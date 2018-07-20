@@ -1,8 +1,21 @@
 import os,sys
 import json
-from pprint import pprint
 
-with open('UQ_in.json') as f:
-	data = json.load(f)
+def wrap_gauss(input_json, output_basedir):
 
-pprint(data)
+    # Check if input is stream or file
+    # Open file and parse either
+
+    # Write target input file
+    
+    # Write execution file
+
+    pass
+
+
+if __name__ == "__main__":
+
+    input_json_file = sys.argv[0]
+    output_basedir = sys.argv[1]
+
+    wrap_gauss(input_json_file, output_basedir)
