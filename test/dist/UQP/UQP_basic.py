@@ -2,6 +2,7 @@ import os,sys
 import itertools
 import json
 import collections
+import numpy as np
 
 # Need to specify:
 # * application (what wrapper to use?)
@@ -12,21 +13,25 @@ import collections
 # * :(
 
 # TODO: Change to use numpy linspace
-def range_float(key, start, end, incr):
+def range_float(param, start, end, incr):
 	i = 0
 	r = start
 	while r < end:
 		r = start + i * incr
 		i += 1
-		yield (key, r)
+		yield (param, r)
+
+def normal_dist(param, mean, sigma, num_samples):
+	for pick in np.random.normal(mean, sigma, num_samples):
+		yield (param, pick)
 
 if len(sys.argv) != 1:
 	sys.exit("Usage: python3 UQP_Basic.py ")
 
-# Input to this UQP
+# Simulated input to this UQP
 params = {
 		"mu":		("range", [0, 1, 0.1]),
-		"sigma":	("range", [0, 1, 0.1]),
+		"sigma":	("normal", [0.0, 1.0, 10]),
 		"num_steps":    ("static", 10),
 		"outfile":	("static", "output.csv")
 	 }
@@ -43,7 +48,7 @@ for key in params.keys():
 		if function == "range":
 			gens.append(range_float(key, args[0], args[1], args[2]))
 		elif function == "normal":
-			print("No.")
+			gens.append(normal_dist(key, args[0], args[1], args[2]))
 		else:
 			sys.exit("Unrecognised function " + function + " for parameter " + key)
 
