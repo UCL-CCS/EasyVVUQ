@@ -1,0 +1,10 @@
+{
+    "run1": [
+        "mu": 0.0,
+        "sigma": 1.0,
+        "num_steps": 10,
+        "outfile": "output.csv"
+    ],
+
+
+}
