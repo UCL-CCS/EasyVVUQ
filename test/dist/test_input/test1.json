@@ -1,5 +1,5 @@
 {
-    "__wrapper":    ["static", "gauss-json.py"],
+    "__wrapper":    ["static", "wrappers/gauss-json.py"],
     "mu":           [ "range", [0, 1, 0.1]    ],
     "sigma":        ["normal", [0.0, 1.0, 10] ],
     "num_steps":    ["static", 10             ],

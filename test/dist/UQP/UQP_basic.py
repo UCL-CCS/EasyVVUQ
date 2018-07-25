@@ -41,19 +41,8 @@ with open(infname, "r") as infile:
     params = json.load(infile)
 validate_params(params)
 
-print("Reading input:")
-pprint(params)
-
-# Simulated input to this UQP
-#params = {
-#		"__wrapper":	("static", "gauss-json.py"),
-#		"mu":		("range", [0, 1, 0.1]),
-#		"sigma":	("normal", [0.0, 1.0, 10]),
-#		"num_steps":    ("static", 10),
-#		"outfile":	("static", "output.csv")
-#	 }
-
-
+#print("Reading input:")
+#pprint(params)
 
 # Extract static and dynamic variables from input
 static_params = []

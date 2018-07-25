@@ -1,7 +1,7 @@
 import os, sys
 import json
 
-def wrap_gauss(input_json, basedir, target_filename='gauss_in.json'):
+def wrap_gauss(input_json, targetdir, target_filename='gauss_in.json'):
     """
 
     TODO: Fix API - for example should we use named inputs
@@ -15,33 +15,34 @@ def wrap_gauss(input_json, basedir, target_filename='gauss_in.json'):
         json_stream = open(input_json, 'r')
 
     # Open file and parse either
-    user_inputs = json.load(json_stream)
+    gauss_params = json.load(json_stream)
 
     # Check for required inputs
     #if 'run_name' not in user_inputs:
     #    raise Exception("EasyVVUQ wrapper requires a run_name in input JSON")
 
-    run_name = list(user_inputs.keys())[0]
+#    run_name = list(user_inputs.keys())[0]
     
     #gauss_params = {x: y for x, y in user_inputs.items() if x != 'run_name'}
-    gauss_params = user_inputs[run_name]
+ #   gauss_params = user_inputs[run_name]
 
     # Write target input file
-    target_path = os.path.join(basedir, run_name)
-    os.makedirs(target_path)
-    target_file_path = os.path.join(target_path, target_filename)
+    target_file_path = os.path.join(targetdir, target_filename)
     with open(target_file_path, 'w') as fp:
         json.dump(gauss_params, fp)
     
     # Write execution file
-    run_cmd_file_path = os.path.join(target_path, 'run_cmd.txt')
+    run_cmd_file_path = os.path.join(targetdir, 'run_cmd.txt')
     with open(run_cmd_file_path, 'w') as fp:
-        out_txt = f"python3 gauss_json.py {target_filename}"
+        out_txt = "python3 gauss_json.py {target_filename}"
         fp.write(out_txt)
 
 if __name__ == "__main__":
 
-    input_json_file = sys.argv[1]
-    output_basedir = sys.argv[2]
+    if len(sys.argv) != 3:
+        sys.exit("Usage: python3 gauss-json.py INPUT_JSON_FILE TARGETDIR")
 
-    wrap_gauss(input_json_file, output_basedir)
+    input_json_file = sys.argv[1]
+    targetdir = sys.argv[2]
+
+    wrap_gauss(input_json_file, targetdir)
