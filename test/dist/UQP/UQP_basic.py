@@ -51,8 +51,8 @@ validate_input(input_json)
 app = input_json["app"]
 params = input_json["params"]
 
-print("Reading input:")
-pprint(params)
+#print("Reading input:")
+#pprint(params)
 
 # Extract static and dynamic variables from input
 static_params = []

@@ -1,6 +1,9 @@
 {
     "app": {
-        "wrapper":  "wrappers/gauss-json.py"
+        "wrapper":  "wrappers/generic.py",
+	"template": "templates/gauss.template",
+	"inputfilename": "gauss_in.json",
+	"run-cmd":  "python3 gauss_json.py {target_filename}"
     },
 
     "params": {
