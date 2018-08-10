@@ -13,10 +13,16 @@ from pprint import pprint
 # Do we pass this info to the UQP in (yet another) JSON file?
 # * :(
 
-def validate_params(params):
-	# Check that params contains a __wrapper parameter
-	if "__wrapper" not in params:
-		sys.exit("Input should contain a __wrapper parameter, designating the wrapper(s) to be used for processing of the given application parameters")
+def validate_input(input_json):
+	# Check that it contains an "app" and a "params" block
+	if "app" not in input_json.keys():
+		sys.exit("Input does not contain an 'app' block")
+	if "params" not in input_json.keys():
+		sys.exit("Input does not contain an 'params' block")
+
+	# Make sure the app block contains a "wrapper" key
+	if "wrapper" not in input_json["app"].keys():
+		sys.exit("Input app block should contain a wrapper parameter, designating the wrapper(s) to be used for processing of the given application parameters")
 
 # TODO: Change to use numpy linspace
 def range_float(param, start, end, incr):
@@ -38,11 +44,15 @@ outfname = sys.argv[2]
 
 # Load and validate input JSON file
 with open(infname, "r") as infile:
-    params = json.load(infile)
-validate_params(params)
+	input_json = json.load(infile)
+validate_input(input_json)
 
-#print("Reading input:")
-#pprint(params)
+# Split into the application and params blocks
+app = input_json["app"]
+params = input_json["params"]
+
+print("Reading input:")
+pprint(params)
 
 # Extract static and dynamic variables from input
 static_params = []
@@ -80,6 +90,9 @@ for dynamic_params in mega_iter:
 	# Add run to master dict of runs
 	runs[run_id] = run
 
-# Save runs as JSON
+# Build output (application info block + runs info)
+output = {"app": app, "runs": runs}
+
+# Save output as JSON
 with open(outfname, 'w') as outfile:
-	json.dump(runs, outfile, indent=8)
+	json.dump(output, outfile, indent=8)

@@ -15,7 +15,8 @@ def wrap_gauss(input_json, targetdir, target_filename='gauss_in.json'):
         json_stream = open(input_json, 'r')
 
     # Open file and parse either
-    gauss_params = json.load(json_stream)
+    input_json = json.load(json_stream)
+    gauss_params = input_json["params"]
 
     # Check for required inputs
     #if 'run_name' not in user_inputs:
