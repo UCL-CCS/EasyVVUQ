@@ -1,0 +1,20 @@
+---
+__wrapper:
+- static
+- wrappers/gauss-json.py
+mu:
+- range
+- - 0
+  - 1
+  - 0.1
+sigma:
+- normal
+- - 0
+  - 1
+  - 10
+num_steps:
+- static
+- 10
+outfile:
+- static
+- output.csv
