@@ -9,17 +9,19 @@ if len(sys.argv) != 2:
 
 json_input = sys.argv[1]
 
-with open(json_input) as f:
+if os.path.isfile(json_input) == False:
+    sys.exit(json_input + " does not exist.")
+
+with open(json_input, "r") as f:
     inputs = json.load(f)
 
 mu = float(inputs['mu'])
 sigma = float(inputs['sigma'])
-num_steps = int(inputs['n_steps'])
-output_filename = inputs['output_filename']
+num_steps = int(inputs['num_steps'])
+output_filename = inputs['outfile']
 
 if num_steps <= 0:
     sys.exit("num_steps should be > 0")
-
 
 numbers = np.random.normal(mu, sigma, num_steps)
 numbers_out = np.array(list(enumerate(numbers)))

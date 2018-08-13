@@ -33,7 +33,7 @@ def wrap_gauss(input_json, targetdir, target_filename='gauss_in.json'):
         json.dump(gauss_params, fp)
     
     # Write execution file
-    run_cmd_file_path = os.path.join(targetdir, 'run_cmd.txt')
+    run_cmd_file_path = os.path.join(targetdir, 'run_cmd.sh')
     with open(run_cmd_file_path, 'w') as fp:
         out_txt = "python3 gauss_json.py " + target_filename
         fp.write(out_txt)

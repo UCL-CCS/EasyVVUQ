@@ -3,12 +3,12 @@
         "wrapper":  "wrappers/generic.py",
 	"template": "templates/gauss.template",
 	"inputfilename": "gauss_in.json",
-	"run-cmd":  "python3 gauss_json.py gauss_in.json"
+	"run-cmd":  "python3 ~/EasyVVUQ/test/dist/correct/gauss_json.py gauss_in.json"
     },
 
     "params": {
-        "mu":           [ "range", [0, 1, 0.1]    ],
-        "sigma":        ["normal", [0.0, 1.0, 10] ],
+        "sigma":        [ "range", [0.1, 1, 0.1]    ],
+        "mu":           ["normal", [1.0, 1.0, 10] ],
         "num_steps":    ["static", 10             ],
         "outfile":      ["static", "output.csv"   ]
     }

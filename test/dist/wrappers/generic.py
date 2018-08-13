@@ -40,7 +40,7 @@ def generic_wrapper(input_json, targetdir):
         fp.write(output_string)
     
     # Write execution file
-    run_cmd_file_path = os.path.join(targetdir, 'run_cmd.txt')
+    run_cmd_file_path = os.path.join(targetdir, 'run_cmd.sh')
     with open(run_cmd_file_path, 'w') as fp:
         fp.write(app["run-cmd"])
 
