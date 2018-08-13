@@ -3,7 +3,7 @@ import json
 import glob
 
 if len(sys.argv) != 2:
-    sys.exit("python3 execute.py RUNS_DIR_JSON")
+    sys.exit("python3 analyse.py RUNS_DIR_JSON")
 
 infname = sys.argv[1]
 with open(infname, "r") as infile:
@@ -15,8 +15,9 @@ if "runs_dir" not in in_data.keys():
 runs_dir = in_data["runs_dir"]
 
 for dirname in glob.glob(runs_dir+"/Run_*"):
-    print("Running " + dirname + "...")
-    cmd = "cd " + dirname + "\nbash run_cmd.sh"
+    print("Analysing " + dirname + "...")
+    outfname = os.path.join(dirname, "output.csv")
+    cmd = "python3 UQP/UQP_analyse.py " + outfname
     r = os.system(cmd)
     if r != 0:
         sys.exit("Non-zero exit code from command '" + cmd + "'")

@@ -6,3 +6,6 @@ python3 splitter.py uqp_runs.json runs_dir.json || exit
 
 # Execute all jobs
 python3 execute.py runs_dir.json || exit
+
+# Analyse jobs
+python3 analyse.py runs_dir.json || exit
