@@ -3,7 +3,7 @@
         "wrapper":  "wrappers/generic.py",
 	"template": "templates/cannonsim.template",
 	"inputfilename": "input.cannon",
-	"run-cmd":  "~/EasyVVUQ/test/dist/cannonsim/cannonsim input.cannon output.csv"
+	"run-cmd":  "~/EasyVVUQ/test/dist/test_apps/cannonsim/cannonsim input.cannon output.csv"
     },
 
     "params": {

@@ -3,7 +3,7 @@
         "wrapper":  "wrappers/generic.py",
 	"template": "templates/gauss.template",
 	"inputfilename": "gauss_in.json",
-	"run-cmd":  "python3 ~/EasyVVUQ/test/dist/correct/gauss_json.py gauss_in.json"
+	"run-cmd":  "python3 ~/EasyVVUQ/test/dist/test_apps/gauss/gauss_json.py gauss_in.json"
     },
 
     "params": {
