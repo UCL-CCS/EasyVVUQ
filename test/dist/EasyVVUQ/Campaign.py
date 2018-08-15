@@ -4,16 +4,20 @@ import numpy as np
 import collections
 from pprint import pprint
 
-class Application:
-    def __init__(self):
+class Campaign:
+    def __init__(self, state_fname=None):
         self.app_info = {}                    # Information needed to run application
         self.params_info = {}                 # Name and description of the model parameters
         self.runs = collections.OrderedDict() # List of runs that need to be performed by this app
         self.run_number = 0                   # Counter keeping track of what order runs were added
 
-    def load_state(self, app_json_fname):
+        if state_fname != None:
+            self.load_state(state_fname)
+            
+
+    def load_state(self, state_fname):
         # Load info from input JSON file
-        with open(app_json_fname, "r") as infile:
+        with open(state_fname, "r") as infile:
             input_json = json.load(infile)
 
         # Check that it contains an "app" and a "params" block
@@ -29,9 +33,9 @@ class Application:
         self.app_info = input_json["app"]
         self.params_info = input_json["params"]
 
-    def save_state(self, app_json_fname):
+    def save_state(self, state_fname):
         output_json = {"app": self.app_info, "params": self.params_info, "runs": self.runs}
-        with open(app_json_fname, "w") as outfile:
+        with open(state_fname, "w") as outfile:
             json.dump(output_json, outfile, indent=8)
 
     def has_run_dir(self):
@@ -64,7 +68,7 @@ class Application:
                 sys.exit("dict passed to add_run() is missing the " + param + " parameter.")
         for param in new_run_dict.keys():
             if param not in self.params_info.keys():
-                sys.exit("dict passed to add_run() contains extra " + param + " parameter which is not a known parameter name of this Application.")
+                sys.exit("dict passed to add_run() contains extra " + param + " parameter which is not a known parameter name of this Campaign.")
 
         # Add to run queue
         run_id = "Run_" + str(self.run_number)
@@ -72,7 +76,7 @@ class Application:
         self.run_number += 1
 
     def print(self):
-        print("Application info:")
+        print("Campaign info:")
         pprint(self.app_info)
         print("Params info:")
         pprint(self.params_info)

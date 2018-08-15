@@ -1,12 +1,11 @@
 import os, sys
-import libEasyVVUQ as easy
+import EasyVVUQ as uq
 
-app = easy.Application()
-app.load_state("test_input/test2.json")
-easy.UQP.Basic(app)
-easy.populate_runs_dir(app)
-app.save_state("out_state.json")
-app.print()
-easy.apply_for_each_run(app, easy.execute_local)
-easy.apply_for_each_run(app, easy.UQP.meanCSV('output.csv'))
+campaign = uq.Campaign(state_fname="test_input/test2.json")
+uq.UQP.Basic(campaign)
+uq.populate_runs_dir(campaign)
+campaign.save_state("out_state.json")
+campaign.print()
+uq.apply_for_each_run(campaign, uq.execute_local)
+uq.apply_for_each_run(campaign, uq.UQP.meanCSV('output.csv', 0))
 

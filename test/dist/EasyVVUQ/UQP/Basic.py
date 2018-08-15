@@ -1,5 +1,5 @@
 import os,sys
-import libEasyVVUQ as easy
+import EasyVVUQ as uq
 import itertools
 import json
 import collections
@@ -62,7 +62,7 @@ if __name__ == "__main__":
         infname = sys.argv[1]
         outfname = sys.argv[2]
 
-        app = easy.Application()
+        app = uq.Application()
         app.load_state(infname)
 
         UQP_basic(app)
