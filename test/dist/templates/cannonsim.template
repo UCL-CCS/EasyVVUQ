@@ -1,0 +1,8 @@
+CANONSIM_INPUT_FILE:
+gravity = $gravity
+mass = $mass
+velocity = $velocity
+angle = $angle
+height = $height
+air_resistance = $air_resistance
+time_step = $time_step
