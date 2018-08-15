@@ -20,6 +20,8 @@ def generic_wrapper(input_json, targetdir):
         sys.exit("Generic wrapper needs the run command ('run-cmd') to have been specified in the 'app' block")
     if "inputfilename" not in app.keys():
         sys.exit("Generic wrapper needs the filename to give to the application input file ('inputfilename') to have been specified in the 'app' block")
+    else:
+        app["run-cmd"] = os.path.realpath(os.path.expanduser(app["run-cmd"]))
 
     # Load template file
     with open(app["template"], "r") as in_template:
