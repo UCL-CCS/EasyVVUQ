@@ -6,7 +6,7 @@ import collections
 import numpy as np
 from pprint import pprint
 
-def Basic(application):
+def basicUQP(application):
 
     # TODO: Change to use numpy linspace
     def range_float(param, start, end, incr):
