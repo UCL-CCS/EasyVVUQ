@@ -9,6 +9,7 @@ def statsUQP(reader=None):
     def statsUQP_specific(dirname):
         l = reader(dirname)
         mean = np.mean(l)
-        print("Mean is " + str(mean))
+        std = np.std(l)
+        print("Mean = " + str(mean) + " std = " + str(std))
 
     return statsUQP_specific
