@@ -59,7 +59,9 @@ class Campaign:
         return self.app_info
     def get_runs_info(self):
         return self.runs
-
+    def get_run_IDs(self):
+        return self.runs.keys()
+ 
     # Expects a dict defining the value of each model parameter listed in self.params_info
     def add_run(self, new_run_dict):
         # Validate (check if parameter names match those already known for this app)
@@ -74,6 +76,11 @@ class Campaign:
         run_id = "Run_" + str(self.run_number)
         self.runs[run_id] = new_run_dict
         self.run_number += 1
+
+    def add_run_result(self, run_ID, result):
+        if run_ID not in self.runs.keys():
+            sys.exit("Attempt to add result for run '" + run_ID + "' but there is no such run in this Campaign")
+        self.runs[run_ID]["result"] = result
 
     def print(self):
         print("Campaign info:")
