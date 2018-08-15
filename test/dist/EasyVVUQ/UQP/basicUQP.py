@@ -6,7 +6,7 @@ import collections
 import numpy as np
 from pprint import pprint
 
-def basicUQP(application):
+def basicUQP(campaign):
 
     # TODO: Change to use numpy linspace
     def range_float(param, start, end, incr):
@@ -21,7 +21,7 @@ def basicUQP(application):
         for pick in np.random.normal(mean, sigma, num_samples):
             yield (param, pick)
 
-    params = application.get_params_info()
+    params = campaign.get_params_info()
 
     # Extract static and dynamic variables from input
     static_params = []
@@ -53,7 +53,7 @@ def basicUQP(application):
             run_dict[key] = value
 
         # Add run to Application's run list
-        application.add_run(run_dict)
+        campaign.add_run(run_dict)
 
 # If module is run as standalone script, read in application/params info from json file, then write resultant runs to specified json file
 if __name__ == "__main__":

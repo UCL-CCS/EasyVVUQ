@@ -3,24 +3,24 @@ import json
 import tempfile
 from pprint import pprint
 
-def populate_runs_dir(application):
+def populate_runs_dir(campaign):
 
     # Get application info block and runs block
-    app = application.get_application_info()
-    runs = application.get_runs_info()
+    app = campaign.get_application_info()
+    runs = campaign.get_runs_info()
 
     # Get application wrapper to use
     if 'wrapper' not in app.keys():
-        sys.exit("wrapper param missing from Application info ('app' block currently contains: " + str(app) + ")")
+        sys.exit("wrapper param missing from campaign application info ('app' block currently contains: " + str(app) + ")")
     wrapper_name = app['wrapper']
 
     # Build a temp directory to store run files (unless it already exists)
-    if application.has_run_dir() == False:
+    if campaign.has_run_dir() == False:
         basedir = tempfile.mkdtemp(prefix='Runs_EasyVVUQ_', dir='.')
         print("Creating temp runs directory: " + basedir)
-        application.set_run_dir(basedir)
+        campaign.set_run_dir(basedir)
     else:
-        basedir = application.get_run_dir()
+        basedir = campaign.get_run_dir()
 
     for run_ID, run_data in runs.items():
 

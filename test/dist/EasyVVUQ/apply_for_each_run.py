@@ -2,10 +2,10 @@ import os, sys
 import json
 import glob
 
-# For each run in the given application's run list, apply the specified UQP or VVP function
-def apply_for_each_run(application, func):
+# For each run in the given Campaign's run list, apply the specified UQP or VVP function
+def apply_for_each_run(campaign, func):
 
-    app = application.get_application_info()
+    app = campaign.get_application_info()
     if "runs_dir" not in app.keys():
         sys.exit("Missing 'runs_dir' key (Application info must include runs directory path).")
     runs_dir = app["runs_dir"]
