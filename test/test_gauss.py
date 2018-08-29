@@ -1,5 +1,5 @@
 import os, sys
-import EasyVVUQ as uq
+import easyvvuq as uq
 
 campaign = uq.Campaign(state_fname="test_input/test_gauss.json")
 uq.UQP.basicUQP(campaign)
