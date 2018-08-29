@@ -1,5 +1,5 @@
 import os,sys
-import EasyVVUQ as uq
+import easyvvuq as uq
 import itertools
 import json
 import collections

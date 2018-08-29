@@ -1,3 +1,3 @@
-from EasyVVUQ.UQP.basicUQP import basicUQP
-from EasyVVUQ.UQP.statsUQP import statsUQP
+from .basicUQP import basicUQP
+from .statsUQP import statsUQP
 

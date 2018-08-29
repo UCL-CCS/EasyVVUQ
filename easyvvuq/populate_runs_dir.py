@@ -16,7 +16,7 @@ def populate_runs_dir(campaign):
 
     # Build a temp directory to store run files (unless it already exists)
     if campaign.has_run_dir() == False:
-        basedir = tempfile.mkdtemp(prefix='Runs_EasyVVUQ_', dir='.')
+        basedir = tempfile.mkdtemp(prefix='Runs_EASYVVUQ_', dir='.')
         print("Creating temp runs directory: " + basedir)
         campaign.set_run_dir(basedir)
     else:

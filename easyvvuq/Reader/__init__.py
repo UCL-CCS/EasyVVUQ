@@ -1,2 +1,2 @@
-from EasyVVUQ.Reader.csvReader import csvReader
+from .csvReader import csvReader
 
