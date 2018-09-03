@@ -246,6 +246,3 @@ class GenericEncoder(BaseEncoder):
 
         else:
             raise RuntimeError('No application input created (try encode method)')
-
-
-
