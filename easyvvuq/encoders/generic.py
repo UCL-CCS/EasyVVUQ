@@ -102,10 +102,10 @@ class GenericEncoder(BaseEncoder):
 
             app_input_txt = template.substitute(str_params)
 
-        except Exception as e:
+        except KeyError:
 
             # TODO: Should we pass str_params here?
-            self._log_substitution_failure(e, params)
+            self._log_substitution_failure(params)
 
         # Write target input file
         target_file_path = os.path.join(target_dir, target_filename)
@@ -117,7 +117,7 @@ class GenericEncoder(BaseEncoder):
         with open(run_cmd_file_path, 'w') as fp:
             fp.write(local_run_cmd)
 
-    def _log_substitution_failure(self, exception, params):
+    def _log_substitution_failure(self, params):
 
         app_info = self.app_info
 
@@ -140,9 +140,10 @@ class GenericEncoder(BaseEncoder):
         with open(temp_filename, 'w') as temp_params_file:
             json.dump(params, temp_params_file)
 
-        reasoning += f"Parameters used in substitution written to {temp_params_file}.\n"
+        reasoning += f"Parameters used in substitution written to {temp_filename}.\n"
 
-        raise Exception(str(exception) + reasoning)
+        print(reasoning)
+        raise
 
 
 if __name__ == "__main__":
