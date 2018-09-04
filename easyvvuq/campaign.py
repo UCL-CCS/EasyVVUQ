@@ -1,18 +1,21 @@
 import os, sys
 import json
+import importlib
 import numpy as np
 import collections
 from pprint import pprint
+from . import app_encoders
 
 
 class Campaign:
 
-    def __init__(self, state_filename=None):
+    def __init__(self, state_filename=None, *args, **kwargs):
 
-        self.app_info = {}                    # Information needed to run application
-        self.params_info = {}                 # Name and description of the model parameters
-        self.runs = collections.OrderedDict() # List of runs that need to be performed by this app
-        self.run_number = 0                   # Counter keeping track of what order runs were added
+        self.app_info = {}                     # Information needed to run application
+        self.params_info = {}                  # Name and description of the model parameters
+        self.runs = collections.OrderedDict()  # List of runs that need to be performed by this app
+        self.run_number = 0                    # Counter keeping track of what order runs were added
+        self.encoder = None
 
         if state_filename is None:
             self.load_state(state_filename)
@@ -24,41 +27,61 @@ class Campaign:
             input_json = json.load(infile)
 
         # Check that it contains an "app" and a "params" block
-        if "app" not in input_json.keys():
+        if "app" not in input_json:
             raise RuntimeError("Input does not contain an 'app' block")
-        if "params" not in input_json.keys():
-            raise RuntimeError("Input does not contain an 'params' block")
-
-        # Make sure the app block contains a "wrapper" key
-        if "wrapper" not in input_json["app"].keys():
-            raise RuntimeError("Input app block should contain a wrapper parameter, "
-                               "designating the wrapper(s) to be used for processing " 
-                               "of the given application parameters")
 
         self.app_info = input_json["app"]
+
+        if "params" not in input_json:
+            raise RuntimeError("Input does not contain an 'params' block")
+
         self.params_info = input_json["params"]
 
-    def save_state(self, state_fname):
-        output_json = {"app": self.app_info, "params": self.params_info, "runs": self.runs}
-        with open(state_fname, "w") as outfile:
-            json.dump(output_json, outfile, indent=8)
+        # `app_name` used to select encoder used to transfer other `app`
+        # information and `params` into application specific input files.
+        if "app_name" not in input_json["app"]:
+            raise RuntimeError("State file 'app' block should contain 'app_name' "
+                               "to allow lookup of required encoder")
+        else:
+
+            app_name = input_json['app']['app_name']
+
+            if app_name not in app_encoders:
+                raise RuntimeError(f'No encoder was found for app_name {app_name}')
+
+            module_location = app_encoders[app_name]['module_location']
+            encoder_name = app_encoders[app_name]['encoder_name']
+
+            module = importlib.import_module(module_location)
+            encoder_class_ = getattr(module, encoder_name)
+            self.encoder = encoder_class_(self.app_info)
+
+    def save_state(self, state_filename):
+
+        output_json = {"app": self.app_info,
+                       "params": self.params_info,
+                       "runs": self.runs}
+
+        with open(state_filename, "w") as outfile:
+            json.dump(output_json, outfile, indent=4)
 
     def has_run_dir(self):
-        if 'runs_dir' not in self.app_info.keys():
+        if 'runs_dir' not in self.app_info:
             return False
         return True
 
     def set_run_dir(self, path):
 
         if self.has_run_dir():
-            sys.exit("Cannot set a new runs directory because there is one already set (" + self.app_info["run_dir"] + ")")
+            message = f'Cannot set a new runs directory because there is one already set ({self.app_info["runs_dir"]})'
+            raise RuntimeError(message)
+
         self.app_info['runs_dir'] = path
 
     def get_run_dir(self):
 
         if not self.has_run_dir():
-
-            sys.exit("Cannot get run directory path - none has been set for this application.")
+            raise RuntimeError("Cannot get run directory path - none has been set for this application.")
 
         return self.app_info['runs_dir']
  

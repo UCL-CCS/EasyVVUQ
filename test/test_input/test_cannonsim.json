@@ -1,6 +1,6 @@
 {
 	"app": {
-        "wrapper":        "wrappers/generic.py",
+        "app_name":       "cannonball_test",
 		"template":       "templates/cannonsim.template",
 		"input_filename": "input.cannon",
 		"run_cmd":        "test_apps/cannonsim/cannonsim input.cannon output.csv"
