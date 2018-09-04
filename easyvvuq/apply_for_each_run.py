@@ -1,20 +1,23 @@
 import os, sys
 
-# For each run in the given Campaign's run list, apply the specified UQP or VVP function
-def apply_for_each_run(campaign, func):
 
-    app = campaign.get_application_info()
+def apply_for_each_run(campaign, func):
+    """For each run in the given Campaign's run list, apply the specified UQP or VVP function"""
+
+    app = campaign.app_info
+
     if "runs_dir" not in app.keys():
         sys.exit("Missing 'runs_dir' key (Application info must include runs directory path).")
     runs_dir = app["runs_dir"]
 
     # Loop through all runs in this campaign
-    run_IDs = campaign.get_run_IDs()
-    for run_ID in run_IDs:
-        dirname = os.path.join(runs_dir, run_ID)
-        print("Applying " + func.__name__ + " to " + dirname + "...")
+    run_ids = campaign.runs.keys()
+    for run_id in run_ids:
+        dir_name = os.path.join(runs_dir, run_id)
+        print("Applying " + func.__name__ + " to " + dir_name + "...")
 
-        # Run user-specified function on this directory, and store the result back into the Campaign object (if there is a result returned)
-        result = func(dirname)
-        if result != None:
-            campaign.add_run_result(run_ID, result)
+        # Run user-specified function on this directory, and store the result
+        # back into the Campaign object (if there is a result returned)
+        result = func(dir_name)
+        if result is not None:
+            campaign.add_run_result(run_id, result)

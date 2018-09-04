@@ -6,7 +6,7 @@ import tempfile
 def populate_runs_dir(campaign, prefix='Runs_EASYVVUQ_', default_dir='.'):
 
     # Get application info block and runs block
-    runs = campaign.get_runs_info()
+    runs = campaign.runs
 
     # Get application encoder to use
 
@@ -17,10 +17,12 @@ def populate_runs_dir(campaign, prefix='Runs_EASYVVUQ_', default_dir='.'):
 
     # Build a temp directory to store run files (unless it already exists)
     if not campaign.run_dir:
+
         basedir = tempfile.mkdtemp(prefix=prefix, dir=default_dir)
         print("Creating temp runs directory: " + basedir)
-        
+
         campaign.run_dir = basedir
+
     else:
 
         basedir = campaign.run_dir
@@ -39,11 +41,11 @@ def populate_runs_dir(campaign, prefix='Runs_EASYVVUQ_', default_dir='.'):
 if __name__ == "__main__":
     if len(sys.argv) != 3:
         sys.exit("Usage: python3 populate_runs_dir.py INPUT_JSON OUTPUT_JOBS_JSON")
-        infname = sys.argv[1]
-        outfname = sys.argv[2]
+        in_filename = sys.argv[1]
+        out_filename = sys.argv[2]
 
         my_app = easy.Application()
-        my_app.load_state(infname)
+        my_app.load_state(in_filename)
 
         easy.build_runs_dir(my_app)
-        app.save_state(outfname)                                   
+        app.save_state(out_filename)

@@ -21,7 +21,7 @@ def basicUQP(campaign):
         for pick in np.random.normal(mean, sigma, num_samples):
             yield (param, pick)
 
-    params = campaign.get_params_info()
+    params = campaign.params_info
 
     # Extract static and dynamic variables from input
     static_params = []

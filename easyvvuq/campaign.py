@@ -1,7 +1,6 @@
-import os, sys
+import sys
 import json
 import importlib
-import numpy as np
 import collections
 from pprint import pprint
 import easyvvuq as uq
@@ -11,9 +10,9 @@ class Campaign:
 
     def __init__(self, state_filename=None, *args, **kwargs):
 
-        self.app_info = {}                     # Information needed to run application
-        self.params_info = {}                  # Name and description of the model parameters
-        self.runs = collections.OrderedDict()  # List of runs that need to be performed by this app
+        self._app_info = {}                     # Information needed to run application
+        self._params_info = {}                  # Name and description of the model parameters
+        self._runs = collections.OrderedDict()  # List of runs that need to be performed by this app
         self.run_number = 0                    # Counter keeping track of what order runs were added
         self.encoder = None
 
@@ -56,6 +55,47 @@ class Campaign:
             encoder_class_ = getattr(module, encoder_name)
             self.encoder = encoder_class_(self.app_info)
 
+    @property
+    def run_dir(self):
+
+        if 'runs_dir' not in self.app_info:
+            return None
+
+        return self._app_info['runs_dir']
+
+    @run_dir.setter
+    def run_dir(self, run_dir):
+
+        if self.run_dir:
+            message = f'Cannot set a new runs directory because there is one already set ({self.app_info["runs_dir"]})'
+            raise RuntimeError(message)
+
+        self._app_info['runs_dir'] = run_dir
+
+    @property
+    def params_info(self):
+        return self._params_info
+
+    @params_info.setter
+    def params_info(self, info):
+        self._params_info = info
+
+    @property
+    def app_info(self):
+        return self._app_info
+
+    @app_info.setter
+    def app_info(self, info):
+        self._app_info = info
+
+    @property
+    def runs(self):
+        return self._runs
+
+    @app_info.setter
+    def runs(self, runs):
+        self._runs = runs
+
     def save_state(self, state_filename):
 
         output_json = {"app": self.app_info,
@@ -65,35 +105,6 @@ class Campaign:
         with open(state_filename, "w") as outfile:
             json.dump(output_json, outfile, indent=4)
 
-    @property
-    def run_dir(self):
-
-        if 'runs_dir' not in self.app_info:
-            return None
-
-        return self.app_info['runs_dir']
-
-    @run_dir.setter
-    def run_dir(self, run_dir):
-
-        if self.run_dir:
-            message = f'Cannot set a new runs directory because there is one already set ({self.app_info["runs_dir"]})'
-            raise RuntimeError(message)
-
-        self.app_info['runs_dir'] = run_dir
- 
-    def get_params_info(self):
-        return self.params_info
-
-    def get_application_info(self):
-        return self.app_info
-
-    def get_runs_info(self):
-        return self.runs
-    
-    def get_run_IDs(self):
-        return self.runs.keys()
- 
     # Expects a dict defining the value of each model parameter listed in self.params_info
     def add_run(self, new_run_dict):
         # Validate (check if parameter names match those already known for this app)
@@ -109,10 +120,10 @@ class Campaign:
         self.runs[run_id] = new_run_dict
         self.run_number += 1
 
-    def add_run_result(self, run_ID, result):
-        if run_ID not in self.runs.keys():
-            sys.exit("Attempt to add result for run '" + run_ID + "' but there is no such run in this Campaign")
-        self.runs[run_ID]["result"] = result
+    def add_run_result(self, run_id, result):
+        if run_id not in self.runs.keys():
+            sys.exit("Attempt to add result for run '" + run_id + "' but there is no such run in this Campaign")
+        self.runs[run_id]["result"] = result
 
     def print(self):
         print("Campaign info:")
