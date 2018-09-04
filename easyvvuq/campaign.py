@@ -4,7 +4,7 @@ import importlib
 import numpy as np
 import collections
 from pprint import pprint
-from . import app_encoders
+import easyvvuq as uq
 
 
 class Campaign:
@@ -17,7 +17,7 @@ class Campaign:
         self.run_number = 0                    # Counter keeping track of what order runs were added
         self.encoder = None
 
-        if state_filename is None:
+        if state_filename is not None:
             self.load_state(state_filename)
 
     def load_state(self, state_filename):
@@ -46,11 +46,11 @@ class Campaign:
 
             app_name = input_json['app']['app_name']
 
-            if app_name not in app_encoders:
+            if app_name not in uq.app_encoders:
                 raise RuntimeError(f'No encoder was found for app_name {app_name}')
 
-            module_location = app_encoders[app_name]['module_location']
-            encoder_name = app_encoders[app_name]['encoder_name']
+            module_location = uq.app_encoders[app_name]['module_location']
+            encoder_name = uq.app_encoders[app_name]['encoder_name']
 
             module = importlib.import_module(module_location)
             encoder_class_ = getattr(module, encoder_name)

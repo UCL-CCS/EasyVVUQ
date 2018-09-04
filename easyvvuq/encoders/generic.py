@@ -28,10 +28,10 @@ class GenericEncoder(BaseEncoder):
 
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, app_info, *args, **kwargs):
 
         # Handles creation of `self.app_info` attribute (dicts)
-        super().__init__(self, *args, **kwargs)
+        super().__init__(app_info, *args, **kwargs)
 
         app_info = self.app_info
 
