@@ -33,30 +33,30 @@ class GenericEncoder(BaseEncoder):
         # Handles creation of `self.app_info` attribute (dicts)
         super().__init__(self, *args, **kwargs)
 
-        app = self.app_info
+        app_info = self.app_info
 
-        if 'template' in app:
+        if 'template' in app_info:
 
-            with open(app['template'], 'r') as template_file:
+            with open(app_info['template'], 'r') as template_file:
                 template_txt = template_file.read()
 
             self.template = Template(template_txt)
 
-        elif 'template_txt' in app:
+        elif 'template_txt' in app_info:
 
-            self.template = Template(app['template_txt'])
+            self.template = Template(app_info['template_txt'])
 
         else:
 
             raise RuntimeError('Template required in "app" specification input to GenericEncoder')
 
-        if 'input_filename' in app:
-            self.target_filename = app['input_filename']
+        if 'input_filename' in app_info:
+            self.target_filename = app_info['input_filename']
         else:
             self.target_filename = 'app_input.txt'
 
-        if 'run_cmd' in self.app:
-            self.local_run_cmd = app['run_cmd']
+        if 'run_cmd' in app_info:
+            self.local_run_cmd = app_info['run_cmd']
         else:
             self.local_run_cmd = None
 
@@ -67,10 +67,11 @@ class GenericEncoder(BaseEncoder):
 
         Parameters
         ----------
-        params    : dict, dict or str or File
+        params        : dict, dict or str or File
             Parameter information. Will try interpreting as a dict or JSON
             file/stream or filename.
-
+        target_dir    : str
+            Path to directory where application input will be written.
         """
 
         if not target_dir:
@@ -112,22 +113,22 @@ class GenericEncoder(BaseEncoder):
 
     def _log_substitution_failure(self, exception, params):
 
-        app = self.app_info
+        app_info = self.app_info
 
-        if 'template_txt' in app:
+        if 'template_txt' in app_info:
 
             fle, temp_filename = tempfile.mkstemp(text=True)
 
             with open(temp_filename, 'w') as temp_file:
 
-                for line in app['template_txt']:
+                for line in app_info['template_txt']:
                     temp_file.write(line)
 
             reasoning = f"\nFailed substituting into template {temp_filename}.\n"
 
         else:
 
-            reasoning = f"\nFailed substituting into template {app['template']}.\n"
+            reasoning = f"\nFailed substituting into template {app_info['template']}.\n"
 
         fle, temp_filename = tempfile.mkstemp(text=True)
         with open(temp_filename, 'w') as temp_params_file:
@@ -146,6 +147,5 @@ if __name__ == "__main__":
     input_json_file = sys.argv[1]
     output_dir = sys.argv[2]
 
-    encoder = GenericEncoder(run_info=input_json_file, target_dir=output_dir)
+    encoder = GenericEncoder(params=input_json_file, target_dir=output_dir)
     encoder.encode()
-    encoder.write_application_files()
