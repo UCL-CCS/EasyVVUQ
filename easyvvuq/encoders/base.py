@@ -1,4 +1,4 @@
-import os, sys
+import os
 import json
 import tempfile
 from string import Template
