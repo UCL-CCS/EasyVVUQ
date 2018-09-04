@@ -1,7 +1,7 @@
 import os, sys
 import easyvvuq as uq
 
-my_campaign = uq.Campaign(state_fname="test_input/test_cannonsim.json")
+my_campaign = uq.Campaign(state_filename="test_input/test_cannonsim.json")
 uq.uqp.basicUQP(my_campaign)
 uq.populate_runs_dir(my_campaign)
 uq.apply_for_each_run(my_campaign, uq.execute_local)

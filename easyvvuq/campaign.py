@@ -4,31 +4,36 @@ import numpy as np
 import collections
 from pprint import pprint
 
+
 class Campaign:
-    def __init__(self, state_fname=None):
+
+    def __init__(self, state_filename=None):
+
         self.app_info = {}                    # Information needed to run application
         self.params_info = {}                 # Name and description of the model parameters
         self.runs = collections.OrderedDict() # List of runs that need to be performed by this app
         self.run_number = 0                   # Counter keeping track of what order runs were added
 
-        if state_fname != None:
-            self.load_state(state_fname)
-            
+        if state_filename is None:
+            self.load_state(state_filename)
 
-    def load_state(self, state_fname):
+    def load_state(self, state_filename):
+
         # Load info from input JSON file
-        with open(state_fname, "r") as infile:
+        with open(state_filename, "r") as infile:
             input_json = json.load(infile)
 
         # Check that it contains an "app" and a "params" block
         if "app" not in input_json.keys():
-            sys.exit("Input does not contain an 'app' block")
+            raise RuntimeError("Input does not contain an 'app' block")
         if "params" not in input_json.keys():
-            sys.exit("Input does not contain an 'params' block")
+            raise RuntimeError("Input does not contain an 'params' block")
 
         # Make sure the app block contains a "wrapper" key
         if "wrapper" not in input_json["app"].keys():
-            sys.exit("Input app block should contain a wrapper parameter, designating the wrapper(s) to be used for processing of the given application parameters")
+            raise RuntimeError("Input app block should contain a wrapper parameter, "
+                               "designating the wrapper(s) to be used for processing " 
+                               "of the given application parameters")
 
         self.app_info = input_json["app"]
         self.params_info = input_json["params"]
@@ -44,21 +49,28 @@ class Campaign:
         return True
 
     def set_run_dir(self, path):
-        if self.has_run_dir() == True:
+
+        if self.has_run_dir():
             sys.exit("Cannot set a new runs directory because there is one already set (" + self.app_info["run_dir"] + ")")
         self.app_info['runs_dir'] = path
 
     def get_run_dir(self):
-        if self.has_run_dir() == False:
+
+        if not self.has_run_dir():
+
             sys.exit("Cannot get run directory path - none has been set for this application.")
+
         return self.app_info['runs_dir']
  
     def get_params_info(self):
         return self.params_info
+
     def get_application_info(self):
         return self.app_info
+
     def get_runs_info(self):
         return self.runs
+    
     def get_run_IDs(self):
         return self.runs.keys()
  
