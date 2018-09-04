@@ -8,7 +8,7 @@ class BaseEncoder(object):
     contract - take in ``app_info`` and provide an ``encode``
     method to parse these and write relevant run file to a target directory.
 
-    TODO: If we end up converting Attributed to Properties with ``@property``
+    TODO: If we end up converting Attributes to Properties with ``@property``
     of Kristof style ``@advanced_property`` decorators then they should be
     documented in the property's getter method.
 
