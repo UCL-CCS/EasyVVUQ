@@ -17,4 +17,4 @@ user_encoders = ''
 
 if user_encoders:
     with open(user_encoders) as fin:
-        user_encoders.update(json.load(fin))
+        app_encoders.update(json.load(fin))
