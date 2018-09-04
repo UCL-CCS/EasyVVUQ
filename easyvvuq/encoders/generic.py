@@ -56,7 +56,13 @@ class GenericEncoder(BaseEncoder):
             self.target_filename = 'app_input.txt'
 
         if 'run_cmd' in app_info:
-            self.local_run_cmd = app_info['run_cmd']
+
+            run_cmd = app_info['run_cmd']
+
+            # Need to expand users, get absolute path and derefernce symlinks
+            local_run_cmd = os.path.realpath(os.path.expanduser(run_cmd))
+
+            self.local_run_cmd = local_run_cmd
         else:
             self.local_run_cmd = None
 
