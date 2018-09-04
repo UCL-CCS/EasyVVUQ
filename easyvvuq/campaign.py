@@ -65,25 +65,22 @@ class Campaign:
         with open(state_filename, "w") as outfile:
             json.dump(output_json, outfile, indent=4)
 
-    def has_run_dir(self):
+    @property
+    def run_dir(self):
+
         if 'runs_dir' not in self.app_info:
-            return False
-        return True
+            return None
 
-    def set_run_dir(self, path):
+        return self.app_info['runs_dir']
 
-        if self.has_run_dir():
+    @run_dir.setter
+    def run_dir(self, run_dir):
+
+        if self.run_dir:
             message = f'Cannot set a new runs directory because there is one already set ({self.app_info["runs_dir"]})'
             raise RuntimeError(message)
 
-        self.app_info['runs_dir'] = path
-
-    def get_run_dir(self):
-
-        if not self.has_run_dir():
-            raise RuntimeError("Cannot get run directory path - none has been set for this application.")
-
-        return self.app_info['runs_dir']
+        self.app_info['runs_dir'] = run_dir
  
     def get_params_info(self):
         return self.params_info

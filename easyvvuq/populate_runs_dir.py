@@ -16,12 +16,14 @@ def populate_runs_dir(campaign, prefix='Runs_EASYVVUQ_', default_dir='.'):
     encoder = campaign.encoder
 
     # Build a temp directory to store run files (unless it already exists)
-    if not campaign.has_run_dir():
+    if not campaign.run_dir:
         basedir = tempfile.mkdtemp(prefix=prefix, dir=default_dir)
         print("Creating temp runs directory: " + basedir)
-        campaign.set_run_dir(basedir)
+        
+        campaign.run_dir = basedir
     else:
-        basedir = campaign.get_run_dir()
+
+        basedir = campaign.run_dir
 
     for run_ID, run_data in runs.items():
 
