@@ -1,6 +1,7 @@
 import os
 import sys
 import json
+import easyvvuq.utils.json as json_utils
 import tempfile
 from string import Template
 from .base import BaseEncoder
@@ -9,37 +10,30 @@ from .base import BaseEncoder
 class GenericEncoder(BaseEncoder):
     """GenericEncoder for substituting values into application template input.
 
-    The `app` dictionary needs to contain either a `template` filename or
+    The `app_info` dictionary needs to contain either a `template` filename or
     `template_txt` string as the source of the application input template.
     Values from the `params` dict are then substituted in by the `encode` method.
 
     Parameters
     ----------
-    run_info : dict or str or File, optional
-        If specifies is used as the source for `app` and `params` dicts. Will
-        try interpreting as a dict or JSON file/stream or filename. If not
-        specified must have `app` and `params` supplied.
-    app      : dict, optional
-        Application information, used if no `run_info` provided.
-    params   : dict, optional
-        Parameters for particular execution of the application, used if no
-        `run_info` provided.
+    app_info      : dict, dict or str or File
+        Application information. Will try interpreting as a dict or JSON
+        file/stream or filename.
+
 
     Attributes
     ----------
-    app    : dict
+    app_info    : dict
         Contains application information.
-    params : dict
-        Contains parameters for run which need encoding.
 
     """
 
     def __init__(self, *args, **kwargs):
 
-        # Handles creation of `self.app` and `self.params` attributes (dicts)
+        # Handles creation of `self.app_info` attribute (dicts)
         super().__init__(self, *args, **kwargs)
 
-        app = self.app
+        app = self.app_info
 
         if 'template' in app:
 
@@ -68,12 +62,23 @@ class GenericEncoder(BaseEncoder):
 
         self.app_input_txt = None
 
-    def encode(self):
-        """Substitutes `params` into a template application input"""
+    def encode(self, params={}, target_dir=''):
+        """Substitutes `params` into a template application input, saves in target_dir
 
-        template = self.template
-        params = self.params
-        app = self.app
+        Parameters
+        ----------
+        params    : dict, dict or str or File
+            Parameter information. Will try interpreting as a dict or JSON
+            file/stream or filename.
+
+        """
+
+        if not target_dir:
+            raise RuntimeError('No target directory specified to encoder')
+
+        if not hasattr(params, 'items'):
+
+            params = json_utils.process_json(params)
 
         str_params = {}
 
@@ -81,66 +86,62 @@ class GenericEncoder(BaseEncoder):
 
             str_params[key] = str(value)
 
-        try:
-
-            self.app_input_txt = template.substitute(str_params)
-
-        except Exception as e:
-
-            if 'template_txt' in app:
-
-                fle, temp_filename = tempfile.mkstemp(text=True)
-
-                with open(temp_filename, 'w') as temp_file:
-
-                    for line in app['template_txt']:
-                        temp_file.write(line)
-
-                reasoning = f"\nFailed substituting into template {temp_filename}.\n"
-
-            else:
-
-                reasoning = f"\nFailed substituting into template {app['template']}.\n"
-
-            fle, temp_filename = tempfile.mkstemp(text=True)
-            with open(temp_filename, 'w') as temp_params_file:
-                json.dump(params, temp_params_file)
-
-            reasoning += f"Parameters written to {temp_params_file}.\n"
-
-            raise Exception(str(e) + reasoning)
-
-    def write_application_files(self):
-        """Writes application input created by `encoder` into `target_dir`"""
-
-        target_dir = self.target_dir
+        template = self.template
         target_filename = self.target_filename
         app_input_txt = self.app_input_txt
         local_run_cmd = self.local_run_cmd
 
-        if not target_dir:
-            raise RuntimeError('No target directory specified to encoder')
+        try:
 
-        if app_input_txt:
+            app_input_txt = template.substitute(str_params)
 
-            # Write target input file
-            target_file_path = os.path.join(target_dir, target_filename)
-            with open(target_file_path, 'w') as fp:
-                fp.write(app_input_txt)
+        except Exception as e:
 
-            # Write execution file
-            run_cmd_file_path = os.path.join(target_dir, 'run_cmd.sh')
-            with open(run_cmd_file_path, 'w') as fp:
-                fp.write(local_run_cmd)
+            # TODO: Should we pass str_params here?
+            self._log_substitution_failure(e, params)
+
+        # Write target input file
+        target_file_path = os.path.join(target_dir, target_filename)
+        with open(target_file_path, 'w') as fp:
+            fp.write(app_input_txt)
+
+        # Write execution file
+        run_cmd_file_path = os.path.join(target_dir, 'run_cmd.sh')
+        with open(run_cmd_file_path, 'w') as fp:
+            fp.write(local_run_cmd)
+
+    def _log_substitution_failure(self, exception, params):
+
+        app = self.app_info
+
+        if 'template_txt' in app:
+
+            fle, temp_filename = tempfile.mkstemp(text=True)
+
+            with open(temp_filename, 'w') as temp_file:
+
+                for line in app['template_txt']:
+                    temp_file.write(line)
+
+            reasoning = f"\nFailed substituting into template {temp_filename}.\n"
 
         else:
-            raise RuntimeError('No application input created (try encode method)')
+
+            reasoning = f"\nFailed substituting into template {app['template']}.\n"
+
+        fle, temp_filename = tempfile.mkstemp(text=True)
+        with open(temp_filename, 'w') as temp_params_file:
+            json.dump(params, temp_params_file)
+
+        reasoning += f"Parameters used in substitution written to {temp_params_file}.\n"
+
+        raise Exception(str(exception) + reasoning)
 
 
 if __name__ == "__main__":
 
     if len(sys.argv) != 3:
-        sys.exit("Usage: python3 generic_wrapper.py INPUT_JSON_FILE OUTPUT_DIR")
+        sys.exit("Usage: python3 generic.py INPUT_JSON_FILE OUTPUT_DIR")
 
     input_json_file = sys.argv[1]
     output_dir = sys.argv[2]
