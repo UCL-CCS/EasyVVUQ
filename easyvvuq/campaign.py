@@ -7,19 +7,51 @@ import easyvvuq as uq
 
 
 class Campaign:
+    """Campaign coordinates information for a series of related runs
+
+    The `app_info` dictionary needs to contain either a `template` filename or
+    `template_txt` string as the source of the application input template.
+    Values from the `params` dict are then substituted in by the `encode` method.
+
+    Parameters
+    ----------
+    state_filename  : str
+        Path to file containing serialized state of a Campaign in JSON format
+
+    Attributes
+    ----------
+    run_number    : int
+        Counter keeping track of what order runs were added
+    encoder
+        Encoder for the application input files. Initialized to None and
+        with an encoder class from `uq.app_encoders` and inizialized
+        dynamically.
+
+    """
 
     def __init__(self, state_filename=None, *args, **kwargs):
 
         self._app_info = {}                     # Information needed to run application
         self._params_info = {}                  # Name and description of the model parameters
         self._runs = collections.OrderedDict()  # List of runs that need to be performed by this app
-        self.run_number = 0                    # Counter keeping track of what order runs were added
+        self.run_number = 0
         self.encoder = None
 
         if state_filename is not None:
             self.load_state(state_filename)
 
     def load_state(self, state_filename):
+        """Load Campaign state from file (JSON format)
+
+        Parameters
+        ----------
+        state_filename  : str
+            JSON file from which to load the Campaign state
+
+        Returns
+        -------
+
+        """
 
         # Load info from input JSON file
         with open(state_filename, "r") as infile:
@@ -97,6 +129,17 @@ class Campaign:
         self._runs = runs
 
     def save_state(self, state_filename):
+        """Save the current Campaign state to file in JSON format
+
+        Parameters
+        ----------
+        state_filename  :   str
+            Name of file in which to save the state
+
+        Returns
+        -------
+
+        """
 
         output_json = {"app": self.app_info,
                        "params": self.params_info,
@@ -105,27 +148,74 @@ class Campaign:
         with open(state_filename, "w") as outfile:
             json.dump(output_json, outfile, indent=4)
 
-    # Expects a dict defining the value of each model parameter listed in self.params_info
-    def add_run(self, new_run_dict):
+    def add_run(self, new_run, prefix='Run_'):
+        """Add a new run to the queue
+
+        Parameters
+        ----------
+        new_run     : dict
+            Defines the value of each model parameter listed in `self.params_info`
+            for a run to be added to `self.runs`
+        prefix      : str
+            Prepended to the key used to identify the run in `self.runs`
+
+        Returns
+        -------
+
+        """
+
         # Validate (check if parameter names match those already known for this app)
         for param in self.params_info.keys():
-            if param not in new_run_dict.keys():
-                sys.exit("dict passed to add_run() is missing the " + param + " parameter.")
-        for param in new_run_dict.keys():
+            if param not in new_run.keys():
+
+                reasoning = (f"dict passed to add_run() is missing the {param} "
+                             f"parameter.")
+
+                raise RuntimeError(reasoning)
+
+        for param in new_run.keys():
             if param not in self.params_info.keys():
-                sys.exit("dict passed to add_run() contains extra " + param + " parameter which is not a known parameter name of this Campaign.")
+
+                reasoning = (f"dict passed to add_run() contains extra {param} "
+                             f"parameter which is not a known parameter name "
+                             f"of this Campaign.")
+
+                raise RuntimeError(reasoning)
 
         # Add to run queue
-        run_id = "Run_" + str(self.run_number)
-        self.runs[run_id] = new_run_dict
+        run_id = f"{prefix}{self.run_number}"
+        self.runs[run_id] = new_run
         self.run_number += 1
 
     def add_run_result(self, run_id, result):
+        """Add result entry to existing run in `self.runs`
+
+        Parameters
+        ----------
+        run_id  : str
+            Identifier of run to be modified
+        result
+            Information on run output to be added to `self.runs`
+
+        Returns
+        -------
+
+        """
+
         if run_id not in self.runs.keys():
-            sys.exit("Attempt to add result for run '" + run_id + "' but there is no such run in this Campaign")
+            reasoning = (f"Attempt to add result for run {run_id} but there is"
+                         f"no such run in this Campaign")
+            raise RuntimeError(reasoning)
+
         self.runs[run_id]["result"] = result
 
     def print(self):
+        """Print formatted summary of the current Campaign state.
+
+        Returns
+        -------
+
+        """
         print("Campaign info:")
         pprint(self.app_info)
         print("Params info:")
