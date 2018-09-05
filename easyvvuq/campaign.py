@@ -123,7 +123,7 @@ class Campaign:
     def runs(self):
         return self._runs
 
-    @app_info.setter
+    @runs.setter
     def runs(self, runs):
         self._runs = runs
 
