@@ -1,9 +1,9 @@
 {
     "app": {
-      "wrapper":  "wrappers/generic.py",
-      "template": "templates/gauss.template",
+      "input_encoder":  "generic_template",
+      "template":       "templates/gauss.template",
       "input_filename": "gauss_in.json",
-      "run_cmd":  "python3 ~/easyvvuq/test/dist/test_apps/gauss/gauss_json.py gauss_in.json"
+      "run_cmd":        "test_apps/gauss/gauss_json.py gauss_in.json"
     },
 
     "params": {

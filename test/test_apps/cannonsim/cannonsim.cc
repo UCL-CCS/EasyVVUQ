@@ -1,4 +1,5 @@
-#include <stdio.h>
+#include <cstdio>
+#include <cstdlib>
 #include <string.h>
 #include <stdint.h>
 #include <math.h>

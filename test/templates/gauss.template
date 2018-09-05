@@ -1,1 +1,1 @@
-{"outfile": "$outfile", "num_steps": "$num_steps", "mu": "$mu", "sigma": "$sigma"}
+{"outfile": "$out_file", "num_steps": "$num_steps", "mu": "$mu", "sigma": "$sigma"}

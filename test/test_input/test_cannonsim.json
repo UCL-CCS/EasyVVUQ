@@ -1,18 +1,17 @@
 {
-	"app": {
-        "wrapper":        "wrappers/generic.py",
-		"template":       "templates/cannonsim.template",
-		"input_filename": "input.cannon",
-		"run_cmd":        "test_apps/cannonsim/cannonsim input.cannon output.csv"
+"app": {
+  "input_encoder":  "generic_template",
+  "template":       "templates/cannonsim.template",
+  "input_filename": "input.cannon",
+  "run_cmd":        "test_apps/cannonsim/cannonsim input.cannon output.csv"
     },
-
-    "params": {
-		"angle":			["range", [1.0, 2.0, 0.25]],
-		"air_resistance":	["range", [0.1, 0.3, 0.1]],
-		"height":			["normal", [10.0, 1.0, 3]],
-		"time_step":		["static", 0.01],
-		"gravity":			["static", 9.8],
-		"mass":				["static", 1.0],
-		"velocity":			["static", 10.0]
+"params": {
+  "angle":            ["range", [1.0, 2.0, 0.25]],
+  "air_resistance":   ["range", [0.1, 0.3, 0.1]],
+  "height":           ["normal", [10.0, 1.0, 3]],
+  "time_step":        ["static", 0.01],
+  "gravity":          ["static", 9.8],
+  "mass":             ["static", 1.0],
+  "velocity":         ["static", 10.0]
     }
 }

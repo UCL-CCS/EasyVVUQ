@@ -1,0 +1,6 @@
+{
+  "generic_template": {
+    "module_location": "easyvvuq.encoders.generic_template",
+    "encoder_name": "GenericEncoder"
+  }
+}
