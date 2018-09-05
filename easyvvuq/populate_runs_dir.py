@@ -1,9 +1,26 @@
 import os
-import sys
 import tempfile
 
 
 def populate_runs_dir(campaign, prefix='Runs_EASYVVUQ_', default_dir='.'):
+    """Populate run directories as specified in the input Campaign object
+
+    This calls the Campaigns encoder object to create input files for the
+    specified application in each run directory, usually with varying input
+    (scientific) parameters.
+
+    Parameters
+    ----------
+    campaign    : Campaign
+        Object that contains information about a set of related runs.
+    prefix      : str
+        Text that will appear at the start of each run directories name.
+    default_dir : str
+        Top level directory where all the run directories will be created.
+    Returns
+    -------
+
+    """
 
     # Get application info block and runs block
     runs = campaign.runs
@@ -35,17 +52,3 @@ def populate_runs_dir(campaign, prefix='Runs_EASYVVUQ_', default_dir='.'):
 
         encoder.encode(params=run_data, target_dir=target_dir)
 
-
-# If module is run as standalone script, read in application/params info from json file,
-# and write the (unique) runs dir name to the specified file
-if __name__ == "__main__":
-    if len(sys.argv) != 3:
-        sys.exit("Usage: python3 populate_runs_dir.py INPUT_JSON OUTPUT_JOBS_JSON")
-        in_filename = sys.argv[1]
-        out_filename = sys.argv[2]
-
-        my_app = easy.Application()
-        my_app.load_state(in_filename)
-
-        easy.build_runs_dir(my_app)
-        app.save_state(out_filename)
