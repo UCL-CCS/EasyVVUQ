@@ -1,10 +1,6 @@
 {
-  "cannonball_test": {
-    "module_location": "easyvvuq.encoders.generic",
-    "encoder_name": "GenericEncoder"
-  },
-  "gauss_test": {
-    "module_location": "easyvvuq.encoders.generic",
+  "generic_template": {
+    "module_location": "easyvvuq.encoders.generic_template",
     "encoder_name": "GenericEncoder"
   }
 }

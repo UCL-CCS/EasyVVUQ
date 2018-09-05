@@ -1,6 +1,6 @@
 {
 "app": {
-  "app_name":       "cannonball_test",
+  "input_encoder":  "generic_template",
   "template":       "templates/cannonsim.template",
   "input_filename": "input.cannon",
   "run_cmd":        "test_apps/cannonsim/cannonsim input.cannon output.csv"

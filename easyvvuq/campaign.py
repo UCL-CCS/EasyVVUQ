@@ -36,20 +36,20 @@ class Campaign:
 
         self.params_info = input_json["params"]
 
-        # `app_name` used to select encoder used to transfer other `app`
+        # `input_encoder` used to select encoder used to transfer other `app`
         # information and `params` into application specific input files.
-        if "app_name" not in input_json["app"]:
+        if "input_encoder" not in input_json["app"]:
             raise RuntimeError("State file 'app' block should contain 'app_name' "
                                "to allow lookup of required encoder")
         else:
 
-            app_name = input_json['app']['app_name']
+            input_encoder = input_json['app']['input_encoder']
 
-            if app_name not in uq.app_encoders:
-                raise RuntimeError(f'No encoder was found for app_name {app_name}')
+            if input_encoder not in uq.app_encoders:
+                raise RuntimeError(f'No encoder was found for app_name {input_encoder}')
 
-            module_location = uq.app_encoders[app_name]['module_location']
-            encoder_name = uq.app_encoders[app_name]['encoder_name']
+            module_location = uq.app_encoders[input_encoder]['module_location']
+            encoder_name = uq.app_encoders[input_encoder]['encoder_name']
 
             module = importlib.import_module(module_location)
             encoder_class_ = getattr(module, encoder_name)

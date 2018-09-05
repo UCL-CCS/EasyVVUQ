@@ -149,7 +149,7 @@ class GenericEncoder(BaseEncoder):
 if __name__ == "__main__":
 
     if len(sys.argv) != 3:
-        sys.exit("Usage: python3 generic.py INPUT_JSON_FILE OUTPUT_DIR")
+        sys.exit("Usage: python3 generic_template.py INPUT_JSON_FILE OUTPUT_DIR")
 
     input_json_file = sys.argv[1]
     output_dir = sys.argv[2]
