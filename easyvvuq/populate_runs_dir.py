@@ -1,5 +1,5 @@
-import os, sys
-import json
+import os
+import sys
 import tempfile
 
 
