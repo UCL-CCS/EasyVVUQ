@@ -1,4 +1,3 @@
-import sys
 import json
 import importlib
 import collections
