@@ -3,7 +3,7 @@ import tempfile
 import json
 import importlib
 import collections
-from pprint import pprint
+import pprint
 import easyvvuq as uq
 
 
@@ -210,20 +210,11 @@ class Campaign:
 
         self.runs[run_id]["result"] = result
 
-    def print(self):
-        """Print formatted summary of the current Campaign state.
-
-        Returns
-        -------
-
-        """
-        print("Campaign info:")
-        pprint(self.app_info)
-        print("Params info:")
-        pprint(self.params_info)
-        print("Runs:")
-        pprint(self.runs)
-
+    def __str__(self):
+        """Returns formatted summary of the current Campaign state. Enables class to work with standard print() method"""
+        return "\n".join(["Campaign info:", pprint.pformat(self.app_info, indent=4),
+                          "Params info:",   pprint.pformat(self.params_info, indent=4),
+                          "Runs:",          pprint.pformat(self.runs, indent=4)])
 
     def populate_runs_dir(self, prefix='Runs_EASYVVUQ_', default_dir='.'):
         """Populate run directories as specified in the input Campaign object
