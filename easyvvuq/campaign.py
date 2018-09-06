@@ -261,15 +261,23 @@ class Campaign:
 
             encoder.encode(params=run_data, target_dir=target_dir)
 
-
     def apply_for_each_run(self, func):
-        """For each run in the given Campaign's run list, apply the specified UQP or VVP function"""
+        """
+        For each run in this Campaign's run list, apply the specified function
+        
 
-        app = self.app_info
+        Parameters
+        ----------
+        func : function
+            The function to be applied to each run directory. func() will called with the run directory path as its only argument.
+        Returns
+        -------
 
-        if "runs_dir" not in app.keys():
+        """
+
+        if "runs_dir" not in self.app_info.keys():
             sys.exit("Missing 'runs_dir' key (Application info must include runs directory path).")
-        runs_dir = app["runs_dir"]
+        runs_dir = self.app_info["runs_dir"]
 
         # Loop through all runs in this campaign
         run_ids = self.runs.keys()
