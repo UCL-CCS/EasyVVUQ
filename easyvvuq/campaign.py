@@ -3,7 +3,7 @@ import tempfile
 import json
 import importlib
 import collections
-from pprint import pprint
+import pprint
 import easyvvuq as uq
 
 
@@ -210,20 +210,11 @@ class Campaign:
 
         self.runs[run_id]["result"] = result
 
-    def print(self):
-        """Print formatted summary of the current Campaign state.
-
-        Returns
-        -------
-
-        """
-        print("Campaign info:")
-        pprint(self.app_info)
-        print("Params info:")
-        pprint(self.params_info)
-        print("Runs:")
-        pprint(self.runs)
-
+    def __str__(self):
+        """Returns formatted summary of the current Campaign state. Enables class to work with standard print() method"""
+        return "\n".join(["Campaign info:", pprint.pformat(self.app_info, indent=4),
+                          "Params info:",   pprint.pformat(self.params_info, indent=4),
+                          "Runs:",          pprint.pformat(self.runs, indent=4)])
 
     def populate_runs_dir(self, prefix='Runs_EASYVVUQ_', default_dir='.'):
         """Populate run directories as specified in the input Campaign object
@@ -270,15 +261,23 @@ class Campaign:
 
             encoder.encode(params=run_data, target_dir=target_dir)
 
-
     def apply_for_each_run(self, func):
-        """For each run in the given Campaign's run list, apply the specified UQP or VVP function"""
+        """
+        For each run in this Campaign's run list, apply the specified function
+        
 
-        app = self.app_info
+        Parameters
+        ----------
+        func : function
+            The function to be applied to each run directory. func() will called with the run directory path as its only argument.
+        Returns
+        -------
 
-        if "runs_dir" not in app.keys():
+        """
+
+        if "runs_dir" not in self.app_info.keys():
             sys.exit("Missing 'runs_dir' key (Application info must include runs directory path).")
-        runs_dir = app["runs_dir"]
+        runs_dir = self.app_info["runs_dir"]
 
         # Loop through all runs in this campaign
         run_ids = self.runs.keys()

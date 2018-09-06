@@ -3,7 +3,7 @@
   "input_encoder":  "generic_template",
   "template":       "templates/cannonsim.template",
   "input_filename": "input.cannon",
-  "run_cmd":        "test_apps/cannonsim/cannonsim input.cannon output.csv"
+  "run_cmd":        "test_apps/cannonsim/bin/cannonsim input.cannon output.csv"
     },
 "params": {
   "angle":            ["range", [1.0, 2.0, 0.25]],
