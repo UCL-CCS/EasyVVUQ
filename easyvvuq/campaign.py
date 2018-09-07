@@ -54,9 +54,12 @@ class Campaign:
 
     def __init__(self, state_filename=None, *args, **kwargs):
 
-        self._app_info = {}                     # Information needed to run application
-        self._params_info = {}                  # Name and description of the model parameters
-        self._runs = collections.OrderedDict()  # List of runs that need to be performed by this app
+        # Information needed to run application
+        self._app_info = {}
+        # Name and description of the model parameters
+        self._params_info = {}
+        # List of runs that need to be performed by this app
+        self._runs = collections.OrderedDict()
         self.run_number = 0
         self.encoder = None
 
@@ -94,14 +97,15 @@ class Campaign:
         # `input_encoder` used to select encoder used to transfer other `app`
         # information and `params` into application specific input files.
         if "input_encoder" not in input_json["app"]:
-            raise RuntimeError("State file 'app' block should contain 'app_name' "
-                               "to allow lookup of required encoder")
+            raise RuntimeError("State file 'app' block should contain "
+                               "'app_name' to allow lookup of required encoder")
         else:
 
             input_encoder = input_json['app']['input_encoder']
 
             if input_encoder not in uq.app_encoders:
-                raise RuntimeError(f'No encoder was found for app_name {input_encoder}')
+                raise RuntimeError(f'No encoder was found for '
+                                   f'app_name {input_encoder}')
 
             module_location = uq.app_encoders[input_encoder]['module_location']
             encoder_name = uq.app_encoders[input_encoder]['encoder_name']
@@ -122,7 +126,9 @@ class Campaign:
     def run_dir(self, run_dir):
 
         if self.run_dir:
-            message = f'Cannot set a new runs directory because there is one already set ({self.app_info["runs_dir"]})'
+
+            message = (f'Cannot set a new runs directory because there is one '
+                       f'already set ({self.app_info["runs_dir"]})')
             raise RuntimeError(message)
 
         self._app_info['runs_dir'] = run_dir
@@ -187,7 +193,8 @@ class Campaign:
 
         """
 
-        # Validate (check if parameter names match those already known for this app)
+        # Validate:
+        # Check if parameter names match those already known for this app
         for param in self.params_info.keys():
             if param not in new_run.keys():
 
@@ -233,7 +240,9 @@ class Campaign:
         self.runs[run_id]["result"] = result
 
     def __str__(self):
-        """Returns formatted summary of the current Campaign state. Enables class to work with standard print() method"""
+        """Returns formatted summary of the current Campaign state.
+        Enables class to work with standard print() method"""
+
         return "\n".join(["Campaign info:", pprint.pformat(self.app_info, indent=4),
                           "Params info:",   pprint.pformat(self.params_info, indent=4),
                           "Runs:",          pprint.pformat(self.runs, indent=4)])
