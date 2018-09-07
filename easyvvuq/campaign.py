@@ -183,8 +183,8 @@ class Campaign:
         Parameters
         ----------
         new_run     : dict
-            Defines the value of each model parameter listed in `self.params_info`
-            for a run to be added to `self.runs`
+            Defines the value of each model parameter listed in
+            `self.params_info` for a run to be added to `self.runs`
         prefix      : str
             Prepended to the key used to identify the run in `self.runs`
 
@@ -271,7 +271,8 @@ class Campaign:
         # Get application encoder to use
 
         if self.encoder is None:
-            raise RuntimeError('Cannot populate runs without valid encoder in campaign')
+            raise RuntimeError('Cannot populate runs without valid '
+                               'encoder in campaign')
 
         encoder = self.encoder
 
@@ -300,14 +301,16 @@ class Campaign:
         Parameters
         ----------
         func : function
-            The function to be applied to each run directory. func() will called with the run directory path as its only argument.
+            The function to be applied to each run directory. func() will
+            be called with the run directory path as its only argument.
         Returns
         -------
 
         """
 
         if "runs_dir" not in self.app_info.keys():
-            sys.exit("Missing 'runs_dir' key (Application info must include runs directory path).")
+            raise RuntimeError("Missing 'runs_dir' key (Application info must "
+                               "include runs directory path).")
         runs_dir = self.app_info["runs_dir"]
 
         # Loop through all runs in this campaign
@@ -316,7 +319,7 @@ class Campaign:
             dir_name = os.path.join(runs_dir, run_id)
             print("Applying " + func.__name__ + " to " + dir_name + "...")
 
-            # Run user-specified function on this directory, and store the result
+            # Run user-specified function on this directory, and store result
             # back into the Campaign object (if there is a result returned)
             result = func(dir_name)
             if result is not None:
