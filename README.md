@@ -1,4 +1,4 @@
-#EasyVVUQ
+# EasyVVUQ
 
 The aim of this library is to facilitate verification, validation and 
 uncertainty quantification (VVUQ) for a wide variety of simulations.
