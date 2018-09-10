@@ -54,9 +54,12 @@ class Campaign:
 
     def __init__(self, state_filename=None, *args, **kwargs):
 
-        self._app_info = {}                     # Information needed to run application
-        self._params_info = {}                  # Name and description of the model parameters
-        self._runs = collections.OrderedDict()  # List of runs that need to be performed by this app
+        # Information needed to run application
+        self._app_info = {}
+        # Name and description of the model parameters
+        self._params_info = {}
+        # List of runs that need to be performed by this app
+        self._runs = collections.OrderedDict()
         self.run_number = 0
         self.encoder = None
 
@@ -94,14 +97,15 @@ class Campaign:
         # `input_encoder` used to select encoder used to transfer other `app`
         # information and `params` into application specific input files.
         if "input_encoder" not in input_json["app"]:
-            raise RuntimeError("State file 'app' block should contain 'app_name' "
-                               "to allow lookup of required encoder")
+            raise RuntimeError("State file 'app' block should contain "
+                               "'app_name' to allow lookup of required encoder")
         else:
 
             input_encoder = input_json['app']['input_encoder']
 
             if input_encoder not in uq.app_encoders:
-                raise RuntimeError(f'No encoder was found for app_name {input_encoder}')
+                raise RuntimeError(f'No encoder was found for '
+                                   f'app_name {input_encoder}')
 
             module_location = uq.app_encoders[input_encoder]['module_location']
             encoder_name = uq.app_encoders[input_encoder]['encoder_name']
@@ -122,7 +126,9 @@ class Campaign:
     def run_dir(self, run_dir):
 
         if self.run_dir:
-            message = f'Cannot set a new runs directory because there is one already set ({self.app_info["runs_dir"]})'
+
+            message = (f'Cannot set a new runs directory because there is one '
+                       f'already set ({self.app_info["runs_dir"]})')
             raise RuntimeError(message)
 
         self._app_info['runs_dir'] = run_dir
@@ -177,8 +183,8 @@ class Campaign:
         Parameters
         ----------
         new_run     : dict
-            Defines the value of each model parameter listed in `self.params_info`
-            for a run to be added to `self.runs`
+            Defines the value of each model parameter listed in
+            `self.params_info` for a run to be added to `self.runs`
         prefix      : str
             Prepended to the key used to identify the run in `self.runs`
 
@@ -187,7 +193,8 @@ class Campaign:
 
         """
 
-        # Validate (check if parameter names match those already known for this app)
+        # Validate:
+        # Check if parameter names match those already known for this app
         for param in self.params_info.keys():
             if param not in new_run.keys():
 
@@ -233,7 +240,9 @@ class Campaign:
         self.runs[run_id]["result"] = result
 
     def __str__(self):
-        """Returns formatted summary of the current Campaign state. Enables class to work with standard print() method"""
+        """Returns formatted summary of the current Campaign state.
+        Enables class to work with standard print() method"""
+
         return "\n".join(["Campaign info:", pprint.pformat(self.app_info, indent=4),
                           "Params info:",   pprint.pformat(self.params_info, indent=4),
                           "Runs:",          pprint.pformat(self.runs, indent=4)])
@@ -262,7 +271,8 @@ class Campaign:
         # Get application encoder to use
 
         if self.encoder is None:
-            raise RuntimeError('Cannot populate runs without valid encoder in campaign')
+            raise RuntimeError('Cannot populate runs without valid '
+                               'encoder in campaign')
 
         encoder = self.encoder
 
@@ -291,14 +301,16 @@ class Campaign:
         Parameters
         ----------
         func : function
-            The function to be applied to each run directory. func() will called with the run directory path as its only argument.
+            The function to be applied to each run directory. func() will
+            be called with the run directory path as its only argument.
         Returns
         -------
 
         """
 
         if "runs_dir" not in self.app_info.keys():
-            sys.exit("Missing 'runs_dir' key (Application info must include runs directory path).")
+            raise RuntimeError("Missing 'runs_dir' key (Application info must "
+                               "include runs directory path).")
         runs_dir = self.app_info["runs_dir"]
 
         # Loop through all runs in this campaign
@@ -307,7 +319,7 @@ class Campaign:
             dir_name = os.path.join(runs_dir, run_id)
             print("Applying " + func.__name__ + " to " + dir_name + "...")
 
-            # Run user-specified function on this directory, and store the result
+            # Run user-specified function on this directory, and store result
             # back into the Campaign object (if there is a result returned)
             result = func(dir_name)
             if result is not None:
