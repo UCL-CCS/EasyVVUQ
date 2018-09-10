@@ -32,7 +32,7 @@ if len(sys.argv) != 2:
 
 json_input = sys.argv[1]
 
-if os.path.isfile(json_input) == False:
+if not os.path.isfile(json_input):
     sys.exit(json_input + " does not exist.")
 
 with open(json_input, "r") as f:
