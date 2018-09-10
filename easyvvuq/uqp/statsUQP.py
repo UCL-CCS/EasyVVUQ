@@ -26,7 +26,7 @@ __license__ = "LGPL"
 
 
 def statsUQP(reader=None):
-    if reader == None:
+    if reader is None:
         sys.exit("A reader (e.g. csvReader) must be specified for the appropriate file type")
 
     def statsUQP_specific(dirname):
