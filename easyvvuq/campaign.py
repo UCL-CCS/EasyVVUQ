@@ -1,10 +1,13 @@
-import os, sys
+import os
 import tempfile
 import json
 import importlib
 import collections
 import pprint
+import pandas as pd
+
 import easyvvuq as uq
+
 
 __copyright__ = """
 
@@ -324,3 +327,29 @@ class Campaign:
             result = func(dir_name)
             if result is not None:
                 self.add_run_result(run_id, result)
+
+    def to_dataframe(self):
+        """Output results of the Campaign to Pandas dataframe
+
+        Columns are the values of the `self.runs` dictionary with the `results`
+        sub dictionary flattened out to provide additional columns. The
+        run names become the keys.
+
+        Returns
+        -------
+        pd.DataFrame
+            Parameters set for and results of all runs in the Campaign.
+
+        """
+
+        runs = self.runs
+
+        results = pd.DataFrame.from_dict({run_name: run_info['result'] for run_name, run_info in runs.items()},
+                                         orient='index')
+
+        run_params = pd.DataFrame.from_dict(runs, orient='index')
+
+        run_params.drop(columns=['result'], inplace=True)
+
+        return pd.concat([run_params, results], axis=1)
+
