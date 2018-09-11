@@ -27,7 +27,7 @@ __license__ = "LGPL"
 # Get app and param info about cannonsim
 my_campaign = uq.Campaign(state_filename="test_input/test_cannonsim.json")
 
-# Specify names of parameters that are variable, and their (prior) distributions.
+# Specify which parameters can vary, and their (prior) distributions.
 my_campaign.vary_param("angle",    dist=uq.distributions.uniform(0.0, 1.0))
 my_campaign.vary_param("velocity", dist=uq.distributions.normal(10.0, 1.0))
 my_campaign.vary_param("mass",     dist=uq.distributions.customHistogram("test_input/mass_distribution.csv"))
