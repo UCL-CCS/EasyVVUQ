@@ -58,6 +58,8 @@ class Campaign:
         self._app_info = {}
         # Name and description of the model parameters
         self._params_info = {}
+        # Which parameters can be varied, and what prior distributions they have
+        self._vars = {}
         # List of runs that need to be performed by this app
         self._runs = collections.OrderedDict()
         self.run_number = 0
@@ -195,14 +197,6 @@ class Campaign:
 
         # Validate:
         # Check if parameter names match those already known for this app
-        for param in self.params_info.keys():
-            if param not in new_run.keys():
-
-                reasoning = (f"dict passed to add_run() is missing the {param} "
-                             f"parameter.")
-
-                raise RuntimeError(reasoning)
-
         for param in new_run.keys():
             if param not in self.params_info.keys():
 
@@ -211,6 +205,10 @@ class Campaign:
                              f"of this Campaign.")
 
                 raise RuntimeError(reasoning)
+        # If necessary parameter names are missing, fill them in from the default values in params_info
+        for param in self.params_info.keys():
+            if param not in new_run.keys():
+                new_run[param] = self.params_info[param]["default"]
 
         # Add to run queue
         run_id = f"{prefix}{self.run_number}"
@@ -324,3 +322,16 @@ class Campaign:
             result = func(dir_name)
             if result is not None:
                 self.add_run_result(run_id, result)
+
+
+    def vary_param(self, param_name, dist=None):
+        """
+        Registers the named parameter as being variable (such as by any applied UQPs)
+        """
+        if param_name in self._vars.keys():
+            print("Param '" + param_name + "' already in list of variables.")
+        else:
+            self._vars[param_name] = dist
+
+    def get_vars(self):
+        return self._vars

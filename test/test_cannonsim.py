@@ -27,13 +27,17 @@ __license__ = "LGPL"
 my_campaign = uq.Campaign(state_filename="test_input/test_cannonsim.json")
 print(my_campaign)
 
+my_campaign.vary_param("angle",    dist=uq.distributions.normal(0.0,  3.0))
+my_campaign.vary_param("velocity", dist=uq.distributions.normal(10.0, 1.0))
+my_campaign.vary_param("mass",     dist=uq.distributions.normal(0.1,  0.5))
 
+uq.uqp.sampling.randomSampler(my_campaign, num_samples=15)
 
-uq.uqp.sampling.basicSampler(my_campaign)
+print(my_campaign)
+
 #my_campaign.populate_runs_dir()
 #my_campaign.apply_for_each_run(uq.execute_local)
 #my_campaign.apply_for_each_run(uq.uqp.statsUQP(reader=uq.reader.csvReader('output.csv', 0)))
 #
 #print(my_campaign)
 #my_campaign.save_state("out_cannonsim.json")
-

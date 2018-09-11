@@ -1,10 +1,10 @@
+import os,sys
+import easyvvuq as uq
+import itertools
 import json
-from .campaign import Campaign
-from .execute import execute_local
-from . import uqp
-from . import reader
-from . import distributions
-import pkg_resources
+import collections
+import numpy as np
+from pprint import pprint
 
 __copyright__ = """
 
@@ -29,14 +29,27 @@ __copyright__ = """
 __license__ = "LGPL"
 
 
-DEFAULT_ENCODERS = pkg_resources.resource_filename(__name__, 'default_app_encoders.json')
+def randomSampler(campaign, num_samples=1):
 
-with open(DEFAULT_ENCODERS) as fin:
-    app_encoders = json.load(fin)
+    all_vars = campaign.get_vars()
 
-# TODO: Search for user specified encoders list
-user_encoders = ''
+    print(all_vars)
 
-if user_encoders:
-    with open(user_encoders) as fin:
-        app_encoders.update(json.load(fin))
+    run_dict = {}
+    for i in range(num_samples):
+        for param_name, dist in all_vars.items():
+            run_dict[param_name] = next(dist)
+        campaign.add_run(run_dict)
+
+# Build runs
+#    for dynamic_params in mega_iter:
+#        run_dict = {}
+#        for dp in dynamic_params:
+#            key, value = dp
+#            run_dict[key] = value
+#        for sp in static_params:
+#            key, value = sp
+#            run_dict[key] = value
+#
+#        # Add run to Application's run list
+#        campaign.add_run(run_dict)

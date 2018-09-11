@@ -1,4 +1,4 @@
-from .basicSampler import basicSampler
+from .randomSampler import randomSampler
 
 __copyright__ = """
 

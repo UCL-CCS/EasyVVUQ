@@ -1,10 +1,10 @@
+import os,sys
+import easyvvuq as uq
+import itertools
 import json
-from .campaign import Campaign
-from .execute import execute_local
-from . import uqp
-from . import reader
-from . import distributions
-import pkg_resources
+import collections
+import numpy as np
+from pprint import pprint
 
 __copyright__ = """
 
@@ -29,14 +29,17 @@ __copyright__ = """
 __license__ = "LGPL"
 
 
-DEFAULT_ENCODERS = pkg_resources.resource_filename(__name__, 'default_app_encoders.json')
+## TODO: Change to use numpy linspace
+#def range_dist(param, start, end, incr):
+#    i = 0
+#    r = start
+#    while r < end:
+#        r = start + i * incr
+#        i += 1
+#        yield (param, r)
 
-with open(DEFAULT_ENCODERS) as fin:
-    app_encoders = json.load(fin)
-
-# TODO: Search for user specified encoders list
-user_encoders = ''
-
-if user_encoders:
-    with open(user_encoders) as fin:
-        app_encoders.update(json.load(fin))
+# Generator returning samples picked from the specified normal distribution forever
+def normal(mean, sigma):
+    while True:
+        for pick in np.random.normal(mean, sigma, 1):
+            yield pick
