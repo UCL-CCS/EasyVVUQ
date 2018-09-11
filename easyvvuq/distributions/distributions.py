@@ -58,9 +58,6 @@ def customHistogram(fname):
         # Force normalization
         probabilities /= probabilities.sum()
 
-        print(probabilities)
-        print(values)
-
     while True:
         yield np.random.choice(values, p=probabilities) 
 

@@ -34,7 +34,7 @@ def basicStats(reader=None):
         mean = np.mean(l)
         std = np.std(l)
 
-        result = {"UQP": "statsUQP", "mean": mean, "std": std}
+        result = {"UQP": "basicStats", "mean": mean, "std": std}
         return result
 
-    return statsUQP_specific
+    return basicStats_specific
