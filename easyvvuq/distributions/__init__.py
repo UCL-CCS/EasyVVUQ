@@ -1,4 +1,4 @@
-from .distributions import normal
+from .distributions import normal, uniform
 
 __copyright__ = """
 

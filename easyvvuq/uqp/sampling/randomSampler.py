@@ -33,23 +33,8 @@ def randomSampler(campaign, num_samples=1):
 
     all_vars = campaign.get_vars()
 
-    print(all_vars)
-
-    run_dict = {}
     for i in range(num_samples):
+        run_dict = {}
         for param_name, dist in all_vars.items():
             run_dict[param_name] = next(dist)
         campaign.add_run(run_dict)
-
-# Build runs
-#    for dynamic_params in mega_iter:
-#        run_dict = {}
-#        for dp in dynamic_params:
-#            key, value = dp
-#            run_dict[key] = value
-#        for sp in static_params:
-#            key, value = sp
-#            run_dict[key] = value
-#
-#        # Add run to Application's run list
-#        campaign.add_run(run_dict)

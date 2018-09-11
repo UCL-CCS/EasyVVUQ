@@ -29,17 +29,12 @@ __copyright__ = """
 __license__ = "LGPL"
 
 
-## TODO: Change to use numpy linspace
-#def range_dist(param, start, end, incr):
-#    i = 0
-#    r = start
-#    while r < end:
-#        r = start + i * incr
-#        i += 1
-#        yield (param, r)
-
-# Generator returning samples picked from the specified normal distribution forever
+# Generator returning samples picked from the specified normal distribution
 def normal(mean, sigma):
     while True:
-        for pick in np.random.normal(mean, sigma, 1):
-            yield pick
+        yield np.random.normal(mean, sigma)
+
+# Generator returning values picked from the specified uniform distribution
+def uniform(min_val, max_val):
+    while True:
+        yield np.random.uniform(min_val, max_val)

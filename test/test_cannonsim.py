@@ -27,7 +27,7 @@ __license__ = "LGPL"
 my_campaign = uq.Campaign(state_filename="test_input/test_cannonsim.json")
 print(my_campaign)
 
-my_campaign.vary_param("angle",    dist=uq.distributions.normal(0.0,  3.0))
+my_campaign.vary_param("angle",    dist=uq.distributions.uniform(0.0,  3.0))
 my_campaign.vary_param("velocity", dist=uq.distributions.normal(10.0, 1.0))
 my_campaign.vary_param("mass",     dist=uq.distributions.normal(0.1,  0.5))
 
