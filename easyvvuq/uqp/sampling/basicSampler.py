@@ -29,7 +29,7 @@ __copyright__ = """
 __license__ = "LGPL"
 
 
-def basicUQP(campaign):
+def basicSampler(campaign):
 
     # TODO: Change to use numpy linspace
     def range_float(param, start, end, incr):

@@ -1,5 +1,4 @@
-from . import sampling
-from . import analysis
+from .basicStats import basicStats
 
 __copyright__ = """
 

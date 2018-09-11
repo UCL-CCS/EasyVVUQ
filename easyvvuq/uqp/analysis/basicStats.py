@@ -25,11 +25,11 @@ __copyright__ = """
 __license__ = "LGPL"
 
 
-def statsUQP(reader=None):
+def basicStats(reader=None):
     if reader is None:
         sys.exit("A reader (e.g. csvReader) must be specified for the appropriate file type")
 
-    def statsUQP_specific(dirname):
+    def basicStats_specific(dirname):
         l = reader(dirname)
         mean = np.mean(l)
         std = np.std(l)
