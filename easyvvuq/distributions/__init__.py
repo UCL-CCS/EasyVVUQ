@@ -1,4 +1,4 @@
-from .distributions import normal, uniform
+from .distributions import normal, uniform, customHistogram
 
 __copyright__ = """
 

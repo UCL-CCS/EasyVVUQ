@@ -4,6 +4,7 @@ import itertools
 import json
 import collections
 import numpy as np
+import csv
 from pprint import pprint
 
 __copyright__ = """
@@ -38,3 +39,28 @@ def normal(mean, sigma):
 def uniform(min_val, max_val):
     while True:
         yield np.random.uniform(min_val, max_val)
+
+# TODO: Test this properly
+def customHistogram(fname):
+    # Read in the list of values and their associated probabilities (1st and 2nd column, respectively)
+    with open(fname, "r") as infile:
+        probabilities = []
+        values = []
+        csvreader = csv.reader(infile)
+        for row in csvreader:
+            if '#' in row[0]: # skip comment line
+                    continue
+            values.append(float(row[0]))
+            probabilities.append(float(row[1]))
+        probabilities = np.array(probabilities)
+        values = np.array(values)
+
+        # Force normalization
+        probabilities /= probabilities.sum()
+
+        print(probabilities)
+        print(values)
+
+    while True:
+        yield np.random.choice(values, p=probabilities) 
+
