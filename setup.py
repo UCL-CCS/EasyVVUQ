@@ -13,7 +13,7 @@ setup(
 
     author='CCS',
 
-    requires=['numpy'],
+    requires=['numpy', 'pandas'],
 
     packages=find_packages(),
 
