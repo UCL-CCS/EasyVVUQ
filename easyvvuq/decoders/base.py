@@ -40,8 +40,8 @@ class BaseDecoder(object):
     def __init__(self, *args, **kwargs):
         pass
 
-    def sim_complete(self, run_info={}, target_dir=''):
+    def sim_complete(self, run_info={}, *args, **kwargs):
         raise NotImplementedError
 
-    def parse_sim_output(self, run_info={}, target_dir=''):
+    def parse_sim_output(self, run_info={}, *args, **kwargs):
         raise NotImplementedError
