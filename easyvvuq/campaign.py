@@ -68,6 +68,8 @@ class Campaign:
         self.run_number = 0
         self.encoder = None
 
+
+
         if state_filename is not None:
             self.load_state(state_filename)
 
@@ -161,6 +163,14 @@ class Campaign:
     @runs.setter
     def runs(self, runs):
         self._runs = runs
+
+    @property
+    def vars(self):
+        return self._vars
+
+    @vars.setter
+    def vars(self, variables):
+        self._vars = variables
 
     def save_state(self, state_filename):
         """Save the current Campaign state to file in JSON format
@@ -335,9 +345,6 @@ class Campaign:
             print("Param '" + param_name + "' already in list of variables.")
         else:
             self._vars[param_name] = dist
-
-    def get_vars(self):
-        return self._vars
 
     def to_dataframe(self):
         """Output results of the Campaign to Pandas dataframe
