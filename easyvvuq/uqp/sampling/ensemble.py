@@ -1,5 +1,3 @@
-from .random import random_sampler
-from .ensemble import make_ensemble
 
 __copyright__ = """
 
@@ -22,3 +20,33 @@ __copyright__ = """
 
 """
 __license__ = "LGPL"
+
+
+def make_ensemble(campaign, selection={}, replicates=1):
+
+    runs = campaign.runs
+
+    check_params = selection.keys()
+
+    for run_id, run_info in runs.items():
+
+        if not selection:
+            copy = True
+        else:
+
+            # TODO: Could we do something neater with pandas here?
+            # TODO: Check if already have enough replicates?
+            copy = all(run_info[param] == selection[param] for param in check_params)
+
+        if copy:
+            for rep_no in range(replicates):
+                campaign.add_run(run_info)
+
+
+
+
+
+
+
+
+
