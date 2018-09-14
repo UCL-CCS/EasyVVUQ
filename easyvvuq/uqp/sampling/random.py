@@ -1,10 +1,3 @@
-import os,sys
-import easyvvuq as uq
-import itertools
-import json
-import collections
-import numpy as np
-from pprint import pprint
 
 __copyright__ = """
 
@@ -29,9 +22,9 @@ __copyright__ = """
 __license__ = "LGPL"
 
 
-def randomSampler(campaign, num_samples=1):
+def random_sampler(campaign, num_samples=1):
 
-    all_vars = campaign.get_vars()
+    all_vars = campaign.vars
 
     for i in range(num_samples):
         run_dict = {}
