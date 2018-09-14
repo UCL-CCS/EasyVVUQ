@@ -1,10 +1,6 @@
-import os,sys
-import easyvvuq as uq
+import sys
 import itertools
-import json
-import collections
 import numpy as np
-from pprint import pprint
 
 __copyright__ = """
 
@@ -29,20 +25,22 @@ __copyright__ = """
 __license__ = "LGPL"
 
 
+def range_float(param, start, end, incr):
+
+    i = 0
+    r = start
+    while r < end:
+        r = start + i * incr
+        i += 1
+        yield (param, r)
+
+
+def normal_dist(param, mean, sigma, num_samples):
+    for pick in np.random.normal(mean, sigma, num_samples):
+        yield (param, pick)
+
+
 def random_sampler(campaign):
-
-    # TODO: Change to use numpy linspace
-    def range_float(param, start, end, incr):
-        i = 0
-        r = start
-        while r < end:
-            r = start + i * incr
-            i += 1
-            yield (param, r)
-
-    def normal_dist(param, mean, sigma, num_samples):
-        for pick in np.random.normal(mean, sigma, num_samples):
-            yield (param, pick)
 
     params = campaign.params_info
 
@@ -56,6 +54,7 @@ def random_sampler(campaign):
             static_params.append((key, args))
         else:
             if func == "range":
+                # TODO: Change to use numpy linspace
                 gens.append(range_float(key, args[0], args[1], args[2]))
             elif func == "normal":
                 gens.append(normal_dist(key, args[0], args[1], args[2]))
