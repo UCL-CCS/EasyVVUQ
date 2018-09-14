@@ -33,7 +33,7 @@ my_campaign.vary_param("velocity", dist=uq.distributions.normal(10.0, 1.0))
 my_campaign.vary_param("mass",     dist=uq.distributions.customHistogram("test_input/mass_distribution.csv"))
 
 # Apply the randomSampler UQP, generating 15 runs
-uq.uqp.sampling.randomSampler(my_campaign, num_samples=15)
+uq.uqp.sampling.random_sampler(my_campaign, num_samples=15)
 
 # Execute and analyse
 my_campaign.populate_runs_dir()

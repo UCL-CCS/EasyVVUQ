@@ -29,7 +29,7 @@ __copyright__ = """
 __license__ = "LGPL"
 
 
-def randomSampler(campaign):
+def random_sampler(campaign):
 
     # TODO: Change to use numpy linspace
     def range_float(param, start, end, incr):
@@ -78,8 +78,13 @@ def randomSampler(campaign):
         # Add run to Application's run list
         campaign.add_run(run_dict)
 
-# If module is run as standalone script, read in application/params info from json file, then write resultant runs to specified json file
+
 if __name__ == "__main__":
+    """
+    If module is run as standalone script, read in application/params info from 
+    json file, then write resultant runs to specified json file
+    """
+
     if len(sys.argv) != 3:
         sys.exit("Usage: python3 Basic.py INPUT_JSON OUTPUT_JOBS_JSON")
         infname = sys.argv[1]
