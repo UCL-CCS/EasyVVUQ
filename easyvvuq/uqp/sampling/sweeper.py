@@ -51,16 +51,16 @@ def random_sampler(campaign):
     gens = []
     for key in params.keys():
         value = params[key]
-        function, args = value[0], value[1]
-        if function == "static":
+        func, args = value[0], value[1]
+        if func == "static":
             static_params.append((key, args))
         else:
-            if function == "range":
+            if func == "range":
                 gens.append(range_float(key, args[0], args[1], args[2]))
-            elif function == "normal":
+            elif func == "normal":
                 gens.append(normal_dist(key, args[0], args[1], args[2]))
             else:
-                sys.exit("Unrecognised function " + function + " for parameter " + key)
+                sys.exit("Unrecognised function " + func + " for parameter " + key)
 
     # Combine all the iterables/generators into one
     mega_iter = itertools.product(*gens)
