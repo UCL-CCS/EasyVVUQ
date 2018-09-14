@@ -68,8 +68,6 @@ class Campaign:
         self.run_number = 0
         self.encoder = None
 
-
-
         if state_filename is not None:
             self.load_state(state_filename)
 
