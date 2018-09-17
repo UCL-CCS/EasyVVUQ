@@ -45,7 +45,7 @@ def add_replicas(campaign, selection={}, replicates=2):
 
             if copy:
 
-                copy_info = {k: v for k,v in run_info if k != 'run_ids'}
+                copy_info = {k: v for k, v in run_info if k != 'run_ids'}
 
                 new_reps = replicates - n_reps
 
