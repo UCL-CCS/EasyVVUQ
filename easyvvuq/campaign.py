@@ -389,9 +389,9 @@ class Campaign:
         runs = self.runs
         unique = []
 
-        for run_id, run_info in runs.items()
+        for run_id, run_info in runs.items():
 
-            if not run_info in unique:
+            if run_info not in unique:
 
                 tmp = dict(run_info)
                 tmp['run_ids'] = [run_id]
