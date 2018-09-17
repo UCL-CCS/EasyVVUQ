@@ -22,25 +22,35 @@ __copyright__ = """
 __license__ = "LGPL"
 
 
-def make_ensemble(campaign, selection={}, replicates=1):
+def make_ensemble(campaign, selection={}, replicates=2):
 
-    runs = campaign.runs
+    # TODO: Could we do something neater with pandas here?
 
-    check_params = selection.keys()
+    runs = campaign.unique_runs()
 
-    for run_id, run_info in runs.items():
+    for run_info in runs:
 
-        if not selection:
-            copy = True
-        else:
+        n_reps = len(run_info['run_ids'])
 
-            # TODO: Could we do something neater with pandas here?
-            # TODO: Check if already have enough replicates?
-            copy = all([run_info[param] == selection[param] for param in check_params])
+        if n_reps < replicates:
 
-        if copy:
-            for rep_no in range(replicates):
-                campaign.add_run(run_info)
+            if not selection:
+
+                copy = True
+
+            else:
+
+                check_params = selection.keys()
+                copy = all([run_info[param] == selection[param] for param in check_params)
+
+            if copy:
+                
+                copy_info = {k: v for k,v in run_info if k != 'run_ids'}
+
+                new_reps = replicates - n_reps
+
+                for rep_no in range(new_reps):
+                    campaign.add_run(copy_info)
 
 
 

@@ -65,6 +65,10 @@ class Campaign:
         self._vars = {}
         # List of runs that need to be performed by this app
         self._runs = collections.OrderedDict()
+
+        self._sample_uqps = []
+        self._aggregated_data = []
+
         self.run_number = 0
         self.encoder = None
 
@@ -367,4 +371,36 @@ class Campaign:
         run_params.drop(columns=['result'], inplace=True)
 
         return pd.concat([run_params, results], axis=1)
+
+    def unique_runs(self):
+        """
+        Check the `runs` list to find which are executed for unique parameters
+        lists. Each entry in the list contains a list of the `run_ids` which
+        correspond to the parameter set.
+
+        Returns
+        -------
+        list
+            List in which each items is parameter dict from run with a list of
+            run_ids which contain those parameters.
+        """
+
+        runs = self.runs
+        unique = []
+
+        for run_id, run_info in runs.items()
+
+            if not run_info in unique:
+
+                tmp = dict(run_info)
+                tmp['run_ids'] = [run_id]
+                unique.append(tmp)
+
+            else:
+
+                match_ndx = unique.index(run_info)
+
+                unique[match_ndx]['run_ids'].append(run_id)
+
+        return unique
 
