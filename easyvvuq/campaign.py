@@ -67,7 +67,7 @@ class Campaign:
         self._runs = collections.OrderedDict()
 
         self._sample_uqps = []
-        self._aggregated_data = []
+        self._analysis_uqps = []
 
         self.run_number = 0
         self.encoder = None
@@ -228,6 +228,7 @@ class Campaign:
         # Add to run queue
         run_id = f"{prefix}{self.run_number}"
         self.runs[run_id] = new_run
+        self.runs[run_id]['executed'] = False
         self.run_number += 1
 
     def add_run_result(self, run_id, result):
