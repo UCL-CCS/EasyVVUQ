@@ -44,19 +44,10 @@ def make_ensemble(campaign, selection={}, replicates=2):
                 copy = all([run_info[param] == selection[param] for param in check_params)
 
             if copy:
-                
+
                 copy_info = {k: v for k,v in run_info if k != 'run_ids'}
 
                 new_reps = replicates - n_reps
 
                 for rep_no in range(new_reps):
                     campaign.add_run(copy_info)
-
-
-
-
-
-
-
-
-
