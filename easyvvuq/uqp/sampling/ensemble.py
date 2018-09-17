@@ -22,7 +22,7 @@ __copyright__ = """
 __license__ = "LGPL"
 
 
-def make_ensemble(campaign, selection={}, replicates=2):
+def add_replicas(campaign, selection={}, replicates=2):
 
     # TODO: Could we do something neater with pandas here?
 
@@ -41,7 +41,7 @@ def make_ensemble(campaign, selection={}, replicates=2):
             else:
 
                 check_params = selection.keys()
-                copy = all([run_info[param] == selection[param] for param in check_params)
+                copy = all([run_info[param] == selection[param] for param in check_params])
 
             if copy:
 
@@ -51,3 +51,6 @@ def make_ensemble(campaign, selection={}, replicates=2):
 
                 for rep_no in range(new_reps):
                     campaign.add_run(copy_info)
+
+    if copy:
+        campaign.sample_uqps.append(('add_replicas', (selection, replicates)))
