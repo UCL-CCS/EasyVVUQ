@@ -36,7 +36,7 @@ def make_ensemble(campaign, selection={}, replicates=1):
 
             # TODO: Could we do something neater with pandas here?
             # TODO: Check if already have enough replicates?
-            copy = all(run_info[param] == selection[param] for param in check_params)
+            copy = all([run_info[param] == selection[param] for param in check_params])
 
         if copy:
             for rep_no in range(replicates):
