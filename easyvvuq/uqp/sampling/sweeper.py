@@ -77,6 +77,8 @@ def random_sampler(campaign):
         # Add run to Application's run list
         campaign.add_run(run_dict)
 
+    campaign.sample_uqps.append(('random_sampler'))
+
 
 if __name__ == "__main__":
     """

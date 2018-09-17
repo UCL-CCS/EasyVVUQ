@@ -66,8 +66,8 @@ class Campaign:
         # List of runs that need to be performed by this app
         self._runs = collections.OrderedDict()
 
-        self._sample_uqps = []
-        self._analysis_uqps = []
+        self.sample_uqps = []
+        self.analysis_uqps = []
 
         self.run_number = 0
         self.encoder = None
