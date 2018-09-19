@@ -1,5 +1,6 @@
 from enum import Enum
 
+
 class OutputType(Enum):
     """Types of data output by UQPs/VVPs
     """
