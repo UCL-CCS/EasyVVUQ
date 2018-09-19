@@ -303,6 +303,7 @@ class Campaign:
         for run_id, run_data in runs.items():
             # Make run directory
             target_dir = os.path.join(base_dir, run_id)
+            runs[run_id]['run_dir'] = 'target_dir'
             os.makedirs(target_dir)
 
             encoder.encode(params=run_data, target_dir=target_dir)
