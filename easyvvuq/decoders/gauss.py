@@ -1,4 +1,7 @@
+import os
+import pandas as pd
 from .base import BaseDecoder
+from easyvvuq import OutputType
 
 __copyright__ = """
 
@@ -23,15 +26,38 @@ __copyright__ = """
 __license__ = "LGPL"
 
 
-class GenericEncoder(BaseDecoder):
+class GaussDecoder(BaseDecoder):
 
-    def __init__(self, run_info, *args, **kwargs):
+    def __init__(self, *args, **kwargs):
 
         # Handles creation of `self.app_info` attribute (dicts)
-        super().__init__(run_info, *args, **kwargs)
+        super().__init__(*args, **kwargs)
+
+    @staticmethod
+    def _get_output_path(run_info={}):
+
+        run_path = run_info['run_dir']
+        out_file = run_info['out_file']
+
+        if not os.path.isdir(run_path):
+            raise RuntimeError(f"Run directory does not exist: {run_path}")
+
+        return os.path.join(run_path, out_file)
 
     def sim_complete(self, run_info={}, *args, **kwargs):
-        raise NotImplementedError
+
+        out_path = self._get_output_path(run_info)
+
+        if not os.path.isfile(out_path):
+            return False
+        else:
+            return True
 
     def parse_sim_output(self, run_info={}, *args, **kwargs):
-        raise NotImplementedError
+
+        out_path = self._get_output_path(run_info)
+
+        data = pd.read_csv(out_path, names=['Step', 'Value'],
+                           header=0, index_col=0)
+
+        return data, OutputType('sample')
