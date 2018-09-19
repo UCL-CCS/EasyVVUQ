@@ -1,5 +1,5 @@
 from .random import random_sampler
-from .ensemble import make_ensemble
+from .ensemble import add_replicas
 
 __copyright__ = """
 
