@@ -1,4 +1,5 @@
 import json
+from .constants import OutputType
 from .campaign import Campaign
 from .execute import execute_local
 from . import uqp
