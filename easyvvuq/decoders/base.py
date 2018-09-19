@@ -37,8 +37,12 @@ class BaseDecoder(object):
 
     """
 
-    def __init__(self, *args, **kwargs):
-        pass
+    def __init__(self, runs_dir='', *args, **kwargs):
+
+        if not runs_dir:
+            raise RuntimeError('Decoder must be initialised with a target runs_dir')
+
+        self.runs_dir = runs_dir
 
     def sim_complete(self, run_info={}, *args, **kwargs):
         raise NotImplementedError
