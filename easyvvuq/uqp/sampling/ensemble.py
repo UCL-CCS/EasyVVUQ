@@ -58,4 +58,8 @@ def add_replicas(campaign, selection={}, replicates=2):
         campaign.sample_uqps.append(('add_replicas', (selection, replicates)))
         reps_made = True
 
-    return reps_made
+    # TODO: There must be a better way to record argument - using locals() maybe?
+    campaign.record_sampling('random_sampler',
+                             {'selection': selection,
+                              'replicates': replicates},
+                             reps_made)

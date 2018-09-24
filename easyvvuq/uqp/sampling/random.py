@@ -32,4 +32,6 @@ def random_sampler(campaign, num_samples=1):
             run_dict[param_name] = next(dist)
         campaign.add_run(run_dict)
 
-    campaign.sample_uqps.append(('random_sampler', (num_samples)))
+    campaign.record_sampling('random_sampler',
+                             {'num_samples': num_samples},
+                             True)

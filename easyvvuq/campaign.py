@@ -66,8 +66,8 @@ class Campaign:
         # List of runs that need to be performed by this app
         self._runs = collections.OrderedDict()
 
-        self.sample_uqps = []
-        self.analysis_uqps = []
+        self._sample_uqps = []
+        self._analysis_uqps = []
 
         self.run_number = 0
         self.encoder = None
@@ -340,6 +340,17 @@ class Campaign:
             result = func(dir_name)
             if result is not None:
                 self.add_run_result(run_id, result)
+
+    def record_sampling(self, primitive_name, primitive_args, success):
+        """
+
+        Returns
+        -------
+
+        """
+
+        # TODO: Need some checks + potentially warnings here
+        self._sample_uqps.append((primitive_name, primitive_args, success))
 
     def vary_param(self, param_name, dist=None):
         """
