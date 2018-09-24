@@ -303,6 +303,7 @@ class Campaign:
         for run_id, run_data in runs.items():
             # Make run directory
             target_dir = os.path.join(base_dir, run_id)
+            # TODO: Should we check if the run has been created?
             runs[run_id]['run_dir'] = 'target_dir'
             os.makedirs(target_dir)
 
