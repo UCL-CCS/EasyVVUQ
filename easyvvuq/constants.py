@@ -6,7 +6,7 @@ class OutputType(Enum):
     """
 
     SAMPLE = 'sample'
-    ARRAY  = 'array'
+    ARRAY = 'array'
     SAMPLE_ARRAY = 'sample_array'
     TRACK = 'track'
     SUMMARY = 'summary'
