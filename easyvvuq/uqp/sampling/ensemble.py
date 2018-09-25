@@ -59,7 +59,7 @@ def add_replicas(campaign, selection={}, replicates=2):
         reps_made = True
 
     # TODO: There must be a better way to record argument - using locals() maybe?
-    campaign.record_sampling('random_sampler',
+    campaign.record_sampling('add_replicas',
                              {'selection': selection,
                               'replicates': replicates},
                              reps_made)
