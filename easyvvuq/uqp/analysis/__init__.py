@@ -1,4 +1,5 @@
 from .basicStats import basicStats
+from .aggregate_samples import aggregate_samples
 
 __copyright__ = """
 
