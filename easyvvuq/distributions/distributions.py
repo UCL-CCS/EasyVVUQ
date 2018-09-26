@@ -1,11 +1,5 @@
-import os,sys
-import easyvvuq as uq
-import itertools
-import json
-import collections
 import numpy as np
 import csv
-from pprint import pprint
 
 __copyright__ = """
 
@@ -30,20 +24,86 @@ __copyright__ = """
 __license__ = "LGPL"
 
 
-# Generator returning samples picked from the specified normal distribution
+def options(choices):
+    """
+    Generator to repeatedly provide one of a list of options (in order)
+
+    Parameters
+    ----------
+    choices:    list
+        Set of choices to be used in simulations
+
+    Yields
+    -------
+    object:
+        Selection from input choices
+    """
+
+    while True:
+        for choice in choices:
+            yield choice
+
+
 def normal(mean, sigma):
+    """
+    Generator returning samples picked from the specified normal distribution
+
+    Parameters
+    ----------
+    mean:   float
+        Mean of the normal distribution
+    sigma:  float
+        Standard deviation of the normal distribution
+
+    Yields
+    -------
+    float
+        Number drawn from provided distribution
+    """
+
     while True:
         yield np.random.normal(mean, sigma)
 
-# Generator returning values picked from the specified uniform distribution
+
 def uniform(min_val, max_val):
+    """
+    Generator returning values picked from the specified uniform distribution
+
+    Parameters
+    ----------
+    min_val:    float
+        Minimum value covered by the distribution
+    max_val:    float
+        Maximum value covered by the distribution
+
+    Yields
+    -------
+    float
+        Number drawn from provided distribution
+
+    """
     while True:
         yield np.random.uniform(min_val, max_val)
 
-# TODO: Test this properly
-def customHistogram(fname):
-    # Read in the list of values and their associated probabilities (1st and 2nd column, respectively)
-    with open(fname, "r") as infile:
+
+def custom_histogram(filename):
+    """
+    Create a generator from histogram read from a CSV file
+    TODO: Test this properly
+
+    Parameters
+    ----------
+    filename:  str
+        Path to file containing histogram
+
+    Yields
+    -------
+
+    """
+
+    # Read in the list of values and their associated probabilities
+    # (1st and 2nd column, respectively)
+    with open(filename, "r") as infile:
         probabilities = []
         values = []
         csvreader = csv.reader(infile)
