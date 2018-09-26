@@ -47,7 +47,7 @@ DEFAULT_DECODERS = pkg_resources.resource_filename(__name__, 'default_app_decode
 with open(DEFAULT_DECODERS) as fin:
     app_decoders = json.load(fin)
 
-# TODO: Search for user specified encoders list
+# TODO: Search for user specified decoders list
 user_decoders = ''
 
 if user_decoders:
