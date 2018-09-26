@@ -105,6 +105,9 @@ class Campaign:
             campaign_dir = self.app_info['campaign_dir']
 
             if not os.path.exists(campaign_dir):
+
+                print(f"Notice: Campaign directory not found - creating {campaign_dir}")
+
                 try:
                     campaign_dir = str(campaign_dir)
                     os.makedirs(campaign_dir)
