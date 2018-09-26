@@ -106,15 +106,17 @@ class Campaign:
 
             if not os.path.exists(campaign_dir):
                 try:
+                    campaign_dir = str(campaign_dir)
                     os.makedirs(campaign_dir)
                 except IOError:
                     raise IOError(f"Unable to create campaign directory: {campaign_dir}")
 
         else:
 
-            self.campaign_dir = tempfile.mkdtemp(prefix='EasyVVUQ_Campaign',
+            campaign_dir = tempfile.mkdtemp(prefix='EasyVVUQ_Campaign',
                                                  dir='.')
             print(f"Creating Campaign directory: {self.campaign_dir}")
+            self.campaign_dir = campaign_dir
 
         if "params" not in input_json:
             raise RuntimeError("Input does not contain an 'params' block")
@@ -169,13 +171,15 @@ class Campaign:
         return self._app_info['campaign_dir']
 
     @campaign_dir.setter
-    def campaign_dir(self, path):
+    def campaign_dir(self, path, force=False):
 
-        if self.campaign_dir:
+        if self.campaign_dir and not force:
 
             message = (f'Cannot set a new runs directory because there is one '
                        f'already set ({self.app_info["campaign_dir"]})')
             raise RuntimeError(message)
+
+        path = os.path.realpath(os.path.expanduser(path))
 
         self._app_info['campaign_dir'] = path
 
