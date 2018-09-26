@@ -5,11 +5,10 @@
       "input_filename": "gauss_in.json",
       "run_cmd":        "test_apps/gauss/gauss_json.py gauss_in.json"
     },
-
     "params": {
-      "sigma":        ["range", [0.1, 1, 0.1] ],
-      "mu":           ["normal", [1.0, 1.0, 10] ],
-      "num_steps":    ["static", 10],
-      "out_file":     ["static", "output.csv"]
+      "sigma":  {"type": "real", "min": "0.0", "max": "100000.0",   "default": "0.25"},
+      "mu":  {"type": "real", "min": "0.0", "max": "100000.0",   "default": "1"},
+      "num_steps":  {"type": "int", "min": "0", "max": "100000",   "default": "10"},
+      "out_file":  {"type": "str", "default": "output.csv"}
     }
 }
