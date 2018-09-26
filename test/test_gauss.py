@@ -33,6 +33,8 @@ uq.uqp.sampling.add_replicas(my_campaign, replicates=5)
 my_campaign.populate_runs_dir()
 my_campaign.apply_for_each_run(uq.execute_local)
 
+uq.uqp.aggregate_samples(my_campaign)
+
 # Apply replica aggregation UQP (using decoder)
 # Apply ensemble bootstrap UQP
 

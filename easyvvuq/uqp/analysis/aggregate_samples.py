@@ -66,6 +66,8 @@ def aggregate_samples(campaign, average=False):
 
                 run_data[param] = value
 
+            run_data['run_id'] = run_id
+
             full_data.append(run_data, ignore_index=True)
 
     return full_data
