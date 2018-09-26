@@ -71,6 +71,7 @@ class Campaign:
 
         self.run_number = 0
         self.encoder = None
+        self.decoder = None
 
         if state_filename is not None:
             self.load_state(state_filename)
@@ -107,7 +108,7 @@ class Campaign:
         # information and `params` into application specific input files.
         if "input_encoder" not in input_json["app"]:
             raise RuntimeError("State file 'app' block should contain "
-                               "'app_name' to allow lookup of required encoder")
+                               "'input_encoder' to allow lookup of required encoder")
         else:
 
             input_encoder = input_json['app']['input_encoder']
@@ -122,6 +123,25 @@ class Campaign:
             module = importlib.import_module(module_location)
             encoder_class_ = getattr(module, encoder_name)
             self.encoder = encoder_class_(self.app_info)
+
+        # `output_decoder` used to select decoder used to read simulation output
+        if "output_decoder" not in input_json["app"]:
+            raise RuntimeError("State file 'app' block should contain "
+                               "'output_decoder' to allow lookup of required encoder")
+        else:
+
+            output_decoder = input_json['app']['output_decoder']
+
+            if output_decoder not in uq.app_encoders:
+                raise RuntimeError(f'No encoder was found for '
+                                   f'app_name {output_decoder}')
+
+            module_location = uq.app_decoders[output_decoder]['module_location']
+            decoder_name = uq.app_decoders[output_decoder]['decoder_name']
+
+            module = importlib.import_module(module_location)
+            decoder_class_ = getattr(module, decoder_name)
+            self.decoder = decoder_class_(self.app_info)
 
     @property
     def run_dir(self):
