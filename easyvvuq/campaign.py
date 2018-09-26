@@ -251,28 +251,6 @@ class Campaign:
         self.runs[run_id]['executed'] = False
         self.run_number += 1
 
-    def add_run_result(self, run_id, result):
-        """Add result entry to existing run in `self.runs`
-
-        Parameters
-        ----------
-        run_id  : str
-            Identifier of run to be modified
-        result
-            Information on run output to be added to `self.runs`
-
-        Returns
-        -------
-
-        """
-
-        if run_id not in self.runs.keys():
-            reasoning = (f"Attempt to add result for run {run_id} but there is"
-                         f"no such run in this Campaign")
-            raise RuntimeError(reasoning)
-
-        self.runs[run_id]["result"] = result
-
     def __str__(self):
         """Returns formatted summary of the current Campaign state.
         Enables class to work with standard print() method"""
