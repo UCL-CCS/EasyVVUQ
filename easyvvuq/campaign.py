@@ -287,38 +287,6 @@ class Campaign:
 
             encoder.encode(params=run_data, target_dir=target_dir)
 
-    def apply_for_each_run(self, func):
-        """
-        For each run in this Campaign's run list, apply the specified function
-        
-
-        Parameters
-        ----------
-        func : function
-            The function to be applied to each run directory. func() will
-            be called with the run directory path as its only argument.
-        Returns
-        -------
-
-        """
-
-        if "runs_dir" not in self.app_info.keys():
-            raise RuntimeError("Missing 'runs_dir' key (Application info must "
-                               "include runs directory path).")
-        runs_dir = self.app_info["runs_dir"]
-
-        # Loop through all runs in this campaign
-        run_ids = self.runs.keys()
-        for run_id in run_ids:
-            dir_name = os.path.join(runs_dir, run_id)
-            print("Applying " + func.__name__ + " to " + dir_name + "...")
-
-            # Run user-specified function on this directory, and store result
-            # back into the Campaign object (if there is a result returned)
-            result = func(dir_name)
-            if result is not None:
-                self.add_run_result(run_id, result)
-
     def vary_param(self, param_name, dist=None):
         """
         Registers the named parameter as being variable (such as by any applied UQPs)
