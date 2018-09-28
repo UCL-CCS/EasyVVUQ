@@ -92,7 +92,7 @@ def bootstrap(data, stat_func=None, alpha=0.05,
 def ensemble_bootstrap(data, params_cols=[], value_cols=[],
                        stat_func=None, alpha=0.05,
                        sample_size=None, n_samples=1000,
-                       pivotal=False):
+                       pivotal=False, stat_name='boot'):
 
     agg_funcs = {}
 
@@ -108,7 +108,7 @@ def ensemble_bootstrap(data, params_cols=[], value_cols=[],
 
     grouped_data.agg(agg_funcs)
 
-    outputs = ['_boot', '_high', '_low']
+    outputs = [stat_name, 'high', 'low']
 
     results = pd.concat({col: grouped_data[col].apply(
                                  lambda cell: pd.Series(cell, index=outputs)
