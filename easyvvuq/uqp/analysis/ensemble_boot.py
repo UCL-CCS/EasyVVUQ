@@ -68,3 +68,51 @@ def confidence_interval(dist, value, alpha, pivotal=False):
         (low, high) = (high, low)
 
     return stat, low, high
+
+def bootstrap(data, stat_func=None, alpha=0.05,
+              sample_size=None, n_samples=1000,
+              pivotal= False):
+
+    stat = data.apply(stat_func)
+
+    if sample_size is None:
+        sample_size = len(data)
+
+    dist = []
+
+    for l in range(n_samples):
+
+        sample = data.sample(sample_size)
+
+        dist.append(sample.apply(stat_func))
+
+    return confidence_interval(dist, stat, alpha, pivotal=False)
+
+
+def ensemble_bootstrap(data, params_cols=[], value_cols=[],
+                       stat_func=None, alpha=0.05,
+                       sample_size=None, n_samples=1000,
+                       pivotal=False):
+
+    agg_funcs = {}
+
+    for col in value_cols:
+        agg_funcs[col] = lambda x: bootstrap(x, stat_func=stat_func, alpha=alpha,
+                                             sample_size=sample_size, n_samples=n_samples,
+                                             pivotal=pivotal)
+
+    if stat_func is None:
+        stat_func = np.mean
+
+    grouped_data = data.groupby(params_cols)
+
+    grouped_data.agg(agg_funcs)
+
+    outputs = ['_boot', '_high', '_low']
+
+    results = pd.concat([grouped_data[col].apply(
+                         lambda cell: pd.Series(cell, index=[col+x for x in outputs]))
+                         for col in value_cols
+                         ], axis=1)
+
+    return results
