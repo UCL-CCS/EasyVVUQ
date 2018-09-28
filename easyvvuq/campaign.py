@@ -4,7 +4,6 @@ import json
 import importlib
 import collections
 import pprint
-import pandas as pd
 
 import easyvvuq as uq
 
