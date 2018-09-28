@@ -231,7 +231,6 @@ class Campaign:
         self.runs[run_id]['executed'] = False
         self.run_number += 1
 
-
     def __str__(self):
         """Returns formatted summary of the current Campaign state.
         Enables class to work with standard print() method"""
