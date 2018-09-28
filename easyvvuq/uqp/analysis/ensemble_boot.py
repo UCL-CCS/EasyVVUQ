@@ -69,6 +69,7 @@ def confidence_interval(dist, value, alpha, pivotal=False):
 
     return stat, low, high
 
+
 def bootstrap(data, stat_func=None, alpha=0.05,
               sample_size=None, n_samples=1000,
               pivotal= False):
@@ -86,7 +87,7 @@ def bootstrap(data, stat_func=None, alpha=0.05,
 
         dist.append(sample.apply(stat_func))
 
-    return confidence_interval(dist, stat, alpha, pivotal=False)
+    return confidence_interval(dist, stat, alpha, pivotal=pivotal)
 
 
 def ensemble_bootstrap(data, params_cols=[], value_cols=[],
@@ -106,10 +107,13 @@ def ensemble_bootstrap(data, params_cols=[], value_cols=[],
 
     grouped_data = data.groupby(params_cols)
 
+    # Apply bootstrapping to all value columns selected
+    # Note results come a tuple per cell
     grouped_data.agg(agg_funcs)
 
     outputs = [stat_name, 'high', 'low']
 
+    # Split out tuples in each cell and provide sensible naming
     results = pd.concat({col: grouped_data[col].apply(
                                  lambda cell: pd.Series(cell, index=outputs)
                               ) for col in value_cols}, axis=1)
