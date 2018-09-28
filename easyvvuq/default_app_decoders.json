@@ -1,0 +1,6 @@
+{
+  "gauss": {
+    "module_location": "easyvvuq.decoders.gauss",
+    "decoder_name": "GaussDecoder"
+  }
+}

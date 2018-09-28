@@ -33,6 +33,8 @@ class GaussDecoder(BaseDecoder):
         # Handles creation of `self.app_info` attribute (dicts)
         super().__init__(*args, **kwargs)
 
+        self.output_type = OutputType('sample')
+
     @staticmethod
     def _get_output_path(run_info={}):
 
@@ -60,4 +62,4 @@ class GaussDecoder(BaseDecoder):
         data = pd.read_csv(out_path, names=['Step', 'Value'],
                            header=0, index_col=0)
 
-        return data, OutputType('sample')
+        return data

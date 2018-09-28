@@ -28,6 +28,8 @@ def add_replicas(campaign, selection={}, replicates=2):
 
     runs = campaign.unique_runs()
 
+    reps_made = False
+
     for run_info in runs:
 
         n_reps = len(run_info['run_ids'])
@@ -54,3 +56,10 @@ def add_replicas(campaign, selection={}, replicates=2):
 
     if copy:
         campaign.sample_uqps.append(('add_replicas', (selection, replicates)))
+        reps_made = True
+
+    # TODO: There must be a better way to record argument - using locals() maybe?
+    campaign.record_sampling('add_replicas',
+                             {'selection': selection,
+                              'replicates': replicates},
+                             reps_made)

@@ -1,3 +1,4 @@
+from easyvvuq import OutputType
 
 __copyright__ = """
 
@@ -38,7 +39,8 @@ class BaseDecoder(object):
     """
 
     def __init__(self, *args, **kwargs):
-        pass
+
+        self.output_type = OutputType('sample')
 
     def sim_complete(self, run_info={}, *args, **kwargs):
         raise NotImplementedError

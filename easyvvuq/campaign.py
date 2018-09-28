@@ -66,11 +66,12 @@ class Campaign:
         # List of runs that need to be performed by this app
         self._runs = collections.OrderedDict()
 
-        self.sample_uqps = []
-        self.analysis_uqps = []
+        self._sample_uqps = []
+        self._analysis_uqps = []
 
         self.run_number = 0
         self.encoder = None
+        self.decoder = None
 
         if state_filename is not None:
             self.load_state(state_filename)
@@ -98,6 +99,28 @@ class Campaign:
 
         self.app_info = input_json["app"]
 
+        # Build a temp directory to store run files (unless it already exists)
+        if 'campaign_dir' in self.app_info:
+
+            campaign_dir = self.app_info['campaign_dir']
+
+            if not os.path.exists(campaign_dir):
+
+                print(f"Notice: Campaign directory not found - creating {campaign_dir}")
+
+                try:
+                    campaign_dir = str(campaign_dir)
+                    os.makedirs(campaign_dir)
+                except IOError:
+                    raise IOError(f"Unable to create campaign directory: {campaign_dir}")
+
+        else:
+
+            campaign_dir = tempfile.mkdtemp(prefix='EasyVVUQ_Campaign',
+                                                 dir='.')
+            print(f"Creating Campaign directory: {self.campaign_dir}")
+            self.campaign_dir = campaign_dir
+
         if "params" not in input_json:
             raise RuntimeError("Input does not contain an 'params' block")
 
@@ -107,14 +130,14 @@ class Campaign:
         # information and `params` into application specific input files.
         if "input_encoder" not in input_json["app"]:
             raise RuntimeError("State file 'app' block should contain "
-                               "'app_name' to allow lookup of required encoder")
+                               "'input_encoder' to allow lookup of required encoder")
         else:
 
             input_encoder = input_json['app']['input_encoder']
 
             if input_encoder not in uq.app_encoders:
-                raise RuntimeError(f"No encoder found. Looking for "
-                                   f"'input_encoder': {input_encoder}")
+                raise RuntimeError(f'No encoder was found for '
+                                   f'app_name {input_encoder}')
 
             module_location = uq.app_encoders[input_encoder]['module_location']
             encoder_name = uq.app_encoders[input_encoder]['encoder_name']
@@ -123,24 +146,64 @@ class Campaign:
             encoder_class_ = getattr(module, encoder_name)
             self.encoder = encoder_class_(self.app_info)
 
+        # `output_decoder` used to select decoder used to read simulation output
+        if "output_decoder" not in input_json["app"]:
+            raise RuntimeError("State file 'app' block should contain "
+                               "'output_decoder' to allow lookup of required encoder")
+        else:
+
+            output_decoder = input_json['app']['output_decoder']
+
+            if output_decoder not in uq.app_encoders:
+                raise RuntimeError(f'No encoder was found for '
+                                   f'app_name {output_decoder}')
+
+            module_location = uq.app_decoders[output_decoder]['module_location']
+            decoder_name = uq.app_decoders[output_decoder]['decoder_name']
+
+            module = importlib.import_module(module_location)
+            decoder_class_ = getattr(module, decoder_name)
+            self.decoder = decoder_class_(self.app_info)
+
     @property
-    def run_dir(self):
+    def campaign_dir(self):
+
+        if 'campaign_dir' not in self.app_info:
+            return None
+
+        return self._app_info['campaign_dir']
+
+    @campaign_dir.setter
+    def campaign_dir(self, path, force=False):
+
+        if self.campaign_dir and not force:
+
+            message = (f'Cannot set a new runs directory because there is one '
+                       f'already set ({self.app_info["campaign_dir"]})')
+            raise RuntimeError(message)
+
+        path = os.path.realpath(os.path.expanduser(path))
+
+        self._app_info['campaign_dir'] = path
+
+    @property
+    def runs_dir(self):
 
         if 'runs_dir' not in self.app_info:
             return None
 
         return self._app_info['runs_dir']
 
-    @run_dir.setter
-    def run_dir(self, run_dir):
+    @runs_dir.setter
+    def runs_dir(self, runs_dir):
 
-        if self.run_dir:
+        if self.runs_dir:
 
             message = (f'Cannot set a new runs directory because there is one '
                        f'already set ({self.app_info["runs_dir"]})')
             raise RuntimeError(message)
 
-        self._app_info['runs_dir'] = run_dir
+        self._app_info['runs_dir'] = runs_dir
 
     @property
     def params_info(self):
@@ -220,6 +283,7 @@ class Campaign:
                              f"of this Campaign.")
 
                 raise RuntimeError(reasoning)
+
         # If necessary parameter names are missing, fill them in from the default values in params_info
         for param in self.params_info.keys():
             if param not in new_run.keys():
@@ -228,8 +292,38 @@ class Campaign:
         # Add to run queue
         run_id = f"{prefix}{self.run_number}"
         self.runs[run_id] = new_run
-        self.runs[run_id]['executed'] = False
+        self.runs[run_id]['completed'] = False
         self.run_number += 1
+
+    def scan_completed(self):
+        """
+        Check each run in `self.runs` to see if output has been generated by a completed simulation.
+
+        Returns
+        -------
+
+        """
+
+        decoder = self.decoder
+        runs = self.runs
+
+        for run_id in runs.keys():
+
+            if decoder.sim_complete(run_info=runs[run_id]):
+                runs[run_id]['completed'] = True
+
+    def all_complete(self):
+        """
+        Check if all runs have reported having output generated by a completed simulation.
+
+        Returns
+        -------
+
+        """
+
+        completed = [run_info['completed'] for run_id, run_info in self.runs.items()]
+
+        return all(completed)
 
     def __str__(self):
         """Returns formatted summary of the current Campaign state.
@@ -239,7 +333,7 @@ class Campaign:
                           "Params info:",   pprint.pformat(self.params_info, indent=4),
                           "Runs:",          pprint.pformat(self.runs, indent=4)])
 
-    def populate_runs_dir(self, prefix='Runs_EASYVVUQ_', default_dir='.'):
+    def populate_runs_dir(self):
         """Populate run directories as specified in the input Campaign object
 
         This calls the Campaigns encoder object to create input files for the
@@ -248,10 +342,7 @@ class Campaign:
 
         Parameters
         ----------
-        prefix      : str
-            Text that will appear at the start of each run directories name.
-        default_dir : str
-            Top level directory where all the run directories will be created.
+
         Returns
         -------
 
@@ -259,32 +350,75 @@ class Campaign:
 
         # Get application info block and runs block
         runs = self.runs
+        runs_dir = self.runs_dir
 
         # Get application encoder to use
+        encoder = self.encoder
 
         if self.encoder is None:
             raise RuntimeError('Cannot populate runs without valid '
                                'encoder in campaign')
 
-        encoder = self.encoder
-
         # Build a temp directory to store run files (unless it already exists)
-        if not self.run_dir:
-            base_dir = tempfile.mkdtemp(prefix=prefix, dir=default_dir)
-            print("Creating temp runs directory: " + base_dir)
+        if not runs_dir:
 
-            self.run_dir = base_dir
-
-        else:
-            base_dir = self.run_dir
+            runs_dir = os.path.join(self.campaign_dir, 'runs')
+            if os.path.exists(runs_dir):
+                raise RuntimeError(f"Cannot create a runs directory to populare, as it already exists: {runs_dir}")
+            os.makedirs(runs_dir)
+            print(f"Creating temp runs directory: {runs_dir}")
 
         for run_id, run_data in runs.items():
             # Make run directory
-            target_dir = os.path.join(base_dir, run_id)
+            target_dir = os.path.join(runs_dir, run_id)
+            # TODO: Should we check if the run has been created?
             runs[run_id]['run_dir'] = 'target_dir'
             os.makedirs(target_dir)
 
             encoder.encode(params=run_data, target_dir=target_dir)
+
+    def apply_for_each_run(self, func):
+        """
+        For each run in this Campaign's run list, apply the specified function
+        
+
+        Parameters
+        ----------
+        func : function
+            The function to be applied to each run directory. func() will
+            be called with the run directory path as its only argument.
+        Returns
+        -------
+
+        """
+
+        if "runs_dir" not in self.app_info.keys():
+            raise RuntimeError("Missing 'runs_dir' key (Application info must "
+                               "include runs directory path).")
+        runs_dir = self.app_info["runs_dir"]
+
+        # Loop through all runs in this campaign
+        run_ids = self.runs.keys()
+        for run_id in run_ids:
+            dir_name = os.path.join(runs_dir, run_id)
+            print("Applying " + func.__name__ + " to " + dir_name + "...")
+
+            # Run user-specified function on this directory, and store result
+            # back into the Campaign object (if there is a result returned)
+            result = func(dir_name)
+            if result is not None:
+                self.add_run_result(run_id, result)
+
+    def record_sampling(self, primitive_name, primitive_args, success):
+        """
+
+        Returns
+        -------
+
+        """
+
+        # TODO: Need some checks + potentially warnings here
+        self._sample_uqps.append((primitive_name, primitive_args, success))
 
     def vary_param(self, param_name, dist=None):
         """
@@ -294,6 +428,31 @@ class Campaign:
             print("Param '" + param_name + "' already in list of variables.")
         else:
             self._vars[param_name] = dist
+
+    def to_dataframe(self):
+        """Output results of the Campaign to Pandas dataframe
+
+        Columns are the values of the `self.runs` dictionary with the `results`
+        sub dictionary flattened out to provide additional columns. The
+        run names become the keys.
+
+        Returns
+        -------
+        pd.DataFrame
+            Parameters set for and results of all runs in the Campaign.
+
+        """
+
+        runs = self.runs
+
+        results = pd.DataFrame.from_dict({run_name: run_info['result'] for run_name, run_info in runs.items()},
+                                         orient='index')
+
+        run_params = pd.DataFrame.from_dict(runs, orient='index')
+
+        run_params.drop(columns=['result'], inplace=True)
+
+        return pd.concat([run_params, results], axis=1)
 
     def unique_runs(self):
         """

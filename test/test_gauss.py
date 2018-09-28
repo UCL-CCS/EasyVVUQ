@@ -25,10 +25,19 @@ __license__ = "LGPL"
 
 
 my_campaign = uq.Campaign(state_filename="test_input/test_gauss.json")
-uq.uqp.basicUQP(my_campaign)
+
+my_campaign.vary_param("mu", dist=uq.distributions.uniform(1.0, 100.0))
+uq.uqp.sampling.random_sampler(my_campaign, num_samples=2)
+uq.uqp.sampling.add_replicas(my_campaign, replicates=5)
+
 my_campaign.populate_runs_dir()
 my_campaign.apply_for_each_run(uq.execute_local)
-my_campaign.apply_for_each_run(uq.uqp.statsUQP(reader=uq.reader.csvReader('output.csv', 0)))
+
+uq.uqp.aggregate_samples(my_campaign)
+
+# Apply replica aggregation UQP (using decoder)
+# Apply ensemble bootstrap UQP
+
 print(my_campaign)
 my_campaign.save_state("out_gauss.json")
 
