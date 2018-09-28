@@ -231,27 +231,6 @@ class Campaign:
         self.runs[run_id]['executed'] = False
         self.run_number += 1
 
-    def add_run_result(self, run_id, result):
-        """Add result entry to existing run in `self.runs`
-
-        Parameters
-        ----------
-        run_id  : str
-            Identifier of run to be modified
-        result
-            Information on run output to be added to `self.runs`
-
-        Returns
-        -------
-
-        """
-
-        if run_id not in self.runs.keys():
-            reasoning = (f"Attempt to add result for run {run_id} but there is"
-                         f"no such run in this Campaign")
-            raise RuntimeError(reasoning)
-
-        self.runs[run_id]["result"] = result
 
     def __str__(self):
         """Returns formatted summary of the current Campaign state.
@@ -348,31 +327,6 @@ class Campaign:
             print("Param '" + param_name + "' already in list of variables.")
         else:
             self._vars[param_name] = dist
-
-    def to_dataframe(self):
-        """Output results of the Campaign to Pandas dataframe
-
-        Columns are the values of the `self.runs` dictionary with the `results`
-        sub dictionary flattened out to provide additional columns. The
-        run names become the keys.
-
-        Returns
-        -------
-        pd.DataFrame
-            Parameters set for and results of all runs in the Campaign.
-
-        """
-
-        runs = self.runs
-
-        results = pd.DataFrame.from_dict({run_name: run_info['result'] for run_name, run_info in runs.items()},
-                                         orient='index')
-
-        run_params = pd.DataFrame.from_dict(runs, orient='index')
-
-        run_params.drop(columns=['result'], inplace=True)
-
-        return pd.concat([run_params, results], axis=1)
 
     def unique_runs(self):
         """
