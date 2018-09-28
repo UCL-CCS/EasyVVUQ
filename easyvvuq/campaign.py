@@ -136,8 +136,8 @@ class Campaign:
             input_encoder = input_json['app']['input_encoder']
 
             if input_encoder not in uq.app_encoders:
-                raise RuntimeError(f'No encoder was found for '
-                                   f'app_name {input_encoder}')
+                raise RuntimeError(f"No encoder found. Looking for "
+                                   f"'input_encoder': {input_encoder}")
 
             module_location = uq.app_encoders[input_encoder]['module_location']
             encoder_name = uq.app_encoders[input_encoder]['encoder_name']
@@ -377,38 +377,6 @@ class Campaign:
 
             encoder.encode(params=run_data, target_dir=target_dir)
 
-    def apply_for_each_run(self, func):
-        """
-        For each run in this Campaign's run list, apply the specified function
-        
-
-        Parameters
-        ----------
-        func : function
-            The function to be applied to each run directory. func() will
-            be called with the run directory path as its only argument.
-        Returns
-        -------
-
-        """
-
-        if "runs_dir" not in self.app_info.keys():
-            raise RuntimeError("Missing 'runs_dir' key (Application info must "
-                               "include runs directory path).")
-        runs_dir = self.app_info["runs_dir"]
-
-        # Loop through all runs in this campaign
-        run_ids = self.runs.keys()
-        for run_id in run_ids:
-            dir_name = os.path.join(runs_dir, run_id)
-            print("Applying " + func.__name__ + " to " + dir_name + "...")
-
-            # Run user-specified function on this directory, and store result
-            # back into the Campaign object (if there is a result returned)
-            result = func(dir_name)
-            if result is not None:
-                self.add_run_result(run_id, result)
-
     def record_sampling(self, primitive_name, primitive_args, success):
         """
 
@@ -428,31 +396,6 @@ class Campaign:
             print("Param '" + param_name + "' already in list of variables.")
         else:
             self._vars[param_name] = dist
-
-    def to_dataframe(self):
-        """Output results of the Campaign to Pandas dataframe
-
-        Columns are the values of the `self.runs` dictionary with the `results`
-        sub dictionary flattened out to provide additional columns. The
-        run names become the keys.
-
-        Returns
-        -------
-        pd.DataFrame
-            Parameters set for and results of all runs in the Campaign.
-
-        """
-
-        runs = self.runs
-
-        results = pd.DataFrame.from_dict({run_name: run_info['result'] for run_name, run_info in runs.items()},
-                                         orient='index')
-
-        run_params = pd.DataFrame.from_dict(runs, orient='index')
-
-        run_params.drop(columns=['result'], inplace=True)
-
-        return pd.concat([run_params, results], axis=1)
 
     def unique_runs(self):
         """
