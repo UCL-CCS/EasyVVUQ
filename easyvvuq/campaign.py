@@ -65,6 +65,8 @@ class Campaign:
         # List of runs that need to be performed by this app
         self._runs = collections.OrderedDict()
 
+        self._data = {}
+
         self._sample_uqps = []
         self._analysis_uqps = []
 
@@ -98,27 +100,8 @@ class Campaign:
 
         self.app_info = input_json["app"]
 
-        # Build a temp directory to store run files (unless it already exists)
-        if 'campaign_dir' in self.app_info:
-
-            campaign_dir = self.app_info['campaign_dir']
-
-            if not os.path.exists(campaign_dir):
-
-                print(f"Notice: Campaign directory not found - creating {campaign_dir}")
-
-                try:
-                    campaign_dir = str(campaign_dir)
-                    os.makedirs(campaign_dir)
-                except IOError:
-                    raise IOError(f"Unable to create campaign directory: {campaign_dir}")
-
-        else:
-
-            campaign_dir = tempfile.mkdtemp(prefix='EasyVVUQ_Campaign',
-                                                 dir='.')
-            print(f"Creating Campaign directory: {self.campaign_dir}")
-            self.campaign_dir = campaign_dir
+        # Check for campaign directory - if doesn't exist create one
+        self._setup_campaign_dir()
 
         if "params" not in input_json:
             raise RuntimeError("Input does not contain an 'params' block")
@@ -163,6 +146,54 @@ class Campaign:
             module = importlib.import_module(module_location)
             decoder_class_ = getattr(module, decoder_name)
             self.decoder = decoder_class_(self.app_info)
+
+    def _setup_campaign_dir(self):
+
+        app_info = self.app_info
+
+        # TODO: Decide if runs should be here
+        sub_dirs = ['data', 'analysis']
+
+        # Build a temp directory to store run files (unless it already exists)
+        if 'campaign_dir' in app_info:
+
+            campaign_dir = app_info['campaign_dir']
+
+            if not os.path.exists(campaign_dir):
+
+                print(f"Notice: Campaign directory not found - creating {campaign_dir}")
+
+                try:
+                    campaign_dir = str(campaign_dir)
+                    os.makedirs(campaign_dir)
+                except IOError:
+                    raise IOError(f"Unable to create campaign directory: {campaign_dir}")
+
+        else:
+
+            campaign_dir = tempfile.mkdtemp(prefix='EasyVVUQ_Campaign',
+                                            dir='.')
+            print(f"Creating Campaign directory: {self.campaign_dir}")
+            self.campaign_dir = campaign_dir
+
+        campaign_dir = self.campaign_dir
+
+        for sub_dir in sub_dirs:
+
+            sub_path = os.path.join(campaign_dir, sub_dir)
+
+            if not os.path.isdir(sub_path):
+
+                if os.path.exists(sub_path):
+                    raise RuntimeError(f"Unable to create sub path {sub_path}, "
+                                       f"invalid campaign directory.")
+
+                os.makedirs(sub_path)
+
+    @property
+    def data(self):
+
+        return self._data
 
     @property
     def campaign_dir(self):
@@ -251,7 +282,8 @@ class Campaign:
 
         output_json = {"app": self.app_info,
                        "params": self.params_info,
-                       "runs": self.runs}
+                       "runs": self.runs,
+                       "data": self.data}
 
         with open(state_filename, "w") as outfile:
             json.dump(output_json, outfile, indent=4)
@@ -363,7 +395,7 @@ class Campaign:
 
             runs_dir = os.path.join(self.campaign_dir, 'runs')
             if os.path.exists(runs_dir):
-                raise RuntimeError(f"Cannot create a runs directory to populare, as it already exists: {runs_dir}")
+                raise RuntimeError(f"Cannot create a runs directory to populate, as it already exists: {runs_dir}")
             os.makedirs(runs_dir)
             print(f"Creating temp runs directory: {runs_dir}")
 
