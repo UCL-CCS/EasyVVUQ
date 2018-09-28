@@ -195,6 +195,11 @@ class Campaign:
 
         return self._data
 
+    @data.setter
+    def data(self, new_data):
+
+        self._data = new_data
+
     @property
     def campaign_dir(self):
 
