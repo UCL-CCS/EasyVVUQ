@@ -1,3 +1,5 @@
+import os
+import tempfile
 import easyvvuq.utils.json as json_utils
 from pandas import DataFrame
 from easyvvuq import Campaign
@@ -40,16 +42,35 @@ class BaseAnalysisUQP(object):
 
     """
 
-    def __init__(self, data_src, *args, **kwargs):
+    def __init__(self, data_src, output_dir=None, *args, **kwargs):
+
+        self.campaign = None
 
         self.data_frame = None
         self.data = None
 
+        self.output_dir = output_dir
+
+        self.output_type = None
+
         if isinstance(data_src, Campaign):
+
+            self.campaign = data_src
+
             self.data_src = data_src.data
+
+            if not self.output_dir:
+
+                analysis_path = os.path.join(Campaign.campaign_dir, 'analysis')
+                self.output_dir = tempfile.mkdtemp(dir=analysis_path)
+
         elif isinstance(data_src, dict):
             self.data_src = data_src
         elif isinstance(data_src, DataFrame):
             self.data_frame = data_src
         else:
             self.data_src = json_utils.process_json(data_src)
+
+        if not self.output_dir:
+
+            self.output_dir = tempfile.mkdtemp()

@@ -1,6 +1,8 @@
+import os
 import numpy as np
 import pandas as pd
 from easyvvuq import OutputType
+from .base import BaseAnalysisUQP
 
 __copyright__ = """
 
@@ -97,6 +99,9 @@ def ensemble_bootstrap(data, params_cols=[], value_cols=[],
 
     agg_funcs = {}
 
+    if not value_cols:
+        value_cols = [x for x in data.columns if x not in params_cols]
+
     for col in value_cols:
         agg_funcs[col] = lambda x: bootstrap(x, stat_func=stat_func, alpha=alpha,
                                              sample_size=sample_size, n_samples=n_samples,
@@ -116,6 +121,82 @@ def ensemble_bootstrap(data, params_cols=[], value_cols=[],
     # Split out tuples in each cell and provide sensible naming
     results = pd.concat({col: grouped_data[col].apply(
                                  lambda cell: pd.Series(cell, index=outputs)
-                              ) for col in value_cols}, axis=1)
+                              )
+                         for col in value_cols}, axis=1)
 
     return results
+
+
+class EnsembleBoot(BaseAnalysisUQP):
+
+    def __init__(self, data_src, params_cols=[], value_cols=[],
+                 stat_func=None, alpha=0.05,
+                 sample_size=None, n_boot_samples=1000,
+                 pivotal=False, stat_name='boot',
+                 *args, **kwargs):
+
+        # Handles creation of `self.data_src` attribute (dict)
+        super().__init__(data_src, *args, **kwargs)
+
+        if self.data_src:
+
+            if 'files' not in data_src:
+
+                if len(data_src['files']) != 1:
+
+                    raise RuntimeError("Data source must contain a SINGLE file path for this UQP")
+
+                else:
+
+                    self.data_frame = pd.from_csv(self.data_src['files'][0], sep='\t')
+
+        self.params_cols = params_cols
+        self.value_cols = value_cols
+        self.stat_func = stat_func
+        self.alpha = alpha
+        self.sample_size = sample_size
+        self.n_boot_samples = n_boot_samples
+        self.pivotal = pivotal
+        self.stat_name = stat_name
+
+        self.output_type = OutputType.SUMMARY
+
+    def run_analysis(self):
+
+        if self.data_frame is None:
+            raise RuntimeError("UQP needs a data frame to analyse")
+
+        data_frame = self.data_frame
+        params_cols = self.params_cols
+        value_cols = self.value_cols
+        stat_func = self.stat_func
+        alpha = self.alpha
+        sample_size = self.sample_size
+        n_boot_samples = self.n_boot_samples
+        pivotal = self.pivotal
+        stat_name = self.stat_name
+        output_dir = self.output_dir
+
+        output_file = os.path.join(output_dir, 'ensemble_boot.tsv')
+
+        results = self.ensemble_bootstrap(data_frame, params_cols=params_cols,
+                                          value_cols=value_cols, stat_func=stat_func,
+                                          alpha=alpha, sample_size=sample_size,
+                                          n_samples=n_boot_samples, pivotal=pivotal,
+                                          stat_name=stat_name)
+
+        results.DataFrame.to_csv(output_file, sep='\t')
+
+        if self.campaign is not None:
+
+            state_file = os.path.join(output_dir, 'state_file.json')
+            self.campaign.save_state(state_file)
+
+            if stat_func is not None:
+                self.campaign.record_analysis('ensemble_bootstrap',
+                                              self.stat_func.__name__
+                                              )
+            else:
+                self.campaign.record_analysis('ensemble_bootstrap',
+                                              None
+                                              )
