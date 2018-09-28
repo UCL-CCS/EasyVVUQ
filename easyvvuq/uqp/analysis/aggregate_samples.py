@@ -1,5 +1,7 @@
 from easyvvuq import OutputType
+import os
 import pandas as pd
+import tempfile
 
 __copyright__ = """
 
@@ -69,6 +71,22 @@ def aggregate_samples(campaign, average=False):
             run_data['run_id'] = run_id
 
             full_data.append(run_data, ignore_index=True)
+
+    data_dir = os.path.join(campaign.campaign_dir, 'data')
+
+    out_dir = tempfile.mkdtemp(dir=data_dir)
+    out_file = os.path.join(out_dir, 'aggregate_sample.tsv')
+
+    full_data.to_csv(out_file, sep='\t', index=False)
+
+    state_file = os.path.join(out_dir, 'state_snapshot.json')
+    campaign.save_state(state_file)
+
+    campaign.summary_data = {
+        'files': [out_file],
+        'type': OutputType('summary'),
+        'state': state_file
+    }
 
     return full_data
 
