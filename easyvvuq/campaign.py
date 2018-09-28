@@ -113,8 +113,8 @@ class Campaign:
             input_encoder = input_json['app']['input_encoder']
 
             if input_encoder not in uq.app_encoders:
-                raise RuntimeError(f'No encoder was found for '
-                                   f'app_name {input_encoder}')
+                raise RuntimeError(f"No encoder found. Looking for "
+                                   f"'input_encoder': {input_encoder}")
 
             module_location = uq.app_encoders[input_encoder]['module_location']
             encoder_name = uq.app_encoders[input_encoder]['encoder_name']
