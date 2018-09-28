@@ -110,9 +110,8 @@ def ensemble_bootstrap(data, params_cols=[], value_cols=[],
 
     outputs = ['_boot', '_high', '_low']
 
-    results = pd.concat([grouped_data[col].apply(
-                         lambda cell: pd.Series(cell, index=[col+x for x in outputs]))
-                         for col in value_cols
-                         ], axis=1)
+    results = pd.concat({col: grouped_data[col].apply(
+                                 lambda cell: pd.Series(cell, index=outputs)
+                              ) for col in value_cols}, axis=1)
 
     return results
