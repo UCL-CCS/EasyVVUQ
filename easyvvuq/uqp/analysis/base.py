@@ -97,6 +97,7 @@ class BaseAnalysisUQP(object):
 
             self.campaign.record_analysis('ensemble_bootstrap',
                                           self.output_file,
+                                          self.output_type,
                                           log_path,
                                           state_file
                                           )

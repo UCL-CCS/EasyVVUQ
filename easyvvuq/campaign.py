@@ -453,11 +453,15 @@ class Campaign:
         else:
             self._vars[param_name] = dist
 
-    def record_analysis(self, primitive, output_file, log_file, state_file):
+    def record_analysis(self, primitive, output_file, output_type, log_file, state_file):
+
+        if isinstance(output_type, uq.constants.OutputType):
+            output_type = output_type.value
 
         info = {
                 'primitive': primitive,
                 'output': output_file,
+                'type': output_type,
                 'log': log_file,
                 'state': state_file,
                }

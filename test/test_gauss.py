@@ -31,11 +31,15 @@ uq.uqp.sampling.random_sampler(my_campaign, num_samples=2)
 uq.uqp.sampling.add_replicas(my_campaign, replicates=5)
 
 my_campaign.populate_runs_dir()
+
 my_campaign.apply_for_each_run(uq.execute_local)
 
-uq.uqp.analysis.aggregate_samples(my_campaign)
+# Aggregate results from all runs (averaging values for each run)
+uq.uqp.analysis.aggregate_samples(my_campaign, average=True)
 
 # Apply ensemble bootstrap UQP
+ensemble_boot = uq.uqp.analysis.EnsembleBoot(my_campaign)
+results, output_file = ensemble_boot.run_analysis()
 
 print(my_campaign)
 my_campaign.save_state("out_gauss.json")
