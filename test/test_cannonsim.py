@@ -38,7 +38,13 @@ uq.uqp.sampling.random_sampler(my_campaign, num_samples=15)
 # Execute and analyse
 my_campaign.populate_runs_dir()
 my_campaign.apply_for_each_run(uq.execute_local)
-my_campaign.apply_for_each_run(uq.uqp.analysis.basicStats(reader=uq.reader.csvReader('output.csv', 0)))
+
+# Aggregate results from all runs
+uq.uqp.analysis.aggregate_samples(my_campaign)
+
+# Apply ensemble bootstrap UQP
+stats = uq.uqp.analysis.BasicStats(my_campaign)
+results, output_file = stats.run_analysis()
 
 # Output
 print(my_campaign)
