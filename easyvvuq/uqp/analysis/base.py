@@ -61,7 +61,7 @@ class BaseAnalysisUQP(object):
 
             if not self.output_dir:
 
-                analysis_path = os.path.join(Campaign.campaign_dir, 'analysis')
+                analysis_path = os.path.join(self.campaign.campaign_dir, 'analysis')
                 self.output_dir = tempfile.mkdtemp(dir=analysis_path)
 
         elif isinstance(data_src, dict):
