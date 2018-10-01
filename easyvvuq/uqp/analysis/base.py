@@ -95,7 +95,7 @@ class BaseAnalysisUQP(object):
             state_file = os.path.join(output_dir, 'state_file.json')
             self.campaign.save_state(state_file)
 
-            self.campaign.record_analysis('ensemble_bootstrap',
+            self.campaign.record_analysis(self.uqp_name,
                                           self.output_file,
                                           self.output_type,
                                           log_path,
