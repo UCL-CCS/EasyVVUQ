@@ -60,6 +60,6 @@ class CannonDecoder(BaseDecoder):
 
         out_path = self._get_output_path(run_info)
 
-        data = pd.read_csv(out_path)
+        data = pd.read_csv(out_path, names=self.output_columns, header=0)
 
         return data
