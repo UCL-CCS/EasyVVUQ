@@ -137,7 +137,7 @@ class Campaign:
         # `output_decoder` used to select decoder used to read simulation output
         if "output_decoder" not in input_json["app"]:
             raise RuntimeError("State file 'app' block should contain "
-                               "'output_decoder' to allow lookup of required encoder")
+                               "'output_decoder' to allow lookup of required decoder")
         else:
 
             output_decoder = input_json['app']['output_decoder']
