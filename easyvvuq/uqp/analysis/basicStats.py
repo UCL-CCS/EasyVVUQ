@@ -31,6 +31,9 @@ class BasicStats(BaseAnalysisUQP):
     def __init__(self, data_src, params_cols=[], value_cols=[],
                  *args, **kwargs):
 
+        # TODO: Fix this to allow more flexibility - basically pass through
+        # available options to `pd.DataFrame.describe()`
+
         self.uqp_name = 'basic_stats'
 
         # Handles creation of `self.data_src` attribute (dict)
