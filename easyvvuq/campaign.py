@@ -103,6 +103,12 @@ class Campaign:
         # Check for campaign directory - if doesn't exist create one
         self._setup_campaign_dir()
 
+        if "sample_uqps" in input_json:
+            self._sample_uqps = input_json["sample_uqps"]
+
+        if "analysis_uqps" in input_json:
+            self._sample_uqps = input_json["analysis_uqps"]
+
         if "params" not in input_json:
             raise RuntimeError("Input does not contain an 'params' block")
 
@@ -189,6 +195,16 @@ class Campaign:
                                        f"invalid campaign directory.")
 
                 os.makedirs(sub_path)
+
+    @property
+    def sample_uqps(self):
+
+        return tuple(self._sample_uqps)
+
+    @property
+    def analysis_uqps(self):
+
+        return tuple(self._analysis_uqps)
 
     @property
     def data(self):
@@ -288,7 +304,10 @@ class Campaign:
         output_json = {"app": self.app_info,
                        "params": self.params_info,
                        "runs": self.runs,
-                       "data": self.data}
+                       "sample_uqps": self._sample_uqps,
+                       "analysis_uqps": self._analysis_uqps,
+                       "data": self.data,
+                       }
 
         with open(state_filename, "w") as outfile:
             json.dump(output_json, outfile, indent=4)
