@@ -87,8 +87,11 @@ class BaseAnalysisUQP(object):
 
         log_path = os.path.join(output_dir, filename)
 
+        self_dict = {k: v for k, v in self.__dict__.items() if k not in ['data_frame', 'campaign']}
+
         with open(log_path, "w") as outfile:
-            json.dump(self.__dict__, outfile, indent=4, default=json_utils.jdefault)
+
+            json.dump(self_dict, outfile, indent=4, default=json_utils.jdefault)
 
         if self.campaign is not None:
 
