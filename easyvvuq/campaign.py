@@ -136,9 +136,9 @@ class Campaign:
 
             output_decoder = input_json['app']['output_decoder']
 
-            if output_decoder not in uq.app_encoders:
-                raise RuntimeError(f'No encoder was found for '
-                                   f'app_name {output_decoder}')
+            if output_decoder not in uq.app_decoders:
+                raise RuntimeError(f'No output decoder was found with the name '
+                                   f'{output_decoder}')
 
             module_location = uq.app_decoders[output_decoder]['module_location']
             decoder_name = uq.app_decoders[output_decoder]['decoder_name']
