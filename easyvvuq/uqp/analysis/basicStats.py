@@ -73,7 +73,7 @@ class BasicStats(BaseAnalysisUQP):
         df = self.data_frame
 
         output_dir = self.output_dir
-        output_file = os.path.join(output_dir, 'ensemble_boot.tsv')
+        output_file = os.path.join(output_dir, 'basic_stats.tsv')
 
         grouped_data = df.groupby(self.params_cols)
 
@@ -82,20 +82,8 @@ class BasicStats(BaseAnalysisUQP):
         results = grouped_data.describe()
         results.to_csv(output_file, sep='\t')
 
-        log_name = f"{self.uqp_name}.json"
-        self.log_vars(log_name)
+        self.output_file = output_file
 
-        if self.campaign is not None:
+        self.log_run()
 
-            state_file = os.path.join(output_dir, 'state_file.json')
-            self.campaign.save_state(state_file)
-
-            if stat_func is not None:
-                self.campaign.record_analysis('ensemble_bootstrap',
-                                              output_file
-                                              )
-            else:
-                self.campaign.record_analysis('ensemble_bootstrap',
-                                              output_file
-                                              )
         return results, output_file
