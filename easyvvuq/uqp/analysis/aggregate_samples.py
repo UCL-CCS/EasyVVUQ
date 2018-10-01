@@ -58,19 +58,26 @@ def aggregate_samples(campaign, average=False):
 
         if decoder.sim_complete(run_info=run_info):
 
+            runs[run_id]['completed'] = True
+
             run_data = decoder.parse_sim_output(run_info=run_info)
 
             if average:
 
                 run_data = pd.DataFrame(run_data.mean()).transpose()
 
+            column_list = list(run_info.keys()) + run_data.columns.tolist()
+
             for param, value in run_info.items():
 
                 run_data[param] = value
 
+            # Reorder columns
+            run_data = run_data[column_list]
+
             run_data['run_id'] = run_id
 
-            full_data.append(run_data, ignore_index=True)
+            full_data = full_data.append(run_data, ignore_index=True)
 
     data_dir = os.path.join(campaign.campaign_dir, 'data')
 
@@ -82,7 +89,7 @@ def aggregate_samples(campaign, average=False):
     state_file = os.path.join(out_dir, 'state_snapshot.json')
     campaign.save_state(state_file)
 
-    campaign.summary_data = {
+    campaign.data = {
         'files': [out_file],
         'type': OutputType('summary'),
         'state': state_file
