@@ -47,7 +47,7 @@ def aggregate_samples(campaign, average=False):
 
     decoder = campaign.decoder
 
-    if decoder.sample_type != OutputType.SAMPLE:
+    if decoder.output_type != OutputType.SAMPLE:
         raise RuntimeError('Can only aggregate sample type data')
 
     runs = campaign.runs
