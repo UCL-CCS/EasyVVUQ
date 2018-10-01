@@ -367,7 +367,8 @@ class Campaign:
 
         return "\n".join(["Campaign info:", pprint.pformat(self.app_info, indent=4),
                           "Params info:",   pprint.pformat(self.params_info, indent=4),
-                          "Runs:",          pprint.pformat(self.runs, indent=4)])
+                          "Runs:",          pprint.pformat(self.runs, indent=4),
+                          "Data:", pprint.pformat(self.data, indent=4)])
 
     def populate_runs_dir(self):
         """Populate run directories as specified in the input Campaign object
