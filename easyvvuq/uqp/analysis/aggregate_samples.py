@@ -91,7 +91,7 @@ def aggregate_samples(campaign, average=False):
 
     campaign.data = {
         'files': [out_file],
-        'type': OutputType('summary'),
+        'type': OutputType('summary').value,
         'state': state_file
     }
 
