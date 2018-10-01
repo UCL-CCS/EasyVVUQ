@@ -26,7 +26,7 @@ __copyright__ = """
 __license__ = "LGPL"
 
 
-def aggregate_samples(campaign, average=False):
+def aggregate_samples(campaign, average=False, *args, **kwargs):
     """
     Aggregate the results of all completed simulations described by the
     Campaign.
@@ -56,7 +56,7 @@ def aggregate_samples(campaign, average=False):
 
     for run_id, run_info in runs.items():
 
-        if decoder.sim_complete(run_info=run_info):
+        if decoder.sim_complete(run_info=run_info, *args, **kwargs):
 
             runs[run_id]['completed'] = True
 
