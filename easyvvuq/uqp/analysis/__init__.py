@@ -1,4 +1,4 @@
-from .basicStats import basicStats
+from .basic_stats import BasicStats
 from .ensemble_boot import EnsembleBoot
 from .aggregate_samples import aggregate_samples
 
