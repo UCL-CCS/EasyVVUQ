@@ -202,6 +202,9 @@ class EnsembleBoot(BaseAnalysisUQP):
 
         results.to_csv(output_file, sep='\t')
 
+        log_name = f"{self.uqp_name}.json"
+        self.log_vars(log_name)
+
         if self.campaign is not None:
 
             state_file = os.path.join(output_dir, 'state_file.json')
@@ -209,12 +212,10 @@ class EnsembleBoot(BaseAnalysisUQP):
 
             if stat_func is not None:
                 self.campaign.record_analysis('ensemble_bootstrap',
-                                              self.stat_func.__name__,
                                               output_file
                                               )
             else:
                 self.campaign.record_analysis('ensemble_bootstrap',
-                                              None,
                                               output_file
                                               )
         return results, output_file

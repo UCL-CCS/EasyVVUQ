@@ -1,5 +1,6 @@
 import os
 import tempfile
+import json
 import easyvvuq.utils.json as json_utils
 from pandas import DataFrame
 from easyvvuq import Campaign
@@ -75,3 +76,10 @@ class BaseAnalysisUQP(object):
         if not self.output_dir:
 
             self.output_dir = tempfile.mkdtemp()
+
+    def log_vars(self, filename):
+
+        output_path = os.path.join(self.output_dir, filename)
+
+        with open(output_path, "w") as outfile:
+            json.dump(self.__dict__, outfile, indent=4, default=jdefault)

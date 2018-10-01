@@ -57,3 +57,25 @@ def process_json(src):
             raise Exception(str(e) + reasoning)
 
     return json.load(json_stream)
+
+
+def jdefault(obj):
+    """
+    Create some default serializations for non-simple objects (to use in logging)
+
+    Parameters
+    ----------
+    obj
+
+    Returns
+    -------
+
+    """
+
+    if isinstance(obj, set):
+        return list(obj)
+
+    if callable(obj):
+        return obj.__str__()
+
+    return obj.__dict__
