@@ -171,7 +171,7 @@ class Campaign:
 
         else:
 
-            campaign_dir = tempfile.mkdtemp(prefix='EasyVVUQ_Campaign',
+            campaign_dir = tempfile.mkdtemp(prefix='EasyVVUQ_Campaign_',
                                             dir='.')
             print(f"Creating Campaign directory: {self.campaign_dir}")
             self.campaign_dir = campaign_dir
