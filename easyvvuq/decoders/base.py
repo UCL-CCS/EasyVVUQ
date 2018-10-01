@@ -41,6 +41,7 @@ class BaseDecoder(object):
     def __init__(self, *args, **kwargs):
 
         self.output_type = OutputType('sample')
+        self.output_columns = []
 
     def sim_complete(self, run_info={}, *args, **kwargs):
         raise NotImplementedError

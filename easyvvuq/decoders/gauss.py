@@ -34,6 +34,7 @@ class GaussDecoder(BaseDecoder):
         super().__init__(*args, **kwargs)
 
         self.output_type = OutputType('sample')
+        self.output_columns = ['Value']
 
     @staticmethod
     def _get_output_path(run_info={}):
