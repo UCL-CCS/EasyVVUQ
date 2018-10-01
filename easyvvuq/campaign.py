@@ -312,10 +312,10 @@ class Campaign:
         # Validate:
         # Check if parameter names match those already known for this app
         for param in new_run.keys():
-            if param not in self.params_info.keys():
+            if param not in self.params_info.keys() and param != 'completed':
 
-                reasoning = (f"dict passed to add_run() contains extra {param} "
-                             f"parameter which is not a known parameter name "
+                reasoning = (f"dict passed to add_run() contains extra parameter, "
+                             f"{param}, which is not a known parameter name "
                              f"of this Campaign.")
 
                 raise RuntimeError(reasoning)
@@ -386,7 +386,6 @@ class Campaign:
 
         # Get application info block and runs block
         runs = self.runs
-        runs_dir = self.runs_dir
 
         # Get application encoder to use
         encoder = self.encoder
@@ -396,9 +395,10 @@ class Campaign:
                                'encoder in campaign')
 
         # Build a temp directory to store run files (unless it already exists)
-        if not runs_dir:
+        if not self.runs_dir:
 
-            runs_dir = os.path.join(self.campaign_dir, 'runs')
+            self.runs_dir = os.path.join(self.campaign_dir, 'runs')
+            runs_dir = self.runs_dir
             if os.path.exists(runs_dir):
                 raise RuntimeError(f"Cannot create a runs directory to populate, as it already exists: {runs_dir}")
             os.makedirs(runs_dir)
@@ -406,7 +406,7 @@ class Campaign:
 
         for run_id, run_data in runs.items():
             # Make run directory
-            target_dir = os.path.join(runs_dir, run_id)
+            target_dir = os.path.join(self.runs_dir, run_id)
             # TODO: Should we check if the run has been created?
             runs[run_id]['run_dir'] = 'target_dir'
             os.makedirs(target_dir)
@@ -465,3 +465,35 @@ class Campaign:
 
         return unique
 
+    def apply_for_each_run(self, func):
+        """
+        For each run in this Campaign's run list, apply the specified function
+
+        Parameters
+        ----------
+        func : function
+            The function to be applied to each run directory. func() will
+            be called with the run directory path as its only argument.
+        Returns
+        -------
+        """
+
+        if "runs_dir" not in self.app_info.keys():
+
+            print(self.app_info)
+
+            raise RuntimeError("Missing 'runs_dir' key (Application info must "
+                               "include runs directory path).")
+        runs_dir = self.app_info["runs_dir"]
+
+        # Loop through all runs in this campaign
+        run_ids = self.runs.keys()
+        for run_id in run_ids:
+            dir_name = os.path.join(runs_dir, run_id)
+            print("Applying " + func.__name__ + " to " + dir_name + "...")
+
+            # Run user-specified function on this directory, and store result
+            # back into the Campaign object (if there is a result returned)
+            result = func(dir_name)
+            if result is not None:
+                self.add_run_result(run_id, result)
