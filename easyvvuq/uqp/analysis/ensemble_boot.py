@@ -152,15 +152,19 @@ class EnsembleBoot(BaseAnalysisUQP):
 
                     self.data_frame = pd.read_csv(data_src['files'][0], sep='\t')
 
-        if self.campaign is not None and not params_cols:
+        self.value_cols = value_cols
 
-            self.params_cols = list(self.campaign.params_info.keys())
+        if self.campaign is not None:
+
+            if not params_cols:
+                self.params_cols = list(self.campaign.params_info.keys())
+
+            self.value_cols = self.campaign.decoder.output_columns
 
         else:
 
             self.params_cols = params_cols
 
-        self.value_cols = value_cols
         self.stat_func = stat_func
         self.alpha = alpha
         self.sample_size = sample_size
