@@ -408,7 +408,7 @@ class Campaign:
             # Make run directory
             target_dir = os.path.join(self.runs_dir, run_id)
             # TODO: Should we check if the run has been created?
-            runs[run_id]['run_dir'] = 'target_dir'
+            runs[run_id]['run_dir'] = target_dir
             os.makedirs(target_dir)
 
             encoder.encode(params=run_data, target_dir=target_dir)
