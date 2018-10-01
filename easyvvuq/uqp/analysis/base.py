@@ -43,7 +43,10 @@ class BaseAnalysisUQP(object):
 
     """
 
-    def __init__(self, data_src, uqp_name= '', output_dir=None, *args, **kwargs):
+    def __init__(self, data_src, uqp_name='uqp_base',
+                 output_dir=None, *args, **kwargs):
+
+        self.uqp_name = uqp_name
 
         self.campaign = None
 
@@ -51,7 +54,7 @@ class BaseAnalysisUQP(object):
         self.data = None
 
         self.output_dir = output_dir
-
+        self.output_file = None
         self.output_type = None
 
         if isinstance(data_src, Campaign):
@@ -77,9 +80,23 @@ class BaseAnalysisUQP(object):
 
             self.output_dir = tempfile.mkdtemp()
 
-    def log_vars(self, filename):
+    def log_run(self):
 
-        output_path = os.path.join(self.output_dir, filename)
+        output_dir = self.output_dir
+        filename = f"{self.uqp_name}.json"
 
-        with open(output_path, "w") as outfile:
-            json.dump(self.__dict__, outfile, indent=4, default=jdefault)
+        log_path = os.path.join(output_dir, filename)
+
+        with open(log_path, "w") as outfile:
+            json.dump(self.__dict__, outfile, indent=4, default=json_utils.jdefault)
+
+        if self.campaign is not None:
+
+            state_file = os.path.join(output_dir, 'state_file.json')
+            self.campaign.save_state(state_file)
+
+            self.campaign.record_analysis('ensemble_bootstrap',
+                                          self.output_file,
+                                          log_path,
+                                          state_file
+                                          )

@@ -135,10 +135,8 @@ class EnsembleBoot(BaseAnalysisUQP):
                  pivotal=False, stat_name='boot',
                  *args, **kwargs):
 
-        self.uqp_name = 'ensemble_boot'
-
         # Handles creation of `self.data_src` attribute (dict)
-        super().__init__(data_src, uqp_name=self.uqp_name, *args, **kwargs)
+        super().__init__(data_src, uqp_name='ensemble_boot', *args, **kwargs)
 
         data_src = self.data_src
 
@@ -201,21 +199,8 @@ class EnsembleBoot(BaseAnalysisUQP):
                                      stat_name=stat_name)
 
         results.to_csv(output_file, sep='\t')
+        self.output_file = output_file
 
-        log_name = f"{self.uqp_name}.json"
-        self.log_vars(log_name)
+        self.log_run()
 
-        if self.campaign is not None:
-
-            state_file = os.path.join(output_dir, 'state_file.json')
-            self.campaign.save_state(state_file)
-
-            if stat_func is not None:
-                self.campaign.record_analysis('ensemble_bootstrap',
-                                              output_file
-                                              )
-            else:
-                self.campaign.record_analysis('ensemble_bootstrap',
-                                              output_file
-                                              )
         return results, output_file

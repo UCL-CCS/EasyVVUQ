@@ -453,9 +453,16 @@ class Campaign:
         else:
             self._vars[param_name] = dist
 
-    def record_analysis(self, primitive_name, settings, output_file):
+    def record_analysis(self, primitive, output_file, log_file, state_file):
 
-        self._analysis_uqps.append((primitive_name, settings, output_file))
+        info = {
+                'primitive': primitive,
+                'output': output_file,
+                'log': log_file,
+                'state': state_file,
+               }
+
+        self._analysis_uqps.append(info)
 
     def unique_runs(self):
         """
