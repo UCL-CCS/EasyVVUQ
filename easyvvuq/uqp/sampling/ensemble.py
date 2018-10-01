@@ -52,7 +52,7 @@ def add_replicas(campaign, selection={}, replicates=2):
                 new_reps = replicates - n_reps
 
                 for rep_no in range(new_reps):
-                    campaign.add_run(copy_info)
+                    campaign.add_run(dict(copy_info))
                     reps_made = True
 
     if reps_made:
