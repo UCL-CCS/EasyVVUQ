@@ -135,8 +135,10 @@ class EnsembleBoot(BaseAnalysisUQP):
                  pivotal=False, stat_name='boot',
                  *args, **kwargs):
 
+        self.uqp_name = 'ensemble_boot'
+
         # Handles creation of `self.data_src` attribute (dict)
-        super().__init__(data_src, *args, **kwargs)
+        super().__init__(data_src, uqp_name=self.uqp_name, *args, **kwargs)
 
         data_src = self.data_src
 

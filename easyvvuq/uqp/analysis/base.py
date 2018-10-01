@@ -42,7 +42,7 @@ class BaseAnalysisUQP(object):
 
     """
 
-    def __init__(self, data_src, output_dir=None, *args, **kwargs):
+    def __init__(self, data_src, uqp_name= '', output_dir=None, *args, **kwargs):
 
         self.campaign = None
 
@@ -62,7 +62,8 @@ class BaseAnalysisUQP(object):
             if not self.output_dir:
 
                 analysis_path = os.path.join(self.campaign.campaign_dir, 'analysis')
-                self.output_dir = tempfile.mkdtemp(dir=analysis_path)
+                self.output_dir = tempfile.mkdtemp(prefix=uqp_name + '_',
+                                                   dir=analysis_path)
 
         elif isinstance(data_src, dict):
             self.data_src = data_src
