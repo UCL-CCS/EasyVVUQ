@@ -494,7 +494,4 @@ class Campaign:
             print("Applying " + func.__name__ + " to " + dir_name + "...")
 
             # Run user-specified function on this directory, and store result
-            # back into the Campaign object (if there is a result returned)
-            result = func(dir_name)
-            if result is not None:
-                self.add_run_result(run_id, result)
+            func(dir_name)
