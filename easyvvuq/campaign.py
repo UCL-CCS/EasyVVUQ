@@ -434,6 +434,10 @@ class Campaign:
         else:
             self._vars[param_name] = dist
 
+    def record_analysis(self, primitive_name, settings, output_file):
+
+        self._analysis_uqps.append((primitive_name, settings, output_file))
+
     def unique_runs(self):
         """
         Check the `runs` list to find which are executed for unique parameters
