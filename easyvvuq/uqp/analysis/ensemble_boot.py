@@ -74,7 +74,7 @@ def confidence_interval(dist, value, alpha, pivotal=False):
 
 def bootstrap(data, stat_func=None, alpha=0.05,
               sample_size=None, n_samples=1000,
-              pivotal= False):
+              pivotal=False):
 
     stat = data.apply(stat_func)
 
@@ -100,26 +100,26 @@ def ensemble_bootstrap(data, params_cols=[], value_cols=[],
     agg_funcs = {}
 
     if not value_cols:
-        value_cols = [x for x in data.columns if x not in params_cols]
+        value_cols = [x for x in data.columns if x not in params_cols + ['run_id', 'completed']]
+
+    if stat_func is None:
+        stat_func = np.mean
 
     for col in value_cols:
         agg_funcs[col] = lambda x: bootstrap(x, stat_func=stat_func, alpha=alpha,
                                              sample_size=sample_size, n_samples=n_samples,
                                              pivotal=pivotal)
 
-    if stat_func is None:
-        stat_func = np.mean
-
     grouped_data = data.groupby(params_cols)
 
     # Apply bootstrapping to all value columns selected
     # Note results come a tuple per cell
-    grouped_data.agg(agg_funcs)
+    results = grouped_data.agg(agg_funcs)
 
     outputs = [stat_name, 'high', 'low']
 
     # Split out tuples in each cell and provide sensible naming
-    results = pd.concat({col: grouped_data[col].apply(
+    results = pd.concat({col: results[col].apply(
                                  lambda cell: pd.Series(cell, index=outputs)
                               )
                          for col in value_cols}, axis=1)
@@ -138,9 +138,11 @@ class EnsembleBoot(BaseAnalysisUQP):
         # Handles creation of `self.data_src` attribute (dict)
         super().__init__(data_src, *args, **kwargs)
 
-        if self.data_src:
+        data_src = self.data_src
 
-            if 'files' not in data_src:
+        if data_src:
+
+            if 'files' in data_src:
 
                 if len(data_src['files']) != 1:
 
@@ -148,9 +150,16 @@ class EnsembleBoot(BaseAnalysisUQP):
 
                 else:
 
-                    self.data_frame = pd.from_csv(self.data_src['files'][0], sep='\t')
+                    self.data_frame = pd.read_csv(data_src['files'][0], sep='\t')
 
-        self.params_cols = params_cols
+        if self.campaign is not None and not params_cols:
+
+            self.params_cols = list(self.campaign.params_info.keys())
+
+        else:
+
+            self.params_cols = params_cols
+
         self.value_cols = value_cols
         self.stat_func = stat_func
         self.alpha = alpha
@@ -179,13 +188,13 @@ class EnsembleBoot(BaseAnalysisUQP):
 
         output_file = os.path.join(output_dir, 'ensemble_boot.tsv')
 
-        results = self.ensemble_bootstrap(data_frame, params_cols=params_cols,
-                                          value_cols=value_cols, stat_func=stat_func,
-                                          alpha=alpha, sample_size=sample_size,
-                                          n_samples=n_boot_samples, pivotal=pivotal,
-                                          stat_name=stat_name)
+        results = ensemble_bootstrap(data_frame, params_cols=params_cols,
+                                     value_cols=value_cols, stat_func=stat_func,
+                                     alpha=alpha, sample_size=sample_size,
+                                     n_samples=n_boot_samples, pivotal=pivotal,
+                                     stat_name=stat_name)
 
-        results.DataFrame.to_csv(output_file, sep='\t')
+        results.to_csv(output_file, sep='\t')
 
         if self.campaign is not None:
 
@@ -194,9 +203,12 @@ class EnsembleBoot(BaseAnalysisUQP):
 
             if stat_func is not None:
                 self.campaign.record_analysis('ensemble_bootstrap',
-                                              self.stat_func.__name__
+                                              self.stat_func.__name__,
+                                              output_file
                                               )
             else:
                 self.campaign.record_analysis('ensemble_bootstrap',
-                                              None
+                                              None,
+                                              output_file
                                               )
+        return results, output_file
