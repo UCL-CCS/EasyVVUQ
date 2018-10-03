@@ -34,9 +34,15 @@ __license__ = "LGPL"
 class Campaign:
     """Campaign coordinates information for a series of related runs
 
-    The `app_info` dictionary needs to contain either a `template` filename or
-    `template_txt` string as the source of the application input template.
-    Values from the `params` dict are then substituted in by the `encode` method.
+    Campaign stores information about the practical elements of creating
+    simulation runs the `app_info` dictionary and information defining the
+    potential values for parameters and settings in `params_info`. The
+    information from both is combined to form inputs to simulation codes via
+    an `encoder`.
+
+    Sampling Primitives need to be applied to the object to specify the runs to
+    be included in the simulation 'campaign'. Information on each run is stored
+    in the `runs` dictionary.
 
     Parameters
     ----------
