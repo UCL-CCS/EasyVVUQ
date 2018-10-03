@@ -154,6 +154,15 @@ class Campaign:
             self.decoder = decoder_class_(self.app_info)
 
     def _setup_campaign_dir(self):
+        """
+        Check if a 'campaign_dir' is found in `self.app_info`. If so use this as
+        top level directory for recording run and analysis information. If no
+        directory provided or find it does not exist yet then create.
+
+        Returns
+        -------
+
+        """
 
         app_info = self.app_info
 
@@ -435,6 +444,17 @@ class Campaign:
 
     def record_sampling(self, primitive_name, primitive_args, success):
         """
+        Add information about sampling primitives applied to this Campaign to
+        `self._sample_uqps`.
+
+        Parameters
+        ----------
+        primitive_name:     str
+            Name of the primitive applied.
+        primitive_args:     dictionary
+            Arguments passed to the primitive.
+        success:            bool
+            Did the primitive run successfully.
 
         Returns
         -------
@@ -453,7 +473,30 @@ class Campaign:
         else:
             self._vars[param_name] = dist
 
-    def record_analysis(self, primitive, output_file, output_type, log_file, state_file):
+    def record_analysis(self, primitive, output_file, output_type,
+                        log_file, state_file):
+        """
+        Add information about analysis primitives applied to this campaign to
+        `self._analysis_uqps`.
+
+        Parameters
+        ----------
+        primitive:      str
+            Name of analysis primitive applied.
+        output_file:    str
+            Path to file containing output from the analysis.
+        output_type:    str or `uq.constants.OutputType`
+            Class of data output by analysis.
+        log_file:       str
+            Path to JSON logfile produced by primitive.
+        state_file:     str
+            Path to Campaign state file logged by primitive.
+            Provides information on the state of runs when executed.
+
+        Returns
+        -------
+
+        """
 
         if isinstance(output_type, uq.constants.OutputType):
             output_type = output_type.value
