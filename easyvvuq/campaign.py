@@ -49,7 +49,7 @@ class Campaign:
         Counter keeping track of what order runs were added
     encoder
         Encoder for the application input files. Initialized to None and
-        with an encoder class from `uq.app_encoders` and inizialized
+        with an encoder class from `uq.app_encoders` and initialized
         dynamically.
 
     """
