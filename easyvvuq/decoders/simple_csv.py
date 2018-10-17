@@ -73,6 +73,6 @@ class SimpleCSV(BaseDecoder):
             raise RuntimeError('A value for "names" must be '
                                'specified for the simple encoder')
 
-        data = pd.read_csv(out_path, names=self.output_columns)
+        data = pd.read_csv(out_path, names=self.output_columns, header=0)
 
         return data

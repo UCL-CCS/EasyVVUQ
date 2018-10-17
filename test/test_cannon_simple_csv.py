@@ -40,13 +40,11 @@ my_campaign.apply_for_each_run(uq.execute_local)
 
 output_filename = 'output.csv'
 output_columns = ['Dist', 'lastvx', 'lastvy']
-header_row = 0
 
 # Aggregate results from all runs
 uq.uqp.analysis.aggregate_samples(my_campaign,
                                   output_filename=output_filename,
-                                  output_columns=output_columns,
-                                  header=header_row)
+                                  output_columns=output_columns)
 
 # Apply ensemble bootstrap UQP
 stats = uq.uqp.analysis.BasicStats(my_campaign, value_cols=output_columns)
