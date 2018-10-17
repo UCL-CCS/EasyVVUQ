@@ -63,14 +63,16 @@ class SimpleCSV(BaseDecoder):
 
     def parse_sim_output(self, run_info={}, *args, **kwargs):
 
-        out_path = self._get_output_path(run_info)
+        print(kwargs)
+        out_path = self._get_output_path(run_info, *args, **kwargs)
+        print(kwargs)
 
         if 'output_columns' in kwargs:
             self.output_columns = kwargs['output_columns']
         else:
-            raise RuntimeError('A value for "output_columns" must be '
+            raise RuntimeError('A value for "names" must be '
                                'specified for the simple encoder')
 
-        data = pd.read_csv(out_path, *args, **kwargs)
+        data = pd.read_csv(out_path, names=self.output_columns)
 
         return data

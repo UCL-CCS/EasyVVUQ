@@ -45,7 +45,7 @@ header_row = 0
 # Aggregate results from all runs
 uq.uqp.analysis.aggregate_samples(my_campaign,
                                   output_filename=output_filename,
-                                  names=output_columns,
+                                  output_columns=output_columns,
                                   header=header_row)
 
 # Apply ensemble bootstrap UQP

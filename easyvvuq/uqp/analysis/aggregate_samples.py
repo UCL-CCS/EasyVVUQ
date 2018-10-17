@@ -60,7 +60,7 @@ def aggregate_samples(campaign, average=False, *args, **kwargs):
 
             runs[run_id]['completed'] = True
 
-            run_data = decoder.parse_sim_output(run_info=run_info)
+            run_data = decoder.parse_sim_output(run_info=run_info, *args, **kwargs)
 
             if average:
 
