@@ -1,5 +1,5 @@
-from . import sampling
-from . import analysis
+from .random import random_sampler
+from .ensemble import add_replicas
 
 __copyright__ = """
 

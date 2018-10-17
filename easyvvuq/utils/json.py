@@ -1,4 +1,6 @@
 import json
+import types
+from easyvvuq.constants import OutputType
 
 __copyright__ = """
 
@@ -57,3 +59,31 @@ def process_json(src):
             raise Exception(str(e) + reasoning)
 
     return json.load(json_stream)
+
+
+def jdefault(obj):
+    """
+    Create some default serializations for non-simple objects (to use in logging)
+
+    Parameters
+    ----------
+    obj
+
+    Returns
+    -------
+
+    """
+
+    if isinstance(obj, set):
+        return list(obj)
+
+    if isinstance(obj, types.GeneratorType):
+        return obj.__name__
+
+    if callable(obj):
+        return obj.__str__
+
+    if isinstance(obj, OutputType):
+        return obj.value
+
+    return obj.__dict__

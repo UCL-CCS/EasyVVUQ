@@ -1,10 +1,6 @@
-import os,sys
-import easyvvuq as uq
+import sys
 import itertools
-import json
-import collections
 import numpy as np
-from pprint import pprint
 
 __copyright__ = """
 
@@ -29,20 +25,22 @@ __copyright__ = """
 __license__ = "LGPL"
 
 
-def basicUQP(campaign):
+def range_float(param, start, end, incr):
 
-    # TODO: Change to use numpy linspace
-    def range_float(param, start, end, incr):
-        i = 0
-        r = start
-        while r < end:
-            r = start + i * incr
-            i += 1
-            yield (param, r)
+    i = 0
+    r = start
+    while r < end:
+        r = start + i * incr
+        i += 1
+        yield (param, r)
 
-    def normal_dist(param, mean, sigma, num_samples):
-        for pick in np.random.normal(mean, sigma, num_samples):
-            yield (param, pick)
+
+def normal_dist(param, mean, sigma, num_samples):
+    for pick in np.random.normal(mean, sigma, num_samples):
+        yield (param, pick)
+
+
+def random_sampler(campaign):
 
     params = campaign.params_info
 
@@ -51,16 +49,17 @@ def basicUQP(campaign):
     gens = []
     for key in params.keys():
         value = params[key]
-        function, args = value[0], value[1]
-        if function == "static":
+        func, args = value[0], value[1]
+        if func == "static":
             static_params.append((key, args))
         else:
-            if function == "range":
+            if func == "range":
+                # TODO: Change to use numpy linspace
                 gens.append(range_float(key, args[0], args[1], args[2]))
-            elif function == "normal":
+            elif func == "normal":
                 gens.append(normal_dist(key, args[0], args[1], args[2]))
             else:
-                sys.exit("Unrecognised function " + function + " for parameter " + key)
+                sys.exit("Unrecognised function " + func + " for parameter " + key)
 
     # Combine all the iterables/generators into one
     mega_iter = itertools.product(*gens)
@@ -78,8 +77,15 @@ def basicUQP(campaign):
         # Add run to Application's run list
         campaign.add_run(run_dict)
 
-# If module is run as standalone script, read in application/params info from json file, then write resultant runs to specified json file
+    campaign.sample_uqps.append(('random_sampler'))
+
+
 if __name__ == "__main__":
+    """
+    If module is run as standalone script, read in application/params info from 
+    json file, then write resultant runs to specified json file
+    """
+
     if len(sys.argv) != 3:
         sys.exit("Usage: python3 Basic.py INPUT_JSON OUTPUT_JOBS_JSON")
         infname = sys.argv[1]

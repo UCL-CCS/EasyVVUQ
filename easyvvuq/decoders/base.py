@@ -1,5 +1,4 @@
-from . import sampling
-from . import analysis
+from easyvvuq import OutputType
 
 __copyright__ = """
 
@@ -22,3 +21,30 @@ __copyright__ = """
 
 """
 __license__ = "LGPL"
+
+
+class BaseDecoder(object):
+    """Baseclass for all EasyVVUQ decoders.
+
+    Skeleton decoder which establishes the format and provides the basis of our
+    contract - <need to define contract>.
+
+
+    Parameters
+    ----------
+
+    Attributes
+    ----------
+
+    """
+
+    def __init__(self, *args, **kwargs):
+
+        self.output_type = OutputType('sample')
+        self.output_columns = []
+
+    def sim_complete(self, run_info={}, *args, **kwargs):
+        raise NotImplementedError
+
+    def parse_sim_output(self, run_info={}, *args, **kwargs):
+        raise NotImplementedError

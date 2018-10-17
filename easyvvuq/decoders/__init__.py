@@ -1,5 +1,4 @@
-from . import sampling
-from . import analysis
+from .base import BaseDecoder
 
 __copyright__ = """
 

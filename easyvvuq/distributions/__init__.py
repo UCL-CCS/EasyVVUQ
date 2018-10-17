@@ -1,5 +1,4 @@
-from . import sampling
-from . import analysis
+from .distributions import normal, uniform, custom_histogram
 
 __copyright__ = """
 

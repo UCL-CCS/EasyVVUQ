@@ -1,7 +1,7 @@
 {
 "app": {
   "input_encoder":  "generic_template",
-  "output_decoder": "cannon",
+  "output_decoder": "csv",
   "template":       "templates/cannonsim.template",
   "input_filename": "input.cannon",
   "run_cmd":        "test_apps/cannonsim/bin/cannonsim input.cannon output.csv"

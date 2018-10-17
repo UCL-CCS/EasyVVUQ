@@ -1,4 +1,3 @@
-import os, sys
 import easyvvuq as uq
 
 __copyright__ = """
@@ -25,7 +24,7 @@ __license__ = "LGPL"
 
 
 # Get app and param info about cannonsim
-my_campaign = uq.Campaign(state_filename="test_input/test_cannonsim.json")
+my_campaign = uq.Campaign(state_filename="test_input/test_cannonsim_simple_csv.json")
 
 # Specify which parameters can vary, and their (prior) distributions.
 my_campaign.vary_param("angle",    dist=uq.distributions.uniform(0.0, 1.0))
@@ -39,11 +38,16 @@ uq.uqp.sampling.random_sampler(my_campaign, num_samples=15)
 my_campaign.populate_runs_dir()
 my_campaign.apply_for_each_run(uq.execute_local)
 
+output_filename = 'output.csv'
+output_columns = ['Dist', 'lastvx', 'lastvy']
+
 # Aggregate results from all runs
-uq.uqp.analysis.aggregate_samples(my_campaign)
+uq.uqp.analysis.aggregate_samples(my_campaign,
+                                  output_filename=output_filename,
+                                  output_columns=output_columns)
 
 # Apply ensemble bootstrap UQP
-stats = uq.uqp.analysis.BasicStats(my_campaign)
+stats = uq.uqp.analysis.BasicStats(my_campaign, value_cols=output_columns)
 results, output_file = stats.run_analysis()
 
 # Output

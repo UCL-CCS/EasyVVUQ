@@ -1,5 +1,3 @@
-from . import sampling
-from . import analysis
 
 __copyright__ = """
 
@@ -22,3 +20,18 @@ __copyright__ = """
 
 """
 __license__ = "LGPL"
+
+
+def random_sampler(campaign, num_samples=1):
+
+    all_vars = campaign.vars
+
+    for i in range(num_samples):
+        run_dict = {}
+        for param_name, dist in all_vars.items():
+            run_dict[param_name] = next(dist)
+        campaign.add_run(run_dict)
+
+    campaign.record_sampling('random_sampler',
+                             {'num_samples': num_samples},
+                             True)

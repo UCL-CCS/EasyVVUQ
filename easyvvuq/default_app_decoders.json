@@ -1,0 +1,14 @@
+{
+  "gauss": {
+    "module_location": "easyvvuq.decoders.gauss",
+    "decoder_name": "GaussDecoder"
+  },
+  "cannon": {
+    "module_location": "easyvvuq.decoders.cannon",
+    "decoder_name": "CannonDecoder"
+  },
+    "csv": {
+    "module_location": "easyvvuq.decoders.simple_csv",
+    "decoder_name": "SimpleCSV"
+  }
+}
