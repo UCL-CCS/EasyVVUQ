@@ -28,6 +28,7 @@ my_campaign = uq.Campaign(state_filename="test_input/test_cannonsim_simple_csv.j
 
 # Specify which parameters can vary, and their (prior) distributions.
 my_campaign.vary_param("angle",    dist=uq.distributions.uniform(0.0, 1.0))
+my_campaign.vary_param("height",   dist=uq.distributions.uniform_integer(0, 10))
 my_campaign.vary_param("velocity", dist=uq.distributions.normal(10.0, 1.0))
 my_campaign.vary_param("mass",     dist=uq.distributions.custom_histogram("test_input/mass_distribution.csv"))
 
