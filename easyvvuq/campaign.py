@@ -126,9 +126,7 @@ class Campaign:
             raise RuntimeError("State file 'app' block should contain "
                                "'input_encoder' to allow lookup of required encoder")
         else:
-
             input_encoder = input_json['app']['input_encoder']
-
             if input_encoder not in uq.app_encoders:
                 raise RuntimeError(f"No encoder found. Looking for "
                                    f"'input_encoder': {input_encoder}")

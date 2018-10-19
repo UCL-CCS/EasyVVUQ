@@ -28,6 +28,10 @@ __copyright__ = """
 """
 __license__ = "LGPL"
 
+def getCustomTemplate(template_txt, custom_delimiter='$'):
+    class CustomTemplate(Template):
+        delimiter = custom_delimiter
+    return CustomTemplate(template_txt)
 
 class GenericEncoder(BaseEncoder):
     """GenericEncoder for substituting values into application template input.
@@ -54,31 +58,30 @@ class GenericEncoder(BaseEncoder):
 
         # Handles creation of `self.app_info` attribute (dicts)
         super().__init__(app_info, *args, **kwargs)
-
         app_info = self.app_info
 
-        if 'template' in app_info:
+        # Check if an encoder delimiter is specified in the app_info. Else use $ by default.
+        self.encoder_delimiter = '$'
+        if 'encoder_delimiter' in app_info:
+            self.encoder_delimiter = app_info['encoder_delimiter']
 
+        # Look for the template text ( specified either in a file, or in app_info['template_txt'] )
+        if 'template' in app_info:
             with open(app_info['template'], 'r') as template_file:
                 template_txt = template_file.read()
-
-            self.template = Template(template_txt)
-
+            self.template = getCustomTemplate(template_txt, custom_delimiter=self.encoder_delimiter)
         elif 'template_txt' in app_info:
-
-            self.template = Template(app_info['template_txt'])
-
+            self.template = getCustomTemplate(app_info['template_txt'], custom_delimiter=self.encoder_delimiter)
         else:
-
             raise RuntimeError('Template required in "app" specification input to GenericEncoder')
 
+        # Check what name to give the output of this encoder
         if 'input_filename' in app_info:
             self.target_filename = app_info['input_filename']
         else:
             self.target_filename = 'app_input.txt'
 
         if 'run_cmd' in app_info:
-
             run_cmd = app_info['run_cmd']
 
             # Need to expand users, get absolute path and derefernce symlinks
@@ -89,6 +92,7 @@ class GenericEncoder(BaseEncoder):
             self.local_run_cmd = None
 
         self.app_input_txt = None
+
 
     def encode(self, params={}, target_dir=''):
         """Substitutes `params` into a template application input, saves in target_dir
@@ -106,13 +110,10 @@ class GenericEncoder(BaseEncoder):
             raise RuntimeError('No target directory specified to encoder')
 
         if not hasattr(params, 'items'):
-
             params = json_utils.process_json(params)
 
         str_params = {}
-
         for key, value in params.items():
-
             str_params[key] = str(value)
 
         template = self.template
@@ -121,11 +122,8 @@ class GenericEncoder(BaseEncoder):
         local_run_cmd = self.local_run_cmd
 
         try:
-
             app_input_txt = template.substitute(str_params)
-
         except KeyError as e:
-
             # TODO: Should we pass str_params here?
             self._log_substitution_failure(params, e)
 
@@ -140,22 +138,15 @@ class GenericEncoder(BaseEncoder):
             fp.write(local_run_cmd)
 
     def _log_substitution_failure(self, params, exception):
-
         app_info = self.app_info
-
         if 'template_txt' in app_info:
-
             fle, temp_filename = tempfile.mkstemp(text=True)
 
             with open(temp_filename, 'w') as temp_file:
-
                 for line in app_info['template_txt']:
                     temp_file.write(line)
-
             reasoning = f"\nFailed substituting into template {temp_filename}.\n"
-
         else:
-
             reasoning = f"\nFailed substituting into template {app_info['template']}.\n"
 
         fle, temp_filename = tempfile.mkstemp(text=True)
@@ -166,6 +157,7 @@ class GenericEncoder(BaseEncoder):
 
         print(reasoning)
         raise KeyError(exception)
+
 
 
 if __name__ == "__main__":

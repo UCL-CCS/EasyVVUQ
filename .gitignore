@@ -1,4 +1,5 @@
 __pycache__
+*.pyc
 Runs_EASYVVUQ_*
 out_cannonsim.json
 out_gauss.json
