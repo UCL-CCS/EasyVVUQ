@@ -1,3 +1,8 @@
+# First make sure python version is 3.6+
+import sys
+print(sys.version_info)
+assert sys.version_info >= (3,6)
+
 import json
 from .constants import OutputType
 from .campaign import Campaign
@@ -29,9 +34,7 @@ __copyright__ = """
 """
 __license__ = "LGPL"
 
-
 DEFAULT_ENCODERS = pkg_resources.resource_filename(__name__, 'default_app_encoders.json')
-
 with open(DEFAULT_ENCODERS) as fin:
     app_encoders = json.load(fin)
 
