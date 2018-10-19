@@ -1,7 +1,7 @@
 # First make sure python version is 3.6+
 import sys
 print(sys.version_info)
-assert sys.version_info >= (3,6)
+assert sys.version_info >= (3, 6)
 
 import json
 from .constants import OutputType
