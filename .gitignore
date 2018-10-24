@@ -1,6 +1,10 @@
 __pycache__
 *.pyc
-Runs_EASYVVUQ_*
 out_cannonsim.json
 out_gauss.json
 test/test_apps/cannonsim/bin/
+EasyVVUQ_Campaign_*
+build/
+dist/
+easyvvuq.egg-info/
+.idea/
