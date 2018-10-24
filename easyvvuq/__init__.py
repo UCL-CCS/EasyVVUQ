@@ -8,7 +8,7 @@ from .constants import OutputType
 from .campaign import Campaign
 from .execute import execute_local
 from . import uqp
-from . import reader
+from . import collate
 from . import distributions
 import pkg_resources
 
