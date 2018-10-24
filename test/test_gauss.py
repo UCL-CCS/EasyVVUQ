@@ -35,7 +35,7 @@ my_campaign.populate_runs_dir()
 my_campaign.apply_for_each_run(uq.execute_local)
 
 # Aggregate results from all runs (averaging values for each run)
-uq.uqp.analysis.aggregate_samples(my_campaign, average=True)
+uq.collate.aggregate_samples(my_campaign, average=True)
 
 # Apply ensemble bootstrap UQP
 ensemble_boot = uq.uqp.analysis.EnsembleBoot(my_campaign)

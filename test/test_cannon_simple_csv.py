@@ -43,9 +43,9 @@ output_filename = 'output.csv'
 output_columns = ['Dist', 'lastvx', 'lastvy']
 
 # Aggregate results from all runs
-uq.uqp.analysis.aggregate_samples(my_campaign,
-                                  output_filename=output_filename,
-                                  output_columns=output_columns)
+uq.collate.aggregate_samples(my_campaign,
+                             output_filename=output_filename,
+                             output_columns=output_columns)
 
 # Apply ensemble bootstrap UQP
 stats = uq.uqp.analysis.BasicStats(my_campaign, value_cols=output_columns)

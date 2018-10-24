@@ -40,9 +40,9 @@ output_filename = 'output_replica.csv'
 output_columns = ['pe', 'temp', 'pres']
 
 # Aggregate results from all runs
-uq.uqp.analysis.aggregate_samples(my_campaign, average=True,
-                                  output_filename=output_filename,
-                                  output_columns=output_columns)
+uq.collate.aggregate_samples(my_campaign, average=True,
+                             output_filename=output_filename,
+                             output_columns=output_columns)
 
 # Apply ensemble bootstrap UQP
 stats = uq.uqp.analysis.BasicStats(my_campaign)
