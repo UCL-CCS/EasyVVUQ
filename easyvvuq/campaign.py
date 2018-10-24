@@ -60,7 +60,7 @@ class Campaign:
 
     """
 
-    def __init__(self, state_filename=None, *args, **kwargs):
+    def __init__(self, state_filename=None, workdir='./', *args, **kwargs):
 
         # Information needed to run application
         self._app_info = {}
@@ -79,6 +79,8 @@ class Campaign:
         self.run_number = 0
         self.encoder = None
         self.decoder = None
+
+        self.workdir = workdir
 
         if state_filename is not None:
             self.load_state(state_filename)
@@ -177,69 +179,52 @@ class Campaign:
         if 'campaign_dir' in app_info:
 
             campaign_dir = app_info['campaign_dir']
-
             if not os.path.exists(campaign_dir):
-
                 print(f"Notice: Campaign directory not found - creating {campaign_dir}")
-
                 try:
                     campaign_dir = str(campaign_dir)
                     os.makedirs(campaign_dir)
                 except IOError:
                     raise IOError(f"Unable to create campaign directory: {campaign_dir}")
-
         else:
-
             campaign_dir = tempfile.mkdtemp(prefix='EasyVVUQ_Campaign_',
-                                            dir='.')
+                                            dir=self.workdir)
             print(f"Creating Campaign directory: {campaign_dir}")
             self.campaign_dir = campaign_dir
 
         campaign_dir = self.campaign_dir
-
         for sub_dir in sub_dirs:
-
             sub_path = os.path.join(campaign_dir, sub_dir)
-
             if not os.path.isdir(sub_path):
-
                 if os.path.exists(sub_path):
                     raise RuntimeError(f"Unable to create sub path {sub_path}, "
                                        f"invalid campaign directory.")
-
                 os.makedirs(sub_path)
 
     @property
     def sample_uqps(self):
-
         return tuple(self._sample_uqps)
 
     @property
     def analysis_uqps(self):
-
         return tuple(self._analysis_uqps)
 
     @property
     def data(self):
-
         return self._data
 
     @data.setter
     def data(self, new_data):
-
         self._data = new_data
 
     @property
     def campaign_dir(self):
-
         if 'campaign_dir' not in self.app_info:
             return None
-
         return self._app_info['campaign_dir']
 
     @campaign_dir.setter
     def campaign_dir(self, path, force=False):
-
         if self.campaign_dir and not force:
 
             message = (f'Cannot set a new runs directory because there is one '
