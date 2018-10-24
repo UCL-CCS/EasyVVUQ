@@ -28,10 +28,12 @@ __copyright__ = """
 """
 __license__ = "LGPL"
 
+
 def getCustomTemplate(template_txt, custom_delimiter='$'):
     class CustomTemplate(Template):
         delimiter = custom_delimiter
     return CustomTemplate(template_txt)
+
 
 class GenericEncoder(BaseEncoder):
     """GenericEncoder for substituting values into application template input.
@@ -92,7 +94,6 @@ class GenericEncoder(BaseEncoder):
             self.local_run_cmd = None
 
         self.app_input_txt = None
-
 
     def encode(self, params={}, target_dir=''):
         """Substitutes `params` into a template application input, saves in target_dir
@@ -157,7 +158,6 @@ class GenericEncoder(BaseEncoder):
 
         print(reasoning)
         raise KeyError(exception)
-
 
 
 if __name__ == "__main__":
