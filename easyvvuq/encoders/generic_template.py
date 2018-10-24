@@ -86,7 +86,7 @@ class GenericEncoder(BaseEncoder):
         if 'run_cmd' in app_info:
             run_cmd = app_info['run_cmd']
 
-            # Need to expand users, get absolute path and derefernce symlinks
+            # Need to expand users, get absolute path and dereference symlinks
             local_run_cmd = os.path.realpath(os.path.expanduser(run_cmd))
 
             self.local_run_cmd = local_run_cmd
