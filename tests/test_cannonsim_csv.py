@@ -1,5 +1,6 @@
 import easyvvuq as uq
 import os
+import pytest
 
 __copyright__ = """
 
@@ -24,16 +25,16 @@ __copyright__ = """
 __license__ = "LGPL"
 
 
-def test_cannonsim_csv():
+def test_cannonsim_csv(tmpdir):
 
     # Params for testing
     input_json = "tests/cannonsim/test_input/test_cannonsim_csv.json"
-    output_json = "out_cannonsim.json"
+    output_json = os.path.join(tmpdir, "out_cannonsim.json")
     number_of_samples = 15
 
     assert( os.path.exists(input_json) )
 
-    my_campaign = uq.Campaign(state_filename=input_json)
+    my_campaign = uq.Campaign(state_filename=input_json, workdir=tmpdir)
 
     assert( my_campaign is not None )
     assert( "angle" in my_campaign.params_info )
@@ -83,4 +84,4 @@ def test_cannonsim_csv():
     assert( os.path.isfile(output_json) )
 
 if __name__ == "__main__":
-    test_cannonsim_csv()
+    test_cannonsim_csv("./tests/tmp/")
