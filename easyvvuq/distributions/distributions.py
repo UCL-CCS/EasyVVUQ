@@ -85,6 +85,26 @@ def uniform(min_val, max_val):
     while True:
         yield np.random.uniform(min_val, max_val)
 
+def uniform_integer(min_val, max_val):
+    """
+    Generator returning integer values picked from the specified uniform distribution
+
+    Parameters
+    ----------
+    min_val:    int
+        Minimum value covered by the distribution
+    max_val:    int
+        Maximum value covered by the distribution
+
+    Yields
+    -------
+    int
+        Number drawn from provided distribution
+
+    """
+    while True:
+        yield np.random.randint(min_val, max_val)
+
 
 def custom_histogram(filename):
     """

@@ -23,24 +23,26 @@ __copyright__ = """
 """
 __license__ = "LGPL"
 
-
 # Get app and param info about cannonsim
-my_campaign = uq.Campaign(state_filename="test_input/test_cannonsim.json")
+my_campaign = uq.Campaign(state_filename="test_input/test_lammps.json")
 
 # Specify which parameters can vary, and their (prior) distributions.
-my_campaign.vary_param("angle",    dist=uq.distributions.uniform(0.0, 1.0))
-my_campaign.vary_param("velocity", dist=uq.distributions.normal(10.0, 1.0))
-my_campaign.vary_param("mass",     dist=uq.distributions.custom_histogram("test_input/mass_distribution.csv"))
+my_campaign.vary_param("seed",    dist=uq.distributions.uniform_integer(0, 10000000))
 
 # Apply the randomSampler UQP, generating 15 runs
 uq.uqp.sampling.random_sampler(my_campaign, num_samples=15)
 
-# Execute and analyse
+# Populate runs dir and execute
 my_campaign.populate_runs_dir()
 my_campaign.apply_for_each_run(uq.execute_local)
 
+output_filename = 'output_replica.csv'
+output_columns = ['pe', 'temp', 'pres']
+
 # Aggregate results from all runs
-uq.collate.aggregate_samples(my_campaign)
+uq.collate.aggregate_samples(my_campaign, average=True,
+                             output_filename=output_filename,
+                             output_columns=output_columns)
 
 # Apply ensemble bootstrap UQP
 stats = uq.uqp.analysis.BasicStats(my_campaign)
@@ -48,4 +50,4 @@ results, output_file = stats.run_analysis()
 
 # Output
 print(my_campaign)
-my_campaign.save_state("out_cannonsim.json")
+my_campaign.save_state("out_lammps.json")

@@ -28,6 +28,7 @@ my_campaign = uq.Campaign(state_filename="test_input/test_cannonsim_simple_csv.j
 
 # Specify which parameters can vary, and their (prior) distributions.
 my_campaign.vary_param("angle",    dist=uq.distributions.uniform(0.0, 1.0))
+my_campaign.vary_param("height",   dist=uq.distributions.uniform_integer(0, 10))
 my_campaign.vary_param("velocity", dist=uq.distributions.normal(10.0, 1.0))
 my_campaign.vary_param("mass",     dist=uq.distributions.custom_histogram("test_input/mass_distribution.csv"))
 
@@ -42,9 +43,9 @@ output_filename = 'output.csv'
 output_columns = ['Dist', 'lastvx', 'lastvy']
 
 # Aggregate results from all runs
-uq.uqp.analysis.aggregate_samples(my_campaign,
-                                  output_filename=output_filename,
-                                  output_columns=output_columns)
+uq.collate.aggregate_samples(my_campaign,
+                             output_filename=output_filename,
+                             output_columns=output_columns)
 
 # Apply ensemble bootstrap UQP
 stats = uq.uqp.analysis.BasicStats(my_campaign, value_cols=output_columns)

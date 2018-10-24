@@ -1,0 +1,13 @@
+{
+"app": {
+  "input_encoder":  "generic_template",
+  "encoder_delimiter": "@",
+  "output_decoder": "csv",
+  "template":       "templates/in.CG.lammps.template",
+  "input_filename": "in.CG.lammps",
+  "run_cmd": "/usr/bin/lammps -i in.CG.lammps"
+  },
+"params": {
+  "seed":                {"type": "int", "min": "0", "max": "1000000", "default": "0"}
+  }
+}
