@@ -1,6 +1,5 @@
 import easyvvuq as uq
 import os
-import pytest
 
 __copyright__ = """
 
@@ -84,4 +83,4 @@ def test_cannonsim_csv(tmpdir):
     assert( os.path.isfile(output_json) )
 
 if __name__ == "__main__":
-    test_cannonsim_csv("./tests/tmp/")
+    test_cannonsim_csv("/tmp/")
