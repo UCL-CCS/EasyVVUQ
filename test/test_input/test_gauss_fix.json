@@ -1,0 +1,20 @@
+{
+    "app": {
+      "input_encoder":  "generic_template",
+      "output_decoder": "gauss",
+      "template":       "templates/gauss.template",
+      "input_filename": "gauss_in.json",
+      "run_cmd":        "test_apps/gauss/gauss_json.py gauss_in.json"
+    },
+    "fixtures": {
+      "bias1": {"type": "file", "path": "test_input/bias1.txt", "common": false, "exists_local": true, "target": "", "group": ""},
+      "bias2": {"type": "file", "path": "test_input/bias2.txt", "common": false, "exists_local": true, "target": "", "group": ""}
+    },
+    "params": {
+      "sigma":  {"type": "real", "min": "0.0", "max": "100000.0",   "default": "0.25"},
+      "mu":  {"type": "real", "min": "0.0", "max": "100000.0",   "default": "1"},
+      "num_steps":  {"type": "int", "min": "0", "max": "100000",   "default": "10"},
+      "out_file":  {"type": "str", "default": "output.csv"},
+      "bias": {"type": "fixture", "options": ["bias1", "bias2"], "default": "bias1"}
+    }
+}
