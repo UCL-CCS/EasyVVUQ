@@ -79,20 +79,3 @@ def random_sampler(campaign):
 
     campaign.sample_uqps.append(('random_sampler'))
 
-
-if __name__ == "__main__":
-    """
-    If module is run as standalone script, read in application/params info from 
-    json file, then write resultant runs to specified json file
-    """
-
-    if len(sys.argv) != 3:
-        sys.exit("Usage: python3 Basic.py INPUT_JSON OUTPUT_JOBS_JSON")
-        infname = sys.argv[1]
-        outfname = sys.argv[2]
-
-        app = uq.Application()
-        app.load_state(infname)
-
-        UQP_basic(app)
-        app.save_state(outfname)
