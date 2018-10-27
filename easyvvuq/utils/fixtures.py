@@ -66,9 +66,10 @@ class Fixture(object):
         self.campaign_dir = campaign_dir
         self.group = group
 
-    def copy_to_target(self):
 
-        target_path = self.target_path
+    def copy_to_target(self, run_id=None):
+
+        target_path = self.fixture_path(run_id=run_id)
 
         if self.common and self._common_copied:
             return
@@ -81,18 +82,18 @@ class Fixture(object):
         if self.common:
             self._common_copied = True
 
-    def target_path(self, run_id=None):
+    def fixture_path(self, run_id=None, depth_in_run=0):
 
         if not self.exists_local:
             return self.src_path
 
-        target_path = self.campaign_dir
+        fixture_path = self.campaign_dir
 
         if self.common:
-            target_path = os.path.join(target_path, 'common')
+            fixture_path = os.path.join(fixture_path, 'common')
 
             if self.group:
-                target_path = os.path.join(target_path, 'group')
+                fixture_path = os.path.join(fixture_path, 'group')
 
         else:
 
@@ -100,11 +101,14 @@ class Fixture(object):
                 raise RuntimeError(f"A run_id is needed to create target path "
                                    f"for the fixture {self.path}")
 
-            target_path = os.path.join(target_path, run_id)
+            fixture_path = os.path.join(fixture_path, run_id)
 
-        target_path = os.path.join(target_path, self.target)
+        fixture_path = os.path.join(fixture_path, self.target)
 
-        return target_path
+        for level in range(depth_in_run):
+            fixture_path = os.path.join('..', fixture_path)
+
+        return fixture_path
 
 
 
