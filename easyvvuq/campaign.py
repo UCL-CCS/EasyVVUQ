@@ -350,15 +350,28 @@ class Campaign:
 
                 raise RuntimeError(reasoning)
 
+        if self.fixtures:
+            run_fixtures = {}
+
         # If necessary parameter names are missing, fill them in from the default values in params_info
         for param in self.params_info.keys():
+
             if param not in new_run.keys():
-                new_run[param] = self.params_info[param]["default"]
+
+                default_val = self.params_info[param]["default"]
+                new_run[param] = default_val
+
+                if self.params_info[param]["type"] == "fixture":
+                    run_fixtures[param] = self.fixtures[default_val]
+
+            elif self.params_info[param]["type"] == "fixture":
+                run_fixtures[param] = self.fixtures[new_run[param]]
 
         # Add to run queue
         run_id = f"{prefix}{self.run_number}"
         self.runs[run_id] = new_run
         self.runs[run_id]['completed'] = False
+        self.runs[run_id]['fixtures'] = run_fixtures
         self.run_number += 1
 
     def scan_completed(self, *args, **kwargs):
