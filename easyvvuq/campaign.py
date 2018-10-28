@@ -66,8 +66,13 @@ class Campaign:
         self._app_info = {}
         # Name and description of the model parameters
         self._params_info = {}
+        # Files and directories that are required by runs
+        self._fixtures = {}
         # Which parameters can be varied, and what prior distributions they have
         self._vars = {}
+        # Categorical variables
+        self._categoricals = {}
+
         # List of runs that need to be performed by this app
         self._runs = collections.OrderedDict()
 
@@ -122,6 +127,9 @@ class Campaign:
 
         self.params_info = input_json["params"]
 
+        if "fixtures" in input_json:
+            self._fixtures = input_json["fixtures"]
+
         # `input_encoder` used to select encoder used to transfer other `app`
         # information and `params` into application specific input files.
         if "input_encoder" not in input_json["app"]:
@@ -173,7 +181,7 @@ class Campaign:
         app_info = self.app_info
 
         # TODO: Decide if runs should be here
-        sub_dirs = ['data', 'analysis']
+        sub_dirs = ['data', 'analysis', 'common']
 
         # Build a temp directory to store run files (unless it already exists)
         if 'campaign_dir' in app_info:
@@ -216,6 +224,10 @@ class Campaign:
     @data.setter
     def data(self, new_data):
         self._data = new_data
+
+    @property
+    def fixtures(self):
+        return self._fixtures
 
     @property
     def campaign_dir(self):
@@ -301,6 +313,7 @@ class Campaign:
 
         output_json = {"app": self.app_info,
                        "params": self.params_info,
+                       "fixtures": self.fixtures,
                        "runs": self.runs,
                        "sample_uqps": self._sample_uqps,
                        "analysis_uqps": self._analysis_uqps,

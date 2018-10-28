@@ -43,10 +43,21 @@ sigma = float(inputs['sigma'])
 num_steps = int(inputs['num_steps'])
 output_filename = inputs['outfile']
 
+if 'biasfile' in inputs:
+    with open(inputs['biasfile']) as fin:
+        line = fin.readline()
+
+    bias = float(line.split()[0])
+        
+else:
+    bias = 0
+
+
 if num_steps <= 0:
     sys.exit("num_steps should be > 0")
 
 numbers = np.random.normal(mu, sigma, num_steps)
+numbers += bias
 numbers_out = np.array(list(enumerate(numbers)))
 
 header = 'Step,Value'
