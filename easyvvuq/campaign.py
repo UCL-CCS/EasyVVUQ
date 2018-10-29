@@ -60,7 +60,7 @@ class Campaign:
 
     """
 
-    def __init__(self, state_filename=None, workdir='./', *args, **kwargs):
+    def __init__(self, state_filename=None, workdir='./', default_campaign_dir_prefix='EasyVVUQ_Campaign_', *args, **kwargs):
 
         # Information needed to run application
         self._app_info = {}
@@ -81,6 +81,7 @@ class Campaign:
         self.decoder = None
 
         self.workdir = workdir
+        self.default_campaign_dir_prefix = default_campaign_dir_prefix
 
         if state_filename is not None:
             self.load_state(state_filename)
@@ -187,7 +188,12 @@ class Campaign:
                 except IOError:
                     raise IOError(f"Unable to create campaign directory: {campaign_dir}")
         else:
-            campaign_dir = tempfile.mkdtemp(prefix='EasyVVUQ_Campaign_',
+            # Check if app_info already contains a prefix to use for the campaign directory. If not, use the default one.
+            if 'campaign_dir_prefix' not in self.app_info:
+                self.app_info['campaign_dir_prefix'] = self.default_campaign_dir_prefix
+            
+            # Create temp dir for campaign
+            campaign_dir = tempfile.mkdtemp(prefix=self.app_info['campaign_dir_prefix'],
                                             dir=self.workdir)
             print(f"Creating Campaign directory: {campaign_dir}")
             self.campaign_dir = campaign_dir
@@ -222,6 +228,11 @@ class Campaign:
         if 'campaign_dir' not in self.app_info:
             return None
         return self._app_info['campaign_dir']
+
+    def campaign_dir_without_prefix(self):
+        app_info = self.app_info
+        if app_info['campaign_dir'].startswith(app_info['campaign_dir_prefix']):
+            return app_info['campaign_dir'][len(app_info['campaign_dir_prefix']):] # Ignore the prefix at the start of the string
 
     @campaign_dir.setter
     def campaign_dir(self, path, force=False):
