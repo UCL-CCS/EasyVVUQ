@@ -124,6 +124,3 @@ class Fixture(object):
                 fixture_path = os.path.join(self.campaign_dir, run_id, fixture_path)
 
         return fixture_path
-
-
-
