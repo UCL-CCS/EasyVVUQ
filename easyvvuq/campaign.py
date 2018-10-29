@@ -195,6 +195,7 @@ class Campaign:
             # Create temp dir for campaign
             campaign_dir = tempfile.mkdtemp(prefix=self.app_info['campaign_dir_prefix'],
                                             dir=self.workdir)
+
             print(f"Creating Campaign directory: {campaign_dir}")
             self.campaign_dir = campaign_dir
 
@@ -229,10 +230,21 @@ class Campaign:
             return None
         return self._app_info['campaign_dir']
 
-    def campaign_dir_without_prefix(self):
-        app_info = self.app_info
-        if app_info['campaign_dir'].startswith(app_info['campaign_dir_prefix']):
-            return app_info['campaign_dir'][len(app_info['campaign_dir_prefix']):] # Ignore the prefix at the start of the string
+    def campaign_ID(self, without_prefix=False):
+
+        # The "ID" of the campaign is just the name of the campaign directory (without the trailing slash)
+        campaign_ID = os.path.basename(os.path.normpath(self.app_info['campaign_dir']))
+
+        if without_prefix == False:
+            return campaign_ID
+        else:
+            # Ignore the prefix at the start of the string.
+            prefix = self.app_info['campaign_dir_prefix']
+            if campaign_ID.startswith(prefix):
+                return campaign_ID[len(prefix):]
+            else:
+                print(f"Warning: campaign_ID() called with option without_prefix set, but prefix {prefix} was not found at the start of campaign_ID {campaign_ID}.")
+                return campaign_ID
 
     @campaign_dir.setter
     def campaign_dir(self, path, force=False):
