@@ -66,10 +66,9 @@ class Fixture(object):
         self.campaign_dir = campaign_dir
         self.group = group
 
-
     def copy_to_target(self, run_id=None):
 
-        target_path = self.fixture_path(run_id=run_id)
+        target_path = self.fixture_path(run_id=run_id, relative=False)
 
         if self.common and self._common_copied:
             return
@@ -82,31 +81,47 @@ class Fixture(object):
         if self.common:
             self._common_copied = True
 
-    def fixture_path(self, run_id=None, depth_in_run=0):
+    def fixture_path(self, run_id=None, relative=True, depth_in_run=0):
+
+        target = self.target
+        common = self.common
 
         if not self.exists_local:
             return self.src_path
 
-        fixture_path = self.campaign_dir
+        fixture_path = ''
 
-        if self.common:
+        if common:
+
             fixture_path = os.path.join(fixture_path, 'common')
 
             if self.group:
                 fixture_path = os.path.join(fixture_path, 'group')
 
+            if relative:
+                fixture_path = os.path.join('..', fixture_path)
+
+        if target:
+            fixture_path = os.path.join(fixture_path, target)
+
+        if relative:
+
+            for level in range(depth_in_run):
+                fixture_path = os.path.join('..', fixture_path)
+
         else:
 
-            if run_id is None:
-                raise RuntimeError(f"A run_id is needed to create target path "
-                                   f"for the fixture {self.path}")
+            if common:
 
-            fixture_path = os.path.join(fixture_path, run_id)
+                fixture_path = os.path.join(self.campaign_dir, fixture_path)
 
-        fixture_path = os.path.join(fixture_path, self.target)
+            else:
 
-        for level in range(depth_in_run):
-            fixture_path = os.path.join('..', fixture_path)
+                if run_id is None:
+                    raise RuntimeError(f"A run_id is needed to create target path "
+                                       f"for the fixture {self.path}")
+
+                fixture_path = os.path.join(self.campaign_dir, run_id, fixture_path)
 
         return fixture_path
 
