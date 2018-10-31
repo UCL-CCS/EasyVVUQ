@@ -274,6 +274,14 @@ class Campaign:
 
     @params_info.setter
     def params_info(self, info):
+
+        reserved_keys = self._reserved_keys
+
+        disallowed_keys = set(reserved_keys).intersection(info.keys())
+        if disallowed_keys:
+            raise RuntimeError(f'The keys {reserved_keys} are not allowed in the '
+                               f'params dictionary , we found: {disallowed_keys}')
+
         self._params_info = info
 
     @property
