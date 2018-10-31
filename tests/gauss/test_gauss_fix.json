@@ -2,9 +2,9 @@
     "app": {
       "input_encoder":  "generic_template",
       "output_decoder": "gauss",
-      "template":       "templates/gauss.template",
+      "template":       "tests/gauss/gauss_fix.template",
       "input_filename": "gauss_in.json",
-      "run_cmd":        "test_apps/gauss/gauss_json.py gauss_in.json"
+      "run_cmd":        "tests/gauss/gauss_json.py gauss_in.json"
     },
     "fixtures": {
       "bias1": {"type": "file", "path": "test_input/bias1.txt", "common": false, "exists_local": true, "target": "", "group": ""},
