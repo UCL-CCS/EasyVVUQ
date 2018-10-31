@@ -342,7 +342,7 @@ class Campaign:
         # Validate:
         # Check if parameter names match those already known for this app
         for param in new_run.keys():
-            if param not in self.params_info.keys() and param != 'completed':
+            if param not in self.params_info.keys() and param not in ['fixtures', 'completed']:
 
                 reasoning = (f"dict passed to add_run() contains extra parameter, "
                              f"{param}, which is not a known parameter name "
