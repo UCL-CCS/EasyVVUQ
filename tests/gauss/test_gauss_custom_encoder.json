@@ -1,0 +1,12 @@
+{
+    "app": {
+      "input_encoder":  "gauss",
+      "output_decoder": "gauss"
+    },
+    "params": {
+      "sigma":      {"type": "real", "min": "0.0", "max": "100000.0",   "default": "0.25"},
+      "mu":         {"type": "real", "min": "0.0", "max": "100000.0",   "default": "1"},
+      "num_steps":  {"type": "int", "min": "0", "max": "100000",   "default": "10"},
+      "out_file":   {"type": "str", "default": "output.csv"}
+    }
+}
