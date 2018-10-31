@@ -85,6 +85,8 @@ class Campaign:
         self.encoder = None
         self.decoder = None
 
+        self._reserved_keys = ['completed', 'fixtures']
+
         self.workdir = workdir
 
         if state_filename is not None:
@@ -339,10 +341,13 @@ class Campaign:
 
         """
 
+        reserved_keys = self._reserved_keys
+        campaign_params = self.params_info.keys()
+
         # Validate:
         # Check if parameter names match those already known for this app
         for param in new_run.keys():
-            if param not in self.params_info.keys() and param not in ['fixtures', 'completed']:
+            if param not in campaign_params and param not in reserved_keys:
 
                 reasoning = (f"dict passed to add_run() contains extra parameter, "
                              f"{param}, which is not a known parameter name "
