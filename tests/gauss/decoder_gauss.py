@@ -1,6 +1,6 @@
 import os
 import pandas as pd
-from .base import BaseDecoder
+from easyvvuq.decoders import BaseDecoder
 from easyvvuq import OutputType
 
 __copyright__ = """

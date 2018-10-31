@@ -1,6 +1,4 @@
 from .base import BaseDecoder
-from .cannon import CannonDecoder
-from .gauss import GaussDecoder
 from .simple_csv import SimpleCSV
 
 __copyright__ = """
