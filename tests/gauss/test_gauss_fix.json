@@ -7,8 +7,8 @@
       "run_cmd":        "tests/gauss/gauss_json.py gauss_in.json"
     },
     "fixtures": {
-      "bias1": {"type": "file", "path": "test_input/bias1.txt", "common": false, "exists_local": true, "target": "", "group": ""},
-      "bias2": {"type": "file", "path": "test_input/bias2.txt", "common": false, "exists_local": true, "target": "", "group": ""}
+      "bias1": {"type": "file", "path": "tests/gauss/bias1.txt", "common": false, "exists_local": true, "target": "", "group": ""},
+      "bias2": {"type": "file", "path": "tests/gauss/bias2.txt", "common": false, "exists_local": true, "target": "", "group": ""}
     },
     "params": {
       "sigma":  {"type": "real", "min": "0.0", "max": "100000.0",   "default": "0.25"},
