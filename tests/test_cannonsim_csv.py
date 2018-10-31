@@ -70,7 +70,8 @@ def test_cannonsim_csv(tmpdir):
     output_columns = ['Dist', 'lastvx', 'lastvy']
     uq.collate.aggregate_samples(my_campaign,
                                  output_filename=output_filename,
-                                 output_columns=output_columns)
+                                 output_columns=output_columns,
+                                 header = 0)
 
     assert( len(my_campaign.data) > 0 )
 
