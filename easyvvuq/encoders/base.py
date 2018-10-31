@@ -61,7 +61,6 @@ class BaseEncoder(object):
         to the dict of available encoders.
         """
         super().__init_subclass__(**kwargs)
-        print(f"Called __init_subclass({cls}, {encoder_name})")
 
         # Register new encoder
         available_encoders[encoder_name] = cls

@@ -136,8 +136,6 @@ class Campaign:
                                    f"Available encoders are:\n"
                                    f"{available_encoders}")
 
-            print("cls=", available_encoders[input_encoder])
-
             encoder_class = available_encoders[input_encoder]
             self.encoder = encoder_class(self.app_info)
 
@@ -155,8 +153,6 @@ class Campaign:
                                    f'{output_decoder}\n'
                                    f"Available decoders are:\n"
                                    f"{available_decoders}")
-
-            print("cls=", available_decoders[output_decoder])
 
             decoder_class = available_decoders[output_decoder]
             self.decoder = decoder_class(self.app_info)

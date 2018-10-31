@@ -48,11 +48,10 @@ class BaseDecoder(object):
 
     def __init_subclass__(cls, decoder_name, **kwargs):
         """
-        Catch any new encoders (all decoders must inherit from BaseDecoder) and add them
+        Catch any new decoders (all decoders must inherit from BaseDecoder) and add them
         to the dict of available decoders.
         """
         super().__init_subclass__(**kwargs)
-        print(f"Called __init_subclass({cls}, {decoder_name})")
 
         # Register new decoder
         available_decoders[decoder_name] = cls
