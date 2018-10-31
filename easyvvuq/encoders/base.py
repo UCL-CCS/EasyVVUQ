@@ -22,6 +22,8 @@ __copyright__ = """
 """
 __license__ = "LGPL"
 
+# Dict to store all registered encoders (any class which extends BaseEncoder is automatically registered as an encoder)
+available_encoders = {}
 
 class BaseEncoder(object):
     """Baseclass for all EasyVVUQ encoders.
@@ -48,15 +50,23 @@ class BaseEncoder(object):
     """
 
     def __init__(self, app_info, *args, **kwargs):
-
         if not hasattr(app_info, 'items'):
-
             self.app_info = json_utils.process_json(app_info)
-
         else:
-
             self.app_info = app_info
+
+    def __init_subclass__(cls, encoder_name, **kwargs):
+        """
+        Catch any new encoders (all encoders must inherit from BaseEncoder) and add them
+        to the dict of available encoders.
+        """
+        super().__init_subclass__(**kwargs)
+        print(f"Called __init_subclass({cls}, {encoder_name})")
+
+        # Register new encoder
+        available_encoders[encoder_name] = cls
 
     def encode(self, params={}, target_dir=''):
         raise NotImplementedError
+
 

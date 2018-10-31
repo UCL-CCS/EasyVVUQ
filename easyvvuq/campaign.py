@@ -130,16 +130,17 @@ class Campaign:
                                "'input_encoder' to allow lookup of required encoder")
         else:
             input_encoder = input_json['app']['input_encoder']
-            if input_encoder not in uq.app_encoders:
+            available_encoders = uq.encoders.base.available_encoders
+            if input_encoder not in available_encoders:
                 raise RuntimeError(f"No encoder found. Looking for "
-                                   f"'input_encoder': {input_encoder}")
+                                   f"'input_encoder': {input_encoder}\n"
+                                   f"Available encoders are:\n"
+                                   f"{available_encoders}")
 
-            module_location = uq.app_encoders[input_encoder]['module_location']
-            encoder_name = uq.app_encoders[input_encoder]['encoder_name']
+            print("cls=", available_encoders[input_encoder])
 
-            module = importlib.import_module(module_location)
-            encoder_class_ = getattr(module, encoder_name)
-            self.encoder = encoder_class_(self.app_info)
+            encoder_class = available_encoders[input_encoder]
+            self.encoder = encoder_class(self.app_info)
 
         # `output_decoder` used to select decoder used to read simulation output
         if "output_decoder" not in input_json["app"]:

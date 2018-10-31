@@ -1,4 +1,5 @@
 from .base import BaseEncoder
+from .generic_template import GenericEncoder
 
 __copyright__ = """
 
