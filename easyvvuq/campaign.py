@@ -1,7 +1,6 @@
 import os
 import tempfile
 import json
-import importlib
 import collections
 import pprint
 
@@ -149,17 +148,18 @@ class Campaign:
         else:
 
             output_decoder = input_json['app']['output_decoder']
+            available_decoders = uq.decoders.base.available_decoders
 
-            if output_decoder not in uq.app_decoders:
+            if output_decoder not in available_decoders:
                 raise RuntimeError(f'No output decoder was found with the name '
-                                   f'{output_decoder}')
+                                   f'{output_decoder}\n'
+                                   f"Available decoders are:\n"
+                                   f"{available_decoders}")
 
-            module_location = uq.app_decoders[output_decoder]['module_location']
-            decoder_name = uq.app_decoders[output_decoder]['decoder_name']
+            print("cls=", available_decoders[output_decoder])
 
-            module = importlib.import_module(module_location)
-            decoder_class_ = getattr(module, decoder_name)
-            self.decoder = decoder_class_(self.app_info)
+            decoder_class = available_decoders[output_decoder]
+            self.decoder = decoder_class(self.app_info)
 
     def _setup_campaign_dir(self):
         """

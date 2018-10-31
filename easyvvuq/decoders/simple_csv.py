@@ -26,7 +26,7 @@ __copyright__ = """
 __license__ = "LGPL"
 
 
-class SimpleCSV(BaseDecoder):
+class SimpleCSV(BaseDecoder, decoder_name = "csv"):
 
     def __init__(self, *args, **kwargs):
 

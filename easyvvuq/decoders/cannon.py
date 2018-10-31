@@ -26,7 +26,7 @@ __copyright__ = """
 __license__ = "LGPL"
 
 
-class CannonDecoder(BaseDecoder):
+class CannonDecoder(BaseDecoder, decoder_name = "cannon"):
 
     def __init__(self, *args, **kwargs):
 

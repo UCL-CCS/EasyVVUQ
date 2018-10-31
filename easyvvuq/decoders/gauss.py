@@ -26,7 +26,7 @@ __copyright__ = """
 __license__ = "LGPL"
 
 
-class GaussDecoder(BaseDecoder):
+class GaussDecoder(BaseDecoder, decoder_name = "gauss"):
 
     def __init__(self, *args, **kwargs):
 
