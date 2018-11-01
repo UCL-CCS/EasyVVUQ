@@ -363,7 +363,9 @@ class Campaign:
 
                 raise RuntimeError(reasoning)
 
-        if self.fixtures:
+        if 'fixtures' in new_run:
+            run_fixtures = new_run['fixtures']
+        else:
             run_fixtures = {}
 
         # If necessary parameter names are missing, fill them in from the default values in params_info
@@ -376,9 +378,12 @@ class Campaign:
 
                 if self.params_info[param]["type"] == "fixture":
                     run_fixtures[param] = self.fixtures[default_val]
+                    new_run[param] = 'EASYVVUQ_FIXTURE'
 
             elif self.params_info[param]["type"] == "fixture":
-                run_fixtures[param] = self.fixtures[new_run[param]]
+                if new_run[param] != 'EASYVVUQ_FIXTURE':
+                    run_fixtures[param] = self.fixtures[new_run[param]]
+                    new_run[param] = 'EASYVVUQ_FIXTURE'
 
         # Add to run queue
         run_id = f"{prefix}{self.run_number}"

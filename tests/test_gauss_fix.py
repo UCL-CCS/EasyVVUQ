@@ -51,6 +51,8 @@ def test_gauss(tmpdir):
 
     assert( len(my_campaign.runs) == number_of_samples * number_of_replicas )
 
+    print(my_campaign)
+
     my_campaign.populate_runs_dir()
 
     assert( len(my_campaign.runs_dir) > 0 )

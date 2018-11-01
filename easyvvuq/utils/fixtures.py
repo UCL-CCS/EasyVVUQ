@@ -27,7 +27,7 @@ __license__ = "LGPL"
 class Fixture(object):
 
     def __init__(self, path, is_dir=False, common=False, exists_local=True,
-                 target="", campaign_dir='.', group=''):
+                 target_name="", campaign_dir='.', group=''):
         """
 
         Parameters
@@ -39,12 +39,14 @@ class Fixture(object):
         exists_local
             Does the file exist on the local machine (i.e. can it be copied to
             a common or run directory by EasyVVUQ)
-        target
+        target_name
             Target file name or path. Path should be relative to a run directory
             except for when `common` is set.
         """
 
         self.exists_local = exists_local
+
+        self._basename = os.path.basename(path)
 
         if exists_local:
 
@@ -59,16 +61,16 @@ class Fixture(object):
 
             self.src_path = path
 
-        self.target = target
+        self.target_name = target_name
         self.common = common
         self._common_copied = False
         self.is_dir = is_dir
         self.campaign_dir = campaign_dir
         self.group = group
 
-    def copy_to_target(self, run_id=None):
+    def copy_to_target(self, target_dir=None):
 
-        target_path = self.fixture_path(run_id=run_id, relative=False)
+        target_path = self.fixture_path(target_dir=target_dir, relative=False)
 
         if self.common and self._common_copied:
             return
@@ -81,9 +83,9 @@ class Fixture(object):
         if self.common:
             self._common_copied = True
 
-    def fixture_path(self, run_id=None, relative=True, depth_in_run=0):
+    def fixture_path(self, target_dir='', relative=True, depth_in_run=0):
 
-        target = self.target
+        target_name = self.target_name
         common = self.common
 
         if not self.exists_local:
@@ -101,9 +103,6 @@ class Fixture(object):
             if relative:
                 fixture_path = os.path.join('..', fixture_path)
 
-        if target:
-            fixture_path = os.path.join(fixture_path, target)
-
         if relative:
 
             for level in range(depth_in_run):
@@ -117,10 +116,16 @@ class Fixture(object):
 
             else:
 
-                if run_id is None:
-                    raise RuntimeError(f"A run_id is needed to create target path "
+                if not target_dir:
+                    raise RuntimeError(f"A target_dir is needed to create target path "
                                        f"for the fixture {self.path}")
 
-                fixture_path = os.path.join(self.campaign_dir, run_id, fixture_path)
+                fixture_path = os.path.join(target_dir, fixture_path)
+
+        if target_name:
+            fixture_path = os.path.join(fixture_path, target_name)
+
+        else:
+            fixture_path = os.path.join(fixture_path, self._basename)
 
         return fixture_path

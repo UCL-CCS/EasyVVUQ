@@ -61,6 +61,7 @@ class GenericEncoder(BaseEncoder):
         # Handles creation of `self.app_info` attribute (dicts)
         super().__init__(app_info, *args, **kwargs)
         app_info = self.app_info
+        print(app_info)
 
         # Check if an encoder delimiter is specified in the app_info. Else use $ by default.
         self.encoder_delimiter = '$'
@@ -112,6 +113,8 @@ class GenericEncoder(BaseEncoder):
 
         if not hasattr(params, 'items'):
             params = json_utils.process_json(params)
+
+        params = self.parse_fixtures_params(params, target_dir)
 
         str_params = {}
         for key, value in params.items():
