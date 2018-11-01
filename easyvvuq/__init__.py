@@ -10,7 +10,8 @@ from .execute import execute_local
 from . import uqp
 from . import collate
 from . import distributions
-import pkg_resources
+from . import encoders
+from . import decoders
 
 __copyright__ = """
 
@@ -33,26 +34,3 @@ __copyright__ = """
 
 """
 __license__ = "LGPL"
-
-DEFAULT_ENCODERS = pkg_resources.resource_filename(__name__, 'default_app_encoders.json')
-with open(DEFAULT_ENCODERS) as fin:
-    app_encoders = json.load(fin)
-
-# TODO: Search for user specified encoders list
-user_encoders = ''
-
-if user_encoders:
-    with open(user_encoders) as fin:
-        app_encoders.update(json.load(fin))
-
-DEFAULT_DECODERS = pkg_resources.resource_filename(__name__, 'default_app_decoders.json')
-
-with open(DEFAULT_DECODERS) as fin:
-    app_decoders = json.load(fin)
-
-# TODO: Search for user specified decoders list
-user_decoders = ''
-
-if user_decoders:
-    with open(user_decoders) as fin:
-        app_decoders.update(json.load(fin))

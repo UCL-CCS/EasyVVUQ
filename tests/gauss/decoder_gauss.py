@@ -1,6 +1,6 @@
 import os
 import pandas as pd
-from .base import BaseDecoder
+from easyvvuq.decoders import BaseDecoder
 from easyvvuq import OutputType
 
 __copyright__ = """
@@ -26,7 +26,7 @@ __copyright__ = """
 __license__ = "LGPL"
 
 
-class GaussDecoder(BaseDecoder):
+class GaussDecoder(BaseDecoder, decoder_name = "gauss"):
 
     def __init__(self, *args, **kwargs):
 

@@ -1,7 +1,6 @@
 import os
 import tempfile
 import json
-import importlib
 import collections
 import pprint
 
@@ -130,16 +129,15 @@ class Campaign:
                                "'input_encoder' to allow lookup of required encoder")
         else:
             input_encoder = input_json['app']['input_encoder']
-            if input_encoder not in uq.app_encoders:
+            available_encoders = uq.encoders.base.available_encoders
+            if input_encoder not in available_encoders:
                 raise RuntimeError(f"No encoder found. Looking for "
-                                   f"'input_encoder': {input_encoder}")
+                                   f"'input_encoder': {input_encoder}\n"
+                                   f"Available encoders are:\n"
+                                   f"{available_encoders}")
 
-            module_location = uq.app_encoders[input_encoder]['module_location']
-            encoder_name = uq.app_encoders[input_encoder]['encoder_name']
-
-            module = importlib.import_module(module_location)
-            encoder_class_ = getattr(module, encoder_name)
-            self.encoder = encoder_class_(self.app_info)
+            encoder_class = available_encoders[input_encoder]
+            self.encoder = encoder_class(self.app_info)
 
         # `output_decoder` used to select decoder used to read simulation output
         if "output_decoder" not in input_json["app"]:
@@ -148,17 +146,16 @@ class Campaign:
         else:
 
             output_decoder = input_json['app']['output_decoder']
+            available_decoders = uq.decoders.base.available_decoders
 
-            if output_decoder not in uq.app_decoders:
+            if output_decoder not in available_decoders:
                 raise RuntimeError(f'No output decoder was found with the name '
-                                   f'{output_decoder}')
+                                   f'{output_decoder}\n'
+                                   f"Available decoders are:\n"
+                                   f"{available_decoders}")
 
-            module_location = uq.app_decoders[output_decoder]['module_location']
-            decoder_name = uq.app_decoders[output_decoder]['decoder_name']
-
-            module = importlib.import_module(module_location)
-            decoder_class_ = getattr(module, decoder_name)
-            self.decoder = decoder_class_(self.app_info)
+            decoder_class = available_decoders[output_decoder]
+            self.decoder = decoder_class(self.app_info)
 
     def _setup_campaign_dir(self):
         """
