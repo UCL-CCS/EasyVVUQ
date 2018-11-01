@@ -25,7 +25,7 @@ __copyright__ = """
 __license__ = "LGPL"
 
 
-def test_gauss(tmpdir):
+def test_gauss_fix(tmpdir):
 
     # Params for testing
     input_json = "tests/gauss/test_gauss_fix.json"
@@ -75,4 +75,4 @@ def test_gauss(tmpdir):
     assert( os.path.isfile(output_json) )
 
 if __name__ == "__main__":
-    test_gauss("/tmp/")
+    test_gauss_fix("/tmp/")
