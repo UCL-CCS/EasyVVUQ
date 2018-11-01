@@ -1,5 +1,6 @@
 import os, sys
 import easyvvuq as uq
+from gauss.decoder_gauss import GaussDecoder
 
 __copyright__ = """
 
