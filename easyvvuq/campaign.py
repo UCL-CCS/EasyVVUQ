@@ -1,7 +1,6 @@
 import os
 import tempfile
 import json
-import importlib
 import collections
 import pprint
 
@@ -60,7 +59,7 @@ class Campaign:
 
     """
 
-    def __init__(self, state_filename=None, workdir='./', *args, **kwargs):
+    def __init__(self, state_filename=None, workdir='./', default_campaign_dir_prefix='EasyVVUQ_Campaign_', *args, **kwargs):
 
         # Information needed to run application
         self._app_info = {}
@@ -88,6 +87,7 @@ class Campaign:
         self._reserved_keys = ['completed', 'fixtures']
 
         self.workdir = workdir
+        self.default_campaign_dir_prefix = default_campaign_dir_prefix
 
         if state_filename is not None:
             self.load_state(state_filename)
@@ -139,16 +139,15 @@ class Campaign:
                                "'input_encoder' to allow lookup of required encoder")
         else:
             input_encoder = input_json['app']['input_encoder']
-            if input_encoder not in uq.app_encoders:
+            available_encoders = uq.encoders.base.available_encoders
+            if input_encoder not in available_encoders:
                 raise RuntimeError(f"No encoder found. Looking for "
-                                   f"'input_encoder': {input_encoder}")
+                                   f"'input_encoder': {input_encoder}\n"
+                                   f"Available encoders are:\n"
+                                   f"{available_encoders}")
 
-            module_location = uq.app_encoders[input_encoder]['module_location']
-            encoder_name = uq.app_encoders[input_encoder]['encoder_name']
-
-            module = importlib.import_module(module_location)
-            encoder_class_ = getattr(module, encoder_name)
-            self.encoder = encoder_class_(self.app_info)
+            encoder_class = available_encoders[input_encoder]
+            self.encoder = encoder_class(self.app_info)
 
         # `output_decoder` used to select decoder used to read simulation output
         if "output_decoder" not in input_json["app"]:
@@ -157,17 +156,16 @@ class Campaign:
         else:
 
             output_decoder = input_json['app']['output_decoder']
+            available_decoders = uq.decoders.base.available_decoders
 
-            if output_decoder not in uq.app_decoders:
+            if output_decoder not in available_decoders:
                 raise RuntimeError(f'No output decoder was found with the name '
-                                   f'{output_decoder}')
+                                   f'{output_decoder}\n'
+                                   f"Available decoders are:\n"
+                                   f"{available_decoders}")
 
-            module_location = uq.app_decoders[output_decoder]['module_location']
-            decoder_name = uq.app_decoders[output_decoder]['decoder_name']
-
-            module = importlib.import_module(module_location)
-            decoder_class_ = getattr(module, decoder_name)
-            self.decoder = decoder_class_(self.app_info)
+            decoder_class = available_decoders[output_decoder]
+            self.decoder = decoder_class(self.app_info)
 
     def _setup_campaign_dir(self):
         """
@@ -197,8 +195,14 @@ class Campaign:
                 except IOError:
                     raise IOError(f"Unable to create campaign directory: {campaign_dir}")
         else:
-            campaign_dir = tempfile.mkdtemp(prefix='EasyVVUQ_Campaign_',
+            # Check if app_info already contains a prefix to use for the campaign directory. If not, use the default one.
+            if 'campaign_dir_prefix' not in self.app_info:
+                self.app_info['campaign_dir_prefix'] = self.default_campaign_dir_prefix
+            
+            # Create temp dir for campaign
+            campaign_dir = tempfile.mkdtemp(prefix=self.app_info['campaign_dir_prefix'],
                                             dir=self.workdir)
+
             print(f"Creating Campaign directory: {campaign_dir}")
             self.campaign_dir = campaign_dir
 
@@ -236,6 +240,22 @@ class Campaign:
         if 'campaign_dir' not in self.app_info:
             return None
         return self._app_info['campaign_dir']
+
+    def campaign_ID(self, without_prefix=False):
+
+        # The "ID" of the campaign is just the name of the campaign directory (without the trailing slash)
+        campaign_ID = os.path.basename(os.path.normpath(self.app_info['campaign_dir']))
+
+        if without_prefix == False:
+            return campaign_ID
+        else:
+            # Ignore the prefix at the start of the string.
+            prefix = self.app_info['campaign_dir_prefix']
+            if campaign_ID.startswith(prefix):
+                return campaign_ID[len(prefix):]
+            else:
+                print(f"Warning: campaign_ID() called with option without_prefix set, but prefix {prefix} was not found at the start of campaign_ID {campaign_ID}.")
+                return campaign_ID
 
     @campaign_dir.setter
     def campaign_dir(self, path, force=False):

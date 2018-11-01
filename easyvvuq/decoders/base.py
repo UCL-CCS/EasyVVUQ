@@ -23,6 +23,9 @@ __copyright__ = """
 __license__ = "LGPL"
 
 
+# Dict to store all registered decoders (any class which extends BaseDecoder is automatically registered as an decoder)
+available_decoders = {}
+
 class BaseDecoder(object):
     """Baseclass for all EasyVVUQ decoders.
 
@@ -42,6 +45,16 @@ class BaseDecoder(object):
 
         self.output_type = OutputType('sample')
         self.output_columns = []
+
+    def __init_subclass__(cls, decoder_name, **kwargs):
+        """
+        Catch any new decoders (all decoders must inherit from BaseDecoder) and add them
+        to the dict of available decoders.
+        """
+        super().__init_subclass__(**kwargs)
+
+        # Register new decoder
+        available_decoders[decoder_name] = cls
 
     def sim_complete(self, run_info={}, *args, **kwargs):
         raise NotImplementedError

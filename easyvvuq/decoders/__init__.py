@@ -1,4 +1,5 @@
 from .base import BaseDecoder
+from .simple_csv import SimpleCSV
 
 __copyright__ = """
 

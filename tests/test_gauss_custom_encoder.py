@@ -1,5 +1,6 @@
 import os, sys
 import easyvvuq as uq
+from gauss.encoder_gauss import GaussEncoder
 from gauss.decoder_gauss import GaussDecoder
 
 __copyright__ = """
@@ -25,10 +26,10 @@ __copyright__ = """
 __license__ = "LGPL"
 
 
-def test_gauss(tmpdir):
+def test_gauss_custom_encoder(tmpdir):
 
     # Params for testing
-    input_json = "tests/gauss/test_gauss.json"
+    input_json = "tests/gauss/test_gauss_custom_encoder.json"
     output_json = os.path.join(tmpdir, "out_gauss.json")
     number_of_samples = 2
     number_of_replicas = 5
@@ -73,4 +74,4 @@ def test_gauss(tmpdir):
     assert( os.path.isfile(output_json) )
 
 if __name__ == "__main__":
-    test_gauss("/tmp/")
+    test_gauss_custom_encoder("/tmp/")

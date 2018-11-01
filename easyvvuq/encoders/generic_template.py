@@ -35,7 +35,7 @@ def getCustomTemplate(template_txt, custom_delimiter='$'):
     return CustomTemplate(template_txt)
 
 
-class GenericEncoder(BaseEncoder):
+class GenericEncoder(BaseEncoder, encoder_name = "generic_template"):
     """GenericEncoder for substituting values into application template input.
 
     The `app_info` dictionary needs to contain either a `template` filename or

@@ -26,7 +26,7 @@ __copyright__ = """
 __license__ = "LGPL"
 
 
-class SimpleCSV(BaseDecoder):
+class SimpleCSV(BaseDecoder, decoder_name = "csv"):
 
     def __init__(self, *args, **kwargs):
 
@@ -63,9 +63,7 @@ class SimpleCSV(BaseDecoder):
 
     def parse_sim_output(self, run_info={}, *args, **kwargs):
 
-        print(kwargs)
         out_path = self._get_output_path(run_info, *args, **kwargs)
-        print(kwargs)
 
         if 'output_columns' in kwargs:
             self.output_columns = kwargs['output_columns']
@@ -73,6 +71,11 @@ class SimpleCSV(BaseDecoder):
             raise RuntimeError('A value for "names" must be '
                                'specified for the simple encoder')
 
-        data = pd.read_csv(out_path, names=self.output_columns, header=0)
+        # Remove 'output_filename' and 'output_columns' from the kwargs before passing to pandas read_csv
+        # (as these are clearly going to be rejected by pandas)
+        del kwargs['output_filename']
+        del kwargs['output_columns']
+
+        data = pd.read_csv(out_path, names=self.output_columns, **kwargs)
 
         return data
