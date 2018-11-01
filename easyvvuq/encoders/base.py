@@ -1,4 +1,5 @@
 import easyvvuq.utils.json as json_utils
+import easyvvuq.utils.fixtures as fixtures
 
 __copyright__ = """
 
@@ -68,4 +69,29 @@ class BaseEncoder(object):
     def encode(self, params={}, target_dir=''):
         raise NotImplementedError
 
+    def parse_fixtures_params(self, info, target_dir, path_depth=0):
+
+        fixture_list = info['fixtures']
+
+        if fixture_list:
+            for key, current_fixture in fixture_list.items():
+
+                path = current_fixture['path']
+                if current_fixture['type'] == 'dir':
+                    is_dir = True
+                else:
+                    is_dir = False
+                common = current_fixture['common']
+                exists_local = current_fixture['exists_local']
+                target_name = current_fixture['target']
+                group = current_fixture['group']
+
+                tmp_fixture = fixtures.Fixture(path, is_dir=is_dir, common=common,
+                                               exists_local=exists_local, target_name=target_name,
+                                               group=group)
+
+                info[key] = tmp_fixture.fixture_path(depth_in_run=path_depth)
+                tmp_fixture.copy_to_target(target_dir=target_dir)
+
+        return info
 

@@ -28,10 +28,12 @@ __copyright__ = """
 """
 __license__ = "LGPL"
 
+
 def getCustomTemplate(template_txt, custom_delimiter='$'):
     class CustomTemplate(Template):
         delimiter = custom_delimiter
     return CustomTemplate(template_txt)
+
 
 class GenericEncoder(BaseEncoder, encoder_name = "generic_template"):
     """GenericEncoder for substituting values into application template input.
@@ -59,6 +61,7 @@ class GenericEncoder(BaseEncoder, encoder_name = "generic_template"):
         # Handles creation of `self.app_info` attribute (dicts)
         super().__init__(app_info, *args, **kwargs)
         app_info = self.app_info
+        print(app_info)
 
         # Check if an encoder delimiter is specified in the app_info. Else use $ by default.
         self.encoder_delimiter = '$'
@@ -84,7 +87,7 @@ class GenericEncoder(BaseEncoder, encoder_name = "generic_template"):
         if 'run_cmd' in app_info:
             run_cmd = app_info['run_cmd']
 
-            # Need to expand users, get absolute path and derefernce symlinks
+            # Need to expand users, get absolute path and dereference symlinks
             local_run_cmd = os.path.realpath(os.path.expanduser(run_cmd))
 
             self.local_run_cmd = local_run_cmd
@@ -92,7 +95,6 @@ class GenericEncoder(BaseEncoder, encoder_name = "generic_template"):
             self.local_run_cmd = None
 
         self.app_input_txt = None
-
 
     def encode(self, params={}, target_dir=''):
         """Substitutes `params` into a template application input, saves in target_dir
@@ -111,6 +113,8 @@ class GenericEncoder(BaseEncoder, encoder_name = "generic_template"):
 
         if not hasattr(params, 'items'):
             params = json_utils.process_json(params)
+
+        params = self.parse_fixtures_params(params, target_dir)
 
         str_params = {}
         for key, value in params.items():
@@ -157,7 +161,6 @@ class GenericEncoder(BaseEncoder, encoder_name = "generic_template"):
 
         print(reasoning)
         raise KeyError(exception)
-
 
 
 if __name__ == "__main__":

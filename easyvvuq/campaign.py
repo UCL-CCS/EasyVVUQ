@@ -65,8 +65,13 @@ class Campaign:
         self._app_info = {}
         # Name and description of the model parameters
         self._params_info = {}
+        # Files and directories that are required by runs
+        self._fixtures = {}
         # Which parameters can be varied, and what prior distributions they have
         self._vars = {}
+        # Categorical variables
+        self._categoricals = {}
+
         # List of runs that need to be performed by this app
         self._runs = collections.OrderedDict()
 
@@ -78,6 +83,8 @@ class Campaign:
         self.run_number = 0
         self.encoder = None
         self.decoder = None
+
+        self._reserved_keys = ['completed', 'fixtures']
 
         self.workdir = workdir
         self.default_campaign_dir_prefix = default_campaign_dir_prefix
@@ -121,6 +128,9 @@ class Campaign:
             raise RuntimeError("Input does not contain an 'params' block")
 
         self.params_info = input_json["params"]
+
+        if "fixtures" in input_json:
+            self._fixtures = input_json["fixtures"]
 
         # `input_encoder` used to select encoder used to transfer other `app`
         # information and `params` into application specific input files.
@@ -171,7 +181,7 @@ class Campaign:
         app_info = self.app_info
 
         # TODO: Decide if runs should be here
-        sub_dirs = ['data', 'analysis']
+        sub_dirs = ['data', 'analysis', 'common']
 
         # Build a temp directory to store run files (unless it already exists)
         if 'campaign_dir' in app_info:
@@ -220,6 +230,10 @@ class Campaign:
     @data.setter
     def data(self, new_data):
         self._data = new_data
+
+    @property
+    def fixtures(self):
+        return self._fixtures
 
     @property
     def campaign_dir(self):
@@ -280,6 +294,14 @@ class Campaign:
 
     @params_info.setter
     def params_info(self, info):
+
+        reserved_keys = self._reserved_keys
+
+        disallowed_keys = set(reserved_keys).intersection(info.keys())
+        if disallowed_keys:
+            raise RuntimeError(f'The keys {reserved_keys} are not allowed in the '
+                               f'params dictionary , we found: {disallowed_keys}')
+
         self._params_info = info
 
     @property
@@ -321,6 +343,7 @@ class Campaign:
 
         output_json = {"app": self.app_info,
                        "params": self.params_info,
+                       "fixtures": self.fixtures,
                        "runs": self.runs,
                        "sample_uqps": self._sample_uqps,
                        "analysis_uqps": self._analysis_uqps,
@@ -346,10 +369,13 @@ class Campaign:
 
         """
 
+        reserved_keys = self._reserved_keys
+        campaign_params = self.params_info.keys()
+
         # Validate:
         # Check if parameter names match those already known for this app
         for param in new_run.keys():
-            if param not in self.params_info.keys() and param != 'completed':
+            if param not in campaign_params and param not in reserved_keys:
 
                 reasoning = (f"dict passed to add_run() contains extra parameter, "
                              f"{param}, which is not a known parameter name "
@@ -357,15 +383,33 @@ class Campaign:
 
                 raise RuntimeError(reasoning)
 
+        if 'fixtures' in new_run:
+            run_fixtures = new_run['fixtures']
+        else:
+            run_fixtures = {}
+
         # If necessary parameter names are missing, fill them in from the default values in params_info
         for param in self.params_info.keys():
+
             if param not in new_run.keys():
-                new_run[param] = self.params_info[param]["default"]
+
+                default_val = self.params_info[param]["default"]
+                new_run[param] = default_val
+
+                if self.params_info[param]["type"] == "fixture":
+                    run_fixtures[param] = self.fixtures[default_val]
+                    new_run[param] = 'EASYVVUQ_FIXTURE'
+
+            elif self.params_info[param]["type"] == "fixture":
+                if new_run[param] != 'EASYVVUQ_FIXTURE':
+                    run_fixtures[param] = self.fixtures[new_run[param]]
+                    new_run[param] = 'EASYVVUQ_FIXTURE'
 
         # Add to run queue
         run_id = f"{prefix}{self.run_number}"
         self.runs[run_id] = new_run
         self.runs[run_id]['completed'] = False
+        self.runs[run_id]['fixtures'] = run_fixtures
         self.run_number += 1
 
     def scan_completed(self, *args, **kwargs):

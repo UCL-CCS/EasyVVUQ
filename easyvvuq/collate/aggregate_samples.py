@@ -70,7 +70,14 @@ def aggregate_samples(campaign, average=False, *args, **kwargs):
 
             for param, value in run_info.items():
 
-                run_data[param] = value
+                # TODO: Improve this ugly hack
+                if param == 'fixtures':
+
+                    run_data[param] = 'FIXTURE'
+
+                else:
+
+                    run_data[param] = value
 
             # Reorder columns
             run_data = run_data[column_list]
