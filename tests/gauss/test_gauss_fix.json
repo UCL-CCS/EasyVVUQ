@@ -3,8 +3,7 @@
       "input_encoder":  "generic_template",
       "output_decoder": "gauss",
       "template":       "tests/gauss/gauss_fix.template",
-      "input_filename": "gauss_in.json",
-      "run_cmd":        "tests/gauss/gauss_json.py gauss_in.json"
+      "input_filename": "gauss_in.json"
     },
     "fixtures": {
       "bias1": {"type": "file", "path": "tests/gauss/bias1.txt", "common": false, "exists_local": true, "target": "", "group": ""},
