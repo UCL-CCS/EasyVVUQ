@@ -613,38 +613,7 @@ class Campaign:
 
         return unique
 
-    def apply_for_each_run(self, func):
-        """
-        For each run in this Campaign's run list, apply the specified function
 
-        Parameters
-        ----------
-        func : function
-            The function to be applied to each run directory. func() will
-            be called with the run directory path as its only argument.
-        Returns
-        -------
-        """
-
-        if "runs_dir" not in self.app_info.keys():
-
-            print(self.app_info)
-
-            raise RuntimeError("Missing 'runs_dir' key (Application info must "
-                               "include runs directory path).")
-        runs_dir = self.app_info["runs_dir"]
-
-        # Loop through all runs in this campaign
-        run_ids = self.runs.keys()
-        for run_id in run_ids:
-            dir_name = os.path.join(runs_dir, run_id)
-            print("Applying " + func.__name__ + " to " + dir_name + "...")
-
-            # Run user-specified function on this directory, and store result
-            func(dir_name)
-        
-        
-        
     def apply_for_each_run_dir(self, action):
         """
         For each run in this Campaign's run list, apply the specified action (an object of type Action)
