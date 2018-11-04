@@ -84,15 +84,15 @@ class GenericEncoder(BaseEncoder, encoder_name = "generic_template"):
         else:
             self.target_filename = 'app_input.txt'
 
-        if 'run_cmd' in app_info:
-            run_cmd = app_info['run_cmd']
-
-            # Need to expand users, get absolute path and dereference symlinks
-            local_run_cmd = os.path.realpath(os.path.expanduser(run_cmd))
-
-            self.local_run_cmd = local_run_cmd
-        else:
-            self.local_run_cmd = None
+#        if 'run_cmd' in app_info:
+#            run_cmd = app_info['run_cmd']
+#
+#            # Need to expand users, get absolute path and dereference symlinks
+#            local_run_cmd = os.path.realpath(os.path.expanduser(run_cmd))
+#
+#            self.local_run_cmd = local_run_cmd
+#        else:
+#            self.local_run_cmd = None
 
         self.app_input_txt = None
 
@@ -123,7 +123,7 @@ class GenericEncoder(BaseEncoder, encoder_name = "generic_template"):
         template = self.template
         target_filename = self.target_filename
         app_input_txt = self.app_input_txt
-        local_run_cmd = self.local_run_cmd
+#        local_run_cmd = self.local_run_cmd
 
         try:
             app_input_txt = template.substitute(str_params)
@@ -136,10 +136,10 @@ class GenericEncoder(BaseEncoder, encoder_name = "generic_template"):
         with open(target_file_path, 'w') as fp:
             fp.write(app_input_txt)
 
-        # Write execution file
-        run_cmd_file_path = os.path.join(target_dir, 'run_cmd.sh')
-        with open(run_cmd_file_path, 'w') as fp:
-            fp.write(local_run_cmd)
+#        # Write execution file
+#        run_cmd_file_path = os.path.join(target_dir, 'run_cmd.sh')
+#        with open(run_cmd_file_path, 'w') as fp:
+#            fp.write(local_run_cmd)
 
     def _log_substitution_failure(self, params, exception):
         app_info = self.app_info
