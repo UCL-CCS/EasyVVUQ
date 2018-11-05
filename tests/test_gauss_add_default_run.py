@@ -60,7 +60,7 @@ def test_gauss_fix(tmpdir):
     assert( os.path.exists(run0dir) )
     assert( os.path.exists(os.path.join(run0dir, "bias1.txt")) ) # check the fixture got transferred correctly
 
-    my_campaign.apply_for_each_run_dir( uq.ExecuteLocal("tests/gauss/gauss_json.py gauss_in.json") )
+    my_campaign.apply_for_each_run_dir( uq.actions.ExecuteLocal("tests/gauss/gauss_json.py gauss_in.json") )
 
     uq.collate.aggregate_samples(my_campaign, average=True)
 
