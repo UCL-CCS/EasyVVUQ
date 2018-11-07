@@ -1,22 +1,7 @@
-# First make sure python version is 3.6+
-import sys
-assert sys.version_info >= (3, 6), (f"Python version must be >= 3.6,"
-                                    f"found {sys.version_info}")
-
-import json
-from .constants import OutputType
-from .campaign import Campaign
-from . import actions
-from . import uqp
-from . import collate
-from . import distributions
-from . import encoders
-from . import decoders
-
 __copyright__ = """
 
     Copyright 2018 Robin A. Richardson, David W. Wright 
-
+    
     This file is part of EasyVVUQ 
 
     EasyVVUQ is free software: you can redistribute it and/or modify
@@ -34,3 +19,15 @@ __copyright__ = """
 
 """
 __license__ = "LGPL"
+
+class BaseAction(object):
+    """
+    Baseclass for all EasyVVUQ Actions.
+
+    """
+
+    def act_on_dir(self, target_dir):
+        """
+        Function that will perform some action on the specified directory. Must be implemented by subclass.
+        """
+        raise NotImplementedError

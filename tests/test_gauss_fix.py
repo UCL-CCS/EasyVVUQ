@@ -60,7 +60,7 @@ def test_gauss_fix(tmpdir):
     assert( os.path.exists(my_campaign.runs_dir) )
     assert( os.path.isdir(my_campaign.runs_dir) )
 
-    my_campaign.apply_for_each_run(uq.execute_local)
+    my_campaign.apply_for_each_run_dir( uq.actions.ExecuteLocal("tests/gauss/gauss_json.py gauss_in.json") )
 
     uq.collate.aggregate_samples(my_campaign, average=True)
 

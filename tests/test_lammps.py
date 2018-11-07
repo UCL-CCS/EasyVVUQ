@@ -52,7 +52,7 @@ def test_lammps(tmpdir):
     assert( len(my_campaign.runs) == number_of_samples )
 
     my_campaign.populate_runs_dir()
-    my_campaign.apply_for_each_run(uq.execute_local)
+    my_campaign.apply_for_each_run_dir( uq.actions.ExecuteLocal("/usr/bin/lammps -i in.CG.lammps") )
 
     assert( len(my_campaign.runs_dir) > 0 )
     assert( os.path.exists(my_campaign.runs_dir) )

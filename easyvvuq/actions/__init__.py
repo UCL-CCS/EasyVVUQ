@@ -1,11 +1,10 @@
-import os, sys
-import json
-import glob
+from .base import BaseAction
+from .execute_local import ExecuteLocal
 
 __copyright__ = """
 
     Copyright 2018 Robin A. Richardson, David W. Wright 
-    
+
     This file is part of EasyVVUQ 
 
     EasyVVUQ is free software: you can redistribute it and/or modify
@@ -23,10 +22,3 @@ __copyright__ = """
 
 """
 __license__ = "LGPL"
-
-
-def execute_local(dirname):
-    cmd = "cd " + dirname + "\nbash run_cmd.sh"
-    r = os.system(cmd)
-    if r != 0:
-        sys.exit("Non-zero exit code from command '" + cmd + "'\n")

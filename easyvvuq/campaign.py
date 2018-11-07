@@ -613,13 +613,14 @@ class Campaign:
 
         return unique
 
-    def apply_for_each_run(self, func):
+
+    def apply_for_each_run_dir(self, action):
         """
-        For each run in this Campaign's run list, apply the specified function
+        For each run in this Campaign's run list, apply the specified action (an object of type Action)
 
         Parameters
         ----------
-        func : function
+        object : the action to be applied to each run directory
             The function to be applied to each run directory. func() will
             be called with the run directory path as its only argument.
         Returns
@@ -638,7 +639,7 @@ class Campaign:
         run_ids = self.runs.keys()
         for run_id in run_ids:
             dir_name = os.path.join(runs_dir, run_id)
-            print("Applying " + func.__name__ + " to " + dir_name + "...")
+            print("Applying " + action.__module__ + " to " + dir_name + "...")
 
-            # Run user-specified function on this directory, and store result
-            func(dir_name)
+            # Run user-specified action on this directory
+            action.act_on_dir(dir_name)

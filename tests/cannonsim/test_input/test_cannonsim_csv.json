@@ -4,8 +4,7 @@
   "encoder_delimiter": "#",
   "output_decoder":    "csv",
   "template":          "tests/cannonsim/test_input/cannonsim.template",
-  "input_filename":    "input.cannon",
-  "run_cmd":           "tests/cannonsim/bin/cannonsim input.cannon output.csv"
+  "input_filename":    "input.cannon"
   },
 "params": {
   "angle":                {"type": "real", "min": "0.0",    "max": "6.28",   "default": "0.79"},

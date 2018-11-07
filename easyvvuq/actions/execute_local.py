@@ -1,22 +1,10 @@
-# First make sure python version is 3.6+
-import sys
-assert sys.version_info >= (3, 6), (f"Python version must be >= 3.6,"
-                                    f"found {sys.version_info}")
-
-import json
-from .constants import OutputType
-from .campaign import Campaign
-from . import actions
-from . import uqp
-from . import collate
-from . import distributions
-from . import encoders
-from . import decoders
+import os, sys
+from . import BaseAction
 
 __copyright__ = """
 
     Copyright 2018 Robin A. Richardson, David W. Wright 
-
+    
     This file is part of EasyVVUQ 
 
     EasyVVUQ is free software: you can redistribute it and/or modify
@@ -34,3 +22,18 @@ __copyright__ = """
 
 """
 __license__ = "LGPL"
+
+
+class ExecuteLocal(BaseAction):
+
+    def __init__(self, run_cmd):
+
+        # Need to expand users, get absolute path and dereference symlinks
+        self.run_cmd = os.path.realpath(os.path.expanduser(run_cmd))
+
+    def act_on_dir(self, dirname):
+
+        full_cmd = 'cd ' + dirname + '\n' + self.run_cmd + '\n'
+        r = os.system(full_cmd)
+        if r != 0:
+            sys.exit("Non-zero exit code from command '" + full_cmd + "'\n")
