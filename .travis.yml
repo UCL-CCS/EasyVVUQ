@@ -1,0 +1,9 @@
+language: python
+python:
+  - "3.6"
+install:
+  - pip install -r requirements.txt
+script:
+  - python -m pytest tests/
+  - py.test --pep8 easyvvuq/
+  - py.test --pep8 test
