@@ -4,6 +4,6 @@ python:
 install:
   - pip install -r requirements.txt
 script:
-  - python -m pytest tests/
+  - python -m pytest test/
   - py.test --pep8 easyvvuq/
   - py.test --pep8 test
