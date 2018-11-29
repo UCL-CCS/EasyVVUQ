@@ -59,7 +59,9 @@ class Campaign:
 
     """
 
-    def __init__(self, state_filename=None, workdir='./', default_campaign_dir_prefix='EasyVVUQ_Campaign_', *args, **kwargs):
+    def __init__(self, *args, state_filename=None, workdir='./',
+                 default_campaign_dir_prefix='EasyVVUQ_Campaign_',
+                 **kwargs):
 
         # Information needed to run application
         self._app_info = {}
@@ -195,10 +197,11 @@ class Campaign:
                 except IOError:
                     raise IOError(f"Unable to create campaign directory: {campaign_dir}")
         else:
-            # Check if app_info already contains a prefix to use for the campaign directory. If not, use the default one.
+            # Check if app_info already contains a prefix to use for the campaign directory.
+            # If not, use the default one.
             if 'campaign_dir_prefix' not in self.app_info:
                 self.app_info['campaign_dir_prefix'] = self.default_campaign_dir_prefix
-            
+
             # Create temp dir for campaign
             campaign_dir = tempfile.mkdtemp(prefix=self.app_info['campaign_dir_prefix'],
                                             dir=self.workdir)
@@ -241,21 +244,24 @@ class Campaign:
             return None
         return self._app_info['campaign_dir']
 
-    def campaign_ID(self, without_prefix=False):
+    def campaign_id(self, without_prefix=False):
 
-        # The "ID" of the campaign is just the name of the campaign directory (without the trailing slash)
-        campaign_ID = os.path.basename(os.path.normpath(self.app_info['campaign_dir']))
+        # The "ID" of the campaign is just the name of the campaign
+        # directory (without the trailing slash)
+        campaign_id = os.path.basename(os.path.normpath(self.app_info['campaign_dir']))
 
-        if without_prefix == False:
-            return campaign_ID
-        else:
+        if without_prefix:
             # Ignore the prefix at the start of the string.
             prefix = self.app_info['campaign_dir_prefix']
-            if campaign_ID.startswith(prefix):
-                return campaign_ID[len(prefix):]
-            else:
-                print(f"Warning: campaign_ID() called with option without_prefix set, but prefix {prefix} was not found at the start of campaign_ID {campaign_ID}.")
-                return campaign_ID
+
+            if campaign_id.startswith(prefix):
+                return campaign_id[len(prefix):]
+
+            print(f"Warning: campaign_ID() called with option "
+                  f"'without_prefix' set, but prefix {prefix} was "
+                  f"not found at the start of campaign_ID {campaign_id}.")
+
+        return campaign_id
 
     @campaign_dir.setter
     def campaign_dir(self, path, force=False):
@@ -388,7 +394,8 @@ class Campaign:
         else:
             run_fixtures = {}
 
-        # If necessary parameter names are missing, fill them in from the default values in params_info
+        # If necessary parameter names are missing, fill them in from the
+        # default values in params_info
         for param in self.params_info.keys():
 
             if param not in new_run.keys():
@@ -412,22 +419,14 @@ class Campaign:
         self.runs[run_id]['fixtures'] = run_fixtures
         self.run_number += 1
 
-    def add_default_run(self, prefix='Run_'):
-        """Add a single new run to the queue, using only default values for all parameters
-
-        Parameters
-        ----------
-        prefix      : str
-            Prepended to the key used to identify the run in `self.runs`
-
-        Returns
-        -------
-
+    def add_default_run(self):
+        """
+        Add a single new run to the queue, using only default values for
+        all parameters.
         """
 
         new_run = {}
         self.add_run(new_run)
-
 
     def scan_completed(self, *args, **kwargs):
         """
@@ -464,8 +463,8 @@ class Campaign:
         Enables class to work with standard print() method"""
 
         return "\n".join(["Campaign info:", pprint.pformat(self.app_info, indent=4),
-                          "Params info:",   pprint.pformat(self.params_info, indent=4),
-                          "Runs:",          pprint.pformat(self.runs, indent=4),
+                          "Params info:", pprint.pformat(self.params_info, indent=4),
+                          "Runs:", pprint.pformat(self.runs, indent=4),
                           "Data:", pprint.pformat(self.data, indent=4)])
 
     def populate_runs_dir(self):
@@ -499,7 +498,9 @@ class Campaign:
             self.runs_dir = os.path.join(self.campaign_dir, 'runs')
             runs_dir = self.runs_dir
             if os.path.exists(runs_dir):
-                raise RuntimeError(f"Cannot create a runs directory to populate, as it already exists: {runs_dir}")
+                raise RuntimeError(f"Cannot create a runs directory to "
+                                   f"populate, as it already exists: "
+                                   f"{runs_dir}")
             os.makedirs(runs_dir)
             print(f"Creating temp runs directory: {runs_dir}")
 
@@ -571,8 +572,7 @@ class Campaign:
         if isinstance(output_type, uq.constants.OutputType):
             output_type = output_type.value
 
-        info = {
-                'primitive': primitive,
+        info = {'primitive': primitive,
                 'output': output_file,
                 'type': output_type,
                 'log': log_file,
@@ -613,10 +613,10 @@ class Campaign:
 
         return unique
 
-
     def apply_for_each_run_dir(self, action):
         """
-        For each run in this Campaign's run list, apply the specified action (an object of type Action)
+        For each run in this Campaign's run list, apply the specified action
+        (an object of type Action)
 
         Parameters
         ----------
