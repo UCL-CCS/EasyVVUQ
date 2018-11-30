@@ -8,4 +8,4 @@ install:
 script:
   - python -m pytest tests/
   - py.test --pep8 easyvvuq/
-  - py.test --pep8 test
+  - py.test --pep8 tests
