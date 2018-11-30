@@ -37,10 +37,10 @@ def test_campaign_dir_prefix(tmpdir):
     my_campaign = uq.Campaign(state_filename=input_json, workdir=tmpdir, default_campaign_dir_prefix=alternative_prefix)
 
     assert( my_campaign is not None )
-    assert( len(my_campaign.campaign_ID()) > 0 )
-    assert( my_campaign.campaign_ID().startswith(alternative_prefix) )
-    assert( my_campaign.campaign_ID(without_prefix=True).startswith(alternative_prefix) == False )
-    assert( len(my_campaign.campaign_ID(without_prefix=True)) > 0 )
+    assert( len(my_campaign.campaign_id()) > 0 )
+    assert( my_campaign.campaign_id().startswith(alternative_prefix) )
+    assert( my_campaign.campaign_id(without_prefix=True).startswith(alternative_prefix) == False )
+    assert( len(my_campaign.campaign_id(without_prefix=True)) > 0 )
     assert( 'campaign_dir_prefix' in my_campaign.app_info )
     assert( my_campaign.app_info['campaign_dir_prefix'] == alternative_prefix )
  
@@ -54,10 +54,10 @@ def test_campaign_dir_prefix(tmpdir):
     my_campaign = None
     reloaded_campaign = uq.Campaign(state_filename=output_json)
 
-    assert( len(reloaded_campaign.campaign_ID()) > 0 )
-    assert( reloaded_campaign.campaign_ID().startswith(alternative_prefix) )
-    assert( reloaded_campaign.campaign_ID(without_prefix=True).startswith(alternative_prefix) == False )
-    assert( len(reloaded_campaign.campaign_ID(without_prefix=True)) > 0 )
+    assert( len(reloaded_campaign.campaign_id()) > 0 )
+    assert( reloaded_campaign.campaign_id().startswith(alternative_prefix) )
+    assert( reloaded_campaign.campaign_id(without_prefix=True).startswith(alternative_prefix) == False )
+    assert( len(reloaded_campaign.campaign_id(without_prefix=True)) > 0 )
     assert( 'campaign_dir_prefix' in reloaded_campaign.app_info )
     assert( reloaded_campaign.app_info['campaign_dir_prefix'] == alternative_prefix )
 
