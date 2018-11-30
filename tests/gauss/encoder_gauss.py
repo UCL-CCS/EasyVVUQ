@@ -43,8 +43,8 @@ class GaussEncoder(BaseEncoder, encoder_name="gauss"):
         num_steps = params['num_steps']
         mu = params['mu']
         sigma = params['sigma']
-        output_str = '{"outfile": "' + out_file + '", "num_steps": "' + str(num_steps)
-                     + '", "mu": "' + str(mu) + '", "sigma": "' + str(sigma) + '"}\n'
+        output_str = '{"outfile": "' + out_file + '", "num_steps": "' + str(num_steps) + \
+                     '", "mu": "' + str(mu) + '", "sigma": "' + str(sigma) + '"}\n'
 
         encoder_outfname = os.path.join(target_dir, "gauss_input.json")
         with open(encoder_outfname, "w") as outfile:
