@@ -2,7 +2,7 @@ from easyvvuq import OutputType
 
 __copyright__ = """
 
-    Copyright 2018 Robin A. Richardson, David W. Wright 
+    Copyright 2018 Robin A. Richardson, David W. Wright
 
     This file is part of EasyVVUQ 
 
@@ -23,8 +23,10 @@ __copyright__ = """
 __license__ = "LGPL"
 
 
-# Dict to store all registered decoders (any class which extends BaseDecoder is automatically registered as an decoder)
+# Dict to store all registered decoders (any class which extends
+# BaseDecoder is automatically registered as an decoder)
 available_decoders = {}
+
 
 class BaseDecoder(object):
     """Baseclass for all EasyVVUQ decoders.

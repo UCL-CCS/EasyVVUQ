@@ -5,9 +5,9 @@ from easyvvuq import OutputType
 
 __copyright__ = """
 
-    Copyright 2018 Robin A. Richardson, David W. Wright 
+    Copyright 2018 Robin A. Richardson, David W. Wright
 
-    This file is part of EasyVVUQ 
+    This file is part of EasyVVUQ
 
     EasyVVUQ is free software: you can redistribute it and/or modify
     it under the terms of the Lesser GNU General Public License as published by
@@ -26,7 +26,7 @@ __copyright__ = """
 __license__ = "LGPL"
 
 
-class SimpleCSV(BaseDecoder, decoder_name = "csv"):
+class SimpleCSV(BaseDecoder, decoder_name="csv"):
 
     def __init__(self, *args, **kwargs):
 
@@ -34,7 +34,6 @@ class SimpleCSV(BaseDecoder, decoder_name = "csv"):
         super().__init__(*args, **kwargs)
 
         self.output_type = OutputType('sample')
-
 
     @staticmethod
     def _get_output_path(run_info={}, *args, **kwargs):
@@ -71,8 +70,8 @@ class SimpleCSV(BaseDecoder, decoder_name = "csv"):
             raise RuntimeError('A value for "names" must be '
                                'specified for the simple encoder')
 
-        # Remove 'output_filename' and 'output_columns' from the kwargs before passing to pandas read_csv
-        # (as these are clearly going to be rejected by pandas)
+        # Remove 'output_filename' and 'output_columns' from the kwargs before
+        # passing to pandas read_csv (as these are clearly going to be rejected by pandas)
         del kwargs['output_filename']
         del kwargs['output_columns']
 

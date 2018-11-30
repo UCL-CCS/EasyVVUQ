@@ -586,7 +586,7 @@ class Campaign:
                 'type': output_type,
                 'log': log_file,
                 'state': state_file,
-               }
+                }
 
         self._analysis_uqps.append(info)
 

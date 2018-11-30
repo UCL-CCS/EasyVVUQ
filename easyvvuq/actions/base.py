@@ -1,8 +1,8 @@
 __copyright__ = """
 
-    Copyright 2018 Robin A. Richardson, David W. Wright 
+    Copyright 2018 Robin A. Richardson, David W. Wright
     
-    This file is part of EasyVVUQ 
+    This file is part of EasyVVUQ
 
     EasyVVUQ is free software: you can redistribute it and/or modify
     it under the terms of the Lesser GNU General Public License as published by
@@ -20,6 +20,7 @@ __copyright__ = """
 """
 __license__ = "LGPL"
 
+
 class BaseAction(object):
     """
     Baseclass for all EasyVVUQ Actions.
@@ -28,6 +29,7 @@ class BaseAction(object):
 
     def act_on_dir(self, target_dir):
         """
-        Function that will perform some action on the specified directory. Must be implemented by subclass.
+        Function that will perform some action on the specified directory.
+        Must be implemented by subclass.
         """
         raise NotImplementedError

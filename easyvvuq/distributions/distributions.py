@@ -3,9 +3,9 @@ import csv
 
 __copyright__ = """
 
-    Copyright 2018 Robin A. Richardson, David W. Wright 
+    Copyright 2018 Robin A. Richardson, David W. Wright
 
-    This file is part of EasyVVUQ 
+    This file is part of EasyVVUQ
 
     EasyVVUQ is free software: you can redistribute it and/or modify
     it under the terms of the Lesser GNU General Public License as published by
@@ -85,6 +85,7 @@ def uniform(min_val, max_val):
     while True:
         yield np.random.uniform(min_val, max_val)
 
+
 def uniform_integer(min_val, max_val):
     """
     Generator returning integer values picked from the specified uniform distribution
@@ -128,7 +129,7 @@ def custom_histogram(filename):
         values = []
         csvreader = csv.reader(infile)
         for row in csvreader:
-            if '#' in row[0]: # skip comment line
+            if '#' in row[0]:  # skip comment line
                     continue
             values.append(float(row[0]))
             probabilities.append(float(row[1]))
@@ -139,5 +140,4 @@ def custom_histogram(filename):
         probabilities /= probabilities.sum()
 
     while True:
-        yield np.random.choice(values, p=probabilities) 
-
+        yield np.random.choice(values, p=probabilities)

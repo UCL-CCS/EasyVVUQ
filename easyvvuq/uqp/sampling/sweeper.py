@@ -4,9 +4,9 @@ import numpy as np
 
 __copyright__ = """
 
-    Copyright 2018 Robin A. Richardson, David W. Wright 
+    Copyright 2018 Robin A. Richardson, David W. Wright
 
-    This file is part of EasyVVUQ 
+    This file is part of EasyVVUQ
 
     EasyVVUQ is free software: you can redistribute it and/or modify
     it under the terms of the Lesser GNU General Public License as published by
@@ -78,4 +78,3 @@ def random_sampler(campaign):
         campaign.add_run(run_dict)
 
     campaign.sample_uqps.append(('random_sampler'))
-

@@ -8,9 +8,9 @@ from .base import BaseEncoder
 
 __copyright__ = """
 
-    Copyright 2018 Robin A. Richardson, David W. Wright 
+    Copyright 2018 Robin A. Richardson, David W. Wright
 
-    This file is part of EasyVVUQ 
+    This file is part of EasyVVUQ
 
     EasyVVUQ is free software: you can redistribute it and/or modify
     it under the terms of the Lesser GNU General Public License as published by
@@ -35,7 +35,7 @@ def getCustomTemplate(template_txt, custom_delimiter='$'):
     return CustomTemplate(template_txt)
 
 
-class GenericEncoder(BaseEncoder, encoder_name = "generic_template"):
+class GenericEncoder(BaseEncoder, encoder_name="generic_template"):
     """GenericEncoder for substituting values into application template input.
 
     The `app_info` dictionary needs to contain either a `template` filename or
@@ -74,7 +74,8 @@ class GenericEncoder(BaseEncoder, encoder_name = "generic_template"):
                 template_txt = template_file.read()
             self.template = getCustomTemplate(template_txt, custom_delimiter=self.encoder_delimiter)
         elif 'template_txt' in app_info:
-            self.template = getCustomTemplate(app_info['template_txt'], custom_delimiter=self.encoder_delimiter)
+            self.template = getCustomTemplate(  app_info['template_txt'],
+                                                custom_delimiter=self.encoder_delimiter)
         else:
             raise RuntimeError('Template required in "app" specification input to GenericEncoder')
 

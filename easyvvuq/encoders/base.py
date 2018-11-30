@@ -3,9 +3,9 @@ import easyvvuq.utils.fixtures as fixtures
 
 __copyright__ = """
 
-    Copyright 2018 Robin A. Richardson, David W. Wright 
+    Copyright 2018 Robin A. Richardson, David W. Wright
 
-    This file is part of EasyVVUQ 
+    This file is part of EasyVVUQ
 
     EasyVVUQ is free software: you can redistribute it and/or modify
     it under the terms of the Lesser GNU General Public License as published by
@@ -23,7 +23,8 @@ __copyright__ = """
 """
 __license__ = "LGPL"
 
-# Dict to store all registered encoders (any class which extends BaseEncoder is automatically registered as an encoder)
+# Dict to store all registered encoders (any class which extends
+# BaseEncoder is automatically registered as an encoder)
 available_encoders = {}
 
 class BaseEncoder(object):
@@ -94,4 +95,3 @@ class BaseEncoder(object):
                 tmp_fixture.copy_to_target(target_dir=target_dir)
 
         return info
-

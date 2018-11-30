@@ -7,9 +7,9 @@ from easyvvuq import Campaign
 
 __copyright__ = """
 
-    Copyright 2018 Robin A. Richardson, David W. Wright 
+    Copyright 2018 Robin A. Richardson, David W. Wright
 
-    This file is part of EasyVVUQ 
+    This file is part of EasyVVUQ
 
     EasyVVUQ is free software: you can redistribute it and/or modify
     it under the terms of the Lesser GNU General Public License as published by
@@ -34,8 +34,8 @@ class BaseAnalysisUQP(object):
     Parameters
     ----------
     data_src    : dict or Campaign or stream
-        Information on the infomration Application information. Will try interpreting as a dict or JSON
-        file/stream or filename.
+        Information on the infomration Application information.
+        Will try interpreting as a dict or JSON file/stream or filename.
 
 
     Attributes
