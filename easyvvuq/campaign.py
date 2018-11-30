@@ -9,9 +9,9 @@ import easyvvuq as uq
 
 __copyright__ = """
 
-    Copyright 2018 Robin A. Richardson, David W. Wright 
+    Copyright 2018 Robin A. Richardson, David W. Wright
 
-    This file is part of EasyVVUQ 
+    This file is part of EasyVVUQ
 
     EasyVVUQ is free software: you can redistribute it and/or modify
     it under the terms of the Lesser GNU General Public License as published by
@@ -69,7 +69,7 @@ class Campaign:
         self._params_info = {}
         # Files and directories that are required by runs
         self._fixtures = {}
-        # Which parameters can be varied, and what prior distributions they have
+        # Which parameters can be varied, and their prior distributions
         self._vars = {}
         # Categorical variables
         self._categoricals = {}
@@ -138,7 +138,8 @@ class Campaign:
         # information and `params` into application specific input files.
         if "input_encoder" not in input_json["app"]:
             raise RuntimeError("State file 'app' block should contain "
-                               "'input_encoder' to allow lookup of required encoder")
+                               "'input_encoder' to allow lookup of required "
+                               "encoder")
         else:
             input_encoder = input_json['app']['input_encoder']
             available_encoders = uq.encoders.base.available_encoders
@@ -151,17 +152,18 @@ class Campaign:
             encoder_class = available_encoders[input_encoder]
             self.encoder = encoder_class(self.app_info)
 
-        # `output_decoder` used to select decoder used to read simulation output
+        # `output_decoder`, selects decoder used to read simulation output
         if "output_decoder" not in input_json["app"]:
             raise RuntimeError("State file 'app' block should contain "
-                               "'output_decoder' to allow lookup of required decoder")
+                               "'output_decoder' to allow lookup of required "
+                               "decoder")
         else:
 
             output_decoder = input_json['app']['output_decoder']
             available_decoders = uq.decoders.base.available_decoders
 
             if output_decoder not in available_decoders:
-                raise RuntimeError(f'No output decoder was found with the name '
+                raise RuntimeError(f'No output decoder found with name: '
                                    f'{output_decoder}\n'
                                    f"Available decoders are:\n"
                                    f"{available_decoders}")
@@ -171,9 +173,9 @@ class Campaign:
 
     def _setup_campaign_dir(self):
         """
-        Check if a 'campaign_dir' is found in `self.app_info`. If so use this as
-        top level directory for recording run and analysis information. If no
-        directory provided or find it does not exist yet then create.
+        Check if a 'campaign_dir' is found in `self.app_info`. If so use this
+        as a top level directory for recording run and analysis information.
+        If no directory provided or find it does not exist yet then create.
 
         Returns
         -------
@@ -190,15 +192,17 @@ class Campaign:
 
             campaign_dir = app_info['campaign_dir']
             if not os.path.exists(campaign_dir):
-                print(f"Notice: Campaign directory not found - creating {campaign_dir}")
+                print(f"Notice: Campaign directory not found "
+                      f"- creating {campaign_dir}")
                 try:
                     campaign_dir = str(campaign_dir)
                     os.makedirs(campaign_dir)
                 except IOError:
-                    raise IOError(f"Unable to create campaign directory: {campaign_dir}")
+                    raise IOError(f"Unable to create campaign directory: "
+                                  f"{campaign_dir}")
         else:
-            # Check if app_info already contains a prefix to use for the campaign directory.
-            # If not, use the default one.
+            # Check if app_info already contains a prefix to use for the
+            # campaign directory. If not, use the default one.
             if 'campaign_dir_prefix' not in self.app_info:
                 self.app_info['campaign_dir_prefix'] = self.default_campaign_dir_prefix
 
@@ -214,8 +218,8 @@ class Campaign:
             sub_path = os.path.join(campaign_dir, sub_dir)
             if not os.path.isdir(sub_path):
                 if os.path.exists(sub_path):
-                    raise RuntimeError(f"Unable to create sub path {sub_path}, "
-                                       f"invalid campaign directory.")
+                    raise RuntimeError(f"Unable to create sub path {sub_path},"
+                                       f" invalid campaign directory.")
                 os.makedirs(sub_path)
 
     @property
@@ -430,7 +434,8 @@ class Campaign:
 
     def scan_completed(self, *args, **kwargs):
         """
-        Check each run in `self.runs` to see if output has been generated by a completed simulation.
+        Check each run in `self.runs` to see if output has been generated by
+        a completed simulation.
 
         Returns
         -------
@@ -447,7 +452,8 @@ class Campaign:
 
     def all_complete(self):
         """
-        Check if all runs have reported having output generated by a completed simulation.
+        Check if all runs have reported having output generated by
+        a completed simulation.
 
         Returns
         -------
@@ -462,10 +468,12 @@ class Campaign:
         """Returns formatted summary of the current Campaign state.
         Enables class to work with standard print() method"""
 
-        return "\n".join(["Campaign info:", pprint.pformat(self.app_info, indent=4),
-                          "Params info:", pprint.pformat(self.params_info, indent=4),
-                          "Runs:", pprint.pformat(self.runs, indent=4),
-                          "Data:", pprint.pformat(self.data, indent=4)])
+        return "\n".join([
+                    "Campaign info:", pprint.pformat(self.app_info, indent=4),
+                    "Params info:", pprint.pformat(self.params_info, indent=4),
+                    "Runs:", pprint.pformat(self.runs, indent=4),
+                    "Data:", pprint.pformat(self.data, indent=4)
+                    ])
 
     def populate_runs_dir(self):
         """Populate run directories as specified in the input Campaign object
@@ -537,7 +545,8 @@ class Campaign:
 
     def vary_param(self, param_name, dist=None):
         """
-        Registers the named parameter as being variable (such as by any applied UQPs)
+        Registers the named parameter as being variable
+        (such as by any applied UQPs)
         """
         if param_name in self._vars.keys():
             print("Param '" + param_name + "' already in list of variables.")
