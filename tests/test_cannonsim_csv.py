@@ -59,7 +59,7 @@ def test_cannonsim_csv(tmpdir):
         "mass",
         dist=uq.distributions.custom_histogram("tests/cannonsim/test_input/mass_distribution.csv")
     )
- 
+
     assert("angle" in my_campaign.vars)
     assert("height" in my_campaign.vars)
     assert("velocity" in my_campaign.vars)
