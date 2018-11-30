@@ -27,6 +27,7 @@ __license__ = "LGPL"
 # BaseEncoder is automatically registered as an encoder)
 available_encoders = {}
 
+
 class BaseEncoder(object):
     """Baseclass for all EasyVVUQ encoders.
 
