@@ -1,4 +1,5 @@
-import os, sys
+import os
+import sys
 import easyvvuq as uq
 import pytest
 
@@ -29,6 +30,7 @@ __license__ = "LGPL"
 if not os.path.exists("/usr/bin/lammps"):
     pytest.skip("Skipping lammps test (lammps is not installed in /usr/bin/lammps", allow_module_level=True)
 
+
 def test_lammps(tmpdir):
 
     # Params for testing
@@ -52,7 +54,8 @@ def test_lammps(tmpdir):
     assert(len(my_campaign.runs) == number_of_samples)
 
     my_campaign.populate_runs_dir()
-    my_campaign.apply_for_each_run_dir(uq.actions.ExecuteLocal("/usr/bin/lammps -i in.CG.lammps"))
+    my_campaign.apply_for_each_run_dir(
+            uq.actions.ExecuteLocal("/usr/bin/lammps -i in.CG.lammps"))
 
     assert(len(my_campaign.runs_dir) > 0)
     assert(os.path.exists(my_campaign.runs_dir))

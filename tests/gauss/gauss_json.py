@@ -6,9 +6,9 @@ import json
 
 __copyright__ = """
 
-    Copyright 2018 Robin A. Richardson, David W. Wright 
+    Copyright 2018 Robin A. Richardson, David W. Wright
 
-    This file is part of EasyVVUQ 
+    This file is part of EasyVVUQ
 
     EasyVVUQ is free software: you can redistribute it and/or modify
     it under the terms of the Lesser GNU General Public License as published by
@@ -48,7 +48,6 @@ if 'biasfile' in inputs:
         line = fin.readline()
 
     bias = float(line.split()[0])
-        
 else:
     bias = 0
 
@@ -64,4 +63,3 @@ header = 'Step,Value'
 
 fmt = '%i,%f'
 np.savetxt(output_filename, numbers_out, fmt=fmt, header=header)
-

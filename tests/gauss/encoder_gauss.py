@@ -8,9 +8,9 @@ from easyvvuq.encoders import BaseEncoder
 
 __copyright__ = """
 
-    Copyright 2018 Robin A. Richardson, David W. Wright 
+    Copyright 2018 Robin A. Richardson, David W. Wright
 
-    This file is part of EasyVVUQ 
+    This file is part of EasyVVUQ
 
     EasyVVUQ is free software: you can redistribute it and/or modify
     it under the terms of the Lesser GNU General Public License as published by
@@ -28,7 +28,8 @@ __copyright__ = """
 """
 __license__ = "LGPL"
 
-class GaussEncoder(BaseEncoder, encoder_name = "gauss"):
+
+class GaussEncoder(BaseEncoder, encoder_name="gauss"):
 
     def __init__(self, app_info, *args, **kwargs):
 
@@ -42,7 +43,8 @@ class GaussEncoder(BaseEncoder, encoder_name = "gauss"):
         num_steps = params['num_steps']
         mu = params['mu']
         sigma = params['sigma']
-        output_str = '{"outfile": "' + out_file + '", "num_steps": "' + str(num_steps) + '", "mu": "' + str(mu) + '", "sigma": "' + str(sigma) + '"}\n'
+        output_str = '{"outfile": "' + out_file + '", "num_steps": "' + str(num_steps)
+                     + '", "mu": "' + str(mu) + '", "sigma": "' + str(sigma) + '"}\n'
 
         encoder_outfname = os.path.join(target_dir, "gauss_input.json")
         with open(encoder_outfname, "w") as outfile:
@@ -53,5 +55,3 @@ class GaussEncoder(BaseEncoder, encoder_name = "gauss"):
         local_run_cmd = os.path.realpath(os.path.expanduser(run_cmd))
         with open(runscript_fname, "w") as outfile:
             outfile.write(local_run_cmd)
-
-

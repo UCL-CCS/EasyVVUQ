@@ -1,4 +1,5 @@
-import os, sys
+import os
+import sys
 import easyvvuq as uq
 from gauss.encoder_gauss import GaussEncoder
 from gauss.decoder_gauss import GaussDecoder
@@ -59,7 +60,8 @@ def test_gauss_custom_encoder(tmpdir):
     assert(os.path.exists(my_campaign.runs_dir))
     assert(os.path.isdir(my_campaign.runs_dir))
 
-    my_campaign.apply_for_each_run_dir(uq.actions.ExecuteLocal("tests/gauss/gauss_json.py gauss_input.json"))
+    my_campaign.apply_for_each_run_dir(
+            uq.actions.ExecuteLocal("tests/gauss/gauss_json.py gauss_input.json"))
 
     uq.collate.aggregate_samples(my_campaign, average=True)
 
