@@ -28,7 +28,9 @@ __license__ = "LGPL"
 
 # If lammps is not installed (at present only checks for /usr/bin/lammps) then skip this test
 if not os.path.exists("/usr/bin/lammps"):
-    pytest.skip("Skipping lammps test (lammps is not installed in /usr/bin/lammps", allow_module_level=True)
+    pytest.skip(
+            "Skipping lammps test (lammps is not installed in /usr/bin/lammps",
+            allow_module_level=True)
 
 
 def test_lammps(tmpdir):

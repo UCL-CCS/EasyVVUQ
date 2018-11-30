@@ -41,7 +41,7 @@ def test_campaign_dir_prefix(tmpdir):
     assert(my_campaign is not None)
     assert(len(my_campaign.campaign_id()) > 0)
     assert(my_campaign.campaign_id().startswith(alternative_prefix))
-    assert(my_campaign.campaign_id(without_prefix=True).startswith(alternative_prefix) == False)
+    assert(my_campaign.campaign_id(without_prefix=True).startswith(alternative_prefix) is False)
     assert(len(my_campaign.campaign_id(without_prefix=True)) > 0)
     assert('campaign_dir_prefix' in my_campaign.app_info)
     assert(my_campaign.app_info['campaign_dir_prefix'] == alternative_prefix)
@@ -59,7 +59,7 @@ def test_campaign_dir_prefix(tmpdir):
     assert(len(reloaded_campaign.campaign_id()) > 0)
     assert(reloaded_campaign.campaign_id().startswith(alternative_prefix))
     assert(
-        reloaded_campaign.campaign_id(without_prefix=True).startswith(alternative_prefix) == False)
+        reloaded_campaign.campaign_id(without_prefix=True).startswith(alternative_prefix) is False)
     assert(len(reloaded_campaign.campaign_id(without_prefix=True)) > 0)
     assert('campaign_dir_prefix' in reloaded_campaign.app_info)
     assert(reloaded_campaign.app_info['campaign_dir_prefix'] == alternative_prefix)
