@@ -7,5 +7,5 @@ install:
   - make -C tests/cannonsim/src/ 
 script:
   - python -m pytest tests/
-  - py.test --pep8 --ignore=E402 easyvvuq/
+  - py.test --pep8 easyvvuq/
   - py.test --pep8 test
