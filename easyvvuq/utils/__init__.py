@@ -19,4 +19,3 @@ __copyright__ = """
 
 """
 __license__ = "LGPL"
-

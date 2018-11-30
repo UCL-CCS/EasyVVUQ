@@ -74,8 +74,10 @@ class GenericEncoder(BaseEncoder, encoder_name="generic_template"):
                 template_txt = template_file.read()
             self.template = getCustomTemplate(template_txt, custom_delimiter=self.encoder_delimiter)
         elif 'template_txt' in app_info:
-            self.template = getCustomTemplate(  app_info['template_txt'],
-                                                custom_delimiter=self.encoder_delimiter)
+            self.template = getCustomTemplate(
+                                                app_info['template_txt'],
+                                                custom_delimiter=self.encoder_delimiter
+                                                )
         else:
             raise RuntimeError('Template required in "app" specification input to GenericEncoder')
 
