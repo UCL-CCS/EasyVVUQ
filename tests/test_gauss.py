@@ -33,44 +33,44 @@ def test_gauss(tmpdir):
     number_of_samples = 2
     number_of_replicas = 5
 
-    assert( os.path.exists(input_json) )
-    
+    assert(os.path.exists(input_json))
+
     my_campaign = uq.Campaign(state_filename=input_json, workdir=tmpdir)
 
-    assert( my_campaign is not None )
-    assert( "sigma" in my_campaign.params_info )
-    assert( "mu" in my_campaign.params_info )
-    assert( "num_steps" in my_campaign.params_info )
-    assert( "out_file" in my_campaign.params_info )
+    assert(my_campaign is not None)
+    assert("sigma" in my_campaign.params_info)
+    assert("mu" in my_campaign.params_info)
+    assert("num_steps" in my_campaign.params_info)
+    assert("out_file" in my_campaign.params_info)
 
     my_campaign.vary_param("mu", dist=uq.distributions.uniform(1.0, 100.0))
 
-    assert( "mu" in my_campaign.vars )
+    assert("mu" in my_campaign.vars)
 
     uq.uqp.sampling.random_sampler(my_campaign, num_samples=number_of_samples)
     uq.uqp.sampling.add_replicas(my_campaign, replicates=number_of_replicas)
 
-    assert( len(my_campaign.runs) == number_of_samples * number_of_replicas )
+    assert(len(my_campaign.runs) == number_of_samples * number_of_replicas)
 
     my_campaign.populate_runs_dir()
 
-    assert( len(my_campaign.runs_dir) > 0 )
-    assert( os.path.exists(my_campaign.runs_dir) )
-    assert( os.path.isdir(my_campaign.runs_dir) )
+    assert(len(my_campaign.runs_dir) > 0)
+    assert(os.path.exists(my_campaign.runs_dir))
+    assert(os.path.isdir(my_campaign.runs_dir))
 
-    my_campaign.apply_for_each_run_dir( uq.actions.ExecuteLocal("tests/gauss/gauss_json.py gauss_in.json") )
+    my_campaign.apply_for_each_run_dir(uq.actions.ExecuteLocal("tests/gauss/gauss_json.py gauss_in.json"))
 
     uq.collate.aggregate_samples(my_campaign, average=True)
 
-    assert( len(my_campaign.data) > 0 )
+    assert(len(my_campaign.data) > 0)
 
     ensemble_boot = uq.uqp.analysis.EnsembleBoot(my_campaign)
     results, output_file = ensemble_boot.run_analysis()
 
     my_campaign.save_state(output_json)
 
-    assert( os.path.exists(output_json) )
-    assert( os.path.isfile(output_json) )
+    assert(os.path.exists(output_json))
+    assert(os.path.isfile(output_json))
 
 if __name__ == "__main__":
     test_gauss("/tmp/")
