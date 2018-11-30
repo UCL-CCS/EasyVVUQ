@@ -4,6 +4,7 @@ python:
 install:
   - pip install -r requirements.txt
   - python setup.py develop
+  - make -C tests/cannonsim/src/ 
 script:
   - python -m pytest tests/
   - py.test --pep8 easyvvuq/
