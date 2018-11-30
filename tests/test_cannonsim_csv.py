@@ -51,7 +51,7 @@ def test_cannonsim_csv(tmpdir):
     assert("gravity" in my_campaign.params_info)
     assert("mass" in my_campaign.params_info)
     assert("velocity" in my_campaign.params_info)
- 
+
     my_campaign.vary_param("angle",    dist=uq.distributions.uniform(0.0, 1.0))
     my_campaign.vary_param("height",   dist=uq.distributions.uniform_integer(0, 10))
     my_campaign.vary_param("velocity", dist=uq.distributions.normal(10.0, 1.0))
@@ -59,7 +59,7 @@ def test_cannonsim_csv(tmpdir):
         "mass",
         dist=uq.distributions.custom_histogram("tests/cannonsim/test_input/mass_distribution.csv")
     )
-    
+ 
     assert("angle" in my_campaign.vars)
     assert("height" in my_campaign.vars)
     assert("velocity" in my_campaign.vars)
