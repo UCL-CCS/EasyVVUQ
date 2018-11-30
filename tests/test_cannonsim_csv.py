@@ -1,5 +1,6 @@
 import easyvvuq as uq
 import os
+import pytest
 
 __copyright__ = """
 
@@ -22,6 +23,11 @@ __copyright__ = """
 
 """
 __license__ = "LGPL"
+
+
+# If cannonsim has not been built (to do so, run the Makefile in tests/cannonsim/src/) then skip this test
+if not os.path.exists("tests/cannonsim/bin/cannonsim"):
+    pytest.skip("Skipping cannonsim test (cannonsim is not installed in tests/cannonsim/bin/)", allow_module_level=True)
 
 
 def test_cannonsim_csv(tmpdir):
