@@ -4,9 +4,9 @@ import numpy as np
 
 __copyright__ = """
 
-    Copyright 2018 Robin A. Richardson, David W. Wright 
+    Copyright 2018 Robin A. Richardson, David W. Wright
 
-    This file is part of EasyVVUQ 
+    This file is part of EasyVVUQ
 
     EasyVVUQ is free software: you can redistribute it and/or modify
     it under the terms of the Lesser GNU General Public License as published by
@@ -78,21 +78,3 @@ def random_sampler(campaign):
         campaign.add_run(run_dict)
 
     campaign.sample_uqps.append(('random_sampler'))
-
-
-if __name__ == "__main__":
-    """
-    If module is run as standalone script, read in application/params info from 
-    json file, then write resultant runs to specified json file
-    """
-
-    if len(sys.argv) != 3:
-        sys.exit("Usage: python3 Basic.py INPUT_JSON OUTPUT_JOBS_JSON")
-        infname = sys.argv[1]
-        outfname = sys.argv[2]
-
-        app = uq.Application()
-        app.load_state(infname)
-
-        UQP_basic(app)
-        app.save_state(outfname)

@@ -1,7 +1,6 @@
 import os
 import tempfile
 import json
-import importlib
 import collections
 import pprint
 
@@ -10,9 +9,9 @@ import easyvvuq as uq
 
 __copyright__ = """
 
-    Copyright 2018 Robin A. Richardson, David W. Wright 
+    Copyright 2018 Robin A. Richardson, David W. Wright
 
-    This file is part of EasyVVUQ 
+    This file is part of EasyVVUQ
 
     EasyVVUQ is free software: you can redistribute it and/or modify
     it under the terms of the Lesser GNU General Public License as published by
@@ -60,14 +59,21 @@ class Campaign:
 
     """
 
-    def __init__(self, state_filename=None, *args, **kwargs):
+    def __init__(self, *args, state_filename=None, workdir='./',
+                 default_campaign_dir_prefix='EasyVVUQ_Campaign_',
+                 **kwargs):
 
         # Information needed to run application
         self._app_info = {}
         # Name and description of the model parameters
         self._params_info = {}
-        # Which parameters can be varied, and what prior distributions they have
+        # Files and directories that are required by runs
+        self._fixtures = {}
+        # Which parameters can be varied, and their prior distributions
         self._vars = {}
+        # Categorical variables
+        self._categoricals = {}
+
         # List of runs that need to be performed by this app
         self._runs = collections.OrderedDict()
 
@@ -79,6 +85,11 @@ class Campaign:
         self.run_number = 0
         self.encoder = None
         self.decoder = None
+
+        self._reserved_keys = ['completed', 'fixtures']
+
+        self.workdir = workdir
+        self.default_campaign_dir_prefix = default_campaign_dir_prefix
 
         if state_filename is not None:
             self.load_state(state_filename)
@@ -120,48 +131,51 @@ class Campaign:
 
         self.params_info = input_json["params"]
 
+        if "fixtures" in input_json:
+            self._fixtures = input_json["fixtures"]
+
         # `input_encoder` used to select encoder used to transfer other `app`
         # information and `params` into application specific input files.
         if "input_encoder" not in input_json["app"]:
             raise RuntimeError("State file 'app' block should contain "
-                               "'input_encoder' to allow lookup of required encoder")
+                               "'input_encoder' to allow lookup of required "
+                               "encoder")
         else:
             input_encoder = input_json['app']['input_encoder']
-            if input_encoder not in uq.app_encoders:
+            available_encoders = uq.encoders.base.available_encoders
+            if input_encoder not in available_encoders:
                 raise RuntimeError(f"No encoder found. Looking for "
-                                   f"'input_encoder': {input_encoder}")
+                                   f"'input_encoder': {input_encoder}\n"
+                                   f"Available encoders are:\n"
+                                   f"{available_encoders}")
 
-            module_location = uq.app_encoders[input_encoder]['module_location']
-            encoder_name = uq.app_encoders[input_encoder]['encoder_name']
+            encoder_class = available_encoders[input_encoder]
+            self.encoder = encoder_class(self.app_info)
 
-            module = importlib.import_module(module_location)
-            encoder_class_ = getattr(module, encoder_name)
-            self.encoder = encoder_class_(self.app_info)
-
-        # `output_decoder` used to select decoder used to read simulation output
+        # `output_decoder`, selects decoder used to read simulation output
         if "output_decoder" not in input_json["app"]:
             raise RuntimeError("State file 'app' block should contain "
-                               "'output_decoder' to allow lookup of required decoder")
+                               "'output_decoder' to allow lookup of required "
+                               "decoder")
         else:
 
             output_decoder = input_json['app']['output_decoder']
+            available_decoders = uq.decoders.base.available_decoders
 
-            if output_decoder not in uq.app_decoders:
-                raise RuntimeError(f'No output decoder was found with the name '
-                                   f'{output_decoder}')
+            if output_decoder not in available_decoders:
+                raise RuntimeError(f'No output decoder found with name: '
+                                   f'{output_decoder}\n'
+                                   f"Available decoders are:\n"
+                                   f"{available_decoders}")
 
-            module_location = uq.app_decoders[output_decoder]['module_location']
-            decoder_name = uq.app_decoders[output_decoder]['decoder_name']
-
-            module = importlib.import_module(module_location)
-            decoder_class_ = getattr(module, decoder_name)
-            self.decoder = decoder_class_(self.app_info)
+            decoder_class = available_decoders[output_decoder]
+            self.decoder = decoder_class(self.app_info)
 
     def _setup_campaign_dir(self):
         """
-        Check if a 'campaign_dir' is found in `self.app_info`. If so use this as
-        top level directory for recording run and analysis information. If no
-        directory provided or find it does not exist yet then create.
+        Check if a 'campaign_dir' is found in `self.app_info`. If so use this
+        as a top level directory for recording run and analysis information.
+        If no directory provided or find it does not exist yet then create.
 
         Returns
         -------
@@ -171,75 +185,90 @@ class Campaign:
         app_info = self.app_info
 
         # TODO: Decide if runs should be here
-        sub_dirs = ['data', 'analysis']
+        sub_dirs = ['data', 'analysis', 'common']
 
         # Build a temp directory to store run files (unless it already exists)
         if 'campaign_dir' in app_info:
 
             campaign_dir = app_info['campaign_dir']
-
             if not os.path.exists(campaign_dir):
-
-                print(f"Notice: Campaign directory not found - creating {campaign_dir}")
-
+                print(f"Notice: Campaign directory not found "
+                      f"- creating {campaign_dir}")
                 try:
                     campaign_dir = str(campaign_dir)
                     os.makedirs(campaign_dir)
                 except IOError:
-                    raise IOError(f"Unable to create campaign directory: {campaign_dir}")
-
+                    raise IOError(f"Unable to create campaign directory: "
+                                  f"{campaign_dir}")
         else:
+            # Check if app_info already contains a prefix to use for the
+            # campaign directory. If not, use the default one.
+            if 'campaign_dir_prefix' not in self.app_info:
+                self.app_info['campaign_dir_prefix'] = self.default_campaign_dir_prefix
 
-            campaign_dir = tempfile.mkdtemp(prefix='EasyVVUQ_Campaign_',
-                                            dir='.')
+            # Create temp dir for campaign
+            campaign_dir = tempfile.mkdtemp(prefix=self.app_info['campaign_dir_prefix'],
+                                            dir=self.workdir)
+
             print(f"Creating Campaign directory: {campaign_dir}")
             self.campaign_dir = campaign_dir
 
         campaign_dir = self.campaign_dir
-
         for sub_dir in sub_dirs:
-
             sub_path = os.path.join(campaign_dir, sub_dir)
-
             if not os.path.isdir(sub_path):
-
                 if os.path.exists(sub_path):
-                    raise RuntimeError(f"Unable to create sub path {sub_path}, "
-                                       f"invalid campaign directory.")
-
+                    raise RuntimeError(f"Unable to create sub path {sub_path},"
+                                       f" invalid campaign directory.")
                 os.makedirs(sub_path)
 
     @property
     def sample_uqps(self):
-
         return tuple(self._sample_uqps)
 
     @property
     def analysis_uqps(self):
-
         return tuple(self._analysis_uqps)
 
     @property
     def data(self):
-
         return self._data
 
     @data.setter
     def data(self, new_data):
-
         self._data = new_data
 
     @property
-    def campaign_dir(self):
+    def fixtures(self):
+        return self._fixtures
 
+    @property
+    def campaign_dir(self):
         if 'campaign_dir' not in self.app_info:
             return None
-
         return self._app_info['campaign_dir']
+
+    def campaign_id(self, without_prefix=False):
+
+        # The "ID" of the campaign is just the name of the campaign
+        # directory (without the trailing slash)
+        campaign_id = os.path.basename(os.path.normpath(self.app_info['campaign_dir']))
+
+        if without_prefix:
+            # Ignore the prefix at the start of the string.
+            prefix = self.app_info['campaign_dir_prefix']
+
+            if campaign_id.startswith(prefix):
+                return campaign_id[len(prefix):]
+
+            print(f"Warning: campaign_ID() called with option "
+                  f"'without_prefix' set, but prefix {prefix} was "
+                  f"not found at the start of campaign_ID {campaign_id}.")
+
+        return campaign_id
 
     @campaign_dir.setter
     def campaign_dir(self, path, force=False):
-
         if self.campaign_dir and not force:
 
             message = (f'Cannot set a new runs directory because there is one '
@@ -275,6 +304,14 @@ class Campaign:
 
     @params_info.setter
     def params_info(self, info):
+
+        reserved_keys = self._reserved_keys
+
+        disallowed_keys = set(reserved_keys).intersection(info.keys())
+        if disallowed_keys:
+            raise RuntimeError(f'The keys {reserved_keys} are not allowed in the '
+                               f'params dictionary , we found: {disallowed_keys}')
+
         self._params_info = info
 
     @property
@@ -316,6 +353,7 @@ class Campaign:
 
         output_json = {"app": self.app_info,
                        "params": self.params_info,
+                       "fixtures": self.fixtures,
                        "runs": self.runs,
                        "sample_uqps": self._sample_uqps,
                        "analysis_uqps": self._analysis_uqps,
@@ -341,10 +379,13 @@ class Campaign:
 
         """
 
+        reserved_keys = self._reserved_keys
+        campaign_params = self.params_info.keys()
+
         # Validate:
         # Check if parameter names match those already known for this app
         for param in new_run.keys():
-            if param not in self.params_info.keys() and param != 'completed':
+            if param not in campaign_params and param not in reserved_keys:
 
                 reasoning = (f"dict passed to add_run() contains extra parameter, "
                              f"{param}, which is not a known parameter name "
@@ -352,20 +393,49 @@ class Campaign:
 
                 raise RuntimeError(reasoning)
 
-        # If necessary parameter names are missing, fill them in from the default values in params_info
+        if 'fixtures' in new_run:
+            run_fixtures = new_run['fixtures']
+        else:
+            run_fixtures = {}
+
+        # If necessary parameter names are missing, fill them in from the
+        # default values in params_info
         for param in self.params_info.keys():
+
             if param not in new_run.keys():
-                new_run[param] = self.params_info[param]["default"]
+
+                default_val = self.params_info[param]["default"]
+                new_run[param] = default_val
+
+                if self.params_info[param]["type"] == "fixture":
+                    run_fixtures[param] = self.fixtures[default_val]
+                    new_run[param] = 'EASYVVUQ_FIXTURE'
+
+            elif self.params_info[param]["type"] == "fixture":
+                if new_run[param] != 'EASYVVUQ_FIXTURE':
+                    run_fixtures[param] = self.fixtures[new_run[param]]
+                    new_run[param] = 'EASYVVUQ_FIXTURE'
 
         # Add to run queue
         run_id = f"{prefix}{self.run_number}"
         self.runs[run_id] = new_run
         self.runs[run_id]['completed'] = False
+        self.runs[run_id]['fixtures'] = run_fixtures
         self.run_number += 1
+
+    def add_default_run(self):
+        """
+        Add a single new run to the queue, using only default values for
+        all parameters.
+        """
+
+        new_run = {}
+        self.add_run(new_run)
 
     def scan_completed(self, *args, **kwargs):
         """
-        Check each run in `self.runs` to see if output has been generated by a completed simulation.
+        Check each run in `self.runs` to see if output has been generated by
+        a completed simulation.
 
         Returns
         -------
@@ -382,7 +452,8 @@ class Campaign:
 
     def all_complete(self):
         """
-        Check if all runs have reported having output generated by a completed simulation.
+        Check if all runs have reported having output generated by
+        a completed simulation.
 
         Returns
         -------
@@ -397,10 +468,12 @@ class Campaign:
         """Returns formatted summary of the current Campaign state.
         Enables class to work with standard print() method"""
 
-        return "\n".join(["Campaign info:", pprint.pformat(self.app_info, indent=4),
-                          "Params info:",   pprint.pformat(self.params_info, indent=4),
-                          "Runs:",          pprint.pformat(self.runs, indent=4),
-                          "Data:", pprint.pformat(self.data, indent=4)])
+        return "\n".join([
+                    "Campaign info:", pprint.pformat(self.app_info, indent=4),
+                    "Params info:", pprint.pformat(self.params_info, indent=4),
+                    "Runs:", pprint.pformat(self.runs, indent=4),
+                    "Data:", pprint.pformat(self.data, indent=4)
+                    ])
 
     def populate_runs_dir(self):
         """Populate run directories as specified in the input Campaign object
@@ -433,7 +506,9 @@ class Campaign:
             self.runs_dir = os.path.join(self.campaign_dir, 'runs')
             runs_dir = self.runs_dir
             if os.path.exists(runs_dir):
-                raise RuntimeError(f"Cannot create a runs directory to populate, as it already exists: {runs_dir}")
+                raise RuntimeError(f"Cannot create a runs directory to "
+                                   f"populate, as it already exists: "
+                                   f"{runs_dir}")
             os.makedirs(runs_dir)
             print(f"Creating temp runs directory: {runs_dir}")
 
@@ -470,7 +545,8 @@ class Campaign:
 
     def vary_param(self, param_name, dist=None):
         """
-        Registers the named parameter as being variable (such as by any applied UQPs)
+        Registers the named parameter as being variable
+        (such as by any applied UQPs)
         """
         if param_name in self._vars.keys():
             print("Param '" + param_name + "' already in list of variables.")
@@ -505,13 +581,12 @@ class Campaign:
         if isinstance(output_type, uq.constants.OutputType):
             output_type = output_type.value
 
-        info = {
-                'primitive': primitive,
+        info = {'primitive': primitive,
                 'output': output_file,
                 'type': output_type,
                 'log': log_file,
                 'state': state_file,
-               }
+                }
 
         self._analysis_uqps.append(info)
 
@@ -547,13 +622,14 @@ class Campaign:
 
         return unique
 
-    def apply_for_each_run(self, func):
+    def apply_for_each_run_dir(self, action):
         """
-        For each run in this Campaign's run list, apply the specified function
+        For each run in this Campaign's run list, apply the specified action
+        (an object of type Action)
 
         Parameters
         ----------
-        func : function
+        object : the action to be applied to each run directory
             The function to be applied to each run directory. func() will
             be called with the run directory path as its only argument.
         Returns
@@ -572,7 +648,7 @@ class Campaign:
         run_ids = self.runs.keys()
         for run_id in run_ids:
             dir_name = os.path.join(runs_dir, run_id)
-            print("Applying " + func.__name__ + " to " + dir_name + "...")
+            print("Applying " + action.__module__ + " to " + dir_name + "...")
 
-            # Run user-specified function on this directory, and store result
-            func(dir_name)
+            # Run user-specified action on this directory
+            action.act_on_dir(dir_name)

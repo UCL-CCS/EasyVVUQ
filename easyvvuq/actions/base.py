@@ -1,5 +1,3 @@
-from .distributions import normal, uniform, uniform_integer, custom_histogram
-
 __copyright__ = """
 
     Copyright 2018 Robin A. Richardson, David W. Wright
@@ -21,3 +19,17 @@ __copyright__ = """
 
 """
 __license__ = "LGPL"
+
+
+class BaseAction(object):
+    """
+    Baseclass for all EasyVVUQ Actions.
+
+    """
+
+    def act_on_dir(self, target_dir):
+        """
+        Function that will perform some action on the specified directory.
+        Must be implemented by subclass.
+        """
+        raise NotImplementedError

@@ -2,9 +2,12 @@ __pycache__
 *.pyc
 out_cannonsim.json
 out_gauss.json
+out_lammps.json
 test/test_apps/cannonsim/bin/
+tests/cannonsim/bin/
 EasyVVUQ_Campaign_*
 build/
 dist/
 easyvvuq.egg-info/
 .idea/
+run_tests_psm.sh

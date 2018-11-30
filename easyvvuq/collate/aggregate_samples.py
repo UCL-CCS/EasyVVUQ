@@ -5,9 +5,9 @@ import tempfile
 
 __copyright__ = """
 
-    Copyright 2018 Robin A. Richardson, David W. Wright 
+    Copyright 2018 Robin A. Richardson, David W. Wright
 
-    This file is part of EasyVVUQ 
+    This file is part of EasyVVUQ
 
     EasyVVUQ is free software: you can redistribute it and/or modify
     it under the terms of the Lesser GNU General Public License as published by
@@ -70,7 +70,14 @@ def aggregate_samples(campaign, average=False, *args, **kwargs):
 
             for param, value in run_info.items():
 
-                run_data[param] = value
+                # TODO: Improve this ugly hack
+                if param == 'fixtures':
+
+                    run_data[param] = 'FIXTURE'
+
+                else:
+
+                    run_data[param] = value
 
             # Reorder columns
             run_data = run_data[column_list]
@@ -97,11 +104,3 @@ def aggregate_samples(campaign, average=False, *args, **kwargs):
     }
 
     return full_data
-
-
-
-
-
-
-
-

@@ -1,13 +1,13 @@
 import os
 import pandas as pd
-from .base import BaseDecoder
+from easyvvuq.decoders import BaseDecoder
 from easyvvuq import OutputType
 
 __copyright__ = """
 
-    Copyright 2018 Robin A. Richardson, David W. Wright 
+    Copyright 2018 Robin A. Richardson, David W. Wright
 
-    This file is part of EasyVVUQ 
+    This file is part of EasyVVUQ
 
     EasyVVUQ is free software: you can redistribute it and/or modify
     it under the terms of the Lesser GNU General Public License as published by
@@ -26,7 +26,7 @@ __copyright__ = """
 __license__ = "LGPL"
 
 
-class GaussDecoder(BaseDecoder):
+class GaussDecoder(BaseDecoder, decoder_name="gauss"):
 
     def __init__(self, *args, **kwargs):
 

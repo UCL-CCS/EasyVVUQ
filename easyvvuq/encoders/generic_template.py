@@ -8,9 +8,9 @@ from .base import BaseEncoder
 
 __copyright__ = """
 
-    Copyright 2018 Robin A. Richardson, David W. Wright 
+    Copyright 2018 Robin A. Richardson, David W. Wright
 
-    This file is part of EasyVVUQ 
+    This file is part of EasyVVUQ
 
     EasyVVUQ is free software: you can redistribute it and/or modify
     it under the terms of the Lesser GNU General Public License as published by
@@ -28,12 +28,14 @@ __copyright__ = """
 """
 __license__ = "LGPL"
 
+
 def getCustomTemplate(template_txt, custom_delimiter='$'):
     class CustomTemplate(Template):
         delimiter = custom_delimiter
     return CustomTemplate(template_txt)
 
-class GenericEncoder(BaseEncoder):
+
+class GenericEncoder(BaseEncoder, encoder_name="generic_template"):
     """GenericEncoder for substituting values into application template input.
 
     The `app_info` dictionary needs to contain either a `template` filename or
@@ -59,6 +61,7 @@ class GenericEncoder(BaseEncoder):
         # Handles creation of `self.app_info` attribute (dicts)
         super().__init__(app_info, *args, **kwargs)
         app_info = self.app_info
+        print(app_info)
 
         # Check if an encoder delimiter is specified in the app_info. Else use $ by default.
         self.encoder_delimiter = '$'
@@ -71,7 +74,10 @@ class GenericEncoder(BaseEncoder):
                 template_txt = template_file.read()
             self.template = getCustomTemplate(template_txt, custom_delimiter=self.encoder_delimiter)
         elif 'template_txt' in app_info:
-            self.template = getCustomTemplate(app_info['template_txt'], custom_delimiter=self.encoder_delimiter)
+            self.template = getCustomTemplate(
+                                                app_info['template_txt'],
+                                                custom_delimiter=self.encoder_delimiter
+                                                )
         else:
             raise RuntimeError('Template required in "app" specification input to GenericEncoder')
 
@@ -81,18 +87,7 @@ class GenericEncoder(BaseEncoder):
         else:
             self.target_filename = 'app_input.txt'
 
-        if 'run_cmd' in app_info:
-            run_cmd = app_info['run_cmd']
-
-            # Need to expand users, get absolute path and derefernce symlinks
-            local_run_cmd = os.path.realpath(os.path.expanduser(run_cmd))
-
-            self.local_run_cmd = local_run_cmd
-        else:
-            self.local_run_cmd = None
-
         self.app_input_txt = None
-
 
     def encode(self, params={}, target_dir=''):
         """Substitutes `params` into a template application input, saves in target_dir
@@ -112,6 +107,8 @@ class GenericEncoder(BaseEncoder):
         if not hasattr(params, 'items'):
             params = json_utils.process_json(params)
 
+        params = self.parse_fixtures_params(params, target_dir)
+
         str_params = {}
         for key, value in params.items():
             str_params[key] = str(value)
@@ -119,7 +116,6 @@ class GenericEncoder(BaseEncoder):
         template = self.template
         target_filename = self.target_filename
         app_input_txt = self.app_input_txt
-        local_run_cmd = self.local_run_cmd
 
         try:
             app_input_txt = template.substitute(str_params)
@@ -131,11 +127,6 @@ class GenericEncoder(BaseEncoder):
         target_file_path = os.path.join(target_dir, target_filename)
         with open(target_file_path, 'w') as fp:
             fp.write(app_input_txt)
-
-        # Write execution file
-        run_cmd_file_path = os.path.join(target_dir, 'run_cmd.sh')
-        with open(run_cmd_file_path, 'w') as fp:
-            fp.write(local_run_cmd)
 
     def _log_substitution_failure(self, params, exception):
         app_info = self.app_info
@@ -157,7 +148,6 @@ class GenericEncoder(BaseEncoder):
 
         print(reasoning)
         raise KeyError(exception)
-
 
 
 if __name__ == "__main__":
