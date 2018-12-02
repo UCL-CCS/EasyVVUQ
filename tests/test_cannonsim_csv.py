@@ -65,7 +65,7 @@ def test_cannonsim_csv(tmpdir):
     assert("velocity" in my_campaign.vars)
     assert("mass" in my_campaign.vars)
 
-    uq.uqp.sampling.random_sampler(my_campaign, num_samples=number_of_samples)
+    uq.elements.sampling.random_sampler(my_campaign, num_samples=number_of_samples)
 
     assert(len(my_campaign.runs) == number_of_samples)
 
@@ -87,7 +87,7 @@ def test_cannonsim_csv(tmpdir):
 
     assert(len(my_campaign.data) > 0)
 
-    stats = uq.uqp.analysis.BasicStats(my_campaign, value_cols=output_columns)
+    stats = uq.elements.analysis.BasicStats(my_campaign, value_cols=output_columns)
     results, output_file = stats.run_analysis()
 
     my_campaign.save_state(output_json)
