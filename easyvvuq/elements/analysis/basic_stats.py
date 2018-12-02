@@ -1,7 +1,7 @@
 import os
 import pandas as pd
 from easyvvuq import OutputType
-from .base import BaseAnalysisUQP
+from .base import BaseAnalysisElement
 
 __copyright__ = """
 
@@ -26,7 +26,7 @@ __copyright__ = """
 __license__ = "LGPL"
 
 
-class BasicStats(BaseAnalysisUQP):
+class BasicStats(BaseAnalysisElement):
 
     def __init__(self, data_src, params_cols=[], value_cols=[],
                  *args, **kwargs):
@@ -34,10 +34,10 @@ class BasicStats(BaseAnalysisUQP):
         # TODO: Fix this to allow more flexibility - basically pass through
         # available options to `pd.DataFrame.describe()`
 
-        self.uqp_name = 'basic_stats'
+        self.element_name = 'basic_stats'
 
         # Handles creation of `self.data_src` attribute (dict)
-        super().__init__(data_src, uqp_name=self.uqp_name, *args, **kwargs)
+        super().__init__(data_src, element_name=self.element_name, *args, **kwargs)
 
         data_src = self.data_src
 
@@ -56,16 +56,11 @@ class BasicStats(BaseAnalysisUQP):
         self.value_cols = value_cols
 
         if self.campaign is not None:
-
             if not params_cols:
                 self.params_cols = list(self.campaign.params_info.keys())
-
             self.value_cols = self.campaign.decoder.output_columns
-
         else:
-
             self.params_cols = params_cols
-
         self.output_type = OutputType.SUMMARY
 
     def run_analysis(self):

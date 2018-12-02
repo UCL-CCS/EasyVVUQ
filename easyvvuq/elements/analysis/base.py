@@ -28,8 +28,8 @@ __copyright__ = """
 __license__ = "LGPL"
 
 
-class BaseAnalysisUQP(object):
-    """Baseclass for all EasyVVUQ analysis UQPs.
+class BaseAnalysisElement(object):
+    """Baseclass for all EasyVVUQ analysis elements.
 
     Parameters
     ----------
@@ -43,10 +43,10 @@ class BaseAnalysisUQP(object):
 
     """
 
-    def __init__(self, data_src, uqp_name='uqp_base',
+    def __init__(self, data_src, element_name='element_base',
                  output_dir=None, *args, **kwargs):
 
-        self.uqp_name = uqp_name
+        self.element_name = element_name
 
         self.campaign = None
 
@@ -66,7 +66,7 @@ class BaseAnalysisUQP(object):
             if not self.output_dir:
 
                 analysis_path = os.path.join(self.campaign.campaign_dir, 'analysis')
-                self.output_dir = tempfile.mkdtemp(prefix=uqp_name + '_',
+                self.output_dir = tempfile.mkdtemp(prefix=element_name + '_',
                                                    dir=analysis_path)
 
         elif isinstance(data_src, dict):
@@ -83,7 +83,7 @@ class BaseAnalysisUQP(object):
     def log_run(self):
 
         output_dir = self.output_dir
-        filename = f"{self.uqp_name}.json"
+        filename = f"{self.element_name}.json"
 
         log_path = os.path.join(output_dir, filename)
 
@@ -98,7 +98,7 @@ class BaseAnalysisUQP(object):
             state_file = os.path.join(output_dir, 'state_file.json')
             self.campaign.save_state(state_file)
 
-            self.campaign.record_analysis(self.uqp_name,
+            self.campaign.record_analysis(self.element_name,
                                           self.output_file,
                                           self.output_type,
                                           log_path,
