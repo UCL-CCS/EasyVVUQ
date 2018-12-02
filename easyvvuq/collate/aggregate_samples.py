@@ -1,7 +1,7 @@
-from easyvvuq import OutputType
 import os
-import pandas as pd
 import tempfile
+import pandas as pd
+from easyvvuq import OutputType
 
 __copyright__ = """
 
@@ -26,7 +26,7 @@ __copyright__ = """
 __license__ = "LGPL"
 
 
-def aggregate_samples(campaign, average=False, *args, **kwargs):
+def aggregate_samples(campaign, *args, average=False, **kwargs):
     """
     Aggregate the results of all completed simulations described by the
     Campaign.

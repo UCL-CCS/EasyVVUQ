@@ -35,6 +35,6 @@ class ExecuteLocal(BaseAction):
     def act_on_dir(self, dirname):
 
         full_cmd = 'cd ' + dirname + '\n' + self.run_cmd + '\n'
-        r = os.system(full_cmd)
-        if r != 0:
+        result = os.system(full_cmd)
+        if result != 0:
             sys.exit("Non-zero exit code from command '" + full_cmd + "'\n")
