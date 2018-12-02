@@ -146,7 +146,8 @@ class EnsembleBoot(BaseAnalysisElement):
 
                 if len(data_src['files']) != 1:
 
-                    raise RuntimeError("Data source must contain a SINGLE file path for this VVUQ element")
+                    raise RuntimeError("Data source must contain a SINGLE file"
+                                       " path for this VVUQ element")
 
                 else:
 

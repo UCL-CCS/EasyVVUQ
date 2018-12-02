@@ -56,18 +56,12 @@ class BasicStats(BaseAnalysisElement):
         self.value_cols = value_cols
 
         if self.campaign is not None:
-
             if not params_cols:
                 self.params_cols = list(self.campaign.params_info.keys())
-
             self.value_cols = self.campaign.decoder.output_columns
-
         else:
-
             self.params_cols = params_cols
-
         self.output_type = OutputType.SUMMARY
-
 
     def run_analysis(self):
 
