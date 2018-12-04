@@ -221,7 +221,7 @@ class Campaign:
 
     @property
     def log(self):
-        return tuple(self._log)
+        return self._log
 
     @property
     def data(self):
