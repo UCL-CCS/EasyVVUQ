@@ -142,7 +142,7 @@ class EnsembleBoot(BaseAnalysisElement):
                  *args, **kwargs):
 
         # Handles creation of `self.data_src` attribute (dict)
-        super().__init__(data_src, element_name='ensemble_boot', *args, **kwargs)
+        super().__init__(data_src, *args, **kwargs)
 
         data_src = self.data_src
 
