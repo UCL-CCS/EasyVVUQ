@@ -543,9 +543,11 @@ class Campaign:
         """
 
         log_entry = {    
-                "name": element.element_name(),
-                "version": element.element_version(),
-                "category": element.element_category(),
+                "element": {
+                                "name": element.element_name(),
+                                "version": element.element_version(),
+                                "category": element.element_category()
+                            },
                 "info": further_info
                 }
         self._log.append(log_entry)
