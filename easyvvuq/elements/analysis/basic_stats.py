@@ -76,8 +76,7 @@ class BasicStats(BaseAnalysisElement):
 
         grouped_data = df.groupby(self.params_cols)
 
-        # Apply bootstrapping to all value columns selected
-        # Note results come a tuple per cell
+        # Get summary statistics
         results = grouped_data.describe()
         results.to_csv(output_file, sep='\t')
 
