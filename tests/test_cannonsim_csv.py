@@ -67,7 +67,7 @@ def test_cannonsim_csv(tmpdir):
 
     random_sampler = uq.elements.sampling.RandomSampler(my_campaign)
 
-    my_campaign.add_runs(random_sampler, max_num_samples=number_of_samples)
+    my_campaign.add_runs(random_sampler, max_num=number_of_samples)
 
     assert(len(my_campaign.runs) == number_of_samples)
 

@@ -87,12 +87,3 @@ class Replicate(BaseSamplingElement):
                     new_reps = self.replicates - n_reps
                     for rep_no in range(new_reps):
                         yield dict(copy_info)
-
-#                        reps_made = True
-
-#        if reps_made:
-#            # TODO: There must be a better way to record argument - using locals() maybe?
-#            campaign.record_sampling('add_replicas',
-#                                     {'selection': selection,
-#                                      'replicates': replicates},
-#                                     reps_made)

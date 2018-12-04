@@ -425,24 +425,24 @@ class Campaign:
         self.add_run(new_run)
 
 
-    def add_runs(self, sampling_element, max_num_samples=0):
+    def add_runs(self, sampling_element, max_num=0):
 
         # Make sure we have a sampling element
         if isinstance(sampling_element, uq.elements.sampling.BaseSamplingElement) is False:
             raise RuntimeError("add_runs() must be passed (an instance of) BaseSamplingElement")
 
         # Make sure num is not 0 for an infinite generator (this would add runs forever...)
-        if sampling_element.is_finite() is False and max_num_samples <= 0:
-            raise RuntimeError("sampling_element '" + sampling_element.element_name() + "' is an infinite generator, therefore a max_num_samples > 0 must be specified.'")
+        if sampling_element.is_finite() is False and max_num <= 0:
+            raise RuntimeError("sampling_element '" + sampling_element.element_name() + "' is an infinite generator, therefore a max_num > 0 must be specified.'")
 
         num_added = 0
         for run in sampling_element.generate_runs():
             self.add_run(run)
             num_added += 1
-            if num_added == max_num_samples:
+            if num_added == max_num:
                 break
 
-        self.log_element_application(sampling_element, {"num_samples_requested": max_num_samples, "num_samples_added": num_added})
+        self.log_element_application(sampling_element, {"num_draws_requested": max_num, "num_draws_added": num_added})
 
 
     def scan_completed(self, *args, **kwargs):
