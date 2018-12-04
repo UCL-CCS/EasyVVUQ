@@ -93,7 +93,7 @@ def test_cannonsim_csv(tmpdir):
     assert(len(my_campaign.data) > 0)
 
     stats = uq.elements.analysis.BasicStats(my_campaign, value_cols=output_columns)
-    results, output_file = stats.run_analysis()
+    results, output_file = stats.apply()
 
     my_campaign.save_state(output_json)
 
