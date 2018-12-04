@@ -1,3 +1,4 @@
+from .base import BaseSamplingElement
 
 __copyright__ = """
 
@@ -21,17 +22,24 @@ __copyright__ = """
 """
 __license__ = "LGPL"
 
+class RandomSampler(BaseSamplingElement):
 
-def random_sampler(campaign, num_samples=1):
+    def __init__(self, campaign):
+        self.campaign = campaign
 
-    all_vars = campaign.vars
+    def element_name(self):
+        return "random_sampler"
 
-    for i in range(num_samples):
-        run_dict = {}
-        for param_name, dist in all_vars.items():
-            run_dict[param_name] = next(dist)
-        campaign.add_run(run_dict)
+    def element_version(self):
+        return "0.1"
 
-    campaign.record_sampling('random_sampler',
-                             {'num_samples': num_samples},
-                             True)
+    def is_finite(self):
+        return False
+
+    def generate_runs(self):
+        all_vars = self.campaign.vars
+        while True:
+            run_dict = {}
+            for param_name, dist in all_vars.items():
+                run_dict[param_name] = next(dist)
+            yield(run_dict)

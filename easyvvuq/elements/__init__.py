@@ -1,3 +1,4 @@
+from .base import BaseElement
 from . import sampling
 from . import analysis
 

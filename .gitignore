@@ -1,4 +1,5 @@
 __pycache__
+*.py.swp
 *.pyc
 out_cannonsim.json
 out_gauss.json

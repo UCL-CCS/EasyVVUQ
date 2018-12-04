@@ -65,9 +65,14 @@ def test_cannonsim_csv(tmpdir):
     assert("velocity" in my_campaign.vars)
     assert("mass" in my_campaign.vars)
 
-    uq.elements.sampling.random_sampler(my_campaign, num_samples=number_of_samples)
+    random_sampler = uq.elements.sampling.RandomSampler(my_campaign)
+
+    my_campaign.add_runs(random_sampler, max_num_samples=number_of_samples)
 
     assert(len(my_campaign.runs) == number_of_samples)
+
+    print(my_campaign.log)
+
 
     my_campaign.populate_runs_dir()
 

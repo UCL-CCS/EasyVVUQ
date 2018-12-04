@@ -58,13 +58,10 @@ class BaseAnalysisElement(object):
         self.output_type = None
 
         if isinstance(data_src, Campaign):
-
             self.campaign = data_src
-
             self.data_src = data_src.data
-
+        
             if not self.output_dir:
-
                 analysis_path = os.path.join(self.campaign.campaign_dir, 'analysis')
                 self.output_dir = tempfile.mkdtemp(prefix=element_name + '_',
                                                    dir=analysis_path)
@@ -77,24 +74,20 @@ class BaseAnalysisElement(object):
             self.data_src = json_utils.process_json(data_src)
 
         if not self.output_dir:
-
             self.output_dir = tempfile.mkdtemp()
 
-    def log_run(self):
 
+    def log_run(self):
         output_dir = self.output_dir
         filename = f"{self.element_name}.json"
 
         log_path = os.path.join(output_dir, filename)
-
         self_dict = {k: v for k, v in self.__dict__.items() if k not in ['data_frame', 'campaign']}
 
         with open(log_path, "w") as outfile:
-
             json.dump(self_dict, outfile, indent=4, default=json_utils.jdefault)
 
         if self.campaign is not None:
-
             state_file = os.path.join(output_dir, 'state_file.json')
             self.campaign.save_state(state_file)
 
