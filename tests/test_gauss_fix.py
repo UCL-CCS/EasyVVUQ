@@ -48,8 +48,13 @@ def test_gauss_fix(tmpdir):
 
     assert("mu" in my_campaign.vars)
 
-    uq.elements.sampling.random_sampler(my_campaign, num_samples=number_of_samples)
-    uq.elements.sampling.add_replicas(my_campaign, replicates=number_of_replicas)
+    random_sampler = uq.elements.sampling.RandomSampler(my_campaign)
+    my_campaign.add_runs(random_sampler, max_num=number_of_samples)
+
+    assert(len(my_campaign.runs) == number_of_samples)
+
+    replicator = uq.elements.sampling.Replicate(my_campaign, replicates=number_of_replicas)
+    my_campaign.add_runs(replicator)
 
     assert(len(my_campaign.runs) == number_of_samples * number_of_replicas)
 
@@ -69,7 +74,7 @@ def test_gauss_fix(tmpdir):
     assert(len(my_campaign.data) > 0)
 
     ensemble_boot = uq.elements.analysis.EnsembleBoot(my_campaign)
-    results, output_file = ensemble_boot.run_analysis()
+    results, output_file = ensemble_boot.apply()
 
     my_campaign.save_state(output_json)
 

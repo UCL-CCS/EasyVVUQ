@@ -51,7 +51,8 @@ def test_lammps(tmpdir):
 
     assert("seed" in my_campaign.vars)
 
-    uq.elements.sampling.random_sampler(my_campaign, num_samples=number_of_samples)
+    random_sampler = uq.elements.sampling.RandomSampler(my_campaign)
+    my_campaign.add_runs(max_num=number_of_samples)
 
     assert(len(my_campaign.runs) == number_of_samples)
 
@@ -73,7 +74,7 @@ def test_lammps(tmpdir):
     assert(len(my_campaign.data) > 0)
 
     stats = uq.elements.analysis.BasicStats(my_campaign)
-    results, output_file = stats.run_analysis()
+    results, output_file = stats.apply()
 
     my_campaign.save_state(output_json)
 

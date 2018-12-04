@@ -71,7 +71,7 @@ def test_gauss_fix(tmpdir):
     assert(len(my_campaign.data) > 0)
 
     ensemble_boot = uq.elements.analysis.EnsembleBoot(my_campaign)
-    results, output_file = ensemble_boot.run_analysis()
+    results, output_file = ensemble_boot.apply()
 
     print(my_campaign)
 
