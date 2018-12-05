@@ -1,4 +1,4 @@
-from .. import BaseElement
+from . import BaseComparisonElement
 
 __copyright__ = """
 
@@ -23,17 +23,13 @@ __copyright__ = """
 __license__ = "LGPL"
 
 
-class BaseComparisonElement(BaseElement):
-    """Baseclass for all EasyVVUQ comparison elements.
+class Validate(BaseComparisonElement):
 
-    Attributes
-    ----------
+    def element_name(self):
+        return "validate"
 
-    """
+    def element_version(self):
+        return "0.1"
 
     def compare(self, dataframe1, dataframe2):
-        raise NotImplementedError
-
-
-    def element_category(self):
-        return "comparison"
+        return "df"
