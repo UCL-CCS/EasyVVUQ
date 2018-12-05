@@ -31,7 +31,7 @@ def test_gauss(tmpdir):
     # Params for testing
     input_json = "tests/gauss/test_gauss.json"
     output_json = os.path.join(tmpdir, "out_gauss.json")
-    number_of_samples = 2
+    number_of_samples = 3
     number_of_replicas = 5
 
     assert(os.path.exists(input_json))
@@ -73,6 +73,10 @@ def test_gauss(tmpdir):
 
     ensemble_boot = uq.elements.analysis.EnsembleBoot(my_campaign)
     results, output_file = ensemble_boot.apply()
+
+    print(results)
+
+    print(my_campaign.log)
 
     my_campaign.save_state(output_json)
 
