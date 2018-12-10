@@ -12,3 +12,4 @@ dist/
 easyvvuq.egg-info/
 .idea/
 run_tests_psm.sh
+pep.sh
