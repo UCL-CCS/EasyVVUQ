@@ -73,7 +73,6 @@ def test_cannonsim_csv(tmpdir):
 
     print(my_campaign.log)
 
-
     my_campaign.populate_runs_dir()
 
     assert(len(my_campaign.runs_dir) > 0)
@@ -96,7 +95,6 @@ def test_cannonsim_csv(tmpdir):
     results, output_file = stats.apply()
 
     my_campaign.save_state(output_json)
-
 
     print(results)
 

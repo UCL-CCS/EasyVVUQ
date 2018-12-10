@@ -74,7 +74,6 @@ def test_cannonsim_compare(tmpdir):
 
     print(my_campaign.log)
 
-
     my_campaign.populate_runs_dir()
 
     assert(len(my_campaign.runs_dir) > 0)
@@ -100,11 +99,9 @@ def test_cannonsim_compare(tmpdir):
 
     print(df)
 
-
     pprint(my_campaign.log)
 
     my_campaign.save_state(output_json)
-
 
     assert(os.path.exists(output_json))
     assert(os.path.isfile(output_json))
