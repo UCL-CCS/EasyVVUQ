@@ -1,5 +1,6 @@
 import os
 import sys
+from pprint import pprint
 import easyvvuq as uq
 from gauss.decoder_gauss import GaussDecoder
 
@@ -67,16 +68,17 @@ def test_gauss(tmpdir):
     my_campaign.apply_for_each_run_dir(
             uq.actions.ExecuteLocal("tests/gauss/gauss_json.py gauss_in.json"))
 
-    uq.collate.aggregate_samples(my_campaign, average=True)
+    aggregate = uq.elements.collate.AggregateSamples(my_campaign, average=True)
+    aggregate.apply()
 
     assert(len(my_campaign.data) > 0)
 
     ensemble_boot = uq.elements.analysis.EnsembleBoot(my_campaign)
     results, output_file = ensemble_boot.apply()
 
-    print(results)
+    pprint(results)
 
-    print(my_campaign.log)
+    pprint(my_campaign.log)
 
     my_campaign.save_state(output_json)
 

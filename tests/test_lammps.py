@@ -67,9 +67,10 @@ def test_lammps(tmpdir):
     output_filename = 'output_replica.csv'
     output_columns = ['pe', 'temp', 'pres']
 
-    uq.collate.aggregate_samples(my_campaign, average=True,
+    aggregate = uq.elements.collate.AggregateSamples(my_campaign, average=True,
                                  output_filename=output_filename,
                                  output_columns=output_columns)
+    aggregate.apply()
 
     assert(len(my_campaign.data) > 0)
 

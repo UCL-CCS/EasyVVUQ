@@ -85,10 +85,12 @@ def test_cannonsim_compare(tmpdir):
 
     output_filename = 'output.csv'
     output_columns = ['Dist', 'lastvx', 'lastvy']
-    uq.collate.aggregate_samples(my_campaign,
+
+    aggregate = uq.elements.collate.AggregateSamples(my_campaign,
                                  output_filename=output_filename,
                                  output_columns=output_columns,
                                  header=0)
+    aggregate.apply()
 
     assert(len(my_campaign.data) > 0)
 

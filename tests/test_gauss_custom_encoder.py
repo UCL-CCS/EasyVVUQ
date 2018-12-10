@@ -68,7 +68,8 @@ def test_gauss_custom_encoder(tmpdir):
     my_campaign.apply_for_each_run_dir(
             uq.actions.ExecuteLocal("tests/gauss/gauss_json.py gauss_input.json"))
 
-    uq.collate.aggregate_samples(my_campaign, average=True)
+    aggregate = uq.elements.collate.AggregateSamples(my_campaign, average=True)
+    aggregate.apply()
 
     assert(len(my_campaign.data) > 0)
 
