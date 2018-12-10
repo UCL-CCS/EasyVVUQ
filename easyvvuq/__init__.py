@@ -8,7 +8,6 @@ from .constants import OutputType
 from .campaign import Campaign
 from . import actions
 from . import elements
-from . import collate
 from . import distributions
 from . import encoders
 from . import decoders

@@ -1,3 +1,4 @@
+from .base import BaseSamplingElement
 
 __copyright__ = """
 
@@ -22,42 +23,37 @@ __copyright__ = """
 __license__ = "LGPL"
 
 
-def add_replicas(campaign, selection={}, replicates=2):
+class Replicate(BaseSamplingElement):
 
-    # TODO: Could we do something neater with pandas here?
+    def __init__(self, campaign, selection={}, replicates=2):
+        self.campaign = campaign
+        self.selection = selection
+        self.replicates = replicates
 
-    runs = campaign.unique_runs()
+    def element_name(self):
+        return "replicate"
 
-    reps_made = False
+    def element_version(self):
+        return "0.1"
 
-    for run_info in runs:
+    def is_finite(self):
+        return True
 
-        n_reps = len(run_info['run_ids'])
+    def generate_runs(self):
+        runs = self.campaign.unique_runs()
+        reps_made = False
+        for run_info in runs:
 
-        if n_reps < replicates:
+            n_reps = len(run_info['run_ids'])
+            if n_reps < self.replicates:
+                if not self.selection:
+                    copy = True
+                else:
+                    check_params = self.selection.keys()
+                    copy = all([run_info[param] == self.selection[param] for param in check_params])
 
-            if not selection:
-
-                copy = True
-
-            else:
-
-                check_params = selection.keys()
-                copy = all([run_info[param] == selection[param] for param in check_params])
-
-            if copy:
-
-                copy_info = {k: v for k, v in run_info.items() if k != 'run_ids'}
-
-                new_reps = replicates - n_reps
-
-                for rep_no in range(new_reps):
-                    campaign.add_run(dict(copy_info))
-                    reps_made = True
-
-    if reps_made:
-        # TODO: There must be a better way to record argument - using locals() maybe?
-        campaign.record_sampling('add_replicas',
-                                 {'selection': selection,
-                                  'replicates': replicates},
-                                 reps_made)
+                if copy:
+                    copy_info = {k: v for k, v in run_info.items() if k != 'run_ids'}
+                    new_reps = self.replicates - n_reps
+                    for rep_no in range(new_reps):
+                        yield dict(copy_info)

@@ -1,4 +1,5 @@
 __pycache__
+*.py.swp
 *.pyc
 out_cannonsim.json
 out_gauss.json
@@ -11,3 +12,4 @@ dist/
 easyvvuq.egg-info/
 .idea/
 run_tests_psm.sh
+pep.sh

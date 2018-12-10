@@ -1,6 +1,4 @@
-from .base import BaseSamplingElement
-from .random import RandomSampler
-from .ensemble import Replicate
+from .. import BaseElement
 
 __copyright__ = """
 
@@ -23,3 +21,18 @@ __copyright__ = """
 
 """
 __license__ = "LGPL"
+
+
+class BaseComparisonElement(BaseElement):
+    """Baseclass for all EasyVVUQ comparison elements.
+
+    Attributes
+    ----------
+
+    """
+
+    def compare(self, dataframe1, dataframe2):
+        raise NotImplementedError
+
+    def element_category(self):
+        return "comparison"

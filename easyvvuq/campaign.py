@@ -79,8 +79,7 @@ class Campaign:
 
         self._data = {}
 
-        self._sample_uqps = []
-        self._analysis_uqps = []
+        self._log = []
 
         self.run_number = 0
         self.encoder = None
@@ -120,11 +119,8 @@ class Campaign:
         # Check for campaign directory - if doesn't exist create one
         self._setup_campaign_dir()
 
-        if "sample_uqps" in input_json:
-            self._sample_uqps = input_json["sample_uqps"]
-
-        if "analysis_uqps" in input_json:
-            self._sample_uqps = input_json["analysis_uqps"]
+        if "log" in input_json:
+            self._log = input_json["log"]
 
         if "params" not in input_json:
             raise RuntimeError("Input does not contain an 'params' block")
@@ -223,12 +219,8 @@ class Campaign:
                 os.makedirs(sub_path)
 
     @property
-    def sample_uqps(self):
-        return tuple(self._sample_uqps)
-
-    @property
-    def analysis_uqps(self):
-        return tuple(self._analysis_uqps)
+    def log(self):
+        return self._log
 
     @property
     def data(self):
@@ -355,8 +347,7 @@ class Campaign:
                        "params": self.params_info,
                        "fixtures": self.fixtures,
                        "runs": self.runs,
-                       "sample_uqps": self._sample_uqps,
-                       "analysis_uqps": self._analysis_uqps,
+                       "log": self._log,
                        "data": self.data,
                        }
 
@@ -431,6 +422,28 @@ class Campaign:
 
         new_run = {}
         self.add_run(new_run)
+
+    def add_runs(self, sampling_element, max_num=0):
+
+        # Make sure we have a sampling element
+        if isinstance(sampling_element, uq.elements.sampling.BaseSamplingElement) is False:
+            raise RuntimeError("add_runs() must be passed (an instance of) BaseSamplingElement")
+
+        # Make sure num is not 0 for an infinite generator (this would add runs forever...)
+        if sampling_element.is_finite() is False and max_num <= 0:
+            raise RuntimeError("sampling_element '" + sampling_element.element_name() +
+                               "' is an infinite generator, therefore a max_num > 0 "
+                               "must be specified.'")
+
+        num_added = 0
+        for run in sampling_element.generate_runs():
+            self.add_run(run)
+            num_added += 1
+            if num_added == max_num:
+                break
+
+        self.log_element_application(sampling_element, {"num_draws_requested": max_num,
+                                                        "num_draws_added": num_added})
 
     def scan_completed(self, *args, **kwargs):
         """
@@ -521,27 +534,23 @@ class Campaign:
 
             encoder.encode(params=run_data, target_dir=target_dir)
 
-    def record_sampling(self, primitive_name, primitive_args, success):
+    def log_element_application(self, element, further_info):
         """
-        Add information about sampling primitives applied to this Campaign to
-        `self._sample_uqps`.
-
-        Parameters
-        ----------
-        primitive_name:     str
-            Name of the primitive applied.
-        primitive_args:     dictionary
-            Arguments passed to the primitive.
-        success:            bool
-            Did the primitive run successfully.
-
-        Returns
-        -------
-
+        Adds an entry to the campaign log for the given element, with the
+        provided further_info dictionary. The further_info dict should give
+        specific information about this element's application, where
+        suitable.
         """
 
-        # TODO: Need some checks + potentially warnings here
-        self._sample_uqps.append((primitive_name, primitive_args, success))
+        log_entry = {
+                "element": {
+                                "name": element.element_name(),
+                                "version": element.element_version(),
+                                "category": element.element_category()
+                            },
+                "info": further_info
+                }
+        self._log.append(log_entry)
 
     def vary_param(self, param_name, dist=None):
         """

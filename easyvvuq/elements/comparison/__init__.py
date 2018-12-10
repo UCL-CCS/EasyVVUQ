@@ -1,6 +1,5 @@
-from .base import BaseSamplingElement
-from .random import RandomSampler
-from .ensemble import Replicate
+from .base import BaseComparisonElement
+from .validate import Validate
 
 __copyright__ = """
 

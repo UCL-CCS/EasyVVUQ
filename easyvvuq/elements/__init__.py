@@ -1,5 +1,8 @@
+from .base import BaseElement
 from . import sampling
 from . import analysis
+from . import comparison
+from . import collate
 
 __copyright__ = """
 

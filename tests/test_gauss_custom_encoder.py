@@ -49,8 +49,13 @@ def test_gauss_custom_encoder(tmpdir):
 
     assert("mu" in my_campaign.vars)
 
-    uq.elements.sampling.random_sampler(my_campaign, num_samples=number_of_samples)
-    uq.elements.sampling.add_replicas(my_campaign, replicates=number_of_replicas)
+    random_sampler = uq.elements.sampling.RandomSampler(my_campaign)
+    my_campaign.add_runs(random_sampler, max_num=number_of_samples)
+
+    assert(len(my_campaign.runs) == number_of_samples)
+
+    replicator = uq.elements.sampling.Replicate(my_campaign, replicates=number_of_replicas)
+    my_campaign.add_runs(replicator)
 
     assert(len(my_campaign.runs) == number_of_samples * number_of_replicas)
 
@@ -63,12 +68,13 @@ def test_gauss_custom_encoder(tmpdir):
     my_campaign.apply_for_each_run_dir(
             uq.actions.ExecuteLocal("tests/gauss/gauss_json.py gauss_input.json"))
 
-    uq.collate.aggregate_samples(my_campaign, average=True)
+    aggregate = uq.elements.collate.AggregateSamples(my_campaign, average=True)
+    aggregate.apply()
 
     assert(len(my_campaign.data) > 0)
 
     ensemble_boot = uq.elements.analysis.EnsembleBoot(my_campaign)
-    results, output_file = ensemble_boot.run_analysis()
+    results, output_file = ensemble_boot.apply()
 
     my_campaign.save_state(output_json)
 

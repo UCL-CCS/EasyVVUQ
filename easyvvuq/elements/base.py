@@ -1,6 +1,3 @@
-from .base import BaseSamplingElement
-from .random import RandomSampler
-from .ensemble import Replicate
 
 __copyright__ = """
 
@@ -23,3 +20,21 @@ __copyright__ = """
 
 """
 __license__ = "LGPL"
+
+
+class BaseElement(object):
+    """Baseclass for all EasyVVUQ elements.
+
+    Attributes
+    ----------
+
+    """
+
+    def element_name(self):
+        raise NotImplementedError
+
+    def element_version(self):
+        raise NotImplementedError
+
+    def element_category(self):
+        raise NotImplementedError

@@ -1,6 +1,4 @@
-from .base import BaseSamplingElement
-from .random import RandomSampler
-from .ensemble import Replicate
+from .. import BaseElement
 
 __copyright__ = """
 
@@ -23,3 +21,21 @@ __copyright__ = """
 
 """
 __license__ = "LGPL"
+
+
+class BaseSamplingElement(BaseElement):
+    """Baseclass for all EasyVVUQ sampling elements.
+
+    Attributes
+    ----------
+
+    """
+
+    def element_category(self):
+        return "sampling"
+
+    def is_finite(self):
+        raise NotImplementedError
+
+    def generate_runs(self):
+        raise NotImplementedError

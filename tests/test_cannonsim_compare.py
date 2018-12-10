@@ -1,6 +1,8 @@
 import easyvvuq as uq
 import os
+import numpy as np
 import pytest
+from pprint import pprint
 
 __copyright__ = """
 
@@ -32,12 +34,18 @@ if not os.path.exists("tests/cannonsim/bin/cannonsim"):
                 allow_module_level=True)
 
 
-def test_cannonsim_csv(tmpdir):
+def test_cannonsim_compare(tmpdir):
 
     # Params for testing
     input_json = "tests/cannonsim/test_input/test_cannonsim_csv.json"
     output_json = os.path.join(tmpdir, "out_cannonsim.json")
     number_of_samples = 15
+    angle_45 = np.pi/4.0
+    velocity_45 = 10.0
+    angle_stdev = 0.01
+    vel_stdev = 0.1
+    correct_dist_45 = 9.25741
+    correct_stdev = 1.0
 
     assert(os.path.exists(input_json))
 
@@ -52,18 +60,11 @@ def test_cannonsim_csv(tmpdir):
     assert("mass" in my_campaign.params_info)
     assert("velocity" in my_campaign.params_info)
 
-    my_campaign.vary_param("angle",    dist=uq.distributions.uniform(0.0, 1.0))
-    my_campaign.vary_param("height",   dist=uq.distributions.uniform_integer(0, 10))
-    my_campaign.vary_param("velocity", dist=uq.distributions.normal(10.0, 1.0))
-    my_campaign.vary_param(
-        "mass",
-        dist=uq.distributions.custom_histogram("tests/cannonsim/test_input/mass_distribution.csv")
-    )
+    my_campaign.vary_param("angle",    dist=uq.distributions.normal(angle_45, angle_stdev))
+    my_campaign.vary_param("velocity", dist=uq.distributions.normal(velocity_45, vel_stdev))
 
     assert("angle" in my_campaign.vars)
-    assert("height" in my_campaign.vars)
     assert("velocity" in my_campaign.vars)
-    assert("mass" in my_campaign.vars)
 
     random_sampler = uq.elements.sampling.RandomSampler(my_campaign)
 
@@ -97,13 +98,17 @@ def test_cannonsim_csv(tmpdir):
     stats = uq.elements.analysis.BasicStats(my_campaign, value_cols=output_columns)
     results, output_file = stats.apply()
 
-    my_campaign.save_state(output_json)
+    df = results['Dist']
 
-    print(results)
+    print(df)
+
+    pprint(my_campaign.log)
+
+    my_campaign.save_state(output_json)
 
     assert(os.path.exists(output_json))
     assert(os.path.isfile(output_json))
 
 
 if __name__ == "__main__":
-    test_cannonsim_csv("/tmp/")
+    test_cannonsim_compare("/tmp/")
