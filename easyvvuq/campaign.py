@@ -93,7 +93,6 @@ class Campaign:
         if state_filename is not None:
             self.load_state(state_filename)
 
-
     def load_state(self, state_filename):
         """Load Campaign state from file (JSON format)
 
@@ -424,7 +423,6 @@ class Campaign:
         new_run = {}
         self.add_run(new_run)
 
-
     def add_runs(self, sampling_element, max_num=0):
 
         # Make sure we have a sampling element
@@ -433,7 +431,9 @@ class Campaign:
 
         # Make sure num is not 0 for an infinite generator (this would add runs forever...)
         if sampling_element.is_finite() is False and max_num <= 0:
-            raise RuntimeError("sampling_element '" + sampling_element.element_name() + "' is an infinite generator, therefore a max_num > 0 must be specified.'")
+            raise RuntimeError("sampling_element '" + sampling_element.element_name() +
+                               "' is an infinite generator, therefore a max_num > 0 "
+                               "must be specified.'")
 
         num_added = 0
         for run in sampling_element.generate_runs():
@@ -442,8 +442,8 @@ class Campaign:
             if num_added == max_num:
                 break
 
-        self.log_element_application(sampling_element, {"num_draws_requested": max_num, "num_draws_added": num_added})
-
+        self.log_element_application(sampling_element, {"num_draws_requested": max_num,
+                                                        "num_draws_added": num_added})
 
     def scan_completed(self, *args, **kwargs):
         """
@@ -534,15 +534,15 @@ class Campaign:
 
             encoder.encode(params=run_data, target_dir=target_dir)
 
-
     def log_element_application(self, element, further_info):
         """
-        Adds an entry to the campaign log for the given element, with the provided further_info dictionary.
-        The further_info dict should give specific information about this element's application, where
+        Adds an entry to the campaign log for the given element, with the
+        provided further_info dictionary. The further_info dict should give
+        specific information about this element's application, where
         suitable.
         """
 
-        log_entry = {    
+        log_entry = {
                 "element": {
                                 "name": element.element_name(),
                                 "version": element.element_version(),
@@ -551,7 +551,6 @@ class Campaign:
                 "info": further_info
                 }
         self._log.append(log_entry)
-
 
     def vary_param(self, param_name, dist=None):
         """

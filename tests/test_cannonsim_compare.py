@@ -106,5 +106,6 @@ def test_cannonsim_compare(tmpdir):
     assert(os.path.exists(output_json))
     assert(os.path.isfile(output_json))
 
+
 if __name__ == "__main__":
     test_cannonsim_compare("/tmp/")

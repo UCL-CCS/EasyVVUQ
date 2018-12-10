@@ -22,6 +22,7 @@ __copyright__ = """
 """
 __license__ = "LGPL"
 
+
 class RandomSampler(BaseSamplingElement):
 
     def __init__(self, campaign):

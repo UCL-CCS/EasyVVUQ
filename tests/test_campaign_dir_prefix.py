@@ -64,5 +64,6 @@ def test_campaign_dir_prefix(tmpdir):
     assert('campaign_dir_prefix' in reloaded_campaign.app_info)
     assert(reloaded_campaign.app_info['campaign_dir_prefix'] == alternative_prefix)
 
+
 if __name__ == "__main__":
     test_campaign_dir_prefix("/tmp/")

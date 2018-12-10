@@ -33,8 +33,7 @@ class BasicStats(BaseAnalysisElement):
 
     def element_version(self):
         return "0.1"
-    
-    
+
     def __init__(self, data_src, params_cols=[], value_cols=[],
                  *args, **kwargs):
 
@@ -62,7 +61,6 @@ class BasicStats(BaseAnalysisElement):
         else:
             self.params_cols = params_cols
         self.output_type = OutputType.SUMMARY
-
 
     def _apply_analysis(self):
 

@@ -171,7 +171,6 @@ class EnsembleBoot(BaseAnalysisElement):
 
         self.output_type = OutputType.SUMMARY
 
-
     def _apply_analysis(self):
 
         if self.data_frame is None:

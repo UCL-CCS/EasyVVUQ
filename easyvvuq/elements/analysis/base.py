@@ -66,7 +66,7 @@ class BaseAnalysisElement(BaseElement):
         if isinstance(data_src, Campaign):
             self.campaign = data_src
             self.data_src = data_src.data
-        
+
             if not self.output_dir:
                 analysis_path = os.path.join(self.campaign.campaign_dir, 'analysis')
                 self.output_dir = tempfile.mkdtemp(prefix=self.element_name() + '_',
@@ -81,7 +81,6 @@ class BaseAnalysisElement(BaseElement):
 
         if not self.output_dir:
             self.output_dir = tempfile.mkdtemp()
-
 
     def _log_analysis(self):
         output_dir = self.output_dir
@@ -108,7 +107,6 @@ class BaseAnalysisElement(BaseElement):
                 }
 
         self.campaign.log_element_application(self, log_info)
-
 
     def apply(self):
         # Run the element specific analysis, then log the application

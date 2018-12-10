@@ -23,36 +23,6 @@ __copyright__ = """
 __license__ = "LGPL"
 
 
-#def add_replicas(campaign, selection={}, replicates=2):
-#
-#    # TODO: Could we do something neater with pandas here?
-#
-#    runs = campaign.unique_runs()
-#    reps_made = False
-#    for run_info in runs:
-#
-#        n_reps = len(run_info['run_ids'])
-#        if n_reps < replicates:
-#            if not selection:
-#                copy = True
-#            else:
-#                check_params = selection.keys()
-#                copy = all([run_info[param] == selection[param] for param in check_params])
-#
-#            if copy:
-#                copy_info = {k: v for k, v in run_info.items() if k != 'run_ids'}
-#                new_reps = replicates - n_reps
-#                for rep_no in range(new_reps):
-#                    campaign.add_run(dict(copy_info))
-#                    reps_made = True
-#
-#    if reps_made:
-#        # TODO: There must be a better way to record argument - using locals() maybe?
-#        campaign.record_sampling('add_replicas',
-#                                 {'selection': selection,
-#                                  'replicates': replicates},
-
-
 class Replicate(BaseSamplingElement):
 
     def __init__(self, campaign, selection={}, replicates=2):

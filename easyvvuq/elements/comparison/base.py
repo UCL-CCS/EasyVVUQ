@@ -34,6 +34,5 @@ class BaseComparisonElement(BaseElement):
     def compare(self, dataframe1, dataframe2):
         raise NotImplementedError
 
-
     def element_category(self):
         return "comparison"
