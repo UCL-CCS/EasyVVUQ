@@ -54,7 +54,7 @@ class FleeEncoder(BaseEncoder, encoder_name="flee"):
         jobfname = "run_flee.sh"
         jobpath = os.path.join(target_dir, jobfname)
         with open(jobpath, "w") as outfile:
-            outfile.write("fab localhost flee:ssudan_ccamp,simulation_period=10,simulation_settings=" + input_path + "\n")
+            outfile.write("cd ~/Codes/FabSim3/plugins/FabFlee && fab localhost flee:ssudan_ccamp,simulation_period=10,simulation_settings=" + input_path + "\n")
 
 #        print("Using custom gauss encoder")
 #        out_file = params['out_file']
