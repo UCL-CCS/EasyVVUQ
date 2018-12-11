@@ -1,7 +1,7 @@
 import os
 import sys
 import easyvvuq as uq
-from flee.encoder_flee import FleeEncoder
+from fleetest.encoder_flee import FleeEncoder
 from pprint import pprint
 
 __copyright__ = """
@@ -29,7 +29,7 @@ __license__ = "LGPL"
 
 def test_flee(tmpdir):
 
-    my_campaign = uq.Campaign(state_filename="tests/flee/flee_application.json", workdir=tmpdir)
+    my_campaign = uq.Campaign(state_filename="tests/fleetest/flee_application.json", workdir=tmpdir)
 
     my_campaign.vary_param("MaxMoveSpeed", dist=uq.distributions.normal(200.0, 5.0))
 
