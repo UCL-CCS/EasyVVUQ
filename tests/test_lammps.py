@@ -52,7 +52,7 @@ def test_lammps(tmpdir):
     assert("seed" in my_campaign.vars)
 
     random_sampler = uq.elements.sampling.RandomSampler(my_campaign)
-    my_campaign.add_runs(max_num=number_of_samples)
+    my_campaign.add_runs(random_sampler, max_num=number_of_samples)
 
     assert(len(my_campaign.runs) == number_of_samples)
 
