@@ -44,7 +44,7 @@ class SimpleCSV(BaseDecoder, decoder_name="csv"):
             out_file = kwargs['output_filename']
         else:
             raise RuntimeError('A value for "output_columns" must be '
-                               'specified for the simple encoder')
+                               'specified for the (simple) csv decoder')
 
         if not os.path.isdir(run_path):
             raise RuntimeError(f"Run directory does not exist: {run_path}")
