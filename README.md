@@ -27,4 +27,6 @@ To complete the tests you need to compile (requires `g++`) the `cannonsim` code:
 make -C tests/cannonsim/src/ 
 ```
 
+## Getting Started
 
+Some very basic documentation on how to use EasyVVUQ is available in the [wiki](https://github.com/UCL-CCS/EasyVVUQ/wiki/Getting-Started).
