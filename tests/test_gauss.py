@@ -1,5 +1,6 @@
 import os
 import sys
+from pprint import pprint
 import easyvvuq as uq
 from gauss.decoder_gauss import GaussDecoder
 
@@ -31,7 +32,7 @@ def test_gauss(tmpdir):
     # Params for testing
     input_json = "tests/gauss/test_gauss.json"
     output_json = os.path.join(tmpdir, "out_gauss.json")
-    number_of_samples = 2
+    number_of_samples = 3
     number_of_replicas = 5
 
     assert(os.path.exists(input_json))
@@ -48,8 +49,13 @@ def test_gauss(tmpdir):
 
     assert("mu" in my_campaign.vars)
 
-    uq.uqp.sampling.random_sampler(my_campaign, num_samples=number_of_samples)
-    uq.uqp.sampling.add_replicas(my_campaign, replicates=number_of_replicas)
+    random_sampler = uq.elements.sampling.RandomSampler(my_campaign)
+    my_campaign.add_runs(random_sampler, max_num=number_of_samples)
+
+    assert(len(my_campaign.runs) == number_of_samples)
+
+    replicator = uq.elements.sampling.Replicate(my_campaign, replicates=number_of_replicas)
+    my_campaign.add_runs(replicator)
 
     assert(len(my_campaign.runs) == number_of_samples * number_of_replicas)
 
@@ -62,12 +68,17 @@ def test_gauss(tmpdir):
     my_campaign.apply_for_each_run_dir(
             uq.actions.ExecuteLocal("tests/gauss/gauss_json.py gauss_in.json"))
 
-    uq.collate.aggregate_samples(my_campaign, average=True)
+    aggregate = uq.elements.collate.AggregateSamples(my_campaign, average=True)
+    aggregate.apply()
 
     assert(len(my_campaign.data) > 0)
 
-    ensemble_boot = uq.uqp.analysis.EnsembleBoot(my_campaign)
-    results, output_file = ensemble_boot.run_analysis()
+    ensemble_boot = uq.elements.analysis.EnsembleBoot(my_campaign)
+    results, output_file = ensemble_boot.apply()
+
+    pprint(results)
+
+    pprint(my_campaign.log)
 
     my_campaign.save_state(output_json)
 

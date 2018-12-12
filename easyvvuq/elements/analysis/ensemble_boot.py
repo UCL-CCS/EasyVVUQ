@@ -2,7 +2,7 @@ import os
 import numpy as np
 import pandas as pd
 from easyvvuq import OutputType
-from .base import BaseAnalysisUQP
+from .base import BaseAnalysisElement
 
 __copyright__ = """
 
@@ -127,7 +127,13 @@ def ensemble_bootstrap(data, params_cols=[], value_cols=[],
     return results
 
 
-class EnsembleBoot(BaseAnalysisUQP):
+class EnsembleBoot(BaseAnalysisElement):
+
+    def element_name(self):
+        return "ensemble_boot"
+
+    def element_version(self):
+        return "0.1"
 
     def __init__(self, data_src, params_cols=[], value_cols=[],
                  stat_func=None, alpha=0.05,
@@ -136,33 +142,24 @@ class EnsembleBoot(BaseAnalysisUQP):
                  *args, **kwargs):
 
         # Handles creation of `self.data_src` attribute (dict)
-        super().__init__(data_src, uqp_name='ensemble_boot', *args, **kwargs)
+        super().__init__(data_src, *args, **kwargs)
 
         data_src = self.data_src
 
         if data_src:
-
             if 'files' in data_src:
-
                 if len(data_src['files']) != 1:
-
-                    raise RuntimeError("Data source must contain a SINGLE file path for this UQP")
-
+                    raise RuntimeError("Data source must contain a SINGLE file"
+                                       " path for this VVUQ element")
                 else:
-
                     self.data_frame = pd.read_csv(data_src['files'][0], sep='\t')
 
         self.value_cols = value_cols
-
         if self.campaign is not None:
-
             if not params_cols:
                 self.params_cols = list(self.campaign.params_info.keys())
-
             self.value_cols = self.campaign.decoder.output_columns
-
         else:
-
             self.params_cols = params_cols
 
         self.stat_func = stat_func
@@ -174,10 +171,10 @@ class EnsembleBoot(BaseAnalysisUQP):
 
         self.output_type = OutputType.SUMMARY
 
-    def run_analysis(self):
+    def _apply_analysis(self):
 
         if self.data_frame is None:
-            raise RuntimeError("UQP needs a data frame to analyse")
+            raise RuntimeError("This VVUQ element needs a data frame to analyse")
 
         data_frame = self.data_frame
         params_cols = self.params_cols
@@ -200,7 +197,5 @@ class EnsembleBoot(BaseAnalysisUQP):
 
         results.to_csv(output_file, sep='\t')
         self.output_file = output_file
-
-        self.log_run()
 
         return results, output_file

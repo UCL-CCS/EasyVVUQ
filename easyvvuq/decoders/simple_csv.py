@@ -1,7 +1,7 @@
 import os
 import pandas as pd
-from .base import BaseDecoder
 from easyvvuq import OutputType
+from .base import BaseDecoder
 
 __copyright__ = """
 
@@ -60,7 +60,7 @@ class SimpleCSV(BaseDecoder, decoder_name="csv"):
         else:
             return True
 
-    def parse_sim_output(self, run_info={}, *args, **kwargs):
+    def parse_sim_output(self, *args, run_info={}, **kwargs):
 
         out_path = self._get_output_path(run_info, *args, **kwargs)
 

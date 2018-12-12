@@ -1,6 +1,4 @@
-import os
-import sys
-from . import BaseAction
+from .base import BaseSamplingElement
 
 __copyright__ = """
 
@@ -25,16 +23,24 @@ __copyright__ = """
 __license__ = "LGPL"
 
 
-class ExecuteLocal(BaseAction):
+class RandomSampler(BaseSamplingElement):
 
-    def __init__(self, run_cmd):
+    def __init__(self, campaign):
+        self.campaign = campaign
 
-        # Need to expand users, get absolute path and dereference symlinks
-        self.run_cmd = os.path.realpath(os.path.expanduser(run_cmd))
+    def element_name(self):
+        return "random_sampler"
 
-    def act_on_dir(self, dirname):
+    def element_version(self):
+        return "0.1"
 
-        full_cmd = 'cd ' + dirname + '\n' + self.run_cmd + '\n'
-        result = os.system(full_cmd)
-        if result != 0:
-            sys.exit("Non-zero exit code from command '" + full_cmd + "'\n")
+    def is_finite(self):
+        return False
+
+    def generate_runs(self):
+        all_vars = self.campaign.vars
+        while True:
+            run_dict = {}
+            for param_name, dist in all_vars.items():
+                run_dict[param_name] = next(dist)
+            yield(run_dict)

@@ -1,6 +1,4 @@
-import os
-import sys
-from . import BaseAction
+from . import BaseComparisonElement
 
 __copyright__ = """
 
@@ -25,16 +23,13 @@ __copyright__ = """
 __license__ = "LGPL"
 
 
-class ExecuteLocal(BaseAction):
+class Validate(BaseComparisonElement):
 
-    def __init__(self, run_cmd):
+    def element_name(self):
+        return "validate"
 
-        # Need to expand users, get absolute path and dereference symlinks
-        self.run_cmd = os.path.realpath(os.path.expanduser(run_cmd))
+    def element_version(self):
+        return "0.1"
 
-    def act_on_dir(self, dirname):
-
-        full_cmd = 'cd ' + dirname + '\n' + self.run_cmd + '\n'
-        result = os.system(full_cmd)
-        if result != 0:
-            sys.exit("Non-zero exit code from command '" + full_cmd + "'\n")
+    def compare(self, dataframe1, dataframe2):
+        return "df"

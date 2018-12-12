@@ -61,5 +61,5 @@ class BaseDecoder(object):
     def sim_complete(self, run_info={}, *args, **kwargs):
         raise NotImplementedError
 
-    def parse_sim_output(self, run_info={}, *args, **kwargs):
+    def parse_sim_output(self, *args, run_info={}, **kwargs):
         raise NotImplementedError

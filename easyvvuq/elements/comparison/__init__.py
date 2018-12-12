@@ -1,6 +1,5 @@
-import os
-import sys
-from . import BaseAction
+from .base import BaseComparisonElement
+from .validate import Validate
 
 __copyright__ = """
 
@@ -23,18 +22,3 @@ __copyright__ = """
 
 """
 __license__ = "LGPL"
-
-
-class ExecuteLocal(BaseAction):
-
-    def __init__(self, run_cmd):
-
-        # Need to expand users, get absolute path and dereference symlinks
-        self.run_cmd = os.path.realpath(os.path.expanduser(run_cmd))
-
-    def act_on_dir(self, dirname):
-
-        full_cmd = 'cd ' + dirname + '\n' + self.run_cmd + '\n'
-        result = os.system(full_cmd)
-        if result != 0:
-            sys.exit("Non-zero exit code from command '" + full_cmd + "'\n")

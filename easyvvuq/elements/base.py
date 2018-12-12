@@ -1,6 +1,3 @@
-import os
-import sys
-from . import BaseAction
 
 __copyright__ = """
 
@@ -25,16 +22,19 @@ __copyright__ = """
 __license__ = "LGPL"
 
 
-class ExecuteLocal(BaseAction):
+class BaseElement(object):
+    """Baseclass for all EasyVVUQ elements.
 
-    def __init__(self, run_cmd):
+    Attributes
+    ----------
 
-        # Need to expand users, get absolute path and dereference symlinks
-        self.run_cmd = os.path.realpath(os.path.expanduser(run_cmd))
+    """
 
-    def act_on_dir(self, dirname):
+    def element_name(self):
+        raise NotImplementedError
 
-        full_cmd = 'cd ' + dirname + '\n' + self.run_cmd + '\n'
-        result = os.system(full_cmd)
-        if result != 0:
-            sys.exit("Non-zero exit code from command '" + full_cmd + "'\n")
+    def element_version(self):
+        raise NotImplementedError
+
+    def element_category(self):
+        raise NotImplementedError

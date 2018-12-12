@@ -51,7 +51,8 @@ def test_lammps(tmpdir):
 
     assert("seed" in my_campaign.vars)
 
-    uq.uqp.sampling.random_sampler(my_campaign, num_samples=number_of_samples)
+    random_sampler = uq.elements.sampling.RandomSampler(my_campaign)
+    my_campaign.add_runs(max_num=number_of_samples)
 
     assert(len(my_campaign.runs) == number_of_samples)
 
@@ -66,14 +67,16 @@ def test_lammps(tmpdir):
     output_filename = 'output_replica.csv'
     output_columns = ['pe', 'temp', 'pres']
 
-    uq.collate.aggregate_samples(my_campaign, average=True,
+    aggregate = uq.elements.collate.AggregateSamples(
+                                 my_campaign, average=True,
                                  output_filename=output_filename,
                                  output_columns=output_columns)
+    aggregate.apply()
 
     assert(len(my_campaign.data) > 0)
 
-    stats = uq.uqp.analysis.BasicStats(my_campaign)
-    results, output_file = stats.run_analysis()
+    stats = uq.elements.analysis.BasicStats(my_campaign)
+    results, output_file = stats.apply()
 
     my_campaign.save_state(output_json)
 

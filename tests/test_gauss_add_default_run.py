@@ -66,12 +66,13 @@ def test_gauss_fix(tmpdir):
     my_campaign.apply_for_each_run_dir(
             uq.actions.ExecuteLocal("tests/gauss/gauss_json.py gauss_in.json"))
 
-    uq.collate.aggregate_samples(my_campaign, average=True)
+    aggregate = uq.elements.collate.AggregateSamples(my_campaign, average=True)
+    aggregate.apply()
 
     assert(len(my_campaign.data) > 0)
 
-    ensemble_boot = uq.uqp.analysis.EnsembleBoot(my_campaign)
-    results, output_file = ensemble_boot.run_analysis()
+    ensemble_boot = uq.elements.analysis.EnsembleBoot(my_campaign)
+    results, output_file = ensemble_boot.apply()
 
     print(my_campaign)
 
