@@ -51,15 +51,12 @@ aggregate = uq.elements.collate.AggregateSamples(
                                                 )
 aggregate.apply()
 
-# 7. Compute the first two statistical moments using new class which 
-#    inherents from the base analysis class
-stats = uq.elements.analysis.SCMoments(my_campaign, value_cols=output_columns)
-results, output_file = stats.apply()
-
-# 8. Use stochastic collocation expansion as a surrogate, interpolating
-#    the samples computed in step 5 to unobserved parameter values.
-#    Makes use of a new Analysis class.
-surr = uq.elements.analysis.SCSurrogate(my_campaign, value_cols=output_columns)
+# 7.  Post-processing analysis: computes the 1st two statistical moments and
+#     gives the ability to use the SCAnalysis object as a surrogate, which
+#     interpolated the code samples to unobserved parameter variables.
+sc_analysis = uq.elements.analysis.SCAnalysis(my_campaign, value_cols=output_columns)
+results, output_file = sc_analysis._apply_analysis()    #moment calculation
+#results, output_file = sc_analysis.apply()
 
 my_campaign.save_state(output_json)
 ###############################################################################
@@ -69,7 +66,7 @@ plt.close('all')
 from collections import OrderedDict
 
 #spatial grid of advection diffusion problem
-x = np.linspace(0, 1, surr.N_qoi)
+x = np.linspace(0, 1, sc_analysis.N_qoi)
 
 fig = plt.figure(figsize=[10, 5])
 ax = fig.add_subplot(121, xlabel='x', ylabel='u', \
@@ -80,13 +77,13 @@ ax.plot(x, results['mean_f'] - results['var_f']**0.5, '--r')
 
 #plot individual SC samples
 for i in range(number_of_samples):
-    plt.plot(x, surr.samples[i], 'g', alpha=0.1, label='samples')
+    plt.plot(x, sc_analysis.samples[i], 'g', alpha=0.1, label='samples')
    
 #display legend, remove duplicate entries
 handles, labels = plt.gca().get_legend_handles_labels()
 by_label = OrderedDict(zip(labels, handles))
 leg = plt.legend(by_label.values(), by_label.keys())
-leg.draggable(True)
+leg.set_draggable(True)
 
 ax = fig.add_subplot(122, xlabel='x', ylabel='u', \
                      title='some Monte Carlo surrogate samples')
@@ -98,6 +95,6 @@ xi_mc = np.random.rand(n_mc, 2)*(right_bound - left_bound) + left_bound
 
 #evaluate the surrogate at these values
 for i in range(n_mc):
-    ax.plot(x, surr.surrogate(xi_mc[i]), 'g')
+    ax.plot(x, sc_analysis.surrogate(xi_mc[i]), 'g')
 
 plt.show()

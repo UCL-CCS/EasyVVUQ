@@ -27,7 +27,7 @@ __copyright__ = """
 __license__ = "LGPL"
 
 
-class SCMoments(BaseAnalysisElement):
+class SCAnalysis(BaseAnalysisElement):
 
     def element_name(self):
         return "basic_stats"
@@ -62,7 +62,13 @@ class SCMoments(BaseAnalysisElement):
         else:
             self.params_cols = params_cols
         self.output_type = OutputType.SUMMARY
+        
+        #load code samples, and set other required variables
+        self.load_samples()
 
+    """
+    Compute the first two statistical moments
+    """
     def _apply_analysis(self):
 
         if self.data_frame is None:
@@ -103,3 +109,72 @@ class SCMoments(BaseAnalysisElement):
         self.output_file = output_file
 
         return results, output_file
+
+    def load_samples(self):
+
+        if self.data_frame is None:
+            raise RuntimeError("UQP needs a data frame to analyse")
+
+        #total code output in pandas Dataframe
+        df = self.data_frame
+        #get (d-dimensional) collocation points and quad. weights
+        self.xi_d = self.campaign.xi_d
+        self.wi_d = self.campaign.wi_d
+        #number of uncertain parameters
+        self.d = self.wi_d.shape[1]    
+        #number of code samples
+        self.number_of_samples = self.wi_d.shape[0]
+        #1D SC variables
+        self.all_vars = self.campaign.vars
+        
+        #extract code output, per run, from Dataframe
+        samples = {}
+        for i in range(self.number_of_samples):
+            samples[i] = df.loc[df['run_id'] == 'Run_' + str(i)][self.value_cols]
+        
+        self.samples = samples
+        #size of one code sample
+        self.N_qoi = samples[0].size
+        
+    def surrogate(self, x):
+        #interpolated QoI
+        f_int = np.zeros([self.N_qoi,1])
+
+        #list with the 1d collocation points of all uncertain parameters   
+        C = [self.all_vars[param]['xi_1d'] for param in self.all_vars.keys()]
+            
+        #loop over all samples
+        for k in range(self.number_of_samples):
+                
+            idx = {}
+            for i in range(self.d):
+                #indices of current collocation point xi_d[k] in 1d collocation points
+                idx[i] = (C[i] == self.xi_d[k][i]).nonzero()[0]
+          
+            L = []
+            for i in range(self.d):
+                #values of Lagrange polynomials at x
+                L.append(LagrangePoly(x[i], C[i], idx[i]))
+       
+            #current sample
+            qoi_k = self.samples[k]#.reshape(self.N_qoi)
+           
+            #surrogate: samples interpolated via Lagrange polynomials
+            f_int += qoi_k*np.prod(L)
+        
+        return f_int 
+        
+#Lagrange polynomials used for interpolation
+def LagrangePoly(x, x_i, j):
+
+    l_j = 1.0    
+    
+    for i in range(len(x_i)):
+         
+        if i != j:
+            denom = x_i[j] - x_i[i]
+            nom = x - x_i[i]
+             
+            l_j *= nom/denom
+         
+    return l_j
