@@ -1,6 +1,7 @@
 import os
 import pandas as pd
 import numpy as np
+from itertools import product, chain, combinations
 from easyvvuq import OutputType
 from .base import BaseAnalysisElement
 
@@ -69,7 +70,7 @@ class SCAnalysis(BaseAnalysisElement):
     """
     Compute the first two statistical moments
     """
-    def _apply_analysis(self):
+    def get_moments(self):
 
         if self.data_frame is None:
             raise RuntimeError("UQP needs a data frame to analyse")
@@ -162,7 +163,156 @@ class SCAnalysis(BaseAnalysisElement):
             #surrogate: samples interpolated via Lagrange polynomials
             f_int += qoi_k*np.prod(L)
         
-        return f_int 
+        return f_int
+    
+    #############################
+    # BEGIN SOBOL SUBROUTINES
+    #############################
+    
+    def compute_tensor_prod_u(self, xi, wi, u, u_prime):
+        #tensor products with dimension of u
+        xi_u = {}
+        wi_u = {}
+        for key in u:
+            xi_u[key] = xi[key]
+            wi_u[key] = wi[key]
+    
+        xi_d_u = np.array(list(product(*xi_u.values())))
+        wi_d_u = np.array(list(product(*wi_u.values())))
+    
+        #tensor products with dimension of u' (complement of u)
+        xi_u_prime = {}
+        wi_u_prime = {}
+        for key in u_prime:
+            xi_u_prime[key] = xi[key]
+            wi_u_prime[key] = wi[key]
+    
+        xi_d_u_prime = np.array(list(product(*xi_u_prime.values())))
+        wi_d_u_prime = np.array(list(product(*wi_u_prime.values())))
+    
+        return {'xi_d_u':xi_d_u, 'wi_d_u':wi_d_u, 'xi_d_u_prime':xi_d_u_prime, 'wi_d_u_prime':wi_d_u_prime}
+    
+    #############################
+    
+    def compute_h(self, u, u_prime, xi_d_u, xi_d_u_prime, wi_d_u_prime):
+        S_u = xi_d_u.shape[0]
+        S_u_prime = xi_d_u_prime.shape[0]
+    
+        #coefficients h = f*w' integrated over u', so cardinality is that of u
+        h = {}
+        for i_u in range(S_u):
+            h[i_u] = 0.
+            for i_up in range(S_u_prime):
+                
+                #collocation point to be evaluated
+                xi_s = np.zeros(self.d)
+    
+                #add the xi of u (at the correct location k)
+                idx = 0
+                for k in u:
+                    xi_s[k] = xi_d_u[i_u][idx]
+                    idx += 1
+    
+                #add the xi of u' (at the correct location k)
+                idx = 0
+                for k in u_prime:
+                    xi_s[k] = xi_d_u_prime[i_up][idx]
+                    idx += 1
+
+                #
+                tmp = np.prod(self.xi_d == xi_s, axis = 1)
+                idx = np.where(tmp == 1)[0][0]
+                h[i_u] += self.samples[idx].values*wi_d_u_prime[i_up].prod()
+
+        return h
+
+    #############################
+
+    # Computes Sobol indices using Stochastic Collocation
+    def get_Sobol_indices(self, typ):
+
+        #multi indices
+        U = range(self.d)
+        
+        if typ == 'first_order':
+            P = list(powerset(U))[0:self.d+1]
+        elif typ == 'all': 
+            #all indices u
+            P = list(powerset(U))
+        
+        #get first two moments
+        mom, _ = self.get_moments()
+        mu = mom['mean_f']
+        D = mom['var_f']
+      
+        #PROBABLY ERROR HERE, HARD CODE TO TEST
+        #list with the 1d collocation points of all uncertain parameters   
+        xi = {self.all_vars[param]['xi_1d'] for param in self.all_vars.keys()}
+        wi = {self.all_vars[param]['wi_1d'] for param in self.all_vars.keys()}
+                
+        #total variance might be zero at some locations, Sobol index not defined there
+        idx_gt0 = np.where(D > 0)[0]
+        
+        #partial variances
+        D_u = {}
+        #D_0 = mu**2
+        D_u[P[0]] = mu.values**2
+        
+        sobol = {}
+        
+        for u in P[1:]:
+        
+            #complement of u
+            u_prime = np.delete(U, u)
+        
+            #compute corresponding tensor products and GQ weights
+            tmp = self.compute_tensor_prod_u(xi, wi, u, u_prime)
+            xi_d_u = tmp['xi_d_u']
+            wi_d_u = tmp['wi_d_u']
+            xi_d_u_prime = tmp['xi_d_u_prime']
+            wi_d_u_prime = tmp['wi_d_u_prime']
+        
+            #cardinality of u
+            S_u = xi_d_u.shape[0]
+        
+            #h coefficients
+            h = self.compute_h(u, u_prime, xi_d_u, xi_d_u_prime, wi_d_u_prime)
+        
+            #partial variance
+            D_u[u] = 0.0
+            for i_u in range(S_u):
+                D_u[u] += h[i_u]**2*wi_d_u[i_u].prod()
+            D_u[u] = D_u[u].flatten()
+        
+            #all subsets of u
+            W = list(powerset(u))[0:-1]
+        
+            #partial variance of u
+            for w in W:
+                D_u[u] -= D_u[w]
+
+            #compute Sobol index, only include points where D > 0        
+            sobol[u] = D_u[u][idx_gt0]/D[idx_gt0]
+            #sobol[u] = D_u[u]/D
+        
+        sort = []
+        for u in P[1:]:
+            #print('Sobol index ', u, ' = ', sobol[u])
+            sort.append(sobol[u])
+        
+        #print('Total sum = ', np.sum(sobol.values())/self.N_qoi)
+        
+        return sort
+
+    #############################
+    # END SOBOL SUBROUTINES
+    #############################
+    
+#https://docs.python.org/3/library/itertools.html#recipes
+def powerset(iterable):
+    "powerset([1,2,3]) --> () (1,) (2,) (3,) (1,2) (1,3) (2,3) (1,2,3)"
+    s = list(iterable)
+    return chain.from_iterable(combinations(s, r) for r in range(len(s)+1))
         
 #Lagrange polynomials used for interpolation
 def LagrangePoly(x, x_i, j):

@@ -55,8 +55,9 @@ aggregate.apply()
 #     gives the ability to use the SCAnalysis object as a surrogate, which
 #     interpolated the code samples to unobserved parameter variables.
 sc_analysis = uq.elements.analysis.SCAnalysis(my_campaign, value_cols=output_columns)
-results, output_file = sc_analysis._apply_analysis()    #moment calculation
+results, output_file = sc_analysis.get_moments()    #moment calculation
 #results, output_file = sc_analysis.apply()
+#print(sc_analysis.get_Sobol_indices('first_order'))
 
 my_campaign.save_state(output_json)
 ###############################################################################
