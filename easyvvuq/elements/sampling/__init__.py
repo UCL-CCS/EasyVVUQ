@@ -1,6 +1,7 @@
 from .base import BaseSamplingElement
 from .random import RandomSampler
 from .ensemble import Replicate
+from .stochastic_collocation import SCSampler
 
 __copyright__ = """
 

@@ -1,5 +1,7 @@
 from .basic_stats import BasicStats
 from .ensemble_boot import EnsembleBoot
+from .sc_moments import SCMoments
+from .sc_surrogate import SCSurrogate
 
 __copyright__ = """
 
