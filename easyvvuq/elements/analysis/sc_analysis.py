@@ -245,11 +245,10 @@ class SCAnalysis(BaseAnalysisElement):
         mu = mom['mean_f']
         D = mom['var_f']
       
-        #PROBABLY ERROR HERE, HARD CODE TO TEST
         #list with the 1d collocation points of all uncertain parameters   
         xi = {self.all_vars[param]['xi_1d'] for param in self.all_vars.keys()}
         wi = {self.all_vars[param]['wi_1d'] for param in self.all_vars.keys()}
-                
+        
         #total variance might be zero at some locations, Sobol index not defined there
         idx_gt0 = np.where(D > 0)[0]
         
@@ -277,6 +276,8 @@ class SCAnalysis(BaseAnalysisElement):
         
             #h coefficients
             h = self.compute_h(u, u_prime, xi_d_u, xi_d_u_prime, wi_d_u_prime)
+        
+            print(h)
         
             #partial variance
             D_u[u] = 0.0
