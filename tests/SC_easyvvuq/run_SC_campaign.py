@@ -1,3 +1,9 @@
+"""
+Perform stochastic collocation using EasyVVUQ.
+Test problem: advection-diffusion equation: u_x - 1/Pe*u_xx = f,
+with uncertain Peclet number (Pe) and scalar forcing term (f).
+"""
+
 import numpy as np
 import matplotlib.pyplot as plt
 import easyvvuq as uq
@@ -17,9 +23,7 @@ m2 = 6
 my_campaign.vary_param("Pe", dist=uq.distributions.legendre(m1))
 my_campaign.vary_param("f", dist=uq.distributions.legendre(m2))
 
-# First we create three samples where the varying parameter ()"mu", the mean)
-# is chosen directly from the selected distribution. If multiple parameters
-# were allowed to vary then all would be sampled independently.
+## 3. Select the SC sampler to create a tensor grid
 sc_sampler = uq.elements.sampling.SCSampler(my_campaign)
 number_of_samples = sc_sampler.number_of_samples
 
@@ -57,7 +61,7 @@ aggregate.apply()
 sc_analysis = uq.elements.analysis.SCAnalysis(my_campaign, value_cols=output_columns)
 results, output_file = sc_analysis.get_moments()    #moment calculation
 #results, output_file = sc_analysis.apply()
-#print(sc_analysis.get_Sobol_indices('first_order'))
+print(sc_analysis.get_Sobol_indices('first_order'))
 
 my_campaign.save_state(output_json)
 ###############################################################################
