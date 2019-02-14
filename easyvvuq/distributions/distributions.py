@@ -149,4 +149,4 @@ def legendre(m):
     """        
     xi_1d, wi_1d = np.polynomial.legendre.leggauss(m)
     
-    return {'xi_1d':xi_1d, 'wi_1d':wi_1d}
+    return {'xi_1d':xi_1d, 'wi_1d':0.5*wi_1d}

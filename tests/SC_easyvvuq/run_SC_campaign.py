@@ -61,17 +61,28 @@ aggregate.apply()
 sc_analysis = uq.elements.analysis.SCAnalysis(my_campaign, value_cols=output_columns)
 results, output_file = sc_analysis.get_moments()    #moment calculation
 #results, output_file = sc_analysis.apply()
-print(sc_analysis.get_Sobol_indices('first_order'))
+
+# 8. Use the SC samples and integration weights to estimate the
+#    (1-st order or all) Sobol indices. In this example, at x=1 the Sobol indices
+#    are NaN, since the variance is zero here.
+
+#get Sobol indices for free
+typ = 'first_order'
+#typ = 'all'
+sobol_idx = sc_analysis.get_Sobol_indices(typ)
 
 my_campaign.save_state(output_json)
 ###############################################################################
 
-#plot some results
 plt.close('all')
 from collections import OrderedDict
 
 #spatial grid of advection diffusion problem
 x = np.linspace(0, 1, sc_analysis.N_qoi)
+
+###################################
+# Plot the moments and SC samples #
+###################################
 
 fig = plt.figure(figsize=[10, 5])
 ax = fig.add_subplot(121, xlabel='x', ylabel='u', \
@@ -90,6 +101,10 @@ by_label = OrderedDict(zip(labels, handles))
 leg = plt.legend(by_label.values(), by_label.keys())
 leg.set_draggable(True)
 
+#####################################
+# Plot the random surrogate samples #
+#####################################
+
 ax = fig.add_subplot(122, xlabel='x', ylabel='u', \
                      title='some Monte Carlo surrogate samples')
 
@@ -101,5 +116,22 @@ xi_mc = np.random.rand(n_mc, 2)*(right_bound - left_bound) + left_bound
 #evaluate the surrogate at these values
 for i in range(n_mc):
     ax.plot(x, sc_analysis.surrogate(xi_mc[i]), 'g')
+
+plt.tight_layout()
+
+######################
+# Plot Sobol indices #
+######################
+
+fig = plt.figure()
+ax = fig.add_subplot(111, xlabel='x', ylabel='Sobol indices', \
+                     title='spatial dist. Sobol indices, Pe only important in viscous regions')
+ax.plot(x, sobol_idx[0], 'b', label=r'Pe')
+ax.plot(x, sobol_idx[1], '--r', label=r'f')
+
+leg = plt.legend(loc=0)
+leg.draggable(True) 
+
+plt.tight_layout()
 
 plt.show()

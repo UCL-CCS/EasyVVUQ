@@ -36,7 +36,7 @@ class SCSampler(BaseSamplingElement):
         wi = []
         for key in all_vars.keys():
             xi.append(all_vars[key]['xi_1d'])
-            wi.append(0.5*all_vars[key]['wi_1d'])
+            wi.append(all_vars[key]['wi_1d'])
         
         #turn 1d rules in a d-dimensional tensor product of collocation points
         self.xi_d, self.wi_d = self.compute_tensor_prod(xi, wi)

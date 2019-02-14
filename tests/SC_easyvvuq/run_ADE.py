@@ -8,7 +8,7 @@ import numpy as np
 #create an object from the finite-element Advection Diffusion Equation solver
 Pe_range = [100, 200]       #range uncertain Peclet number
 f_range = [0.9, 1.1]        #range uncertain forcing term
-nel = 100                   #number of elements in FEM solver
+nel = 300                   #number of elements in FEM solver
 ade_obj = ade.ADE(Pe_range, f_range, nel)
 
 #the json input file containing the values of the parameters, and the output file 

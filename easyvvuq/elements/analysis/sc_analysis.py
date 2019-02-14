@@ -222,7 +222,7 @@ class SCAnalysis(BaseAnalysisElement):
                 #
                 tmp = np.prod(self.xi_d == xi_s, axis = 1)
                 idx = np.where(tmp == 1)[0][0]
-                h[i_u] += self.samples[idx].values*wi_d_u_prime[i_up].prod()
+                h[i_u] += self.samples[idx].values.flatten()*wi_d_u_prime[i_up].prod()
 
         return h
 
@@ -242,20 +242,20 @@ class SCAnalysis(BaseAnalysisElement):
         
         #get first two moments
         mom, _ = self.get_moments()
-        mu = mom['mean_f']
-        D = mom['var_f']
+        mu = mom['mean_f'].values.flatten()
+        D = mom['var_f'].values.flatten()
       
-        #list with the 1d collocation points of all uncertain parameters   
-        xi = {self.all_vars[param]['xi_1d'] for param in self.all_vars.keys()}
-        wi = {self.all_vars[param]['wi_1d'] for param in self.all_vars.keys()}
+        #list with the 1d collocation points of all uncertain parameters           
+        xi = [self.all_vars[param]['xi_1d'] for param in self.all_vars.keys()]
+        wi = [self.all_vars[param]['wi_1d'] for param in self.all_vars.keys()]
         
         #total variance might be zero at some locations, Sobol index not defined there
-        idx_gt0 = np.where(D > 0)[0]
+        #idx_gt0 = np.where(D > 0)[0]
         
         #partial variances
         D_u = {}
         #D_0 = mu**2
-        D_u[P[0]] = mu.values**2
+        D_u[P[0]] = mu**2
         
         sobol = {}
         
@@ -277,8 +277,6 @@ class SCAnalysis(BaseAnalysisElement):
             #h coefficients
             h = self.compute_h(u, u_prime, xi_d_u, xi_d_u_prime, wi_d_u_prime)
         
-            print(h)
-        
             #partial variance
             D_u[u] = 0.0
             for i_u in range(S_u):
@@ -293,12 +291,12 @@ class SCAnalysis(BaseAnalysisElement):
                 D_u[u] -= D_u[w]
 
             #compute Sobol index, only include points where D > 0        
-            sobol[u] = D_u[u][idx_gt0]/D[idx_gt0]
-            #sobol[u] = D_u[u]/D
+            #sobol[u] = D_u[u][idx_gt0]/D[idx_gt0]
+            sobol[u] = D_u[u]/D
         
         sort = []
         for u in P[1:]:
-            #print('Sobol index ', u, ' = ', sobol[u])
+            print('Sobol index ', u, ' = ', sobol[u])
             sort.append(sobol[u])
         
         #print('Total sum = ', np.sum(sobol.values())/self.N_qoi)
