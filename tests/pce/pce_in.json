@@ -1,0 +1,13 @@
+{
+    "app": {
+      "input_encoder":  "generic_template",
+      "output_decoder": "csv",
+      "template":       "tests/pce/pce.template",
+      "input_filename": "pce_in.json"
+    },
+    "params": {
+      "d1":       {"type": "real", "min": "0.0", "max": "10.0",   "default": "1"},
+      "d2":       {"type": "real", "min": "0.0", "max": "10.0",   "default": "1"},
+      "out_file": {"type": "str", "default": "output.csv"}
+    }
+}

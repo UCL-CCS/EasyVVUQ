@@ -2,25 +2,20 @@ from .base import BaseSamplingElement
 import numpy    as np
 import chaospy  as cp
 
-# TODO
-# Change self.campagn using a new design => check with the easyvvuq team.
-# Use other rules for the quadrature (in arguments ?) and optimal order (Leja?).
-# Optimase generate_runs routine.
+# author: Jalal Lakhlili
 
 class PCESampler(BaseSamplingElement):
 
     def __init__(self,
                  campaign,
-                 distribution,
                  polynomial_order=4,
                  sparse=False):
         """
-        Create the polynomial chaos expansion Sampler.
+        Create the sampler for the Polynomial Chaos Expansion method.
 
         Parameters
         ----------
-        distribution : list of chaospy.Dist
-            List of the probability distribution for the given parameters.
+        campaign :
 
         polynomial_order : int, optional
             The polynomial order, default is 4.
@@ -30,8 +25,10 @@ class PCESampler(BaseSamplingElement):
             default is False.
 
         """
-
         self.campaign = campaign
+
+        # Get the list of probalities distribution
+        distribution = list(self.campaign.vars.values())
 
         # Multivariate distribution
         self.campaign.dist = cp.J(*distribution)
@@ -43,11 +40,12 @@ class PCESampler(BaseSamplingElement):
         quad_order = polynomial_order + 1
 
         # Nodes and weights for the integration
+        # TODO: Use other rules for the quadrature (in args) and optimal order (Leja?).
         self.campaign.nodes, self.campaign.weights = \
                 cp.generate_quadrature(quad_order, self.campaign.dist, rule="G", sparse=sparse)
 
-
-        self.campaign.number_of_samples = len(self.campaign.nodes[0])
+        # Number of samples
+        self.campaign.n_samples = len(self.campaign.nodes[0])
 
     def element_name(self):
         return "PCE_sampler"
@@ -59,9 +57,11 @@ class PCESampler(BaseSamplingElement):
         return True
 
     def generate_runs(self):
-
-        # each run_dict[i] will caintan nparams
-        for i in range(self.campaign.number_of_samples):
-            run_dict = {"c":self.campaign.nodes.T[i]}
+        run_dict = {}
+        for i_val in range(self.campaign.n_samples):
+            i_par = 0
+            for param_name in self.campaign.vars.keys():
+                run_dict[param_name] = self.campaign.nodes.T[i_val][i_par]
+                i_par += 1
 
             yield run_dict
