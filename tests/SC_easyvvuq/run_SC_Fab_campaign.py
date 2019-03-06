@@ -41,7 +41,7 @@ Fab_dir = '~/CWI/VECMA/FabSim3'
 
 cmd1 = "cd " + Fab_dir + " && fab localhost campaign2ensemble:" + \
         sim_ID + ",campaign_dir=" + my_campaign.campaign_dir
-cmd2 = "cd " + Fab_dir + " && fab localhost ade_ensemble:" + sim_ID
+cmd2 = "cd " + Fab_dir + " && fab localhost sc_ensemble:" + sim_ID
 
 os.system(cmd1)
 os.system(cmd2)
