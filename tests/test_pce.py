@@ -16,8 +16,8 @@ assert(os.path.exists(input_json))
 my_campaign = uq.Campaign(state_filename=input_json, workdir=tmpdir)
 
 # Define the parameters dictionary
-my_campaign.vary_param("d1", dist=cp.Normal(0.5, 0.15))
-my_campaign.vary_param("d2", dist=cp.Uniform(0.5, 2.5))
+my_campaign.vary_param("kappa", dist=cp.Uniform(0.025, 0.075))
+my_campaign.vary_param("t_env", dist=cp.Uniform(15, 25))
 
 # Create the sampler
 my_sampler  = uq.elements.sampling.PCESampler(my_campaign)
@@ -36,7 +36,7 @@ my_campaign.apply_for_each_run_dir(
 
 # Aggregate the results from all runs.
 output_filename = my_campaign.params_info['out_file']['default']
-output_columns = ['u']
+output_columns = ['te']
 
 aggregate = uq.elements.collate.AggregateSamples(
                                                 my_campaign,
@@ -50,7 +50,7 @@ aggregate.apply()
 # Post-processing analysis: computes the 1st two statistical moments and
 analysis = uq.elements.analysis.PCEAnalysis(my_campaign, value_cols=output_columns)
 
-results, output_file = analysis.apply()
+output_file = analysis.apply()
 
 ## ...
 #

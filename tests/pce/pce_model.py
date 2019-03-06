@@ -1,45 +1,42 @@
 #!/usr/bin/env python3
 
+import sys
 import json
 import numpy as np
-import sys
 
-# ... A test model
-def model(x, c1, c2):
-    def c(x):
-        if x < 0.5:
-            return c1
-        else:
-            return c2
+# ... A test model: Coffee_Cup from Uncertainpy
+def model(time, kappa, T_env):
+    # For the ODE integration
+    from scipy.integrate import odeint
 
-    N = len(x)
-    u = np.zeros(N)
+    # Initial temperature
+    T_0 = 95
 
-    u[0] = c1
-    for n in range(N-1):
-        dx = x[n+1] -x[n]
-        K1 = -dx*u[n]*c(x[n])
-        K2 = -dx*u[n] + K1/2*c(x[n]+dx/2)
-        u[n+1] = u[n] + K1 + K2
+    # The equation describing the model
+    def f(T, time, kappa, T_env):
+        return -kappa*(T - T_env)
 
-    return u
+    # Solving the equation by intergration
+    temp = odeint(f, T_0, time, args=(kappa, T_env))[:, 0]
+
+    # The output temperature
+    return temp
 # ...
-
 
 json_input = sys.argv[1]
 with open(json_input, "r") as f:
     inputs = json.load(f)
 
-c1 = float(inputs['d1'])
-c2 = float(inputs['d2'])
-x  = np.linspace(0, 1, 101)
+kappa = float(inputs['kappa'])
+t_env = float(inputs['t_env'])
+t  = np.linspace(0, 200, 100)
 
 output_filename = inputs['out_file']
 
-u = model(x, c1, c2)
+te = model(t, kappa, t_env)
 
 #output csv file
-header = 'u'
-np.savetxt(output_filename, u,
+header = 'te'
+np.savetxt(output_filename, te,
            delimiter=",", comments='',
            header=header)

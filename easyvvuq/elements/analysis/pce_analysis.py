@@ -5,6 +5,7 @@ import chaospy as cp
 from easyvvuq import OutputType
 from .base    import BaseAnalysisElement
 
+# author: Jalal Lakhlili
 
 class PCEAnalysis(BaseAnalysisElement):
 
@@ -14,8 +15,7 @@ class PCEAnalysis(BaseAnalysisElement):
     def element_version(self):
         return "0.1"
 
-    def __init__(self, data_src, params_cols=[], value_cols=[],
-                 *args, **kwargs):
+    def __init__(self, data_src, params_cols=[], value_cols=[], *args, **kwargs):
 
         # TODO: Fix this to allow more flexibility - basically pass through
         # available options to `pd.DataFrame.describe()`
@@ -52,38 +52,30 @@ class PCEAnalysis(BaseAnalysisElement):
         output_dir = self.output_dir
         output_file = os.path.join(output_dir, 'pce_basic_stats.tsv')
 
-        grouped_data = df.groupby(self.params_cols)
-
-        # Get summary statistics
-        results = grouped_data.describe()
-
         # PCE nodes, weights and Polynomial
         nodes = self.campaign.nodes
         w = self.campaign.weights
         P = self.campaign.P
 
         # extract code output, per run, from Dataframe
-#        samples = {}
-#        for i in range(self.campaign.n_samples):
-#            samples[i] = df.loc[df['run_id'] == 'Run_' + str(i)][self.value_cols]
-#
+        # TODO: to compare with samples = [[] for _dummy in range(self.campaign.n_samples)]
+        samples = [[]]*self.campaign.n_samples
+        for i in range(self.campaign.n_samples):
+            samples[i]= df.loc[df['run_id'] == 'Run_' + str(i)][self.value_cols].to_numpy().ravel()
+
         # Approximation solver
-#        fit = cp.fit_quadrature(P, nodes, w, samples)
-#
-#        # Statistical infos
-#        mean = cp.E(fit, dist)
-#        var  = cp.Var(fit, dist)
-#        std  = cp.Std(fit, dist)
-#
-#        # Store results in pandas Dataframe
-#        results = pd.DataFrame({'mean':mean, 'var':var, 'std':std })
-#        results.to_csv(output_file, sep='\t')
+        fit = cp.fit_quadrature(P, nodes, w, samples)
+
+        # Statistical infos
+        mean = cp.E(fit,   self.campaign.distribution)
+        var  = cp.Var(fit, self.campaign.distribution)
+        std  = cp.Std(fit, self.campaign.distribution)
+
+        # Store results in pandas Dataframe
+        results = pd.DataFrame({'mean':mean, 'var':var, 'std':std })
+        results.to_csv(output_file, sep='\t')
 
         self.output_file = output_file
 
-        return results, output_file
-
-
-
-
+        return output_file
 

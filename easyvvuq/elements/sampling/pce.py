@@ -27,22 +27,22 @@ class PCESampler(BaseSamplingElement):
         """
         self.campaign = campaign
 
-        # Get the list of probalities distribution
-        distribution = list(self.campaign.vars.values())
+        # The probality distributions of uncertain parameters
+        params_distribution = list(self.campaign.vars.values())
 
         # Multivariate distribution
-        self.campaign.dist = cp.J(*distribution)
+        self.campaign.distribution = cp.J(*params_distribution)
 
         # The orthogonal polynomials corresponding to the joint disctribution
-        self.campaign.P = cp.orth_ttr(polynomial_order, self.campaign.dist)
+        self.campaign.P = cp.orth_ttr(polynomial_order, self.campaign.distribution)
 
-        # The quadrature oder
+        # The quadrature oder (+2 ?)
         quad_order = polynomial_order + 1
 
         # Nodes and weights for the integration
         # TODO: Use other rules for the quadrature (in args) and optimal order (Leja?).
         self.campaign.nodes, self.campaign.weights = \
-                cp.generate_quadrature(quad_order, self.campaign.dist, rule="G", sparse=sparse)
+                cp.generate_quadrature(quad_order, self.campaign.distribution, rule="G", sparse=sparse)
 
         # Number of samples
         self.campaign.n_samples = len(self.campaign.nodes[0])

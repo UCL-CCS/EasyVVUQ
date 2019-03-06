@@ -1,1 +1,1 @@
-{"d1": "$d1", "d2": "$d2","out_file": "$out_file"}
+{"kappa": "$kappa", "t_env": "$t_env","out_file": "$out_file"}
