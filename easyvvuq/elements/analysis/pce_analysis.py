@@ -10,7 +10,7 @@ from .base    import BaseAnalysisElement
 class PCEAnalysis(BaseAnalysisElement):
 
     def element_name(self):
-        return "PCE_basic_stats"
+        return "PCE_Analysis"
 
     def element_version(self):
         return "0.1"
@@ -58,24 +58,36 @@ class PCEAnalysis(BaseAnalysisElement):
         P = self.campaign.P
 
         # extract code output, per run, from Dataframe
-        # TODO: to compare with samples = [[] for _dummy in range(self.campaign.n_samples)]
-        samples = [[]]*self.campaign.n_samples
-        for i in range(self.campaign.n_samples):
+        # TODO: to compare with samples = [[] for _dummy in range(self.campaign.sample_number)]
+        samples = [[]]*self.campaign.sample_number
+        for i in range(self.campaign.sample_number):
             samples[i]= df.loc[df['run_id'] == 'Run_' + str(i)][self.value_cols].to_numpy().ravel()
 
         # Approximation solver
         fit = cp.fit_quadrature(P, nodes, w, samples)
 
-        # Statistical infos
+        # Statistical moments
         mean = cp.E(fit,   self.campaign.distribution)
         var  = cp.Var(fit, self.campaign.distribution)
         std  = cp.Std(fit, self.campaign.distribution)
 
-        # Store results in pandas Dataframe
-        results = pd.DataFrame({'mean':mean, 'var':var, 'std':std })
-        results.to_csv(output_file, sep='\t')
+        # Sensitivity Analysis
+        sobol_first_narr = cp.Sens_m(fit, self.campaign.distribution)
+        sobol_first_dict = {}
+        i_par = 0
+        for param_name in self.campaign.vars.keys():
+            sobol_first_dict[param_name] = sobol_first_narr[i_par]
+            i_par =+1
+
+        # Store Statistical moments in pandas Dataframe and the output file
+        statistical_moments = pd.DataFrame({'mean':mean, 'var':var, 'std':std})
+        statistical_moments.to_csv(output_file, sep='\t')
+
+        # Store 1st Sobol indices in pandas Dataframe
+        sobol_first =  pd.DataFrame(sobol_first_dict)
+        #sobol_first.to_csv(output_file, sep='\t')
 
         self.output_file = output_file
 
-        return output_file
+        return statistical_moments, sobol_first, output_file
 

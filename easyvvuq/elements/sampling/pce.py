@@ -9,16 +9,27 @@ class PCESampler(BaseSamplingElement):
     def __init__(self,
                  campaign,
                  polynomial_order=4,
+                 quadrature_rule="G",
                  sparse=False):
         """
         Create the sampler for the Polynomial Chaos Expansion method.
 
         Parameters
         ----------
-        campaign :
+        campaign : Campaign
+            To stores informations about the PCE element.
+            - distribution
+            - P (The orthogonal polynomials)
+            - nodes
+            - weights
+            - sampler_number
+            - parameters_number
 
         polynomial_order : int, optional
             The polynomial order, default is 4.
+
+        quadrature_rule : char, optional
+            The quadrature method, default is Gaussian "G".
 
         sparse : bool, optional
             If True use sparse grid instead of normal tensor product grid,
@@ -29,7 +40,6 @@ class PCESampler(BaseSamplingElement):
 
         # The probality distributions of uncertain parameters
         params_distribution = list(self.campaign.vars.values())
-
         # Multivariate distribution
         self.campaign.distribution = cp.J(*params_distribution)
 
@@ -40,12 +50,15 @@ class PCESampler(BaseSamplingElement):
         quad_order = polynomial_order + 1
 
         # Nodes and weights for the integration
-        # TODO: Use other rules for the quadrature (in args) and optimal order (Leja?).
         self.campaign.nodes, self.campaign.weights = \
-                cp.generate_quadrature(quad_order, self.campaign.distribution, rule="G", sparse=sparse)
+            cp.generate_quadrature(quad_order, self.campaign.distribution, rule=quadrature_rule, sparse=sparse)
 
         # Number of samples
-        self.campaign.n_samples = len(self.campaign.nodes[0])
+        self.campaign.sample_number = len(self.campaign.nodes[0])
+
+        # Number of uncertain parameters
+        self.parameters_number = len(params_distribution)
+
 
     def element_name(self):
         return "PCE_sampler"
@@ -57,8 +70,8 @@ class PCESampler(BaseSamplingElement):
         return True
 
     def generate_runs(self):
-        run_dict = {}
-        for i_val in range(self.campaign.n_samples):
+        for i_val in range(self.campaign.sample_number):
+            run_dict = {}
             i_par = 0
             for param_name in self.campaign.vars.keys():
                 run_dict[param_name] = self.campaign.nodes.T[i_val][i_par]

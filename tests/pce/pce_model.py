@@ -4,6 +4,8 @@ import sys
 import json
 import numpy as np
 
+# author: Jalal Lakhlili
+
 # ... A test model: Coffee_Cup from Uncertainpy
 def model(time, kappa, T_env):
     # For the ODE integration
@@ -29,7 +31,7 @@ with open(json_input, "r") as f:
 
 kappa = float(inputs['kappa'])
 t_env = float(inputs['t_env'])
-t  = np.linspace(0, 200, 100)
+t  = np.linspace(0, 200, 150)
 
 output_filename = inputs['out_file']
 
