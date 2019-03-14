@@ -142,11 +142,13 @@ def custom_histogram(filename):
     while True:
         yield np.random.choice(values, p=probabilities)
 
+
 def legendre(m):
     """
     Returns the m-th order 1D legendre rules for uniformly distributed variables.
     To be used for stochastic collocation method.
-    """        
+    """
     xi_1d, wi_1d = np.polynomial.legendre.leggauss(m)
-    
-    return {'xi_1d':xi_1d, 'wi_1d':0.5*wi_1d}
+
+    return {'xi_1d': xi_1d, 'wi_1d': 0.5 * wi_1d}
+

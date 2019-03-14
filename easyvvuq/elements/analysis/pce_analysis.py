@@ -1,11 +1,12 @@
 import os
-import numpy   as np
-import pandas  as pd
+import numpy as np
+import pandas as pd
 import chaospy as cp
 from easyvvuq import OutputType
-from .base    import BaseAnalysisElement
+from .base import BaseAnalysisElement
 
 # author: Jalal Lakhlili
+
 
 class PCEAnalysis(BaseAnalysisElement):
 
@@ -61,15 +62,16 @@ class PCEAnalysis(BaseAnalysisElement):
         # TODO: to compare with samples = [[] for _dummy in range(self.campaign.sample_number)]
         samples = [[]]*self.campaign.sample_number
         for i in range(self.campaign.sample_number):
-            samples[i]= df.loc[df['run_id'] == 'Run_' + str(i)][self.value_cols].to_numpy().ravel()
+            # TODO: Make this readable
+            samples[i] = df.loc[df['run_id'] == 'Run_' + str(i)][self.value_cols].to_numpy().ravel()
 
         # Approximation solver
         fit = cp.fit_quadrature(P, nodes, w, samples)
 
         # Statistical moments
-        mean = cp.E(fit,   self.campaign.distribution)
-        var  = cp.Var(fit, self.campaign.distribution)
-        std  = cp.Std(fit, self.campaign.distribution)
+        mean = cp.E(fit, self.campaign.distribution)
+        var = cp.Var(fit, self.campaign.distribution)
+        std = cp.Std(fit, self.campaign.distribution)
 
         # Sensitivity Analysis
         sobol_first_narr = cp.Sens_m(fit, self.campaign.distribution)

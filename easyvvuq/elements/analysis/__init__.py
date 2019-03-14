@@ -1,7 +1,7 @@
-from .basic_stats   import BasicStats
+from .basic_stats import BasicStats
 from .ensemble_boot import EnsembleBoot
-from .sc_analysis   import SCAnalysis
-from .pce_analysis  import PCEAnalysis
+from .sc_analysis import SCAnalysis
+from .pce_analysis import PCEAnalysis
 
 __copyright__ = """
 
