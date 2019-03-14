@@ -64,7 +64,7 @@ def test_gauss_fix(tmpdir):
     assert(os.path.exists(os.path.join(run0dir, "bias1.txt")))
 
     my_campaign.apply_for_each_run_dir(
-            uq.actions.ExecuteLocal("tests/gauss/gauss_json.py gauss_in.json"))
+        uq.actions.ExecuteLocal("tests/gauss/gauss_json.py gauss_in.json"))
 
     aggregate = uq.elements.collate.AggregateSamples(my_campaign, average=True)
     aggregate.apply()
@@ -80,6 +80,7 @@ def test_gauss_fix(tmpdir):
 
     assert(os.path.exists(output_json))
     assert(os.path.isfile(output_json))
+
 
 if __name__ == "__main__":
     test_gauss_fix("/tmp/")

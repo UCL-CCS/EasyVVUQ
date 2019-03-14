@@ -28,8 +28,9 @@ __license__ = "LGPL"
 # If cannonsim has not been built (to do so, run the Makefile in tests/cannonsim/src/)
 # then skip this test
 if not os.path.exists("tests/cannonsim/bin/cannonsim"):
-    pytest.skip("Skipping cannonsim test (cannonsim is not installed in tests/cannonsim/bin/)",
-                allow_module_level=True)
+    pytest.skip(
+        "Skipping cannonsim test (cannonsim is not installed in tests/cannonsim/bin/)",
+        allow_module_level=True)
 
 
 def test_cannonsim_csv(tmpdir):
@@ -52,13 +53,15 @@ def test_cannonsim_csv(tmpdir):
     assert("mass" in my_campaign.params_info)
     assert("velocity" in my_campaign.params_info)
 
-    my_campaign.vary_param("angle",    dist=uq.distributions.uniform(0.0, 1.0))
-    my_campaign.vary_param("height",   dist=uq.distributions.uniform_integer(0, 10))
-    my_campaign.vary_param("velocity", dist=uq.distributions.normal(10.0, 1.0))
+    my_campaign.vary_param("angle", dist=uq.distributions.uniform(0.0, 1.0))
     my_campaign.vary_param(
-        "mass",
-        dist=uq.distributions.custom_histogram("tests/cannonsim/test_input/mass_distribution.csv")
-    )
+        "height",
+        dist=uq.distributions.uniform_integer(
+            0,
+            10))
+    my_campaign.vary_param("velocity", dist=uq.distributions.normal(10.0, 1.0))
+    my_campaign.vary_param("mass", dist=uq.distributions.custom_histogram(
+        "tests/cannonsim/test_input/mass_distribution.csv"))
 
     assert("angle" in my_campaign.vars)
     assert("height" in my_campaign.vars)
@@ -79,22 +82,23 @@ def test_cannonsim_csv(tmpdir):
     assert(os.path.exists(my_campaign.runs_dir))
     assert(os.path.isdir(my_campaign.runs_dir))
 
-    my_campaign.apply_for_each_run_dir(
-            uq.actions.ExecuteLocal("tests/cannonsim/bin/cannonsim input.cannon output.csv"))
+    my_campaign.apply_for_each_run_dir(uq.actions.ExecuteLocal(
+        "tests/cannonsim/bin/cannonsim input.cannon output.csv"))
 
     output_filename = 'output.csv'
     output_columns = ['Dist', 'lastvx', 'lastvy']
 
     aggregate = uq.elements.collate.AggregateSamples(
-                                my_campaign,
-                                output_filename=output_filename,
-                                output_columns=output_columns,
-                                header=0)
+        my_campaign,
+        output_filename=output_filename,
+        output_columns=output_columns,
+        header=0)
     aggregate.apply()
 
     assert(len(my_campaign.data) > 0)
 
-    stats = uq.elements.analysis.BasicStats(my_campaign, value_cols=output_columns)
+    stats = uq.elements.analysis.BasicStats(
+        my_campaign, value_cols=output_columns)
     results, output_file = stats.apply()
 
     my_campaign.save_state(output_json)

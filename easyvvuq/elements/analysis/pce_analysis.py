@@ -93,7 +93,6 @@ class PCEAnalysis(BaseAnalysisElement):
 
         # Store 1st Sobol indices in pandas Dataframe
         sobol_first = pd.DataFrame(sobol_first_dict)
-        #sobol_first.to_csv(output_file, sep='\t')
 
         self.output_file = output_file
 

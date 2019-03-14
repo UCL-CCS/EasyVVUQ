@@ -259,11 +259,11 @@ class SCAnalysis(BaseAnalysisElement):
         wi = [self.all_vars[param]['wi_1d'] for param in self.all_vars.keys()]
 
         # total variance might be zero at some locations, Sobol index not defined there
-        #idx_gt0 = np.where(D > 0)[0]
+        # idx_gt0 = np.where(D > 0)[0]
 
         # partial variances
         D_u = {}
-        #D_0 = mu**2
+        # D_0 = mu**2
         D_u[P[0]] = mu**2
 
         sobol = {}
@@ -300,7 +300,7 @@ class SCAnalysis(BaseAnalysisElement):
                 D_u[u] -= D_u[w]
 
             # compute Sobol index, only include points where D > 0
-            #sobol[u] = D_u[u][idx_gt0]/D[idx_gt0]
+            # sobol[u] = D_u[u][idx_gt0]/D[idx_gt0]
             sobol[u] = D_u[u] / D
 
         sort = []
@@ -308,7 +308,7 @@ class SCAnalysis(BaseAnalysisElement):
             print('Sobol index ', u, ' = ', sobol[u])
             sort.append(sobol[u])
 
-        #print('Total sum = ', np.sum(sobol.values())/self.N_qoi)
+        # print('Total sum = ', np.sum(sobol.values())/self.N_qoi)
 
         return sort
 
