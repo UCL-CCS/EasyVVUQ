@@ -203,8 +203,8 @@ class Campaign:
                 self.app_info['campaign_dir_prefix'] = self.default_campaign_dir_prefix
 
             # Create temp dir for campaign
-            campaign_dir = tempfile.mkdtemp(prefix=self.app_info['campaign_dir_prefix'],
-                                            dir=self.workdir)
+            campaign_dir = tempfile.mkdtemp(
+                prefix=self.app_info['campaign_dir_prefix'], dir=self.workdir)
 
             print(f"Creating Campaign directory: {campaign_dir}")
             self.campaign_dir = campaign_dir
@@ -244,7 +244,8 @@ class Campaign:
 
         # The "ID" of the campaign is just the name of the campaign
         # directory (without the trailing slash)
-        campaign_id = os.path.basename(os.path.normpath(self.app_info['campaign_dir']))
+        campaign_id = os.path.basename(
+            os.path.normpath(self.app_info['campaign_dir']))
 
         if without_prefix:
             # Ignore the prefix at the start of the string.
@@ -301,8 +302,9 @@ class Campaign:
 
         disallowed_keys = set(reserved_keys).intersection(info.keys())
         if disallowed_keys:
-            raise RuntimeError(f'The keys {reserved_keys} are not allowed in the '
-                               f'params dictionary , we found: {disallowed_keys}')
+            raise RuntimeError(
+                f'The keys {reserved_keys} are not allowed in the '
+                f'params dictionary , we found: {disallowed_keys}')
 
         self._params_info = info
 
@@ -378,9 +380,10 @@ class Campaign:
         for param in new_run.keys():
             if param not in campaign_params and param not in reserved_keys:
 
-                reasoning = (f"dict passed to add_run() contains extra parameter, "
-                             f"{param}, which is not a known parameter name "
-                             f"of this Campaign.")
+                reasoning = (
+                    f"dict passed to add_run() contains extra parameter, "
+                    f"{param}, which is not a known parameter name "
+                    f"of this Campaign.")
 
                 raise RuntimeError(reasoning)
 
@@ -426,14 +429,19 @@ class Campaign:
     def add_runs(self, sampling_element, max_num=0):
 
         # Make sure we have a sampling element
-        if isinstance(sampling_element, uq.elements.sampling.BaseSamplingElement) is False:
-            raise RuntimeError("add_runs() must be passed (an instance of) BaseSamplingElement")
+        if isinstance(sampling_element,
+                      uq.elements.sampling.BaseSamplingElement) is False:
+            raise RuntimeError(
+                "add_runs() must be passed (an instance of) BaseSamplingElement")
 
-        # Make sure num is not 0 for an infinite generator (this would add runs forever...)
+        # Make sure num is not 0 for an infinite generator (this would add runs
+        # forever...)
         if sampling_element.is_finite() is False and max_num <= 0:
-            raise RuntimeError("sampling_element '" + sampling_element.element_name() +
-                               "' is an infinite generator, therefore a max_num > 0 "
-                               "must be specified.'")
+            raise RuntimeError(
+                "sampling_element '" +
+                sampling_element.element_name() +
+                "' is an infinite generator, therefore a max_num > 0 "
+                "must be specified.'")
 
         num_added = 0
         for run in sampling_element.generate_runs():
@@ -442,8 +450,9 @@ class Campaign:
             if num_added == max_num:
                 break
 
-        self.log_element_application(sampling_element, {"num_draws_requested": max_num,
-                                                        "num_draws_added": num_added})
+        self.log_element_application(
+            sampling_element, {
+                "num_draws_requested": max_num, "num_draws_added": num_added})
 
     def scan_completed(self, *args, **kwargs):
         """
@@ -473,7 +482,8 @@ class Campaign:
 
         """
 
-        completed = [run_info['completed'] for run_id, run_info in self.runs.items()]
+        completed = [run_info['completed']
+                     for run_id, run_info in self.runs.items()]
 
         return all(completed)
 
@@ -482,11 +492,11 @@ class Campaign:
         Enables class to work with standard print() method"""
 
         return "\n".join([
-                    "Campaign info:", pprint.pformat(self.app_info, indent=4),
-                    "Params info:", pprint.pformat(self.params_info, indent=4),
-                    "Runs:", pprint.pformat(self.runs, indent=4),
-                    "Data:", pprint.pformat(self.data, indent=4)
-                    ])
+            "Campaign info:", pprint.pformat(self.app_info, indent=4),
+            "Params info:", pprint.pformat(self.params_info, indent=4),
+            "Runs:", pprint.pformat(self.runs, indent=4),
+            "Data:", pprint.pformat(self.data, indent=4)
+        ])
 
     def populate_runs_dir(self):
         """Populate run directories as specified in the input Campaign object
@@ -543,13 +553,13 @@ class Campaign:
         """
 
         log_entry = {
-                "element": {
-                                "name": element.element_name(),
-                                "version": element.element_version(),
-                                "category": element.element_category()
-                            },
-                "info": further_info
-                }
+            "element": {
+                "name": element.element_name(),
+                "version": element.element_version(),
+                "category": element.element_category()
+            },
+            "info": further_info
+        }
         self._log.append(log_entry)
 
     def vary_param(self, param_name, dist=None):

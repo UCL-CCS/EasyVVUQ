@@ -68,9 +68,10 @@ class BaseAnalysisElement(BaseElement):
             self.data_src = data_src.data
 
             if not self.output_dir:
-                analysis_path = os.path.join(self.campaign.campaign_dir, 'analysis')
-                self.output_dir = tempfile.mkdtemp(prefix=self.element_name() + '_',
-                                                   dir=analysis_path)
+                analysis_path = os.path.join(
+                    self.campaign.campaign_dir, 'analysis')
+                self.output_dir = tempfile.mkdtemp(
+                    prefix=self.element_name() + '_', dir=analysis_path)
 
         elif isinstance(data_src, dict):
             self.data_src = data_src
@@ -87,10 +88,12 @@ class BaseAnalysisElement(BaseElement):
         filename = f"{self.element_name()}.json"
 
         log_path = os.path.join(output_dir, filename)
-        self_dict = {k: v for k, v in self.__dict__.items() if k not in ['data_frame', 'campaign']}
+        self_dict = {k: v for k, v in self.__dict__.items() if k not in [
+            'data_frame', 'campaign']}
 
         with open(log_path, "w") as outfile:
-            json.dump(self_dict, outfile, indent=4, default=json_utils.jdefault)
+            json.dump(self_dict, outfile, indent=4,
+                      default=json_utils.jdefault)
 
         if self.campaign is not None:
             state_file = os.path.join(output_dir, 'state_file.json')
@@ -100,11 +103,11 @@ class BaseAnalysisElement(BaseElement):
             output_type_str = self.output_type.value
 
         log_info = {
-                'output': self.output_file,
-                'type': output_type_str,
-                'logfile': log_path,
-                'state': state_file,
-                }
+            'output': self.output_file,
+            'type': output_type_str,
+            'logfile': log_path,
+            'state': state_file,
+        }
 
         self.campaign.log_element_application(self, log_info)
 

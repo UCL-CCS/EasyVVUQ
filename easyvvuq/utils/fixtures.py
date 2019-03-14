@@ -117,8 +117,9 @@ class Fixture(object):
             else:
 
                 if not target_dir:
-                    raise RuntimeError(f"A target_dir is needed to create target path "
-                                       f"for the fixture {self.path}")
+                    raise RuntimeError(
+                        f"A target_dir is needed to create target path "
+                        f"for the fixture {self.path}")
 
                 fixture_path = os.path.join(target_dir, fixture_path)
 

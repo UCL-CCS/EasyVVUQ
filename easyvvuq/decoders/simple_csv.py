@@ -71,7 +71,8 @@ class SimpleCSV(BaseDecoder, decoder_name="csv"):
                                'specified for the simple encoder')
 
         # Remove 'output_filename' and 'output_columns' from the kwargs before
-        # passing to pandas read_csv (as these are clearly going to be rejected by pandas)
+        # passing to pandas read_csv (as these are clearly going to be rejected
+        # by pandas)
         del kwargs['output_filename']
         del kwargs['output_columns']
 

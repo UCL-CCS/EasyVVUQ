@@ -50,10 +50,12 @@ class Replicate(BaseSamplingElement):
                     copy = True
                 else:
                     check_params = self.selection.keys()
-                    copy = all([run_info[param] == self.selection[param] for param in check_params])
+                    copy = all([run_info[param] == self.selection[param]
+                                for param in check_params])
 
                 if copy:
-                    copy_info = {k: v for k, v in run_info.items() if k != 'run_ids'}
+                    copy_info = {k: v for k, v in run_info.items()
+                                 if k != 'run_ids'}
                     new_reps = self.replicates - n_reps
                     for rep_no in range(new_reps):
                         yield dict(copy_info)

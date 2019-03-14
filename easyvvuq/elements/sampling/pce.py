@@ -1,8 +1,9 @@
 from .base import BaseSamplingElement
-import numpy    as np
-import chaospy  as cp
+import numpy as np
+import chaospy as cp
 
 # author: Jalal Lakhlili
+
 
 class PCESampler(BaseSamplingElement):
 
@@ -44,21 +45,21 @@ class PCESampler(BaseSamplingElement):
         self.campaign.distribution = cp.J(*params_distribution)
 
         # The orthogonal polynomials corresponding to the joint disctribution
-        self.campaign.P = cp.orth_ttr(polynomial_order, self.campaign.distribution)
+        self.campaign.P = cp.orth_ttr(
+            polynomial_order, self.campaign.distribution)
 
         # The quadrature oder (+2 ?)
         quad_order = polynomial_order + 1
 
         # Nodes and weights for the integration
-        self.campaign.nodes, self.campaign.weights = \
-            cp.generate_quadrature(quad_order, self.campaign.distribution, rule=quadrature_rule, sparse=sparse)
+        self.campaign.nodes, self.campaign.weights = cp.generate_quadrature(
+            quad_order, self.campaign.distribution, rule=quadrature_rule, sparse=sparse)
 
         # Number of samples
         self.campaign.sample_number = len(self.campaign.nodes[0])
 
         # Number of uncertain parameters
         self.parameters_number = len(params_distribution)
-
 
     def element_name(self):
         return "PCE_sampler"

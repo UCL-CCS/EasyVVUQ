@@ -59,7 +59,8 @@ def random_sampler(campaign):
             elif func == "normal":
                 gens.append(normal_dist(key, args[0], args[1], args[2]))
             else:
-                sys.exit("Unrecognised function " + func + " for parameter " + key)
+                sys.exit("Unrecognised function " +
+                         func + " for parameter " + key)
 
     # Combine all the iterables/generators into one
     mega_iter = itertools.product(*gens)

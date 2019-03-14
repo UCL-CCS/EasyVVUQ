@@ -48,9 +48,11 @@ class BasicStats(BaseAnalysisElement):
         if data_src:
             if 'files' in data_src:
                 if len(data_src['files']) != 1:
-                    raise RuntimeError("Data source must contain a SINGLE file path for this UQP")
+                    raise RuntimeError(
+                        "Data source must contain a SINGLE file path for this UQP")
                 else:
-                    self.data_frame = pd.read_csv(data_src['files'][0], sep='\t')
+                    self.data_frame = pd.read_csv(
+                        data_src['files'][0], sep='\t')
 
         self.value_cols = value_cols
 

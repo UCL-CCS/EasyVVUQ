@@ -16,7 +16,8 @@ class PCEAnalysis(BaseAnalysisElement):
     def element_version(self):
         return "0.1"
 
-    def __init__(self, data_src, params_cols=[], value_cols=[], *args, **kwargs):
+    def __init__(self, data_src, params_cols=[],
+                 value_cols=[], *args, **kwargs):
 
         # TODO: Fix this to allow more flexibility - basically pass through
         # available options to `pd.DataFrame.describe()`
@@ -29,9 +30,11 @@ class PCEAnalysis(BaseAnalysisElement):
         if data_src:
             if 'files' in data_src:
                 if len(data_src['files']) != 1:
-                    raise RuntimeError("Data source must contain a SINGLE file path for this UQP")
+                    raise RuntimeError(
+                        "Data source must contain a SINGLE file path for this UQP")
                 else:
-                    self.data_frame = pd.read_csv(data_src['files'][0], sep='\t')
+                    self.data_frame = pd.read_csv(
+                        data_src['files'][0], sep='\t')
 
         self.value_cols = value_cols
 
@@ -59,11 +62,13 @@ class PCEAnalysis(BaseAnalysisElement):
         P = self.campaign.P
 
         # extract code output, per run, from Dataframe
-        # TODO: to compare with samples = [[] for _dummy in range(self.campaign.sample_number)]
-        samples = [[]]*self.campaign.sample_number
+        # TODO: to compare with samples = [[] for _dummy in
+        # range(self.campaign.sample_number)]
+        samples = [[]] * self.campaign.sample_number
         for i in range(self.campaign.sample_number):
             # TODO: Make this readable
-            samples[i] = df.loc[df['run_id'] == 'Run_' + str(i)][self.value_cols].to_numpy().ravel()
+            samples[i] = df.loc[df['run_id'] == 'Run_' +
+                                str(i)][self.value_cols].to_numpy().ravel()
 
         # Approximation solver
         fit = cp.fit_quadrature(P, nodes, w, samples)
@@ -79,17 +84,17 @@ class PCEAnalysis(BaseAnalysisElement):
         i_par = 0
         for param_name in self.campaign.vars.keys():
             sobol_first_dict[param_name] = sobol_first_narr[i_par]
-            i_par =+1
+            i_par = +1
 
         # Store Statistical moments in pandas Dataframe and the output file
-        statistical_moments = pd.DataFrame({'mean':mean, 'var':var, 'std':std})
+        statistical_moments = pd.DataFrame(
+            {'mean': mean, 'var': var, 'std': std})
         statistical_moments.to_csv(output_file, sep='\t')
 
         # Store 1st Sobol indices in pandas Dataframe
-        sobol_first =  pd.DataFrame(sobol_first_dict)
+        sobol_first = pd.DataFrame(sobol_first_dict)
         #sobol_first.to_csv(output_file, sep='\t')
 
         self.output_file = output_file
 
         return statistical_moments, sobol_first, output_file
-
