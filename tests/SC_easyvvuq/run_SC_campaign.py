@@ -62,7 +62,7 @@ aggregate.apply()
 sc_analysis = uq.elements.analysis.SCAnalysis(
     my_campaign, value_cols=output_columns)
 results, output_file = sc_analysis.get_moments()  # moment calculation
-#results, output_file = sc_analysis.apply()
+# results, output_file = sc_analysis.apply()
 
 # 8. Use the SC samples and integration weights to estimate the
 #    (1-st order or all) Sobol indices. In this example, at x=1 the Sobol indices
@@ -70,7 +70,7 @@ results, output_file = sc_analysis.get_moments()  # moment calculation
 
 # get Sobol indices for free
 typ = 'first_order'
-#typ = 'all'
+# typ = 'all'
 sobol_idx = sc_analysis.get_Sobol_indices(typ)
 
 my_campaign.save_state(output_json)

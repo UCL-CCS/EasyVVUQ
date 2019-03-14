@@ -54,8 +54,8 @@ os.system(
     my_campaign.campaign_dir +
     '/runs')
 
-#"cd ~/CWI/VECMA/FabSim3 && fab localhost campaign2ensemble:ade-example1,campaign_dir=<full path>"
-#"cd ~/CWI/VECMA/FabSim3 %% fab localhost ade_ensemble:ade-example1"
+# "cd ~/CWI/VECMA/FabSim3 && fab localhost campaign2ensemble:ade-example1,campaign_dir=<full path>"
+# "cd ~/CWI/VECMA/FabSim3 %% fab localhost ade_ensemble:ade-example1"
 
 # 6. Aggregate the results from all runs.
 #    This makes use of the `Decoder` selected in the input file to interpret the
@@ -79,7 +79,7 @@ aggregate.apply()
 sc_analysis = uq.elements.analysis.SCAnalysis(
     my_campaign, value_cols=output_columns)
 results, output_file = sc_analysis.get_moments()  # moment calculation
-#results, output_file = sc_analysis.apply()
+# results, output_file = sc_analysis.apply()
 # print(sc_analysis.get_Sobol_indices('first_order'))
 
 # 8. Use the SC samples and integration weights to estimate the
@@ -88,7 +88,7 @@ results, output_file = sc_analysis.get_moments()  # moment calculation
 
 # get Sobol indices for free
 typ = 'first_order'
-#typ = 'all'
+# typ = 'all'
 sobol_idx = sc_analysis.get_Sobol_indices(typ)
 
 my_campaign.save_state(output_json)
