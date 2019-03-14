@@ -88,9 +88,13 @@ class BaseEncoder(object):
                 target_name = current_fixture['target']
                 group = current_fixture['group']
 
-                tmp_fixture = fixtures.Fixture(path, is_dir=is_dir, common=common,
-                                               exists_local=exists_local, target_name=target_name,
-                                               group=group)
+                tmp_fixture = fixtures.Fixture(
+                    path,
+                    is_dir=is_dir,
+                    common=common,
+                    exists_local=exists_local,
+                    target_name=target_name,
+                    group=group)
 
                 info[key] = tmp_fixture.fixture_path(depth_in_run=path_depth)
                 tmp_fixture.copy_to_target(target_dir=target_dir)

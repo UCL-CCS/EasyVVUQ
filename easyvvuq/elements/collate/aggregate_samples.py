@@ -73,7 +73,10 @@ class AggregateSamples(BaseCollationElement):
         full_data = pd.DataFrame()
 
         for run_id, run_info in runs.items():
-            if decoder.sim_complete(run_info=run_info, *self.decoder_args, **self.decoder_kwargs):
+            if decoder.sim_complete(
+                    run_info=run_info,
+                    *self.decoder_args,
+                    **self.decoder_kwargs):
                 runs[run_id]['completed'] = True
                 run_data = decoder.parse_sim_output(run_info=run_info,
                                                     *self.decoder_args,

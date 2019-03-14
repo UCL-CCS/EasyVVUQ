@@ -100,15 +100,20 @@ def ensemble_bootstrap(data, params_cols=[], value_cols=[],
     agg_funcs = {}
 
     if not value_cols:
-        value_cols = [x for x in data.columns if x not in params_cols + ['run_id', 'completed']]
+        value_cols = [
+            x for x in data.columns if x not in params_cols + ['run_id', 'completed']]
 
     if stat_func is None:
         stat_func = np.mean
 
     for col in value_cols:
-        agg_funcs[col] = lambda x: bootstrap(x, stat_func=stat_func, alpha=alpha,
-                                             sample_size=sample_size, n_samples=n_samples,
-                                             pivotal=pivotal)
+        agg_funcs[col] = lambda x: bootstrap(
+            x,
+            stat_func=stat_func,
+            alpha=alpha,
+            sample_size=sample_size,
+            n_samples=n_samples,
+            pivotal=pivotal)
 
     grouped_data = data.groupby(params_cols)
 
@@ -120,9 +125,9 @@ def ensemble_bootstrap(data, params_cols=[], value_cols=[],
 
     # Split out tuples in each cell and provide sensible naming
     results = pd.concat({col: results[col].apply(
-                                 lambda cell: pd.Series(cell, index=outputs)
-                              )
-                         for col in value_cols}, axis=1)
+        lambda cell: pd.Series(cell, index=outputs)
+    )
+        for col in value_cols}, axis=1)
 
     return results
 
@@ -152,7 +157,8 @@ class EnsembleBoot(BaseAnalysisElement):
                     raise RuntimeError("Data source must contain a SINGLE file"
                                        " path for this VVUQ element")
                 else:
-                    self.data_frame = pd.read_csv(data_src['files'][0], sep='\t')
+                    self.data_frame = pd.read_csv(
+                        data_src['files'][0], sep='\t')
 
         self.value_cols = value_cols
         if self.campaign is not None:
@@ -174,7 +180,8 @@ class EnsembleBoot(BaseAnalysisElement):
     def _apply_analysis(self):
 
         if self.data_frame is None:
-            raise RuntimeError("This VVUQ element needs a data frame to analyse")
+            raise RuntimeError(
+                "This VVUQ element needs a data frame to analyse")
 
         data_frame = self.data_frame
         params_cols = self.params_cols
@@ -189,11 +196,16 @@ class EnsembleBoot(BaseAnalysisElement):
 
         output_file = os.path.join(output_dir, 'ensemble_boot.tsv')
 
-        results = ensemble_bootstrap(data_frame, params_cols=params_cols,
-                                     value_cols=value_cols, stat_func=stat_func,
-                                     alpha=alpha, sample_size=sample_size,
-                                     n_samples=n_boot_samples, pivotal=pivotal,
-                                     stat_name=stat_name)
+        results = ensemble_bootstrap(
+            data_frame,
+            params_cols=params_cols,
+            value_cols=value_cols,
+            stat_func=stat_func,
+            alpha=alpha,
+            sample_size=sample_size,
+            n_samples=n_boot_samples,
+            pivotal=pivotal,
+            stat_name=stat_name)
 
         results.to_csv(output_file, sep='\t')
         self.output_file = output_file

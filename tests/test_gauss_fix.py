@@ -53,7 +53,8 @@ def test_gauss_fix(tmpdir):
 
     assert(len(my_campaign.runs) == number_of_samples)
 
-    replicator = uq.elements.sampling.Replicate(my_campaign, replicates=number_of_replicas)
+    replicator = uq.elements.sampling.Replicate(
+        my_campaign, replicates=number_of_replicas)
     my_campaign.add_runs(replicator)
 
     assert(len(my_campaign.runs) == number_of_samples * number_of_replicas)
@@ -67,7 +68,7 @@ def test_gauss_fix(tmpdir):
     assert(os.path.isdir(my_campaign.runs_dir))
 
     my_campaign.apply_for_each_run_dir(
-            uq.actions.ExecuteLocal("tests/gauss/gauss_json.py gauss_in.json"))
+        uq.actions.ExecuteLocal("tests/gauss/gauss_json.py gauss_in.json"))
 
     aggregate = uq.elements.collate.AggregateSamples(my_campaign, average=True)
     aggregate.apply()
@@ -81,6 +82,7 @@ def test_gauss_fix(tmpdir):
 
     assert(os.path.exists(output_json))
     assert(os.path.isfile(output_json))
+
 
 if __name__ == "__main__":
     test_gauss_fix("/tmp/")

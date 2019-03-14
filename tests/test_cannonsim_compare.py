@@ -30,8 +30,9 @@ __license__ = "LGPL"
 # If cannonsim has not been built (to do so, run the Makefile in tests/cannonsim/src/)
 # then skip this test
 if not os.path.exists("tests/cannonsim/bin/cannonsim"):
-    pytest.skip("Skipping cannonsim test (cannonsim is not installed in tests/cannonsim/bin/)",
-                allow_module_level=True)
+    pytest.skip(
+        "Skipping cannonsim test (cannonsim is not installed in tests/cannonsim/bin/)",
+        allow_module_level=True)
 
 
 def test_cannonsim_compare(tmpdir):
@@ -40,7 +41,7 @@ def test_cannonsim_compare(tmpdir):
     input_json = "tests/cannonsim/test_input/test_cannonsim_csv.json"
     output_json = os.path.join(tmpdir, "out_cannonsim.json")
     number_of_samples = 15
-    angle_45 = np.pi/4.0
+    angle_45 = np.pi / 4.0
     velocity_45 = 10.0
     angle_stdev = 0.01
     vel_stdev = 0.1
@@ -60,8 +61,14 @@ def test_cannonsim_compare(tmpdir):
     assert("mass" in my_campaign.params_info)
     assert("velocity" in my_campaign.params_info)
 
-    my_campaign.vary_param("angle",    dist=uq.distributions.normal(angle_45, angle_stdev))
-    my_campaign.vary_param("velocity", dist=uq.distributions.normal(velocity_45, vel_stdev))
+    my_campaign.vary_param(
+        "angle", dist=uq.distributions.normal(
+            angle_45, angle_stdev))
+    my_campaign.vary_param(
+        "velocity",
+        dist=uq.distributions.normal(
+            velocity_45,
+            vel_stdev))
 
     assert("angle" in my_campaign.vars)
     assert("velocity" in my_campaign.vars)
@@ -80,22 +87,23 @@ def test_cannonsim_compare(tmpdir):
     assert(os.path.exists(my_campaign.runs_dir))
     assert(os.path.isdir(my_campaign.runs_dir))
 
-    my_campaign.apply_for_each_run_dir(
-            uq.actions.ExecuteLocal("tests/cannonsim/bin/cannonsim input.cannon output.csv"))
+    my_campaign.apply_for_each_run_dir(uq.actions.ExecuteLocal(
+        "tests/cannonsim/bin/cannonsim input.cannon output.csv"))
 
     output_filename = 'output.csv'
     output_columns = ['Dist', 'lastvx', 'lastvy']
 
     aggregate = uq.elements.collate.AggregateSamples(
-                                my_campaign,
-                                output_filename=output_filename,
-                                output_columns=output_columns,
-                                header=0)
+        my_campaign,
+        output_filename=output_filename,
+        output_columns=output_columns,
+        header=0)
     aggregate.apply()
 
     assert(len(my_campaign.data) > 0)
 
-    stats = uq.elements.analysis.BasicStats(my_campaign, value_cols=output_columns)
+    stats = uq.elements.analysis.BasicStats(
+        my_campaign, value_cols=output_columns)
     results, output_file = stats.apply()
 
     df = results['Dist']

@@ -63,23 +63,27 @@ class GenericEncoder(BaseEncoder, encoder_name="generic_template"):
         app_info = self.app_info
         print(app_info)
 
-        # Check if an encoder delimiter is specified in the app_info. Else use $ by default.
+        # Check if an encoder delimiter is specified in the app_info. Else use
+        # $ by default.
         self.encoder_delimiter = '$'
         if 'encoder_delimiter' in app_info:
             self.encoder_delimiter = app_info['encoder_delimiter']
 
-        # Look for the template text ( specified either in a file, or in app_info['template_txt'] )
+        # Look for the template text ( specified either in a file, or in
+        # app_info['template_txt'] )
         if 'template' in app_info:
             with open(app_info['template'], 'r') as template_file:
                 template_txt = template_file.read()
-            self.template = getCustomTemplate(template_txt, custom_delimiter=self.encoder_delimiter)
+            self.template = getCustomTemplate(
+                template_txt, custom_delimiter=self.encoder_delimiter)
         elif 'template_txt' in app_info:
             self.template = getCustomTemplate(
-                                                app_info['template_txt'],
-                                                custom_delimiter=self.encoder_delimiter
-                                                )
+                app_info['template_txt'],
+                custom_delimiter=self.encoder_delimiter
+            )
         else:
-            raise RuntimeError('Template required in "app" specification input to GenericEncoder')
+            raise RuntimeError(
+                'Template required in "app" specification input to GenericEncoder')
 
         # Check what name to give the output of this encoder
         if 'input_filename' in app_info:

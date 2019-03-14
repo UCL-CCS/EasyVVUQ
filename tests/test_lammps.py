@@ -26,11 +26,12 @@ __copyright__ = """
 __license__ = "LGPL"
 
 
-# If lammps is not installed (at present only checks for /usr/bin/lammps) then skip this test
+# If lammps is not installed (at present only checks for /usr/bin/lammps)
+# then skip this test
 if not os.path.exists("/usr/bin/lammps"):
     pytest.skip(
-            "Skipping lammps test (lammps is not installed in /usr/bin/lammps",
-            allow_module_level=True)
+        "Skipping lammps test (lammps is not installed in /usr/bin/lammps",
+        allow_module_level=True)
 
 
 def test_lammps(tmpdir):
@@ -47,7 +48,9 @@ def test_lammps(tmpdir):
     assert(my_campaign is not None)
     assert("seed" in my_campaign.params_info)
 
-    my_campaign.vary_param("seed",    dist=uq.distributions.uniform_integer(0, 10000000))
+    my_campaign.vary_param(
+        "seed", dist=uq.distributions.uniform_integer(
+            0, 10000000))
 
     assert("seed" in my_campaign.vars)
 
@@ -58,7 +61,7 @@ def test_lammps(tmpdir):
 
     my_campaign.populate_runs_dir()
     my_campaign.apply_for_each_run_dir(
-            uq.actions.ExecuteLocal("/usr/bin/lammps -i in.CG.lammps"))
+        uq.actions.ExecuteLocal("/usr/bin/lammps -i in.CG.lammps"))
 
     assert(len(my_campaign.runs_dir) > 0)
     assert(os.path.exists(my_campaign.runs_dir))
@@ -68,9 +71,9 @@ def test_lammps(tmpdir):
     output_columns = ['pe', 'temp', 'pres']
 
     aggregate = uq.elements.collate.AggregateSamples(
-                                 my_campaign, average=True,
-                                 output_filename=output_filename,
-                                 output_columns=output_columns)
+        my_campaign, average=True,
+        output_filename=output_filename,
+        output_columns=output_columns)
     aggregate.apply()
 
     assert(len(my_campaign.data) > 0)
@@ -82,6 +85,7 @@ def test_lammps(tmpdir):
 
     assert(os.path.exists(output_json))
     assert(os.path.isfile(output_json))
+
 
 if __name__ == "__main__":
     test_lammps("/tmp/")

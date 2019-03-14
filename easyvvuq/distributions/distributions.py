@@ -130,7 +130,7 @@ def custom_histogram(filename):
         csvreader = csv.reader(infile)
         for row in csvreader:
             if '#' in row[0]:  # skip comment line
-                    continue
+                continue
             values.append(float(row[0]))
             probabilities.append(float(row[1]))
         probabilities = np.array(probabilities)
@@ -142,11 +142,12 @@ def custom_histogram(filename):
     while True:
         yield np.random.choice(values, p=probabilities)
 
+
 def legendre(m):
     """
     Returns the m-th order 1D legendre rules for uniformly distributed variables.
     To be used for stochastic collocation method.
-    """        
+    """
     xi_1d, wi_1d = np.polynomial.legendre.leggauss(m)
-    
-    return {'xi_1d':xi_1d, 'wi_1d':wi_1d}
+
+    return {'xi_1d': xi_1d, 'wi_1d': 0.5 * wi_1d}
