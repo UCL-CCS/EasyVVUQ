@@ -61,9 +61,7 @@ class PCEAnalysis(BaseAnalysisElement):
         w = self.campaign.weights
         P = self.campaign.P
 
-        # extract code output, per run, from Dataframe
-        # TODO: to compare with samples = [[] for _dummy in
-        # range(self.campaign.sample_number)]
+        # Extract code output, per run, from Dataframe
         samples = [[]] * self.campaign.sample_number
         for i in range(self.campaign.sample_number):
             # TODO: Make this readable
@@ -73,12 +71,15 @@ class PCEAnalysis(BaseAnalysisElement):
         # Approximation solver
         fit = cp.fit_quadrature(P, nodes, w, samples)
 
-        # Statistical moments
+        # Get Statistical moments
         mean = cp.E(fit, self.campaign.distribution)
         var = cp.Var(fit, self.campaign.distribution)
         std = cp.Std(fit, self.campaign.distribution)
 
-        # Sensitivity Analysis
+        # Get Correlation matrix
+        correlation_matrix = cp.Corr(fit, self.campaign.distribution)
+
+        # Get Sensitivity Analysis
         sobol_first_narr = cp.Sens_m(fit, self.campaign.distribution)
         sobol_first_dict = {}
         i_par = 0
@@ -89,11 +90,12 @@ class PCEAnalysis(BaseAnalysisElement):
         # Store Statistical moments in pandas Dataframe and the output file
         statistical_moments = pd.DataFrame(
             {'mean': mean, 'var': var, 'std': std})
-        statistical_moments.to_csv(output_file, sep='\t')
 
         # Store 1st Sobol indices in pandas Dataframe
         sobol_first = pd.DataFrame(sobol_first_dict)
 
-        self.output_file = output_file
+        # TODO add VERBOSE (by default chould be False)
+        # statistical_moments.to_csv(output_file, sep='\t')
+        # self.output_file = output_file
 
-        return statistical_moments, sobol_first, output_file
+        return statistical_moments, sobol_first, correlation_matrix

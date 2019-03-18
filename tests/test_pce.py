@@ -50,14 +50,14 @@ def test_pce(tmpdir):
     analysis = uq.elements.analysis.PCEAnalysis(
         my_campaign, value_cols=output_columns)
 
-    stats, sobols, output_file = analysis.apply()
+    stats, sobols, corr_matrix = analysis.apply()
 
-    return stats, sobols
+    return stats, sobols, corr_matrix
 # ...
 
 
 if __name__ == "__main__":
-    stats, sobols = test_pce("/tmp/")
+    stats, sobols, correlation = test_pce("/tmp/")
 
     # plots
     mean = stats["mean"].to_numpy()
