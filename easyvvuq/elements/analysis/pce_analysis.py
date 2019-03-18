@@ -85,7 +85,7 @@ class PCEAnalysis(BaseAnalysisElement):
         i_par = 0
         for param_name in self.campaign.vars.keys():
             sobol_first_dict[param_name] = sobol_first_narr[i_par]
-            i_par = +1
+            i_par += 1
 
         # Store Statistical moments in pandas Dataframe and the output file
         statistical_moments = pd.DataFrame(
