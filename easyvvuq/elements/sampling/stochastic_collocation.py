@@ -46,8 +46,12 @@ class SCSampler(BaseSamplingElement):
         self.counter = 0
 
         # IS THIS OKAY, OR A PROGRAMMING NO NO?
-        campaign.xi_d = self.xi_d
-        campaign.wi_d = self.wi_d
+        #campaign.xi_d = self.xi_d
+        #campaign.wi_d = self.wi_d
+        
+        #BETTER: create a tensor product from 1D rules in all_vars when needed
+        xi = [all_vars[param]['xi_1d'] for param in all_vars.keys()]
+        self.xi_d = np.array(list(product(*xi)))
 
     def element_name(self):
         return "sc_sampler"

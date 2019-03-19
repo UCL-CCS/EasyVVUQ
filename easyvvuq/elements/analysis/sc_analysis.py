@@ -66,24 +66,30 @@ class SCAnalysis(BaseAnalysisElement):
             self.params_cols = params_cols
         self.output_type = OutputType.SUMMARY
 
-        # load code samples, and set other required variables
-        self.load_samples()
-
     """
     Compute the first two statistical moments
     """
 
     def get_moments(self):
 
+        # load code samples, and set other required variables
+        self.load_samples()
+        
         if self.data_frame is None:
             raise RuntimeError("UQP needs a data frame to analyse")
 
         df = self.data_frame
 
-        # SC quad weights
-        wi_d = self.campaign.wi_d
+        # SC quad weights, STORED IN FULL IN THE CAMPAIGN OBJECT
+        #wi_d = self.campaign.wi_d
+        
+        # list with the 1D weights of all uncertain parameters
+        #wi = [self.all_vars[param]['wi_1d'] for param in self.all_vars.keys()]
+        
+        #turn the 1D weights into a Ns x d array, where Ns = number of SC samples and d = number of param
+        #wi_d = np.array(list(product(*wi)))
 
-        number_of_samples = wi_d.shape[0]
+        number_of_samples = self.wi_d.shape[0]
 
         # extract code output, per run, from Dataframe
         samples = {}
@@ -99,10 +105,10 @@ class SCAnalysis(BaseAnalysisElement):
         var_f = np.zeros([N_qoi, 1])
 
         for k in range(number_of_samples):
-            mean_f += samples[k] * wi_d[k].prod()
+            mean_f += samples[k] * self.wi_d[k].prod()
 
         for k in range(number_of_samples):
-            var_f += (samples[k] - mean_f)**2 * wi_d[k].prod()
+            var_f += (samples[k] - mean_f)**2 * self.wi_d[k].prod()
 
         # store results in pandas Dataframe
         results = pd.DataFrame(
@@ -123,9 +129,23 @@ class SCAnalysis(BaseAnalysisElement):
 
         # total code output in pandas Dataframe
         df = self.data_frame
-        # get (d-dimensional) collocation points and quad. weights
-        self.xi_d = self.campaign.xi_d
-        self.wi_d = self.campaign.wi_d
+        
+        # get (d-dimensional) collocation points and quad. weights STORED IN CAMPAIGN OBJECT
+        #self.xi_d = self.campaign.xi_d
+        #self.wi_d = self.campaign.wi_d
+
+        #compute Ns x d arrays of weights and collocation points from 1d rules stored in campaign.vars,
+        #where Ns = number of SC samples and d = number of uncertain parameters
+
+        # list with the 1D weights/colloc points of all uncertain parameters
+        self.all_vars = self.campaign.vars
+
+        xi = [self.all_vars[param]['xi_1d'] for param in self.all_vars.keys()]
+        wi = [self.all_vars[param]['wi_1d'] for param in self.all_vars.keys()]
+        
+        self.xi_d = np.array(list(product(*xi)))
+        self.wi_d = np.array(list(product(*wi)))
+
         # number of uncertain parameters
         self.d = self.wi_d.shape[1]
         # number of code samples
