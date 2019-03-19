@@ -72,7 +72,7 @@ class SCAnalysis(BaseAnalysisElement):
 
     def get_moments(self):
 
-        # load code samples, and set other required variables
+        # load code samples colloc point and weight tensors
         self.load_samples()
         
         if self.data_frame is None:
