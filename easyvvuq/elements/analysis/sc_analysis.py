@@ -1,6 +1,7 @@
 import os
 import pandas as pd
 import numpy as np
+import chaospy as cp
 from itertools import product, chain, combinations
 from easyvvuq import OutputType
 from .base import BaseAnalysisElement
@@ -70,7 +71,11 @@ class SCAnalysis(BaseAnalysisElement):
     Compute the first two statistical moments
     """
 
-    def get_moments(self):
+    def get_moments(self, polynomial_order=4, quadrature_rule="G", sparse=False):
+        
+        self.polynomial_order = polynomial_order
+        self.quadrature_rule = quadrature_rule
+        self.sparse = sparse
 
         # load code samples colloc point and weight tensors
         self.load_samples()
@@ -89,7 +94,7 @@ class SCAnalysis(BaseAnalysisElement):
         #turn the 1D weights into a Ns x d array, where Ns = number of SC samples and d = number of param
         #wi_d = np.array(list(product(*wi)))
 
-        number_of_samples = self.wi_d.shape[0]
+        number_of_samples = self.xi_d.shape[0]
 
         # extract code output, per run, from Dataframe
         samples = {}
@@ -105,10 +110,10 @@ class SCAnalysis(BaseAnalysisElement):
         var_f = np.zeros([N_qoi, 1])
 
         for k in range(number_of_samples):
-            mean_f += samples[k] * self.wi_d[k].prod()
+            mean_f += samples[k] * self.wi_d[k]#.prod()
 
         for k in range(number_of_samples):
-            var_f += (samples[k] - mean_f)**2 * self.wi_d[k].prod()
+            var_f += (samples[k] - mean_f)**2 * self.wi_d[k]#.prod()
 
         # store results in pandas Dataframe
         results = pd.DataFrame(
@@ -140,24 +145,40 @@ class SCAnalysis(BaseAnalysisElement):
         # list with the 1D weights/colloc points of all uncertain parameters
         self.all_vars = self.campaign.vars
 
-        xi = [self.all_vars[param]['xi_1d'] for param in self.all_vars.keys()]
-        wi = [self.all_vars[param]['wi_1d'] for param in self.all_vars.keys()]
+#       Old implementation
+#        xi = [self.all_vars[param]['xi_1d'] for param in self.all_vars.keys()]
+#        wi = [self.all_vars[param]['wi_1d'] for param in self.all_vars.keys()]
+#        
+#        self.xi_d = np.array(list(product(*xi)))
+#        self.wi_d = np.array(list(product(*wi)))
+
+        #Chaospy computation of weights
         
-        self.xi_d = np.array(list(product(*xi)))
-        self.wi_d = np.array(list(product(*wi)))
+        # The probality distributions of uncertain parameters
+        params_distribution = list(self.all_vars.values())
+        
+        # Multivariate distribution
+        joint = cp.J(*params_distribution)
+
+        xi_d, wi_d = cp.generate_quadrature(self.polynomial_order+1, joint, \
+                                            rule=self.quadrature_rule, sparse=self.sparse)
+        
+        #tensor product of collocation points
+        self.xi_d = xi_d.T
+        
+        #array of weights, each entry being the product of all weights
+        self.wi_d = wi_d
 
         # number of uncertain parameters
-        self.d = self.wi_d.shape[1]
+        self.d = self.xi_d.shape[1]
+        
         # number of code samples
-        self.number_of_samples = self.wi_d.shape[0]
-        # 1D SC variables
-        self.all_vars = self.campaign.vars
+        self.number_of_samples = self.xi_d.shape[0]
 
         # extract code output, per run, from Dataframe
         samples = {}
         for i in range(self.number_of_samples):
-            samples[i] = df.loc[df['run_id'] ==
-                                'Run_' + str(i)][self.value_cols]
+            samples[i] = df.loc[df['run_id'] == 'Run_' + str(i)][self.value_cols]
 
         self.samples = samples
         # size of one code sample
@@ -168,7 +189,7 @@ class SCAnalysis(BaseAnalysisElement):
         f_int = np.zeros([self.N_qoi, 1])
 
         # list with the 1d collocation points of all uncertain parameters
-        C = [self.all_vars[param]['xi_1d'] for param in self.all_vars.keys()]
+        C = self.xi #[self.all_vars[param]['xi_1d'] for param in self.all_vars.keys()]
 
         # loop over all samples
         for k in range(self.number_of_samples):
