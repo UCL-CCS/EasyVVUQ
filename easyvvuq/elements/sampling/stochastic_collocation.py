@@ -28,7 +28,7 @@ __license__ = "LGPL"
 
 class SCSampler(BaseSamplingElement):
 
-    def __init__(self, campaign, polynomial_order=4, quadrature_rule="G", sparse=False):
+    def __init__(self, campaign, polynomial_order=4, quadrature_rule="G"):
         
         self.campaign = campaign
         self.all_vars = self.campaign.vars
@@ -39,51 +39,23 @@ class SCSampler(BaseSamplingElement):
         # Multivariate distribution
         joint = cp.J(*params_distribution)
 
-        xi_d, _ = cp.generate_quadrature(polynomial_order+1, joint, rule=quadrature_rule, sparse=sparse)
+        xi_d, _ = cp.generate_quadrature(polynomial_order, joint, rule=quadrature_rule)
         
         self.xi_d = xi_d.T
-
-#        # get the 1D collocation points and quad weights
-#        xi = []
-#        wi = []
-#        for key in all_vars.keys():
-#            xi.append(all_vars[key]['xi_1d'])
-#            wi.append(all_vars[key]['wi_1d'])
-#
-#        # turn 1d rules in a d-dimensional tensor product of collocation points
-#        self.xi_d, self.wi_d = self.compute_tensor_prod(xi, wi)
+        
         self.number_of_samples = self.xi_d.shape[0]
-#
+
 #        # required counter in generate_runs()
         self.counter = 0
-#
-#        # IS THIS OKAY, OR A PROGRAMMING NO NO?
-#        #campaign.xi_d = self.xi_d
-#        #campaign.wi_d = self.wi_d
-#        
-#        #BETTER: create a tensor product from 1D rules in all_vars when needed
-#        xi = [all_vars[param]['xi_1d'] for param in all_vars.keys()]
-#        self.xi_d = np.array(list(product(*xi)))
 
     def element_name(self):
         return "sc_sampler"
 
     def element_version(self):
-        return "0.1"
+        return "0.2"
 
     def is_finite(self):
         return False
-
-    def compute_tensor_prod(self, xi, wi):
-        """
-        tensor products for colloc point and weights
-        """
-
-        # full d-dimensional tensor product
-        xi_d = np.array(list(product(*xi)))
-        wi_d = np.array(list(product(*wi)))
-
-        return xi_d, wi_d
 
     # SC collocations points are not random, generate_runs simply returns
     # one collocation point from the tensor product after the other
