@@ -37,7 +37,7 @@ __copyright__ = """
 __license__ = "LGPL"
 
 
-class CampaignTable(Base):
+class CampaignRow(Base):
     __tablename__ = 'campaign'
     id = Column(Integer, primary_key=True)
     app = Column(Integer, ForeignKey('app.id'))
@@ -47,7 +47,7 @@ class CampaignTable(Base):
     data = Column(String)
 
     
-class AppTable(Base):
+class AppRow(Base):
     __tablename__ = 'app'
     id = Column(Integer, primary_key=True)
     input_encoder = Column(String)
@@ -60,14 +60,14 @@ class AppTable(Base):
     runs_dir = Column(String)
 
     
-class RunTable(Base):
+class RunRow(Base):
     __tablename__ = 'run'
     id = Column(Integer, primary_key=True)
     config = Column(String)
     campaign = Column(Integer, ForeignKey('campaign.id'))
 
     
-class LogTable(Base):
+class LogRow(Base):
     __tablename__ = 'log'
     id = Column(Integer, primary_key=True)
     name = Column(String)
@@ -139,9 +139,14 @@ class Campaign:
         if state_filename is not None:
             self.load_state(state_filename)
 
-        self.engine = create_engine('sqlite:///:memory:', echo=True)
-        self.session = sessionmaker(bind=self.engine)
+        self.engine = create_engine('sqlite:///test.db', echo=True)
+        Session = sessionmaker(bind=self.engine)
+        self.session = Session()
         Base.metadata.create_all(self.engine)
+        self.campaign_row = CampaignRow()
+        self.session.add(self.campaign_row)
+        self.session.commit()
+        
 
     def load_state(self, state_filename):
         """Load Campaign state from file (JSON format)
@@ -463,6 +468,8 @@ class Campaign:
         # Add to run queue
         run_id = f"{prefix}{self.run_number}"
         self.runs[run_id] = new_run
+        self.session.add(RunRow(config=json.dumps(new_run), campaign=self.campaign_row.id))
+        self.session.commit()
         self.runs[run_id]['completed'] = False
         self.runs[run_id]['fixtures'] = run_fixtures
         self.run_number += 1
