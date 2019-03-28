@@ -135,10 +135,7 @@ class Campaign:
 
         self.workdir = workdir
         self.default_campaign_dir_prefix = default_campaign_dir_prefix
-
-        if state_filename is not None:
-            self.load_state(state_filename)
-
+        
         self.engine = create_engine('sqlite:///test.db', echo=True)
         Session = sessionmaker(bind=self.engine)
         self.session = Session()
@@ -146,8 +143,14 @@ class Campaign:
         self.app = App()
         self.session.add(self.app)
         self.session.commit()
-        self.campaign_row = CampaignDB(app=self.app.id)
+        self.app_id = self.app.id
+        self.campaign_row = CampaignDB(app=self.app_id)
         self.session.add(self.campaign_row)
+
+        if state_filename is not None:
+            self.load_state(state_filename)
+
+        self.campaign_row.params = json.dumps(self._params_info)
         self.session.commit()
         
 
