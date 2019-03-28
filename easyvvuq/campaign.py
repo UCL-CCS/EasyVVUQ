@@ -37,7 +37,7 @@ __copyright__ = """
 __license__ = "LGPL"
 
 
-class CampaignRow(Base):
+class CampaignDB(Base):
     __tablename__ = 'campaign'
     id = Column(Integer, primary_key=True)
     app = Column(Integer, ForeignKey('app.id'))
@@ -47,7 +47,7 @@ class CampaignRow(Base):
     data = Column(String)
 
     
-class AppRow(Base):
+class App(Base):
     __tablename__ = 'app'
     id = Column(Integer, primary_key=True)
     input_encoder = Column(String)
@@ -60,14 +60,14 @@ class AppRow(Base):
     runs_dir = Column(String)
 
     
-class RunRow(Base):
+class Run(Base):
     __tablename__ = 'run'
     id = Column(Integer, primary_key=True)
     config = Column(String)
     campaign = Column(Integer, ForeignKey('campaign.id'))
 
     
-class LogRow(Base):
+class Log(Base):
     __tablename__ = 'log'
     id = Column(Integer, primary_key=True)
     name = Column(String)
@@ -143,7 +143,10 @@ class Campaign:
         Session = sessionmaker(bind=self.engine)
         self.session = Session()
         Base.metadata.create_all(self.engine)
-        self.campaign_row = CampaignRow()
+        self.app = App()
+        self.session.add(self.app)
+        self.session.commit()
+        self.campaign_row = CampaignDB(app=self.app.id)
         self.session.add(self.campaign_row)
         self.session.commit()
         
@@ -468,7 +471,7 @@ class Campaign:
         # Add to run queue
         run_id = f"{prefix}{self.run_number}"
         self.runs[run_id] = new_run
-        self.session.add(RunRow(config=json.dumps(new_run), campaign=self.campaign_row.id))
+        self.session.add(Run(config=json.dumps(new_run), campaign=self.campaign_row.id))
         self.session.commit()
         self.runs[run_id]['completed'] = False
         self.runs[run_id]['fixtures'] = run_fixtures
