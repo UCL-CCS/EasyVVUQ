@@ -1,9 +1,9 @@
 import os
-import numpy   as np
-import pandas  as pd
+import numpy as np
+import pandas as pd
 import chaospy as cp
 from easyvvuq import OutputType
-from .base    import BaseAnalysisElement
+from .base import BaseAnalysisElement
 
 # author: Jalal Lakhlili
 
@@ -15,7 +15,6 @@ from .base    import BaseAnalysisElement
 # 5. Organize and add more results (Sobols 2nd order, Percentiles, ...).
 
 class PCEAnalysis(BaseAnalysisElement):
-
     def element_name(self):
         return "PCE_Analysis"
 
@@ -66,10 +65,10 @@ class PCEAnalysis(BaseAnalysisElement):
         P = self.campaign.P
 
         # Compute nodes and weights
-        nodes, weights = cp.generate_quadrature(order  = self.campaign.quad_order  ,
-                                                domain = self.campaign.distribution,
-                                                rule   = self.campaign.quad_rule   ,
-                                                sparse = self.campaign.quad_sparse )
+        nodes, weights = cp.generate_quadrature(order=self.campaign.quad_order,
+                                                domain=self.campaign.distribution,
+                                                rule=self.campaign.quad_rule,
+                                                sparse=self.campaign.quad_sparse )
 
         # Extract code output, per run, from Dataframe
         samples = [[]] * self.campaign.number_of_samples
@@ -83,8 +82,8 @@ class PCEAnalysis(BaseAnalysisElement):
 
         # Get Statistical moments
         mean = cp.E(fit, self.campaign.distribution)
-        var  = cp.Var(fit, self.campaign.distribution)
-        std  = cp.Std(fit, self.campaign.distribution)
+        var = cp.Var(fit, self.campaign.distribution)
+        std = cp.Std(fit, self.campaign.distribution)
 
         # Get Correlation matrix
         correlation_matrix = cp.Corr(fit, self.campaign.distribution)

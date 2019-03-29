@@ -1,16 +1,15 @@
-import numpy   as np
+import numpy as np
 import chaospy as cp
 from .base import BaseSamplingElement
 
 # author: Jalal Lakhlili
 
 class PCESampler(BaseSamplingElement):
-
     def __init__(self,
                  campaign,
-                 polynomial_order = 4,
-                 quadrature_rule = "G",
-                 sparse = False):
+                 polynomial_order=4,
+                 quadrature_rule="G",
+                 sparse=False):
         """
         Create the sampler for the Polynomial Chaos Expansion method.
 
@@ -47,15 +46,15 @@ class PCESampler(BaseSamplingElement):
             polynomial_order, self.campaign.distribution)
 
         # The quadrature informations: order, rule and sparsity
-        self.campaign.quad_order  = polynomial_order + 1
-        self.campaign.quad_rule   = quadrature_rule
+        self.campaign.quad_order = polynomial_order + 1
+        self.campaign.quad_rule = quadrature_rule
         self.campaign.quad_sparse = sparse
 
         # Nodes and weights for the integration
-        self._nodes, _ = cp.generate_quadrature(order  = self.campaign.quad_order,
-                                                domain = self.campaign.distribution,
-                                                rule   = quadrature_rule,
-                                                sparse = sparse)
+        self._nodes, _ = cp.generate_quadrature(order=self.campaign.quad_order,
+                                                domain=self.campaign.distribution,
+                                                rule=quadrature_rule,
+                                                sparse=sparse)
 
         # Number of samples
         self.campaign.number_of_samples = len(self._nodes[0])
