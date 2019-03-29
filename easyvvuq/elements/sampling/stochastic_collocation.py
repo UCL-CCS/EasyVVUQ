@@ -29,20 +29,21 @@ __license__ = "LGPL"
 class SCSampler(BaseSamplingElement):
 
     def __init__(self, campaign, polynomial_order=4, quadrature_rule="G"):
-        
+
         self.campaign = campaign
         self.all_vars = self.campaign.vars
 
         # The probality distributions of uncertain parameters
         params_distribution = list(self.all_vars.values())
-        
+
         # Multivariate distribution
         joint = cp.J(*params_distribution)
 
-        xi_d, _ = cp.generate_quadrature(polynomial_order, joint, rule=quadrature_rule)
-        
+        xi_d, _ = cp.generate_quadrature(
+            polynomial_order, joint, rule=quadrature_rule)
+
         self.xi_d = xi_d.T
-        
+
         self.number_of_samples = self.xi_d.shape[0]
 
 #        # required counter in generate_runs()

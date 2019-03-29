@@ -46,7 +46,7 @@ class CampaignTable(Base):
     log = Column(Integer, ForeignKey('log.id'))
     data = Column(String)
 
-    
+
 class AppTable(Base):
     __tablename__ = 'app'
     id = Column(Integer, primary_key=True)
@@ -59,14 +59,14 @@ class AppTable(Base):
     campaign_dir = Column(String)
     runs_dir = Column(String)
 
-    
+
 class RunTable(Base):
     __tablename__ = 'run'
     id = Column(Integer, primary_key=True)
     config = Column(String)
     campaign = Column(Integer, ForeignKey('campaign.id'))
 
-    
+
 class LogTable(Base):
     __tablename__ = 'log'
     id = Column(Integer, primary_key=True)

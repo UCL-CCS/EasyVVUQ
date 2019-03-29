@@ -72,13 +72,13 @@ class SCAnalysis(BaseAnalysisElement):
     """
 
     def get_moments(self, polynomial_order=4, quadrature_rule="G"):
-        
+
         self.polynomial_order = polynomial_order
         self.quadrature_rule = quadrature_rule
 
         # load code samples, colloc point and weights
         self.load_samples()
-        
+
         if self.data_frame is None:
             raise RuntimeError("UQP needs a data frame to analyse")
 
@@ -117,8 +117,8 @@ class SCAnalysis(BaseAnalysisElement):
 
         return results, output_file
 
-    #load the samples from the data frame and use Chaospy to compute the weights
-    #and collocation points
+    # load the samples from the data frame and use Chaospy to compute the weights
+    # and collocation points
     def load_samples(self):
 
         if self.data_frame is None:
@@ -133,36 +133,38 @@ class SCAnalysis(BaseAnalysisElement):
 #       Old implementation
 #        xi = [self.all_vars[param]['xi_1d'] for param in self.all_vars.keys()]
 #        wi = [self.all_vars[param]['wi_1d'] for param in self.all_vars.keys()]
-#        
+#
 #        self.xi_d = np.array(list(product(*xi)))
 #        self.wi_d = np.array(list(product(*wi)))
 
-        #Chaospy computation of 1D weights        
+        # Chaospy computation of 1D weights
         xi = []
         wi = []
         for dist in self.all_vars.values():
-            xi_i, wi_i = cp.generate_quadrature(self.polynomial_order, dist, rule=self.quadrature_rule)
+            xi_i, wi_i = cp.generate_quadrature(
+                self.polynomial_order, dist, rule=self.quadrature_rule)
             xi.append(xi_i.flatten())
             wi.append(wi_i.flatten())
 
-        #create tensor product
+        # create tensor product
         self.xi_d = np.array(list(product(*xi)))
         self.wi_d = np.array(list(product(*wi)))
-        
-        #also store 1d weights and collocation points
+
+        # also store 1d weights and collocation points
         self.xi = xi
-        self.wi = wi      
+        self.wi = wi
 
         # number of uncertain parameters
         self.d = self.xi_d.shape[1]
-        
+
         # number of code samples
         self.number_of_samples = self.xi_d.shape[0]
 
         # extract code output, per run, from Dataframe
         samples = {}
         for i in range(self.number_of_samples):
-            samples[i] = df.loc[df['run_id'] == 'Run_' + str(i)][self.value_cols]
+            samples[i] = df.loc[df['run_id'] ==
+                                'Run_' + str(i)][self.value_cols]
 
         self.samples = samples
         # size of one code sample
@@ -173,7 +175,8 @@ class SCAnalysis(BaseAnalysisElement):
         f_int = np.zeros([self.N_qoi, 1])
 
         # list with the 1d collocation points of all uncertain parameters
-        C = self.xi #[self.all_vars[param]['xi_1d'] for param in self.all_vars.keys()]
+        # [self.all_vars[param]['xi_1d'] for param in self.all_vars.keys()]
+        C = self.xi
 
         # loop over all samples
         for k in range(self.number_of_samples):
