@@ -1,6 +1,7 @@
 import os
 import pandas as pd
 import numpy as np
+import chaospy as cp
 from itertools import product, chain, combinations
 from easyvvuq import OutputType
 from .base import BaseAnalysisElement
@@ -34,7 +35,7 @@ class SCAnalysis(BaseAnalysisElement):
         return "basic_stats"
 
     def element_version(self):
-        return "0.1"
+        return "0.2"
 
     def __init__(self, data_src, params_cols=[], value_cols=[],
                  *args, **kwargs):
@@ -70,26 +71,20 @@ class SCAnalysis(BaseAnalysisElement):
     Compute the first two statistical moments
     """
 
-    def get_moments(self):
+    def get_moments(self, polynomial_order=4, quadrature_rule="G"):
 
-        # load code samples, and set other required variables
+        self.polynomial_order = polynomial_order
+        self.quadrature_rule = quadrature_rule
+
+        # load code samples, colloc point and weights
         self.load_samples()
-        
+
         if self.data_frame is None:
             raise RuntimeError("UQP needs a data frame to analyse")
 
         df = self.data_frame
 
-        # SC quad weights, STORED IN FULL IN THE CAMPAIGN OBJECT
-        #wi_d = self.campaign.wi_d
-        
-        # list with the 1D weights of all uncertain parameters
-        #wi = [self.all_vars[param]['wi_1d'] for param in self.all_vars.keys()]
-        
-        #turn the 1D weights into a Ns x d array, where Ns = number of SC samples and d = number of param
-        #wi_d = np.array(list(product(*wi)))
-
-        number_of_samples = self.wi_d.shape[0]
+        number_of_samples = self.xi_d.shape[0]
 
         # extract code output, per run, from Dataframe
         samples = {}
@@ -122,6 +117,8 @@ class SCAnalysis(BaseAnalysisElement):
 
         return results, output_file
 
+    # load the samples from the data frame and use Chaospy to compute the weights
+    # and collocation points
     def load_samples(self):
 
         if self.data_frame is None:
@@ -129,29 +126,39 @@ class SCAnalysis(BaseAnalysisElement):
 
         # total code output in pandas Dataframe
         df = self.data_frame
-        
-        # get (d-dimensional) collocation points and quad. weights STORED IN CAMPAIGN OBJECT
-        #self.xi_d = self.campaign.xi_d
-        #self.wi_d = self.campaign.wi_d
-
-        #compute Ns x d arrays of weights and collocation points from 1d rules stored in campaign.vars,
-        #where Ns = number of SC samples and d = number of uncertain parameters
 
         # list with the 1D weights/colloc points of all uncertain parameters
         self.all_vars = self.campaign.vars
 
-        xi = [self.all_vars[param]['xi_1d'] for param in self.all_vars.keys()]
-        wi = [self.all_vars[param]['wi_1d'] for param in self.all_vars.keys()]
-        
+#       Old implementation
+#        xi = [self.all_vars[param]['xi_1d'] for param in self.all_vars.keys()]
+#        wi = [self.all_vars[param]['wi_1d'] for param in self.all_vars.keys()]
+#
+#        self.xi_d = np.array(list(product(*xi)))
+#        self.wi_d = np.array(list(product(*wi)))
+
+        # Chaospy computation of 1D weights
+        xi = []
+        wi = []
+        for dist in self.all_vars.values():
+            xi_i, wi_i = cp.generate_quadrature(
+                self.polynomial_order, dist, rule=self.quadrature_rule)
+            xi.append(xi_i.flatten())
+            wi.append(wi_i.flatten())
+
+        # create tensor product
         self.xi_d = np.array(list(product(*xi)))
         self.wi_d = np.array(list(product(*wi)))
 
+        # also store 1d weights and collocation points
+        self.xi = xi
+        self.wi = wi
+
         # number of uncertain parameters
-        self.d = self.wi_d.shape[1]
+        self.d = self.xi_d.shape[1]
+
         # number of code samples
-        self.number_of_samples = self.wi_d.shape[0]
-        # 1D SC variables
-        self.all_vars = self.campaign.vars
+        self.number_of_samples = self.xi_d.shape[0]
 
         # extract code output, per run, from Dataframe
         samples = {}
@@ -168,7 +175,8 @@ class SCAnalysis(BaseAnalysisElement):
         f_int = np.zeros([self.N_qoi, 1])
 
         # list with the 1d collocation points of all uncertain parameters
-        C = [self.all_vars[param]['xi_1d'] for param in self.all_vars.keys()]
+        # [self.all_vars[param]['xi_1d'] for param in self.all_vars.keys()]
+        C = self.xi
 
         # loop over all samples
         for k in range(self.number_of_samples):
@@ -275,8 +283,11 @@ class SCAnalysis(BaseAnalysisElement):
         D = mom['var_f'].values.flatten()
 
         # list with the 1d collocation points of all uncertain parameters
-        xi = [self.all_vars[param]['xi_1d'] for param in self.all_vars.keys()]
-        wi = [self.all_vars[param]['wi_1d'] for param in self.all_vars.keys()]
+        #xi = [self.all_vars[param]['xi_1d'] for param in self.all_vars.keys()]
+        #wi = [self.all_vars[param]['wi_1d'] for param in self.all_vars.keys()]
+
+        xi = self.xi
+        wi = self.wi
 
         # total variance might be zero at some locations, Sobol index not defined there
         # idx_gt0 = np.where(D > 0)[0]

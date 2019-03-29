@@ -8,6 +8,7 @@ with uncertain Peclet number (Pe) and scalar forcing term (f).
 import numpy as np
 import matplotlib.pyplot as plt
 import easyvvuq as uq
+import chaospy as cp
 
 # Input file containing information about parameters of interest
 input_json = "ade_input.json"
@@ -19,13 +20,12 @@ my_campaign = uq.Campaign(state_filename=input_json)
 
 # 2. Set which parameters we wish to include in the analysis and the
 #    distribution from which to draw samples
-m1 = 6
-m2 = 6
-my_campaign.vary_param("Pe", dist=uq.distributions.legendre(m1))
-my_campaign.vary_param("f", dist=uq.distributions.legendre(m2))
+m = 4
+my_campaign.vary_param("Pe", dist=cp.distributions.Uniform(-1, 1))
+my_campaign.vary_param("f", dist=cp.distributions.Uniform(-1, 1))
 
 # 3. Select the SC sampler to create a tensor grid
-sc_sampler = uq.elements.sampling.SCSampler(my_campaign)
+sc_sampler = uq.elements.sampling.SCSampler(my_campaign, m)
 number_of_samples = sc_sampler.number_of_samples
 
 my_campaign.add_runs(sc_sampler, max_num=number_of_samples)
@@ -56,12 +56,13 @@ aggregate = uq.elements.collate.AggregateSamples(
 )
 aggregate.apply()
 
+
 # 7.  Post-processing analysis: computes the 1st two statistical moments and
 #     gives the ability to use the SCAnalysis object as a surrogate, which
 #     interpolated the code samples to unobserved parameter variables.
 sc_analysis = uq.elements.analysis.SCAnalysis(
     my_campaign, value_cols=output_columns)
-results, output_file = sc_analysis.get_moments()  # moment calculation
+results, output_file = sc_analysis.get_moments(m)  # moment calculation
 # results, output_file = sc_analysis.apply()
 
 # 8. Use the SC samples and integration weights to estimate the
@@ -69,8 +70,8 @@ results, output_file = sc_analysis.get_moments()  # moment calculation
 #    are NaN, since the variance is zero here.
 
 # get Sobol indices for free
-typ = 'first_order'
-# typ = 'all'
+#typ = 'first_order'
+typ = 'all'
 sobol_idx = sc_analysis.get_Sobol_indices(typ)
 
 my_campaign.save_state(output_json)
@@ -131,8 +132,13 @@ ax = fig.add_subplot(
     xlabel='x',
     ylabel='Sobol indices',
     title='spatial dist. Sobol indices, Pe only important in viscous regions')
-ax.plot(x, sobol_idx[0], 'b', label=r'Pe')
-ax.plot(x, sobol_idx[1], '--r', label=r'f')
+
+lbl = ['Pe', 'f', 'Pe-f interaction']
+idx = 0
+
+for S_i in sobol_idx:
+    ax.plot(x, S_i, label=lbl[idx])
+    idx += 1
 
 leg = plt.legend(loc=0)
 leg.draggable(True)
