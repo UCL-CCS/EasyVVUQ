@@ -3,6 +3,8 @@ import chaospy as cp
 from .base import BaseSamplingElement
 
 # author: Jalal Lakhlili
+__license__ = "LGPL"
+
 
 class PCESampler(BaseSamplingElement):
     def __init__(self,

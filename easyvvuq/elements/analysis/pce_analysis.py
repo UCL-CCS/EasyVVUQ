@@ -6,6 +6,7 @@ from easyvvuq import OutputType
 from .base import BaseAnalysisElement
 
 # author: Jalal Lakhlili
+__license__ = "LGPL"
 
 # TODO:
 # 1. Fix dataframe collection in the case of multiple quantities of interest.
@@ -13,6 +14,7 @@ from .base import BaseAnalysisElement
 # 3. Add VERBOSE argument (False by default) to allow the user to store output_file or no.
 # 4. Test cp.fit_regression to approximate solver.
 # 5. Organize and add more results (Sobols 2nd order, Percentiles, ...).
+
 
 class PCEAnalysis(BaseAnalysisElement):
     def element_name(self):
