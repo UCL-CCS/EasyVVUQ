@@ -1,10 +1,10 @@
-import os, time
-import numpy    as np
-import chaospy  as cp
+import os
+import time
+import numpy as np
+import chaospy as cp
 import easyvvuq as uq
 
 # author: Jalal Lakhlili
-
 # ...
 def test_pce(tmpdir):
     input_json = "tests/pce/pce_in.json"
@@ -20,7 +20,7 @@ def test_pce(tmpdir):
     my_campaign.vary_param("t_env", dist=cp.Uniform(15, 25))
 
     # Create the sampler
-    my_sampler = uq.elements.sampling.PCESampler(my_campaign)
+    my_sampler = uq.elements.sampling.PCESampler(my_campaign, polynomial_order=3)
 
     # Use the sampler
     my_campaign.add_runs(my_sampler)
@@ -37,7 +37,7 @@ def test_pce(tmpdir):
     aggregate = uq.elements.collate.AggregateSamples(
         my_campaign,
         output_filename = output_filename,
-        output_columns  = output_columns,
+        output_columns = output_columns,
         header = 0,
     )
 
@@ -54,10 +54,9 @@ def test_pce(tmpdir):
 
 
 if __name__ == "__main__":
-
     start_time = time.time()
 
-    stats, sobols  = test_pce("/tmp/")
+    stats, sobol = test_pce("/tmp/")
 
     end_time = time.time()
     print('>>>>> elapsed time = ', end_time - start_time)
@@ -68,8 +67,8 @@ if __name__ == "__main__":
     if __plot:
         import matplotlib.pyplot as plt
         mean = stats["mean"].to_numpy()
-        std  = stats["std"].to_numpy()
-        var  = stats["var"].to_numpy()
+        std = stats["std"].to_numpy()
+        var = stats["var"].to_numpy()
 
         s_kappa = sobols["kappa"].to_numpy()
         s_t_env = sobols["t_env"].to_numpy()
