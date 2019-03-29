@@ -1,7 +1,6 @@
-from .base import BaseSamplingElement
-import numpy as np
+import numpy   as np
 import chaospy as cp
-from memory_profiler import profile
+from .base import BaseSamplingElement
 
 # author: Jalal Lakhlili
 
