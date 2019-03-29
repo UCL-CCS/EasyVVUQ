@@ -1,12 +1,18 @@
 import os
-import numpy as np
-import pandas as pd
+import numpy   as np
+import pandas  as pd
 import chaospy as cp
 from easyvvuq import OutputType
-from .base import BaseAnalysisElement
+from .base    import BaseAnalysisElement
 
 # author: Jalal Lakhlili
 
+# TODO:
+# 1. Fix dataframe collection in the case of multiple quantities of interest.
+# 2. Add pd.read_hdf (https://pandas.pydata.org/pandas-docs/stable/user_guide/io.html#io-hdf5).
+# 3. Add VERBOSE argument (False by default) to allow the user to store output_file or no.
+# 4. Test cp.fit_regression to approximate solver.
+# 5. Organize and add more results (Sobols 2nd order, Percentiles, ...).
 
 class PCEAnalysis(BaseAnalysisElement):
 
@@ -53,28 +59,32 @@ class PCEAnalysis(BaseAnalysisElement):
 
         df = self.data_frame
 
-        output_dir = self.output_dir
-        output_file = os.path.join(output_dir, 'pce_basic_stats.tsv')
+        # output_dir  = self.output_dir
+        # output_file = os.path.join(output_dir, 'pce_basic_stats.tsv')
 
-        # PCE nodes, weights and Polynomial
-        nodes = self.campaign.nodes
-        w = self.campaign.weights
+        # Get the Polynomial
         P = self.campaign.P
 
+        # Compute nodes and weights
+        nodes, weights = cp.generate_quadrature(order  = self.campaign.quad_order  ,
+                                                domain = self.campaign.distribution,
+                                                rule   = self.campaign.quad_rule   ,
+                                                sparse = self.campaign.quad_sparse )
+
         # Extract code output, per run, from Dataframe
-        samples = [[]] * self.campaign.sample_number
-        for i in range(self.campaign.sample_number):
+        samples = [[]] * self.campaign.number_of_samples
+        for i in range(self.campaign.number_of_samples):
             # TODO: Make this readable
             samples[i] = df.loc[df['run_id'] == 'Run_' +
                                 str(i)][self.value_cols].to_numpy().ravel()
 
         # Approximation solver
-        fit = cp.fit_quadrature(P, nodes, w, samples)
+        fit = cp.fit_quadrature(P, nodes, weights, samples)
 
         # Get Statistical moments
         mean = cp.E(fit, self.campaign.distribution)
-        var = cp.Var(fit, self.campaign.distribution)
-        std = cp.Std(fit, self.campaign.distribution)
+        var  = cp.Var(fit, self.campaign.distribution)
+        std  = cp.Std(fit, self.campaign.distribution)
 
         # Get Correlation matrix
         correlation_matrix = cp.Corr(fit, self.campaign.distribution)
@@ -94,7 +104,6 @@ class PCEAnalysis(BaseAnalysisElement):
         # Store 1st Sobol indices in pandas Dataframe
         sobol_first = pd.DataFrame(sobol_first_dict)
 
-        # TODO add VERBOSE (by default chould be False)
         # statistical_moments.to_csv(output_file, sep='\t')
         # self.output_file = output_file
 
