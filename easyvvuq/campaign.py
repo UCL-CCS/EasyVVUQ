@@ -3,8 +3,15 @@ import tempfile
 import json
 import collections
 import pprint
+from sqlalchemy import create_engine, Column, Integer, String, ForeignKey
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy_utils import create_database, database_exists
 
 import easyvvuq as uq
+
+
+Base = declarative_base()
 
 
 __copyright__ = """
@@ -28,6 +35,45 @@ __copyright__ = """
 
 """
 __license__ = "LGPL"
+
+
+class CampaignTable(Base):
+    __tablename__ = 'campaign'
+    id = Column(Integer, primary_key=True)
+    app = Column(Integer, ForeignKey('app.id'))
+    params = Column(String)
+    fixtures = Column(String)
+    log = Column(Integer, ForeignKey('log.id'))
+    data = Column(String)
+
+    
+class AppTable(Base):
+    __tablename__ = 'app'
+    id = Column(Integer, primary_key=True)
+    input_encoder = Column(String)
+    encoder_delimiter = Column(String)
+    output_decoder = Column(String)
+    template = Column(String)
+    input_filename = Column(String)
+    campaign_dir_prefix = Column(String)
+    campaign_dir = Column(String)
+    runs_dir = Column(String)
+
+    
+class RunTable(Base):
+    __tablename__ = 'run'
+    id = Column(Integer, primary_key=True)
+    config = Column(String)
+    campaign = Column(Integer, ForeignKey('campaign.id'))
+
+    
+class LogTable(Base):
+    __tablename__ = 'log'
+    id = Column(Integer, primary_key=True)
+    name = Column(String)
+    version = Column(String)
+    category = Column(String)
+    info = Column(String)
 
 
 class Campaign:
@@ -92,6 +138,10 @@ class Campaign:
 
         if state_filename is not None:
             self.load_state(state_filename)
+
+        self.engine = create_engine('sqlite:///:memory:', echo=True)
+        self.session = sessionmaker(bind=self.engine)
+        Base.metadata.create_all(self.engine)
 
     def load_state(self, state_filename):
         """Load Campaign state from file (JSON format)

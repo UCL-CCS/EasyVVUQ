@@ -3,3 +3,5 @@ pandas>=0.24
 chaospy
 pytest
 pytest-pep8
+SQLAlchemy
+sqlalchemy-utils
