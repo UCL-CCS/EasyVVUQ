@@ -5,8 +5,9 @@ import chaospy as cp
 import easyvvuq as uq
 
 # author: Jalal Lakhlili
+__license__ = "LGPL"
 
-# ...
+
 def test_pce(tmpdir):
 
     # Params for testing
@@ -53,6 +54,7 @@ def test_pce(tmpdir):
     stats, sobols, corr_matrix = analysis.apply()
 
     return stats, sobols
+
 
 if __name__ == "__main__":
     start_time = time.time()
