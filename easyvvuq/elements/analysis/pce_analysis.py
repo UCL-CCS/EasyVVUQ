@@ -70,7 +70,7 @@ class PCEAnalysis(BaseAnalysisElement):
         nodes, weights = cp.generate_quadrature(order=self.campaign.quad_order,
                                                 domain=self.campaign.distribution,
                                                 rule=self.campaign.quad_rule,
-                                                sparse=self.campaign.quad_sparse )
+                                                sparse=self.campaign.quad_sparse)
 
         # Extract code output, per run, from Dataframe
         samples = [[]] * self.campaign.number_of_samples
