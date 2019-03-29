@@ -5,8 +5,11 @@ import chaospy as cp
 import easyvvuq as uq
 
 # author: Jalal Lakhlili
+
 # ...
 def test_pce(tmpdir):
+
+    # Params for testing
     input_json = "tests/pce/pce_in.json"
     output_json = os.path.join(tmpdir, "out_pce.json")
 
@@ -36,9 +39,9 @@ def test_pce(tmpdir):
 
     aggregate = uq.elements.collate.AggregateSamples(
         my_campaign,
-        output_filename = output_filename,
-        output_columns = output_columns,
-        header = 0,
+        output_filename=output_filename,
+        output_columns=output_columns,
+        header=0,
     )
 
     aggregate.apply()
@@ -50,14 +53,10 @@ def test_pce(tmpdir):
     stats, sobols, corr_matrix = analysis.apply()
 
     return stats, sobols
-# ...
-
 
 if __name__ == "__main__":
     start_time = time.time()
-
     stats, sobol = test_pce("/tmp/")
-
     end_time = time.time()
     print('>>>>> elapsed time = ', end_time - start_time)
 
