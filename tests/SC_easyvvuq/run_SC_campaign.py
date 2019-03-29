@@ -21,8 +21,8 @@ my_campaign = uq.Campaign(state_filename=input_json)
 # 2. Set which parameters we wish to include in the analysis and the
 #    distribution from which to draw samples
 m = 4
-my_campaign.vary_param("Pe", dist=cp.distributions.Uniform(-1,1))
-my_campaign.vary_param("f", dist=cp.distributions.Uniform(-1,1))
+my_campaign.vary_param("Pe", dist=cp.distributions.Uniform(-1, 1))
+my_campaign.vary_param("f", dist=cp.distributions.Uniform(-1, 1))
 
 # 3. Select the SC sampler to create a tensor grid
 sc_sampler = uq.elements.sampling.SCSampler(my_campaign, m)
@@ -139,7 +139,7 @@ idx = 0
 for S_i in sobol_idx:
     ax.plot(x, S_i, label=lbl[idx])
     idx += 1
-    
+
 leg = plt.legend(loc=0)
 leg.draggable(True)
 
