@@ -69,7 +69,7 @@ class PCEAnalysis(BaseAnalysisElement):
                                                 sparse=self.campaign.quad_sparse)
 
         # Extract output values for each quantity of interest from Dataframe
-        samples = {k : [] for k in self.value_cols}
+        samples = {k: [] for k in self.value_cols}
         for i in range(self.campaign.run_number):
             for k in self.value_cols:
                 values = df.loc[df['run_id'] == 'Run_' + str(i)][k].to_numpy()
