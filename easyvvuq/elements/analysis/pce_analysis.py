@@ -9,12 +9,10 @@ from .base import BaseAnalysisElement
 __license__ = "LGPL"
 
 # TODO:
-# 1. Fix dataframe collection in the case of multiple quantities of interest.
 # 2. Add pd.read_hdf (https://pandas.pydata.org/pandas-docs/stable/user_guide/io.html#io-hdf5).
 # 3. Add VERBOSE argument (False by default) to allow the user to store output_file or no.
 # 4. Test cp.fit_regression to approximate solver.
 # 5. Organize and add more results (Sobols 2nd order, Percentiles, ...).
-
 
 class PCEAnalysis(BaseAnalysisElement):
     def element_name(self):
@@ -33,7 +31,6 @@ class PCEAnalysis(BaseAnalysisElement):
         super().__init__(data_src, *args, **kwargs)
 
         data_src = self.data_src
-
         if data_src:
             if 'files' in data_src:
                 if len(data_src['files']) != 1:
@@ -44,7 +41,6 @@ class PCEAnalysis(BaseAnalysisElement):
                         data_src['files'][0], sep='\t')
 
         self.value_cols = value_cols
-
         if self.campaign is not None:
             if not params_cols:
                 self.params_cols = list(self.campaign.params_info.keys())
@@ -72,40 +68,38 @@ class PCEAnalysis(BaseAnalysisElement):
                                                 rule=self.campaign.quad_rule,
                                                 sparse=self.campaign.quad_sparse)
 
-        # Extract code output, per run, from Dataframe
-        samples = [[]] * self.campaign.number_of_samples
-        for i in range(self.campaign.number_of_samples):
-            # TODO: Make this readable
-            samples[i] = df.loc[df['run_id'] == 'Run_' +
-                                str(i)][self.value_cols].to_numpy().ravel()
+        # Extract output values for each quantity of interest from Dataframe
+        samples = {k:[] for k in self.value_cols}
+        for i in range(self.campaign.run_number):
+            for k in self.value_cols:
+                values = df.loc[df['run_id'] == 'Run_'+str(i)][k].to_numpy()
+                samples[k].append(values)
 
-        # Approximation solver
-        fit = cp.fit_quadrature(P, nodes, weights, samples)
+        # Perform analysis for each quantity of interest
+        statistical_moments = {}
+        sobol_first = {}
+        correlation_matrix = {}
+        for k in self.value_cols:
+            # Approximation solver
+            fit = cp.fit_quadrature(P, nodes, weights, samples[k])
 
-        # Get Statistical moments
-        mean = cp.E(fit, self.campaign.distribution)
-        var = cp.Var(fit, self.campaign.distribution)
-        std = cp.Std(fit, self.campaign.distribution)
+            # Statistical moments
+            mean = cp.E(fit, self.campaign.distribution)
+            var = cp.Var(fit, self.campaign.distribution)
+            std = cp.Std(fit, self.campaign.distribution)
+            statistical_moments[k] = pd.DataFrame(
+                {'mean': mean, 'var': var, 'std': std})
 
-        # Get Correlation matrix
-        correlation_matrix = cp.Corr(fit, self.campaign.distribution)
+            # Correlation matrix
+            correlation_matrix[k] = cp.Corr(fit, self.campaign.distribution)
 
-        # Get Sensitivity Analysis
-        sobol_first_narr = cp.Sens_m(fit, self.campaign.distribution)
-        sobol_first_dict = {}
-        i_par = 0
-        for param_name in self.campaign.vars.keys():
-            sobol_first_dict[param_name] = sobol_first_narr[i_par]
-            i_par += 1
+            # First Sobol indices
+            sobol_first_narr = cp.Sens_m(fit, self.campaign.distribution)
+            sobol_first_dict = {}
+            i_par = 0
+            for param_name in self.campaign.vars.keys():
+                sobol_first_dict[param_name] = sobol_first_narr[i_par]
+                i_par += 1
+            sobol_first[k] = pd.DataFrame(sobol_first_dict)
 
-        # Store Statistical moments in pandas Dataframe and the output file
-        statistical_moments = pd.DataFrame(
-            {'mean': mean, 'var': var, 'std': std})
-
-        # Store 1st Sobol indices in pandas Dataframe
-        sobol_first = pd.DataFrame(sobol_first_dict)
-
-        # statistical_moments.to_csv(output_file, sep='\t')
-        # self.output_file = output_file
-
-        return statistical_moments, sobol_first, correlation_matrix
+        return statistical_moments, correlation_matrix, sobol_first

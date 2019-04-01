@@ -22,7 +22,6 @@ class PCESampler(BaseSamplingElement):
             - Multivariate distribution
             - The orthogonal polynomials P
             - The quadrature informations: order, rule and sparsity
-            - Number of samples
 
         polynomial_order : int, optional
             The polynomial order, default is 4.
@@ -59,7 +58,7 @@ class PCESampler(BaseSamplingElement):
                                                 sparse=sparse)
 
         # Number of samples
-        self.campaign.number_of_samples = len(self._nodes[0])
+        self._number_of_samples = len(self._nodes[0])
 
     def element_name(self):
         return "PCE_sampler"
@@ -71,7 +70,7 @@ class PCESampler(BaseSamplingElement):
         return True
 
     def generate_runs(self):
-        for i_val in range(self.campaign.number_of_samples):
+        for i_val in range(self._number_of_samples):
             run_dict = {}
             i_par = 0
             for param_name in self.campaign.vars.keys():

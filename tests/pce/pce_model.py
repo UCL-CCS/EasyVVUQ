@@ -39,9 +39,9 @@ t = np.linspace(0, 200, 150)
 output_filename = inputs['out_file']
 
 te = model(t, kappa, t_env)
-
+ti = -te
 # output csv file
-header = 'te'
-np.savetxt(output_filename, te,
+header = 'te, ti'
+np.savetxt(output_filename, np.c_[te,ti],
            delimiter=",", comments='',
            header=header)

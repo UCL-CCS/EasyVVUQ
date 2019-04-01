@@ -35,8 +35,8 @@ def test_pce(tmpdir):
         uq.actions.ExecuteLocal("tests/pce/pce_model.py pce_in.json"))
 
     # Aggregate the results from all runs.
-    output_filename = my_campaign.params_info['out_file']['default']
-    output_columns = ['te']
+    output_filename = my_campaign.params_info["out_file"]["default"]
+    output_columns = ["te", "ti"]
 
     aggregate = uq.elements.collate.AggregateSamples(
         my_campaign,
@@ -51,19 +51,21 @@ def test_pce(tmpdir):
     analysis = uq.elements.analysis.PCEAnalysis(
         my_campaign, value_cols=output_columns)
 
-    stats, sobols, corr_matrix = analysis.apply()
+    stats, corr, sobols = analysis.apply()
 
-    return stats, sobols
+    return stats["te"], sobols["te"]
 
 
 if __name__ == "__main__":
     start_time = time.time()
-    stats, sobol = test_pce("/tmp/")
+
+    stats, sobols = test_pce("/tmp/")
+
     end_time = time.time()
     print('>>>>> elapsed time = ', end_time - start_time)
 
     # Plot statistical results
-    __plot = False
+    __plot = True
 
     if __plot:
         import matplotlib.pyplot as plt
@@ -99,17 +101,16 @@ if __name__ == "__main__":
         ax12.tick_params('y', colors='r')
 
         ax11.grid()
-        plt.title('Statistical moments')
+        ax11.set_title('Statistical moments')
 
         fig2 = plt.figure()
         ax2 = fig2.add_subplot(111)
         ax2.plot(t, s_kappa, 'b-', label=r'$\kappa$')
         ax2.plot(t, s_t_env, 'g-', label=r'$t_{env}$')
-        ax2.legend()
+
         ax2.set_xlabel('Time')
         ax2.set_ylabel('Sobol indices')
         ax2.set_title('First order Sobol indices')
-
         ax2.grid()
         ax2.legend()
 
