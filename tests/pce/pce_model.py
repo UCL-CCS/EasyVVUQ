@@ -42,6 +42,6 @@ te = model(t, kappa, t_env)
 ti = -te
 # output csv file
 header = 'te, ti'
-np.savetxt(output_filename, np.c_[te,ti],
+np.savetxt(output_filename, np.c_[te, ti],
            delimiter=",", comments='',
            header=header)
