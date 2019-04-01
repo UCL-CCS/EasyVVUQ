@@ -14,6 +14,7 @@ __license__ = "LGPL"
 # 4. Test cp.fit_regression to approximate solver.
 # 5. Organize and add more results (Sobols 2nd order, Percentiles, ...).
 
+
 class PCEAnalysis(BaseAnalysisElement):
     def element_name(self):
         return "PCE_Analysis"
