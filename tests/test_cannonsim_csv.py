@@ -57,7 +57,7 @@ def test_cannonsim_csv(tmpdir):
     my_campaign.vary_param("angle", dist=cp.Uniform(0.0, 1.0))
     my_campaign.vary_param("height", dist=cp.Uniform(2.0, 10.0))
     my_campaign.vary_param("velocity", dist=cp.Normal(10.0, 1.0))
-    my_campaign.vary_param("mass", dist=cp.Normal(5.0, 2.0))
+    my_campaign.vary_param("mass", dist=cp.Uniform(5.0, 1.0))
 
     assert("angle" in my_campaign.vars)
     assert("height" in my_campaign.vars)
