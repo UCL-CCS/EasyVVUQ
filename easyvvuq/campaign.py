@@ -107,6 +107,7 @@ class Campaign:
 
     def __init__(self, *args, state_filename=None, workdir='./',
                  default_campaign_dir_prefix='EasyVVUQ_Campaign_',
+                 db_uri=None,
                  **kwargs):
 
         # Information needed to run application
@@ -135,8 +136,12 @@ class Campaign:
 
         self.workdir = workdir
         self.default_campaign_dir_prefix = default_campaign_dir_prefix
-        
-        self.engine = create_engine('sqlite:///test.db', echo=True)
+
+        if db_uri is not None:
+            self.engine = create_engine(db_uri)
+        else:
+            self.engine = create_engine('sqlite://')
+            
         Session = sessionmaker(bind=self.engine)
         self.session = Session()
         Base.metadata.create_all(self.engine)
