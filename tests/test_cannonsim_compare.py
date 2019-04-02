@@ -1,4 +1,5 @@
 import easyvvuq as uq
+import chaospy as cp
 import os
 import numpy as np
 import pytest
@@ -62,11 +63,11 @@ def test_cannonsim_compare(tmpdir):
     assert("velocity" in my_campaign.params_info)
 
     my_campaign.vary_param(
-        "angle", dist=uq.distributions.normal(
+        "angle", dist=cp.Normal(
             angle_45, angle_stdev))
     my_campaign.vary_param(
         "velocity",
-        dist=uq.distributions.normal(
+        dist=cp.Normal(
             velocity_45,
             vel_stdev))
 
