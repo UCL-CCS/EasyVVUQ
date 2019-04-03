@@ -42,6 +42,7 @@ class CampaignDB(Base):
     """
     __tablename__ = 'campaign'
     id = Column(Integer, primary_key=True)
+    name = Column(String)
     app = Column(Integer, ForeignKey('app.id'))
     params = Column(String)
     fixtures = Column(String)
@@ -113,7 +114,7 @@ class Campaign:
 
     """
 
-    def __init__(self, *args, state_filename=None, workdir='./',
+    def __init__(self, name, state_filename=None, workdir='./',
                  default_campaign_dir_prefix='EasyVVUQ_Campaign_',
                  db_uri=None,
                  **kwargs):
@@ -145,24 +146,31 @@ class Campaign:
         self.workdir = workdir
         self.default_campaign_dir_prefix = default_campaign_dir_prefix
 
+        if state_filename is not None:
+            self.load_state(state_filename)
+
         if db_uri is not None:
             self.engine = create_engine(db_uri)
         else:
             self.engine = create_engine('sqlite://')
             
         Session = sessionmaker(bind=self.engine)
+                    
         self.session = Session()
         Base.metadata.create_all(self.engine)
-        self.app = App()
+        self.app = App(
+            input_encoder=self.app_info['input_encoder'],
+            output_decoder=self.app_info['output_decoder'],
+            template = self.app_info['template'],
+            input_filename=self.app_info['input_filename'],
+            campaign_dir_prefix=self.app_info['campaign_dir_prefix'],
+            campaign_dir=self.app_info['campaign_dir']
+            )
         self.session.add(self.app)
         self.session.commit()
         self.app_id = self.app.id
         self.campaign_row = CampaignDB(app=self.app_id)
         self.session.add(self.campaign_row)
-
-        if state_filename is not None:
-            self.load_state(state_filename)
-
         self.campaign_row.params = json.dumps(self._params_info)
         self.session.commit()
 
