@@ -38,6 +38,8 @@ __license__ = "LGPL"
 
 
 class CampaignDB(Base):
+    """An SQLAlchemy schema for the campaign table.
+    """
     __tablename__ = 'campaign'
     id = Column(Integer, primary_key=True)
     app = Column(Integer, ForeignKey('app.id'))
@@ -47,6 +49,8 @@ class CampaignDB(Base):
 
 
 class App(Base):
+    """An SQLAlchemy schema for the app table.
+    """
     __tablename__ = 'app'
     id = Column(Integer, primary_key=True)
     input_encoder = Column(String)
@@ -60,6 +64,8 @@ class App(Base):
 
     
 class Run(Base):
+    """An SQLAlchemy schema for the run table.
+    """
     __tablename__ = 'run'
     id = Column(Integer, primary_key=True)
     config = Column(String)
@@ -67,6 +73,8 @@ class Run(Base):
 
     
 class Log(Base):
+    """An SQLAlchemy schema for the log table.
+    """
     __tablename__ = 'log'
     id = Column(Integer, primary_key=True)
     name = Column(String)
@@ -157,7 +165,7 @@ class Campaign:
 
         self.campaign_row.params = json.dumps(self._params_info)
         self.session.commit()
-        
+
 
     def load_state(self, state_filename):
         """Load Campaign state from file (JSON format)
