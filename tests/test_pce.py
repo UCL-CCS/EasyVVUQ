@@ -24,7 +24,8 @@ def test_pce(tmpdir):
     my_campaign.vary_param("t_env", dist=cp.Uniform(15, 25))
 
     # Create the sampler
-    my_sampler = uq.elements.sampling.PCESampler(my_campaign, polynomial_order=3)
+    my_sampler = uq.elements.sampling.PCESampler(
+        my_campaign, polynomial_order=3)
 
     # Use the sampler
     my_campaign.add_runs(my_sampler)

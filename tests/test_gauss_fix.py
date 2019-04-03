@@ -1,6 +1,7 @@
 import os
 import sys
 import easyvvuq as uq
+import chaospy as cp
 from gauss.decoder_gauss import GaussDecoder
 
 __copyright__ = """
@@ -44,7 +45,7 @@ def test_gauss_fix(tmpdir):
     assert("num_steps" in my_campaign.params_info)
     assert("out_file" in my_campaign.params_info)
 
-    my_campaign.vary_param("mu", dist=uq.distributions.uniform(1.0, 100.0))
+    my_campaign.vary_param("mu", dist=cp.Uniform(1.0, 100.0))
 
     assert("mu" in my_campaign.vars)
 

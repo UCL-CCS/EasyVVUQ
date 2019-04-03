@@ -42,5 +42,5 @@ class RandomSampler(BaseSamplingElement):
         while True:
             run_dict = {}
             for param_name, dist in all_vars.items():
-                run_dict[param_name] = next(dist)
+                run_dict[param_name] = dist.sample(1)[0]
             yield(run_dict)
