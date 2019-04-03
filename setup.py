@@ -13,7 +13,7 @@ setup(
 
     author='CCS',
 
-    requires=['numpy', 'pandas', 'pytest'],
+    requires=['numpy', 'pandas', 'pytest', 'SQLAlchemy', 'chaospy', 'sqlalchemy-utils'],
 
     packages=find_packages(),
 
