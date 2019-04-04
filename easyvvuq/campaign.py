@@ -433,7 +433,7 @@ class Campaign:
         runs = self.session.query(Run).filter_by(campaign=campaign.id)
         logs = self.session.query(Log).filter_by(campaign=campaign.id)
         output_json = {
-            "app": {
+            "app" : {
                 'input_encoder' : app.input_encoder,
                 'encoder_delimiter' : app.encoder_delimiter,
                 'output_decoder' : app.output_decoder,
@@ -442,12 +442,12 @@ class Campaign:
                 'campaign_dir_prefix' : app.campaign_dir_prefix,
                 'campaign_dir' : app.campaign_dir,
                 'runs_dir' : app.runs_dir
-                }
-            "params": self.params_info,
-            "fixtures": self.fixtures,
-            "runs": dict((run.run_name, run.config) for run in runs),
-            "log": self._log,
-            "data": self.data,
+                },
+            "params" : json.loads(campaign.params),
+            "fixtures" : self.fixtures,
+            "runs" : dict((run.run_name, run.config) for run in runs),
+            "log" : self._log,
+            "data" : self.data,
             }
         with open(state_filename, "w") as outfile:
             json.dump(output_json, outfile, indent=4)
