@@ -446,8 +446,14 @@ class Campaign:
             "params" : json.loads(campaign.params),
             "fixtures" : self.fixtures,
             "runs" : dict((run.run_name, run.config) for run in runs),
-            "log" : self._log,
-            "data" : self.data,
+            "log" : [
+                {
+                    'name' : log.name,
+                    'version' : log.version,
+                    'category' : log.category,
+                    'info' : log.info
+                } for log in logs],
+            "data" : self.data
             }
         with open(state_filename, "w") as outfile:
             json.dump(output_json, outfile, indent=4)
