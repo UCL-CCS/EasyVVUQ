@@ -69,6 +69,7 @@ class Run(Base):
     """
     __tablename__ = 'run'
     id = Column(Integer, primary_key=True)
+    run_name = Column(String)
     config = Column(String)
     campaign = Column(Integer, ForeignKey('campaign.id'))
 
@@ -173,6 +174,7 @@ class Campaign:
         self.session.add(self.campaign_row)
         self.campaign_row.params = json.dumps(self._params_info)
         self.session.commit()
+        self.campaign_id = self.campaign_row.id
 
 
     def load_state(self, state_filename):
@@ -426,15 +428,18 @@ class Campaign:
         -------
 
         """
-
-        output_json = {"app": self.app_info,
-                       "params": self.params_info,
-                       "fixtures": self.fixtures,
-                       "runs": self.runs,
-                       "log": self._log,
-                       "data": self.data,
-                       }
-
+        campaign = self.session.query(CampaignDB).filter_by(id=self.campaign_id).first()
+        app = self.session.query(App).filter_by(id=campaign.app).first()
+        runs = self.session.query(Run).filter_by(campaign=campaign.id)
+        logs = self.session.query(Log).filter_by(campaign=campaign.id)
+        output_json = {
+            "app": self.app_info,
+            "params": self.params_info,
+            "fixtures": self.fixtures,
+            "runs": dict((run.run_name, run.config) for run in runs),
+            "log": self._log,
+            "data": self.data,
+            }
         with open(state_filename, "w") as outfile:
             json.dump(output_json, outfile, indent=4)
 
@@ -495,7 +500,7 @@ class Campaign:
         # Add to run queue
         run_id = f"{prefix}{self.run_number}"
         self.runs[run_id] = new_run
-        self.session.add(Run(config=json.dumps(new_run), campaign=self.campaign_row.id))
+        self.session.add(Run(run_name=run_id, config=json.dumps(new_run), campaign=self.campaign_row.id))
         self.session.commit()
         self.runs[run_id]['completed'] = False
         self.runs[run_id]['fixtures'] = run_fixtures
