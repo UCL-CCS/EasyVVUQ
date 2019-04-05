@@ -101,8 +101,16 @@ class Campaign:
 
     Parameters
     ----------
+    name: str
+        Campaign name. Either new name or the name of a campaign to be resumed.
+    new_campaign: bool
+        If True will start a new campaign. If false will query the database for
+        a campaign with the given name. Will raise an exception if it does not
+        exist.
     state_filename  : str
         Path to file containing serialized state of a Campaign in JSON format
+    db_uri: str
+        SQLAlchemy database URI, e.g. sqlite:///mydb.sqlite
 
     Attributes
     ----------
@@ -115,10 +123,16 @@ class Campaign:
 
     """
 
-    def __init__(self, name, state_filename=None, workdir='./',
-                 default_campaign_dir_prefix='EasyVVUQ_Campaign_',
+    def __init__(self, name, new_campaign=False, state_filename=None,
+                 workdir='./', default_campaign_dir_prefix='EasyVVUQ_Campaign_',
                  db_uri=None,
                  **kwargs):
+        """
+        Parameters
+        ----------
+        Returns
+        -------
+        """
 
         # Information needed to run application
         self._app_info = {}
@@ -158,22 +172,27 @@ class Campaign:
         Session = sessionmaker(bind=self.engine)
                     
         self.session = Session()
-        Base.metadata.create_all(self.engine)
-        self.app = App(
-            input_encoder=self.app_info['input_encoder'],
-            output_decoder=self.app_info['output_decoder'],
-            template = self.app_info['template'],
-            input_filename=self.app_info['input_filename'],
-            campaign_dir_prefix=self.app_info['campaign_dir_prefix'],
-            campaign_dir=self.app_info['campaign_dir']
-            )
-        self.session.add(self.app)
-        self.session.commit()
-        self.app_id = self.app.id
-        self.campaign_row = CampaignDB(app=self.app_id)
-        self.session.add(self.campaign_row)
-        self.campaign_row.params = json.dumps(self._params_info)
-        self.session.commit()
+        if db_uri is not None and not new_campaign:
+            self.campaign_row = self.session.query(CampaignDB).filter_by(name=name).first()
+            if self.campaign_row is None:
+                raise ValueError('Campaign with the given name not found.')
+        else:
+            Base.metadata.create_all(self.engine)
+            self.app = App(
+                input_encoder=self.app_info['input_encoder'],
+                output_decoder=self.app_info['output_decoder'],
+                template = self.app_info['template'],
+                input_filename=self.app_info['input_filename'],
+                campaign_dir_prefix=self.app_info['campaign_dir_prefix'],
+                campaign_dir=self.app_info['campaign_dir']
+                )
+            self.session.add(self.app)
+            self.session.commit()
+            self.app_id = self.app.id
+            self.campaign_row = CampaignDB(name=name, app=self.app_id)
+            self.session.add(self.campaign_row)
+            self.campaign_row.params = json.dumps(self._params_info)
+            self.session.commit()
         self.campaign_id = self.campaign_row.id
 
 
