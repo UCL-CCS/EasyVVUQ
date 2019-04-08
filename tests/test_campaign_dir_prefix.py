@@ -35,6 +35,7 @@ def test_campaign_dir_prefix(tmpdir):
 
     # Build a campaign with an alternative default prefix
     my_campaign = uq.Campaign(
+        name='test_campaign',
         state_filename=input_json, workdir=tmpdir,
         default_campaign_dir_prefix=alternative_prefix)
 
