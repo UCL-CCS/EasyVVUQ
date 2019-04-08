@@ -17,7 +17,11 @@ def test_pce(tmpdir):
     assert(os.path.exists(input_json))
 
     # Initialize Campaign object
-    my_campaign = uq.Campaign(state_filename=input_json, workdir=tmpdir)
+    my_campaign = uq.Campaign(
+        name='test_campaign',
+        state_filename=input_json,
+        workdir=tmpdir
+        )
 
     # Define the parameters dictionary
     my_campaign.vary_param("kappa", dist=cp.Uniform(0.025, 0.075))
