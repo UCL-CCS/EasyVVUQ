@@ -193,7 +193,7 @@ class Campaign:
             self.session.add(self.campaign_row)
             self.campaign_row.params = json.dumps(self._params_info)
             self.session.commit()
-        self.campaign_id = self.campaign_row.id
+        self.campaign_id_ = self.campaign_row.id
 
 
     def load_state(self, state_filename):
@@ -447,7 +447,7 @@ class Campaign:
         -------
 
         """
-        campaign = self.session.query(CampaignDB).filter_by(id=self.campaign_id).first()
+        campaign = self.session.query(CampaignDB).filter_by(id=self.campaign_id_).first()
         app = self.session.query(App).filter_by(id=campaign.app).first()
         runs = self.session.query(Run).filter_by(campaign=campaign.id)
         logs = self.session.query(Log).filter_by(campaign=campaign.id)
