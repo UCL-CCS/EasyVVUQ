@@ -52,67 +52,67 @@ def test_pce(tmpdir):
     analysis = uq.elements.analysis.PCEAnalysis(
         my_campaign, value_cols=output_columns)
 
-    stats, corr, sobols = analysis.apply()
+    analysis.apply()
 
-    return stats["te"], sobols["te"]
+    # Get Descriptive Statistics
+    stats = analysis.statistical_moments('te')
+    per = analysis.percentiles('te')
+    sobols = analysis.sobol_indices('te', 'first_order')
+    #dist_out = analysis.output_distributions('te')
 
+    return stats, per, sobols
 
 if __name__ == "__main__":
+
     start_time = time.time()
-
-    stats, sobols = test_pce("/tmp/")
-
+    stats, per, sobols = test_pce("/ptmp/ljala/")
     end_time = time.time()
     print('>>>>> elapsed time = ', end_time - start_time)
 
     # Plot statistical results
-    __plot = True
+    __plot = False
 
     if __plot:
         import matplotlib.pyplot as plt
-        mean = stats["mean"].to_numpy()
-        std = stats["std"].to_numpy()
-        var = stats["var"].to_numpy()
+        mean = stats["mean"]
+        var = stats["var"]
+        p10 = per['p10']
+        p90 = per['p90']
 
-        s_kappa = sobols["kappa"].to_numpy()
-        s_t_env = sobols["t_env"].to_numpy()
+        s_kappa = sobols["kappa"]
+        s_t_env = sobols["t_env"]
 
         t = np.linspace(0, 200, 150)
 
         fig1 = plt.figure()
-
-        ax11 = fig1.add_subplot(111)
-        ax11.plot(t, mean, 'g-', alpha=0.75, label='Mean')
-        ax11.plot(t, mean - std, 'b-', alpha=0.25)
-        ax11.plot(t, mean + std, 'b-', alpha=0.25)
-        ax11.fill_between(
-            t,
-            mean - std,
-            mean + std,
-            alpha=0.25,
-            label=r'Mean $\pm$ deviation')
-        ax11.set_xlabel('Time')
-        ax11.set_ylabel('Temperature', color='b')
-        ax11.tick_params('y', colors='b')
-        ax11.legend()
-
-        ax12 = ax11.twinx()
-        ax12.plot(t, var, 'r-', alpha=0.5)
-        ax12.set_ylabel('Variance', color='r')
-        ax12.tick_params('y', colors='r')
-
-        ax11.grid()
-        ax11.set_title('Statistical moments')
+        ax1 = fig1.add_subplot(111)
+        ax1.plot(t, mean, 'g-', alpha=0.75, label='Mean')
+        ax1.plot(t, p10, 'b-', alpha=0.25)
+        ax1.plot(t, p90, 'b-', alpha=0.25)
+        ax1.fill_between(
+           t,
+           p10,
+           p90,
+           alpha=0.25,
+           label='90% prediction interval')
+        ax1.set_xlabel('Time')
+        ax1.set_ylabel('Temperature', color='b')
+        ax1.tick_params('y', colors='b')
+        ax2 = ax1.twinx()
+        ax2.plot(t, var, 'r-', alpha=0.5)
+        ax2.set_ylabel('Variance', color='r')
+        ax2.tick_params('y', colors='r')
+        ax1.grid()
+        ax1.legend()
+        ax1.set_title('Statistical moments')
 
         fig2 = plt.figure()
-        ax2 = fig2.add_subplot(111)
-        ax2.plot(t, s_kappa, 'b-', label=r'$\kappa$')
-        ax2.plot(t, s_t_env, 'g-', label=r'$t_{env}$')
-
-        ax2.set_xlabel('Time')
-        ax2.set_ylabel('Sobol indices')
-        ax2.set_title('First order Sobol indices')
-        ax2.grid()
-        ax2.legend()
-
+        ax = fig2.add_subplot(111)
+        ax.plot(t, s_kappa, 'b-', label=r'$\kappa$')
+        ax.plot(t, s_t_env, 'g-', label=r'$t_{env}$')
+        ax.set_xlabel('Time')
+        ax.set_ylabel('Sobol indices')
+        ax.grid()
+        ax.legend()
+        ax.set_title('First order Sobol indices')
         plt.show()

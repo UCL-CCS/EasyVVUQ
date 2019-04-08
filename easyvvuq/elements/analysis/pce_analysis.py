@@ -9,10 +9,9 @@ from .base import BaseAnalysisElement
 __license__ = "LGPL"
 
 # TODO:
-# 2. Add pd.read_hdf (https://pandas.pydata.org/pandas-docs/stable/user_guide/io.html#io-hdf5).
-# 3. Add VERBOSE argument (False by default) to allow the user to store output_file or no.
-# 4. Test cp.fit_regression to approximate solver.
-# 5. Organize and add more results (Sobols 2nd order, Percentiles, ...).
+# 1. Add pd.read_hdf (https://pandas.pydata.org/pandas-docs/stable/user_guide/io.html#io-hdf5).
+# 2. Add STORE flag (False by default) to allow the user to store output_file or no.
+# 3. Test cp.fit_regression to approximate solver.
 
 
 class PCEAnalysis(BaseAnalysisElement):
@@ -20,7 +19,7 @@ class PCEAnalysis(BaseAnalysisElement):
         return "PCE_Analysis"
 
     def element_version(self):
-        return "0.1"
+        return "0.2"
 
     def __init__(self, data_src, params_cols=[],
                  value_cols=[], *args, **kwargs):
@@ -50,6 +49,15 @@ class PCEAnalysis(BaseAnalysisElement):
             self.params_cols = params_cols
         self.output_type = OutputType.SUMMARY
 
+        # TODO fix call __dict___ in log_analysis to allow ndarray
+        # cf. casting ndarray to list in _apply_analysis
+        # To store Descriptive Statistics
+        self._statistical_moments = {}
+        self._percentiles = {}
+        self._sobol_indices = {}
+#        self._correlation_matrices = {}
+#        self._output_distributions = {}
+
     def _apply_analysis(self):
 
         if self.data_frame is None:
@@ -76,10 +84,8 @@ class PCEAnalysis(BaseAnalysisElement):
                 values = df.loc[df['run_id'] == 'Run_' + str(i)][k].to_numpy()
                 samples[k].append(values)
 
-        # Perform analysis for each quantity of interest
-        statistical_moments = {}
-        sobol_first = {}
-        correlation_matrix = {}
+        output_distributions = {}
+        # Compute descriptive statistics for each quantity of interest
         for k in self.value_cols:
             # Approximation solver
             fit = cp.fit_quadrature(P, nodes, weights, samples[k])
@@ -88,19 +94,96 @@ class PCEAnalysis(BaseAnalysisElement):
             mean = cp.E(fit, self.campaign.distribution)
             var = cp.Var(fit, self.campaign.distribution)
             std = cp.Std(fit, self.campaign.distribution)
-            statistical_moments[k] = pd.DataFrame(
-                {'mean': mean, 'var': var, 'std': std})
+            self._statistical_moments[k] = {'mean': list(mean), 'var':
+                                            list(var), 'std': list(std)}
 
-            # Correlation matrix
-            correlation_matrix[k] = cp.Corr(fit, self.campaign.distribution)
+            # Percentiles (Pxx)
+            P10 = cp.Perc(fit, 10, self.campaign.distribution)
+            P90 = cp.Perc(fit, 90, self.campaign.distribution)
+            self._percentiles[k] = {'p10': list(P10), 'p90': list(P90)}
 
             # First Sobol indices
             sobol_first_narr = cp.Sens_m(fit, self.campaign.distribution)
             sobol_first_dict = {}
             i_par = 0
             for param_name in self.campaign.vars.keys():
-                sobol_first_dict[param_name] = sobol_first_narr[i_par]
+                sobol_first_dict[param_name] = list(sobol_first_narr[i_par])
                 i_par += 1
-            sobol_first[k] = pd.DataFrame(sobol_first_dict)
+            self._sobol_indices[k] = sobol_first_dict
 
-        return statistical_moments, correlation_matrix, sobol_first
+            # Correlation matrix
+            #self._correlation_matrices[k] = list(cp.Corr(fit, self.campaign.distribution))
+
+            # Ouput distributions
+            #output_distributions[k] = cp.QoI_Dist(fit, self.campaign.distribution)
+
+        return
+
+    # Descriptive statistics
+    def statistical_moments(self, qoi):
+        """
+        Returns a dictionary object containing mean, variation and standard deviation
+        of the given quantity of interset.
+        keys: 'mean', 'var' and 'std'
+        values: ndarrays
+        """
+
+        if qoi not in self.value_cols:
+            raise NameError(
+                        "Unknown quantity of interset "+qoi)
+
+        return self._statistical_moments[qoi]
+
+    def percentiles(self, qoi):
+        """
+        Returns a dictionary object containing 10% and 90% percentiles
+        of the given quantity of interset.
+        keys: 'p10' and 'p90'
+        values: ndarrays
+        """
+
+        if qoi not in self.value_cols:
+            raise NameError(
+                        "Unknown quantity of interset "+qoi)
+
+        return self._percentiles[qoi]
+
+    def sobol_indices(self, qoi, typ):
+        """
+        Returns a dictionary object containing the sobol indices of the given quantity of interset
+        for each uncertain parameter (typ='first_order').
+        keys: uncertain parameters names
+        values: ndarray
+        """
+
+        if qoi not in self.value_cols:
+            raise NameError(
+                        "Unknown quantity of interset "+qoi)
+
+        if typ == 'first_order':
+            return  self._sobol_indices[qoi]
+        else:
+            print('Not yet implemented.')
+            pass
+
+#    def correlation_matrix(self, qoi):
+#        """
+#        Returns the correlation matrix of the given quantity of interest.
+#        """
+#
+#        if qoi not in self.value_cols:
+#            raise NameError(
+#                        "Unknown quantity of interset "+qoi)
+#
+#        return self._correlation_matrices[qoi]
+#
+#    def output_distributions(self, qoi):
+#        """
+#        Returns the constructed quantity of interest distributions.
+#        """
+#
+#        if qoi not in self.value_cols:
+#            raise NameError(
+#                        "Unknown quantity of interset "+qoi)
+#
+#        return self._output_distributions[qoi_name]
