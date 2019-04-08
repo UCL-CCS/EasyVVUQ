@@ -183,7 +183,7 @@ class Campaign:
                 encoder_delimiter=self.app_info.get('encoder_delimiter', None),
                 output_decoder=self.app_info['output_decoder'],
                 template = self.app_info.get('template', None),
-                input_filename=self.app_info['input_filename'],
+                input_filename=self.app_info.get('input_filename', None),
                 campaign_dir_prefix=self.app_info['campaign_dir_prefix'],
                 campaign_dir=self.app_info['campaign_dir'],
                 runs_dir=self.app_info.get('runs_dir', None)
