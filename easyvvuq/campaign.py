@@ -63,7 +63,7 @@ class App(Base):
     campaign_dir = Column(String)
     runs_dir = Column(String)
 
-    
+
 class Run(Base):
     """An SQLAlchemy schema for the run table.
     """
@@ -73,7 +73,7 @@ class Run(Base):
     config = Column(String)
     campaign = Column(Integer, ForeignKey('campaign.id'))
 
-    
+
 class Log(Base):
     """An SQLAlchemy schema for the log table.
     """
@@ -168,9 +168,9 @@ class Campaign:
             self.engine = create_engine(db_uri)
         else:
             self.engine = create_engine('sqlite://')
-            
+
         Session = sessionmaker(bind=self.engine)
-                    
+
         self.session = Session()
         if db_uri is not None and not new_campaign:
             self.campaign_row = self.session.query(CampaignDB).filter_by(name=name).first()
@@ -182,7 +182,7 @@ class Campaign:
                 input_encoder=self.app_info['input_encoder'],
                 encoder_delimiter=self.app_info.get('encoder_delimiter', None),
                 output_decoder=self.app_info['output_decoder'],
-                template = self.app_info.get('template', None),
+                template=self.app_info.get('template', None),
                 input_filename=self.app_info.get('input_filename', None),
                 campaign_dir_prefix=self.app_info['campaign_dir_prefix'],
                 campaign_dir=self.app_info['campaign_dir'],
@@ -196,7 +196,6 @@ class Campaign:
             self.campaign_row.params = json.dumps(self._params_info)
             self.session.commit()
         self.campaign_id_ = self.campaign_row.id
-
 
     def load_state(self, state_filename):
         """Load Campaign state from file (JSON format)
@@ -455,26 +454,26 @@ class Campaign:
         logs = self.session.query(Log).filter_by(campaign=campaign.id)
         output_json = {
             "app" : {
-                'input_encoder' : app.input_encoder,
-                'encoder_delimiter' : app.encoder_delimiter,
-                'output_decoder' : app.output_decoder,
-                'template' : app.template,
-                'input_filename' : app.input_filename,
-                'campaign_dir_prefix' : app.campaign_dir_prefix,
-                'campaign_dir' : app.campaign_dir,
-                'runs_dir' : app.runs_dir
+                'input_encoder': app.input_encoder,
+                'encoder_delimiter': app.encoder_delimiter,
+                'output_decoder': app.output_decoder,
+                'template': app.template,
+                'input_filename': app.input_filename,
+                'campaign_dir_prefix': app.campaign_dir_prefix,
+                'campaign_dir': app.campaign_dir,
+                'runs_dir': app.runs_dir
                 },
-            "params" : json.loads(campaign.params),
-            "fixtures" : self.fixtures,
-            "runs" : dict((run.run_name, run.config) for run in runs),
-            "log" : [
+            "params": json.loads(campaign.params),
+            "fixtures": self.fixtures,
+            "runs": dict((run.run_name, run.config) for run in runs),
+            "log": [
                 {
-                    'name' : log.name,
-                    'version' : log.version,
-                    'category' : log.category,
-                    'info' : log.info
+                    'name': log.name,
+                    'version': log.version,
+                    'category': log.category,
+                    'info': log.info
                 } for log in logs],
-            "data" : self.data
+            "data": self.data
             }
         with open(state_filename, "w") as outfile:
             json.dump(output_json, outfile, indent=4)
