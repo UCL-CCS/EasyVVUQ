@@ -453,7 +453,7 @@ class Campaign:
         runs = self.session.query(Run).filter_by(campaign=campaign.id)
         logs = self.session.query(Log).filter_by(campaign=campaign.id)
         output_json = {
-            "app" : {
+            "app": {
                 'input_encoder': app.input_encoder,
                 'encoder_delimiter': app.encoder_delimiter,
                 'output_decoder': app.output_decoder,
@@ -535,7 +535,11 @@ class Campaign:
         # Add to run queue
         run_id = f"{prefix}{self.run_number}"
         self.runs[run_id] = new_run
-        self.session.add(Run(run_name=run_id, config=json.dumps(new_run), campaign=self.campaign_row.id))
+        self.session.add(Run(
+            run_name=run_id,
+            config=json.dumps(new_run),
+            campaign=self.campaign_row.id)
+        )
         self.session.commit()
         self.runs[run_id]['completed'] = False
         self.runs[run_id]['fixtures'] = run_fixtures
