@@ -451,31 +451,30 @@ class Campaign:
         app = self.session.query(App).filter_by(id=campaign.app).first()
         runs = self.session.query(Run).filter_by(campaign=campaign.id)
         logs = self.session.query(Log).filter_by(campaign=campaign.id)
-        output_json =\
-          {
-              "app":
-              {
-                  'input_encoder': app.input_encoder,
-                  'encoder_delimiter': app.encoder_delimiter,
-                  'output_decoder': app.output_decoder,
-                  'template': app.template,
-                  'input_filename': app.input_filename,
-                  'campaign_dir_prefix': app.campaign_dir_prefix,
-                  'campaign_dir': app.campaign_dir,
-                  'runs_dir': app.runs_dir
-              },
-              "params": json.loads(campaign.params),
-              "fixtures": self.fixtures,
-              "runs": dict((run.run_name, run.config) for run in runs),
-              "log": [
-                    {
-                          'name': log.name,
-                          'version': log.version,
-                          'category': log.category,
-                          'info': log.info
-                    } for log in logs],
-              "data": self.data
-          }
+        output_json = {
+            "app":
+            {
+                'input_encoder': app.input_encoder,
+                'encoder_delimiter': app.encoder_delimiter,
+                'output_decoder': app.output_decoder,
+                'template': app.template,
+                'input_filename': app.input_filename,
+                'campaign_dir_prefix': app.campaign_dir_prefix,
+                'campaign_dir': app.campaign_dir,
+                'runs_dir': app.runs_dir
+            },
+            "params": json.loads(campaign.params),
+            "fixtures": self.fixtures,
+            "runs": dict((run.run_name, run.config) for run in runs),
+            "log": [
+                {
+                    'name': log.name,
+                    'version': log.version,
+                    'category': log.category,
+                    'info': log.info
+                } for log in logs],
+            "data": self.data
+        }
         with open(state_filename, "w") as outfile:
             json.dump(output_json, outfile, indent=4)
 
@@ -697,7 +696,8 @@ class Campaign:
                 category=element.element_category(),
                 info=json.dumps(further_info),
                 campaign=self.campaign_row.id
-                ))
+            )
+        )
         self.session.commit()
 
     def vary_param(self, param_name, dist=None):
