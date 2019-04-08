@@ -60,7 +60,7 @@ def test_campaign_dir_prefix(tmpdir):
     reloaded_campaign = uq.Campaign(
         name='test_campaign',
         state_filename=output_json
-        )
+    )
 
     assert(len(reloaded_campaign.campaign_id()) > 0)
     assert(reloaded_campaign.campaign_id().startswith(alternative_prefix))

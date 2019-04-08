@@ -21,7 +21,7 @@ def test_pce(tmpdir):
         name='test_campaign',
         state_filename=input_json,
         workdir=tmpdir
-        )
+    )
 
     # Define the parameters dictionary
     my_campaign.vary_param("kappa", dist=cp.Uniform(0.025, 0.075))

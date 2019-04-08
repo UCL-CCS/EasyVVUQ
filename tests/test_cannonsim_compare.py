@@ -55,7 +55,7 @@ def test_cannonsim_compare(tmpdir):
         name='test_campaign',
         state_filename=input_json,
         workdir=tmpdir
-        )
+    )
 
     assert(my_campaign is not None)
     assert("angle" in my_campaign.params_info)
