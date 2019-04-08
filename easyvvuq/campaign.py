@@ -689,11 +689,16 @@ class Campaign:
             "info": further_info
         }
         self._log.append(log_entry)
-        self.session.add(Log(name=element.element_name(), version=element.element_version(),
-                                 category=element.element_category(), info=json.dumps(further_info),
-                                 campaign=self.campaign_row.id))
+        self.session.add(
+            Log(
+                name=element.element_name(),
+                version=element.element_version(),
+                category=element.element_category(),
+                info=json.dumps(further_info),
+                campaign=self.campaign_row.id
+                )
+            )
         self.session.commit()
-        
 
     def vary_param(self, param_name, dist=None):
         """
