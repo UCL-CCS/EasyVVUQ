@@ -180,11 +180,13 @@ class Campaign:
             Base.metadata.create_all(self.engine)
             self.app = App(
                 input_encoder=self.app_info['input_encoder'],
+                encoder_delimiter=self.app_info.get('encoder_delimiter', None),
                 output_decoder=self.app_info['output_decoder'],
-                template = self.app_info['template'],
+                template = self.app_info.get('template', None),
                 input_filename=self.app_info['input_filename'],
                 campaign_dir_prefix=self.app_info['campaign_dir_prefix'],
-                campaign_dir=self.app_info['campaign_dir']
+                campaign_dir=self.app_info['campaign_dir'],
+                runs_dir=self.app_info.get('runs_dir', None)
                 )
             self.session.add(self.app)
             self.session.commit()
