@@ -186,8 +186,7 @@ class Campaign:
                 input_filename=self.app_info.get('input_filename', None),
                 campaign_dir_prefix=self.app_info['campaign_dir_prefix'],
                 campaign_dir=self.app_info['campaign_dir'],
-                runs_dir=self.app_info.get('runs_dir', None)
-                )
+                runs_dir=self.app_info.get('runs_dir', None))
             self.session.add(self.app)
             self.session.commit()
             self.app_id = self.app.id
@@ -452,8 +451,10 @@ class Campaign:
         app = self.session.query(App).filter_by(id=campaign.app).first()
         runs = self.session.query(Run).filter_by(campaign=campaign.id)
         logs = self.session.query(Log).filter_by(campaign=campaign.id)
-        output_json = {
-            "app": {
+        output_json =\
+        {
+            "app":
+            {
                 'input_encoder': app.input_encoder,
                 'encoder_delimiter': app.encoder_delimiter,
                 'output_decoder': app.output_decoder,
@@ -462,7 +463,7 @@ class Campaign:
                 'campaign_dir_prefix': app.campaign_dir_prefix,
                 'campaign_dir': app.campaign_dir,
                 'runs_dir': app.runs_dir
-                },
+            },
             "params": json.loads(campaign.params),
             "fixtures": self.fixtures,
             "runs": dict((run.run_name, run.config) for run in runs),
@@ -474,7 +475,7 @@ class Campaign:
                     'info': log.info
                 } for log in logs],
             "data": self.data
-            }
+        }
         with open(state_filename, "w") as outfile:
             json.dump(output_json, outfile, indent=4)
 
