@@ -51,7 +51,11 @@ def test_cannonsim_compare(tmpdir):
 
     assert(os.path.exists(input_json))
 
-    my_campaign = uq.Campaign(state_filename=input_json, workdir=tmpdir)
+    my_campaign = uq.Campaign(
+        name='test_campaign',
+        state_filename=input_json,
+        workdir=tmpdir
+        )
 
     assert(my_campaign is not None)
     assert("angle" in my_campaign.params_info)
