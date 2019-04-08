@@ -129,8 +129,7 @@ class PCEAnalysis(BaseAnalysisElement):
         """
 
         if qoi not in self.value_cols:
-            raise NameError(
-                        "Unknown quantity of interset "+qoi)
+            raise NameError("Unknown quantity of interset "+ qoi)
 
         return self._statistical_moments[qoi]
 
@@ -143,8 +142,7 @@ class PCEAnalysis(BaseAnalysisElement):
         """
 
         if qoi not in self.value_cols:
-            raise NameError(
-                        "Unknown quantity of interset "+qoi)
+            raise NameError("Unknown quantity of interset "+ qoi)
 
         return self._percentiles[qoi]
 
@@ -157,8 +155,7 @@ class PCEAnalysis(BaseAnalysisElement):
         """
 
         if qoi not in self.value_cols:
-            raise NameError(
-                        "Unknown quantity of interset "+qoi)
+            raise NameError("Unknown quantity of interset "+ qoi)
 
         if typ == 'first_order':
             return  self._sobol_indices[qoi]
@@ -172,8 +169,7 @@ class PCEAnalysis(BaseAnalysisElement):
 #        """
 #
 #        if qoi not in self.value_cols:
-#            raise NameError(
-#                        "Unknown quantity of interset "+qoi)
+#            raise NameError("Unknown quantity of interset "+ qoi)
 #
 #        return self._correlation_matrices[qoi]
 #
@@ -183,7 +179,6 @@ class PCEAnalysis(BaseAnalysisElement):
 #        """
 #
 #        if qoi not in self.value_cols:
-#            raise NameError(
-#                        "Unknown quantity of interset "+qoi)
+#            raise NameError("Unknown quantity of interset "+ qoi)
 #
 #        return self._output_distributions[qoi_name]

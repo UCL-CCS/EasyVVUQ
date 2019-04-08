@@ -90,11 +90,11 @@ if __name__ == "__main__":
         ax1.plot(t, p10, 'b-', alpha=0.25)
         ax1.plot(t, p90, 'b-', alpha=0.25)
         ax1.fill_between(
-           t,
-           p10,
-           p90,
-           alpha=0.25,
-           label='90% prediction interval')
+            t,
+            p10,
+            p90,
+            alpha=0.25,
+            label='90% prediction interval')
         ax1.set_xlabel('Time')
         ax1.set_ylabel('Temperature', color='b')
         ax1.tick_params('y', colors='b')
