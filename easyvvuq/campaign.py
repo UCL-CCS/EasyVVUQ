@@ -176,6 +176,15 @@ class Campaign:
             self.campaign_row = self.session.query(CampaignDB).filter_by(name=name).first()
             if self.campaign_row is None:
                 raise ValueError('Campaign with the given name not found.')
+            self.app = self.session.query(App).filter_by(id=self.campaign_row.app).first()
+            self.app_info['input_encoder'] = self.app.input_encoder
+            self.app_info['encoder_delimiter'] = self.app.encoder_delimiter
+            self.app_info['output_decoder'] = self.app.output_decoder
+            self.app_info['template'] = self.app.template
+            self.app_info['input_filename'] = self.app.input_filename
+            self.app_info['campaign_dir_prefix'] = self.app.campaign_dir_prefix
+            self.app_info['campaign_dir'] = self.app.campaign_dir
+            self.app_info['runs_dir'] = self.app.runs_dir
         else:
             Base.metadata.create_all(self.engine)
             self.app = App(
