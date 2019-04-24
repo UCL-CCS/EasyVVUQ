@@ -37,17 +37,21 @@ __copyright__ = """
 __license__ = "LGPL"
 
 
-class CampaignTable(Base):
+class CampaignDB(Base):
+    """An SQLAlchemy schema for the campaign table.
+    """
     __tablename__ = 'campaign'
     id = Column(Integer, primary_key=True)
+    name = Column(String)
     app = Column(Integer, ForeignKey('app.id'))
     params = Column(String)
     fixtures = Column(String)
-    log = Column(Integer, ForeignKey('log.id'))
     data = Column(String)
 
 
-class AppTable(Base):
+class App(Base):
+    """An SQLAlchemy schema for the app table.
+    """
     __tablename__ = 'app'
     id = Column(Integer, primary_key=True)
     input_encoder = Column(String)
@@ -60,20 +64,26 @@ class AppTable(Base):
     runs_dir = Column(String)
 
 
-class RunTable(Base):
+class Run(Base):
+    """An SQLAlchemy schema for the run table.
+    """
     __tablename__ = 'run'
     id = Column(Integer, primary_key=True)
+    run_name = Column(String)
     config = Column(String)
     campaign = Column(Integer, ForeignKey('campaign.id'))
 
 
-class LogTable(Base):
+class Log(Base):
+    """An SQLAlchemy schema for the log table.
+    """
     __tablename__ = 'log'
     id = Column(Integer, primary_key=True)
     name = Column(String)
     version = Column(String)
     category = Column(String)
     info = Column(String)
+    campaign = Column(Integer, ForeignKey('campaign.id'))
 
 
 class Campaign:
@@ -91,8 +101,16 @@ class Campaign:
 
     Parameters
     ----------
+    name: str
+        Campaign name. Either new name or the name of a campaign to be resumed.
+    new_campaign: bool
+        If True will start a new campaign. If false will query the database for
+        a campaign with the given name. Will raise an exception if it does not
+        exist.
     state_filename  : str
         Path to file containing serialized state of a Campaign in JSON format
+    db_uri: str
+        SQLAlchemy database URI, e.g. sqlite:///mydb.sqlite
 
     Attributes
     ----------
@@ -105,9 +123,16 @@ class Campaign:
 
     """
 
-    def __init__(self, *args, state_filename=None, workdir='./',
-                 default_campaign_dir_prefix='EasyVVUQ_Campaign_',
+    def __init__(self, name, new_campaign=False, state_filename=None,
+                 workdir='./', default_campaign_dir_prefix='EasyVVUQ_Campaign_',
+                 db_uri=None,
                  **kwargs):
+        """
+        Parameters
+        ----------
+        Returns
+        -------
+        """
 
         # Information needed to run application
         self._app_info = {}
@@ -139,9 +164,46 @@ class Campaign:
         if state_filename is not None:
             self.load_state(state_filename)
 
-        self.engine = create_engine('sqlite:///:memory:', echo=True)
-        self.session = sessionmaker(bind=self.engine)
-        Base.metadata.create_all(self.engine)
+        if db_uri is not None:
+            self.engine = create_engine(db_uri)
+        else:
+            self.engine = create_engine('sqlite://')
+
+        Session = sessionmaker(bind=self.engine)
+
+        self.session = Session()
+        if db_uri is not None and not new_campaign:
+            self.campaign_row = self.session.query(CampaignDB).filter_by(name=name).first()
+            if self.campaign_row is None:
+                raise ValueError('Campaign with the given name not found.')
+            self.app = self.session.query(App).filter_by(id=self.campaign_row.app).first()
+            self.app_info['input_encoder'] = self.app.input_encoder
+            self.app_info['encoder_delimiter'] = self.app.encoder_delimiter
+            self.app_info['output_decoder'] = self.app.output_decoder
+            self.app_info['template'] = self.app.template
+            self.app_info['input_filename'] = self.app.input_filename
+            self.app_info['campaign_dir_prefix'] = self.app.campaign_dir_prefix
+            self.app_info['campaign_dir'] = self.app.campaign_dir
+            self.app_info['runs_dir'] = self.app.runs_dir
+        else:
+            Base.metadata.create_all(self.engine)
+            self.app = App(
+                input_encoder=self.app_info['input_encoder'],
+                encoder_delimiter=self.app_info.get('encoder_delimiter', None),
+                output_decoder=self.app_info['output_decoder'],
+                template=self.app_info.get('template', None),
+                input_filename=self.app_info.get('input_filename', None),
+                campaign_dir_prefix=self.app_info['campaign_dir_prefix'],
+                campaign_dir=self.app_info['campaign_dir'],
+                runs_dir=self.app_info.get('runs_dir', None))
+            self.session.add(self.app)
+            self.session.commit()
+            self.app_id = self.app.id
+            self.campaign_row = CampaignDB(name=name, app=self.app_id)
+            self.session.add(self.campaign_row)
+            self.campaign_row.params = json.dumps(self._params_info)
+            self.session.commit()
+        self.campaign_id_ = self.campaign_row.id
 
     def load_state(self, state_filename):
         """Load Campaign state from file (JSON format)
@@ -394,15 +456,34 @@ class Campaign:
         -------
 
         """
-
-        output_json = {"app": self.app_info,
-                       "params": self.params_info,
-                       "fixtures": self.fixtures,
-                       "runs": self.runs,
-                       "log": self._log,
-                       "data": self.data,
-                       }
-
+        campaign = self.session.query(CampaignDB).filter_by(id=self.campaign_id_).first()
+        app = self.session.query(App).filter_by(id=campaign.app).first()
+        runs = self.session.query(Run).filter_by(campaign=campaign.id)
+        logs = self.session.query(Log).filter_by(campaign=campaign.id)
+        output_json = {
+            "app":
+            {
+                'input_encoder': app.input_encoder,
+                'encoder_delimiter': app.encoder_delimiter,
+                'output_decoder': app.output_decoder,
+                'template': app.template,
+                'input_filename': app.input_filename,
+                'campaign_dir_prefix': app.campaign_dir_prefix,
+                'campaign_dir': app.campaign_dir,
+                'runs_dir': app.runs_dir
+            },
+            "params": json.loads(campaign.params),
+            "fixtures": self.fixtures,
+            "runs": dict((run.run_name, run.config) for run in runs),
+            "log": [
+                {
+                    'name': log.name,
+                    'version': log.version,
+                    'category': log.category,
+                    'info': log.info
+                } for log in logs],
+            "data": self.data
+        }
         with open(state_filename, "w") as outfile:
             json.dump(output_json, outfile, indent=4)
 
@@ -463,6 +544,12 @@ class Campaign:
         # Add to run queue
         run_id = f"{prefix}{self.run_number}"
         self.runs[run_id] = new_run
+        self.session.add(Run(
+            run_name=run_id,
+            config=json.dumps(new_run),
+            campaign=self.campaign_row.id)
+        )
+        self.session.commit()
         self.runs[run_id]['completed'] = False
         self.runs[run_id]['fixtures'] = run_fixtures
         self.run_number += 1
@@ -611,6 +698,16 @@ class Campaign:
             "info": further_info
         }
         self._log.append(log_entry)
+        self.session.add(
+            Log(
+                name=element.element_name(),
+                version=element.element_version(),
+                category=element.element_category(),
+                info=json.dumps(further_info),
+                campaign=self.campaign_row.id
+            )
+        )
+        self.session.commit()
 
     def vary_param(self, param_name, dist=None):
         """
