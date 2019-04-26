@@ -1,4 +1,4 @@
-from .base import BaseDB
+from .base import BaseCampaignDB
 
 __copyright__ = """
 
