@@ -28,6 +28,18 @@ class BaseCampaignDB:
 
         pass
 
+    def app(self, name):
+        raise NotImplementedError
+
+    def campaigns(self):
+        raise NotImplementedError
+
+    def campaign_dir(self):
+        raise NotImplementedError
+
+    def runs_dir(self):
+        raise NotImplementedError
+
     def add_app(self):
         raise NotImplementedError
 
