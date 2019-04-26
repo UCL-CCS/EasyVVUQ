@@ -1,4 +1,3 @@
-import os
 import json
 from sqlalchemy import create_engine, Column, Integer, String, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
@@ -113,23 +112,93 @@ class CampaignDB:
                 campaign_dir=info['campaign_dir'],
                 runs_dir=info['runs_dir'],
             )
+
             self.session.add(self.info)
             self.session.commit()
 
-    def add_app(self, app_info):
+    def add_app(self, name='', input_encoder='', encoder_options={},
+                output_decoder='', decoder_options={}, execution={},
+                params={}, fixtures={}, collation={}, variable=[]):
         """
         Add passed application information to the `app` table in the database.
 
         Parameters
         ----------
-        app_info :  dict
-            
+        name :  str
+            Name of the app.
+        input_encoder  : str
+            Module location of the app input encoder.
+        encoder_options  :  dict
+            Options for encoder.
+        output_decoder  : str
+            Module location of the app output decoder.
+        decoder_options  :  dict
+            Options for decoder.
+        execution  :  dict
+            Execution command information.
+        params  :  dict
+            Parameters that define the phase space for teh application.
+        fixtures  :  dict
+            Information on files/databases and the like used by application.
+        collation  : dict
+            Information on how decoded output will be collated.
+        variable  :  list
+            Which parameters could be varied in this analysis?
 
         Returns
         -------
 
         """
 
-        app = App(**app_info)
+        # TODO: Check that no app with same name exists
+
+        app = App(
+                  name=name,
+                  input_encoder=input_encoder,
+                  encoder_options=json.dumps(encoder_options),
+                  output_decoder=output_decoder,
+                  decoder_options=json.dumps(decoder_options),
+                  execution=json.dumps(execution),
+                  params=json.dumps(params),
+                  fixtures=json.dumps(fixtures),
+                  collation=json.dumps(collation),
+                  variable=json.dumps(),
+                 )
+
         self.session.add(app)
         self.session.commit()
+
+    def add_sampler(self, sampler={}):
+        """
+        Add passed application information to the `app` table in the database.
+
+        Parameters
+        ----------
+        sampler  :  dict
+            Information on the sampler that was used
+
+        Returns
+        -------
+
+        """
+
+        sampler = Sample(sampler=json.dumps(sampler))
+
+        self.session.add(sampler)
+        self.session.commit()
+
+    def add_run(self, run_info={}):
+        """
+        Add run to the `runs` table in the database.
+
+        Parameters
+        ----------
+        run_info  :  dict
+            Information on the run to be added
+
+        Returns
+        -------
+
+        """
+
+        pass
