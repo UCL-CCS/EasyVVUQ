@@ -121,6 +121,18 @@ class CampaignDB(BaseCampaignDB):
 
         return
 
+    def _save(self):
+
+        out_dict = {
+            'campaign': self._campaign_info,
+            'app':      self._app,
+            'runs':     self._runs,
+            'sample':   self._sample,
+        }
+
+        with open(self.db_filename, "w") as outfile:
+            json.dump(out_dict, outfile, indent=4)
+
     def app(self, name=None):
 
         if name is not None:
@@ -140,7 +152,7 @@ class CampaignDB(BaseCampaignDB):
         if campaign_name is not None:
             # TODO: Should this raise and Exception?
             message = (f'JSON/Python dictionary database can only support one '
-                       f'application - ignoring selected name ({name}).')
+                       f'application - ignoring selected name ({campaign_name}).')
             logger.warning(message)
 
         return self._campaign_info['campaign_dir']
@@ -160,7 +172,7 @@ class CampaignDB(BaseCampaignDB):
         if campaign_name is not None:
             # TODO: Should this raise and Exception?
             message = (f'JSON/Python dictionary database can only support one '
-                       f'application - ignoring selected name ({name}).')
+                       f'application - ignoring selected name ({campaign_name}).')
             logger.warning(message)
 
         return self._campaign_info['runs_dir']
@@ -189,7 +201,7 @@ class CampaignDB(BaseCampaignDB):
 
         self._next_run += 1
 
-        # TODO: Save database?
+        self._save()
 
     def add_sampler(self, sampler):
 
