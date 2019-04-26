@@ -37,6 +37,12 @@ class BaseCampaignDB:
     def campaign_dir(self):
         raise NotImplementedError
 
+    def run(self):
+        raise NotImplementedError
+
+    def runs(self):
+        raise NotImplementedError
+    
     def runs_dir(self):
         raise NotImplementedError
 
