@@ -73,6 +73,8 @@ class RunInfo:
     def __init__(self, run_name='', app=None, config={}, sample=None,
                  campaign=None):
 
+        # TODO: Handle fixtures
+
         check_reference(campaign, run_name, ref_type='campaign')
         check_reference(sample, run_name, ref_type='sampler')
         check_reference(app, run_name, ref_type='app')
