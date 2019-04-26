@@ -29,9 +29,27 @@ __license__ = "LGPL"
 
 logger = logging.getLogger(__name__)
 
+
 def convert_old_state_file(input_state):
 
-    converted = {}
+    try:
+
+        converted = {}
+
+        app_info = input_state['app']
+        converted['campaign'] = {}
+        for field in ['campaign_dir', 'campaign_dir_prefix', 'runs_dir']:
+            converted['campaign'][field] = app_info.pop(field)
+
+        converted['app'] = app_info
+
+        converted['runs'] = input_state.get('runs', {})
+
+        converted['sample'] = input_state.get('sample', {})
+
+    except KeyError as err:
+        message = f'Input state not valid: {err}'
+        raise IOError(message)
 
     return converted
 
@@ -46,7 +64,7 @@ def validate_input_dict(input_info, local):
 class CampaignDB(BaseCampaignDB):
 
     def __init__(self, src=None, new_campaign=False, name=None,
-                 info={}, local=False):
+                 info={}, local=False, old_style=True, db_filename=None):
 
         self.local = local
 
@@ -54,6 +72,16 @@ class CampaignDB(BaseCampaignDB):
         self._app = {}
         self._runs = {}
         self._sample = {}
+
+        if old_style and db_filename is None:
+            message = ('Loading old_style Campaign requires db_filename to be '
+                       'specified (to save database into).')
+            logger.critical(message)
+            raise RuntimeError(message)
+        elif old_style:
+            self.db_filename = db_filename
+        else:
+            self.db_filename = src
 
         if new_campaign:
 
@@ -70,7 +98,12 @@ class CampaignDB(BaseCampaignDB):
             input_info = json.load(infile)
 
         if 'campaign' not in input_info:
-            input_info = convert_old_state_file(input_info)
+            try:
+                input_info = convert_old_state_file(input_info)
+            except IOError as err:
+                message = f"State file {src} could not be read: {err}"
+                logger.critical(message)
+                raise RuntimeError(message)
 
         validate_input_dict(input_info, self.local)
 
@@ -112,6 +145,16 @@ class CampaignDB(BaseCampaignDB):
 
         return self._campaign_info['campaign_dir']
 
+    def runs(self, campaign=None, sampler=None):
+
+        if campaign is not None or sampler is not None:
+            message = (f'JSON/Python dictionary database only supports '
+                       f'single campaign and sampler workflows - ignoring'
+                       f'campaign - {campaign}/ sampler {sampler}')
+            logger.warning(message)
+
+        return self._runs
+
     def runs_dir(self, campaign_name=None):
 
         if campaign_name is not None:
@@ -145,6 +188,8 @@ class CampaignDB(BaseCampaignDB):
         self._runs[name] = info.to_dict()
 
         self._next_run += 1
+
+        # TODO: Save database?
 
     def add_sampler(self, sampler):
 
