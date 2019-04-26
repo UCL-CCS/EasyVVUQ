@@ -22,7 +22,7 @@ __copyright__ = """
 __license__ = "LGPL"
 
 
-class BaseDB:
+class BaseCampaignDB:
 
     def __init__(self, *args, **kwargs):
 
