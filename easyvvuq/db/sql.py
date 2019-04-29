@@ -137,10 +137,10 @@ class CampaignDB(BaseCampaignDB):
             Application information.
         """
 
-        if name:
-            selected = self.session.query(App).filter_by(name=name).first()
-        else:
+        if name is None:
             selected = self.session.query(App).first()
+        else:
+            selected = self.session.query(App).filter_by(name=name).first()
 
         if not selected:
             message = f'No entry for app: ({name}).'
