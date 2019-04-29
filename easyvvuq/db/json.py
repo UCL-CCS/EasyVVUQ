@@ -63,8 +63,8 @@ def validate_input_dict(input_info, local):
 
 class CampaignDB(BaseCampaignDB):
 
-    def __init__(self, src=None, new_campaign=False, name=None,
-                 info={}, local=False, old_style=True, db_filename=None):
+    def __init__(self, location=None, new_campaign=False, name=None,
+                 info={}, local=False):
 
         self.local = local
 
@@ -73,23 +73,13 @@ class CampaignDB(BaseCampaignDB):
         self._runs = {}
         self._sample = {}
 
-        if old_style and db_filename is None:
-            message = ('Loading old_style Campaign requires db_filename to be '
-                       'specified (to save database into).')
-            logger.critical(message)
-            raise RuntimeError(message)
-        elif old_style:
-            self.db_filename = db_filename
-        else:
-            self.db_filename = src
-
         if new_campaign:
 
             self._campaign_info = validate_input_dict(info, local)
             self._next_run = 0
 
         else:
-            self._load_campaign(src, name)
+            self._load_campaign(location, name)
             self._next_run = len(self._runs)
 
     def _load_campaign(self, src, name):

@@ -3,16 +3,7 @@ import tempfile
 import json
 import collections
 import pprint
-from sqlalchemy import create_engine, Column, Integer, String, ForeignKey
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
-from sqlalchemy_utils import create_database, database_exists
-
 import easyvvuq as uq
-
-
-Base = declarative_base()
-
 
 __copyright__ = """
 
@@ -37,55 +28,6 @@ __copyright__ = """
 __license__ = "LGPL"
 
 
-class CampaignDB(Base):
-    """An SQLAlchemy schema for the campaign table.
-    """
-    __tablename__ = 'campaign'
-    id = Column(Integer, primary_key=True)
-    name = Column(String)
-    app = Column(Integer, ForeignKey('app.id'))
-    params = Column(String)
-    fixtures = Column(String)
-    data = Column(String)
-
-
-class App(Base):
-    """An SQLAlchemy schema for the app table.
-    """
-    __tablename__ = 'app'
-    id = Column(Integer, primary_key=True)
-    input_encoder = Column(String)
-    encoder_delimiter = Column(String)
-    output_decoder = Column(String)
-    template = Column(String)
-    input_filename = Column(String)
-    campaign_dir_prefix = Column(String)
-    campaign_dir = Column(String)
-    runs_dir = Column(String)
-
-
-class Run(Base):
-    """An SQLAlchemy schema for the run table.
-    """
-    __tablename__ = 'run'
-    id = Column(Integer, primary_key=True)
-    run_name = Column(String)
-    config = Column(String)
-    campaign = Column(Integer, ForeignKey('campaign.id'))
-
-
-class Log(Base):
-    """An SQLAlchemy schema for the log table.
-    """
-    __tablename__ = 'log'
-    id = Column(Integer, primary_key=True)
-    name = Column(String)
-    version = Column(String)
-    category = Column(String)
-    info = Column(String)
-    campaign = Column(Integer, ForeignKey('campaign.id'))
-
-
 class Campaign:
     """Campaign coordinates information for a series of related runs
 
@@ -99,6 +41,8 @@ class Campaign:
     be included in the simulation 'campaign'. Information on each run is stored
     in the `runs` dictionary.
 
+    # TODO: need to make dbtype an Enum
+
     Parameters
     ----------
     name: str
@@ -109,8 +53,14 @@ class Campaign:
         exist.
     state_filename  : str
         Path to file containing serialized state of a Campaign in JSON format
-    db_uri: str
-        SQLAlchemy database URI, e.g. sqlite:///mydb.sqlite
+    db_src: str
+        SQLAlchemy database URI, e.g. sqlite:///mydb.sqlite, or JSON
+        serialisation of database.
+    db_type: str
+        Will we use json/sql or in future some other type of database.
+    local: bool
+        Is this campaign being processed locally - in which case we can check
+        files and directories.
 
     Attributes
     ----------
@@ -124,86 +74,37 @@ class Campaign:
     """
 
     def __init__(self, name, new_campaign=False, state_filename=None,
-                 workdir='./', default_campaign_dir_prefix='EasyVVUQ_Campaign_',
-                 db_uri=None,
-                 **kwargs):
-        """
-        Parameters
-        ----------
-        Returns
-        -------
-        """
-
-        # Information needed to run application
-        self._app_info = {}
-        # Name and description of the model parameters
-        self._params_info = {}
-        # Files and directories that are required by runs
-        self._fixtures = {}
-        # Which parameters can be varied, and their prior distributions
-        self._vars = {}
-        # Categorical variables
-        self._categoricals = {}
-
-        # List of runs that need to be performed by this app
-        self._runs = collections.OrderedDict()
-
-        self._data = {}
+                 db_src=None, db_type='', local=False, **kwargs):
 
         self._log = []
 
-        self.run_number = 0
         self.encoder = None
         self.decoder = None
 
         self._reserved_keys = ['completed', 'fixtures']
 
-        self.workdir = workdir
-        self.default_campaign_dir_prefix = default_campaign_dir_prefix
-
         if state_filename is not None:
+            # TODO: Update this for the new design
             self.load_state(state_filename)
 
-        if db_uri is not None:
-            self.engine = create_engine(db_uri)
+        if db_type == 'sql':
+            from .db.sql import CampaignDB
         else:
-            self.engine = create_engine('sqlite://')
+            from .db.json import CampaignDB
 
-        Session = sessionmaker(bind=self.engine)
+        self.db_src = db_src
 
-        self.session = Session()
-        if db_uri is not None and not new_campaign:
-            self.campaign_row = self.session.query(CampaignDB).filter_by(name=name).first()
-            if self.campaign_row is None:
-                raise ValueError('Campaign with the given name not found.')
-            self.app = self.session.query(App).filter_by(id=self.campaign_row.app).first()
-            self.app_info['input_encoder'] = self.app.input_encoder
-            self.app_info['encoder_delimiter'] = self.app.encoder_delimiter
-            self.app_info['output_decoder'] = self.app.output_decoder
-            self.app_info['template'] = self.app.template
-            self.app_info['input_filename'] = self.app.input_filename
-            self.app_info['campaign_dir_prefix'] = self.app.campaign_dir_prefix
-            self.app_info['campaign_dir'] = self.app.campaign_dir
-            self.app_info['runs_dir'] = self.app.runs_dir
+        if new_campaign:
+
+            # TODO: Replace placeholder here
+            info = {}
+
+            self.campaign_db = CampaignDB(location=db_src, new_campaign=True,
+                                          name=name, local=local, info=info)
+
         else:
-            Base.metadata.create_all(self.engine)
-            self.app = App(
-                input_encoder=self.app_info['input_encoder'],
-                encoder_delimiter=self.app_info.get('encoder_delimiter', None),
-                output_decoder=self.app_info['output_decoder'],
-                template=self.app_info.get('template', None),
-                input_filename=self.app_info.get('input_filename', None),
-                campaign_dir_prefix=self.app_info['campaign_dir_prefix'],
-                campaign_dir=self.app_info['campaign_dir'],
-                runs_dir=self.app_info.get('runs_dir', None))
-            self.session.add(self.app)
-            self.session.commit()
-            self.app_id = self.app.id
-            self.campaign_row = CampaignDB(name=name, app=self.app_id)
-            self.session.add(self.campaign_row)
-            self.campaign_row.params = json.dumps(self._params_info)
-            self.session.commit()
-        self.campaign_id_ = self.campaign_row.id
+
+            self.campaign_db = CampaignDB(location=db_src, name=name, local=local)
 
     def load_state(self, state_filename):
         """Load Campaign state from file (JSON format)

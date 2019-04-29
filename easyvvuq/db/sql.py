@@ -89,11 +89,11 @@ class Sample(Base):
 
 class CampaignDB(BaseCampaignDB):
 
-    def __init__(self, src=None, new_campaign=False, name='default',
+    def __init__(self, location=None, new_campaign=False, name='default',
                  info={}):
 
-        if src is not None:
-            self.engine = create_engine(src)
+        if location is not None:
+            self.engine = create_engine(location)
         else:
             self.engine = create_engine('sqlite://')
 
@@ -101,7 +101,7 @@ class CampaignDB(BaseCampaignDB):
 
         self.session = session_maker()
 
-        if src is not None and not new_campaign:
+        if location is not None and not new_campaign:
 
             self.info = self.session.query(
                 CampaignInfo).filter_by(name=name).first()
