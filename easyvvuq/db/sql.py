@@ -1,6 +1,5 @@
 import json
 import logging
-from easyvvuq import data_structs
 from sqlalchemy import create_engine, Column, Integer, String, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
@@ -90,7 +89,7 @@ class Sample(Base):
 class CampaignDB(BaseCampaignDB):
 
     def __init__(self, location=None, new_campaign=False, name='default',
-                 info={}):
+                 info=None):
 
         if location is not None:
             self.engine = create_engine(location)
@@ -101,26 +100,23 @@ class CampaignDB(BaseCampaignDB):
 
         self.session = session_maker()
 
-        if location is not None and not new_campaign:
-
-            self.info = self.session.query(
-                CampaignInfo).filter_by(name=name).first()
-            if self.info is None:
-                raise ValueError('Campaign with the given name not found.')
-
-        else:
+        if new_campaign:
+            if info is None:
+                raise RuntimeError('No information provided to create'
+                                   'database')
+            if info.name != name:
+                message = ('Information for campaign {info.name} given '
+                           'for campaign database {name.}')
+                logging.critical(message)
+                raise RuntimeError(message)
             Base.metadata.create_all(self.engine)
-
-            self.info = CampaignInfo(
-                name=name,
-                easyvvuq_version=constants.version,
-                campaign_dir_prefix=info['campaign_dir_prefix'],
-                campaign_dir=info['campaign_dir'],
-                runs_dir=info['runs_dir'],
-            )
-
-            self.session.add(self.info)
+            self.session.add(info)
             self.session.commit()
+        else:
+            info = self.session.query(
+                CampaignInfo).filter_by(name=name).first()
+            if info is None:
+                raise ValueError('Campaign with the given name not found.')
 
     def app(self, name=None):
         """
@@ -164,23 +160,7 @@ class CampaignDB(BaseCampaignDB):
 
         return app_dict
 
-    def add_app(self, app):
-        """
-        Add passed `app`lication information to the 'app' table in the
-        database.
-
-        Parameters
-        ----------
-        app : dict
-            Application information.
-
-        Returns
-        -------
-
-        """
-
-        # validate application input
-        app_info = data_structs.AppInfo(**app)
+    def add_app(self, app_info):
 
         # TODO: Check that no app with same name exists
 
@@ -188,7 +168,7 @@ class CampaignDB(BaseCampaignDB):
             name=app_info.name,
             input_encoder=app_info.input_encoder,
             encoder_options=json.dumps(app_info.encoder_options),
-            output_decoder=app.output_decoder,
+            output_decoder=app_info.output_decoder,
             decoder_options=json.dumps(app_info.decoder_options),
             execution=json.dumps(app_info.execution),
             params=json.dumps(app_info.params),
@@ -219,7 +199,7 @@ class CampaignDB(BaseCampaignDB):
         self.session.add(sampler)
         self.session.commit()
 
-    def add_run(self, run_info={}):
+    def add_run(self, run_info={}, prefix='Run_'):
         """
         Add run to the `runs` table in the database.
 

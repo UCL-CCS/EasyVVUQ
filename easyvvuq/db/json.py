@@ -1,7 +1,7 @@
 import json
 import logging
+import tempfile
 from easyvvuq import constants
-from easyvvuq import data_structs
 from .base import BaseCampaignDB
 
 __copyright__ = """
@@ -30,42 +30,10 @@ __license__ = "LGPL"
 logger = logging.getLogger(__name__)
 
 
-def convert_old_state_file(input_state):
-
-    try:
-
-        converted = {}
-
-        app_info = input_state['app']
-        converted['campaign'] = {}
-        for field in ['campaign_dir', 'campaign_dir_prefix', 'runs_dir']:
-            converted['campaign'][field] = app_info.pop(field)
-        converted['campaign']['easyvvuq_version'] = '0.0.1'
-
-        converted['app'] = app_info
-
-        converted['runs'] = input_state.get('runs', {})
-
-        converted['sample'] = input_state.get('sample', {})
-
-    except KeyError as err:
-        message = f'Input state not valid: {err}'
-        raise IOError(message)
-
-    return converted
-
-
-def validate_input_dict(input_info, local):
-
-    info = data_structs.CampaignInfo(**input_info, local=local)
-
-    return info.to_dict()
-
-
 class CampaignDB(BaseCampaignDB):
 
     def __init__(self, location=None, new_campaign=False, name=None,
-                 info={}, local=False):
+                 info=None, local=False):
 
         self.local = local
 
@@ -76,13 +44,20 @@ class CampaignDB(BaseCampaignDB):
 
         if new_campaign:
 
-            self._campaign_info = validate_input_dict(info, local)
-            self._campaign_info['easyvvuq_version'] = constants.version
+            self._campaign_info = info
+            self._campaign_info.easyvvuq_version = constants.version
             self._next_run = 0
+
+            if location is None:
+                location = tempfile.mkstemp(suffix='json', prefix='easyvvuq')
+                logging.warning('No location provided - db will be saved '
+                                'in {location}.')
 
         else:
             self._load_campaign(location, name)
             self._next_run = len(self._runs)
+
+        self.location = location
 
     def _load_campaign(self, src, name):
 
@@ -90,14 +65,9 @@ class CampaignDB(BaseCampaignDB):
             input_info = json.load(infile)
 
         if 'campaign' not in input_info:
-            try:
-                input_info = convert_old_state_file(input_info)
-            except IOError as err:
-                message = f"State file {src} could not be read: {err}"
-                logger.critical(message)
-                raise RuntimeError(message)
-
-        validate_input_dict(input_info, self.local)
+            message = f"Campaign information missing from state file {src}."
+            logger.critical(message)
+            raise RuntimeError(message)
 
         if name is not None and input_info['campaign']['name'] != name:
             message = f'No campaign called {name} found - unable to continue.'
@@ -122,7 +92,7 @@ class CampaignDB(BaseCampaignDB):
             'sample': self._sample,
         }
 
-        with open(self.db_filename, "w") as outfile:
+        with open(self.location, "w") as outfile:
             json.dump(out_dict, outfile, indent=4)
 
     def app(self, name=None):
@@ -197,7 +167,7 @@ class CampaignDB(BaseCampaignDB):
 
         return self._campaign_info['runs_dir']
 
-    def add_app(self, app):
+    def add_app(self, app_info):
 
         if self._app:
             message = ('JSON/Python dict database does not support '
@@ -205,19 +175,17 @@ class CampaignDB(BaseCampaignDB):
             logger.critical(message)
             raise RuntimeError(message)
 
-        info = data_structs.AppInfo(**app)
+        self._app = app_info
 
-        self._app = info.to_dict()
-
-    def add_run(self, run_config, prefix='Run_'):
+    def add_run(self, run_info={}, prefix='Run_'):
 
         name = f"{prefix}{self._next_run}"
 
         # TODO: Handle fixtures
 
-        info = data_structs.RunInfo(**run_config, run_name=name)
+        run_info = run_info['name'] = name
 
-        self._runs[name] = info.to_dict()
+        self._runs[name] = run_info
 
         self._next_run += 1
 
