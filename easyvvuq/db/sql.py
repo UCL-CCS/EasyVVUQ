@@ -123,13 +123,14 @@ class CampaignDB(BaseCampaignDB):
 
     def app(self, name=None):
         """
-        Get app information. Specific applications selected by `name`, otherwise
-        first entry in database 'app' selected.
+        Get app information. Specific applications selected by `name`,
+        otherwise first entry in database 'app' selected.
 
         Parameters
         ----------
         name : str or None
-            Name of selected app, if `None` given then first app will be selected.
+            Name of selected app, if `None` given then first app will be
+            selected.
 
         Returns
         -------
@@ -164,7 +165,8 @@ class CampaignDB(BaseCampaignDB):
 
     def add_app(self, app):
         """
-        Add passed `app`lication information to the 'app' table in the database.
+        Add passed `app`lication information to the 'app' table in the
+        database.
 
         Parameters
         ----------
