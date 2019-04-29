@@ -1,5 +1,6 @@
 import json
 import logging
+from easyvvuq import data_structs
 from sqlalchemy import create_engine, Column, Integer, String, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
@@ -170,27 +171,30 @@ class CampaignDB(BaseCampaignDB):
 
         Parameters
         ----------
-        app : `easyvvuq.data_structs.AppInfo`
-            Validated app information.
+        app : dict
+            Application information.
 
         Returns
         -------
 
         """
 
+        # validate application input
+        app_info = data_structs.AppInfo(**app)
+
         # TODO: Check that no app with same name exists
 
         db_entry = App(
-            name=app.name,
-            input_encoder=app.input_encoder,
-            encoder_options=json.dumps(app.encoder_options),
+            name=app_info.name,
+            input_encoder=app_info.input_encoder,
+            encoder_options=json.dumps(app_info.encoder_options),
             output_decoder=app.output_decoder,
-            decoder_options=json.dumps(app.decoder_options),
-            execution=json.dumps(app.execution),
-            params=json.dumps(app.params),
-            fixtures=json.dumps(app.fixtures),
-            collation=json.dumps(app.collation),
-            variable=json.dumps(app.variable),
+            decoder_options=json.dumps(app_info.decoder_options),
+            execution=json.dumps(app_info.execution),
+            params=json.dumps(app_info.params),
+            fixtures=json.dumps(app_info.fixtures),
+            collation=json.dumps(app_info.collation),
+            variable=json.dumps(app_info.variable),
         )
 
         self.session.add(db_entry)
