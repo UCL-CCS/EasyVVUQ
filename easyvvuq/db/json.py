@@ -40,6 +40,7 @@ def convert_old_state_file(input_state):
         converted['campaign'] = {}
         for field in ['campaign_dir', 'campaign_dir_prefix', 'runs_dir']:
             converted['campaign'][field] = app_info.pop(field)
+        converted['campaign']['easyvvuq_version'] = '0.0.1'
 
         converted['app'] = app_info
 
