@@ -134,6 +134,22 @@ class CampaignDB(BaseCampaignDB):
             json.dump(out_dict, outfile, indent=4)
 
     def app(self, name=None):
+        """
+        Get app information. Note for this format (JSON/Python dict) only one
+        app can be stored in the database.
+
+        Parameters
+        ----------
+        name: str or None
+            Name of selected app, provided for consistency with other formats -
+            here will be ignored as only one app.
+
+        Returns
+        -------
+        dict:
+            Application information.
+
+        """
 
         if name is not None:
             # TODO: Should this raise and Exception?
