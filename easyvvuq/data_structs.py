@@ -96,11 +96,11 @@ class RunInfo:
 
         out_dict = {
             'run_name': self.run_name,
-            'config':   self.config,
-            'status':   self.status,
+            'config': self.config,
+            'status': self.status,
             'campaign': self.campaign,
-            'sample':   self.sample,
-            'app':      self.app,
+            'sample': self.sample,
+            'app': self.app,
         }
 
         return out_dict
@@ -109,11 +109,11 @@ class RunInfo:
 
         db_dict = {
             'run_name': self.run_name,
-            'config':   json.dumps(self.config),
-            'status':   self.status,
+            'config': json.dumps(self.config),
+            'status': self.status,
             'campaign': self.campaign,
-            'sample':   self.sample,
-            'app':      self.app,
+            'sample': self.sample,
+            'app': self.app,
         }
 
         return db_dict

@@ -125,9 +125,9 @@ class CampaignDB(BaseCampaignDB):
 
         out_dict = {
             'campaign': self._campaign_info,
-            'app':      self._app,
-            'runs':     self._runs,
-            'sample':   self._sample,
+            'app': self._app,
+            'runs': self._runs,
+            'sample': self._sample,
         }
 
         with open(self.db_filename, "w") as outfile:
