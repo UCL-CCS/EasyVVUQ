@@ -1,4 +1,5 @@
 import json
+import logging
 from sqlalchemy import create_engine, Column, Integer, String, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
@@ -27,6 +28,8 @@ __copyright__ = """
 
 """
 __license__ = "LGPL"
+
+logger = logging.getLogger(__name__)
 
 Base = declarative_base()
 
@@ -117,34 +120,55 @@ class CampaignDB(BaseCampaignDB):
             self.session.add(self.info)
             self.session.commit()
 
-    def add_app(self, name='', input_encoder='', encoder_options={},
-                output_decoder='', decoder_options={}, execution={},
-                params={}, fixtures={}, collation={}, variable=[]):
+    def app(self, name=None):
         """
-        Add passed application information to the `app` table in the database.
+        Get app information. Specific applications selected by `name`, otherwise
+        first entry in database 'app' selected.
 
         Parameters
         ----------
-        name :  str
-            Name of the app.
-        input_encoder  : str
-            Module location of the app input encoder.
-        encoder_options  :  dict
-            Options for encoder.
-        output_decoder  : str
-            Module location of the app output decoder.
-        decoder_options  :  dict
-            Options for decoder.
-        execution  :  dict
-            Execution command information.
-        params  :  dict
-            Parameters that define the phase space for teh application.
-        fixtures  :  dict
-            Information on files/databases and the like used by application.
-        collation  : dict
-            Information on how decoded output will be collated.
-        variable  :  list
-            Which parameters could be varied in this analysis?
+        name : str or None
+            Name of selected app, if `None` given then first app will be selected.
+
+        Returns
+        -------
+        dict:
+            Application information.
+        """
+
+        if name:
+            selected = self.session.query(App).filter_by(name=name).first()
+        else:
+            selected = self.session.query(App).first()
+
+        if not selected:
+            message = f'No entry for app: ({name}).'
+            logger.critical(message)
+            raise RuntimeError(message)
+
+        app_dict = {
+                    'name': selected.name,
+                    'input_encoder': selected.input_encoder,
+                    'encoder_options': json.loads(selected.encoder_options),
+                    'output_decoder': selected.output_decoder,
+                    'decoder_options': json.loads(selected.decoder_options),
+                    'execution': json.loads(selected.execution),
+                    'params': json.loads(selected.params),
+                    'fixtures': json.loads(selected.fixtures),
+                    'collation': json.loads(selected.collation),
+                    'variable': json.loads(selected.variable),
+        }
+
+        return app_dict
+
+    def add_app(self, app):
+        """
+        Add passed `app`lication information to the 'app' table in the database.
+
+        Parameters
+        ----------
+        app : `easyvvuq.data_structs.AppInfo`
+            Validated app information.
 
         Returns
         -------
@@ -153,20 +177,20 @@ class CampaignDB(BaseCampaignDB):
 
         # TODO: Check that no app with same name exists
 
-        app = App(
-                  name=name,
-                  input_encoder=input_encoder,
-                  encoder_options=json.dumps(encoder_options),
-                  output_decoder=output_decoder,
-                  decoder_options=json.dumps(decoder_options),
-                  execution=json.dumps(execution),
-                  params=json.dumps(params),
-                  fixtures=json.dumps(fixtures),
-                  collation=json.dumps(collation),
-                  variable=json.dumps(),
+        db_entry = App(
+                  name=app.name,
+                  input_encoder=app.input_encoder,
+                  encoder_options=json.dumps(app.encoder_options),
+                  output_decoder=app.output_decoder,
+                  decoder_options=json.dumps(app.decoder_options),
+                  execution=json.dumps(app.execution),
+                  params=json.dumps(app.params),
+                  fixtures=json.dumps(app.fixtures),
+                  collation=json.dumps(app.collation),
+                  variable=json.dumps(app.variable),
                  )
 
-        self.session.add(app)
+        self.session.add(db_entry)
         self.session.commit()
 
     def add_sampler(self, sampler={}):
