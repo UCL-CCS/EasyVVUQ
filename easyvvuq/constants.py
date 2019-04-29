@@ -1,7 +1,7 @@
 from enum import Enum
 
 # TODO: make this auto update with setup.py etc.
-version = '0.0.1.dev1'
+version = '0.0.3.dev1'
 default_campaign_prefix = 'EasyVVUQ_Campaign_'
 
 
