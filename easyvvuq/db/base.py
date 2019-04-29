@@ -42,7 +42,7 @@ class BaseCampaignDB:
 
     def runs(self):
         raise NotImplementedError
-    
+
     def runs_dir(self):
         raise NotImplementedError
 
