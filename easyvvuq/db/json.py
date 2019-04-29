@@ -76,6 +76,7 @@ class CampaignDB(BaseCampaignDB):
         if new_campaign:
 
             self._campaign_info = validate_input_dict(info, local)
+            self._campaign_info['easyvvuq_version'] = constants.version
             self._next_run = 0
 
         else:
