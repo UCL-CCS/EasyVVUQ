@@ -195,7 +195,7 @@ class CampaignDB(BaseCampaignDB):
 
     def add_sampler(self, sampler={}):
         """
-        Add passed application information to the `app` table in the database.
+        Add passed sampler information to the `sample` table in the database.
 
         Parameters
         ----------
