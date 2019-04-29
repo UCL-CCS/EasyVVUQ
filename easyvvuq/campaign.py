@@ -1,7 +1,7 @@
 import os
+import logging
 import tempfile
 import json
-import collections
 import pprint
 import easyvvuq as uq
 
@@ -28,6 +28,9 @@ __copyright__ = """
 __license__ = "LGPL"
 
 
+logger = logging.getLogger(__name__)
+
+
 class Campaign:
     """Campaign coordinates information for a series of related runs
 
@@ -47,17 +50,12 @@ class Campaign:
     ----------
     name: str
         Campaign name. Either new name or the name of a campaign to be resumed.
+    state_filename  : str
+        Path to file containing serialized state of a Campaign in JSON format.
     new_campaign: bool
         If True will start a new campaign. If false will query the database for
         a campaign with the given name. Will raise an exception if it does not
         exist.
-    state_filename  : str
-        Path to file containing serialized state of a Campaign in JSON format
-    db_src: str
-        SQLAlchemy database URI, e.g. sqlite:///mydb.sqlite, or JSON
-        serialisation of database.
-    db_type: str
-        Will we use json/sql or in future some other type of database.
     local: bool
         Is this campaign being processed locally - in which case we can check
         files and directories.
@@ -73,40 +71,28 @@ class Campaign:
 
     """
 
-    def __init__(self, name, new_campaign=False, state_filename=None,
-                 db_src=None, db_type='', local=False, **kwargs):
+    def __init__(self, name, state_filename=None, new_campaign=False,
+                 local=False, **kwargs):
 
         self._log = []
 
         self.encoder = None
         self.decoder = None
+        self.campaign_db = None
+        self.db_location = None
+        self.campaign_name = name
+        self.local = local
+        self.state_filename = None
+
+        self._current_app = None
 
         self._reserved_keys = ['completed', 'fixtures']
 
         if state_filename is not None:
-            # TODO: Update this for the new design
-            self.load_state(state_filename)
 
-        if db_type == 'sql':
-            from .db.sql import CampaignDB
-        else:
-            from .db.json import CampaignDB
+            self.setup_state(new_campaign=new_campaign, name=name)
 
-        self.db_src = db_src
-
-        if new_campaign:
-
-            # TODO: Replace placeholder here
-            info = {}
-
-            self.campaign_db = CampaignDB(location=db_src, new_campaign=True,
-                                          name=name, local=local, info=info)
-
-        else:
-
-            self.campaign_db = CampaignDB(location=db_src, name=name, local=local)
-
-    def load_state(self, state_filename):
+    def setup_state(self, state_filename, new_campaign=False, name=''):
         """Load Campaign state from file (JSON format)
 
         Parameters
@@ -119,66 +105,104 @@ class Campaign:
 
         """
 
+        self.state_filename = state_filename
+
         # Load info from input JSON file
         with open(state_filename, "r") as infile:
             input_json = json.load(infile)
 
-        # Check that it contains an "app" and a "params" block
-        if "app" not in input_json:
-            raise RuntimeError("Input does not contain an 'app' block")
+        if 'db_type' not in input_json:
+            logging.warning(f'No db_type specified in {infile} - '
+                            f'assuming this is an old style (EasyVVUQ version '
+                            f'< 0.0.3) state file.')
+            try:
+                input_json = self._convert_old_state_file(input_json)
+            except IOError as err:
+                message = f"State file {state_filename} could not be read: {err}"
+                logger.critical(message)
+                raise RuntimeError(message)
 
-        self.app_info = input_json["app"]
+            db_type = 'json'
 
-        # Check for campaign directory - if doesn't exist create one
-        self._setup_campaign_dir()
-
-        if "log" in input_json:
-            self._log = input_json["log"]
-
-        if "params" not in input_json:
-            raise RuntimeError("Input does not contain an 'params' block")
-
-        self.params_info = input_json["params"]
-
-        if "fixtures" in input_json:
-            self._fixtures = input_json["fixtures"]
-
-        # `input_encoder` used to select encoder used to transfer other `app`
-        # information and `params` into application specific input files.
-        if "input_encoder" not in input_json["app"]:
-            raise RuntimeError("State file 'app' block should contain "
-                               "'input_encoder' to allow lookup of required "
-                               "encoder")
         else:
-            input_encoder = input_json['app']['input_encoder']
-            available_encoders = uq.encoders.base.available_encoders
-            if input_encoder not in available_encoders:
-                raise RuntimeError(f"No encoder found. Looking for "
-                                   f"'input_encoder': {input_encoder}\n"
-                                   f"Available encoders are:\n"
-                                   f"{available_encoders}")
+            db_type = input_json['db_type']
 
-            encoder_class = available_encoders[input_encoder]
-            self.encoder = encoder_class(self.app_info)
+        if db_type == 'sql':
+            from .db.sql import CampaignDB
+        elif db_type == 'json':
+            from .db.json import CampaignDB
+        else:
+            message = f"Invalid 'db_type' specified in {state_filename}."
+            logger.critical(message)
+            raise RuntimeError(message)
 
-        # `output_decoder`, selects decoder used to read simulation output
-        if "output_decoder" not in input_json["app"]:
-            raise RuntimeError("State file 'app' block should contain "
-                               "'output_decoder' to allow lookup of required "
-                               "decoder")
+        db_location = input_json.get('db_location', None)
+
+        if db_location is None:
+            if db_type == 'json':
+                message = (f"No 'db_location' in {state_filename} - cannot create "
+                           f"a new campaign database.")
+                logger.critical(message)
+                raise RuntimeError(message)
+            else:
+                message = (f"No 'db_location' in {state_filename} - will try"
+                           f" default")
+                logger.warning(message)
+
+        self.db_location = db_location
+
+        if new_campaign:
+
+            info = uq.data_structs.CampaignInfo(**input_json['campaign'],
+                                                local=self.local)
+
+            self.campaign_db = CampaignDB(location=db_location,
+                                          new_campaign=True,
+                                          name=name,
+                                          local=self.local,
+                                          info=info)
+
         else:
 
-            output_decoder = input_json['app']['output_decoder']
-            available_decoders = uq.decoders.base.available_decoders
+            self.campaign_db = CampaignDB(location=db_location, name=name,
+                                          local=self.local)
 
-            if output_decoder not in available_decoders:
-                raise RuntimeError(f'No output decoder found with name: '
-                                   f'{output_decoder}\n'
-                                   f"Available decoders are:\n"
-                                   f"{available_decoders}")
+        # TODO: Relocate input encoder validation
+        # TODO: Decide whether to return to having self.encoder
+        # TODO: Relocate output decoder validation
+        # TODO: Decide whether to return to having self.decoder
 
-            decoder_class = available_decoders[output_decoder]
-            self.decoder = decoder_class(self.app_info)
+    @staticmethod
+    def _convert_old_state_file(input_state):
+
+        try:
+
+            converted = {}
+
+            app_info = input_state['app']
+            converted['campaign'] = {}
+            for field in ['campaign_dir', 'campaign_dir_prefix', 'runs_dir']:
+                converted['campaign'][field] = app_info.pop(field)
+            converted['campaign']['easyvvuq_version'] = '0.0.1'
+
+            converted['app'] = app_info
+
+            converted['runs'] = input_state.get('runs', {})
+
+            converted['sample'] = input_state.get('sample', {})
+
+        except KeyError as err:
+            message = f'Input state not valid: {err}'
+            raise IOError(message)
+
+        return converted
+
+    def add_app(self, app_info):
+
+        # validate application input
+        app = uq.data_structs.AppInfo(app_info)
+
+        self.campaign_db.add_app(app.to_dict())
 
     def _setup_campaign_dir(self):
         """
@@ -325,17 +349,9 @@ class Campaign:
     def app_info(self):
         return self._app_info
 
-    @app_info.setter
-    def app_info(self, info):
-        self._app_info = info
-
     @property
     def runs(self):
         return self._runs
-
-    @runs.setter
-    def runs(self, runs):
-        self._runs = runs
 
     @property
     def vars(self):
@@ -357,36 +373,13 @@ class Campaign:
         -------
 
         """
-        campaign = self.session.query(CampaignDB).filter_by(id=self.campaign_id_).first()
-        app = self.session.query(App).filter_by(id=campaign.app).first()
-        runs = self.session.query(Run).filter_by(campaign=campaign.id)
-        logs = self.session.query(Log).filter_by(campaign=campaign.id)
-        output_json = {
-            "app":
-            {
-                'input_encoder': app.input_encoder,
-                'encoder_delimiter': app.encoder_delimiter,
-                'output_decoder': app.output_decoder,
-                'template': app.template,
-                'input_filename': app.input_filename,
-                'campaign_dir_prefix': app.campaign_dir_prefix,
-                'campaign_dir': app.campaign_dir,
-                'runs_dir': app.runs_dir
-            },
-            "params": json.loads(campaign.params),
-            "fixtures": self.fixtures,
-            "runs": dict((run.run_name, run.config) for run in runs),
-            "log": [
-                {
-                    'name': log.name,
-                    'version': log.version,
-                    'category': log.category,
-                    'info': log.info
-                } for log in logs],
-            "data": self.data
-        }
-        with open(state_filename, "w") as outfile:
-            json.dump(output_json, outfile, indent=4)
+
+        # TODO: Make this make sense
+
+        # with open(state_filename, "w") as outfile:
+        #    json.dump(output_json, outfile, indent=4)
+
+        pass
 
     def add_run(self, new_run, prefix='Run_'):
         """Add a new run to the queue
@@ -403,6 +396,8 @@ class Campaign:
         -------
 
         """
+
+        # TODO: Update to new approach
 
         reserved_keys = self._reserved_keys
         campaign_params = self.params_info.keys()
@@ -445,12 +440,7 @@ class Campaign:
         # Add to run queue
         run_id = f"{prefix}{self.run_number}"
         self.runs[run_id] = new_run
-        self.session.add(Run(
-            run_name=run_id,
-            config=json.dumps(new_run),
-            campaign=self.campaign_row.id)
-        )
-        self.session.commit()
+
         self.runs[run_id]['completed'] = False
         self.runs[run_id]['fixtures'] = run_fixtures
         self.run_number += 1
@@ -599,16 +589,6 @@ class Campaign:
             "info": further_info
         }
         self._log.append(log_entry)
-        self.session.add(
-            Log(
-                name=element.element_name(),
-                version=element.element_version(),
-                category=element.element_category(),
-                info=json.dumps(further_info),
-                campaign=self.campaign_row.id
-            )
-        )
-        self.session.commit()
 
     def vary_param(self, param_name, dist=None):
         """
