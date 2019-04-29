@@ -102,7 +102,8 @@ class CampaignDB(BaseCampaignDB):
 
         if src is not None and not new_campaign:
 
-            self.info = self.session.query(CampaignInfo).filter_by(name=name).first()
+            self.info = self.session.query(
+                CampaignInfo).filter_by(name=name).first()
             if self.info is None:
                 raise ValueError('Campaign with the given name not found.')
 
@@ -147,16 +148,16 @@ class CampaignDB(BaseCampaignDB):
             raise RuntimeError(message)
 
         app_dict = {
-                    'name': selected.name,
-                    'input_encoder': selected.input_encoder,
-                    'encoder_options': json.loads(selected.encoder_options),
-                    'output_decoder': selected.output_decoder,
-                    'decoder_options': json.loads(selected.decoder_options),
-                    'execution': json.loads(selected.execution),
-                    'params': json.loads(selected.params),
-                    'fixtures': json.loads(selected.fixtures),
-                    'collation': json.loads(selected.collation),
-                    'variable': json.loads(selected.variable),
+            'name': selected.name,
+            'input_encoder': selected.input_encoder,
+            'encoder_options': json.loads(selected.encoder_options),
+            'output_decoder': selected.output_decoder,
+            'decoder_options': json.loads(selected.decoder_options),
+            'execution': json.loads(selected.execution),
+            'params': json.loads(selected.params),
+            'fixtures': json.loads(selected.fixtures),
+            'collation': json.loads(selected.collation),
+            'variable': json.loads(selected.variable),
         }
 
         return app_dict
@@ -178,17 +179,17 @@ class CampaignDB(BaseCampaignDB):
         # TODO: Check that no app with same name exists
 
         db_entry = App(
-                  name=app.name,
-                  input_encoder=app.input_encoder,
-                  encoder_options=json.dumps(app.encoder_options),
-                  output_decoder=app.output_decoder,
-                  decoder_options=json.dumps(app.decoder_options),
-                  execution=json.dumps(app.execution),
-                  params=json.dumps(app.params),
-                  fixtures=json.dumps(app.fixtures),
-                  collation=json.dumps(app.collation),
-                  variable=json.dumps(app.variable),
-                 )
+            name=app.name,
+            input_encoder=app.input_encoder,
+            encoder_options=json.dumps(app.encoder_options),
+            output_decoder=app.output_decoder,
+            decoder_options=json.dumps(app.decoder_options),
+            execution=json.dumps(app.execution),
+            params=json.dumps(app.params),
+            fixtures=json.dumps(app.fixtures),
+            collation=json.dumps(app.collation),
+            variable=json.dumps(app.variable),
+        )
 
         self.session.add(db_entry)
         self.session.commit()

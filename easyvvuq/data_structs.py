@@ -61,7 +61,7 @@ def check_reference(ref, run_name, ref_type='campaign'):
         logger.critical(message)
         raise RuntimeError(message)
 
-    if type(ref) != 'int':
+    if not isinstance(ref, 'int'):
         message = (f'Invalid {ref_type} id ({ref}) specified for '
                    f'run {run_name}')
         logger.critical(message)
@@ -171,16 +171,16 @@ class AppInfo:
     def to_dict(self):
 
         out_dict = {
-                    'name': self.name,
-                    'input_encoder': self.input_encoder,
-                    'encoder_options': self.encoder_options,
-                    'output_decoder': self.output_decoder,
-                    'decoder_options': self.decoder_options,
-                    'execution': self.execution,
-                    'params': self.params,
-                    'fixtures': self.fixtures,
-                    'collation': self.collation,
-                    'variable': self.variable,
+            'name': self.name,
+            'input_encoder': self.input_encoder,
+            'encoder_options': self.encoder_options,
+            'output_decoder': self.output_decoder,
+            'decoder_options': self.decoder_options,
+            'execution': self.execution,
+            'params': self.params,
+            'fixtures': self.fixtures,
+            'collation': self.collation,
+            'variable': self.variable,
         }
 
         return out_dict
@@ -219,7 +219,7 @@ class CampaignInfo:
             runs_dir = os.path.join(campaign_dir, 'runs')
 
         if local:
-                check_local_dir(runs_dir, 'runs')
+            check_local_dir(runs_dir, 'runs')
 
         self.runs_dir = runs_dir
 
@@ -235,10 +235,10 @@ class CampaignInfo:
     def to_dict(self):
 
         out_dict = {
-                   'campaign_dir': self.campaign_dir,
-                   'campaign_dir_prefix': self.campaign_dir_prefix,
-                   'runs_dir': self.runs_dir,
-                   'easyvvuq_version': self.easyvvuq_version,
+            'campaign_dir': self.campaign_dir,
+            'campaign_dir_prefix': self.campaign_dir_prefix,
+            'runs_dir': self.runs_dir,
+            'easyvvuq_version': self.easyvvuq_version,
         }
 
         return out_dict

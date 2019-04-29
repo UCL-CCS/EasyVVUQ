@@ -167,8 +167,9 @@ class CampaignDB(BaseCampaignDB):
 
         if campaign_name is not None:
             # TODO: Should this raise and Exception?
-            message = (f'JSON/Python dictionary database can only support one '
-                       f'application - ignoring selected name ({campaign_name}).')
+            message = (
+                f'JSON/Python dictionary database can only support one '
+                f'application - ignoring selected name ({campaign_name}).')
             logger.warning(message)
 
         return self._campaign_info['campaign_dir']
@@ -197,8 +198,9 @@ class CampaignDB(BaseCampaignDB):
 
         if campaign_name is not None:
             # TODO: Should this raise and Exception?
-            message = (f'JSON/Python dictionary database can only support one '
-                       f'application - ignoring selected name ({campaign_name}).')
+            message = (
+                f'JSON/Python dictionary database can only support one '
+                f'application - ignoring selected name ({campaign_name}).')
             logger.warning(message)
 
         return self._campaign_info['runs_dir']
@@ -238,10 +240,3 @@ class CampaignDB(BaseCampaignDB):
             raise RuntimeError(message)
 
         self._sample = sampler
-
-
-
-
-
-
-
