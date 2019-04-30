@@ -96,7 +96,7 @@ class RunInfo:
 
         out_dict = {
             'run_name': self.run_name,
-            'config': self.config,
+            'params': self.params,
             'status': self.status,
             'campaign': self.campaign,
             'sample': self.sample,
@@ -109,7 +109,7 @@ class RunInfo:
 
         db_dict = {
             'run_name': self.run_name,
-            'config': json.dumps(self.config),
+            'params': json.dumps(self.params),
             'status': self.status,
             'campaign': self.campaign,
             'sample': self.sample,
