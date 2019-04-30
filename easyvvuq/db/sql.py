@@ -112,11 +112,14 @@ class CampaignDB(BaseCampaignDB):
             Base.metadata.create_all(self.engine)
             self.session.add(info)
             self.session.commit()
+            self._next_run = 1
         else:
             info = self.session.query(
                 CampaignInfo).filter_by(name=name).first()
             if info is None:
                 raise ValueError('Campaign with the given name not found.')
+
+            self._next_run = self.session.query(Run).count() + 1
 
     def app(self, name=None):
         """
@@ -136,6 +139,8 @@ class CampaignDB(BaseCampaignDB):
         """
 
         if name is None:
+            logging.warning('No app name provided so using first app '
+                            'in database')
             selected = self.session.query(App).first()
         else:
             selected = self.session.query(App).filter_by(name=name).first()
