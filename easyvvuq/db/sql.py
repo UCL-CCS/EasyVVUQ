@@ -291,3 +291,38 @@ class CampaignDB(BaseCampaignDB):
 
         return run_info
 
+    def campaigns(self):
+
+        return [c.name for c in self.session.query(CampaignInfo).all()]
+
+    def _get_campaign_info(self, campaign_name=None):
+
+        query = self.session.query(CampaignInfo)
+
+        if campaign_name is None:
+
+            campaign_info = query
+
+        else:
+
+            campaign_info = query.filter_by(name=campaign_name).all()
+
+        if campaign_info.count() > 1:
+            logger.warning('More than one campaign selected - using last one.')
+        elif campaign_info.count() == 0:
+            message = 'No campaign available.'
+            logger.critical(message)
+            raise RuntimeError(message)
+
+        return campaign_info.last()
+
+    def campaign_dir(self, campaign_name=None):
+
+        self._get_campaign_info(campaign_name=campaign_name).campaign_dir
+
+    def runs(self):
+        raise NotImplementedError
+
+    def runs_dir(self, campaign_name=None):
+
+        self._get_campaign_info(campaign_name=campaign_name).runs_dir
