@@ -71,7 +71,7 @@ class Run(Base):
     run_name = Column(String)
     app = Column(Integer, ForeignKey('app.id'))
     # Parameter values for this run
-    config = Column(String)
+    params = Column(String)
     # TODO: Consider making status an ENUM to enforce relevant EasyVVUQ values
     status = Column(String)
     campaign = Column(Integer, ForeignKey('campaign_info.id'))
