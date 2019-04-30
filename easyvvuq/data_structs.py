@@ -70,7 +70,7 @@ def check_reference(ref, run_name, ref_type='campaign'):
 
 class RunInfo:
 
-    def __init__(self, run_name='', app=None, config={}, sample=None,
+    def __init__(self, run_name='', app=None, params={}, sample=None,
                  campaign=None):
 
         # TODO: Handle fixtures
@@ -83,12 +83,12 @@ class RunInfo:
         self.sample = sample
         self.run_name = run_name
 
-        if not config:
+        if not params:
             message = f'No run configuration specified for run {run_name}'
             logger.critical(message)
             raise RuntimeError(message)
 
-        self.config = config
+        self.params = params
 
         self.status = 'created'
 
