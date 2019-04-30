@@ -166,6 +166,18 @@ class CampaignDB(BaseCampaignDB):
         return app_dict
 
     def add_app(self, app_info):
+        """
+        Add application to the 'app' table.
+
+        Parameters
+        ----------
+        app_info: dict
+            Application definition.
+
+        Returns
+        -------
+
+        """
 
         # TODO: Check that no app with same name exists
 

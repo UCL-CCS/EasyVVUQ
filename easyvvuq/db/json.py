@@ -168,6 +168,18 @@ class CampaignDB(BaseCampaignDB):
         return self._campaign_info['runs_dir']
 
     def add_app(self, app_info):
+        """
+        Add application to the 'app' table.
+
+        Parameters
+        ----------
+        app_info: dict
+            Application definition.
+
+        Returns
+        -------
+
+        """
 
         if self._app:
             message = ('JSON/Python dict database does not support '
@@ -176,6 +188,7 @@ class CampaignDB(BaseCampaignDB):
             raise RuntimeError(message)
 
         self._app = app_info
+        self._save()
 
     def add_run(self, run_info={}, prefix='Run_'):
         """
