@@ -243,6 +243,20 @@ class CampaignDB(BaseCampaignDB):
         self.session.commit()
         self._next_run += 1
 
+    @staticmethod
+    def _run_to_dict(run_row):
+
+        run_info = {
+            'run_name': run_row.run_name,
+            'params': json.loads(run_row.params),
+            'status': run_row.status,
+            'sample': run_row.sample,
+            'campaign': run_row.campaign,
+            'app': run_row.app,
+        }
+
+        return run_info
+
     def run(self, run_name, campaign=None, sampler=None):
         """
         Get the information for a specified run.
@@ -280,16 +294,7 @@ class CampaignDB(BaseCampaignDB):
             logging.warning('Multiple runs selected - using the last')
             selected = selected.last()
 
-        run_info = {
-            'run_name': selected.run_name,
-            'params': json.loads(selected.params),
-            'status': selected.status,
-            'sample': selected.sample,
-            'campaign': selected.campaign,
-            'app': selected.app,
-        }
-
-        return run_info
+        return self._run_to_dict(selected)
 
     def campaigns(self):
 
@@ -320,8 +325,22 @@ class CampaignDB(BaseCampaignDB):
 
         self._get_campaign_info(campaign_name=campaign_name).campaign_dir
 
-    def runs(self):
-        raise NotImplementedError
+    def runs(self, campaign=None, sampler=None):
+
+        # TODO: This is a bad idea - find a better generator solution
+
+        if campaign is None and sampler is None:
+            selected = self.session.query(Run).all()
+        elif campaign is not None and sampler is not None:
+            selected = self.session.query(Run).filter_by(campaign=campaign,
+                                                         sample=sampler).all()
+        elif campaign is not None:
+            selected = self.session.query(Run)
+            selected = selected.filter_by(campaign=campaign).all()
+        else:
+            selected = self.session.query(Run).filter_by(sample=sampler).all()
+
+        return {r.run_name: self._run_to_dict(r) for r in selected}
 
     def runs_dir(self, campaign_name=None):
 
