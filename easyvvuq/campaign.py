@@ -72,7 +72,7 @@ class Campaign:
     """
 
     def __init__(self, name, state_filename=None, new_campaign=False,
-                 local=False, **kwargs):
+                 local=False, work_dir='.', **kwargs):
 
         self._log = []
 
@@ -84,6 +84,7 @@ class Campaign:
         self.campaign_name = name
         self.local = local
         self.state_filename = None
+        self.work_dir = '.'
 
         self._current_app = None
 
@@ -182,7 +183,7 @@ class Campaign:
         # TODO: Decide whether to return to having self.decoder
 
     @staticmethod
-    def _convert_old_state_file(input_state):
+    def _convert_old_state_file(input_state, default_prefix='EasyVVUQ_Campaign_'):
         """
         Old state files combined function as a database and workflow restart
         file. Here we refactor the information read from an old state file
@@ -203,8 +204,11 @@ class Campaign:
 
             app_info = input_state['app']
             converted['campaign'] = {}
+
             for field in ['campaign_dir', 'campaign_dir_prefix', 'runs_dir']:
-                converted['campaign'][field] = app_info.pop(field)
+                if field in app_info:
+                    converted['campaign'][field] = app_info.pop(field)
+
             converted['campaign']['easyvvuq_version'] = '0.0.1'
 
             converted['app'] = app_info
@@ -256,15 +260,15 @@ class Campaign:
 
         """
 
-        app_info = self.app_info
+        campaign_info = self.campaign_db.campaign()
 
         # TODO: Decide if runs should be here
         sub_dirs = ['data', 'analysis', 'common']
 
         # Build a temp directory to store run files (unless it already exists)
-        if 'campaign_dir' in app_info:
+        if 'campaign_dir' in campaign_info:
 
-            campaign_dir = app_info['campaign_dir']
+            campaign_dir = campaign_info['campaign_dir']
             if not os.path.exists(campaign_dir):
                 print(f"Notice: Campaign directory not found "
                       f"- creating {campaign_dir}")
@@ -277,8 +281,8 @@ class Campaign:
         else:
             # Check if app_info already contains a prefix to use for the
             # campaign directory. If not, use the default one.
-            if 'campaign_dir_prefix' not in self.app_info:
-                self.app_info['campaign_dir_prefix'] = self.default_campaign_dir_prefix
+            if 'campaign_dir_prefix' not in self.campaign_info:
+                self.campaign_info['campaign_dir_prefix'] = self.default_campaign_dir_prefix
 
             # Create temp dir for campaign
             campaign_dir = tempfile.mkdtemp(
@@ -299,18 +303,6 @@ class Campaign:
     @property
     def log(self):
         return self._log
-
-    @property
-    def data(self):
-        return self._data
-
-    @data.setter
-    def data(self, new_data):
-        self._data = new_data
-
-    @property
-    def fixtures(self):
-        return self._fixtures
 
     @property
     def campaign_dir(self):
