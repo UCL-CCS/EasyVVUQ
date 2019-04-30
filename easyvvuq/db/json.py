@@ -178,6 +178,22 @@ class CampaignDB(BaseCampaignDB):
         self._app = app_info
 
     def add_run(self, run_info={}, prefix='Run_'):
+        """
+        Add a run to the 'runs' dictionary.
+
+        Parameters
+        ----------
+        run_info: dict
+            Contains relevant run fields: params, status (where in the
+            EasyVVUQ workflow is this run), campaign (id number),
+            sample, app
+        prefix: str
+            Prefix for run id
+
+        Returns
+        -------
+
+        """
 
         name = f"{prefix}{self._next_run}"
 

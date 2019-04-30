@@ -210,13 +210,18 @@ class CampaignDB(BaseCampaignDB):
 
         Parameters
         ----------
-        run_info  :  dict
-            Information on the run to be added
+        run_info: dict
+            Contains relevant run fields: params, status (where in the
+            EasyVVUQ workflow is this run), campaign (id number),
+            sample, app
+        prefix: str
+            Prefix for run id
 
         Returns
         -------
 
         """
+
         name = f"{prefix}{self._next_run}"
 
         run_info = run_info['name'] = name
