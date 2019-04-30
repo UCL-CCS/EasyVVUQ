@@ -217,5 +217,11 @@ class CampaignDB(BaseCampaignDB):
         -------
 
         """
+        name = f"{prefix}{self._next_run}"
 
-        pass
+        run_info = run_info['name'] = name
+
+        run = Run(run_info)
+        self.session.add(run)
+        self.session.commit()
+        self._next_run += 1

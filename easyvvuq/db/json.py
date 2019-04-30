@@ -181,8 +181,6 @@ class CampaignDB(BaseCampaignDB):
 
         name = f"{prefix}{self._next_run}"
 
-        # TODO: Handle fixtures
-
         run_info = run_info['name'] = name
 
         self._runs[name] = run_info
