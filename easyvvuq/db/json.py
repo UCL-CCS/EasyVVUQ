@@ -81,8 +81,6 @@ class CampaignDB(BaseCampaignDB):
         self._runs = input_info.get('runs', {})
         self._sample = input_info.get('sample', {})
 
-        return
-
     def _save(self):
 
         out_dict = {
@@ -149,7 +147,7 @@ class CampaignDB(BaseCampaignDB):
     def run(self, run_name, campaign=None, sampler=None):
         """
         Get the information for a specified run.
-        
+
         Parameters
         ----------
         run_name: str
