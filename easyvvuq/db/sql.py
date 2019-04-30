@@ -145,7 +145,7 @@ class CampaignDB(BaseCampaignDB):
         else:
             selected = self.session.query(App).filter_by(name=name).first()
 
-        if not selected:
+        if not selected.count() == 0:
             message = f'No entry for app: ({name}).'
             logger.critical(message)
             raise RuntimeError(message)
@@ -236,9 +236,57 @@ class CampaignDB(BaseCampaignDB):
 
         name = f"{prefix}{self._next_run}"
 
-        run_info = run_info['name'] = name
+        run_info = run_info['run_name'] = name
 
         run = Run(run_info)
         self.session.add(run)
         self.session.commit()
         self._next_run += 1
+
+    def run(self, run_name, campaign=None, sampler=None):
+        """
+
+        Parameters
+        ----------
+        run_name: str
+            Name of run to filter for.
+        campaign:  int
+            Campaign id to filter for.
+        sampler:
+            Sample id to filter for.
+
+        Returns
+        -------
+        dict
+            Containing run information (run_name, params, status, sample,
+            campaign, app)
+        """
+
+        if campaign is None and sampler is None:
+            selected = self.session.query(Run).filter_by(run_name=run_name)
+        elif campaign is not None and sampler is not None:
+            selected = self.session.query(Run).filter_by(run_name=run_name,
+                                                         campaign=campaign,
+                                                         sample=sampler)
+        elif campaign is not None:
+            selected = self.session.query(Run).filter_by(run_name=run_name,
+                                                         campaign=campaign)
+        else:
+            selected = self.session.query(Run).filter_by(run_name=run_name,
+                                                         sample=sampler)
+
+        if selected.count() != 1:
+            logging.warning('Multiple runs selected - using the last')
+            selected = selected.last()
+
+        run_info = {
+            'run_name': selected.run_name,
+            'params': json.loads(selected.params),
+            'status': selected.status,
+            'sample': selected.sample,
+            'campaign': selected.campaign,
+            'app': selected.app,
+        }
+
+        return run_info
+

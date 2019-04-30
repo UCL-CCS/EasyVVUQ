@@ -210,7 +210,7 @@ class CampaignDB(BaseCampaignDB):
 
         name = f"{prefix}{self._next_run}"
 
-        run_info = run_info['name'] = name
+        run_info = run_info['run_name'] = name
 
         self._runs[name] = run_info
 
