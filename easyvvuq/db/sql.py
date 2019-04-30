@@ -245,6 +245,7 @@ class CampaignDB(BaseCampaignDB):
 
     def run(self, run_name, campaign=None, sampler=None):
         """
+        Get the information for a specified run.
 
         Parameters
         ----------

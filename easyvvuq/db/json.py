@@ -147,6 +147,24 @@ class CampaignDB(BaseCampaignDB):
         return self._runs
 
     def run(self, run_name, campaign=None, sampler=None):
+        """
+        Get the information for a specified run.
+        
+        Parameters
+        ----------
+        run_name: str
+            Name of run to filter for.
+        campaign:  int
+            Campaign id to filter for.
+        sampler:
+            Sample id to filter for.
+
+        Returns
+        -------
+        dict
+            Containing run information (run_name, params, status, sample,
+            campaign, app)
+        """
 
         if campaign is not None or sampler is not None:
             message = (f'JSON/Python dictionary database only supports '
