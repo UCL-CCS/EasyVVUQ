@@ -265,9 +265,9 @@ class CampaignDB(BaseCampaignDB):
         ----------
         run_name: str
             Name of run to filter for.
-        campaign:  int
+        campaign:  int or None
             Campaign id to filter for.
-        sampler:
+        sampler: int or None
             Sample id to filter for.
 
         Returns
