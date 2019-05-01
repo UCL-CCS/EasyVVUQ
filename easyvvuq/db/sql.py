@@ -88,7 +88,7 @@ class Sample(Base):
 
 class CampaignDB(BaseCampaignDB):
 
-    def __init__(self, location=None, new_campaign=False, name='default',
+    def __init__(self, location=None, new_campaign=False, name=None,
                  info=None):
 
         if location is not None:
@@ -105,8 +105,8 @@ class CampaignDB(BaseCampaignDB):
                 raise RuntimeError('No information provided to create'
                                    'database')
             if info.name != name:
-                message = ('Information for campaign {info.name} given '
-                           'for campaign database {name.}')
+                message = (f'Information for campaign {info.name} given '
+                           f'for campaign database {name}')
                 logging.critical(message)
                 raise RuntimeError(message)
             Base.metadata.create_all(self.engine)
