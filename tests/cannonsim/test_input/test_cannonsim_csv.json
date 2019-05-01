@@ -1,3 +1,4 @@
 {
-  "db_type": "lolm8"
+  "db_type": "json",
+  "db_location": "./blah.json"
 }

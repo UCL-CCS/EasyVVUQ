@@ -44,6 +44,7 @@ def test_cannonsim_csv(tmpdir):
     assert(os.path.exists(input_json))
 
     my_campaign = uq.Campaign(
+        new_campaign=True,
         name='test_campaign',
         state_filename=input_json,
         workdir=tmpdir
