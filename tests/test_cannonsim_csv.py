@@ -37,18 +37,34 @@ if not os.path.exists("tests/cannonsim/bin/cannonsim"):
 def test_cannonsim_csv(tmpdir):
 
     # Params for testing
-    input_json = "tests/cannonsim/test_input/test_cannonsim_csv.json"
     output_json = os.path.join(tmpdir, "out_cannonsim.json")
     number_of_samples = 15
 
-    assert(os.path.exists(input_json))
+    my_campaign = uq.Campaign(name='cannon', db_type="sql", db_location="sqlite:///cannonsim.db", workdir=tmpdir)
 
-    my_campaign = uq.Campaign(
-        new_campaign=True,
-        name='test_campaign',
-        state_filename=input_json,
-        workdir=tmpdir
-    )
+    # Define parameter space for the cannonsim app
+    params = {
+        "angle":            {"type": "real", "min": "0.0",    "max": "6.28",   "default": "0.79"},
+        "air_resistance":   {"type": "real", "min": "0.0",    "max": "1.0",    "default": "0.2" },
+        "height":           {"type": "real", "min": "0.0",    "max": "1000.0", "default": "1.0" },
+        "time_step":        {"type": "real", "min": "0.0001", "max": "1.0",    "default": "0.01"},
+        "gravity":          {"type": "real", "min": "0.0",    "max": "1000.0", "default": "9.8" },
+        "mass":             {"type": "real", "min": "0.0001", "max": "1000.0", "default": "1.0" },
+        "velocity":         {"type": "real", "min": "0.0",    "max": "1000.0", "default": "10.0"}
+    }
+
+    # Add the cannonsim app
+    my_campaign.add_app({
+                        "name": "cannonsim", # TODO Tell campaign to "use_app('appname')" to declutter this input line
+                        "input_encoder":"generic_template", "encoder_options":{"delimiter":'#'}, # TODO Pass the encoder object directly and have it serialize itself rather than the user needing to do it here
+                        "output_decoder":"csv", # TODO Pass decoder object directly and have campaign serialize it to store it
+                        "params": params # TODO Allow params to be added to app programmatically
+                        })
+
+    # Set the active app to be cannonsim
+    my_campaign.set_app("cannonsim")
+    
+    sys.exit(0)
 
     assert(my_campaign is not None)
     assert("angle" in my_campaign.params_info)
