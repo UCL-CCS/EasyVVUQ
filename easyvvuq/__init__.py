@@ -5,6 +5,7 @@ assert sys.version_info >= (3, 6), (f"Python version must be >= 3.6,"
 
 import json
 from .constants import OutputType
+from . import data_structs
 from .campaign import Campaign
 from . import actions
 from . import elements
