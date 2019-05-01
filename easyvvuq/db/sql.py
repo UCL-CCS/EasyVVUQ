@@ -292,7 +292,8 @@ class CampaignDB(BaseCampaignDB):
 
         if selected.count() != 1:
             logging.warning('Multiple runs selected - using the last')
-            selected = selected.last()
+
+        selected = selected.last()
 
         return self._run_to_dict(selected)
 
