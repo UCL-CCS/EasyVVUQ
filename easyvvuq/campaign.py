@@ -70,8 +70,6 @@ class Campaign:
 
         self._log = []
 
-        self.encoder = None
-        self.decoder = None
         self.campaign_db = None
         self.db_location = None
         self.db_type = None
