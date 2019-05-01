@@ -141,7 +141,7 @@ class Campaign:
         elif db_type == 'json':
             from .db.json import CampaignDB
         else:
-            message = f"Invalid 'db_type' specified in {state_filename}."
+            message = f"Invalid 'db_type' {db_type} specified in {state_filename}. Supported types are 'sql' or 'json'."
             logger.critical(message)
             raise RuntimeError(message)
 
