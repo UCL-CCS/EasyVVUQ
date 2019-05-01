@@ -78,14 +78,12 @@ class Campaign:
         self.state_filename = None
         self.work_dir = '.'
 
-        self._current_app = None
+        self._active_app = None
 
         self._reserved_keys = ['completed', 'fixtures']
 
         if state_filename is not None:
-
-            self.setup_state(state_filename, new_campaign=new_campaign,
-                             name=name)
+            self.setup_state(state_filename, new_campaign=new_campaign, name=name)
 
     def setup_state(self, state_filename, new_campaign=False, name=''):
         """Load Campaign state from file (JSON format)
@@ -240,6 +238,22 @@ class Campaign:
         app = uq.data_structs.AppInfo(**app_info)
 
         self.campaign_db.add_app(app.to_dict())
+
+    def set_app(self, app_name):
+        """
+        Set the app to be in active use by this campaign. Gets the app info from
+        the database.
+
+        Parameters
+        ----------
+        app_name: str or None
+            Name of selected app, if `None` given then first app will be
+            selected.
+        Returns
+        -------
+
+        """
+        self._active_app = self.campaign_db.app(name=app_name)
 
     def _setup_campaign_dir(self):
         """
