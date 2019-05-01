@@ -30,8 +30,13 @@ __license__ = "LGPL"
 
 logger = logging.getLogger(__name__)
 
-
 class Campaign:
+
+    def __init__(name=None, db_type="sql", db_location="sqlite:///test.db", workdir=tmpdir):
+        #TODO Make this create a suitable empty campaign with db etc
+
+
+class CampaignOld:
     """Campaign coordinates information for a series of related runs
 
     Sampling Primitives need to be applied to the object to specify the runs to
@@ -159,13 +164,11 @@ class Campaign:
             self.campaign_db = CampaignDB(location=db_location,
                                           new_campaign=True,
                                           name=name,
-                                          local=self.local,
                                           info=info)
 
         else:
 
-            self.campaign_db = CampaignDB(location=db_location, name=name,
-                                          local=self.local)
+            self.campaign_db = CampaignDB(location=db_location, name=name)
 
         # TODO: Relocate input encoder validation
         # TODO: Decide whether to return to having self.encoder
