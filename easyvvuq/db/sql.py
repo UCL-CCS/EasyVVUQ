@@ -139,6 +139,7 @@ class CampaignDB(BaseCampaignDB):
             Application information.
         """
 
+        # TODO: Find efficient way for this
         if name is None:
             logging.warning('No app name provided so using first app '
                             'in database')
@@ -147,7 +148,6 @@ class CampaignDB(BaseCampaignDB):
             selected = self.session.query(AppTable).filter_by(name=name).all()
 
         if len(selected) == 0:
-        #if not selected.count() == 0:
             message = f'No entry for app: ({name}).'
             logger.critical(message)
             raise RuntimeError(message)
@@ -156,18 +156,19 @@ class CampaignDB(BaseCampaignDB):
             logger.critical(message)
             raise RuntimeError(message)
 
+        selected_app = selected[0]
 
         app_dict = {
-            'name': selected.name,
-            'input_encoder': selected.input_encoder,
-            'encoder_options': json.loads(selected.encoder_options),
-            'output_decoder': selected.output_decoder,
-            'decoder_options': json.loads(selected.decoder_options),
-            'execution': json.loads(selected.execution),
-            'params': json.loads(selected.params),
-            'fixtures': json.loads(selected.fixtures),
-            'collation': json.loads(selected.collation),
-            'variable': json.loads(selected.variable),
+            'name': selected_app.name,
+            'input_encoder': selected_app.input_encoder,
+            'encoder_options': json.loads(selected_app.encoder_options),
+            'output_decoder': selected_app.output_decoder,
+            'decoder_options': json.loads(selected_app.decoder_options),
+            'execution': json.loads(selected_app.execution),
+            'params': json.loads(selected_app.params),
+            'fixtures': json.loads(selected_app.fixtures),
+            'collation': json.loads(selected_app.collation),
+            'variable': json.loads(selected_app.variable),
         }
 
         return app_dict

@@ -1,6 +1,7 @@
 import easyvvuq as uq
 import chaospy as cp
 import os
+import sys
 import pytest
 
 __copyright__ = """
