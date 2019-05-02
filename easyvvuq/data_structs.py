@@ -2,7 +2,7 @@ import os
 import logging
 import json
 import easyvvuq as uq
-from .constants import version
+from easyvvuq.constants import __easyvvuq_version__, default_campaign_prefix
 
 logger = logging.getLogger(__name__)
 
@@ -199,9 +199,15 @@ class AppInfo:
 
 class CampaignInfo:
 
-    def __init__(self, name='default', easyvvuq_version=version,
-                 campaign_dir_prefix='EasyVVUQ_Campaign_', campaign_dir='.',
+    def __init__(self, name=None, easyvvuq_version=__easyvvuq_version__,
+                 campaign_dir_prefix=default_campaign_prefix, campaign_dir=None,
                  runs_dir=None, local=False):
+
+        if name is None:
+            sys.exit("CampaignInfo constructor must be passed a 'name'.")
+
+        if campaign_dir is None:
+            sys.exit("CampaignInfo constructor must be passed 'campaign_dir'")
 
         self.name = name
         self.campaign_dir_prefix = campaign_dir_prefix

@@ -37,10 +37,9 @@ if not os.path.exists("tests/cannonsim/bin/cannonsim"):
 def test_cannonsim_csv(tmpdir):
 
     # Params for testing
-    output_json = os.path.join(tmpdir, "out_cannonsim.json")
     number_of_samples = 15
 
-    my_campaign = uq.Campaign(name='cannon', db_type="sql", db_location="sqlite:///cannonsim.db", workdir=tmpdir)
+    my_campaign = uq.Campaign(name='cannon', campaign_dir=tmpdir)
 
     # Define parameter space for the cannonsim app
     params = {

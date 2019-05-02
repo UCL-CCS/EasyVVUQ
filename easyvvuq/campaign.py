@@ -32,8 +32,40 @@ logger = logging.getLogger(__name__)
 
 class Campaign:
 
-    def __init__(name=None, db_type="sql", db_location="sqlite:///test.db", workdir=tmpdir):
-        #TODO Make this create a suitable empty campaign with db etc
+    def __init__(self, name=None, db_type="sql", db_location="sqlite:///test.db", campaign_dir="./", state_file=None):
+
+        self._log = []
+
+        self._active_app = None
+
+
+        # Load campaign from state_file, if provided. Else make a fresh new
+        # campaign with a new campaign database
+        if state_file is not None:
+            self.init_from_state_file(state_file)
+        else:
+            self.init_fresh(name, db_type, db_location, campaign_dir)
+
+
+    def init_fresh(self, name, db_type, db_location, campaign_dir):
+
+        if db_type == 'sql':
+            from .db.sql import CampaignDB
+        elif db_type == 'json':
+            from .db.json import CampaignDB
+        else:
+            message = f"Invalid 'db_type' {db_type} specified in {state_filename}. Supported types are 'sql' or 'json'."
+            logger.critical(message)
+            raise RuntimeError(message)
+
+        info = uq.data_structs.CampaignInfo(name=name, campaign_dir=campaign_dir)
+        self.campaign_db = CampaignDB(location=db_location, new_campaign=True, name=name, info=info)
+
+
+    def init_from_state_file(self, state_file):
+        #TODO Implement loading from state file
+        print(f"Loading campaign from state file '{state_file}'")
+        raise NotImplementedError
 
 
 class CampaignOld:
