@@ -4,6 +4,7 @@ import tempfile
 import json
 import pprint
 import easyvvuq as uq
+from easyvvuq.constants import __easyvvuq_version__, default_campaign_prefix
 
 __copyright__ = """
 
@@ -32,7 +33,7 @@ logger = logging.getLogger(__name__)
 
 class Campaign:
 
-    def __init__(self, name=None, db_type="sql", db_location=None, campaign_dir="./", state_file=None):
+    def __init__(self, name=None, db_type="sql", db_location=None, workdir="./", state_file=None):
 
         self._log = []
 
@@ -44,10 +45,13 @@ class Campaign:
         if state_file is not None:
             self.init_from_state_file(state_file)
         else:
-            self.init_fresh(name, db_type, db_location, campaign_dir)
+            self.init_fresh(name, db_type, db_location, workdir)
 
 
-    def init_fresh(self, name, db_type, db_location, campaign_dir):
+    def init_fresh(self, name, db_type, db_location, workdir):
+
+        # Create temp dir for campaign
+        campaign_dir = tempfile.mkdtemp(prefix=default_campaign_prefix, dir=workdir)
 
         if db_type == 'sql':
             from .db.sql import CampaignDB
@@ -60,7 +64,7 @@ class Campaign:
             logger.critical(message)
             raise RuntimeError(message)
 
-        info = uq.data_structs.CampaignInfo(name=name, campaign_dir=campaign_dir)
+        info = uq.data_structs.CampaignInfo(name=name, campaign_dir_prefix=default_campaign_prefix, easyvvuq_version=__easyvvuq_version__, campaign_dir=campaign_dir)
         self.campaign_db = CampaignDB(location=db_location, new_campaign=True, name=name, info=info)
 
 

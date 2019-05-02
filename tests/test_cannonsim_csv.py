@@ -39,7 +39,7 @@ def test_cannonsim_csv(tmpdir):
     # Params for testing
     number_of_samples = 15
 
-    my_campaign = uq.Campaign(name='cannon', campaign_dir=tmpdir)
+    my_campaign = uq.Campaign(name='cannon', workdir=tmpdir)
 
     # Define parameter space for the cannonsim app
     params = {

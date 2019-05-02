@@ -2,7 +2,7 @@ import os
 import logging
 import json
 import easyvvuq as uq
-from easyvvuq.constants import __easyvvuq_version__, default_campaign_prefix
+from easyvvuq.constants import __easyvvuq_version__
 
 logger = logging.getLogger(__name__)
 
@@ -199,8 +199,8 @@ class AppInfo:
 
 class CampaignInfo:
 
-    def __init__(self, name=None, easyvvuq_version=__easyvvuq_version__,
-                 campaign_dir_prefix=default_campaign_prefix, campaign_dir=None,
+    def __init__(self, name=None, easyvvuq_version=None,
+                 campaign_dir_prefix=None, campaign_dir=None,
                  runs_dir=None, local=False):
 
         if name is None:
