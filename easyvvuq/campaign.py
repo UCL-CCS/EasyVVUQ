@@ -32,7 +32,7 @@ logger = logging.getLogger(__name__)
 
 class Campaign:
 
-    def __init__(self, name=None, db_type="sql", db_location="sqlite:///test.db", campaign_dir="./", state_file=None):
+    def __init__(self, name=None, db_type="sql", db_location=None, campaign_dir="./", state_file=None):
 
         self._log = []
 
@@ -51,6 +51,8 @@ class Campaign:
 
         if db_type == 'sql':
             from .db.sql import CampaignDB
+            if db_location == None:
+                db_location = "sqlite:///" + campaign_dir + "test.db"
         elif db_type == 'json':
             from .db.json import CampaignDB
         else:
@@ -66,6 +68,49 @@ class Campaign:
         #TODO Implement loading from state file
         print(f"Loading campaign from state file '{state_file}'")
         raise NotImplementedError
+
+    def add_app(self, app_info):
+        """
+        Add information on a new application to the campaign database.
+
+        Parameters
+        ----------
+        app_info: dict
+            Contains the information needed to describe and wrap an
+            application: name, input_encoder, output_decoder,
+            encoder_options, decoder_options, execution, params (all
+            parameters that can be passed via encoder to the application),
+            fixtures, collation and variable (which parameters can be varied
+            in this workflow).
+
+        Returns
+        -------
+
+        """
+
+        # TODO: Need to look at parameters
+
+        # validate application input
+        app = uq.data_structs.AppInfo(**app_info)
+
+        self.campaign_db.add_app(app)
+
+    def set_app(self, app_name):
+        """
+        Set the app to be in active use by this campaign. Gets the app info from
+        the database.
+
+        Parameters
+        ----------
+        app_name: str or None
+            Name of selected app, if `None` given then first app will be
+            selected.
+        Returns
+        -------
+
+        """
+        self._active_app = self.campaign_db.app(name=app_name)
+
 
 
 class CampaignOld:

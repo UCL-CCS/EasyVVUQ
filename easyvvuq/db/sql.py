@@ -142,14 +142,20 @@ class CampaignDB(BaseCampaignDB):
         if name is None:
             logging.warning('No app name provided so using first app '
                             'in database')
-            selected = self.session.query(App).first()
+            selected = self.session.query(AppTable).all()
         else:
-            selected = self.session.query(App).filter_by(name=name).first()
+            selected = self.session.query(AppTable).filter_by(name=name).all()
 
-        if not selected.count() == 0:
+        if len(selected) == 0:
+        #if not selected.count() == 0:
             message = f'No entry for app: ({name}).'
             logger.critical(message)
             raise RuntimeError(message)
+        if len(selected) > 1:
+            message = f'Too many apps called: ({name}).'
+            logger.critical(message)
+            raise RuntimeError(message)
+
 
         app_dict = {
             'name': selected.name,
@@ -172,7 +178,7 @@ class CampaignDB(BaseCampaignDB):
 
         Parameters
         ----------
-        app_info: dict
+        app_info: AppInfo
             Application definition.
 
         Returns
@@ -182,18 +188,9 @@ class CampaignDB(BaseCampaignDB):
 
         # TODO: Check that no app with same name exists
 
-        db_entry = App(
-            name=app_info.name,
-            input_encoder=app_info.input_encoder,
-            encoder_options=json.dumps(app_info.encoder_options),
-            output_decoder=app_info.output_decoder,
-            decoder_options=json.dumps(app_info.decoder_options),
-            execution=json.dumps(app_info.execution),
-            params=json.dumps(app_info.params),
-            fixtures=json.dumps(app_info.fixtures),
-            collation=json.dumps(app_info.collation),
-            variable=json.dumps(app_info.variable),
-        )
+        app_dict = app_info.dict_for_db()
+
+        db_entry = AppTable(**app_dict)
 
         self.session.add(db_entry)
         self.session.commit()

@@ -191,7 +191,7 @@ class AppInfo:
 
         for field in ['params', 'fixtures',
                       'execution', 'collation',
-                      'encoder_options', 'decoder_options']:
+                      'encoder_options', 'decoder_options', 'variable']:
             db_dict[field] = json.dumps(db_dict[field])
 
         return db_dict
