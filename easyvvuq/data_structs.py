@@ -212,7 +212,7 @@ class CampaignInfo:
         self.name = name
         self.campaign_dir_prefix = campaign_dir_prefix
 
-        self.easyvvuq_version = easyvvuq_version,
+        self.easyvvuq_version = easyvvuq_version
 
         # TODO: think about right location for path check for remote runs
         if local:
@@ -241,6 +241,7 @@ class CampaignInfo:
     def to_dict(self):
 
         out_dict = {
+            'name': self.name,
             'campaign_dir': self.campaign_dir,
             'campaign_dir_prefix': self.campaign_dir_prefix,
             'runs_dir': self.runs_dir,

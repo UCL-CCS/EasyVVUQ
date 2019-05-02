@@ -110,7 +110,8 @@ class CampaignDB(BaseCampaignDB):
                 logging.critical(message)
                 raise RuntimeError(message)
             Base.metadata.create_all(self.engine)
-            self.session.add(info)
+
+            self.session.add(CampaignInfo(**info.dict_for_db()))
             self.session.commit()
             self._next_run = 1
         else:
