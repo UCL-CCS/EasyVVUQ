@@ -34,7 +34,7 @@ logger = logging.getLogger(__name__)
 Base = declarative_base()
 
 
-class CampaignInfo(Base):
+class CampaignTable(Base):
     """An SQLAlchemy schema for the campaign information table.
     """
     __tablename__ = 'campaign_info'
@@ -46,7 +46,7 @@ class CampaignInfo(Base):
     runs_dir = Column(String)
 
 
-class App(Base):
+class AppTable(Base):
     """An SQLAlchemy schema for the app table.
     """
     __tablename__ = 'app'
@@ -63,7 +63,7 @@ class App(Base):
     variable = Column(String)
 
 
-class Run(Base):
+class RunTable(Base):
     """An SQLAlchemy schema for the run table.
     """
     __tablename__ = 'run'
@@ -78,7 +78,7 @@ class Run(Base):
     sample = Column(Integer, ForeignKey('sample.id'))
 
 
-class Sample(Base):
+class SampleTable(Base):
     """An SQLAlchemy schema for the run table.
     """
     __tablename__ = 'sample'
@@ -111,7 +111,7 @@ class CampaignDB(BaseCampaignDB):
                 raise RuntimeError(message)
             Base.metadata.create_all(self.engine)
 
-            self.session.add(CampaignInfo(**info.dict_for_db()))
+            self.session.add(CampaignTable(**info.dict_for_db()))
             self.session.commit()
             self._next_run = 1
         else:
