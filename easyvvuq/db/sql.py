@@ -116,11 +116,11 @@ class CampaignDB(BaseCampaignDB):
             self._next_run = 1
         else:
             info = self.session.query(
-                CampaignInfo).filter_by(name=name).first()
+                CampaignTable).filter_by(name=name).first()
             if info is None:
                 raise ValueError('Campaign with the given name not found.')
 
-            self._next_run = self.session.query(Run).count() + 1
+            self._next_run = self.session.query(RunTable).count() + 1
 
     def app(self, name=None):
         """
@@ -210,7 +210,7 @@ class CampaignDB(BaseCampaignDB):
 
         """
 
-        sampler = Sample(sampler=json.dumps(sampler))
+        sampler = SampleTable(sampler=json.dumps(sampler))
 
         self.session.add(sampler)
         self.session.commit()
@@ -223,7 +223,7 @@ class CampaignDB(BaseCampaignDB):
         ----------
         run_info: dict
             Contains relevant run fields: params, status (where in the
-            EasyVVUQ workflow is this run), campaign (id number),
+            EasyVVUQ workflow is this RunTable), campaign (id number),
             sample, app
         prefix: str
             Prefix for run id
@@ -237,8 +237,8 @@ class CampaignDB(BaseCampaignDB):
 
         run_info = run_info['run_name'] = name
 
-        run = Run(run_info)
-        self.session.add(run)
+        run = RunTable(run_info)
+        self.session.add(RunTable)
         self.session.commit()
         self._next_run += 1
 
@@ -277,17 +277,17 @@ class CampaignDB(BaseCampaignDB):
         """
 
         if campaign is None and sampler is None:
-            selected = self.session.query(Run).filter_by(run_name=run_name)
+            selected = self.session.query(RunTable).filter_by(run_name=run_name)
         elif campaign is not None and sampler is not None:
-            selected = self.session.query(Run).filter_by(run_name=run_name,
-                                                         campaign=campaign,
-                                                         sample=sampler)
+            selected = self.session.query(RunTable).filter_by(run_name=run_name,
+                                                              campaign=campaign,
+                                                              sample=sampler)
         elif campaign is not None:
-            selected = self.session.query(Run).filter_by(run_name=run_name,
-                                                         campaign=campaign)
+            selected = self.session.query(RunTable).filter_by(run_name=run_name,
+                                                              campaign=campaign)
         else:
-            selected = self.session.query(Run).filter_by(run_name=run_name,
-                                                         sample=sampler)
+            selected = self.session.query(RunTable).filter_by(run_name=run_name,
+                                                              sample=sampler)
 
         if selected.count() != 1:
             logging.warning('Multiple runs selected - using the last')
@@ -298,11 +298,11 @@ class CampaignDB(BaseCampaignDB):
 
     def campaigns(self):
 
-        return [c.name for c in self.session.query(CampaignInfo).all()]
+        return [c.name for c in self.session.query(CampaignTable).all()]
 
     def _get_campaign_info(self, campaign_name=None):
 
-        query = self.session.query(CampaignInfo)
+        query = self.session.query(CampaignTable)
 
         if campaign_name is None:
 
@@ -330,15 +330,15 @@ class CampaignDB(BaseCampaignDB):
         # TODO: This is a bad idea - find a better generator solution
 
         if campaign is None and sampler is None:
-            selected = self.session.query(Run).all()
+            selected = self.session.query(RunTable).all()
         elif campaign is not None and sampler is not None:
-            selected = self.session.query(Run).filter_by(campaign=campaign,
-                                                         sample=sampler).all()
+            selected = self.session.query(RunTable).filter_by(campaign=campaign,
+                                                              sample=sampler).all()
         elif campaign is not None:
-            selected = self.session.query(Run)
+            selected = self.session.query(RunTable)
             selected = selected.filter_by(campaign=campaign).all()
         else:
-            selected = self.session.query(Run).filter_by(sample=sampler).all()
+            selected = self.session.query(RunTable).filter_by(sample=sampler).all()
 
         return {r.run_name: self._run_to_dict(r) for r in selected}
 
