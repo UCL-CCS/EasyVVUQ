@@ -30,7 +30,7 @@ __copyright__ = """
 __license__ = "LGPL"
 
 
-def getCustomTemplate(template_txt, custom_delimiter='$'):
+def get_custom_template(template_txt, custom_delimiter='$'):
     class CustomTemplate(Template):
         delimiter = custom_delimiter
     return CustomTemplate(template_txt)
@@ -47,24 +47,27 @@ class GenericEncoder(BaseEncoder, encoder_name="generic_template"):
 
     """
 
-    def __init__(self, templatefname=None, delimiter='$', target_filename="app_input.txt"):
+    def __init__(self, template_fname=None, delimiter='$',
+                 target_filename="app_input.txt"):
 
         self.encoder_delimiter = delimiter
         self.target_filename = target_filename
 
         # Check that user has specified the file to use as template
-        if templatefname is None:
-            msg = "GenericEncoder must be given 'templatefname' - the location of a file containing the template text."
+        if template_fname is None:
+            msg = ("GenericEncoder must be given 'template_fname' - the "
+                   "location of a file containing the template text.")
             logging.error(msg)
-            raise Exception(msg)
+            raise RuntimeError(msg)
              
-        with open(templatefname, 'r') as template_file:
+        with open(template_fname, 'r') as template_file:
             template_txt = template_file.read()
-            self.template = getCustomTemplate(template_txt, custom_delimiter=self.encoder_delimiter)
-
+            self.template = get_custom_template(template_txt,
+                                                custom_delimiter=self.encoder_delimiter)
 
     def encode(self, params={}, target_dir=''):
-        """Substitutes `params` into a template application input, saves in target_dir
+        """Substitutes `params` into a template application input, saves in
+        `target_dir`
 
         Parameters
         ----------
@@ -120,4 +123,8 @@ class GenericEncoder(BaseEncoder, encoder_name="generic_template"):
         raise KeyError(exception)
 
     def serialize(self):
-        return {"delimiter":self.encoder_delimiter, "target_filename":self.target_filename}
+        return {"delimiter": self.encoder_delimiter,
+                "target_filename": self.target_filename}
+
+    def deserialize(self):
+        raise NotImplementedError
