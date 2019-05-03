@@ -150,7 +150,6 @@ class Campaign:
                 self._active_sampler.element_name() +
                 "' is an infinite generator, therefore a finite number of draws (N > 0) must be specified.'")
 
-
         num_added = 0
         for param_vals in self._active_sampler.generate_runs():
             # TODO: Get correct sampler and campaign IDs to pass to RunInfo

@@ -142,6 +142,7 @@ class CampaignDB(BaseCampaignDB):
             raise RuntimeError(message)
 
         self._app = app_info.to_dict()
+        self._app['id'] = 0
         self._save()
 
     def add_sampler(self, sampler):
@@ -154,15 +155,15 @@ class CampaignDB(BaseCampaignDB):
 
         self._sample = sampler
 
-    def add_run(self, run_info={}, prefix='Run_'):
+    def add_run(self, run_info=None, prefix='Run_'):
         """
-        Add a run to the 'runs' dictionary.
+        Add run to the `runs` table in the database.
 
         Parameters
         ----------
-        run_info: dict
+        run_info: RunInfo
             Contains relevant run fields: params, status (where in the
-            EasyVVUQ workflow is this run), campaign (id number),
+            EasyVVUQ workflow is this RunTable), campaign (id number),
             sample, app
         prefix: str
             Prefix for run id
@@ -174,9 +175,10 @@ class CampaignDB(BaseCampaignDB):
 
         name = f"{prefix}{self._next_run}"
 
-        run_info = run_info['run_name'] = name
+        this_run = run_info.to_dict()
+        this_run[name] = name
 
-        self._runs[name] = run_info
+        self._runs[name] = this_run
 
         self._next_run += 1
 
