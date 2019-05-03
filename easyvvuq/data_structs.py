@@ -159,7 +159,7 @@ class AppInfo:
 
     @output_decoder.setter
     def output_decoder(self, decoder):
-        available_decoders = uq.decoders.base.available_decoders
+        available_decoders = uq.decoders.base.AVAILABLE_DECODERS
         if decoder not in available_decoders:
             message = (f"Decoder not found. Looking for {decoder}.\n"
                        f"Available decoders are {available_decoders}.")
