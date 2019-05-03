@@ -1,3 +1,5 @@
+"""Provides class that allows access to an SQL format CampaignDB.
+"""
 import json
 import logging
 from sqlalchemy import create_engine, Column, Integer, String, ForeignKey
@@ -232,7 +234,6 @@ class CampaignDB(BaseCampaignDB):
 
         """
 
-
         run_info.run_name = f"{prefix}{self._next_run}"
 
         run = RunTable(**run_info.dict_for_db())
@@ -242,6 +243,21 @@ class CampaignDB(BaseCampaignDB):
 
     @staticmethod
     def _run_to_dict(run_row):
+        """
+        Convert the provided row from 'runs' table into a dictionary
+
+        Parameters
+        ----------
+        run_row: RunTable
+            Information on a particular run in the database.
+
+        Returns
+        -------
+        dict:
+            Contains run information (keys = run_name, params, status, sample,
+            campaign and app)
+
+        """
 
         run_info = {
             'run_name': run_row.run_name,
@@ -295,10 +311,28 @@ class CampaignDB(BaseCampaignDB):
         return self._run_to_dict(selected)
 
     def campaigns(self):
+        """Get list of campaigns for which information is stored in the
+        database.
+
+        Returns
+        -------
+        list:
+            Campaign names.
+        """
 
         return [c.name for c in self.session.query(CampaignTable).all()]
 
     def _get_campaign_info(self, campaign_name=None):
+        """
+        Parameters
+        ----------
+        campaign_name: str
+            Name of campaign to select
+
+        Returns
+        -------
+
+        """
 
         query = self.session.query(CampaignTable)
 
@@ -320,11 +354,40 @@ class CampaignDB(BaseCampaignDB):
         return campaign_info.last()
 
     def campaign_dir(self, campaign_name=None):
+        """Get campaign directory for `campaign_name`.
+
+        Parameters
+        ----------
+        campaign_name: str
+            Name of campaign to select
+
+        Returns
+        -------
+        str:
+            Path to campaign directory.
+        """
 
         self._get_campaign_info(campaign_name=campaign_name).campaign_dir
 
     def runs(self, campaign=None, sampler=None):
+        """
+        Get a dictionary of all run information for selected `campaign` and
+        `sampler`.
 
+        Parameters
+        ----------
+        campaign: int
+            Campaign id to filter for.
+        sampler: int
+            Sampler id to filter for.
+
+        Returns
+        -------
+        dict:
+            Information on all selected runs (key = run_name, value = dict of
+            run information fields.).
+
+        """
         # TODO: This is a bad idea - find a better generator solution
 
         if campaign is None and sampler is None:
@@ -341,5 +404,18 @@ class CampaignDB(BaseCampaignDB):
         return {r.run_name: self._run_to_dict(r) for r in selected}
 
     def runs_dir(self, campaign_name=None):
+        """
+        Get the directory used to store run information for `campaign_name`.
+
+        Parameters
+        ----------
+        campaign_name: str
+            Name of the selected campaign.
+
+        Returns
+        -------
+        str:
+            Path containing run outputs.
+        """
 
         self._get_campaign_info(campaign_name=campaign_name).runs_dir
