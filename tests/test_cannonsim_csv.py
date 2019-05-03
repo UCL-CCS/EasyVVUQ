@@ -80,9 +80,10 @@ def test_cannonsim_csv(tmpdir):
     # Print the list of runs now in the campaign db
     print(my_campaign.list_runs())
 
-    sys.exit(0)
-
+    # Encode all runs into a local directory
     my_campaign.populate_runs_dir()
+
+    sys.exit(0)
 
     assert(len(my_campaign.runs_dir) > 0)
     assert(os.path.exists(my_campaign.runs_dir))

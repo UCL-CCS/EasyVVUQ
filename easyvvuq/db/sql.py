@@ -303,21 +303,18 @@ class CampaignDB(BaseCampaignDB):
         query = self.session.query(CampaignTable)
 
         if campaign_name is None:
-
             campaign_info = query
-
         else:
-
             campaign_info = query.filter_by(name=campaign_name).all()
 
         if campaign_info.count() > 1:
-            logger.warning('More than one campaign selected - using last one.')
+            logger.warning('More than one campaign selected - using first one.')
         elif campaign_info.count() == 0:
             message = 'No campaign available.'
             logger.critical(message)
             raise RuntimeError(message)
 
-        return campaign_info.last()
+        return campaign_info.first()
 
     def campaign_dir(self, campaign_name=None):
 
@@ -341,5 +338,4 @@ class CampaignDB(BaseCampaignDB):
         return {r.run_name: self._run_to_dict(r) for r in selected}
 
     def runs_dir(self, campaign_name=None):
-
-        self._get_campaign_info(campaign_name=campaign_name).runs_dir
+        return self._get_campaign_info(campaign_name=campaign_name).runs_dir

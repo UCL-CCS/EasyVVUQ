@@ -219,7 +219,6 @@ class CampaignInfo:
         self.campaign_dir = campaign_dir
 
         if runs_dir is None:
-
             runs_dir = os.path.join(campaign_dir, 'runs')
 
         if local:

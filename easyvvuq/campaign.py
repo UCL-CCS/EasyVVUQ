@@ -157,6 +157,50 @@ class Campaign:
     def list_runs(self):
         return self.campaign_db.runs()
 
+    def populate_runs_dir(self):
+        """Populate run directories based on runs in the DB
+
+        This calls the App encoder object to create input files for the
+        specified application in each run directory, usually with varying input
+        (scientific) parameters.
+
+        Parameters
+        ----------
+
+        Returns
+        -------
+
+        """
+
+        runs = self.campaign_db.runs()
+        runs_dir = self.campaign_db.runs_dir()
+
+
+        # TODO: Check if encoder exists / is set correctly
+        #if self._active_app.encoder is None:
+        #    raise RuntimeError('Cannot populate runs without valid '
+        #                       'encoder in campaign')
+
+
+        print(runs)
+        for run_id, run_data in runs.items():
+            print("RUNID", run_id)
+            print("RUNSDIR", runs_dir)
+            print("RUNDATA", run_data)
+            print("RUNPARAMS", run_data['params'])
+
+            # Make run directory
+            target_dir = os.path.join(runs_dir, run_id)
+            os.makedirs(target_dir)
+
+            # TODO: Should we check if the run has been created?
+
+            # TODO: record target_dir along with the run info?
+            # runs[run_id]['run_dir'] = target_dir
+
+            # TODO: Apply encoder
+            #self._active_app_encoder.encode(params=run_data, target_dir=target_dir)
+
 class CampaignOld:
     """Campaign coordinates information for a series of related runs
 
