@@ -61,7 +61,7 @@ def check_reference(ref, run_name, ref_type='campaign'):
         logger.critical(message)
         raise RuntimeError(message)
 
-    if not isinstance(ref, 'int'):
+    if not isinstance(ref, int):
         message = (f'Invalid {ref_type} id ({ref}) specified for '
                    f'run {run_name}')
         logger.critical(message)
@@ -81,6 +81,7 @@ class RunInfo:
 
         self.campaign = campaign
         self.sample = sample
+        self.app = app
         self.run_name = run_name
 
         if not params:
