@@ -105,7 +105,7 @@ class Campaign:
 
         self.campaign_db.add_app(app)
         if set_active:
-            self.set_app(app_info.name)
+            self.set_app(app.name)
 
     def set_app(self, app_name):
         """
