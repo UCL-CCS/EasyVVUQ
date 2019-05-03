@@ -1,7 +1,7 @@
 import json
 import logging
 import tempfile
-from easyvvuq import constants
+from easyvvuq.constants import __easyvvuq_version__
 from .base import BaseCampaignDB
 
 __copyright__ = """
@@ -45,7 +45,7 @@ class CampaignDB(BaseCampaignDB):
         if new_campaign:
 
             self._campaign_info = info
-            self._campaign_info.easyvvuq_version = constants.version
+            self._campaign_info.easyvvuq_version = __easyvvuq_version__
             self._next_run = 0
 
             if location is None:
