@@ -37,12 +37,8 @@ if not os.path.exists("tests/cannonsim/bin/cannonsim"):
 
 def test_cannonsim_csv(tmpdir):
 
-    # Params for testing
-    number_of_samples = 15
-
+    # Set up a fresh campaign called "cannon"
     my_campaign = uq.Campaign(name='cannon', workdir=tmpdir)
-
-    assert(my_campaign is not None)
 
     # Define parameter space for the cannonsim app
     params = {
@@ -75,16 +71,16 @@ def test_cannonsim_csv(tmpdir):
     }
     sampler1 = uq.elements.sampling.RandomSampler(vary=vary)
 
+    # Set the campaign to use this sampler
     my_campaign.set_sampler(sampler1)
 
+    # Draw 5 samples
+    my_campaign.draw_samples(N=5)
+
+    # Print the list of runs now in the campaign db
+    print(my_campaign.list_runs())
+
     sys.exit(0)
-
-
-    my_campaign.add_runs(random_sampler, max_num=number_of_samples)
-
-    assert(len(my_campaign.runs) == number_of_samples)
-
-    print(my_campaign.log)
 
     my_campaign.populate_runs_dir()
 

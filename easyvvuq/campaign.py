@@ -5,6 +5,7 @@ import json
 import pprint
 import easyvvuq as uq
 from easyvvuq.constants import __easyvvuq_version__, default_campaign_prefix
+from easyvvuq.data_structs import RunInfo
 
 __copyright__ = """
 
@@ -121,8 +122,8 @@ class Campaign:
         -------
 
         """
-        self._active_app = self.campaign_db.app(name=app_name)
 
+        self._active_app = self.campaign_db.app(name=app_name)
 
     def set_sampler(self, sampler):
         if not isinstance(sampler, uq.elements.sampling.BaseSamplingElement):
@@ -132,6 +133,29 @@ class Campaign:
         
         self._active_sampler = sampler
 
+    def draw_samples(self, N=0):
+
+        # Make sure N is not 0 for an infinite generator (this would add runs
+        # forever...)
+        if self._active_sampler.is_finite() is False and N <= 0:
+            raise RuntimeError(
+                "sampling_element '" +
+                self._active_sampler.element_name() +
+                "' is an infinite generator, therefore a finite number of draws (N > 0) must be specified.'")
+
+
+        num_added = 0
+        for param_vals in self._active_sampler.generate_runs():
+            # TODO: Get correct sampler and campaign IDs to pass to RunInfo
+            run_info = RunInfo(app=self._active_app['id'], params=param_vals, sample=0, campaign=0)
+            self.campaign_db.add_run(run_info)
+            num_added += 1
+            if num_added == N:
+                break
+
+
+    def list_runs(self):
+        return self.campaign_db.runs()
 
 class CampaignOld:
     """Campaign coordinates information for a series of related runs
@@ -313,48 +337,6 @@ class CampaignOld:
 
         return converted
 
-    def add_app(self, app_info):
-        """
-        Add information on a new application to the campaign database.
-
-        Parameters
-        ----------
-        app_info: dict
-            Contains the information needed to describe and wrap an
-            application: name, input_encoder, output_decoder,
-            encoder_options, decoder_options, execution, params (all
-            parameters that can be passed via encoder to the application),
-            fixtures, collation and variable (which parameters can be varied
-            in this workflow).
-
-        Returns
-        -------
-
-        """
-
-        # TODO: Need to look at parameters
-
-        # validate application input
-        app = uq.data_structs.AppInfo(**app_info)
-
-        self.campaign_db.add_app(app.to_dict())
-
-    def set_app(self, app_name):
-        """
-        Set the app to be in active use by this campaign. Gets the app info from
-        the database.
-
-        Parameters
-        ----------
-        app_name: str or None
-            Name of selected app, if `None` given then first app will be
-            selected.
-        Returns
-        -------
-
-        """
-        self._active_app = self.campaign_db.app(name=app_name)
-
     def _setup_campaign_dir(self):
         """
         Check if a 'campaign_dir' is found in `self.app_info`. If so use this
@@ -487,70 +469,6 @@ class CampaignOld:
 
         pass
 
-    def add_run(self, new_run, prefix='Run_'):
-        """Add a new run to the queue
-
-        Parameters
-        ----------
-        new_run     : dict
-            Defines the value of each model parameter listed in
-            `self.params_info` for a run to be added to `self.runs`
-        prefix      : str
-            Prepended to the key used to identify the run in `self.runs`
-
-        Returns
-        -------
-
-        """
-
-        # TODO: Update to new approach
-
-        reserved_keys = self._reserved_keys
-        campaign_params = self.params_info.keys()
-
-        # Validate:
-        # Check if parameter names match those already known for this app
-        for param in new_run.keys():
-            if param not in campaign_params and param not in reserved_keys:
-
-                reasoning = (
-                    f"dict passed to add_run() contains extra parameter, "
-                    f"{param}, which is not a known parameter name "
-                    f"of this Campaign.")
-
-                raise RuntimeError(reasoning)
-
-        if 'fixtures' in new_run:
-            run_fixtures = new_run['fixtures']
-        else:
-            run_fixtures = {}
-
-        # If necessary parameter names are missing, fill them in from the
-        # default values in params_info
-        for param in self.params_info.keys():
-
-            if param not in new_run.keys():
-
-                default_val = self.params_info[param]["default"]
-                new_run[param] = default_val
-
-                if self.params_info[param]["type"] == "fixture":
-                    run_fixtures[param] = self.fixtures[default_val]
-                    new_run[param] = 'EASYVVUQ_FIXTURE'
-
-            elif self.params_info[param]["type"] == "fixture":
-                if new_run[param] != 'EASYVVUQ_FIXTURE':
-                    run_fixtures[param] = self.fixtures[new_run[param]]
-                    new_run[param] = 'EASYVVUQ_FIXTURE'
-
-        # Add to run queue
-        run_id = f"{prefix}{self.run_number}"
-        self.runs[run_id] = new_run
-
-        self.runs[run_id]['completed'] = False
-        self.runs[run_id]['fixtures'] = run_fixtures
-        self.run_number += 1
-
     def add_default_run(self):
         """
         Add a single new run to the queue, using only default values for
@@ -559,34 +477,6 @@ class CampaignOld:
 
         new_run = {}
         self.add_run(new_run)
-
-    def add_runs(self, sampling_element, max_num=0):
-
-        # Make sure we have a sampling element
-        if isinstance(sampling_element,
-                      uq.elements.sampling.BaseSamplingElement) is False:
-            raise RuntimeError(
-                "add_runs() must be passed (an instance of) BaseSamplingElement")
-
-        # Make sure num is not 0 for an infinite generator (this would add runs
-        # forever...)
-        if sampling_element.is_finite() is False and max_num <= 0:
-            raise RuntimeError(
-                "sampling_element '" +
-                sampling_element.element_name() +
-                "' is an infinite generator, therefore a max_num > 0 "
-                "must be specified.'")
-
-        num_added = 0
-        for run in sampling_element.generate_runs():
-            self.add_run(run)
-            num_added += 1
-            if num_added == max_num:
-                break
-
-        self.log_element_application(
-            sampling_element, {
-                "num_draws_requested": max_num, "num_draws_added": num_added})
 
     def scan_completed(self, *args, **kwargs):
         """

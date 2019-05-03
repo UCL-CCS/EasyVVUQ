@@ -158,6 +158,7 @@ class CampaignDB(BaseCampaignDB):
         selected_app = selected[0]
 
         app_dict = {
+            'id': selected_app.id,
             'name': selected_app.name,
             'input_encoder': selected_app.input_encoder,
             'encoder_options': json.loads(selected_app.encoder_options),
@@ -213,13 +214,13 @@ class CampaignDB(BaseCampaignDB):
         self.session.add(sampler)
         self.session.commit()
 
-    def add_run(self, run_info={}, prefix='Run_'):
+    def add_run(self, run_info=None, prefix='Run_'):
         """
         Add run to the `runs` table in the database.
 
         Parameters
         ----------
-        run_info: dict
+        run_info: RunInfo
             Contains relevant run fields: params, status (where in the
             EasyVVUQ workflow is this RunTable), campaign (id number),
             sample, app
@@ -231,12 +232,11 @@ class CampaignDB(BaseCampaignDB):
 
         """
 
-        name = f"{prefix}{self._next_run}"
 
-        run_info = run_info['run_name'] = name
+        run_info.run_name = f"{prefix}{self._next_run}"
 
-        run = RunTable(run_info)
-        self.session.add(RunTable)
+        run = RunTable(**run_info.dict_for_db())
+        self.session.add(run)
         self.session.commit()
         self._next_run += 1
 
