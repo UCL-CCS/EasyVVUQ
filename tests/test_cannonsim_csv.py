@@ -51,11 +51,14 @@ def test_cannonsim_csv(tmpdir):
         "velocity":         {"type": "real", "min": "0.0",    "max": "1000.0", "default": "10.0", "variable": "True"}
     }
 
+    # Create an encoder for the cannonsim app
+    encoder = uq.encoders.GenericEncoder(templatefname='tests/cannonsim/test_input/cannonsim.template', delimiter='#', target_filename='in.cannon')
+
     # Add the cannonsim app
     my_campaign.add_app({
                         "name": "cannonsim", # TODO Tell campaign to "use_app('appname')" to declutter this input line
-                        "input_encoder":"generic_template", "encoder_options":{"delimiter":'#'}, # TODO Pass the encoder object directly and have it serialize itself rather than the user needing to do it here
-                        "output_decoder":"csv", # TODO Pass decoder object directly and have campaign serialize it to store it
+                        "input_encoder": encoder,
+                        "output_decoder":"csv", # TODO Pass decoder object directly and have campaign serialize it to store it (as with encoder)
                         "params": params # TODO Allow params to be added to app programmatically
                         })
 

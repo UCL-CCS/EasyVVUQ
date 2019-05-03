@@ -58,7 +58,7 @@ class GenericEncoder(BaseEncoder, encoder_name="generic_template"):
             logging.error(msg)
             raise Exception(msg)
              
-        with open(app_info['template'], 'r') as template_file:
+        with open(templatefname, 'r') as template_file:
             template_txt = template_file.read()
             self.template = getCustomTemplate(template_txt, custom_delimiter=self.encoder_delimiter)
 
@@ -99,22 +99,25 @@ class GenericEncoder(BaseEncoder, encoder_name="generic_template"):
             fp.write(app_input_txt)
 
     def _log_substitution_failure(self, params, exception):
-        app_info = self.app_info
-        if 'template_txt' in app_info:
-            fle, temp_filename = tempfile.mkstemp(text=True)
-
-            with open(temp_filename, 'w') as temp_file:
-                for line in app_info['template_txt']:
-                    temp_file.write(line)
-            reasoning = f"\nFailed substituting into template {temp_filename}.\n"
-        else:
-            reasoning = f"\nFailed substituting into template {app_info['template']}.\n"
-
-        fle, temp_filename = tempfile.mkstemp(text=True)
-        with open(temp_filename, 'w') as temp_params_file:
-            json.dump(params, temp_params_file)
-
-        reasoning += f"Parameters used in substitution written to {temp_filename}.\n"
-
-        print(reasoning)
+#        app_info = self.app_info
+#        if 'template_txt' in app_info:
+#            fle, temp_filename = tempfile.mkstemp(text=True)
+#
+#            with open(temp_filename, 'w') as temp_file:
+#                for line in app_info['template_txt']:
+#                    temp_file.write(line)
+#            reasoning = f"\nFailed substituting into template {temp_filename}.\n"
+#        else:
+#            reasoning = f"\nFailed substituting into template {app_info['template']}.\n"
+#
+#        fle, temp_filename = tempfile.mkstemp(text=True)
+#        with open(temp_filename, 'w') as temp_params_file:
+#            json.dump(params, temp_params_file)
+#
+#        reasoning += f"Parameters used in substitution written to {temp_filename}.\n"
+#
+#        print(reasoning)
         raise KeyError(exception)
+
+    def serialize(self):
+        return {"delimiter":self.encoder_delimiter, "target_filename":self.target_filename}

@@ -53,9 +53,7 @@ class AppTable(Base):
     id = Column(Integer, primary_key=True)
     name = Column(String)
     input_encoder = Column(String)
-    encoder_options = Column(String)
     output_decoder = Column(String)
-    decoder_options = Column(String)
     execution = Column(String)
     params = Column(String)
     fixtures = Column(String)
@@ -161,9 +159,7 @@ class CampaignDB(BaseCampaignDB):
             'id': selected_app.id,
             'name': selected_app.name,
             'input_encoder': selected_app.input_encoder,
-            'encoder_options': json.loads(selected_app.encoder_options),
             'output_decoder': selected_app.output_decoder,
-            'decoder_options': json.loads(selected_app.decoder_options),
             'execution': json.loads(selected_app.execution),
             'params': json.loads(selected_app.params),
             'fixtures': json.loads(selected_app.fixtures),

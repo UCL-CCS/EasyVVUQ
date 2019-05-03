@@ -122,16 +122,11 @@ class RunInfo:
 
 class AppInfo:
 
-    def __init__(self, name='app', input_encoder=None, encoder_options={},
-                 output_decoder=None, decoder_options=None, execution={},
-                 params={}, fixtures={}, collation={},
-                 ):
+    def __init__(self, name='app', input_encoder=None, output_decoder=None, execution={}, params={}, fixtures={}, collation={}):
 
         self.name = name
         self.input_encoder = input_encoder
         self.output_decoder = output_decoder
-        self.encoder_options = encoder_options
-        self.decoder_options = decoder_options
         self.execution = execution
         self.params = params
         self.fixtures = fixtures
@@ -144,11 +139,13 @@ class AppInfo:
     @input_encoder.setter
     def input_encoder(self, encoder):
         available_encoders = uq.encoders.base.AVAILABLE_ENCODERS
-        if encoder not in available_encoders:
-            message = (f"Encoder not found. Looking for {encoder}.\n"
-                       f"Available encoders are {available_encoders}.")
-            logging.critical(message)
-            raise RuntimeError(message)
+
+        # TODO: Fix/relocate check. Problem is with live/serialized encoder info.
+#        if encoder not in available_encoders:
+#            message = (f"Encoder not found. Looking for {encoder}.\n"
+#                       f"Available encoders are {available_encoders}.")
+#            logging.critical(message)
+#            raise RuntimeError(message)
 
         self._input_encoder = encoder
 
@@ -171,10 +168,8 @@ class AppInfo:
 
         out_dict = {
             'name': self.name,
-            'input_encoder': self.input_encoder,
-            'encoder_options': self.encoder_options,
+            'input_encoder': self.input_encoder.serialize(),
             'output_decoder': self.output_decoder,
-            'decoder_options': self.decoder_options,
             'execution': self.execution,
             'params': self.params,
             'fixtures': self.fixtures,
@@ -187,9 +182,8 @@ class AppInfo:
 
         db_dict = self.to_dict()
 
-        for field in ['params', 'fixtures',
-                      'execution', 'collation',
-                      'encoder_options', 'decoder_options']:
+        for field in ['params', 'fixtures', 'input_encoder',
+                      'execution', 'collation']:
             db_dict[field] = json.dumps(db_dict[field])
 
         return db_dict

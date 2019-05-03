@@ -85,6 +85,12 @@ class BaseEncoder:
         """
         raise NotImplementedError
 
+    def serialize(self):
+        raise NotImplementedError
+
+    def deserialize(self):
+        raise NotImplementedError
+
     @staticmethod
     def parse_fixtures_params(info, target_dir, path_depth=0):
         """

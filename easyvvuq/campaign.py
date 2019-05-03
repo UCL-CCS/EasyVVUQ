@@ -43,6 +43,9 @@ class Campaign:
         self.campaign_db = None
         self.state_file = state_file
 
+        # TODO: This shouldn't be here. Probably should be in DB.
+        self._active_app_encoder = None
+
         # Load campaign from state_file, if provided. Else make a fresh new
         # campaign with a new campaign database
         if state_file is not None:
@@ -107,6 +110,10 @@ class Campaign:
         self.campaign_db.add_app(app)
         if set_active:
             self.set_app(app.name)
+
+        # TODO: Find somewhere sensible to store/resume/set the *live* encoder for a given app.
+        # Currently not possible from the "dead" form stored in the DB
+        self._active_app_encoder = app_info['input_encoder']
 
     def set_app(self, app_name):
         """
@@ -177,17 +184,13 @@ class Campaign:
 
 
         # TODO: Check if encoder exists / is set correctly
-        #if self._active_app.encoder is None:
-        #    raise RuntimeError('Cannot populate runs without valid '
-        #                       'encoder in campaign')
+        if self._active_app_encoder is None:
+            raise RuntimeError('Cannot populate runs without valid '
+                               'encoder in campaign')
 
 
         print(runs)
         for run_id, run_data in runs.items():
-            print("RUNID", run_id)
-            print("RUNSDIR", runs_dir)
-            print("RUNDATA", run_data)
-            print("RUNPARAMS", run_data['params'])
 
             # Make run directory
             target_dir = os.path.join(runs_dir, run_id)
@@ -199,7 +202,7 @@ class Campaign:
             # runs[run_id]['run_dir'] = target_dir
 
             # TODO: Apply encoder
-            #self._active_app_encoder.encode(params=run_data, target_dir=target_dir)
+            self._active_app_encoder.encode(params=run_data, target_dir=target_dir)
 
 class CampaignOld:
     def campaign_id(self, without_prefix=False):
