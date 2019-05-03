@@ -77,7 +77,7 @@ class Campaign:
         print(f"Loading campaign from state file '{state_file}'")
         raise NotImplementedError
 
-    def add_app(self, app_info):
+    def add_app(self, app_info, set_active=True):
         """
         Add information on a new application to the campaign database.
 
@@ -90,6 +90,8 @@ class Campaign:
             parameters that can be passed via encoder to the application),
             fixtures, collation and variable (which parameters can be varied
             in this workflow).
+        set_active: bool
+            Should the added app be set to be teh currently active app?
 
         Returns
         -------
@@ -102,6 +104,8 @@ class Campaign:
         app = uq.data_structs.AppInfo(**app_info)
 
         self.campaign_db.add_app(app)
+        if set_active:
+            self.set_app(app_info.name)
 
     def set_app(self, app_name):
         """
