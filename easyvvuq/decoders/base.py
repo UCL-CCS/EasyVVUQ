@@ -1,4 +1,5 @@
-"""Base class for all decoders and dictionary to register all imported decoders
+"""Provides baseclass for all decoders and dictionary to register all imported
+decoders.
 
 Decoders are objects which provide functions to check simulation runs have
 completed and parse the output when they have.
