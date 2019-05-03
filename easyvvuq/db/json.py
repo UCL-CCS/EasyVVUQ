@@ -1,3 +1,6 @@
+"""Provides class that allows access to an JSON/Python dictionary format
+CampaignDB.
+"""
 import json
 import logging
 import tempfile
