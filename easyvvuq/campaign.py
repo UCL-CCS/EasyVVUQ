@@ -40,6 +40,7 @@ class Campaign:
         self._log = []
 
         self._active_app = None
+        self._active_app_encoder = None
         self.campaign_db = None
         self.state_file = state_file
 
@@ -159,7 +160,6 @@ class Campaign:
             if num_added == N:
                 break
 
-
     def list_runs(self):
         return self.campaign_db.runs()
 
@@ -181,14 +181,11 @@ class Campaign:
         runs = self.campaign_db.runs()
         runs_dir = self.campaign_db.runs_dir()
 
-
         # TODO: Check if encoder exists / is set correctly
         if self._active_app_encoder is None:
             raise RuntimeError('Cannot populate runs without valid '
                                'encoder in campaign')
 
-
-        print(runs)
         for run_id, run_data in runs.items():
 
             # Make run directory
@@ -202,6 +199,7 @@ class Campaign:
 
             # TODO: Apply encoder
             self._active_app_encoder.encode(params=run_data, target_dir=target_dir)
+
 
 class CampaignOld:
     def campaign_id(self, without_prefix=False):
