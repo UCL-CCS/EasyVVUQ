@@ -157,247 +157,51 @@ class Campaign:
     def list_runs(self):
         return self.campaign_db.runs()
 
+    def populate_runs_dir(self):
+        """Populate run directories based on runs in the DB
+
+        This calls the App encoder object to create input files for the
+        specified application in each run directory, usually with varying input
+        (scientific) parameters.
+
+        Parameters
+        ----------
+
+        Returns
+        -------
+
+        """
+
+        runs = self.campaign_db.runs()
+        runs_dir = self.campaign_db.runs_dir()
+
+
+        # TODO: Check if encoder exists / is set correctly
+        #if self._active_app.encoder is None:
+        #    raise RuntimeError('Cannot populate runs without valid '
+        #                       'encoder in campaign')
+
+
+        print(runs)
+        for run_id, run_data in runs.items():
+            print("RUNID", run_id)
+            print("RUNSDIR", runs_dir)
+            print("RUNDATA", run_data)
+            print("RUNPARAMS", run_data['params'])
+
+            # Make run directory
+            target_dir = os.path.join(runs_dir, run_id)
+            os.makedirs(target_dir)
+
+            # TODO: Should we check if the run has been created?
+
+            # TODO: record target_dir along with the run info? (Would need a new entry in RunTable)
+            # runs[run_id]['run_dir'] = target_dir
+
+            # TODO: Apply encoder
+            #self._active_app_encoder.encode(params=run_data, target_dir=target_dir)
+
 class CampaignOld:
-    """Campaign coordinates information for a series of related runs
-
-    Sampling Primitives need to be applied to the object to specify the runs to
-    be included in the simulation 'campaign'. Information on each run is stored
-    in the `runs` dictionary.
-
-    # TODO: need to make dbtype an Enum
-
-    Parameters
-    ----------
-    name: str
-        Campaign name. Either new name or the name of a campaign to be resumed.
-    state_filename  : str
-        Path to file containing serialized state of a Campaign in JSON format.
-    new_campaign: bool
-        If True will start a new campaign. If false will query the database for
-        a campaign with the given name. Will raise an exception if it does not
-        exist.
-    local: bool
-        Is this campaign being processed locally - in which case we can check
-        files and directories.
-
-    Attributes
-    ----------
-    run_number    : int
-        Counter keeping track of what order runs were added
-    encoder
-        Encoder for the application input files. Initialized to None and
-        with an encoder class from `uq.app_encoders` and initialized
-        dynamically.
-
-    """
-
-    def __init__(self, name, state_filename=None, new_campaign=False,
-                 local=False, work_dir='.', **kwargs):
-
-        self._log = []
-
-        self.campaign_db = None
-        self.db_location = None
-        self.db_type = None
-        self.campaign_name = name
-        self.local = local
-        self.state_filename = None
-        self.work_dir = '.'
-
-        self._active_app = None
-
-        self._reserved_keys = ['completed', 'fixtures']
-
-        if state_filename is not None:
-            self.setup_state(state_filename, new_campaign=new_campaign, name=name)
-
-    def setup_state(self, state_filename, new_campaign=False, name=''):
-        """Load Campaign state from file (JSON format)
-
-        Parameters
-        ----------
-        state_filename : str
-            JSON file from which to load the Campaign state
-        new_campaign : bool
-            Do we need to create a new database or load an old one.
-        name :  str
-            Name of the campaign of interest or that to be created.
-
-        Returns
-        -------
-
-        """
-
-        self.state_filename = state_filename
-
-        # Load info from input JSON file
-        with open(state_filename, "r") as infile:
-            input_json = json.load(infile)
-
-        if 'db_type' not in input_json:
-            logging.warning(f'No db_type specified in {infile} - '
-                            f'assuming this is an old style (EasyVVUQ version '
-                            f'< 0.0.3) state file.')
-            try:
-                input_json = self._convert_old_state_file(input_json)
-                os.rename(os.path.realpath(state_filename),
-                          os.path.realpath(state_filename) + ".bak")
-            except IOError as err:
-                message = f"State file {state_filename} could not be read: {err}"
-                logger.critical(message)
-                raise RuntimeError(message)
-
-            db_type = 'json'
-
-        else:
-            db_type = input_json['db_type']
-
-        if db_type == 'sql':
-            from .db.sql import CampaignDB
-        elif db_type == 'json':
-            from .db.json import CampaignDB
-        else:
-            message = f"Invalid 'db_type' {db_type} specified in {state_filename}. Supported types are 'sql' or 'json'."
-            logger.critical(message)
-            raise RuntimeError(message)
-
-        db_location = input_json.get('db_location', None)
-
-        if db_location is None:
-            if db_type == 'json':
-                message = (f"No 'db_location' in {state_filename} - cannot create "
-                           f"a new campaign database.")
-                logger.critical(message)
-                raise RuntimeError(message)
-            else:
-                message = (f"No 'db_location' in {state_filename} - will try"
-                           f" default")
-                logger.warning(message)
-
-        self.db_type = db_type
-        self.db_location = db_location
-
-        if new_campaign:
-
-            info = uq.data_structs.CampaignInfo(**input_json['campaign'],
-                                                local=self.local)
-
-            self.campaign_db = CampaignDB(location=db_location,
-                                          new_campaign=True,
-                                          name=name,
-                                          info=info)
-
-        else:
-
-            self.campaign_db = CampaignDB(location=db_location, name=name)
-
-        # TODO: Relocate input encoder validation
-        # TODO: Decide whether to return to having self.encoder
-        # TODO: Relocate output decoder validation
-        # TODO: Decide whether to return to having self.decoder
-
-    @staticmethod
-    def _convert_old_state_file(input_state, default_prefix='EasyVVUQ_Campaign_'):
-        """
-        Old state files combined function as a database and workflow restart
-        file. Here we refactor the information read from an old state file
-        to conform to the organization we use now.
-
-        Parameters
-        ----------
-        input_state
-
-        Returns
-        -------
-
-        """
-
-        try:
-
-            converted = {}
-
-            app_info = input_state['app']
-            converted['campaign'] = {}
-
-            for field in ['campaign_dir', 'campaign_dir_prefix', 'runs_dir']:
-                if field in app_info:
-                    converted['campaign'][field] = app_info.pop(field)
-
-            converted['campaign']['easyvvuq_version'] = '0.0.1'
-
-            converted['app'] = app_info
-
-            converted['runs'] = input_state.get('runs', {})
-
-            converted['sample'] = input_state.get('sample', {})
-
-        except KeyError as err:
-            message = f'Input state not valid: {err}'
-            raise IOError(message)
-
-        return converted
-
-    def _setup_campaign_dir(self):
-        """
-        Check if a 'campaign_dir' is found in `self.app_info`. If so use this
-        as a top level directory for recording run and analysis information.
-        If no directory provided or find it does not exist yet then create.
-
-        Returns
-        -------
-
-        """
-
-        campaign_info = self.campaign_db.campaign()
-
-        # TODO: Decide if runs should be here
-        sub_dirs = ['data', 'analysis', 'common']
-
-        # Build a temp directory to store run files (unless it already exists)
-        if 'campaign_dir' in campaign_info:
-
-            campaign_dir = campaign_info['campaign_dir']
-            if not os.path.exists(campaign_dir):
-                print(f"Notice: Campaign directory not found "
-                      f"- creating {campaign_dir}")
-                try:
-                    campaign_dir = str(campaign_dir)
-                    os.makedirs(campaign_dir)
-                except IOError:
-                    raise IOError(f"Unable to create campaign directory: "
-                                  f"{campaign_dir}")
-        else:
-            # Check if app_info already contains a prefix to use for the
-            # campaign directory. If not, use the default one.
-            if 'campaign_dir_prefix' not in self.campaign_info:
-                self.campaign_info['campaign_dir_prefix'] = self.default_campaign_dir_prefix
-
-            # Create temp dir for campaign
-            campaign_dir = tempfile.mkdtemp(
-                prefix=self.app_info['campaign_dir_prefix'], dir=self.workdir)
-
-            print(f"Creating Campaign directory: {campaign_dir}")
-            self.campaign_dir = campaign_dir
-
-        campaign_dir = self.campaign_dir
-        for sub_dir in sub_dirs:
-            sub_path = os.path.join(campaign_dir, sub_dir)
-            if not os.path.isdir(sub_path):
-                if os.path.exists(sub_path):
-                    raise RuntimeError(f"Unable to create sub path {sub_path},"
-                                       f" invalid campaign directory.")
-                os.makedirs(sub_path)
-
-    @property
-    def log(self):
-        return self._log
-
-    @property
-    def campaign_dir(self):
-        if 'campaign_dir' not in self.app_info:
-            return None
-        return self._app_info['campaign_dir']
-
     def campaign_id(self, without_prefix=False):
 
         # The "ID" of the campaign is just the name of the campaign
@@ -418,36 +222,7 @@ class CampaignOld:
 
         return campaign_id
 
-    @campaign_dir.setter
-    def campaign_dir(self, path, force=False):
-        if self.campaign_dir and not force:
 
-            message = (f'Cannot set a new runs directory because there is one '
-                       f'already set ({self.app_info["campaign_dir"]})')
-            raise RuntimeError(message)
-
-        path = os.path.realpath(os.path.expanduser(path))
-
-        self._app_info['campaign_dir'] = path
-
-    @property
-    def runs_dir(self):
-
-        if 'runs_dir' not in self.app_info:
-            return None
-
-        return self._app_info['runs_dir']
-
-    @runs_dir.setter
-    def runs_dir(self, runs_dir):
-
-        if self.runs_dir:
-
-            message = (f'Cannot set a new runs directory because there is one '
-                       f'already set ({self.app_info["runs_dir"]})')
-            raise RuntimeError(message)
-
-        self._app_info['runs_dir'] = runs_dir
 
     def save_state(self, state_filename):
         """Save the current Campaign state to file in JSON format
@@ -512,54 +287,6 @@ class CampaignOld:
         # TODO: Recreate functionality
 
         pass
-
-    def populate_runs_dir(self):
-        """Populate run directories as specified in the input Campaign object
-
-        This calls the Campaigns encoder object to create input files for the
-        specified application in each run directory, usually with varying input
-        (scientific) parameters.
-
-        Parameters
-        ----------
-
-        Returns
-        -------
-
-        """
-
-        # TODO: Check this makes sense anymore
-
-        # Get application info block and runs block
-        runs = self.runs
-
-        # Get application encoder to use
-        encoder = self.encoder
-
-        if self.encoder is None:
-            raise RuntimeError('Cannot populate runs without valid '
-                               'encoder in campaign')
-
-        # Build a temp directory to store run files (unless it already exists)
-        if not self.runs_dir:
-
-            self.runs_dir = os.path.join(self.campaign_dir, 'runs')
-            runs_dir = self.runs_dir
-            if os.path.exists(runs_dir):
-                raise RuntimeError(f"Cannot create a runs directory to "
-                                   f"populate, as it already exists: "
-                                   f"{runs_dir}")
-            os.makedirs(runs_dir)
-            print(f"Creating temp runs directory: {runs_dir}")
-
-        for run_id, run_data in runs.items():
-            # Make run directory
-            target_dir = os.path.join(self.runs_dir, run_id)
-            # TODO: Should we check if the run has been created?
-            runs[run_id]['run_dir'] = target_dir
-            os.makedirs(target_dir)
-
-            encoder.encode(params=run_data, target_dir=target_dir)
 
     def log_element_application(self, element, further_info):
         """
