@@ -1,4 +1,5 @@
-"""Base class for all encoders and dictionary to register all imported encoders
+"""Provided base class for all encoders and dictionary to register all imported
+encoders.
 
 Encoders provide functions to convert generic problem space parameters lists
 into inputs for particular simulation codes.
@@ -44,10 +45,6 @@ class BaseEncoder:
     Skeleton encoder which establishes the format and provides the basis of our
     contract - provide an ``encode``
     method to parse these and write relevant run file to a target directory.
-
-    TODO: If we end up converting Attributes to Properties with ``@property``
-    of Kristof style ``@advanced_property`` decorators then they should be
-    documented in the property's getter method.
 
     Parameters
     ----------

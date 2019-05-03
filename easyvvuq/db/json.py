@@ -1,7 +1,10 @@
+"""Provides class that allows access to an JSON/Python dictionary format
+CampaignDB.
+"""
 import json
 import logging
 import tempfile
-from easyvvuq import constants
+from easyvvuq.constants import __easyvvuq_version__
 from .base import BaseCampaignDB
 
 __copyright__ = """
@@ -33,9 +36,7 @@ logger = logging.getLogger(__name__)
 class CampaignDB(BaseCampaignDB):
 
     def __init__(self, location=None, new_campaign=False, name=None,
-                 info=None, local=False):
-
-        self.local = local
+                 info=None):
 
         self._campaign_info = {}
         self._app = {}
@@ -44,8 +45,8 @@ class CampaignDB(BaseCampaignDB):
 
         if new_campaign:
 
-            self._campaign_info = info
-            self._campaign_info.easyvvuq_version = constants.version
+            self._campaign_info = info.to_dict()
+            self._campaign_info['easyvvuq_version'] = __easyvvuq_version__
             self._next_run = 0
 
             if location is None:
@@ -119,77 +120,13 @@ class CampaignDB(BaseCampaignDB):
 
         return self._app
 
-    def campaigns(self):
-
-        return [self._campaign_info['name']]
-
-    def campaign_dir(self, campaign_name=None):
-
-        if campaign_name is not None:
-            # TODO: Should this raise and Exception?
-            message = (
-                f'JSON/Python dictionary database can only support one '
-                f'application - ignoring selected name ({campaign_name}).')
-            logger.warning(message)
-
-        return self._campaign_info['campaign_dir']
-
-    def runs(self, campaign=None, sampler=None):
-
-        if campaign is not None or sampler is not None:
-            message = (f'JSON/Python dictionary database only supports '
-                       f'single campaign and sampler workflows - ignoring'
-                       f'campaign - {campaign}/ sampler {sampler}')
-            logger.warning(message)
-
-        return self._runs
-
-    def run(self, run_name, campaign=None, sampler=None):
-        """
-        Get the information for a specified run.
-
-        Parameters
-        ----------
-        run_name: str
-            Name of run to filter for.
-        campaign:  int
-            Campaign id to filter for.
-        sampler:
-            Sample id to filter for.
-
-        Returns
-        -------
-        dict
-            Containing run information (run_name, params, status, sample,
-            campaign, app)
-        """
-
-        if campaign is not None or sampler is not None:
-            message = (f'JSON/Python dictionary database only supports '
-                       f'single campaign and sampler workflows - ignoring'
-                       f'campaign - {campaign}/ sampler {sampler}')
-            logger.warning(message)
-
-        return self._runs[run_name]
-
-    def runs_dir(self, campaign_name=None):
-
-        if campaign_name is not None:
-            # TODO: Should this raise and Exception?
-            message = (
-                f'JSON/Python dictionary database can only support one '
-                f'application - ignoring selected name ({campaign_name}).')
-            logger.warning(message)
-
-        return self._campaign_info['runs_dir']
-
     def add_app(self, app_info):
         """
         Add application to the 'app' table.
 
         Parameters
         ----------
-        app_info: dict
+        app_info: `easyvvuq.data_structs.AppInfo`
             Application definition.
 
         Returns
@@ -203,8 +140,18 @@ class CampaignDB(BaseCampaignDB):
             logger.critical(message)
             raise RuntimeError(message)
 
-        self._app = app_info
+        self._app = app_info.to_dict()
         self._save()
+
+    def add_sampler(self, sampler):
+
+        if self._sample:
+            message = ('JSON/Python dict database does not support '
+                       'multiple samplers')
+            logger.critical(message)
+            raise RuntimeError(message)
+
+        self._sample = sampler
 
     def add_run(self, run_info={}, prefix='Run_'):
         """
@@ -234,12 +181,66 @@ class CampaignDB(BaseCampaignDB):
 
         self._save()
 
-    def add_sampler(self, sampler):
+    def run(self, run_name, campaign=None, sampler=None):
+        """
+        Get the information for a specified run.
 
-        if self._sample:
-            message = ('JSON/Python dict database does not support '
-                       'multiple samplers')
-            logger.critical(message)
-            raise RuntimeError(message)
+        Parameters
+        ----------
+        run_name: str
+            Name of run to filter for.
+        campaign:  int
+            Campaign id to filter for.
+        sampler:
+            Sample id to filter for.
 
-        self._sample = sampler
+        Returns
+        -------
+        dict
+            Containing run information (run_name, params, status, sample,
+            campaign, app)
+        """
+
+        if campaign is not None or sampler is not None:
+            message = (f'JSON/Python dictionary database only supports '
+                       f'single campaign and sampler workflows - ignoring'
+                       f'campaign - {campaign}/ sampler {sampler}')
+            logger.warning(message)
+
+        return self._runs[run_name]
+
+    def campaigns(self):
+
+        return [self._campaign_info['name']]
+
+    def campaign_dir(self, campaign_name=None):
+
+        if campaign_name is not None:
+            # TODO: Should this raise and Exception?
+            message = (
+                f'JSON/Python dictionary database can only support one '
+                f'application - ignoring selected name ({campaign_name}).')
+            logger.warning(message)
+
+        return self._campaign_info['campaign_dir']
+
+    def runs(self, campaign=None, sampler=None):
+
+        if campaign is not None or sampler is not None:
+            message = (f'JSON/Python dictionary database only supports '
+                       f'single campaign and sampler workflows - ignoring'
+                       f'campaign - {campaign}/ sampler {sampler}')
+            logger.warning(message)
+
+        return self._runs
+
+    def runs_dir(self, campaign_name=None):
+
+        if campaign_name is not None:
+            # TODO: Should this raise and Exception?
+            message = (
+                f'JSON/Python dictionary database can only support one '
+                f'application - ignoring selected name ({campaign_name}).')
+            logger.warning(message)
+
+        return self._campaign_info['runs_dir']
