@@ -68,16 +68,14 @@ def test_cannonsim_csv(tmpdir):
 
     # Make a random sampler
     vary = {
-       "angle": cp.Uniform(0.0, 1.0)
+        "angle": cp.Uniform(0.0, 1.0),
+        "height": cp.Uniform(2.0, 10.0),
+        "velocity": cp.Normal(10.0, 1.0),
+        "mass": cp.Uniform(5.0, 1.0)
     }
     sampler1 = uq.elements.sampling.RandomSampler(vary=vary)
 
-#    my_campaign.vary_param("angle", dist=cp.Uniform(0.0, 1.0))
-#    my_campaign.vary_param("height", dist=cp.Uniform(2.0, 10.0))
-#    my_campaign.vary_param("velocity", dist=cp.Normal(10.0, 1.0))
-#    my_campaign.vary_param("mass", dist=cp.Uniform(5.0, 1.0))
-
-#    random_sampler = uq.elements.sampling.RandomSampler(my_campaign)
+    my_campaign.set_sampler(sampler1)
 
     sys.exit(0)
 
