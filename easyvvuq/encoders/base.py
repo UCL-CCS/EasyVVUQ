@@ -1,5 +1,15 @@
+"""Base class for all encoders and dictionary to register all imported encoders
+
+Encoders provide functions to convert generic problem space parameters lists
+into inputs for particular simulation codes.
+
+Attributes
+----------
+AVAILABLE_ENCODERS : dict
+    Registers all imported encoders.
+"""
 import easyvvuq.utils.json as json_utils
-import easyvvuq.utils.fixtures as fixtures
+from easyvvuq.utils import fixtures
 
 __copyright__ = """
 
@@ -25,10 +35,10 @@ __license__ = "LGPL"
 
 # Dict to store all registered encoders (any class which extends
 # BaseEncoder is automatically registered as an encoder)
-available_encoders = {}
+AVAILABLE_ENCODERS = {}
 
 
-class BaseEncoder(object):
+class BaseEncoder:
     """Baseclass for all EasyVVUQ encoders.
 
     Skeleton encoder which establishes the format and provides the basis of our
@@ -66,23 +76,65 @@ class BaseEncoder(object):
         super().__init_subclass__(**kwargs)
 
         # Register new encoder
-        available_encoders[encoder_name] = cls
+        AVAILABLE_ENCODERS[encoder_name] = cls
 
-    def encode(self, params={}, target_dir=''):
+    def encode(self, params=None, target_dir=''):
+        """
+        Takes list of generic parameter values from `params` and
+        converts them into simulation input files (in `target_dir`).
+
+        Parameters
+        ----------
+        params: dict or None
+            Dictionary containing parameter names and values.
+        target_dir: str
+            Path into which output will be written.
+
+        Returns
+        -------
+
+        """
         raise NotImplementedError
 
-    def parse_fixtures_params(self, info, target_dir, path_depth=0):
+    @staticmethod
+    def parse_fixtures_params(info, target_dir, path_depth=0):
+        """
+        Interpret a dictionary of run information to covert the 'fixtures' sub-
+        dictionary to paths of files relative to `target_dir` or a directory
+        `path_depth` beneath this.
 
-        fixture_list = info['fixtures']
+        Notes
+        -----
+            Use case `path_depth` is e.g. NAMD where the file paths in the input
+            must be relative to where the configuration input file is stored
+            rather than where the executable is run from.
+
+        Parameters
+        ----------
+        info: dict
+            Run information dictionary.
+        target_dir: str
+            Path into which input files will be written for the run.
+        path_depth: int
+            Depth beneath `target_dir` to which fixture paths must be relative.
+
+        Returns
+        -------
+        dict
+            Updated version of input dictionary with parameters replaced with
+            fixture paths where relevant.
+
+        """
+
+        fixture_list = info.get('fixtures', {})
 
         if fixture_list:
             for key, current_fixture in fixture_list.items():
 
                 path = current_fixture['path']
-                if current_fixture['type'] == 'dir':
-                    is_dir = True
-                else:
-                    is_dir = False
+
+                is_dir = bool(current_fixture['type'] == 'dir')
+
                 common = current_fixture['common']
                 exists_local = current_fixture['exists_local']
                 target_name = current_fixture['target']

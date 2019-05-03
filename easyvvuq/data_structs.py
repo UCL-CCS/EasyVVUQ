@@ -144,7 +144,7 @@ class AppInfo:
 
     @input_encoder.setter
     def input_encoder(self, encoder):
-        available_encoders = uq.encoders.base.available_encoders
+        available_encoders = uq.encoders.base.AVAILABLE_ENCODERS
         if encoder not in available_encoders:
             message = (f"Encoder not found. Looking for {encoder}.\n"
                        f"Available encoders are {available_encoders}.")
