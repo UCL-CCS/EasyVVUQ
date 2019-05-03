@@ -192,4 +192,3 @@ class BaseCampaignDB:
             Path containing run outputs.
         """
         raise NotImplementedError
-
