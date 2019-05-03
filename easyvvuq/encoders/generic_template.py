@@ -5,6 +5,7 @@ import easyvvuq.utils.json as json_utils
 import tempfile
 from string import Template
 from .base import BaseEncoder
+import logging
 
 __copyright__ = """
 
@@ -38,69 +39,37 @@ def getCustomTemplate(template_txt, custom_delimiter='$'):
 class GenericEncoder(BaseEncoder, encoder_name="generic_template"):
     """GenericEncoder for substituting values into application template input.
 
-    The `app_info` dictionary needs to contain either a `template` filename or
-    `template_txt` string as the source of the application input template.
-    Values from the `params` dict are then substituted in by the `encode` method.
-
     Parameters
     ----------
-    app_info      : dict, dict or str or File
-        Application information. Will try interpreting as a dict or JSON
-        file/stream or filename.
-
 
     Attributes
     ----------
-    app_info    : dict
-        Contains application information.
 
     """
 
-    def __init__(self, app_info, *args, **kwargs):
+    def __init__(self, templatefname=None, delimiter='$', target_filename="app_input.txt"):
 
-        # Handles creation of `self.app_info` attribute (dicts)
-        super().__init__(app_info, *args, **kwargs)
-        app_info = self.app_info
-        print(app_info)
+        self.encoder_delimiter = delimiter
+        self.target_filename = target_filename
 
-        # Check if an encoder delimiter is specified in the app_info. Else use
-        # $ by default.
-        self.encoder_delimiter = '$'
-        if 'encoder_delimiter' in app_info:
-            self.encoder_delimiter = app_info['encoder_delimiter']
+        # Check that user has specified the file to use as template
+        if templatefname is None:
+            msg = "GenericEncoder must be given 'templatefname' - the location of a file containing the template text."
+            logging.error(msg)
+            raise Exception(msg)
+             
+        with open(app_info['template'], 'r') as template_file:
+            template_txt = template_file.read()
+            self.template = getCustomTemplate(template_txt, custom_delimiter=self.encoder_delimiter)
 
-        # Look for the template text ( specified either in a file, or in
-        # app_info['template_txt'] )
-        if 'template' in app_info:
-            with open(app_info['template'], 'r') as template_file:
-                template_txt = template_file.read()
-            self.template = getCustomTemplate(
-                template_txt, custom_delimiter=self.encoder_delimiter)
-        elif 'template_txt' in app_info:
-            self.template = getCustomTemplate(
-                app_info['template_txt'],
-                custom_delimiter=self.encoder_delimiter
-            )
-        else:
-            raise RuntimeError(
-                'Template required in "app" specification input to GenericEncoder')
-
-        # Check what name to give the output of this encoder
-        if 'input_filename' in app_info:
-            self.target_filename = app_info['input_filename']
-        else:
-            self.target_filename = 'app_input.txt'
-
-        self.app_input_txt = None
 
     def encode(self, params={}, target_dir=''):
         """Substitutes `params` into a template application input, saves in target_dir
 
         Parameters
         ----------
-        params        : dict, dict or str or File
-            Parameter information. Will try interpreting as a dict or JSON
-            file/stream or filename.
+        params        : dict
+            Parameter information in dictionary
         target_dir    : str
             Path to directory where application input will be written.
         """
@@ -108,10 +77,8 @@ class GenericEncoder(BaseEncoder, encoder_name="generic_template"):
         if not target_dir:
             raise RuntimeError('No target directory specified to encoder')
 
-        if not hasattr(params, 'items'):
-            params = json_utils.process_json(params)
-
-        params = self.parse_fixtures_params(params, target_dir)
+        # TODO: Sort out fixtures
+        #params = self.parse_fixtures_params(params, target_dir)
 
         str_params = {}
         for key, value in params.items():
@@ -119,7 +86,6 @@ class GenericEncoder(BaseEncoder, encoder_name="generic_template"):
 
         template = self.template
         target_filename = self.target_filename
-        app_input_txt = self.app_input_txt
 
         try:
             app_input_txt = template.substitute(str_params)
@@ -152,15 +118,3 @@ class GenericEncoder(BaseEncoder, encoder_name="generic_template"):
 
         print(reasoning)
         raise KeyError(exception)
-
-
-if __name__ == "__main__":
-
-    if len(sys.argv) != 3:
-        sys.exit("Usage: python3 generic_template.py INPUT_JSON_FILE OUTPUT_DIR")
-
-    input_json_file = sys.argv[1]
-    output_dir = sys.argv[2]
-
-    encoder = GenericEncoder(params=input_json_file, target_dir=output_dir)
-    encoder.encode()

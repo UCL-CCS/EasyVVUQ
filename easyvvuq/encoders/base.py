@@ -42,7 +42,7 @@ class BaseEncoder:
     """Baseclass for all EasyVVUQ encoders.
 
     Skeleton encoder which establishes the format and provides the basis of our
-    contract - take in ``app_info`` and provide an ``encode``
+    contract - provide an ``encode``
     method to parse these and write relevant run file to a target directory.
 
     TODO: If we end up converting Attributes to Properties with ``@property``
@@ -51,22 +51,11 @@ class BaseEncoder:
 
     Parameters
     ----------
-    app_info    : dict, optional
-        Application information. Will try interpreting as a dict or JSON
-        file/stream or filename.
 
     Attributes
     ----------
-    app_info    : dict
-        Contains application information.
 
     """
-
-    def __init__(self, app_info, *args, **kwargs):
-        if not hasattr(app_info, 'items'):
-            self.app_info = json_utils.process_json(app_info)
-        else:
-            self.app_info = app_info
 
     def __init_subclass__(cls, encoder_name, **kwargs):
         """
