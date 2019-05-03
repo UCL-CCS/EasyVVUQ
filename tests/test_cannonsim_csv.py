@@ -65,7 +65,13 @@ def test_cannonsim_csv(tmpdir):
 
     # Set the active app to be cannonsim
     my_campaign.set_app("cannonsim")
-    
+
+    # Make a random sampler
+    vary = {
+       "angle": cp.Uniform(0.0, 1.0)
+    }
+    sampler1 = uq.elements.sampling.RandomSampler(vary=vary)
+
 #    my_campaign.vary_param("angle", dist=cp.Uniform(0.0, 1.0))
 #    my_campaign.vary_param("height", dist=cp.Uniform(2.0, 10.0))
 #    my_campaign.vary_param("velocity", dist=cp.Normal(10.0, 1.0))

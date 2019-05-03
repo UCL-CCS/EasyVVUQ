@@ -1,4 +1,5 @@
 from .base import BaseSamplingElement
+import logging
 
 __copyright__ = """
 
@@ -25,8 +26,25 @@ __license__ = "LGPL"
 
 class RandomSampler(BaseSamplingElement):
 
-    def __init__(self, campaign):
-        self.campaign = campaign
+    def __init__(self, vary=None):
+        """
+            Expects dict of var names, and their corresponding distributions
+        """
+
+        if vary is None:
+            msg = "'vary' cannot be None. RandomSampler must be passed a dict of the names of the parameters you want to vary, and their corresponding distributions."
+            logging.error(msg)
+            raise Exception(msg)
+        if not isinstance(vary, dict):
+            msg = "'vary' must be a dictionary of the names of the parameters you want to vary, and their corresponding distributions."
+            logging.error(msg)
+            raise Exception(msg)
+        if len(vary) == 0:
+            msg = "'vary' cannot be empty."
+            logging.error(msg)
+            raise Exception(msg)
+
+        self.vary = vary
 
     def element_name(self):
         return "random_sampler"
@@ -37,10 +55,9 @@ class RandomSampler(BaseSamplingElement):
     def is_finite(self):
         return False
 
-    def generate_runs(self):
-        all_vars = self.campaign.vars
+    def generate_runs(self) -> dict:
         while True:
             run_dict = {}
-            for param_name, dist in all_vars.items():
+            for param_name, dist in self.vary.items():
                 run_dict[param_name] = dist.sample(1)[0]
             yield(run_dict)
