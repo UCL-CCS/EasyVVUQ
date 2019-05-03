@@ -42,15 +42,17 @@ def test_cannonsim_csv(tmpdir):
 
     my_campaign = uq.Campaign(name='cannon', workdir=tmpdir)
 
+    assert(my_campaign is not None)
+
     # Define parameter space for the cannonsim app
     params = {
-        "angle":            {"type": "real", "min": "0.0",    "max": "6.28",   "default": "0.79"},
-        "air_resistance":   {"type": "real", "min": "0.0",    "max": "1.0",    "default": "0.2" },
-        "height":           {"type": "real", "min": "0.0",    "max": "1000.0", "default": "1.0" },
-        "time_step":        {"type": "real", "min": "0.0001", "max": "1.0",    "default": "0.01"},
-        "gravity":          {"type": "real", "min": "0.0",    "max": "1000.0", "default": "9.8" },
-        "mass":             {"type": "real", "min": "0.0001", "max": "1000.0", "default": "1.0" },
-        "velocity":         {"type": "real", "min": "0.0",    "max": "1000.0", "default": "10.0"}
+        "angle":            {"type": "real", "min": "0.0",    "max": "6.28",   "default": "0.79", "variable": "True"},
+        "air_resistance":   {"type": "real", "min": "0.0",    "max": "1.0",    "default": "0.2",  "variable": "True"},
+        "height":           {"type": "real", "min": "0.0",    "max": "1000.0", "default": "1.0",  "variable": "True"},
+        "time_step":        {"type": "real", "min": "0.0001", "max": "1.0",    "default": "0.01", "variable": "True"},
+        "gravity":          {"type": "real", "min": "0.0",    "max": "1000.0", "default": "9.8",  "variable": "True"},
+        "mass":             {"type": "real", "min": "0.0001", "max": "1000.0", "default": "1.0",  "variable": "True"},
+        "velocity":         {"type": "real", "min": "0.0",    "max": "1000.0", "default": "10.0", "variable": "True"}
     }
 
     # Add the cannonsim app
@@ -64,28 +66,15 @@ def test_cannonsim_csv(tmpdir):
     # Set the active app to be cannonsim
     my_campaign.set_app("cannonsim")
     
+#    my_campaign.vary_param("angle", dist=cp.Uniform(0.0, 1.0))
+#    my_campaign.vary_param("height", dist=cp.Uniform(2.0, 10.0))
+#    my_campaign.vary_param("velocity", dist=cp.Normal(10.0, 1.0))
+#    my_campaign.vary_param("mass", dist=cp.Uniform(5.0, 1.0))
+
+#    random_sampler = uq.elements.sampling.RandomSampler(my_campaign)
+
     sys.exit(0)
 
-    assert(my_campaign is not None)
-    assert("angle" in my_campaign.params_info)
-    assert("air_resistance" in my_campaign.params_info)
-    assert("height" in my_campaign.params_info)
-    assert("time_step" in my_campaign.params_info)
-    assert("gravity" in my_campaign.params_info)
-    assert("mass" in my_campaign.params_info)
-    assert("velocity" in my_campaign.params_info)
-
-    my_campaign.vary_param("angle", dist=cp.Uniform(0.0, 1.0))
-    my_campaign.vary_param("height", dist=cp.Uniform(2.0, 10.0))
-    my_campaign.vary_param("velocity", dist=cp.Normal(10.0, 1.0))
-    my_campaign.vary_param("mass", dist=cp.Uniform(5.0, 1.0))
-
-    assert("angle" in my_campaign.vars)
-    assert("height" in my_campaign.vars)
-    assert("velocity" in my_campaign.vars)
-    assert("mass" in my_campaign.vars)
-
-    random_sampler = uq.elements.sampling.RandomSampler(my_campaign)
 
     my_campaign.add_runs(random_sampler, max_num=number_of_samples)
 
