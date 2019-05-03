@@ -50,9 +50,10 @@ class CampaignDB(BaseCampaignDB):
             self._next_run = 0
 
             if location is None:
-                location = tempfile.mkstemp(suffix='json', prefix='easyvvuq')
-                logging.warning('No location provided - db will be saved '
-                                'in {location}.')
+
+                location = tempfile.mkstemp(suffix='json', prefix='easyvvuq')[1]
+                logging.info('No database location provided - db will be saved '
+                             'in {location}.')
 
         else:
             self._load_campaign(location, name)
