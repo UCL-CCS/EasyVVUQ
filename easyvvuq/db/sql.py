@@ -60,7 +60,6 @@ class AppTable(Base):
     params = Column(String)
     fixtures = Column(String)
     collation = Column(String)
-    variable = Column(String)
 
 
 class RunTable(Base):
@@ -167,8 +166,7 @@ class CampaignDB(BaseCampaignDB):
             'execution': json.loads(selected_app.execution),
             'params': json.loads(selected_app.params),
             'fixtures': json.loads(selected_app.fixtures),
-            'collation': json.loads(selected_app.collation),
-            'variable': json.loads(selected_app.variable),
+            'collation': json.loads(selected_app.collation)
         }
 
         return app_dict

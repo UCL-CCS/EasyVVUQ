@@ -123,7 +123,7 @@ class AppInfo:
 
     def __init__(self, name='app', input_encoder=None, encoder_options={},
                  output_decoder=None, decoder_options=None, execution={},
-                 params={}, fixtures={}, collation={}, variable=[],
+                 params={}, fixtures={}, collation={},
                  ):
 
         self.name = name
@@ -135,8 +135,6 @@ class AppInfo:
         self.params = params
         self.fixtures = fixtures
         self.collation = collation
-        # TODO: check that variable is subset of keys of params dict
-        self.variable = variable
 
     @property
     def input_encoder(self):
@@ -179,8 +177,7 @@ class AppInfo:
             'execution': self.execution,
             'params': self.params,
             'fixtures': self.fixtures,
-            'collation': self.collation,
-            'variable': self.variable,
+            'collation': self.collation
         }
 
         return out_dict
@@ -191,7 +188,7 @@ class AppInfo:
 
         for field in ['params', 'fixtures',
                       'execution', 'collation',
-                      'encoder_options', 'decoder_options', 'variable']:
+                      'encoder_options', 'decoder_options']:
             db_dict[field] = json.dumps(db_dict[field])
 
         return db_dict
