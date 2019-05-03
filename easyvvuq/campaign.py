@@ -31,6 +31,7 @@ __license__ = "LGPL"
 
 logger = logging.getLogger(__name__)
 
+
 class Campaign:
 
     def __init__(self, name=None, db_type="sql", db_location=None, workdir="./", state_file=None):
@@ -38,7 +39,8 @@ class Campaign:
         self._log = []
 
         self._active_app = None
-
+        self.campaign_db = None
+        self.state_file = state_file
 
         # Load campaign from state_file, if provided. Else make a fresh new
         # campaign with a new campaign database
@@ -47,29 +49,31 @@ class Campaign:
         else:
             self.init_fresh(name, db_type, db_location, workdir)
 
-
     def init_fresh(self, name, db_type, db_location, workdir):
 
         # Create temp dir for campaign
-        campaign_dir = tempfile.mkdtemp(prefix=default_campaign_prefix, dir=workdir)
+        campaign_dir = tempfile.mkdtemp(prefix=default_campaign_prefix,
+                                        dir=workdir)
 
         if db_type == 'sql':
             from .db.sql import CampaignDB
-            if db_location == None:
+            if db_location is None:
                 db_location = "sqlite:///" + campaign_dir + "test.db"
         elif db_type == 'json':
             from .db.json import CampaignDB
         else:
-            message = f"Invalid 'db_type' {db_type} specified in {state_filename}. Supported types are 'sql' or 'json'."
+            message = (f"Invalid 'db_type' {db_type}. Supported types are "
+                       f"'sql' or 'json'.")
             logger.critical(message)
             raise RuntimeError(message)
 
-        info = uq.data_structs.CampaignInfo(name=name, campaign_dir_prefix=default_campaign_prefix, easyvvuq_version=__easyvvuq_version__, campaign_dir=campaign_dir)
-        self.campaign_db = CampaignDB(location=db_location, new_campaign=True, name=name, info=info)
-
+        info = uq.data_structs.CampaignInfo(name=name, campaign_dir_prefix=default_campaign_prefix,
+                                            easyvvuq_version=__easyvvuq_version__, campaign_dir=campaign_dir)
+        self.campaign_db = CampaignDB(location=db_location, new_campaign=True,
+                                      name=name, info=info)
 
     def init_from_state_file(self, state_file):
-        #TODO Implement loading from state file
+        # TODO Implement loading from state file
         print(f"Loading campaign from state file '{state_file}'")
         raise NotImplementedError
 
@@ -114,7 +118,6 @@ class Campaign:
 
         """
         self._active_app = self.campaign_db.app(name=app_name)
-
 
 
 class CampaignOld:
