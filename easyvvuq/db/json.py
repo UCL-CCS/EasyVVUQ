@@ -176,7 +176,7 @@ class CampaignDB(BaseCampaignDB):
         name = f"{prefix}{self._next_run}"
 
         this_run = run_info.to_dict()
-        this_run[name] = name
+        this_run['run_name'] = name
 
         self._runs[name] = this_run
 
