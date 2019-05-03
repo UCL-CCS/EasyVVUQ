@@ -5,7 +5,8 @@ setup(
 
     version='0.0.1.dev1',
 
-    description='Library to facilitate simple Verification, Validation and Uncertainty Quantification of simulation codes',
+    description=('Library to facilitate simple Verification, Validation and '
+                 'Uncertainty Quantification of simulation codes'),
 
     long_description='Copy from README file',
 
@@ -13,7 +14,8 @@ setup(
 
     author='CCS',
 
-    install_requires=['numpy', 'pandas', 'pytest', 'SQLAlchemy', 'chaospy', "sqlalchemy-utils"],
+    install_requires=['numpy', 'pandas', 'pytest', 'SQLAlchemy', 'chaospy',
+                      'sqlalchemy-utils'],
 
     packages=find_packages(),
 
