@@ -61,6 +61,8 @@ class BaseDecoder:
         """
         super().__init_subclass__(**kwargs)
 
+        cls.decoder_name = decoder_name
+
         # Register new decoder
         AVAILABLE_DECODERS[decoder_name] = cls
 

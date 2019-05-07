@@ -80,7 +80,8 @@ class SimpleCSV(BaseDecoder, decoder_name="csv"):
         return data
 
     def serialize(self):
-        return {"target_filename": self.target_filename,
+        return {"decoder_name": self.decoder_name,
+                "target_filename": self.target_filename,
                 "output_columns": json.dumps(self.output_columns)}
 
     def deserialize(self):
