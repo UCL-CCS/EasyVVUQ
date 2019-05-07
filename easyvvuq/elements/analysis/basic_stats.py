@@ -39,7 +39,7 @@ class BasicStats(BaseAnalysisElement):
         self.params_cols = params_cols
         self.output_type = OutputType.SUMMARY
 
-    def _apply_analysis(self, data_frame=None):
+    def analyse(self, data_frame=None):
 
         if data_frame is None:
             raise RuntimeError("UQP needs a data frame to analyse")

@@ -46,14 +46,8 @@ class BaseAnalysisElement(BaseElement):
 
     """
 
-    def _apply_analysis(self):
+    def analyse(self):
         raise NotImplementedError
 
     def element_category(self):
         return "analysis"
-
-    def apply(self, data_frame):
-        # Run the element specific analysis, then log the application
-        return_vals = self._apply_analysis(data_frame)
-
-        return return_vals
