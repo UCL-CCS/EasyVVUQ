@@ -70,18 +70,12 @@ class AggregateSamples(BaseCollationElement):
 
                 run_data = decoder.parse_sim_output(run_info=run_info)
 
-                print("RUN_DATA::\n", run_data)
-
                 if self.average:
                     run_data = pd.DataFrame(run_data.mean()).transpose()
 
                 params = run_info['params']
 
                 column_list = list(params.keys()) + run_data.columns.tolist()
-
-                print("column_list", column_list)
-
-                print("run_info", run_info)
 
                 for param, value in params.items():
                     run_data[param] = value
