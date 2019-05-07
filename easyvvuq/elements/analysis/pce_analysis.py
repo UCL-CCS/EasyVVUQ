@@ -50,6 +50,7 @@ class PCEAnalysis(BaseAnalysisElement):
         self.output_type = OutputType.SUMMARY
 
         # TODO fix call __dict___ in log_analysis to allow ndarray
+        # ISSUE 71
         # cf. casting ndarray to list in _apply_analysis
         # To store Descriptive Statistics
         self._statistical_moments = {}

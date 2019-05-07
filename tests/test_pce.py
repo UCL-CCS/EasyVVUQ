@@ -69,7 +69,7 @@ def test_pce(tmpdir):
 if __name__ == "__main__":
 
     start_time = time.time()
-    stats, per, sobols = test_pce("/ptmp/ljala/")
+    stats, per, sobols = test_pce("/tmp/")
     end_time = time.time()
     print('>>>>> elapsed time = ', end_time - start_time)
 
