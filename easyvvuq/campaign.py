@@ -281,7 +281,7 @@ class Campaign:
     def collate(self, store=True):
 
         # Apply collation element, and obtain the resulting dataframe
-        self.last_collation_dataframe = self._active_app_collation.apply(self)
+        self.last_collation_dataframe = self._active_app_collation.collate(self)
 
         if store == True:
             # Set up dirs and files to store collation results in

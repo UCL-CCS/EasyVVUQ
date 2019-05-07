@@ -45,7 +45,7 @@ class AggregateSamples(BaseCollationElement):
     def __init__(self, average=False):
         self.average = average
 
-    def _collate(self, campaign):
+    def collate(self, campaign):
         """
         Returns
         -------

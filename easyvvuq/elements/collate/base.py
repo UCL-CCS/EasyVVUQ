@@ -42,7 +42,7 @@ class BaseCollationElement(BaseElement):
 
     """
 
-    def _collate(self):
+    def collate(self):
         """
         Collates the campaign run output into a pandas dataframe.
         Must be implemented by all collation subclasses.
@@ -51,16 +51,6 @@ class BaseCollationElement(BaseElement):
 
     def element_category(self):
         return "collation"
-
-    def apply(self, campaign):
-        """
-        Run the collation, then log the details in the campaign
-        """
-
-        # Get dataframe (collation of results in the campaign object)
-        df = self._collate(campaign)
-
-        return df
 
     def serialize(self):
         raise NotImplementedError
