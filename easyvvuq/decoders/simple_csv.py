@@ -53,47 +53,29 @@ class SimpleCSV(BaseDecoder, decoder_name="csv"):
         self.output_type = OutputType('sample')
 
     @staticmethod
-    def _get_output_path(run_info={}, *args, **kwargs):
+    def _get_output_path(run_info=None):
 
         run_path = run_info['run_dir']
-
-        if 'output_filename' in kwargs:
-            out_file = kwargs['output_filename']
-        else:
-            raise RuntimeError('A value for "output_columns" must be '
-                               'specified for the (simple) csv decoder')
 
         if not os.path.isdir(run_path):
             raise RuntimeError(f"Run directory does not exist: {run_path}")
 
         return os.path.join(run_path, out_file)
 
-    def sim_complete(self, run_info={}, *args, **kwargs):
+    def sim_complete(self, run_info=None):
 
-        out_path = self._get_output_path(run_info, *args, **kwargs)
+        out_path = self._get_output_path(run_info)
 
         if not os.path.isfile(out_path):
             return False
         else:
             return True
 
-    def parse_sim_output(self, *args, run_info={}, **kwargs):
+    def parse_sim_output(self, run_info={}):
 
-        out_path = self._get_output_path(run_info, *args, **kwargs)
+        out_path = self._get_output_path(run_info)
 
-        if 'output_columns' in kwargs:
-            self.output_columns = kwargs['output_columns']
-        else:
-            raise RuntimeError('A value for "names" must be '
-                               'specified for the simple encoder')
-
-        # Remove 'output_filename' and 'output_columns' from the kwargs before
-        # passing to pandas read_csv (as these are clearly going to be rejected
-        # by pandas)
-        del kwargs['output_filename']
-        del kwargs['output_columns']
-
-        data = pd.read_csv(out_path, names=self.output_columns, **kwargs)
+        data = pd.read_csv(out_path, names=self.output_columns)
 
         return data
 

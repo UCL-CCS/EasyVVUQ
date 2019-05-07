@@ -32,8 +32,6 @@ class AggregateSamples(BaseCollationElement):
 
     Parameters
     ----------
-    campaign:   `easyvvuq.Campaign`
-        Campaign from which to get simulation output to aggregate.
     average:
         Should the values read in be averaged (mean).
     """
@@ -44,43 +42,28 @@ class AggregateSamples(BaseCollationElement):
     def element_version(self):
         return "0.1"
 
-    # TODO: This is an ugly way to set the campaign object. Will need to refactor
-    # this to do logging differently soon.
-    def __init__(self, campaign, average=False, *args, **kwargs):
-        super().__init__(campaign)
+    def __init__(self, average=False):
         self.average = average
 
-        # TODO: This should be made actually transparent
-        # It is unclear that these args are passed to the decoder
-        # Is there a better way to do this?
-        self.decoder_args = args
-        self.decoder_kwargs = kwargs
-
-    def _collate(self):
+    def _collate(self, campaign):
         """
         Returns
         -------
         `pd.DataFrame`:
             Aggregated data from all completed runs referenced in the input Campaign.
         """
-        decoder = self.campaign.decoder
+        decoder = campaign._active_decoder
 
         if decoder.output_type != OutputType.SAMPLE:
             raise RuntimeError('Can only aggregate sample type data')
 
-        runs = self.campaign.runs
-
         full_data = pd.DataFrame()
 
+        runs = self.campaign_db.runs()
         for run_id, run_info in runs.items():
-            if decoder.sim_complete(
-                    run_info=run_info,
-                    *self.decoder_args,
-                    **self.decoder_kwargs):
+            if decoder.sim_complete(run_info=run_info):
                 runs[run_id]['completed'] = True
-                run_data = decoder.parse_sim_output(run_info=run_info,
-                                                    *self.decoder_args,
-                                                    **self.decoder_kwargs)
+                run_data = decoder.parse_sim_output(run_info=run_info)
 
                 if self.average:
                     run_data = pd.DataFrame(run_data.mean()).transpose()
@@ -88,12 +71,7 @@ class AggregateSamples(BaseCollationElement):
                 column_list = list(run_info.keys()) + run_data.columns.tolist()
 
                 for param, value in run_info.items():
-
-                    # TODO: Improve this ugly hack
-                    if param == 'fixtures':
-                        run_data[param] = 'FIXTURE'
-                    else:
-                        run_data[param] = value
+                    run_data[param] = value
 
                 # Reorder columns
                 run_data = run_data[column_list]
@@ -102,19 +80,5 @@ class AggregateSamples(BaseCollationElement):
 
         return full_data
 
-#        data_dir = os.path.join(campaign.campaign_dir, 'data')
-#
-#        out_dir = tempfile.mkdtemp(dir=data_dir)
-#        out_file = os.path.join(out_dir, 'aggregate_sample.tsv')
-#
-#        full_data.to_csv(out_file, sep='\t', index=False)
-#
-#        state_file = os.path.join(out_dir, 'state_snapshot.json')
-#        campaign.save_state(state_file)
-
-#        campaign.data = {
-#            'files': [out_file],
-#            'type': OutputType('summary').value,
-#            'output_columns': decoder.output_columns,
-#            'state': state_file
-#        }
+    def serialize(self):
+        return {"element_name": self.element_name(), "element_version": self.element_version(), "average": self.average}

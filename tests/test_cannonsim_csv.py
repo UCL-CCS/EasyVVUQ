@@ -52,12 +52,10 @@ def test_cannonsim_csv(tmpdir):
         "velocity":         {"type": "real", "min": "0.0",    "max": "1000.0", "default": "10.0", "variable": "True"}
     }
 
-    # Create an encoder and decoder for the cannonsim app
+    # Create an encoder, decoder and collation element for the cannonsim app
     encoder = uq.encoders.GenericEncoder(template_fname='tests/cannonsim/test_input/cannonsim.template', delimiter='#', target_filename='in.cannon')
     decoder = uq.decoders.SimpleCSV(target_filename='output.csv', output_columns = ['Dist', 'lastvx', 'lastvy'])
-
-    # Create the collation element for this app
-    collation = None
+    collation = uq.elements.collate.AggregateSamples()
 
     # Add the cannonsim app
     my_campaign.add_app(name="cannonsim",
@@ -101,14 +99,9 @@ def test_cannonsim_csv(tmpdir):
     my_campaign.apply_for_each_run_dir(uq.actions.ExecuteLocal(
         "tests/cannonsim/bin/cannonsim in.cannon output.csv"))
 
-    sys.exit(0)
+#    my_campaign.collate()
 
-    aggregate = uq.elements.collate.AggregateSamples(
-        my_campaign,
-        output_filename=output_filename,
-        output_columns=output_columns,
-        header=0)
-    aggregate.apply()
+    sys.exit(0)
 
     assert(len(my_campaign.data) > 0)
 

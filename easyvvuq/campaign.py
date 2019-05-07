@@ -48,6 +48,7 @@ class Campaign:
         # TODO: These definitely shouldn't be here. Probably should be in DB.
         self._active_app_encoder = None
         self._active_app_decoder = None
+        self._active_app_collation = None
 
         # Load campaign from state_file, if provided. Else make a fresh new
         # campaign with a new campaign database
@@ -117,6 +118,7 @@ class Campaign:
         # Currently not possible from the "dead" form stored in the DB
         self._active_app_encoder = encoder
         self._active_app_decoder = decoder
+        self._active_app_collation = collation
 
     def set_app(self, app_name):
         """

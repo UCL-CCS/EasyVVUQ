@@ -177,10 +177,10 @@ class AppInfo:
 
             out_dict = {
                 'name': self.name,
+                'params': self.params,
                 'input_encoder': self.input_encoder.serialize(),
                 'output_decoder': self.output_decoder.serialize(),
-                'params': self.params,
-                'collation': self.collation
+                'collation': self.collation.serialize()
             }
 
         return out_dict

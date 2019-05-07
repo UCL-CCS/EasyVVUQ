@@ -64,7 +64,7 @@ class BaseDecoder:
         # Register new decoder
         AVAILABLE_DECODERS[decoder_name] = cls
 
-    def sim_complete(self, *args, run_info=None, **kwargs):
+    def sim_complete(self, run_info=None):
         """
         Check whether the simulation specified by `run_info` has completed and
         produced results.
@@ -73,10 +73,6 @@ class BaseDecoder:
         ----------
         run_info: dict or None
             Information defining the run to check.
-        *args
-            Variable length argument list.
-        **kwargs
-            Arbitrary keyword arguments.
 
         Returns
         -------
@@ -84,7 +80,7 @@ class BaseDecoder:
         """
         raise NotImplementedError
 
-    def parse_sim_output(self, *args, run_info=None, **kwargs):
+    def parse_sim_output(self, run_info=None):
         """
 
         Parameters

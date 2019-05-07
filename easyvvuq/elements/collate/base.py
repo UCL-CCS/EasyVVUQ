@@ -52,39 +52,33 @@ class BaseCollationElement(BaseElement):
     def element_category(self):
         return "collation"
 
-    def __init__(self, campaign):
-        self.campaign = campaign
-
-    def apply(self):
+    def apply(self, campaign):
         """
-        Run the collation, then log the details in the campaign (if it exists)
+        Run the collation, then log the details in the campaign
         """
 
         # Get dataframe (collation of results in the campaign object)
         df = self._collate()
 
         # Set up dirs and files to store collation results in
-        data_dir = os.path.join(self.campaign.campaign_dir, 'data')
+        data_dir = os.path.join(campaign.get_campaign_dir(), 'data')
         out_dir = tempfile.mkdtemp(dir=data_dir)
         out_file = os.path.join(out_dir, 'aggregate_sample.tsv')
 
         # Convert dataframe to file
         df.to_csv(out_file, sep='\t', index=False)
 
-        # Save campaign state
-        state_file = os.path.join(out_dir, 'state_snapshot.json')
-        self.campaign.save_state(state_file)
-
-        # Log this collation with the campaign object
-        data_info = {
-            'files': [out_file],
-            'type': OutputType('summary').value,
-            'output_columns': self.campaign.decoder.output_columns,
-            'state': state_file
-        }
-        self.campaign.log_element_application(self, data_info)
-
-        # Point the campaign's 'data' var to this collated output
-        self.campaign.data = data_info
+        # TODO: Make the logging work with the new refactored campaign object
+#        # Log this collation with the campaign object
+#        data_info = {
+#            'files': [out_file],
+#            'type': OutputType('summary').value,
+#            'output_columns': self.campaign.decoder.output_columns,
+#            'state': state_file
+#        }
+#        campaign.log_element_application(self, data_info)
 
         return df
+
+    def serialize(self):
+        raise NotImplementedError
