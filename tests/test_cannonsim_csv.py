@@ -3,6 +3,7 @@ import chaospy as cp
 import os
 import sys
 import pytest
+from pprint import pprint
 
 __copyright__ = """
 
@@ -81,7 +82,9 @@ def test_cannonsim_csv(tmpdir):
     my_campaign.draw_samples(N=5)
 
     # Print the list of runs now in the campaign db
-    print(my_campaign.list_runs())
+    print("List of runs added:")
+    pprint(my_campaign.list_runs())
+    print("---")
 
     # Encode all runs into a local directory
     my_campaign.populate_runs_dir()

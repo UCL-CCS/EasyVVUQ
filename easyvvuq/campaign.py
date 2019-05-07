@@ -1,4 +1,5 @@
 import os
+import sys
 import logging
 import tempfile
 import json
@@ -241,7 +242,8 @@ class Campaign:
             # runs[run_id]['run_dir'] = target_dir
 
             # TODO: Apply encoder
-            self._active_app_encoder.encode(params=run_data, target_dir=target_dir)
+            self._active_app_encoder.encode(params=run_data['params'], target_dir=target_dir)
+            sys.exit(0)
 
 
 class CampaignOld:
