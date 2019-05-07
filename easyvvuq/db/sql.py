@@ -259,6 +259,7 @@ class CampaignDB(BaseCampaignDB):
             'sample': run_row.sample,
             'campaign': run_row.campaign,
             'app': run_row.app,
+            'run_dir': run_row.run_dir
         }
 
         return run_info
