@@ -53,7 +53,7 @@ def test_cannonsim_csv_jsondb(tmpdir):
 
     # Create an encoder for the cannonsim app
     template_path = 'tests/cannonsim/test_input/cannonsim.template'
-    encoder = uq.encoders.GenericEncoder(templatefname=template_path,
+    encoder = uq.encoders.GenericEncoder(template_fname=template_path,
                                          delimiter='#',
                                          target_filename='in.cannon')
 
