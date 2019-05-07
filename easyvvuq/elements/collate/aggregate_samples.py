@@ -52,17 +52,22 @@ class AggregateSamples(BaseCollationElement):
         `pd.DataFrame`:
             Aggregated data from all completed runs referenced in the input Campaign.
         """
-        decoder = campaign._active_decoder
+        decoder = campaign._active_app_decoder
 
         if decoder.output_type != OutputType.SAMPLE:
             raise RuntimeError('Can only aggregate sample type data')
 
         full_data = pd.DataFrame()
 
-        runs = self.campaign_db.runs()
+        # TODO: Find nicer way than forcing collate to access deep internal vars of campaign object like this
+        runs = campaign.campaign_db.runs()
+
         for run_id, run_info in runs.items():
             if decoder.sim_complete(run_info=run_info):
-                runs[run_id]['completed'] = True
+
+                # TODO: Communicate this completion flag back to the database properly
+#                runs[run_id]['completed'] = True
+
                 run_data = decoder.parse_sim_output(run_info=run_info)
 
                 if self.average:

@@ -58,25 +58,7 @@ class BaseCollationElement(BaseElement):
         """
 
         # Get dataframe (collation of results in the campaign object)
-        df = self._collate()
-
-        # Set up dirs and files to store collation results in
-        data_dir = os.path.join(campaign.get_campaign_dir(), 'data')
-        out_dir = tempfile.mkdtemp(dir=data_dir)
-        out_file = os.path.join(out_dir, 'aggregate_sample.tsv')
-
-        # Convert dataframe to file
-        df.to_csv(out_file, sep='\t', index=False)
-
-        # TODO: Make the logging work with the new refactored campaign object
-#        # Log this collation with the campaign object
-#        data_info = {
-#            'files': [out_file],
-#            'type': OutputType('summary').value,
-#            'output_columns': self.campaign.decoder.output_columns,
-#            'state': state_file
-#        }
-#        campaign.log_element_application(self, data_info)
+        df = self._collate(campaign)
 
         return df
 

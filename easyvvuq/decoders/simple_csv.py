@@ -29,7 +29,7 @@ __license__ = "LGPL"
 
 class SimpleCSV(BaseDecoder, decoder_name="csv"):
 
-    def __init__(self, target_filename=None, output_columns = None):
+    def __init__(self, target_filename=None, output_columns = None, header = 1):
 
         if target_filename == None:
             msg = "target_filename must be set for SimpleCSV. This should be the name of the output file this decoder acts on."
@@ -49,22 +49,23 @@ class SimpleCSV(BaseDecoder, decoder_name="csv"):
 
         self.target_filename = target_filename
         self.output_columns = output_columns
+        self.header = header
 
         self.output_type = OutputType('sample')
 
     @staticmethod
-    def _get_output_path(run_info=None):
+    def _get_output_path(run_info=None, outfile=None):
 
         run_path = run_info['run_dir']
 
         if not os.path.isdir(run_path):
             raise RuntimeError(f"Run directory does not exist: {run_path}")
 
-        return os.path.join(run_path, out_file)
+        return os.path.join(run_path, outfile)
 
     def sim_complete(self, run_info=None):
 
-        out_path = self._get_output_path(run_info)
+        out_path = self._get_output_path(run_info, self.target_filename)
 
         if not os.path.isfile(out_path):
             return False
@@ -73,16 +74,17 @@ class SimpleCSV(BaseDecoder, decoder_name="csv"):
 
     def parse_sim_output(self, run_info={}):
 
-        out_path = self._get_output_path(run_info)
+        out_path = self._get_output_path(run_info, self.target_filename)
 
-        data = pd.read_csv(out_path, names=self.output_columns)
+        data = pd.read_csv(out_path, names=self.output_columns, header=self.header)
 
         return data
 
     def serialize(self):
         return {"decoder_name": self.decoder_name,
                 "target_filename": self.target_filename,
-                "output_columns": json.dumps(self.output_columns)}
+                "output_columns": json.dumps(self.output_columns),
+                "header": self.header}
 
     def deserialize(self):
         raise NotImplementedErro

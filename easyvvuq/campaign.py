@@ -44,6 +44,7 @@ class Campaign:
         self._active_app_encoder = None
         self.campaign_db = None
         self.state_file = state_file
+        self.last_collation_dataframe = None
 
         # TODO: These definitely shouldn't be here. Probably should be in DB.
         self._active_app_encoder = None
@@ -241,8 +242,8 @@ class Campaign:
 
             # TODO: Should we check if the run has been created?
 
-            # TODO: record target_dir along with the run info? (Would need a new entry in RunTable)
-            # runs[run_id]['run_dir'] = target_dir
+            # TODO: Check that this isn't insanely inefficient (almost certainly will be hammering the database for large run lists)
+            self.campaign_db.set_dir_for_run(run_id, target_dir)
 
             # TODO: Apply encoder
             self._active_app_encoder.encode(params=run_data['params'], target_dir=target_dir)
@@ -275,6 +276,29 @@ class Campaign:
             # Run user-specified action on this directory
             action.act_on_dir(dir_name)
 
+
+    def collate(self, store=True):
+
+        # Apply collation element, and obtain the resulting dataframe
+        self.last_collation_dataframe = self._active_app_collation.apply(self)
+
+        if store == True:
+            # Set up dirs and files to store collation results in
+            data_dir = os.path.join(campaign.get_campaign_dir(), 'data')
+            out_dir = tempfile.mkdtemp(dir=data_dir)
+            out_file = os.path.join(out_dir, 'aggregate_sample.tsv')
+
+            # Convert dataframe to file
+            df.to_csv(out_file, sep='\t', index=False)
+
+        #TODO: Log this collation appropriately
+
+    def get_last_collation(self):
+        # TODO: Make check work with pandas dataframe
+#        if self.last_collation_dataframe == None:
+#            logging.warning("No dataframe available as no collation has been done. Was this campaign's collate() function run?")
+#            return None
+        return self.last_collation_dataframe
 
 class CampaignOld:
     def add_default_run(self):

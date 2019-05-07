@@ -54,7 +54,7 @@ def test_cannonsim_csv(tmpdir):
 
     # Create an encoder, decoder and collation element for the cannonsim app
     encoder = uq.encoders.GenericEncoder(template_fname='tests/cannonsim/test_input/cannonsim.template', delimiter='#', target_filename='in.cannon')
-    decoder = uq.decoders.SimpleCSV(target_filename='output.csv', output_columns = ['Dist', 'lastvx', 'lastvy'])
+    decoder = uq.decoders.SimpleCSV(target_filename='output.csv', output_columns = ['Dist', 'lastvx', 'lastvy'], header=1)
     collation = uq.elements.collate.AggregateSamples()
 
     print("Serialized encoder:", encoder.serialize())
@@ -104,7 +104,11 @@ def test_cannonsim_csv(tmpdir):
     my_campaign.apply_for_each_run_dir(uq.actions.ExecuteLocal(
         "tests/cannonsim/bin/cannonsim in.cannon output.csv"))
 
-#    my_campaign.collate()
+    my_campaign.collate(store=False)
+
+    data = my_campaign.get_last_collation()
+
+    print("data:", data)
 
     sys.exit(0)
 
