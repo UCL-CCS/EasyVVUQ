@@ -122,15 +122,13 @@ class RunInfo:
 
 class AppInfo:
 
-    def __init__(self, name='app', input_encoder=None, output_decoder=None, execution={}, params={}, fixtures={}, collation={}):
+    def __init__(self, name=None, params=None, encoder=None, decoder=None, collation=None):
 
         self.name = name
-        self.input_encoder = input_encoder
-        self.output_decoder = output_decoder
-        self.execution = execution
-        self.params = params
-        self.fixtures = fixtures
+        self.input_encoder = encoder
+        self.output_decoder = decoder
         self.collation = collation
+        self.params = params
 
     @property
     def input_encoder(self):
@@ -172,8 +170,7 @@ class AppInfo:
 
             out_dict = self.to_dict()
 
-            for field in ['params', 'fixtures', 'input_encoder', 'output_decoder',
-                          'execution', 'collation']:
+            for field in ['params', 'input_encoder', 'output_decoder', 'collation']:
                 out_dict[field] = json.dumps(out_dict[field])
 
         else:
@@ -182,9 +179,7 @@ class AppInfo:
                 'name': self.name,
                 'input_encoder': self.input_encoder.serialize(),
                 'output_decoder': self.output_decoder.serialize(),
-                'execution': self.execution,
                 'params': self.params,
-                'fixtures': self.fixtures,
                 'collation': self.collation
             }
 

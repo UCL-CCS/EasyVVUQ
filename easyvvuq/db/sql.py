@@ -56,9 +56,7 @@ class AppTable(Base):
     name = Column(String)
     input_encoder = Column(String)
     output_decoder = Column(String)
-    execution = Column(String)
     params = Column(String)
-    fixtures = Column(String)
     collation = Column(String)
 
 
@@ -162,9 +160,7 @@ class CampaignDB(BaseCampaignDB):
             'name': selected_app.name,
             'input_encoder': selected_app.input_encoder,
             'output_decoder': selected_app.output_decoder,
-            'execution': json.loads(selected_app.execution),
             'params': json.loads(selected_app.params),
-            'fixtures': json.loads(selected_app.fixtures),
             'collation': json.loads(selected_app.collation)
         }
 

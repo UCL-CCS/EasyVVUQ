@@ -84,19 +84,12 @@ class Campaign:
         print(f"Loading campaign from state file '{state_file}'")
         raise NotImplementedError
 
-    def add_app(self, app_info, set_active=True):
+    def add_app(self, name=None, params=None, encoder=None, decoder=None, collation=None, set_active=True):
         """
         Add information on a new application to the campaign database.
 
         Parameters
         ----------
-        app_info: dict
-            Contains the information needed to describe and wrap an
-            application: name, input_encoder, output_decoder,
-            encoder_options, decoder_options, execution, params (all
-            parameters that can be passed via encoder to the application),
-            fixtures, collation and variable (which parameters can be varied
-            in this workflow).
         set_active: bool
             Should the added app be set to be teh currently active app?
 
@@ -108,7 +101,13 @@ class Campaign:
         # TODO: Need to look at parameters
 
         # validate application input
-        app = uq.data_structs.AppInfo(**app_info)
+        app = uq.data_structs.AppInfo(
+                                        name=name,
+                                        params=params,
+                                        encoder=encoder,
+                                        decoder=decoder,
+                                        collation=collation
+                                     )
 
         self.campaign_db.add_app(app)
         if set_active:
@@ -116,8 +115,8 @@ class Campaign:
 
         # TODO: Find somewhere sensible to store/resume/set the *live* encoder and decoder for a given app.
         # Currently not possible from the "dead" form stored in the DB
-        self._active_app_encoder = app_info['input_encoder']
-        self._active_app_decoder = app_info['output_decoder']
+        self._active_app_encoder = encoder
+        self._active_app_decoder = decoder
 
     def set_app(self, app_name):
         """
