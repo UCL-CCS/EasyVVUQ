@@ -34,52 +34,18 @@ class BasicStats(BaseAnalysisElement):
     def element_version(self):
         return "0.1"
 
-    def __init__(self, data_src, params_cols=[], value_cols=[],
-                 *args, **kwargs):
+    def __init__(self, params_cols=None):
 
-        # TODO: Fix this to allow more flexibility - basically pass through
-        # available options to `pd.DataFrame.describe()`
-
-        # Handles creation of `self.data_src` attribute (dict)
-        super().__init__(data_src, *args, **kwargs)
-
-        data_src = self.data_src
-
-        if data_src:
-            if 'files' in data_src:
-                if len(data_src['files']) != 1:
-                    raise RuntimeError(
-                        "Data source must contain a SINGLE file path for this UQP")
-                else:
-                    self.data_frame = pd.read_csv(
-                        data_src['files'][0], sep='\t')
-
-        self.value_cols = value_cols
-
-        if self.campaign is not None:
-            if not params_cols:
-                self.params_cols = list(self.campaign.params_info.keys())
-            self.value_cols = self.campaign.decoder.output_columns
-        else:
-            self.params_cols = params_cols
+        self.params_cols = params_cols
         self.output_type = OutputType.SUMMARY
 
-    def _apply_analysis(self):
+    def _apply_analysis(self, data_frame=None):
 
-        if self.data_frame is None:
+        if data_frame is None:
             raise RuntimeError("UQP needs a data frame to analyse")
 
-        df = self.data_frame
-
-        output_dir = self.output_dir
-        output_file = os.path.join(output_dir, 'basic_stats.tsv')
-
-        grouped_data = df.groupby(self.params_cols)
-
         # Get summary statistics
+        grouped_data = data_frame.groupby(self.params_cols)
         results = grouped_data.describe()
-        results.to_csv(output_file, sep='\t')
 
-        self.output_file = output_file
-
-        return results, output_file
+        return results

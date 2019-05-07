@@ -291,7 +291,7 @@ class Campaign:
             # Convert dataframe to file
             df.to_csv(out_file, sep='\t', index=False)
 
-        #TODO: Log this collation appropriately
+        # TODO: Log this collation appropriately
 
     def get_last_collation(self):
         # TODO: Make check work with pandas dataframe
@@ -299,6 +299,11 @@ class Campaign:
 #            logging.warning("No dataframe available as no collation has been done. Was this campaign's collate() function run?")
 #            return None
         return self.last_collation_dataframe
+
+    def apply_analysis(self, analysis_element):
+        self.last_analysis = analysis_element.apply(self.last_collation_dataframe)
+        # TODO: Log this analysis appropriately
+
 
 class CampaignOld:
     def add_default_run(self):

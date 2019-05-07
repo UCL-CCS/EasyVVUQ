@@ -55,7 +55,7 @@ def test_cannonsim_csv(tmpdir):
     # Create an encoder, decoder and collation element for the cannonsim app
     encoder = uq.encoders.GenericEncoder(template_fname='tests/cannonsim/test_input/cannonsim.template', delimiter='#', target_filename='in.cannon')
     decoder = uq.decoders.SimpleCSV(target_filename='output.csv', output_columns = ['Dist', 'lastvx', 'lastvy'], header=0)
-    collation = uq.elements.collate.AggregateSamples(average=True)
+    collation = uq.elements.collate.AggregateSamples(average=False)
 
     print("Serialized encoder:", encoder.serialize())
     print("Serialized decoder:", decoder.serialize())
@@ -109,21 +109,10 @@ def test_cannonsim_csv(tmpdir):
 
     print("data:", data)
 
-    sys.exit(0)
+    assert(len(my_campaign.get_last_collation()) > 0)
 
-    assert(len(my_campaign.data) > 0)
-
-    stats = uq.elements.analysis.BasicStats(
-        my_campaign, value_cols=output_columns)
-    results, output_file = stats.apply()
-
-    my_campaign.save_state(output_json)
-
-    print(results)
-
-    assert(os.path.exists(output_json))
-    assert(os.path.isfile(output_json))
-
+    stats = uq.elements.analysis.BasicStats(params_cols=['Dist', 'lastvx', 'lastvy'])
+    my_campaign.apply_analysis(stats)
 
 if __name__ == "__main__":
     test_cannonsim_csv("/tmp/")
