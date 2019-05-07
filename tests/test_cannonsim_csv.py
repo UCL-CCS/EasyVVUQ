@@ -57,6 +57,11 @@ def test_cannonsim_csv(tmpdir):
     decoder = uq.decoders.SimpleCSV(target_filename='output.csv', output_columns = ['Dist', 'lastvx', 'lastvy'])
     collation = uq.elements.collate.AggregateSamples()
 
+    print("Serialized encoder:", encoder.serialize())
+    print("Serialized decoder:", decoder.serialize())
+    print("Serialized collation:", collation.serialize())
+
+
     # Add the cannonsim app
     my_campaign.add_app(name="cannonsim",
                         params=params,

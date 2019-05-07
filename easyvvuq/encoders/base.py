@@ -61,6 +61,8 @@ class BaseEncoder:
         """
         super().__init_subclass__(**kwargs)
 
+        cls.encoder_name = encoder_name
+
         # Register new encoder
         AVAILABLE_ENCODERS[encoder_name] = cls
 
