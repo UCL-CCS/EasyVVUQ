@@ -105,14 +105,12 @@ def test_cannonsim_csv(tmpdir):
 
     my_campaign.collate(store=False)
 
-    data = my_campaign.get_last_collation()
-
-    print("data:", data)
-
-    assert(len(my_campaign.get_last_collation()) > 0)
+    print("data:", my_campaign.get_last_collation())
 
     stats = uq.elements.analysis.BasicStats(params_cols=['Dist', 'lastvx', 'lastvy'])
     my_campaign.apply_analysis(stats)
+
+    print("stats:", my_campaign.get_last_analysis())
 
 if __name__ == "__main__":
     test_cannonsim_csv("/tmp/")

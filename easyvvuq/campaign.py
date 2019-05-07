@@ -45,6 +45,7 @@ class Campaign:
         self.campaign_db = None
         self.state_file = state_file
         self.last_collation_dataframe = None
+        self.last_analysis = None
 
         # TODO: These definitely shouldn't be here. Probably should be in DB.
         self._active_app_encoder = None
@@ -301,8 +302,29 @@ class Campaign:
         return self.last_collation_dataframe
 
     def apply_analysis(self, analysis_element):
+        # TODO: Check that collation was done before applying this
         self.last_analysis = analysis_element.apply(self.last_collation_dataframe)
         # TODO: Log this analysis appropriately
+
+    def get_last_analysis(self):
+        # TODO: Check that analysis was done
+#        if self.last_analysis == None:
+#            logging.warning("No last analysis available as no analysis has been done. Was this campaign's collate() function run?")
+#            return None
+        return self.last_analysis
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 class CampaignOld:
