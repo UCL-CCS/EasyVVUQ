@@ -81,23 +81,19 @@ class GenericEncoder(BaseEncoder, encoder_name="generic_template"):
             raise RuntimeError('No target directory specified to encoder')
 
         # TODO: Sort out fixtures
-        #params = self.parse_fixtures_params(params, target_dir)
 
         str_params = {}
         for key, value in params.items():
             str_params[key] = str(value)
 
-        template = self.template
-        target_filename = self.target_filename
-
         try:
-            app_input_txt = template.substitute(str_params)
+            app_input_txt = self.template.substitute(str_params)
         except KeyError as e:
             # TODO: Should we pass str_params here?
             self._log_substitution_failure(params, e)
 
         # Write target input file
-        target_file_path = os.path.join(target_dir, target_filename)
+        target_file_path = os.path.join(target_dir, self.target_filename)
         with open(target_file_path, 'w') as fp:
             fp.write(app_input_txt)
 

@@ -138,8 +138,51 @@ class Campaign:
             msg = "set_sampler() must be passed a sampling element"
             logging.error(msg)
             raise Exception(msg)
-        
+
         self._active_sampler = sampler
+
+    def add_run(self, new_run, prefix='Run_'):
+        """Add a new run to the queue
+
+        Parameters
+        ----------
+        new_run     : dict
+            Defines the value of each model parameter listed in
+            `self.params_info` for a run to be added to `self.runs`
+        prefix      : str
+            Prepended to the key used to identify the run in `self.runs`
+
+        Returns
+        -------
+
+        """
+
+        app_default_params = self._active_app["params"]
+
+        # Validate:
+        # Check if parameter names match those already known for this app
+        for param in new_run.keys():
+            if param not in app_default_params.keys():
+
+                reasoning = (
+                    f"dict passed to add_run() contains extra parameter, "
+                    f"{param}, which is not a known parameter name "
+                    f"of app {self._active_app['name']}.")
+
+                raise RuntimeError(reasoning)
+
+        # If necessary parameter names are missing, fill them in from the
+        # default values in params_info
+        for param in app_default_params.keys():
+            if param not in new_run.keys():
+                default_val = app_default_params[param]["default"]
+                new_run[param] = default_val
+
+        # Add to run queue
+        # TODO: Get correct sampler and campaign IDs to pass to RunInfo
+        run_info = RunInfo(app=self._active_app['id'], params=new_run, sample=0, campaign=0)
+        self.campaign_db.add_run(run_info)
+
 
     def draw_samples(self, N=0):
 
@@ -152,10 +195,10 @@ class Campaign:
                 "' is an infinite generator, therefore a finite number of draws (N > 0) must be specified.'")
 
         num_added = 0
-        for param_vals in self._active_sampler.generate_runs():
-            # TODO: Get correct sampler and campaign IDs to pass to RunInfo
-            run_info = RunInfo(app=self._active_app['id'], params=param_vals, sample=0, campaign=0)
-            self.campaign_db.add_run(run_info)
+        for new_run in self._active_sampler.generate_runs():
+
+            self.add_run(new_run)
+
             num_added += 1
             if num_added == N:
                 break
