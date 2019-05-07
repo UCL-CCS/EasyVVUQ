@@ -52,14 +52,15 @@ def test_cannonsim_csv(tmpdir):
         "velocity":         {"type": "real", "min": "0.0",    "max": "1000.0", "default": "10.0", "variable": "True"}
     }
 
-    # Create an encoder for the cannonsim app
+    # Create an encoder and a decoder for the cannonsim app
     encoder = uq.encoders.GenericEncoder(template_fname='tests/cannonsim/test_input/cannonsim.template', delimiter='#', target_filename='in.cannon')
+    decoder = uq.decoders.SimpleCSV(target_filename='output.csv', output_columns = ['Dist', 'lastvx', 'lastvy'])
 
     # Add the cannonsim app
     my_campaign.add_app({
                         "name": "cannonsim", # TODO Tell campaign to "use_app('appname')" to declutter this input line
                         "input_encoder": encoder,
-                        "output_decoder":"csv", # TODO Pass decoder object directly and have campaign serialize it to store it (as with encoder)
+                        "output_decoder": decoder,
                         "params": params # TODO Allow params to be added to app programmatically
                         })
 
@@ -98,9 +99,6 @@ def test_cannonsim_csv(tmpdir):
         "tests/cannonsim/bin/cannonsim in.cannon output.csv"))
 
     sys.exit(0)
-
-    output_filename = 'output.csv'
-    output_columns = ['Dist', 'lastvx', 'lastvy']
 
     aggregate = uq.elements.collate.AggregateSamples(
         my_campaign,

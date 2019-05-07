@@ -1,4 +1,5 @@
 import os
+import json
 import pandas as pd
 from easyvvuq import OutputType
 from .base import BaseDecoder
@@ -28,10 +29,26 @@ __license__ = "LGPL"
 
 class SimpleCSV(BaseDecoder, decoder_name="csv"):
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, target_filename=None, output_columns = None):
 
-        # Handles creation of `self.app_info` attribute (dicts)
-        super().__init__(*args, **kwargs)
+        if target_filename == None:
+            msg = "target_filename must be set for SimpleCSV. This should be the name of the output file this decoder acts on."
+            logging.error(msg)
+            raise Exception(msg)
+
+        if output_columns == None:
+            msg = "output_columns must be specified for SimpleCSV. This should be the names of the output columns this decoder extracts from the target csv file."
+            logging.error(msg)
+            raise Exception(msg)
+
+        if len(output_columns) == 0:
+            msg = "output_columns cannot be empty."
+            logging.error(msg)
+            raise Exception(msg)
+
+
+        self.target_filename = target_filename
+        self.output_columns = output_columns
 
         self.output_type = OutputType('sample')
 
@@ -79,3 +96,10 @@ class SimpleCSV(BaseDecoder, decoder_name="csv"):
         data = pd.read_csv(out_path, names=self.output_columns, **kwargs)
 
         return data
+
+    def serialize(self):
+        return {"target_filename": self.target_filename,
+                "output_columns": json.dumps(self.output_columns)}
+
+    def deserialize(self):
+        raise NotImplementedErro

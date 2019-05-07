@@ -45,8 +45,9 @@ class Campaign:
         self.campaign_db = None
         self.state_file = state_file
 
-        # TODO: This shouldn't be here. Probably should be in DB.
+        # TODO: These definitely shouldn't be here. Probably should be in DB.
         self._active_app_encoder = None
+        self._active_app_decoder = None
 
         # Load campaign from state_file, if provided. Else make a fresh new
         # campaign with a new campaign database
@@ -113,9 +114,10 @@ class Campaign:
         if set_active:
             self.set_app(app.name)
 
-        # TODO: Find somewhere sensible to store/resume/set the *live* encoder for a given app.
+        # TODO: Find somewhere sensible to store/resume/set the *live* encoder and decoder for a given app.
         # Currently not possible from the "dead" form stored in the DB
         self._active_app_encoder = app_info['input_encoder']
+        self._active_app_decoder = app_info['output_decoder']
 
     def set_app(self, app_name):
         """

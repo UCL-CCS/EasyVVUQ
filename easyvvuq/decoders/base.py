@@ -54,11 +54,6 @@ class BaseDecoder:
 
     """
 
-    def __init__(self, *args, **kwargs):
-
-        self.output_type = OutputType('sample')
-        self.output_columns = []
-
     def __init_subclass__(cls, decoder_name, **kwargs):
         """
         Catch any new decoders (all decoders must inherit from BaseDecoder) and add them
@@ -105,4 +100,10 @@ class BaseDecoder:
         -------
 
         """
+        raise NotImplementedError
+
+    def serialize(self):
+        raise NotImplementedError
+
+    def deserialize(self):
         raise NotImplementedError

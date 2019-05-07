@@ -156,11 +156,13 @@ class AppInfo:
     @output_decoder.setter
     def output_decoder(self, decoder):
         available_decoders = uq.decoders.base.AVAILABLE_DECODERS
-        if decoder not in available_decoders:
-            message = (f"Decoder not found. Looking for {decoder}.\n"
-                       f"Available decoders are {available_decoders}.")
-            logging.critical(message)
-            raise RuntimeError(message)
+
+        # TODO: Fix/relocate check. Problem is with live/serialized encoder info.
+#        if decoder not in available_decoders:
+#            message = (f"Decoder not found. Looking for {decoder}.\n"
+#                       f"Available decoders are {available_decoders}.")
+#            logging.critical(message)
+#            raise RuntimeError(message)
 
         self._output_decoder = decoder
 
@@ -170,7 +172,7 @@ class AppInfo:
 
             out_dict = self.to_dict()
 
-            for field in ['params', 'fixtures', 'input_encoder',
+            for field in ['params', 'fixtures', 'input_encoder', 'output_decoder',
                           'execution', 'collation']:
                 out_dict[field] = json.dumps(out_dict[field])
 
@@ -179,7 +181,7 @@ class AppInfo:
             out_dict = {
                 'name': self.name,
                 'input_encoder': self.input_encoder.serialize(),
-                'output_decoder': self.output_decoder,
+                'output_decoder': self.output_decoder.serialize(),
                 'execution': self.execution,
                 'params': self.params,
                 'fixtures': self.fixtures,
