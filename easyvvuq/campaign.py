@@ -247,6 +247,31 @@ class Campaign:
     def get_campaign_runs_dir(self):
         return self.campaign_db.runs_dir()
 
+    def apply_for_each_run_dir(self, action):
+        """
+        For each run in this Campaign's run list, apply the specified action
+        (an object of type Action)
+
+        Parameters
+        ----------
+        action : the action to be applied to each run directory
+            The function to be applied to each run directory. func() will
+            be called with the run directory path as its only argument.
+        Returns
+        -------
+        """
+
+        runs = self.campaign_db.runs()
+        runs_dir = self.campaign_db.runs_dir()
+
+        # Loop through all runs in this campaign
+        for run_id in runs.keys():
+            dir_name = os.path.join(runs_dir, run_id)
+            print("Applying " + action.__module__ + " to " + dir_name + "...")
+
+            # Run user-specified action on this directory
+            action.act_on_dir(dir_name)
+
 
 class CampaignOld:
     def campaign_id(self, without_prefix=False):

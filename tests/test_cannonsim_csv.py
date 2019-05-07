@@ -94,10 +94,10 @@ def test_cannonsim_csv(tmpdir):
     assert(os.path.exists(my_campaign.get_campaign_runs_dir()))
     assert(os.path.isdir(my_campaign.get_campaign_runs_dir()))
 
-    sys.exit(0)
-
     my_campaign.apply_for_each_run_dir(uq.actions.ExecuteLocal(
-        "tests/cannonsim/bin/cannonsim input.cannon output.csv"))
+        "tests/cannonsim/bin/cannonsim in.cannon output.csv"))
+
+    sys.exit(0)
 
     output_filename = 'output.csv'
     output_columns = ['Dist', 'lastvx', 'lastvy']
