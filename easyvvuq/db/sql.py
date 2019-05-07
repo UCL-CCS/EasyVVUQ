@@ -71,6 +71,7 @@ class RunTable(Base):
     params = Column(String)
     # TODO: Consider making status an ENUM to enforce relevant EasyVVUQ values
     status = Column(String)
+    run_dir = Column(String)
     campaign = Column(Integer, ForeignKey('campaign_info.id'))
     sample = Column(Integer, ForeignKey('sample.id'))
 
@@ -296,11 +297,33 @@ class CampaignDB(BaseCampaignDB):
                                                               sample=sampler)
 
         if selected.count() != 1:
-            logging.warning('Multiple runs selected - using the last')
+            logging.warning('Multiple runs selected - using the first')
 
-        selected = selected.last()
+        selected = selected.first()
 
         return self._run_to_dict(selected)
+
+    def set_dir_for_run(self, run_name, run_dir, campaign=None, sampler=None):
+        if campaign is None and sampler is None:
+            selected = self.session.query(RunTable).filter_by(run_name=run_name)
+        elif campaign is not None and sampler is not None:
+            selected = self.session.query(RunTable).filter_by(run_name=run_name,
+                                                              campaign=campaign,
+                                                              sample=sampler)
+        elif campaign is not None:
+            selected = self.session.query(RunTable).filter_by(run_name=run_name,
+                                                              campaign=campaign)
+        else:
+            selected = self.session.query(RunTable).filter_by(run_name=run_name,
+                                                              sample=sampler)
+
+        if selected.count() != 1:
+            logging.warning('Multiple runs selected - using the first')
+
+        selected = selected.first()
+
+        selected.run_dir = run_dir
+        self.session.commit()
 
     def campaigns(self):
         """Get list of campaigns for which information is stored in the
@@ -408,3 +431,5 @@ class CampaignDB(BaseCampaignDB):
         """
 
         return self._get_campaign_info(campaign_name=campaign_name).runs_dir
+
+
