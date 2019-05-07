@@ -276,48 +276,6 @@ class Campaign:
 
 
 class CampaignOld:
-    def campaign_id(self, without_prefix=False):
-
-        # The "ID" of the campaign is just the name of the campaign
-        # directory (without the trailing slash)
-        campaign_id = os.path.basename(
-            os.path.normpath(self.app_info['campaign_dir']))
-
-        if without_prefix:
-            # Ignore the prefix at the start of the string.
-            prefix = self.app_info['campaign_dir_prefix']
-
-            if campaign_id.startswith(prefix):
-                return campaign_id[len(prefix):]
-
-            print(f"Warning: campaign_ID() called with option "
-                  f"'without_prefix' set, but prefix {prefix} was "
-                  f"not found at the start of campaign_ID {campaign_id}.")
-
-        return campaign_id
-
-
-
-    def save_state(self, state_filename):
-        """Save the current Campaign state to file in JSON format
-
-        Parameters
-        ----------
-        state_filename  :   str
-            Name of file in which to save the state
-
-        Returns
-        -------
-
-        """
-
-        # TODO: Make this make sense
-
-        # with open(state_filename, "w") as outfile:
-        #    json.dump(output_json, outfile, indent=4)
-
-        pass
-
     def add_default_run(self):
         """
         Add a single new run to the queue, using only default values for
@@ -448,34 +406,3 @@ class CampaignOld:
                 unique[match_ndx]['run_ids'].append(run_id)
 
         return unique
-
-    def apply_for_each_run_dir(self, action):
-        """
-        For each run in this Campaign's run list, apply the specified action
-        (an object of type Action)
-
-        Parameters
-        ----------
-        action : the action to be applied to each run directory
-            The function to be applied to each run directory. func() will
-            be called with the run directory path as its only argument.
-        Returns
-        -------
-        """
-
-        if "runs_dir" not in self.app_info.keys():
-
-            print(self.app_info)
-
-            raise RuntimeError("Missing 'runs_dir' key (Application info must "
-                               "include runs directory path).")
-        runs_dir = self.app_info["runs_dir"]
-
-        # Loop through all runs in this campaign
-        run_ids = self.runs.keys()
-        for run_id in run_ids:
-            dir_name = os.path.join(runs_dir, run_id)
-            print("Applying " + action.__module__ + " to " + dir_name + "...")
-
-            # Run user-specified action on this directory
-            action.act_on_dir(dir_name)
