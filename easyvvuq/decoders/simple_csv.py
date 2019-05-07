@@ -29,7 +29,7 @@ __license__ = "LGPL"
 
 class SimpleCSV(BaseDecoder, decoder_name="csv"):
 
-    def __init__(self, target_filename=None, output_columns = None, header = 1):
+    def __init__(self, target_filename=None, output_columns = None, header = 0):
 
         if target_filename == None:
             msg = "target_filename must be set for SimpleCSV. This should be the name of the output file this decoder acts on."
