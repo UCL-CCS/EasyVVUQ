@@ -87,7 +87,7 @@ def test_cannonsim_csv(tmpdir):
     print("---")
 
     # Encode all runs into a local directory
-    print(f"Encoding all runs to runs_dir={my_campaign.get_campaign_runs_dir()}")
+    print(f"Encoding all runs to campaign runs dir {my_campaign.get_campaign_runs_dir()}")
     my_campaign.populate_runs_dir()
 
     assert(len(my_campaign.get_campaign_runs_dir()) > 0)

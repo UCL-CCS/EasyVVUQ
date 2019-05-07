@@ -243,7 +243,6 @@ class Campaign:
 
             # TODO: Apply encoder
             self._active_app_encoder.encode(params=run_data['params'], target_dir=target_dir)
-            sys.exit(0)
 
     def get_campaign_runs_dir(self):
         return self.campaign_db.runs_dir()
