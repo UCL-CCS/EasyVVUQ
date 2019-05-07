@@ -110,7 +110,7 @@ class CampaignDB(BaseCampaignDB):
                 raise RuntimeError(message)
             Base.metadata.create_all(self.engine)
 
-            self.session.add(CampaignTable(**info.dict_for_db()))
+            self.session.add(CampaignTable(**info.to_dict(flatten=True)))
             self.session.commit()
             self._next_run = 1
         else:
@@ -186,7 +186,7 @@ class CampaignDB(BaseCampaignDB):
 
         # TODO: Check that no app with same name exists
 
-        app_dict = app_info.dict_for_db()
+        app_dict = app_info.to_dict(flatten=True)
 
         db_entry = AppTable(**app_dict)
 
@@ -232,7 +232,7 @@ class CampaignDB(BaseCampaignDB):
 
         run_info.run_name = f"{prefix}{self._next_run}"
 
-        run = RunTable(**run_info.dict_for_db())
+        run = RunTable(**run_info.to_dict(flatten=True))
         self.session.add(run)
         self.session.commit()
         self._next_run += 1

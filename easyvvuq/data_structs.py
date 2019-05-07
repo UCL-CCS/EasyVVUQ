@@ -93,31 +93,31 @@ class RunInfo:
 
         self.status = 'created'
 
-    def to_dict(self):
+    def to_dict(self, flatten=False):
 
-        out_dict = {
-            'run_name': self.run_name,
-            'params': self.params,
-            'status': self.status,
-            'campaign': self.campaign,
-            'sample': self.sample,
-            'app': self.app,
-        }
+        if flatten:
+
+            out_dict = {
+                'run_name': self.run_name,
+                'params': json.dumps(self.params),
+                'status': self.status,
+                'campaign': self.campaign,
+                'sample': self.sample,
+                'app': self.app,
+            }
+
+        else:
+
+            out_dict = {
+                'run_name': self.run_name,
+                'params': self.params,
+                'status': self.status,
+                'campaign': self.campaign,
+                'sample': self.sample,
+                'app': self.app,
+            }
 
         return out_dict
-
-    def dict_for_db(self):
-
-        db_dict = {
-            'run_name': self.run_name,
-            'params': json.dumps(self.params),
-            'status': self.status,
-            'campaign': self.campaign,
-            'sample': self.sample,
-            'app': self.app,
-        }
-
-        return db_dict
 
 
 class AppInfo:
@@ -164,29 +164,29 @@ class AppInfo:
 
         self._output_decoder = decoder
 
-    def to_dict(self):
+    def to_dict(self, flatten=False):
 
-        out_dict = {
-            'name': self.name,
-            'input_encoder': self.input_encoder.serialize(),
-            'output_decoder': self.output_decoder,
-            'execution': self.execution,
-            'params': self.params,
-            'fixtures': self.fixtures,
-            'collation': self.collation
-        }
+        if flatten:
+
+            out_dict = self.to_dict()
+
+            for field in ['params', 'fixtures', 'input_encoder',
+                          'execution', 'collation']:
+                out_dict[field] = json.dumps(out_dict[field])
+
+        else:
+
+            out_dict = {
+                'name': self.name,
+                'input_encoder': self.input_encoder.serialize(),
+                'output_decoder': self.output_decoder,
+                'execution': self.execution,
+                'params': self.params,
+                'fixtures': self.fixtures,
+                'collation': self.collation
+            }
 
         return out_dict
-
-    def dict_for_db(self):
-
-        db_dict = self.to_dict()
-
-        for field in ['params', 'fixtures', 'input_encoder',
-                      'execution', 'collation']:
-            db_dict[field] = json.dumps(db_dict[field])
-
-        return db_dict
 
 
 class CampaignInfo:
@@ -196,10 +196,14 @@ class CampaignInfo:
                  runs_dir=None, local=False):
 
         if name is None:
-            sys.exit("CampaignInfo constructor must be passed a 'name'.")
+            message = "CampaignInfo constructor must be passed a 'name'."
+            logger.critical(message)
+            raise RuntimeError(message)
 
         if campaign_dir is None:
-            sys.exit("CampaignInfo constructor must be passed 'campaign_dir'")
+            message = "CampaignInfo constructor must be passed 'campaign_dir'"
+            logger.critical(message)
+            raise RuntimeError(message)
 
         self.name = name
         self.campaign_dir_prefix = campaign_dir_prefix
@@ -229,7 +233,7 @@ class CampaignInfo:
         # TODO: check validity and compatibility
         self._easyvvuq_version = version_no
 
-    def to_dict(self):
+    def to_dict(self, flatten=False):
 
         out_dict = {
             'name': self.name,
@@ -240,7 +244,3 @@ class CampaignInfo:
         }
 
         return out_dict
-
-    def dict_for_db(self):
-
-        return self.to_dict()
