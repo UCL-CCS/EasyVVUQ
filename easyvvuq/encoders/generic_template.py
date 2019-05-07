@@ -107,7 +107,8 @@ class GenericEncoder(BaseEncoder, encoder_name="generic_template"):
 
     def serialize(self):
         return {"delimiter": self.encoder_delimiter,
-                "target_filename": self.target_filename}
+                "target_filename": self.target_filename,
+                "template_fname": self.template_fname}
 
     def deserialize(self):
         raise NotImplementedError
