@@ -100,16 +100,17 @@ def test_cannonsim_csv(tmpdir):
     assert(os.path.exists(my_campaign.get_campaign_runs_dir()))
     assert(os.path.isdir(my_campaign.get_campaign_runs_dir()))
 
+    # Local execution
     my_campaign.apply_for_each_run_dir(uq.actions.ExecuteLocal(
         "tests/cannonsim/bin/cannonsim in.cannon output.csv"))
 
+    # Collate all data into one pandas data frame
     my_campaign.collate(store=False)
-
     print("data:", my_campaign.get_last_collation())
 
+    # Create a BasicStats analysis element and apply it to the campaign
     stats = uq.elements.analysis.BasicStats(params_cols=['Dist', 'lastvx', 'lastvy'])
     my_campaign.apply_analysis(stats)
-
     print("stats:", my_campaign.get_last_analysis())
 
 if __name__ == "__main__":
