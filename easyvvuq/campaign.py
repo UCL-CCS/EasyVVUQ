@@ -308,13 +308,13 @@ class Campaign:
 
     def get_last_collation(self):
         if self.last_collation_dataframe is None:
-            logging.warning("No dataframe available as no collation has been done. Was this campaign's collate() function run?")
+            logging.warning("No dataframe available as no collation has been done. Was this campaign's collate() function run first?")
             return None
         return self.last_collation_dataframe
 
     def apply_analysis(self, analysis_element):
-        # TODO: Check that collation was done before applying this
-        self.last_analysis = analysis_element.analyse(self.last_collation_dataframe)
+        # Apply analysis element to most recent collation result
+        self.last_analysis = analysis_element.analyse(self.get_last_collation())
 
         # Log application of this analysis element
         self.log_element_application(analysis_element, None)
@@ -376,4 +376,4 @@ class Campaign:
             },
             "info": further_info
         }
-        self._log.append(log_entry) 
+        self._log.append(log_entry)
