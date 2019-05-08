@@ -1,3 +1,4 @@
+import logging
 import numpy as np
 import chaospy as cp
 from .base import BaseSamplingElement
@@ -8,7 +9,7 @@ __license__ = "LGPL"
 
 class PCESampler(BaseSamplingElement):
     def __init__(self,
-                 campaign,
+                 vary=None,
                  polynomial_order=4,
                  quadrature_rule="G",
                  sparse=False):
@@ -17,11 +18,7 @@ class PCESampler(BaseSamplingElement):
 
         Parameters
         ----------
-        campaign : Campaign
-            To stores informations about the PCE element.
-            - Multivariate distribution
-            - The orthogonal polynomials P
-            - The quadrature informations: order, rule and sparsity
+        vary: dict or None
 
         polynomial_order : int, optional
             The polynomial order, default is 4.
@@ -34,26 +31,44 @@ class PCESampler(BaseSamplingElement):
             default is False.
 
         """
-        self.campaign = campaign
 
-        # List of the probality distributions of uncertain parameters
-        params_distribution = list(self.campaign.vars.values())
+        if vary is None:
+            msg = ("'vary' cannot be None. RandomSampler must be passed a "
+                   "dict of the names of the parameters you want to vary, "
+                   "and their corresponding distributions.")
+            logging.error(msg)
+            raise Exception(msg)
+        if not isinstance(vary, dict):
+            msg = ("'vary' must be a dictionary of the names of the "
+                   "parameters you want to vary, and their corresponding "
+                   "distributions.")
+            logging.error(msg)
+            raise Exception(msg)
+        if len(vary) == 0:
+            msg = "'vary' cannot be empty."
+            logging.error(msg)
+            raise Exception(msg)
+
+        self.vary = vary
+
+        # List of the probability distributions of uncertain parameters
+        params_distribution = list(vary.values())
 
         # Multivariate distribution
-        self.campaign.distribution = cp.J(*params_distribution)
+        self.distribution = cp.J(*params_distribution)
 
         # The orthogonal polynomials corresponding to the joint distribution
-        self.campaign.P = cp.orth_ttr(
-            polynomial_order, self.campaign.distribution)
+        self.P = cp.orth_ttr(
+            polynomial_order, self.distribution)
 
-        # The quadrature informations: order, rule and sparsity
-        self.campaign.quad_order = polynomial_order + 1
-        self.campaign.quad_rule = quadrature_rule
-        self.campaign.quad_sparse = sparse
+        # The quadrature information: order, rule and sparsity
+        self.quad_order = polynomial_order + 1
+        self.quad_rule = quadrature_rule
+        self.quad_sparse = sparse
 
         # Nodes and weights for the integration
-        self._nodes, _ = cp.generate_quadrature(order=self.campaign.quad_order,
-                                                domain=self.campaign.distribution,
+        self._nodes, _ = cp.generate_quadrature(order=self.quad_order,
+                                                domain=self.distribution,
                                                 rule=quadrature_rule,
                                                 sparse=sparse)
 
@@ -64,17 +79,19 @@ class PCESampler(BaseSamplingElement):
         return "PCE_sampler"
 
     def element_version(self):
-        return "0.2"
+        return "0.3"
 
     def is_finite(self):
         return True
 
     def generate_runs(self):
+
         for i_val in range(self._number_of_samples):
             run_dict = {}
             i_par = 0
-            for param_name in self.campaign.vars.keys():
+            for param_name in self.vary.keys():
                 run_dict[param_name] = self._nodes.T[i_val][i_par]
                 i_par += 1
 
             yield run_dict
+
