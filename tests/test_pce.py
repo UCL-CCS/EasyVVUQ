@@ -1,6 +1,3 @@
-import os
-import time
-import numpy as np
 import chaospy as cp
 import easyvvuq as uq
 
@@ -63,71 +60,23 @@ def test_pce(tmpdir):
     # Update after here
 
     # Post-processing analysis
-    analysis = uq.elements.analysis.PCEAnalysis(
-        my_campaign, value_cols=output_columns)
+    pce_analysis = uq.elements.analysis.PCEAnalysis(sampler=my_sampler,
+                                                    qoi_cols=output_columns)
 
-    analysis.apply()
+    my_campaign.apply_analysis(pce_analysis)
+
+    results = my_campaign.get_last_analysis()
 
     # Get Descriptive Statistics
-    stats = analysis.statistical_moments('te')
-    per = analysis.percentiles('te')
-    sobols = analysis.sobol_indices('te', 'first_order')
-    #dist_out = analysis.output_distributions('te')
+    stats = results['statistical_moments']['te']
+    per = results['percentiles']['te']
+    sobols = results['sobol_indices']['te'][1]
+    dist_out = results['output_distributions']['te']
 
-    return stats, per, sobols
+    return stats, per, sobols, dist_out
 
 
 if __name__ == "__main__":
 
-    start_time = time.time()
-    stats, per, sobols = test_pce("/ptmp/ljala/")
-    end_time = time.time()
-    print('>>>>> elapsed time = ', end_time - start_time)
+    stats, per, sobols, dist_out = test_pce("/tmp/")
 
-    # Plot statistical results
-    __plot = False
-
-    if __plot:
-        import matplotlib.pyplot as plt
-        mean = stats["mean"]
-        var = stats["var"]
-        p10 = per['p10']
-        p90 = per['p90']
-
-        s_kappa = sobols["kappa"]
-        s_t_env = sobols["t_env"]
-
-        t = np.linspace(0, 200, 150)
-
-        fig1 = plt.figure()
-        ax1 = fig1.add_subplot(111)
-        ax1.plot(t, mean, 'g-', alpha=0.75, label='Mean')
-        ax1.plot(t, p10, 'b-', alpha=0.25)
-        ax1.plot(t, p90, 'b-', alpha=0.25)
-        ax1.fill_between(
-            t,
-            p10,
-            p90,
-            alpha=0.25,
-            label='90% prediction interval')
-        ax1.set_xlabel('Time')
-        ax1.set_ylabel('Temperature', color='b')
-        ax1.tick_params('y', colors='b')
-        ax2 = ax1.twinx()
-        ax2.plot(t, var, 'r-', alpha=0.5)
-        ax2.set_ylabel('Variance', color='r')
-        ax2.tick_params('y', colors='r')
-        ax1.grid()
-        ax1.legend()
-        ax1.set_title('Statistical moments')
-
-        fig2 = plt.figure()
-        ax = fig2.add_subplot(111)
-        ax.plot(t, s_kappa, 'b-', label=r'$\kappa$')
-        ax.plot(t, s_t_env, 'g-', label=r'$t_{env}$')
-        ax.set_xlabel('Time')
-        ax.set_ylabel('Sobol indices')
-        ax.grid()
-        ax.legend()
-        ax.set_title('First order Sobol indices')
-        plt.show()
