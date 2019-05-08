@@ -69,7 +69,7 @@ def test_cannonsim_csv(tmpdir):
                         collation=collation
                        )
 
-    # Set the active app to be cannonsim
+    # Set the active app to be cannonsim (this is redundant when only one app has been added)
     my_campaign.set_app("cannonsim")
 
     # Make a random sampler
@@ -112,6 +112,9 @@ def test_cannonsim_csv(tmpdir):
     stats = uq.elements.analysis.BasicStats(params_cols=['Dist', 'lastvx', 'lastvy'])
     my_campaign.apply_analysis(stats)
     print("stats:", my_campaign.get_last_analysis())
+
+    # Print the campaign log
+    pprint(my_campaign._log)
 
 if __name__ == "__main__":
     test_cannonsim_csv("/tmp/")

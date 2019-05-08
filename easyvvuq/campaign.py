@@ -189,8 +189,30 @@ class Campaign:
         run_info = RunInfo(app=self._active_app['id'], params=new_run, sample=0, campaign=0)
         self.campaign_db.add_run(run_info)
 
+    def add_default_run(self):
+        """
+        Add a single new run to the queue, using only default values for
+        all parameters.
+        """
+
+        new_run = {}
+        self.add_run(new_run)
 
     def draw_samples(self, N=0):
+        """Draws N samples from the currently set sampler, resulting in N new runs added to the runs list.
+           If N is 0 (its default value) then this method draws ALL samples from the sampler, until exhaustion
+           (this will fail if the sampler is not finite).
+
+        Parameters
+        ----------
+        N     : int
+                Number of samples to draw from the active sampling element.
+                By default is 0 (draw ALL samples)
+
+        Returns
+        -------
+
+        """
 
         # Make sure N is not 0 for an infinite generator (this would add runs
         # forever...)
@@ -208,6 +230,9 @@ class Campaign:
             num_added += 1
             if num_added == N:
                 break
+
+        # Log application of this sampling element
+        self.log_element_application(self._active_sampler, {"num_added": num_added})
 
     def list_runs(self):
         return self.campaign_db.runs()
@@ -292,50 +317,27 @@ class Campaign:
             # Convert dataframe to file
             df.to_csv(out_file, sep='\t', index=False)
 
-        # TODO: Log this collation appropriately
+        # Log application of this collation element
+        self.log_element_application(self._active_app_collation, {"store": store})
 
     def get_last_collation(self):
-        # TODO: Make check work with pandas dataframe
-#        if self.last_collation_dataframe == None:
-#            logging.warning("No dataframe available as no collation has been done. Was this campaign's collate() function run?")
-#            return None
+        if self.last_collation_dataframe is None:
+            logging.warning("No dataframe available as no collation has been done. Was this campaign's collate() function run first?")
+            return None
         return self.last_collation_dataframe
 
     def apply_analysis(self, analysis_element):
-        # TODO: Check that collation was done before applying this
-        self.last_analysis = analysis_element.analyse(self.last_collation_dataframe)
-        # TODO: Log this analysis appropriately
+        # Apply analysis element to most recent collation result
+        self.last_analysis = analysis_element.analyse(self.get_last_collation())
+
+        # Log application of this analysis element
+        self.log_element_application(analysis_element, None)
 
     def get_last_analysis(self):
-        # TODO: Check that analysis was done
-#        if self.last_analysis == None:
-#            logging.warning("No last analysis available as no analysis has been done. Was this campaign's collate() function run?")
-#            return None
+        if self.last_analysis is None:
+            logging.warning("No last analysis available as no analysis has been done. Was this campaign's collate() function run?")
+            return None
         return self.last_analysis
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-class CampaignOld:
-    def add_default_run(self):
-        """
-        Add a single new run to the queue, using only default values for
-        all parameters.
-        """
-
-        new_run = {}
-        self.add_run(new_run)
 
     def scan_completed(self, *args, **kwargs):
         """
@@ -389,72 +391,3 @@ class CampaignOld:
             "info": further_info
         }
         self._log.append(log_entry)
-
-    def record_analysis(self, primitive, output_file, output_type,
-                        log_file, state_file):
-        """
-        Add information about analysis primitives applied to this campaign to
-        `self._analysis_uqps`.
-
-        Parameters
-        ----------
-        primitive:      str
-            Name of analysis primitive applied.
-        output_file:    str
-            Path to file containing output from the analysis.
-        output_type:    str or `uq.constants.OutputType`
-            Class of data output by analysis.
-        log_file:       str
-            Path to JSON logfile produced by primitive.
-        state_file:     str
-            Path to Campaign state file logged by primitive.
-            Provides information on the state of runs when executed.
-
-        Returns
-        -------
-
-        """
-
-        if isinstance(output_type, uq.constants.OutputType):
-            output_type = output_type.value
-
-        info = {'primitive': primitive,
-                'output': output_file,
-                'type': output_type,
-                'log': log_file,
-                'state': state_file,
-                }
-
-        self._analysis_uqps.append(info)
-
-    def unique_runs(self):
-        """
-        Check the `runs` list to find which are executed for unique parameters
-        lists. Each entry in the list contains a list of the `run_ids` which
-        correspond to the parameter set.
-
-        Returns
-        -------
-        list
-            List in which each items is parameter dict from run with a list of
-            run_ids which contain those parameters.
-        """
-
-        runs = self.runs
-        unique = []
-
-        for run_id, run_info in runs.items():
-
-            if run_info not in unique:
-
-                tmp = dict(run_info)
-                tmp['run_ids'] = [run_id]
-                unique.append(tmp)
-
-            else:
-
-                match_ndx = unique.index(run_info)
-
-                unique[match_ndx]['run_ids'].append(run_id)
-
-        return unique
