@@ -15,38 +15,22 @@ __license__ = "LGPL"
 
 
 class PCEAnalysis(BaseAnalysisElement):
+
     def element_name(self):
         return "PCE_Analysis"
 
     def element_version(self):
-        return "0.2"
+        return "0.3"
 
-    def __init__(self, data_src, params_cols=[],
-                 value_cols=[], *args, **kwargs):
+    def __init__(self, params_cols=None):
 
         # TODO: Fix this to allow more flexibility - basically pass through
         # available options to `pd.DataFrame.describe()`
 
         # Handles creation of `self.data_src` attribute (dict)
-        super().__init__(data_src, *args, **kwargs)
+        super().__init__()
 
-        data_src = self.data_src
-        if data_src:
-            if 'files' in data_src:
-                if len(data_src['files']) != 1:
-                    raise RuntimeError(
-                        "Data source must contain a SINGLE file path for this UQP")
-                else:
-                    self.data_frame = pd.read_csv(
-                        data_src['files'][0], sep='\t')
-
-        self.value_cols = value_cols
-        if self.campaign is not None:
-            if not params_cols:
-                self.params_cols = list(self.campaign.params_info.keys())
-            self.value_cols = self.campaign.decoder.output_columns
-        else:
-            self.params_cols = params_cols
+        self.params_cols = params_cols
         self.output_type = OutputType.SUMMARY
 
         # TODO fix call __dict___ in log_analysis to allow ndarray
@@ -55,18 +39,16 @@ class PCEAnalysis(BaseAnalysisElement):
         self._statistical_moments = {}
         self._percentiles = {}
         self._sobol_indices = {}
-#        self._correlation_matrices = {}
-#        self._output_distributions = {}
+        # self._correlation_matrices = {}
+        # self._output_distributions = {}
 
-    def _apply_analysis(self):
+    def analyse(self, data_frame=None):
 
-        if self.data_frame is None:
-            raise RuntimeError("UQP needs a data frame to analyse")
+        if data_frame is None:
+            raise RuntimeError("Analysis element needs a data frame to "
+                               "analyse")
 
-        df = self.data_frame
-
-        # output_dir  = self.output_dir
-        # output_file = os.path.join(output_dir, 'pce_basic_stats.tsv')
+        # TODO: refactor the rest of this
 
         # Get the Polynomial
         P = self.campaign.P
@@ -81,7 +63,7 @@ class PCEAnalysis(BaseAnalysisElement):
         samples = {k: [] for k in self.value_cols}
         for i in range(self.campaign.run_number):
             for k in self.value_cols:
-                values = df.loc[df['run_id'] == 'Run_' + str(i)][k].to_numpy()
+                values = data_frame.loc[data_frame['run_id'] == 'Run_' + str(i)][k].to_numpy()
                 samples[k].append(values)
 
         output_distributions = {}

@@ -10,47 +10,57 @@ __license__ = "LGPL"
 
 def test_pce(tmpdir):
 
-    # Params for testing
-    input_json = "tests/pce/pce_in.json"
-    output_json = os.path.join(tmpdir, "out_pce.json")
+    # Set up a fresh campaign called "pce"
+    my_campaign = uq.Campaign(name='pce', workdir=tmpdir)
 
-    assert(os.path.exists(input_json))
+    # Define parameter space
+    params = {
+      "kappa":    {"type": "real", "min": "0.0", "max": "0.1",  "default": "0.025"},
+      "t_env":    {"type": "real", "min": "0.0", "max": "40.0", "default": "15.0"},
+      "out_file": {"type": "str", "default": "output.csv"}
+    }
 
-    # Initialize Campaign object
-    my_campaign = uq.Campaign(
-        name='test_campaign',
-        state_filename=input_json,
-        workdir=tmpdir
-    )
-
-    # Define the parameters dictionary
-    my_campaign.vary_param("kappa", dist=cp.Uniform(0.025, 0.075))
-    my_campaign.vary_param("t_env", dist=cp.Uniform(15, 25))
-
-    # Create the sampler
-    my_sampler = uq.elements.sampling.PCESampler(
-        my_campaign, polynomial_order=3)
-
-    # Use the sampler
-    my_campaign.add_runs(my_sampler)
-    my_campaign.populate_runs_dir()
-
-    # Execute runs
-    my_campaign.apply_for_each_run_dir(
-        uq.actions.ExecuteLocal("tests/pce/pce_model.py pce_in.json"))
-
-    # Aggregate the results from all runs.
-    output_filename = my_campaign.params_info["out_file"]["default"]
+    output_filename = params["out_file"]["default"]
     output_columns = ["te", "ti"]
 
-    aggregate = uq.elements.collate.AggregateSamples(
-        my_campaign,
-        output_filename=output_filename,
-        output_columns=output_columns,
-        header=0,
-    )
+    # Create an encoder, decoder and collation element for PCE test app
+    encoder = uq.encoders.GenericEncoder(template_fname='tests/pce/pce.template',
+                                         delimiter='#',
+                                         target_filename='pce_in.json')
+    decoder = uq.decoders.SimpleCSV(target_filename=output_filename,
+                                    output_columns=output_columns,
+                                    header=0)
+    collation = uq.elements.collate.AggregateSamples(average=False)
 
-    aggregate.apply()
+    # Add the PCE app (automatically set as current app)
+    my_campaign.add_app(name="pce",
+                        params=params,
+                        encoder=encoder,
+                        decoder=decoder,
+                        collation=collation
+                        )
+
+    # Create the sampler
+    vary = {
+        "kappa": cp.Uniform(0.025, 0.075),
+        "t_env": cp.Uniform(15, 25)
+    }
+
+    my_sampler = uq.elements.sampling.PCESampler(vary=vary, polynomial_order=3)
+
+    # Associate the sampler with the campaign
+    my_campaign.set_sampler(my_sampler)
+
+    # Will draw all (of the finite set of samples)
+    my_campaign.draw_samples()
+
+    my_campaign.populate_runs_dir()
+    my_campaign.apply_for_each_run_dir(uq.actions.ExecuteLocal(
+        "tests/pce/pce_model.py pce_in.json"))
+
+    my_campaign.collate(store=False)
+
+    # Update after here
 
     # Post-processing analysis
     analysis = uq.elements.analysis.PCEAnalysis(
@@ -65,6 +75,7 @@ def test_pce(tmpdir):
     #dist_out = analysis.output_distributions('te')
 
     return stats, per, sobols
+
 
 if __name__ == "__main__":
 
