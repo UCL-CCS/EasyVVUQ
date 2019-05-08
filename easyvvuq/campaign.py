@@ -189,6 +189,14 @@ class Campaign:
         run_info = RunInfo(app=self._active_app['id'], params=new_run, sample=0, campaign=0)
         self.campaign_db.add_run(run_info)
 
+    def add_default_run(self):
+        """
+        Add a single new run to the queue, using only default values for
+        all parameters.
+        """
+
+        new_run = {}
+        self.add_run(new_run)
 
     def draw_samples(self, N=0):
 
@@ -313,30 +321,6 @@ class Campaign:
 #            return None
         return self.last_analysis
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-class CampaignOld:
-    def add_default_run(self):
-        """
-        Add a single new run to the queue, using only default values for
-        all parameters.
-        """
-
-        new_run = {}
-        self.add_run(new_run)
-
     def scan_completed(self, *args, **kwargs):
         """
         Check campaign database for completed runs.
@@ -372,6 +356,21 @@ class CampaignOld:
 
         pass
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+class CampaignOld:
     def log_element_application(self, element, further_info):
         """
         Adds an entry to the campaign log for the given element, with the
