@@ -199,6 +199,20 @@ class Campaign:
         self.add_run(new_run)
 
     def draw_samples(self, N=0):
+        """Draws N samples from the currently set sampler, resulting in N new runs added to the runs list.
+           If N is 0 (its default value) then this method draws ALL samples from the sampler, until exhaustion
+           (this will fail if the sampler is not finite).
+
+        Parameters
+        ----------
+        N     : int
+                Number of samples to draw from the active sampling element.
+                By default is 0 (draw ALL samples)
+
+        Returns
+        -------
+
+        """
 
         # Make sure N is not 0 for an infinite generator (this would add runs
         # forever...)
