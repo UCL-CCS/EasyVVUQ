@@ -316,7 +316,9 @@ class Campaign:
     def apply_analysis(self, analysis_element):
         # TODO: Check that collation was done before applying this
         self.last_analysis = analysis_element.analyse(self.last_collation_dataframe)
-        # TODO: Log this analysis appropriately
+
+        # Log application of this analysis element
+        self.log_element_application(analysis_element, None)
 
     def get_last_analysis(self):
         # TODO: Check that analysis was done
