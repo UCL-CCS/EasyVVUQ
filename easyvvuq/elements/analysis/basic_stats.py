@@ -42,7 +42,8 @@ class BasicStats(BaseAnalysisElement):
     def analyse(self, data_frame=None):
 
         if data_frame is None:
-            raise RuntimeError("UQP needs a data frame to analyse")
+            raise RuntimeError("Analysis element needs a data frame to "
+                               "analyse")
 
         # Get summary statistics
         grouped_data = data_frame.groupby(self.params_cols)
