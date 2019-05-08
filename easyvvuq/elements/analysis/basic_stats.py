@@ -34,7 +34,7 @@ class BasicStats(BaseAnalysisElement):
     def element_version(self):
         return "0.1"
 
-    def __init__(self, params_cols=None):
+    def __init__(self, params_cols=None, qoi=None):
 
         self.params_cols = params_cols
         self.output_type = OutputType.SUMMARY
@@ -46,6 +46,7 @@ class BasicStats(BaseAnalysisElement):
                                "analyse")
 
         # Get summary statistics
+        # TODO: Filter to only show QOI?
         grouped_data = data_frame.groupby(self.params_cols)
         results = grouped_data.describe()
 
