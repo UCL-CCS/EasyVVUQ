@@ -3,6 +3,7 @@ import chaospy as cp
 import os
 import sys
 import pytest
+from pprint import pprint
 
 __copyright__ = """
 
@@ -51,19 +52,22 @@ def test_cannonsim_csv_jsondb(tmpdir):
         "velocity":         {"type": "real", "min": "0.0",    "max": "1000.0", "default": "10.0", "variable": "True"}
     }
 
-    # Create an encoder for the cannonsim app
-    template_path = 'tests/cannonsim/test_input/cannonsim.template'
-    encoder = uq.encoders.GenericEncoder(template_fname=template_path,
-                                         delimiter='#',
-                                         target_filename='in.cannon')
+    # Create an encoder, decoder and collation element for the cannonsim app
+    encoder = uq.encoders.GenericEncoder(template_fname='tests/cannonsim/test_input/cannonsim.template', delimiter='#', target_filename='in.cannon')
+    decoder = uq.decoders.SimpleCSV(target_filename='output.csv', output_columns = ['Dist', 'lastvx', 'lastvy'], header=0)
+    collation = uq.elements.collate.AggregateSamples(average=False)
+
+    print("Serialized encoder:", encoder.serialize())
+    print("Serialized decoder:", decoder.serialize())
+    print("Serialized collation:", collation.serialize())
 
     # Add the cannonsim app
-    my_campaign.add_app({
-                        "name": "cannonsim",  # TODO Tell campaign to "use_app('appname')" to declutter this input line
-                        "input_encoder": encoder,
-                        "output_decoder": "csv",  # TODO Pass decoder object directly and have campaign serialize it to store it (as with encoder)
-                        "params": params  # TODO Allow params to be added to app programmatically
-                        })
+    my_campaign.add_app(name="cannonsim",
+                        params=params,
+                        encoder=encoder,
+                        decoder=decoder,
+                        collation=collation
+                       )
 
     # Set the active app to be cannonsim
     my_campaign.set_app("cannonsim")
@@ -84,43 +88,32 @@ def test_cannonsim_csv_jsondb(tmpdir):
     my_campaign.draw_samples(N=5)
 
     # Print the list of runs now in the campaign db
-    print(my_campaign.list_runs())
+    print("List of runs added:")
+    pprint(my_campaign.list_runs())
+    print("---")
 
     # Encode all runs into a local directory
+    print(f"Encoding all runs to campaign runs dir {my_campaign.get_campaign_runs_dir()}")
     my_campaign.populate_runs_dir()
 
-    sys.exit(0)
+    assert(len(my_campaign.get_campaign_runs_dir()) > 0)
+    assert(os.path.exists(my_campaign.get_campaign_runs_dir()))
+    assert(os.path.isdir(my_campaign.get_campaign_runs_dir()))
 
-    assert(len(my_campaign.runs_dir) > 0)
-    assert(os.path.exists(my_campaign.runs_dir))
-    assert(os.path.isdir(my_campaign.runs_dir))
-
+    # Local execution
     my_campaign.apply_for_each_run_dir(uq.actions.ExecuteLocal(
-        "tests/cannonsim/bin/cannonsim input.cannon output.csv"))
+        "tests/cannonsim/bin/cannonsim in.cannon output.csv"))
 
-    output_filename = 'output.csv'
-    output_columns = ['Dist', 'lastvx', 'lastvy']
+    # Collate all data into one pandas data frame
+    my_campaign.collate(store=False)
+    print("data:", my_campaign.get_last_collation())
 
-    aggregate = uq.elements.collate.AggregateSamples(
-        my_campaign,
-        output_filename=output_filename,
-        output_columns=output_columns,
-        header=0)
-    aggregate.apply()
-
-    assert(len(my_campaign.data) > 0)
-
-    stats = uq.elements.analysis.BasicStats(
-        my_campaign, value_cols=output_columns)
-    results, output_file = stats.apply()
-
-    my_campaign.save_state(output_json)
-
-    print(results)
-
-    assert(os.path.exists(output_json))
-    assert(os.path.isfile(output_json))
+    # Create a BasicStats analysis element and apply it to the campaign
+    stats = uq.elements.analysis.BasicStats(params_cols=['Dist', 'lastvx', 'lastvy'])
+    my_campaign.apply_analysis(stats)
+    print("stats:", my_campaign.get_last_analysis())
 
 
 if __name__ == "__main__":
     test_cannonsim_csv_jsondb("/tmp/")
+

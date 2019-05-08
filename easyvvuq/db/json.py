@@ -212,6 +212,14 @@ class CampaignDB(BaseCampaignDB):
 
         return self._runs[run_name]
 
+    def set_dir_for_run(self, run_name, run_dir, campaign=None, sampler=None):
+        if campaign is not None or sampler is not None:
+            message = (f'JSON/Python dictionary database only supports '
+                       f'single campaign and sampler workflows - ignoring'
+                       f'campaign - {campaign}/ sampler {sampler}')
+            logger.warning(message)
+        self._runs[run_name]['run_dir'] = run_dir
+
     def campaigns(self):
 
         return [self._campaign_info['name']]
