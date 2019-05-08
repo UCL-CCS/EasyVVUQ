@@ -69,7 +69,7 @@ def test_cannonsim_csv(tmpdir):
                         collation=collation
                        )
 
-    # Set the active app to be cannonsim
+    # Set the active app to be cannonsim (this is redundant when only one app has been added)
     my_campaign.set_app("cannonsim")
 
     # Make a random sampler
