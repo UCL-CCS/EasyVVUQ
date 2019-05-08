@@ -307,10 +307,9 @@ class Campaign:
         self.log_element_application(self._active_app_collation, {"store": store})
 
     def get_last_collation(self):
-        # TODO: Make check work with pandas dataframe
-#        if self.last_collation_dataframe == None:
-#            logging.warning("No dataframe available as no collation has been done. Was this campaign's collate() function run?")
-#            return None
+        if self.last_collation_dataframe is None:
+            logging.warning("No dataframe available as no collation has been done. Was this campaign's collate() function run?")
+            return None
         return self.last_collation_dataframe
 
     def apply_analysis(self, analysis_element):
@@ -321,10 +320,9 @@ class Campaign:
         self.log_element_application(analysis_element, None)
 
     def get_last_analysis(self):
-        # TODO: Check that analysis was done
-#        if self.last_analysis == None:
-#            logging.warning("No last analysis available as no analysis has been done. Was this campaign's collate() function run?")
-#            return None
+        if self.last_analysis is None:
+            logging.warning("No last analysis available as no analysis has been done. Was this campaign's collate() function run?")
+            return None
         return self.last_analysis
 
     def scan_completed(self, *args, **kwargs):
