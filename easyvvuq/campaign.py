@@ -217,8 +217,8 @@ class Campaign:
             if num_added == N:
                 break
 
-        self.log_element_application(self._active_sampler, {"num_added", num_added})
-
+        # Log application of this sampling element
+        self.log_element_application(self._active_sampler, {"num_added": num_added})
 
     def list_runs(self):
         return self.campaign_db.runs()
@@ -303,7 +303,8 @@ class Campaign:
             # Convert dataframe to file
             df.to_csv(out_file, sep='\t', index=False)
 
-        # TODO: Log this collation appropriately
+        # Log application of this collation element
+        self.log_element_application(self._active_app_collation, {"store": store})
 
     def get_last_collation(self):
         # TODO: Make check work with pandas dataframe
