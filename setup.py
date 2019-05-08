@@ -15,7 +15,7 @@ setup(
     author='CCS',
 
     install_requires=['numpy', 'pandas', 'pytest', 'SQLAlchemy', 'chaospy',
-                      'sqlalchemy-utils'],
+                      'sqlalchemy-utils', 'matplotlib'],
 
     packages=find_packages(),
 
