@@ -19,7 +19,7 @@ class PCESampler(BaseSamplingElement):
         Parameters
         ----------
         vary: dict or None
-
+            keys = parameters to be sampled, values = distributions.
         polynomial_order : int, optional
             The polynomial order, default is 4.
 
