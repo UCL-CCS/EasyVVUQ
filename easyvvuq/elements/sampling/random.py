@@ -32,11 +32,15 @@ class RandomSampler(BaseSamplingElement):
         """
 
         if vary is None:
-            msg = "'vary' cannot be None. RandomSampler must be passed a dict of the names of the parameters you want to vary, and their corresponding distributions."
+            msg = ("'vary' cannot be None. RandomSampler must be passed a "
+                   "dict of the names of the parameters you want to vary, "
+                   "and their corresponding distributions.")
             logging.error(msg)
             raise Exception(msg)
         if not isinstance(vary, dict):
-            msg = "'vary' must be a dictionary of the names of the parameters you want to vary, and their corresponding distributions."
+            msg = ("'vary' must be a dictionary of the names of the "
+                   "parameters you want to vary, and their corresponding "
+                   "distributions.")
             logging.error(msg)
             raise Exception(msg)
         if len(vary) == 0:
