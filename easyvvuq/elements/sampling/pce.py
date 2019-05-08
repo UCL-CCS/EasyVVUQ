@@ -58,8 +58,7 @@ class PCESampler(BaseSamplingElement):
         self.distribution = cp.J(*params_distribution)
 
         # The orthogonal polynomials corresponding to the joint distribution
-        self.P = cp.orth_ttr(
-            polynomial_order, self.distribution)
+        self.P = cp.orth_ttr(polynomial_order, self.distribution)
 
         # The quadrature information: order, rule and sparsity
         self.quad_order = polynomial_order + 1
