@@ -217,6 +217,9 @@ class Campaign:
             if num_added == N:
                 break
 
+        self.log_element_application(self._active_sampler, {"num_added", num_added})
+
+
     def list_runs(self):
         return self.campaign_db.runs()
 
@@ -356,21 +359,6 @@ class Campaign:
 
         pass
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-class CampaignOld:
     def log_element_application(self, element, further_info):
         """
         Adds an entry to the campaign log for the given element, with the
@@ -388,6 +376,21 @@ class CampaignOld:
             "info": further_info
         }
         self._log.append(log_entry)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+class CampaignOld:
 
     def record_analysis(self, primitive, output_file, output_type,
                         log_file, state_file):
