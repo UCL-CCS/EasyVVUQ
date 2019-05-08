@@ -51,6 +51,7 @@ class Campaign:
         self._active_app_encoder = None
         self._active_app_decoder = None
         self._active_app_collation = None
+        self._active_sampler = None
 
         # Load campaign from state_file, if provided. Else make a fresh new
         # campaign with a new campaign database
@@ -87,12 +88,17 @@ class Campaign:
         print(f"Loading campaign from state file '{state_file}'")
         raise NotImplementedError
 
-    def add_app(self, name=None, params=None, encoder=None, decoder=None, collation=None, set_active=True):
+    def add_app(self, name=None, params=None, encoder=None, decoder=None,
+                collation=None, set_active=True):
         """
-        Add information on a new application to the campaign database.
 
         Parameters
         ----------
+        name
+        params
+        encoder
+        decoder
+        collation
         set_active: bool
             Should the added app be set to be teh currently active app?
 
@@ -186,7 +192,8 @@ class Campaign:
 
         # Add to run queue
         # TODO: Get correct sampler and campaign IDs to pass to RunInfo
-        run_info = RunInfo(app=self._active_app['id'], params=new_run, sample=0, campaign=0)
+        run_info = RunInfo(app=self._active_app['id'], params=new_run,
+                           sample=0, campaign=0)
         self.campaign_db.add_run(run_info)
 
     def add_default_run(self):
@@ -199,9 +206,10 @@ class Campaign:
         self.add_run(new_run)
 
     def draw_samples(self, N=0):
-        """Draws N samples from the currently set sampler, resulting in N new runs added to the runs list.
-           If N is 0 (its default value) then this method draws ALL samples from the sampler, until exhaustion
-           (this will fail if the sampler is not finite).
+        """Draws N samples from the currently set sampler, resulting in N new
+        runs added to the runs list. If N is 0 (its default value) then this
+        method draws ALL samples from the sampler, until exhaustion (this will
+        fail if the sampler is not finite).
 
         Parameters
         ----------
@@ -217,10 +225,10 @@ class Campaign:
         # Make sure N is not 0 for an infinite generator (this would add runs
         # forever...)
         if self._active_sampler.is_finite() is False and N <= 0:
-            raise RuntimeError(
-                "sampling_element '" +
-                self._active_sampler.element_name() +
-                "' is an infinite generator, therefore a finite number of draws (N > 0) must be specified.'")
+            msg =(f"Sampling_element '{self._active_sampler.element_name()}' "
+                  f"is an infinite generator, therefore a finite number of "
+                  f"draws (N > 0) must be specified.")
+            raise RuntimeError(msg)
 
         num_added = 0
         for new_run in self._active_sampler.generate_runs():
@@ -268,11 +276,13 @@ class Campaign:
 
             # TODO: Should we check if the run has been created?
 
-            # TODO: Check that this isn't insanely inefficient (almost certainly will be hammering the database for large run lists)
+            # TODO: Check that this isn't insanely inefficient (almost
+            #  certainly will be hammering the database for large run lists)
             self.campaign_db.set_dir_for_run(run_id, target_dir)
 
             # TODO: Apply encoder
-            self._active_app_encoder.encode(params=run_data['params'], target_dir=target_dir)
+            self._active_app_encoder.encode(params=run_data['params'],
+                                            target_dir=target_dir)
 
     def get_campaign_runs_dir(self):
         return self.campaign_db.runs_dir()
@@ -302,12 +312,12 @@ class Campaign:
             # Run user-specified action on this directory
             action.act_on_dir(dir_name)
 
-
     def collate(self, store=True):
 
         # Apply collation element, and obtain the resulting dataframe
         self.last_collation_dataframe = self._active_app_collation.collate(self)
 
+        # @TODO: Check this works - don't see where df comes from
         if store == True:
             # Set up dirs and files to store collation results in
             data_dir = os.path.join(campaign.get_campaign_dir(), 'data')
@@ -322,7 +332,9 @@ class Campaign:
 
     def get_last_collation(self):
         if self.last_collation_dataframe is None:
-            logging.warning("No dataframe available as no collation has been done. Was this campaign's collate() function run first?")
+            logging.warning("No dataframe available as no collation has been "
+                            "done. Was this campaign's collate() function run "
+                            "first?")
             return None
         return self.last_collation_dataframe
 
@@ -335,7 +347,9 @@ class Campaign:
 
     def get_last_analysis(self):
         if self.last_analysis is None:
-            logging.warning("No last analysis available as no analysis has been done. Was this campaign's collate() function run?")
+            logging.warning("No last analysis available as no analysis has "
+                            "been done. Was this campaign's collate() "
+                            "function run?")
             return None
         return self.last_analysis
 
