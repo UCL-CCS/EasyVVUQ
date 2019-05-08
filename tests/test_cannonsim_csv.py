@@ -53,8 +53,12 @@ def test_cannonsim_csv(tmpdir):
     }
 
     # Create an encoder, decoder and collation element for the cannonsim app
-    encoder = uq.encoders.GenericEncoder(template_fname='tests/cannonsim/test_input/cannonsim.template', delimiter='#', target_filename='in.cannon')
-    decoder = uq.decoders.SimpleCSV(target_filename='output.csv', output_columns = ['Dist', 'lastvx', 'lastvy'], header=0)
+    encoder = uq.encoders.GenericEncoder(template_fname='tests/cannonsim/test_input/cannonsim.template',
+                                         delimiter='#',
+                                         target_filename='in.cannon')
+    decoder = uq.decoders.SimpleCSV(target_filename='output.csv',
+                                    output_columns=['Dist', 'lastvx', 'lastvy'],
+                                    header=0)
     collation = uq.elements.collate.AggregateSamples(average=False)
 
     print("Serialized encoder:", encoder.serialize())
@@ -67,7 +71,7 @@ def test_cannonsim_csv(tmpdir):
                         encoder=encoder,
                         decoder=decoder,
                         collation=collation
-                       )
+                        )
 
     # Set the active app to be cannonsim (this is redundant when only one app has been added)
     my_campaign.set_app("cannonsim")
@@ -115,6 +119,7 @@ def test_cannonsim_csv(tmpdir):
 
     # Print the campaign log
     pprint(my_campaign._log)
+
 
 if __name__ == "__main__":
     test_cannonsim_csv("/tmp/")
