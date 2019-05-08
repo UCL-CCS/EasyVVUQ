@@ -16,11 +16,11 @@ output_json = "ade_output.json"
 
 # 1. Initialize `Campaign` object which information on parameters to be sampled
 #    and the values used for all sampling runs
-my_campaign = uq.Campaign(state_filename=input_json)
+my_campaign = uq.Campaign(name='SC_test', state_filename=input_json)
 
 # 2. Set which parameters we wish to include in the analysis and the
 #    distribution from which to draw samples
-m = 4
+m = 5
 my_campaign.vary_param("Pe", dist=cp.distributions.Uniform(-1, 1))
 my_campaign.vary_param("f", dist=cp.distributions.Uniform(-1, 1))
 
@@ -37,8 +37,7 @@ my_campaign.populate_runs_dir()
 
 # 5. Run execution - note this method of running all jobs is just for demo
 #    purposes.
-my_campaign.apply_for_each_run_dir(
-    uq.actions.ExecuteLocal("run_ADE.py ade_in.json"))
+my_campaign.apply_for_each_run_dir(uq.actions.ExecuteLocal("run_ADE.py ade_in.json"))
 
 # 6. Aggregate the results from all runs.
 #    This makes use of the `Decoder` selected in the input file to interpret the
@@ -62,8 +61,8 @@ aggregate.apply()
 #     interpolated the code samples to unobserved parameter variables.
 sc_analysis = uq.elements.analysis.SCAnalysis(
     my_campaign, value_cols=output_columns)
-results, output_file = sc_analysis.get_moments(m)  # moment calculation
-# results, output_file = sc_analysis.apply()
+
+results, output_file = sc_analysis.get_moments(polynomial_order=m)  # moment calculation
 
 # 8. Use the SC samples and integration weights to estimate the
 #    (1-st order or all) Sobol indices. In this example, at x=1 the Sobol indices
@@ -72,7 +71,7 @@ results, output_file = sc_analysis.get_moments(m)  # moment calculation
 # get Sobol indices for free
 #typ = 'first_order'
 typ = 'all'
-sobol_idx = sc_analysis.get_Sobol_indices(typ)
+sobol_idx = sc_analysis.get_Sobol_indices(typ, polynomial_order=m)
 
 my_campaign.save_state(output_json)
 ###############################################################################

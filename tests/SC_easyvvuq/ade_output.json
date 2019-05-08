@@ -1,12 +1,13 @@
 {
     "app": {
         "input_encoder": "generic_template",
+        "encoder_delimiter": null,
         "output_decoder": "csv",
         "template": "ade.template",
         "input_filename": "ade_in.json",
         "campaign_dir_prefix": "EasyVVUQ_Campaign_",
-        "campaign_dir": "/home/wouter/CWI/EasyVVUQ/tests/SC_easyvvuq/EasyVVUQ_Campaign_54gsktbn",
-        "runs_dir": "/home/wouter/CWI/EasyVVUQ/tests/SC_easyvvuq/EasyVVUQ_Campaign_54gsktbn/runs"
+        "campaign_dir": "/home/wouter/CWI/EasyVVUQ/tests/SC_easyvvuq/EasyVVUQ_Campaign_6pcl3v6c",
+        "runs_dir": null
     },
     "params": {
         "Pe": {
@@ -28,245 +29,65 @@
     },
     "fixtures": {},
     "runs": {
-        "Run_0": {
-            "Pe": -0.9061798459386639,
-            "f": -0.9061798459386639,
-            "out_file": "output.csv",
-            "completed": true,
-            "fixtures": {},
-            "run_dir": "/home/wouter/CWI/EasyVVUQ/tests/SC_easyvvuq/EasyVVUQ_Campaign_54gsktbn/runs/Run_0"
-        },
-        "Run_1": {
-            "Pe": -0.9061798459386639,
-            "f": -0.5384693101056832,
-            "out_file": "output.csv",
-            "completed": true,
-            "fixtures": {},
-            "run_dir": "/home/wouter/CWI/EasyVVUQ/tests/SC_easyvvuq/EasyVVUQ_Campaign_54gsktbn/runs/Run_1"
-        },
-        "Run_2": {
-            "Pe": -0.9061798459386639,
-            "f": 4.14343792302007e-17,
-            "out_file": "output.csv",
-            "completed": true,
-            "fixtures": {},
-            "run_dir": "/home/wouter/CWI/EasyVVUQ/tests/SC_easyvvuq/EasyVVUQ_Campaign_54gsktbn/runs/Run_2"
-        },
-        "Run_3": {
-            "Pe": -0.9061798459386639,
-            "f": 0.5384693101056831,
-            "out_file": "output.csv",
-            "completed": true,
-            "fixtures": {},
-            "run_dir": "/home/wouter/CWI/EasyVVUQ/tests/SC_easyvvuq/EasyVVUQ_Campaign_54gsktbn/runs/Run_3"
-        },
-        "Run_4": {
-            "Pe": -0.9061798459386639,
-            "f": 0.9061798459386639,
-            "out_file": "output.csv",
-            "completed": true,
-            "fixtures": {},
-            "run_dir": "/home/wouter/CWI/EasyVVUQ/tests/SC_easyvvuq/EasyVVUQ_Campaign_54gsktbn/runs/Run_4"
-        },
-        "Run_5": {
-            "Pe": -0.5384693101056832,
-            "f": -0.9061798459386639,
-            "out_file": "output.csv",
-            "completed": true,
-            "fixtures": {},
-            "run_dir": "/home/wouter/CWI/EasyVVUQ/tests/SC_easyvvuq/EasyVVUQ_Campaign_54gsktbn/runs/Run_5"
-        },
-        "Run_6": {
-            "Pe": -0.5384693101056832,
-            "f": -0.5384693101056832,
-            "out_file": "output.csv",
-            "completed": true,
-            "fixtures": {},
-            "run_dir": "/home/wouter/CWI/EasyVVUQ/tests/SC_easyvvuq/EasyVVUQ_Campaign_54gsktbn/runs/Run_6"
-        },
-        "Run_7": {
-            "Pe": -0.5384693101056832,
-            "f": 4.14343792302007e-17,
-            "out_file": "output.csv",
-            "completed": true,
-            "fixtures": {},
-            "run_dir": "/home/wouter/CWI/EasyVVUQ/tests/SC_easyvvuq/EasyVVUQ_Campaign_54gsktbn/runs/Run_7"
-        },
-        "Run_8": {
-            "Pe": -0.5384693101056832,
-            "f": 0.5384693101056831,
-            "out_file": "output.csv",
-            "completed": true,
-            "fixtures": {},
-            "run_dir": "/home/wouter/CWI/EasyVVUQ/tests/SC_easyvvuq/EasyVVUQ_Campaign_54gsktbn/runs/Run_8"
-        },
-        "Run_9": {
-            "Pe": -0.5384693101056832,
-            "f": 0.9061798459386639,
-            "out_file": "output.csv",
-            "completed": true,
-            "fixtures": {},
-            "run_dir": "/home/wouter/CWI/EasyVVUQ/tests/SC_easyvvuq/EasyVVUQ_Campaign_54gsktbn/runs/Run_9"
-        },
-        "Run_10": {
-            "Pe": 4.14343792302007e-17,
-            "f": -0.9061798459386639,
-            "out_file": "output.csv",
-            "completed": true,
-            "fixtures": {},
-            "run_dir": "/home/wouter/CWI/EasyVVUQ/tests/SC_easyvvuq/EasyVVUQ_Campaign_54gsktbn/runs/Run_10"
-        },
-        "Run_11": {
-            "Pe": 4.14343792302007e-17,
-            "f": -0.5384693101056832,
-            "out_file": "output.csv",
-            "completed": true,
-            "fixtures": {},
-            "run_dir": "/home/wouter/CWI/EasyVVUQ/tests/SC_easyvvuq/EasyVVUQ_Campaign_54gsktbn/runs/Run_11"
-        },
-        "Run_12": {
-            "Pe": 4.14343792302007e-17,
-            "f": 4.14343792302007e-17,
-            "out_file": "output.csv",
-            "completed": true,
-            "fixtures": {},
-            "run_dir": "/home/wouter/CWI/EasyVVUQ/tests/SC_easyvvuq/EasyVVUQ_Campaign_54gsktbn/runs/Run_12"
-        },
-        "Run_13": {
-            "Pe": 4.14343792302007e-17,
-            "f": 0.5384693101056831,
-            "out_file": "output.csv",
-            "completed": true,
-            "fixtures": {},
-            "run_dir": "/home/wouter/CWI/EasyVVUQ/tests/SC_easyvvuq/EasyVVUQ_Campaign_54gsktbn/runs/Run_13"
-        },
-        "Run_14": {
-            "Pe": 4.14343792302007e-17,
-            "f": 0.9061798459386639,
-            "out_file": "output.csv",
-            "completed": true,
-            "fixtures": {},
-            "run_dir": "/home/wouter/CWI/EasyVVUQ/tests/SC_easyvvuq/EasyVVUQ_Campaign_54gsktbn/runs/Run_14"
-        },
-        "Run_15": {
-            "Pe": 0.5384693101056831,
-            "f": -0.9061798459386639,
-            "out_file": "output.csv",
-            "completed": true,
-            "fixtures": {},
-            "run_dir": "/home/wouter/CWI/EasyVVUQ/tests/SC_easyvvuq/EasyVVUQ_Campaign_54gsktbn/runs/Run_15"
-        },
-        "Run_16": {
-            "Pe": 0.5384693101056831,
-            "f": -0.5384693101056832,
-            "out_file": "output.csv",
-            "completed": true,
-            "fixtures": {},
-            "run_dir": "/home/wouter/CWI/EasyVVUQ/tests/SC_easyvvuq/EasyVVUQ_Campaign_54gsktbn/runs/Run_16"
-        },
-        "Run_17": {
-            "Pe": 0.5384693101056831,
-            "f": 4.14343792302007e-17,
-            "out_file": "output.csv",
-            "completed": true,
-            "fixtures": {},
-            "run_dir": "/home/wouter/CWI/EasyVVUQ/tests/SC_easyvvuq/EasyVVUQ_Campaign_54gsktbn/runs/Run_17"
-        },
-        "Run_18": {
-            "Pe": 0.5384693101056831,
-            "f": 0.5384693101056831,
-            "out_file": "output.csv",
-            "completed": true,
-            "fixtures": {},
-            "run_dir": "/home/wouter/CWI/EasyVVUQ/tests/SC_easyvvuq/EasyVVUQ_Campaign_54gsktbn/runs/Run_18"
-        },
-        "Run_19": {
-            "Pe": 0.5384693101056831,
-            "f": 0.9061798459386639,
-            "out_file": "output.csv",
-            "completed": true,
-            "fixtures": {},
-            "run_dir": "/home/wouter/CWI/EasyVVUQ/tests/SC_easyvvuq/EasyVVUQ_Campaign_54gsktbn/runs/Run_19"
-        },
-        "Run_20": {
-            "Pe": 0.9061798459386639,
-            "f": -0.9061798459386639,
-            "out_file": "output.csv",
-            "completed": true,
-            "fixtures": {},
-            "run_dir": "/home/wouter/CWI/EasyVVUQ/tests/SC_easyvvuq/EasyVVUQ_Campaign_54gsktbn/runs/Run_20"
-        },
-        "Run_21": {
-            "Pe": 0.9061798459386639,
-            "f": -0.5384693101056832,
-            "out_file": "output.csv",
-            "completed": true,
-            "fixtures": {},
-            "run_dir": "/home/wouter/CWI/EasyVVUQ/tests/SC_easyvvuq/EasyVVUQ_Campaign_54gsktbn/runs/Run_21"
-        },
-        "Run_22": {
-            "Pe": 0.9061798459386639,
-            "f": 4.14343792302007e-17,
-            "out_file": "output.csv",
-            "completed": true,
-            "fixtures": {},
-            "run_dir": "/home/wouter/CWI/EasyVVUQ/tests/SC_easyvvuq/EasyVVUQ_Campaign_54gsktbn/runs/Run_22"
-        },
-        "Run_23": {
-            "Pe": 0.9061798459386639,
-            "f": 0.5384693101056831,
-            "out_file": "output.csv",
-            "completed": true,
-            "fixtures": {},
-            "run_dir": "/home/wouter/CWI/EasyVVUQ/tests/SC_easyvvuq/EasyVVUQ_Campaign_54gsktbn/runs/Run_23"
-        },
-        "Run_24": {
-            "Pe": 0.9061798459386639,
-            "f": 0.9061798459386639,
-            "out_file": "output.csv",
-            "completed": true,
-            "fixtures": {},
-            "run_dir": "/home/wouter/CWI/EasyVVUQ/tests/SC_easyvvuq/EasyVVUQ_Campaign_54gsktbn/runs/Run_24"
-        }
+        "Run_0": "{\"Pe\": -0.9324695142031517, \"f\": -0.9324695142031517, \"out_file\": \"output.csv\"}",
+        "Run_1": "{\"Pe\": -0.9324695142031517, \"f\": -0.6612093864662645, \"out_file\": \"output.csv\"}",
+        "Run_2": "{\"Pe\": -0.9324695142031517, \"f\": -0.23861918608319682, \"out_file\": \"output.csv\"}",
+        "Run_3": "{\"Pe\": -0.9324695142031517, \"f\": 0.23861918608319688, \"out_file\": \"output.csv\"}",
+        "Run_4": "{\"Pe\": -0.9324695142031517, \"f\": 0.6612093864662646, \"out_file\": \"output.csv\"}",
+        "Run_5": "{\"Pe\": -0.9324695142031517, \"f\": 0.9324695142031519, \"out_file\": \"output.csv\"}",
+        "Run_6": "{\"Pe\": -0.6612093864662645, \"f\": -0.9324695142031517, \"out_file\": \"output.csv\"}",
+        "Run_7": "{\"Pe\": -0.6612093864662645, \"f\": -0.6612093864662645, \"out_file\": \"output.csv\"}",
+        "Run_8": "{\"Pe\": -0.6612093864662645, \"f\": -0.23861918608319682, \"out_file\": \"output.csv\"}",
+        "Run_9": "{\"Pe\": -0.6612093864662645, \"f\": 0.23861918608319688, \"out_file\": \"output.csv\"}",
+        "Run_10": "{\"Pe\": -0.6612093864662645, \"f\": 0.6612093864662646, \"out_file\": \"output.csv\"}",
+        "Run_11": "{\"Pe\": -0.6612093864662645, \"f\": 0.9324695142031519, \"out_file\": \"output.csv\"}",
+        "Run_12": "{\"Pe\": -0.23861918608319682, \"f\": -0.9324695142031517, \"out_file\": \"output.csv\"}",
+        "Run_13": "{\"Pe\": -0.23861918608319682, \"f\": -0.6612093864662645, \"out_file\": \"output.csv\"}",
+        "Run_14": "{\"Pe\": -0.23861918608319682, \"f\": -0.23861918608319682, \"out_file\": \"output.csv\"}",
+        "Run_15": "{\"Pe\": -0.23861918608319682, \"f\": 0.23861918608319688, \"out_file\": \"output.csv\"}",
+        "Run_16": "{\"Pe\": -0.23861918608319682, \"f\": 0.6612093864662646, \"out_file\": \"output.csv\"}",
+        "Run_17": "{\"Pe\": -0.23861918608319682, \"f\": 0.9324695142031519, \"out_file\": \"output.csv\"}",
+        "Run_18": "{\"Pe\": 0.23861918608319688, \"f\": -0.9324695142031517, \"out_file\": \"output.csv\"}",
+        "Run_19": "{\"Pe\": 0.23861918608319688, \"f\": -0.6612093864662645, \"out_file\": \"output.csv\"}",
+        "Run_20": "{\"Pe\": 0.23861918608319688, \"f\": -0.23861918608319682, \"out_file\": \"output.csv\"}",
+        "Run_21": "{\"Pe\": 0.23861918608319688, \"f\": 0.23861918608319688, \"out_file\": \"output.csv\"}",
+        "Run_22": "{\"Pe\": 0.23861918608319688, \"f\": 0.6612093864662646, \"out_file\": \"output.csv\"}",
+        "Run_23": "{\"Pe\": 0.23861918608319688, \"f\": 0.9324695142031519, \"out_file\": \"output.csv\"}",
+        "Run_24": "{\"Pe\": 0.6612093864662646, \"f\": -0.9324695142031517, \"out_file\": \"output.csv\"}",
+        "Run_25": "{\"Pe\": 0.6612093864662646, \"f\": -0.6612093864662645, \"out_file\": \"output.csv\"}",
+        "Run_26": "{\"Pe\": 0.6612093864662646, \"f\": -0.23861918608319682, \"out_file\": \"output.csv\"}",
+        "Run_27": "{\"Pe\": 0.6612093864662646, \"f\": 0.23861918608319688, \"out_file\": \"output.csv\"}",
+        "Run_28": "{\"Pe\": 0.6612093864662646, \"f\": 0.6612093864662646, \"out_file\": \"output.csv\"}",
+        "Run_29": "{\"Pe\": 0.6612093864662646, \"f\": 0.9324695142031519, \"out_file\": \"output.csv\"}",
+        "Run_30": "{\"Pe\": 0.9324695142031519, \"f\": -0.9324695142031517, \"out_file\": \"output.csv\"}",
+        "Run_31": "{\"Pe\": 0.9324695142031519, \"f\": -0.6612093864662645, \"out_file\": \"output.csv\"}",
+        "Run_32": "{\"Pe\": 0.9324695142031519, \"f\": -0.23861918608319682, \"out_file\": \"output.csv\"}",
+        "Run_33": "{\"Pe\": 0.9324695142031519, \"f\": 0.23861918608319688, \"out_file\": \"output.csv\"}",
+        "Run_34": "{\"Pe\": 0.9324695142031519, \"f\": 0.6612093864662646, \"out_file\": \"output.csv\"}",
+        "Run_35": "{\"Pe\": 0.9324695142031519, \"f\": 0.9324695142031519, \"out_file\": \"output.csv\"}"
     },
     "log": [
         {
-            "element": {
-                "name": "sc_sampler",
-                "version": "0.2",
-                "category": "sampling"
-            },
-            "info": {
-                "num_draws_requested": 25,
-                "num_draws_added": 25
-            }
+            "name": "sc_sampler",
+            "version": "0.2",
+            "category": "sampling",
+            "info": "{\"num_draws_requested\": 36, \"num_draws_added\": 36}"
         },
         {
-            "element": {
-                "name": "aggregate_samples",
-                "version": "0.1",
-                "category": "collation"
-            },
-            "info": {
-                "files": [
-                    "/home/wouter/CWI/EasyVVUQ/tests/SC_easyvvuq/EasyVVUQ_Campaign_54gsktbn/data/tmp7r45q8bv/aggregate_sample.tsv"
-                ],
-                "type": "summary",
-                "output_columns": [
-                    "u"
-                ],
-                "state": "/home/wouter/CWI/EasyVVUQ/tests/SC_easyvvuq/EasyVVUQ_Campaign_54gsktbn/data/tmp7r45q8bv/state_snapshot.json"
-            }
+            "name": "aggregate_samples",
+            "version": "0.1",
+            "category": "collation",
+            "info": "{\"files\": [\"/home/wouter/CWI/EasyVVUQ/tests/SC_easyvvuq/EasyVVUQ_Campaign_6pcl3v6c/data/tmpxe3kso71/aggregate_sample.tsv\"], \"type\": \"summary\", \"output_columns\": [\"u\"], \"state\": \"/home/wouter/CWI/EasyVVUQ/tests/SC_easyvvuq/EasyVVUQ_Campaign_6pcl3v6c/data/tmpxe3kso71/state_snapshot.json\"}"
         }
     ],
     "data": {
         "files": [
-            "/home/wouter/CWI/EasyVVUQ/tests/SC_easyvvuq/EasyVVUQ_Campaign_54gsktbn/data/tmp7r45q8bv/aggregate_sample.tsv"
+            "/home/wouter/CWI/EasyVVUQ/tests/SC_easyvvuq/EasyVVUQ_Campaign_6pcl3v6c/data/tmpxe3kso71/aggregate_sample.tsv"
         ],
         "type": "summary",
         "output_columns": [
             "u"
         ],
-        "state": "/home/wouter/CWI/EasyVVUQ/tests/SC_easyvvuq/EasyVVUQ_Campaign_54gsktbn/data/tmp7r45q8bv/state_snapshot.json"
+        "state": "/home/wouter/CWI/EasyVVUQ/tests/SC_easyvvuq/EasyVVUQ_Campaign_6pcl3v6c/data/tmpxe3kso71/state_snapshot.json"
     }
 }

@@ -70,7 +70,6 @@ class SCAnalysis(BaseAnalysisElement):
     """
     Compute the first two statistical moments
     """
-
     def get_moments(self, polynomial_order=4, quadrature_rule="G"):
 
         self.polynomial_order = polynomial_order
@@ -266,8 +265,13 @@ class SCAnalysis(BaseAnalysisElement):
     #############################
 
     # Computes Sobol indices using Stochastic Collocation
-    def get_Sobol_indices(self, typ):
+    def get_Sobol_indices(self, typ, polynomial_order=4):
 
+        # get first two moments
+        mom, _ = self.get_moments(polynomial_order=polynomial_order)
+        mu = mom['mean_f'].values.flatten()
+        D = mom['var_f'].values.flatten()
+        
         # multi indices
         U = range(self.d)
 
@@ -276,11 +280,6 @@ class SCAnalysis(BaseAnalysisElement):
         elif typ == 'all':
             # all indices u
             P = list(powerset(U))
-
-        # get first two moments
-        mom, _ = self.get_moments()
-        mu = mom['mean_f'].values.flatten()
-        D = mom['var_f'].values.flatten()
 
         # list with the 1d collocation points of all uncertain parameters
         #xi = [self.all_vars[param]['xi_1d'] for param in self.all_vars.keys()]
