@@ -12,6 +12,11 @@ from . import elements
 from . import distributions
 from . import encoders
 from . import decoders
+from .base_element import BaseElement
+from . import sampling
+from . import analysis
+from . import comparison
+from . import collate
 
 __copyright__ = """
 
