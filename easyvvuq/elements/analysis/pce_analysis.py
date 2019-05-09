@@ -53,7 +53,12 @@ class PCEAnalysis(BaseAnalysisElement):
 
         qoi_cols = self.qoi_cols
 
-        results = {}
+        results = {'statistical_moments': {},
+                   'percentiles': {},
+                   'sobol_indices': {k: {} for k in qoi_cols},
+                   'correlation_matrices': {},
+                   'output_distributions': {},
+                   }
 
         # Get the Polynomial
         P = self.sampler.P
@@ -66,9 +71,9 @@ class PCEAnalysis(BaseAnalysisElement):
 
         # Extract output values for each quantity of interest from Dataframe
         samples = {k: [] for k in qoi_cols}
-        for i in range(self.campaign.run_number):
+        for run_id in data_frame.run_id.unique():
             for k in qoi_cols:
-                values = data_frame.loc[data_frame['run_id'] == 'Run_' + str(i)][k].to_numpy()
+                values = data_frame.loc[data_frame['run_id'] == run_id][k]
                 samples[k].append(values)
 
         output_distributions = {}
