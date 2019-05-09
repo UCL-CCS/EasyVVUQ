@@ -70,7 +70,7 @@ def check_reference(ref, run_name, ref_type='campaign'):
 
 class RunInfo:
 
-    def __init__(self, run_name='', app=None, params={}, sample=None,
+    def __init__(self, run_name='', app=None, params=None, sample=None,
                  campaign=None):
 
         # TODO: Handle fixtures

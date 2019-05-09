@@ -38,6 +38,9 @@ class Campaign:
 
     def __init__(self, name=None, db_type="sql", db_location=None, workdir="./", state_file=None):
 
+        self.campaign_name = None
+        self.campaign_id = None
+
         self._log = []
 
         self._active_app = None
@@ -82,6 +85,10 @@ class Campaign:
                                             easyvvuq_version=__easyvvuq_version__, campaign_dir=campaign_dir)
         self.campaign_db = CampaignDB(location=db_location, new_campaign=True,
                                       name=name, info=info)
+
+        # Record the campaign's name and its associated ID in the database
+        self.campaign_name = name
+        self.campaign_id = self.campaign_db.get_campaign_id(self.campaign_name)
 
     def init_from_state_file(self, state_file):
         # TODO Implement loading from state file
@@ -192,7 +199,6 @@ class Campaign:
 
         app_default_params = self._active_app["params"]
 
-        # Validate:
         # Check if parameter names match those already known for this app
         for param in new_run.keys():
             if param not in app_default_params.keys():
@@ -215,8 +221,10 @@ class Campaign:
 
         # Add to run queue
         # TODO: Get correct sampler and campaign IDs to pass to RunInfo
-        run_info = RunInfo(app=self._active_app['id'], params=new_run,
-                           sample=0, campaign=0)
+        run_info = RunInfo( app=self._active_app['id'],
+                            params=new_run,
+                            sample=0,
+                            campaign=self.campaign_id)
         self.campaign_db.add_run(run_info)
 
     def add_default_run(self):

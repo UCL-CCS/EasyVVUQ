@@ -366,6 +366,20 @@ class CampaignDB(BaseCampaignDB):
 
         return campaign_info.first()
 
+    def get_campaign_id(self, name):
+        selected = self.session.query(CampaignTable.name.label(name), CampaignTable.id).all()
+        if len(selected) == 0:
+            msg = f"No campaign with name {name} found in campaign database"
+            logger.error(msg)
+            raise Exception(msg)
+        if len(selected) > 1:
+            msg = f"More than one campaign with name {name} found in campaign database. Database is compromised."
+            logger.error(msg)
+            raise Exception(msg)
+
+        # Return the database ID for the specified campaign
+        return selected[0][1]
+
     def campaign_dir(self, campaign_name=None):
         """Get campaign directory for `campaign_name`.
 
