@@ -95,7 +95,7 @@ class Campaign:
         Parameters
         ----------
         name
-        params
+        params: dict
         encoder
         decoder
         collation
@@ -107,7 +107,28 @@ class Campaign:
 
         """
 
-        # TODO: Need to look at parameters
+        # Verify input parameters dict:
+        # Check params is a dict
+        if not isinstance(params, dict):
+            msg = "params must be of type 'dict'"
+            logger.error(msg)
+            raise Exception(msg)
+
+        if len(params) == 0:
+            msg = "params must not be empty. At least one parameter should be specified."
+            logger.error(msg)
+            raise Exception(msg)
+
+        # Check each param has a dict as a value, and that dict has a "default" defined
+        for param_key, param_def in params.items():
+            if not isinstance(param_def, dict):
+                msg = f"Entry for param '{param_key}' must be a dictionary"
+                logger.error(msg)
+                raise Exception(msg)
+            if "default" not in param_def:
+                msg = f"Entry for param '{param_key}' must be a dictionary defining a 'default' value for this parameter."
+                logger.error(msg)
+                raise Exception(msg)
 
         # validate application input
         app = uq.data_structs.AppInfo(
@@ -175,11 +196,13 @@ class Campaign:
         # Check if parameter names match those already known for this app
         for param in new_run.keys():
             if param not in app_default_params.keys():
-
+                allowed_params_str = ','.join(list(app_default_params.keys()))
                 reasoning = (
                     f"dict passed to add_run() contains extra parameter, "
                     f"{param}, which is not a known parameter name "
-                    f"of app {self._active_app['name']}.")
+                    f"of app {self._active_app['name']}.\n"
+                    f"The allowed param names for this app appear to be:\n"
+                    f"{allowed_params_str}")
 
                 raise RuntimeError(reasoning)
 
