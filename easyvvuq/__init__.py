@@ -8,7 +8,6 @@ from .constants import OutputType
 from . import data_structs
 from .campaign import Campaign
 from . import actions
-from . import elements
 from . import distributions
 from . import encoders
 from . import decoders
