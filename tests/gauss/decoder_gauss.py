@@ -1,4 +1,5 @@
 import os
+import logging
 import pandas as pd
 from easyvvuq.decoders import BaseDecoder
 from easyvvuq import OutputType
@@ -26,9 +27,12 @@ __copyright__ = """
 __license__ = "LGPL"
 
 
+logger = logging.Logger(__name__)
+
+
 class GaussDecoder(BaseDecoder, decoder_name="gauss"):
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, target_filename=None, *args, **kwargs):
 
         # Handles creation of `self.app_info` attribute (dicts)
         super().__init__(*args, **kwargs)
@@ -64,3 +68,9 @@ class GaussDecoder(BaseDecoder, decoder_name="gauss"):
                            header=0, index_col=0)
 
         return data
+
+    def serialize(self):
+        return {"decoder_name": self.decoder_name}
+
+    def deserialize(self):
+        raise NotImplementedError

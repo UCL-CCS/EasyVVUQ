@@ -1,9 +1,4 @@
 import os
-import sys
-import json
-import easyvvuq.utils.json as json_utils
-import tempfile
-from string import Template
 from easyvvuq.encoders import BaseEncoder
 
 __copyright__ = """
@@ -31,14 +26,11 @@ __license__ = "LGPL"
 
 class GaussEncoder(BaseEncoder, encoder_name="gauss"):
 
-    def __init__(self, app_info, *args, **kwargs):
-
-        # Handles creation of `self.app_info` attribute (dicts)
-        super().__init__(app_info, *args, **kwargs)
-        app_info = self.app_info
+    def __init__(self, target_filename, *args, **kwargs):
+        self.target_filename = target_filename
 
     def encode(self, params={}, target_dir=''):
-        print("Using custom gauss encoder")
+
         out_file = params['out_file']
         num_steps = params['num_steps']
         mu = params['mu']
@@ -50,8 +42,10 @@ class GaussEncoder(BaseEncoder, encoder_name="gauss"):
         with open(encoder_outfname, "w") as outfile:
             outfile.write(output_str)
 
-        runscript_fname = os.path.join(target_dir, "run_cmd.sh")
-        run_cmd = 'tests/gauss/gauss_json.py gauss_input.json\n'
-        local_run_cmd = os.path.realpath(os.path.expanduser(run_cmd))
-        with open(runscript_fname, "w") as outfile:
-            outfile.write(local_run_cmd)
+    def serialize(self):
+        return {"encoder_name": self.encoder_name,
+                "target_filename": self.target_filename,
+                }
+
+    def deserialize(self):
+        raise NotImplementedError
