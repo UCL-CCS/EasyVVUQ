@@ -179,11 +179,13 @@ class Campaign:
         # Check if parameter names match those already known for this app
         for param in new_run.keys():
             if param not in app_default_params.keys():
-
+                allowed_params_str = ','.join(list(app_default_params.keys()))
                 reasoning = (
                     f"dict passed to add_run() contains extra parameter, "
                     f"{param}, which is not a known parameter name "
-                    f"of app {self._active_app['name']}.")
+                    f"of app {self._active_app['name']}.\n"
+                    f"The allowed param names for this app appear to be:\n"
+                    f"{allowed_params_str}")
 
                 raise RuntimeError(reasoning)
 
