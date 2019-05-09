@@ -146,7 +146,7 @@ class Campaign:
         self._active_app = self.campaign_db.app(name=app_name)
 
     def set_sampler(self, sampler):
-        if not isinstance(sampler, uq.elements.sampling.BaseSamplingElement):
+        if not isinstance(sampler, uq.sampling.BaseSamplingElement):
             msg = "set_sampler() must be passed a sampling element"
             logging.error(msg)
             raise Exception(msg)
@@ -263,7 +263,6 @@ class Campaign:
         runs = self.campaign_db.runs()
         runs_dir = self.campaign_db.runs_dir()
 
-        # TODO: Check if encoder exists / is set correctly
         if self._active_app_encoder is None:
             raise RuntimeError('Cannot populate runs without valid '
                                'encoder in campaign')
@@ -274,13 +273,10 @@ class Campaign:
             target_dir = os.path.join(runs_dir, run_id)
             os.makedirs(target_dir)
 
-            # TODO: Should we check if the run has been created?
-
             # TODO: Check that this isn't insanely inefficient (almost
             #  certainly will be hammering the database for large run lists)
             self.campaign_db.set_dir_for_run(run_id, target_dir)
 
-            # TODO: Apply encoder
             self._active_app_encoder.encode(params=run_data['params'],
                                             target_dir=target_dir)
 
@@ -312,7 +308,7 @@ class Campaign:
             # Run user-specified action on this directory
             action.act_on_dir(dir_name)
 
-    def collate(self, store=True):
+    def collate(self, store=False):
 
         # Apply collation element, and obtain the resulting dataframe
         self.last_collation_dataframe = self._active_app_collation.collate(self)
