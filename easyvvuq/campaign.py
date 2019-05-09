@@ -308,7 +308,7 @@ class Campaign:
             # Run user-specified action on this directory
             action.act_on_dir(dir_name)
 
-    def collate(self, store=True):
+    def collate(self, store=False):
 
         # Apply collation element, and obtain the resulting dataframe
         self.last_collation_dataframe = self._active_app_collation.collate(self)
