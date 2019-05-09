@@ -146,7 +146,7 @@ class Campaign:
         self._active_app = self.campaign_db.app(name=app_name)
 
     def set_sampler(self, sampler):
-        if not isinstance(sampler, uq.elements.sampling.BaseSamplingElement):
+        if not isinstance(sampler, uq.sampling.BaseSamplingElement):
             msg = "set_sampler() must be passed a sampling element"
             logging.error(msg)
             raise Exception(msg)
