@@ -22,7 +22,7 @@ def test_pce(tmpdir):
 
     # Create an encoder, decoder and collation element for PCE test app
     encoder = uq.encoders.GenericEncoder(template_fname='tests/pce/pce.template',
-                                         delimiter='#',
+                                         delimiter='$',
                                          target_filename='pce_in.json')
     decoder = uq.decoders.SimpleCSV(target_filename=output_filename,
                                     output_columns=output_columns,
