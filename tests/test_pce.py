@@ -27,7 +27,7 @@ def test_pce(tmpdir):
     decoder = uq.decoders.SimpleCSV(target_filename=output_filename,
                                     output_columns=output_columns,
                                     header=0)
-    collation = uq.elements.collate.AggregateSamples(average=False)
+    collation = uq.collate.AggregateSamples(average=False)
 
     # Add the PCE app (automatically set as current app)
     my_campaign.add_app(name="pce",
@@ -43,7 +43,7 @@ def test_pce(tmpdir):
         "t_env": cp.Uniform(15, 25)
     }
 
-    my_sampler = uq.elements.sampling.PCESampler(vary=vary, polynomial_order=3)
+    my_sampler = uq.sampling.PCESampler(vary=vary, polynomial_order=3)
 
     # Associate the sampler with the campaign
     my_campaign.set_sampler(my_sampler)
@@ -60,7 +60,7 @@ def test_pce(tmpdir):
     # Update after here
 
     # Post-processing analysis
-    pce_analysis = uq.elements.analysis.PCEAnalysis(sampler=my_sampler,
+    pce_analysis = uq.analysis.PCEAnalysis(sampler=my_sampler,
                                                     qoi_cols=output_columns)
 
     my_campaign.apply_analysis(pce_analysis)
