@@ -263,7 +263,6 @@ class Campaign:
         runs = self.campaign_db.runs()
         runs_dir = self.campaign_db.runs_dir()
 
-        # TODO: Check if encoder exists / is set correctly
         if self._active_app_encoder is None:
             raise RuntimeError('Cannot populate runs without valid '
                                'encoder in campaign')
@@ -274,13 +273,10 @@ class Campaign:
             target_dir = os.path.join(runs_dir, run_id)
             os.makedirs(target_dir)
 
-            # TODO: Should we check if the run has been created?
-
             # TODO: Check that this isn't insanely inefficient (almost
             #  certainly will be hammering the database for large run lists)
             self.campaign_db.set_dir_for_run(run_id, target_dir)
 
-            # TODO: Apply encoder
             self._active_app_encoder.encode(params=run_data['params'],
                                             target_dir=target_dir)
 
