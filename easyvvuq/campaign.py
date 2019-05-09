@@ -95,7 +95,7 @@ class Campaign:
         Parameters
         ----------
         name
-        params
+        params: dict
         encoder
         decoder
         collation
@@ -107,7 +107,11 @@ class Campaign:
 
         """
 
-        # TODO: Need to look at parameters
+        # Verify input parameters dict:
+        if not isinstance(params, dict):
+            msg = "params must be of type 'dict'"
+            logger.error(msg)
+            raise Exception(msg)
 
         # validate application input
         app = uq.data_structs.AppInfo(
