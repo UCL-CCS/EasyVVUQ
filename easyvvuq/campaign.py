@@ -143,7 +143,10 @@ class Campaign:
                 logger.error(msg)
                 raise Exception(msg)
             if "default" not in param_def:
-                msg = f"Entry for param '{param_key}' must be a dictionary defining a 'default' value for this parameter."
+                msg = (
+                    f"Entry for param '{param_key}' must be a dictionary"
+                    f"defining a 'default' value for this parameter."
+                )
                 logger.error(msg)
                 raise Exception(msg)
 
@@ -160,7 +163,8 @@ class Campaign:
         if set_active:
             self.set_app(app.name)
 
-        # TODO: Find somewhere sensible to store/resume/set the *live* encoder and decoder for a given app.
+        # TODO: Find somewhere sensible to store/resume/set the *live* encoder
+        # and decoder for a given app.
         # Currently not possible from the "dead" form stored in the DB
         self._active_app_encoder = encoder
         self._active_app_decoder = decoder

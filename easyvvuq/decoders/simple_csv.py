@@ -32,12 +32,19 @@ class SimpleCSV(BaseDecoder, decoder_name="csv"):
     def __init__(self, target_filename=None, output_columns=None, header=0):
 
         if target_filename is None:
-            msg = "target_filename must be set for SimpleCSV. This should be the name of the output file this decoder acts on."
+            msg = (
+                f"target_filename must be set for SimpleCSV. This should be"
+                f"the name of the output file this decoder acts on."
+            )
             logging.error(msg)
             raise Exception(msg)
 
         if output_columns is None:
-            msg = "output_columns must be specified for SimpleCSV. This should be the names of the output columns this decoder extracts from the target csv file."
+            msg = (
+                f"output_columns must be specified for SimpleCSV. This should"
+                f"be the names of the output columns this decoder extracts"
+                f"from the target csv file."
+            )
             logging.error(msg)
             raise Exception(msg)
 

@@ -185,7 +185,10 @@ class CampaignDB(BaseCampaignDB):
         selected = self.session.query(
             AppTable).filter_by(name=app_info.name).all()
         if len(selected) > 0:
-            message = f'There is already an app in this database with name {name} (found {len(selected)}).'
+            message = (
+                f'There is already an app in this database with name {name}'
+                f'(found {len(selected)}).'
+            )
             logger.critical(message)
             raise RuntimeError(message)
 
@@ -382,7 +385,10 @@ class CampaignDB(BaseCampaignDB):
             logger.error(msg)
             raise Exception(msg)
         if len(selected) > 1:
-            msg = f"More than one campaign with name {name} found in campaign database. Database is compromised."
+            msg = (
+                f"More than one campaign with name {name} found in"
+                f"campaign database. Database state is compromised."
+            )
             logger.error(msg)
             raise Exception(msg)
 
