@@ -1,6 +1,4 @@
 import os
-import sys
-from pprint import pprint
 import easyvvuq as uq
 import chaospy as cp
 from gauss.decoder_gauss import GaussDecoder
@@ -30,36 +28,52 @@ __license__ = "LGPL"
 
 def test_gauss(tmpdir):
 
-    # Params for testing
-    input_json = "tests/gauss/test_gauss.json"
-    output_json = os.path.join(tmpdir, "out_gauss.json")
+    # Set up a fresh campaign called "cannon"
+    my_campaign = uq.Campaign(name='gauss_custom', workdir=tmpdir)
+
+    params = {
+      "sigma":      {"type": "real", "min": "0.0", "max": "100000.0",
+                     "default": "0.25"},
+      "mu":         {"type": "real", "min": "0.0", "max": "100000.0",
+                     "default": "1"},
+      "num_steps":  {"type": "int", "min": "0", "max": "100000",
+                     "default": "10"},
+      "out_file":   {"type": "str", "default": "output.csv"}
+    }
+
     number_of_samples = 3
     number_of_replicas = 5
 
-    assert(os.path.exists(input_json))
+    # Create an encoder, decoder and collation element for the cannonsim app
+    encoder = uq.encoders.GenericEncoder(template_fname='tests/gauss/gauss.template',
+                                         target_filename='gauss_in.json')
+    decoder = GaussDecoder()
+    collation = uq.collate.AggregateSamples(average=True)
 
-    my_campaign = uq.Campaign(
-        name='test_campaign',
-        state_filename=input_json,
-        workdir=tmpdir
-    )
+    my_campaign.add_app(name="gauss",
+                        params=params,
+                        encoder=encoder,
+                        decoder=decoder,
+                        collation=collation
+                        )
 
-    assert(my_campaign is not None)
-    assert("sigma" in my_campaign.params_info)
-    assert("mu" in my_campaign.params_info)
-    assert("num_steps" in my_campaign.params_info)
-    assert("out_file" in my_campaign.params_info)
+    # Make a random sampler
+    vary = {
+        "mu": cp.Uniform(1.0, 100.0),
+    }
+    sampler1 = uq.sampling.RandomSampler(vary=vary)
 
-    my_campaign.vary_param("mu", dist=cp.Uniform(1.0, 100.0))
+    # Set the campaign to use this sampler
+    my_campaign.set_sampler(sampler1)
 
-    assert("mu" in my_campaign.vars)
+    # Draw samples
+    my_campaign.draw_samples(N=number_of_samples)
 
-    random_sampler = uq.elements.sampling.RandomSampler(my_campaign)
-    my_campaign.add_runs(random_sampler, max_num=number_of_samples)
+    # TODO: Assert no. samples in db = number_of_samples
 
-    assert(len(my_campaign.runs) == number_of_samples)
+    # TODO: Create a replicator that works in new style
 
-    replicator = uq.elements.sampling.Replicate(
+    replicator = uq.sampling.ensemble.Replicate(
         my_campaign, replicates=number_of_replicas)
     my_campaign.add_runs(replicator)
 
@@ -74,22 +88,12 @@ def test_gauss(tmpdir):
     my_campaign.apply_for_each_run_dir(
         uq.actions.ExecuteLocal("tests/gauss/gauss_json.py gauss_in.json"))
 
-    aggregate = uq.elements.collate.AggregateSamples(my_campaign, average=True)
-    aggregate.apply()
+    my_campaign.collate(store=False)
 
-    assert(len(my_campaign.data) > 0)
-
-    ensemble_boot = uq.elements.analysis.EnsembleBoot(my_campaign)
-    results, output_file = ensemble_boot.apply()
-
-    pprint(results)
-
-    pprint(my_campaign.log)
-
-    my_campaign.save_state(output_json)
-
-    assert(os.path.exists(output_json))
-    assert(os.path.isfile(output_json))
+    # Create a BasicStats analysis element and apply it to the campaign
+    stats = uq.analysis.EnsembleBoot()
+    my_campaign.apply_analysis(stats)
+    print("stats:", my_campaign.get_last_analysis())
 
 
 if __name__ == "__main__":
