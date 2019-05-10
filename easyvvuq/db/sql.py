@@ -190,25 +190,6 @@ class CampaignDB(BaseCampaignDB):
         self.session.add(db_entry)
         self.session.commit()
 
-    def add_sampler(self, sampler={}):
-        """
-        Add passed sampler information to the `sample` table in the database.
-
-        Parameters
-        ----------
-        sampler  :  dict
-            Information on the sampler that was used
-
-        Returns
-        -------
-
-        """
-
-        sampler = SampleTable(sampler=json.dumps(sampler))
-
-        self.session.add(sampler)
-        self.session.commit()
-
     def add_run(self, run_info=None, prefix='Run_'):
         """
         Add run to the `runs` table in the database.
