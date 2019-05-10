@@ -180,6 +180,7 @@ class Campaign:
             raise Exception(msg)
 
         self._active_sampler = sampler
+        self._active_sampler_id = self.campaign_db.add_sampler(sampler)
 
     def add_run(self, new_run, prefix='Run_'):
         """Add a new run to the queue
@@ -223,7 +224,7 @@ class Campaign:
         # TODO: Get correct sampler and campaign IDs to pass to RunInfo
         run_info = RunInfo( app=self._active_app['id'],
                             params=new_run,
-                            sample=0,
+                            sample=self._active_sampler_id,
                             campaign=self.campaign_id)
         self.campaign_db.add_run(run_info)
 

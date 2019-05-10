@@ -85,6 +85,8 @@ def test_cannonsim_csv(tmpdir):
     }
     sampler1 = uq.sampling.RandomSampler(vary=vary)
 
+    print("Serialized sampler:", sampler1.serialize())
+
     # Set the campaign to use this sampler
     my_campaign.set_sampler(sampler1)
 

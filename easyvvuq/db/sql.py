@@ -76,7 +76,7 @@ class RunTable(Base):
     sample = Column(Integer, ForeignKey('sample.id'))
 
 
-class SampleTable(Base):
+class SamplerTable(Base):
     """An SQLAlchemy schema for the run table.
     """
     __tablename__ = 'sample'
@@ -188,13 +188,31 @@ class CampaignDB(BaseCampaignDB):
             logger.critical(message)
             raise RuntimeError(message)
 
-
         app_dict = app_info.to_dict(flatten=True)
 
         db_entry = AppTable(**app_dict)
 
         self.session.add(db_entry)
         self.session.commit()
+
+    def add_sampler(self, sampler_element):
+        """
+        Add new Sampler to the 'sampler' table.
+
+        Parameters
+        ----------
+        sampler_element: BaseSamplingElement
+
+        Returns
+        -------
+
+        """
+        db_entry = SamplerTable(sampler=sampler_element.serialize())
+
+        self.session.add(db_entry)
+        self.session.commit()
+
+        return db_entry.id
 
     def add_run(self, run_info=None, prefix='Run_'):
         """
@@ -262,7 +280,7 @@ class CampaignDB(BaseCampaignDB):
         campaign:  int or None
             Campaign id to filter for.
         sampler: int or None
-            Sample id to filter for.
+            Sampler id to filter for.
 
         Returns
         -------
