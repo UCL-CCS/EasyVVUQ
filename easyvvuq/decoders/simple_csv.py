@@ -29,14 +29,14 @@ __license__ = "LGPL"
 
 class SimpleCSV(BaseDecoder, decoder_name="csv"):
 
-    def __init__(self, target_filename=None, output_columns = None, header = 0):
+    def __init__(self, target_filename=None, output_columns=None, header=0):
 
-        if target_filename == None:
+        if target_filename is None:
             msg = "target_filename must be set for SimpleCSV. This should be the name of the output file this decoder acts on."
             logging.error(msg)
             raise Exception(msg)
 
-        if output_columns == None:
+        if output_columns is None:
             msg = "output_columns must be specified for SimpleCSV. This should be the names of the output columns this decoder extracts from the target csv file."
             logging.error(msg)
             raise Exception(msg)
@@ -45,7 +45,6 @@ class SimpleCSV(BaseDecoder, decoder_name="csv"):
             msg = "output_columns cannot be empty."
             logging.error(msg)
             raise Exception(msg)
-
 
         self.target_filename = target_filename
         self.output_columns = output_columns
@@ -76,7 +75,10 @@ class SimpleCSV(BaseDecoder, decoder_name="csv"):
 
         out_path = self._get_output_path(run_info, self.target_filename)
 
-        data = pd.read_csv(out_path, names=self.output_columns, header=self.header)
+        data = pd.read_csv(
+            out_path,
+            names=self.output_columns,
+            header=self.header)
 
         return data
 

@@ -45,8 +45,8 @@ class BaseElement(object):
 
     def serialize(self):
         return json.dumps({
-                    "element_name": self.element_name(),
-                    "element_version": self.element_version(),
-                    "element_category": self.element_category(),
-                    "state": self.serialized_state()
-                })
+            "element_name": self.element_name(),
+            "element_version": self.element_version(),
+            "element_category": self.element_category(),
+            "state": self.serialized_state()
+        })

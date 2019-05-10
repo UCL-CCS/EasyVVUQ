@@ -63,8 +63,8 @@ class GenericEncoder(BaseEncoder, encoder_name="generic_template"):
 
         with open(template_fname, 'r') as template_file:
             template_txt = template_file.read()
-            self.template = get_custom_template(template_txt,
-                                                custom_delimiter=self.encoder_delimiter)
+            self.template = get_custom_template(
+                template_txt, custom_delimiter=self.encoder_delimiter)
 
     def encode(self, params={}, target_dir=''):
         """Substitutes `params` into a template application input, saves in

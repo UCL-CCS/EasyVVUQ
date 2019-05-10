@@ -101,4 +101,3 @@ class PCESampler(BaseSamplingElement):
 
     def serialized_state(self):
         return json.dumps({"count": self.count})
-

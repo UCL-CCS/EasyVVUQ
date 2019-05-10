@@ -59,14 +59,15 @@ class AggregateSamples(BaseCollationElement):
 
         full_data = pd.DataFrame()
 
-        # TODO: Find nicer way than forcing collate to access deep internal vars of campaign object like this
+        # TODO: Find nicer way than forcing collate to access deep internal
+        # vars of campaign object like this
         runs = campaign.campaign_db.runs()
 
         for run_id, run_info in runs.items():
             if decoder.sim_complete(run_info=run_info):
 
                 # TODO: Communicate this completion flag back to the database properly
-#                runs[run_id]['completed'] = True
+                #                runs[run_id]['completed'] = True
 
                 run_data = decoder.parse_sim_output(run_info=run_info)
 
@@ -88,4 +89,7 @@ class AggregateSamples(BaseCollationElement):
         return full_data
 
     def serialize(self):
-        return {"element_name": self.element_name(), "element_version": self.element_version(), "average": self.average}
+        return {
+            "element_name": self.element_name(),
+            "element_version": self.element_version(),
+            "average": self.average}

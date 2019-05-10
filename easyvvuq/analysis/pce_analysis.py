@@ -109,9 +109,11 @@ class PCEAnalysis(BaseAnalysisElement):
             results['sobol_indices'][k][1] = sobol_first_dict
 
             # Correlation matrix
-            results['correlation_matrices'][k] = cp.Corr(fit, self.sampler.distribution)
+            results['correlation_matrices'][k] = cp.Corr(
+                fit, self.sampler.distribution)
 
             # Output distributions
-            results['output_distributions'][k] = cp.QoI_Dist(fit, self.sampler.distribution)
+            results['output_distributions'][k] = cp.QoI_Dist(
+                fit, self.sampler.distribution)
 
         return results

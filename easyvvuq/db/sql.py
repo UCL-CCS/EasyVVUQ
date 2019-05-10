@@ -182,7 +182,8 @@ class CampaignDB(BaseCampaignDB):
         """
 
         # Check that no app with same name exists
-        selected = self.session.query(AppTable).filter_by(name=app_info.name).all()
+        selected = self.session.query(
+            AppTable).filter_by(name=app_info.name).all()
         if len(selected) > 0:
             message = f'There is already an app in this database with name {name} (found {len(selected)}).'
             logger.critical(message)
@@ -290,17 +291,17 @@ class CampaignDB(BaseCampaignDB):
         """
 
         if campaign is None and sampler is None:
-            selected = self.session.query(RunTable).filter_by(run_name=run_name)
+            selected = self.session.query(
+                RunTable).filter_by(run_name=run_name)
         elif campaign is not None and sampler is not None:
-            selected = self.session.query(RunTable).filter_by(run_name=run_name,
-                                                              campaign=campaign,
-                                                              sample=sampler)
+            selected = self.session.query(RunTable).filter_by(
+                run_name=run_name, campaign=campaign, sample=sampler)
         elif campaign is not None:
-            selected = self.session.query(RunTable).filter_by(run_name=run_name,
-                                                              campaign=campaign)
+            selected = self.session.query(RunTable).filter_by(
+                run_name=run_name, campaign=campaign)
         else:
-            selected = self.session.query(RunTable).filter_by(run_name=run_name,
-                                                              sample=sampler)
+            selected = self.session.query(RunTable).filter_by(
+                run_name=run_name, sample=sampler)
 
         if selected.count() != 1:
             logging.warning('Multiple runs selected - using the first')
@@ -311,17 +312,17 @@ class CampaignDB(BaseCampaignDB):
 
     def set_dir_for_run(self, run_name, run_dir, campaign=None, sampler=None):
         if campaign is None and sampler is None:
-            selected = self.session.query(RunTable).filter_by(run_name=run_name)
+            selected = self.session.query(
+                RunTable).filter_by(run_name=run_name)
         elif campaign is not None and sampler is not None:
-            selected = self.session.query(RunTable).filter_by(run_name=run_name,
-                                                              campaign=campaign,
-                                                              sample=sampler)
+            selected = self.session.query(RunTable).filter_by(
+                run_name=run_name, campaign=campaign, sample=sampler)
         elif campaign is not None:
-            selected = self.session.query(RunTable).filter_by(run_name=run_name,
-                                                              campaign=campaign)
+            selected = self.session.query(RunTable).filter_by(
+                run_name=run_name, campaign=campaign)
         else:
-            selected = self.session.query(RunTable).filter_by(run_name=run_name,
-                                                              sample=sampler)
+            selected = self.session.query(RunTable).filter_by(
+                run_name=run_name, sample=sampler)
 
         if selected.count() != 1:
             logging.warning('Multiple runs selected - using the first')
@@ -363,7 +364,8 @@ class CampaignDB(BaseCampaignDB):
             campaign_info = query.filter_by(name=campaign_name).all()
 
         if campaign_info.count() > 1:
-            logger.warning('More than one campaign selected - using first one.')
+            logger.warning(
+                'More than one campaign selected - using first one.')
         elif campaign_info.count() == 0:
             message = 'No campaign available.'
             logger.critical(message)
@@ -372,7 +374,9 @@ class CampaignDB(BaseCampaignDB):
         return campaign_info.first()
 
     def get_campaign_id(self, name):
-        selected = self.session.query(CampaignTable.name.label(name), CampaignTable.id).all()
+        selected = self.session.query(
+            CampaignTable.name.label(name),
+            CampaignTable.id).all()
         if len(selected) == 0:
             msg = f"No campaign with name {name} found in campaign database"
             logger.error(msg)
@@ -425,13 +429,14 @@ class CampaignDB(BaseCampaignDB):
         if campaign is None and sampler is None:
             selected = self.session.query(RunTable).all()
         elif campaign is not None and sampler is not None:
-            selected = self.session.query(RunTable).filter_by(campaign=campaign,
-                                                              sample=sampler).all()
+            selected = self.session.query(RunTable).filter_by(
+                campaign=campaign, sample=sampler).all()
         elif campaign is not None:
             selected = self.session.query(RunTable)
             selected = selected.filter_by(campaign=campaign).all()
         else:
-            selected = self.session.query(RunTable).filter_by(sample=sampler).all()
+            selected = self.session.query(
+                RunTable).filter_by(sample=sampler).all()
 
         return {r.run_name: self._run_to_dict(r) for r in selected}
 
@@ -451,5 +456,3 @@ class CampaignDB(BaseCampaignDB):
         """
 
         return self._get_campaign_info(campaign_name=campaign_name).runs_dir
-
-

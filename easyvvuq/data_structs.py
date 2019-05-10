@@ -122,7 +122,13 @@ class RunInfo:
 
 class AppInfo:
 
-    def __init__(self, name=None, params=None, encoder=None, decoder=None, collation=None):
+    def __init__(
+            self,
+            name=None,
+            params=None,
+            encoder=None,
+            decoder=None,
+            collation=None):
 
         self.name = name
         self.input_encoder = encoder
@@ -170,7 +176,11 @@ class AppInfo:
 
             out_dict = self.to_dict()
 
-            for field in ['params', 'input_encoder', 'output_decoder', 'collation']:
+            for field in [
+                'params',
+                'input_encoder',
+                'output_decoder',
+                    'collation']:
                 out_dict[field] = json.dumps(out_dict[field])
 
         else:

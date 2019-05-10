@@ -36,7 +36,13 @@ logger = logging.getLogger(__name__)
 
 class Campaign:
 
-    def __init__(self, name=None, db_type="sql", db_location=None, workdir="./", state_file=None):
+    def __init__(
+            self,
+            name=None,
+            db_type="sql",
+            db_location=None,
+            workdir="./",
+            state_file=None):
 
         self.campaign_name = None
         self.campaign_id = None
@@ -81,8 +87,11 @@ class Campaign:
             logger.critical(message)
             raise RuntimeError(message)
 
-        info = uq.data_structs.CampaignInfo(name=name, campaign_dir_prefix=default_campaign_prefix,
-                                            easyvvuq_version=__easyvvuq_version__, campaign_dir=campaign_dir)
+        info = uq.data_structs.CampaignInfo(
+            name=name,
+            campaign_dir_prefix=default_campaign_prefix,
+            easyvvuq_version=__easyvvuq_version__,
+            campaign_dir=campaign_dir)
         self.campaign_db = CampaignDB(location=db_location, new_campaign=True,
                                       name=name, info=info)
 
@@ -126,7 +135,8 @@ class Campaign:
             logger.error(msg)
             raise Exception(msg)
 
-        # Check each param has a dict as a value, and that dict has a "default" defined
+        # Check each param has a dict as a value, and that dict has a "default"
+        # defined
         for param_key, param_def in params.items():
             if not isinstance(param_def, dict):
                 msg = f"Entry for param '{param_key}' must be a dictionary"
@@ -139,12 +149,12 @@ class Campaign:
 
         # validate application input
         app = uq.data_structs.AppInfo(
-                                        name=name,
-                                        params=params,
-                                        encoder=encoder,
-                                        decoder=decoder,
-                                        collation=collation
-                                     )
+            name=name,
+            params=params,
+            encoder=encoder,
+            decoder=decoder,
+            collation=collation
+        )
 
         self.campaign_db.add_app(app)
         if set_active:
@@ -222,10 +232,10 @@ class Campaign:
 
         # Add to run queue
         # TODO: Get correct sampler and campaign IDs to pass to RunInfo
-        run_info = RunInfo( app=self._active_app['id'],
-                            params=new_run,
-                            sample=self._active_sampler_id,
-                            campaign=self.campaign_id)
+        run_info = RunInfo(app=self._active_app['id'],
+                           params=new_run,
+                           sample=self._active_sampler_id,
+                           campaign=self.campaign_id)
         self.campaign_db.add_run(run_info)
 
     def add_default_run(self):
@@ -257,9 +267,9 @@ class Campaign:
         # Make sure N is not 0 for an infinite generator (this would add runs
         # forever...)
         if self._active_sampler.is_finite() is False and N <= 0:
-            msg =(f"Sampling_element '{self._active_sampler.element_name()}' "
-                  f"is an infinite generator, therefore a finite number of "
-                  f"draws (N > 0) must be specified.")
+            msg = (f"Sampling_element '{self._active_sampler.element_name()}' "
+                   f"is an infinite generator, therefore a finite number of "
+                   f"draws (N > 0) must be specified.")
             raise RuntimeError(msg)
 
         num_added = 0
@@ -272,7 +282,9 @@ class Campaign:
                 break
 
         # Log application of this sampling element
-        self.log_element_application(self._active_sampler, {"num_added": num_added})
+        self.log_element_application(
+            self._active_sampler, {
+                "num_added": num_added})
 
     def list_runs(self):
         return self.campaign_db.runs()
@@ -343,10 +355,11 @@ class Campaign:
     def collate(self, store=False):
 
         # Apply collation element, and obtain the resulting dataframe
-        self.last_collation_dataframe = self._active_app_collation.collate(self)
+        self.last_collation_dataframe = self._active_app_collation.collate(
+            self)
 
         # @TODO: Check this works - don't see where df comes from
-        if store == True:
+        if store:
             # Set up dirs and files to store collation results in
             data_dir = os.path.join(campaign.get_campaign_dir(), 'data')
             out_dir = tempfile.mkdtemp(dir=data_dir)
@@ -356,7 +369,9 @@ class Campaign:
             df.to_csv(out_file, sep='\t', index=False)
 
         # Log application of this collation element
-        self.log_element_application(self._active_app_collation, {"store": store})
+        self.log_element_application(
+            self._active_app_collation, {
+                "store": store})
 
     def get_last_collation(self):
         if self.last_collation_dataframe is None:
@@ -368,7 +383,8 @@ class Campaign:
 
     def apply_analysis(self, analysis_element):
         # Apply analysis element to most recent collation result
-        self.last_analysis = analysis_element.analyse(self.get_last_collation())
+        self.last_analysis = analysis_element.analyse(
+            self.get_last_collation())
 
         # Log application of this analysis element
         self.log_element_application(analysis_element, None)
