@@ -12,18 +12,28 @@ def test_pce(tmpdir):
 
     # Define parameter space
     params = {
-      "kappa":    {"type": "real", "min": "0.0", "max": "0.1",  "default": "0.025"},
-      "t_env":    {"type": "real", "min": "0.0", "max": "40.0", "default": "15.0"},
-      "out_file": {"type": "str", "default": "output.csv"}
-    }
+        "kappa": {
+            "type": "real",
+            "min": "0.0",
+            "max": "0.1",
+            "default": "0.025"},
+        "t_env": {
+            "type": "real",
+            "min": "0.0",
+            "max": "40.0",
+            "default": "15.0"},
+        "out_file": {
+            "type": "str",
+            "default": "output.csv"}}
 
     output_filename = params["out_file"]["default"]
     output_columns = ["te", "ti"]
 
     # Create an encoder, decoder and collation element for PCE test app
-    encoder = uq.encoders.GenericEncoder(template_fname='tests/pce/pce.template',
-                                         delimiter='$',
-                                         target_filename='pce_in.json')
+    encoder = uq.encoders.GenericEncoder(
+        template_fname='tests/pce/pce.template',
+        delimiter='$',
+        target_filename='pce_in.json')
     decoder = uq.decoders.SimpleCSV(target_filename=output_filename,
                                     output_columns=output_columns,
                                     header=0)
@@ -61,7 +71,7 @@ def test_pce(tmpdir):
 
     # Post-processing analysis
     pce_analysis = uq.analysis.PCEAnalysis(sampler=my_sampler,
-                                                    qoi_cols=output_columns)
+                                           qoi_cols=output_columns)
 
     my_campaign.apply_analysis(pce_analysis)
 
@@ -79,4 +89,3 @@ def test_pce(tmpdir):
 if __name__ == "__main__":
 
     stats, per, sobols, dist_out = test_pce("/tmp/")
-

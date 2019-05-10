@@ -43,22 +43,57 @@ def test_cannonsim_csv(tmpdir):
 
     # Define parameter space for the cannonsim app
     params = {
-        "angle":            {"type": "real", "min": "0.0",    "max": "6.28",   "default": "0.79", "variable": "True"},
-        "air_resistance":   {"type": "real", "min": "0.0",    "max": "1.0",    "default": "0.2",  "variable": "True"},
-        "height":           {"type": "real", "min": "0.0",    "max": "1000.0", "default": "1.0",  "variable": "True"},
-        "time_step":        {"type": "real", "min": "0.0001", "max": "1.0",    "default": "0.01", "variable": "True"},
-        "gravity":          {"type": "real", "min": "0.0",    "max": "1000.0", "default": "9.8",  "variable": "True"},
-        "mass":             {"type": "real", "min": "0.0001", "max": "1000.0", "default": "1.0",  "variable": "True"},
-        "velocity":         {"type": "real", "min": "0.0",    "max": "1000.0", "default": "10.0", "variable": "True"}
-    }
+        "angle": {
+            "type": "real",
+            "min": "0.0",
+            "max": "6.28",
+            "default": "0.79",
+            "variable": "True"},
+        "air_resistance": {
+            "type": "real",
+            "min": "0.0",
+            "max": "1.0",
+            "default": "0.2",
+            "variable": "True"},
+        "height": {
+            "type": "real",
+            "min": "0.0",
+            "max": "1000.0",
+            "default": "1.0",
+            "variable": "True"},
+        "time_step": {
+            "type": "real",
+                    "min": "0.0001",
+                    "max": "1.0",
+                    "default": "0.01",
+                    "variable": "True"},
+        "gravity": {
+            "type": "real",
+            "min": "0.0",
+            "max": "1000.0",
+            "default": "9.8",
+            "variable": "True"},
+        "mass": {
+            "type": "real",
+            "min": "0.0001",
+            "max": "1000.0",
+            "default": "1.0",
+            "variable": "True"},
+        "velocity": {
+            "type": "real",
+            "min": "0.0",
+            "max": "1000.0",
+            "default": "10.0",
+            "variable": "True"}}
 
     # Create an encoder, decoder and collation element for the cannonsim app
-    encoder = uq.encoders.GenericEncoder(template_fname='tests/cannonsim/test_input/cannonsim.template',
-                                         delimiter='#',
-                                         target_filename='in.cannon')
-    decoder = uq.decoders.SimpleCSV(target_filename='output.csv',
-                                    output_columns=['Dist', 'lastvx', 'lastvy'],
-                                    header=0)
+    encoder = uq.encoders.GenericEncoder(
+        template_fname='tests/cannonsim/test_input/cannonsim.template',
+        delimiter='#',
+        target_filename='in.cannon')
+    decoder = uq.decoders.SimpleCSV(
+        target_filename='output.csv', output_columns=[
+            'Dist', 'lastvx', 'lastvy'], header=0)
     collation = uq.collate.AggregateSamples(average=False)
 
     print("Serialized encoder:", encoder.serialize())
@@ -73,7 +108,8 @@ def test_cannonsim_csv(tmpdir):
                         collation=collation
                         )
 
-    # Set the active app to be cannonsim (this is redundant when only one app has been added)
+    # Set the active app to be cannonsim (this is redundant when only one app
+    # has been added)
     my_campaign.set_app("cannonsim")
 
     # Make a random sampler
@@ -84,6 +120,8 @@ def test_cannonsim_csv(tmpdir):
         "mass": cp.Uniform(5.0, 1.0)
     }
     sampler1 = uq.sampling.RandomSampler(vary=vary)
+
+    print("Serialized sampler:", sampler1.serialize())
 
     # Set the campaign to use this sampler
     my_campaign.set_sampler(sampler1)
@@ -97,7 +135,8 @@ def test_cannonsim_csv(tmpdir):
     print("---")
 
     # Encode all runs into a local directory
-    print(f"Encoding all runs to campaign runs dir {my_campaign.get_campaign_runs_dir()}")
+    print(
+        f"Encoding all runs to campaign runs dir {my_campaign.get_campaign_runs_dir()}")
     my_campaign.populate_runs_dir()
 
     assert(len(my_campaign.get_campaign_runs_dir()) > 0)

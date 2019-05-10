@@ -1,5 +1,6 @@
 from .base import BaseSamplingElement
 import logging
+import json
 
 __copyright__ = """
 
@@ -50,6 +51,9 @@ class RandomSampler(BaseSamplingElement):
 
         self.vary = vary
 
+        # Keep track of how many samples we have drawn
+        self.count = 0
+
     def element_name(self):
         return "random_sampler"
 
@@ -64,4 +68,8 @@ class RandomSampler(BaseSamplingElement):
             run_dict = {}
             for param_name, dist in self.vary.items():
                 run_dict[param_name] = dist.sample(1)[0]
+            self.count += 1
             yield(run_dict)
+
+    def serialized_state(self):
+        return json.dumps({"count": self.count})

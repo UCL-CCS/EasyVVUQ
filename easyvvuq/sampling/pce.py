@@ -2,6 +2,7 @@ import logging
 import numpy as np
 import chaospy as cp
 from .base import BaseSamplingElement
+import json
 
 # author: Jalal Lakhlili
 __license__ = "LGPL"
@@ -74,6 +75,9 @@ class PCESampler(BaseSamplingElement):
         # Number of samples
         self._number_of_samples = len(self._nodes[0])
 
+        # Keep track of how many samples we have drawn
+        self.count = 0
+
     def element_name(self):
         return "PCE_sampler"
 
@@ -92,5 +96,8 @@ class PCESampler(BaseSamplingElement):
                 run_dict[param_name] = self._nodes.T[i_val][i_par]
                 i_par += 1
 
+            self.count += 1
             yield run_dict
 
+    def serialized_state(self):
+        return json.dumps({"count": self.count})
