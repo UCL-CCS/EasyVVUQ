@@ -181,7 +181,13 @@ class CampaignDB(BaseCampaignDB):
 
         """
 
-        # TODO: Check that no app with same name exists
+        # Check that no app with same name exists
+        selected = self.session.query(AppTable).filter_by(name=app_info.name).all()
+        if len(selected) > 0:
+            message = f'There is already an app in this database with name {name} (found {len(selected)}).'
+            logger.critical(message)
+            raise RuntimeError(message)
+
 
         app_dict = app_info.to_dict(flatten=True)
 
