@@ -148,7 +148,7 @@ def test_cannonsim_csv(tmpdir):
         "tests/cannonsim/bin/cannonsim in.cannon output.csv"))
 
     # Collate all data into one pandas data frame
-    my_campaign.collate(store=False)
+    my_campaign.collate()
     print("data:", my_campaign.get_last_collation())
 
     # Create a BasicStats analysis element and apply it to the campaign

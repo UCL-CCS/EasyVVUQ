@@ -65,7 +65,7 @@ def test_pce(tmpdir):
     my_campaign.apply_for_each_run_dir(uq.actions.ExecuteLocal(
         "tests/pce/pce_model.py pce_in.json"))
 
-    my_campaign.collate(store=False)
+    my_campaign.collate()
 
     # Update after here
 

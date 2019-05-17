@@ -356,26 +356,15 @@ class Campaign:
             # Run user-specified action on this directory
             action.act_on_dir(dir_name)
 
-    def collate(self, store=False):
+    def collate(self):
 
         # Apply collation element, and obtain the resulting dataframe
         self.last_collation_dataframe = self._active_app_collation.collate(
             self)
 
-        # @TODO: Check this works - don't see where df comes from
-        if store:
-            # Set up dirs and files to store collation results in
-            data_dir = os.path.join(campaign.get_campaign_dir(), 'data')
-            out_dir = tempfile.mkdtemp(dir=data_dir)
-            out_file = os.path.join(out_dir, 'aggregate_sample.tsv')
-
-            # Convert dataframe to file
-            df.to_csv(out_file, sep='\t', index=False)
-
         # Log application of this collation element
         self.log_element_application(
-            self._active_app_collation, {
-                "store": store})
+            self._active_app_collation, None)
 
     def get_last_collation(self):
         if self.last_collation_dataframe is None:
