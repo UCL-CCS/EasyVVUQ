@@ -165,7 +165,7 @@ def test_cannonsim_csv(tmpdir):
 
     # Load state in new campaign object
     new = uq.Campaign(state_file=state_file, workdir=tmpdir)
-
+    print(new)
 
 if __name__ == "__main__":
     test_cannonsim_csv("/tmp/")

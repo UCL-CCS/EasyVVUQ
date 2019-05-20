@@ -460,9 +460,11 @@ class Campaign:
         """Returns formatted summary of the current Campaign state.
         Enables class to work with standard print() method"""
 
-        # TODO: Recreate functionality
+        return (f"db_location = {self.db_location}\n"
+                f"campaign_name = {self.campaign_name}\n"
+                f"campaign_id = {self.campaign_id}\n"
+                f"log = {self._log}\n")
 
-        pass
 
     def log_element_application(self, element, further_info):
         """
