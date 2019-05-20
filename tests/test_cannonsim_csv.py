@@ -160,7 +160,11 @@ def test_cannonsim_csv(tmpdir):
     pprint(my_campaign._log)
 
     # Save the state of the campaign
-    my_campaign.save_state(tmpdir + "cannonsim_state.json")
+    state_file = tmpdir + "cannonsim_state.json"
+    my_campaign.save_state(state_file)
+
+    # Load state in new campaign object
+    new = uq.Campaign(state_file=state_file, workdir=tmpdir)
 
 
 if __name__ == "__main__":

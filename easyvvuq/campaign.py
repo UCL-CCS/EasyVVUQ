@@ -103,9 +103,8 @@ class Campaign:
         self.campaign_id = self.campaign_db.get_campaign_id(self.campaign_name)
 
     def init_from_state_file(self, state_file):
-        # TODO Implement loading from state file
-        print(f"Loading campaign from state file '{state_file}'")
-        raise NotImplementedError
+        logger.info(f"Loading campaign from state file '{state_file}'")
+        self.load_state(state_file)
 
     def save_state(self, state_filename):
         """Save the current Campaign state to file in JSON format
@@ -126,6 +125,23 @@ class Campaign:
         with open(state_filename, "w") as outfile:
             json.dump(output_json, outfile, indent=4)
 
+    def load_state(self, state_filename):
+        """Load up a Campaign state from the specified JSON file
+        Parameters
+        ----------
+        state_filename  :   str
+            Name of file from which to load the state
+        Returns
+        -------
+        """
+
+        with open(state_filename, "r") as infile:
+            input_json = json.load(infile)
+
+        self.db_location = input_json["db_location"]
+        self.campaign_name = input_json["campaign_name"]
+        self.campaign_id = input_json["campaign_id"]
+        self._log = input_json["log"]
 
     def add_app(self, name=None, params=None, encoder=None, decoder=None,
                 collation=None, set_active=True):
