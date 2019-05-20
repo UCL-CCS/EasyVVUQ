@@ -46,6 +46,7 @@ class Campaign:
 
         self.campaign_name = None
         self.campaign_id = None
+        self.db_location = None
 
         self._log = []
 
@@ -75,10 +76,12 @@ class Campaign:
         campaign_dir = tempfile.mkdtemp(prefix=default_campaign_prefix,
                                         dir=workdir)
 
+        self.db_location = db_location
+
         if db_type == 'sql':
             from .db.sql import CampaignDB
-            if db_location is None:
-                db_location = "sqlite:///" + campaign_dir + "test.db"
+            if self.db_location is None:
+                self.db_location = "sqlite:///" + campaign_dir + "test.db"
         elif db_type == 'json':
             from .db.json import CampaignDB
         else:
@@ -92,7 +95,7 @@ class Campaign:
             campaign_dir_prefix=default_campaign_prefix,
             easyvvuq_version=__easyvvuq_version__,
             campaign_dir=campaign_dir)
-        self.campaign_db = CampaignDB(location=db_location, new_campaign=True,
+        self.campaign_db = CampaignDB(location=self.db_location, new_campaign=True,
                                       name=name, info=info)
 
         # Record the campaign's name and its associated ID in the database
@@ -103,6 +106,26 @@ class Campaign:
         # TODO Implement loading from state file
         print(f"Loading campaign from state file '{state_file}'")
         raise NotImplementedError
+
+    def save_state(self, state_filename):
+        """Save the current Campaign state to file in JSON format
+        Parameters
+        ----------
+        state_filename  :   str
+            Name of file in which to save the state
+        Returns
+        -------
+        """
+
+        output_json = {
+            "db_location": self.db_location,
+            "campaign_name": self.campaign_name,
+            "campaign_id": self.campaign_id,
+            "log": self._log
+        }
+        with open(state_filename, "w") as outfile:
+            json.dump(output_json, outfile, indent=4)
+
 
     def add_app(self, name=None, params=None, encoder=None, decoder=None,
                 collation=None, set_active=True):

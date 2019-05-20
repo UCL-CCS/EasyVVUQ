@@ -159,6 +159,9 @@ def test_cannonsim_csv(tmpdir):
     # Print the campaign log
     pprint(my_campaign._log)
 
+    # Save the state of the campaign
+    my_campaign.save_state(tmpdir + "cannonsim_state.json")
+
 
 if __name__ == "__main__":
     test_cannonsim_csv("/tmp/")
