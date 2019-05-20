@@ -161,6 +161,11 @@ class Campaign:
         self.campaign_dir = input_json["campaign_dir"]
         self._log = input_json["log"]
 
+        if not os.path.exists(self.campaign_dir):
+            message = (f"Campaign directory in state_file {state_filename} ({self.campaign_dir}) does not exist.")
+            logger.critical(message)
+            raise RuntimeError(message)
+
     def add_app(self, name=None, params=None, encoder=None, decoder=None,
                 collation=None, set_active=True):
         """
