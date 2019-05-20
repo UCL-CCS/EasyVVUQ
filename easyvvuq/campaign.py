@@ -120,6 +120,7 @@ class Campaign:
 
         logger.info(f"Opening session with CampaignDB at {self.db_location}")
         self.campaign_db = CampaignDB(location=self.db_location, new_campaign=False, name=self.campaign_name)
+        self.campaign_id = self.campaign_db.get_campaign_id(self.campaign_name)
 
     def save_state(self, state_filename):
         """Save the current Campaign state to file in JSON format
@@ -135,7 +136,6 @@ class Campaign:
             "db_location": self.db_location,
             "db_type": self.db_type,
             "campaign_name": self.campaign_name,
-            "campaign_id": self.campaign_id,
             "log": self._log
         }
         with open(state_filename, "w") as outfile:
@@ -157,7 +157,6 @@ class Campaign:
         self.db_location = input_json["db_location"]
         self.db_type = input_json["db_type"]
         self.campaign_name = input_json["campaign_name"]
-        self.campaign_id = input_json["campaign_id"]
         self._log = input_json["log"]
 
     def add_app(self, name=None, params=None, encoder=None, decoder=None,
