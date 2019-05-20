@@ -47,6 +47,7 @@ class Campaign:
         self.campaign_name = None
         self.campaign_id = None
         self.db_location = None
+        self.db_type = None
 
         self._log = []
 
@@ -77,12 +78,13 @@ class Campaign:
                                         dir=workdir)
 
         self.db_location = db_location
+        self.db_type = db_type
 
-        if db_type == 'sql':
+        if self.db_type == 'sql':
             from .db.sql import CampaignDB
             if self.db_location is None:
                 self.db_location = "sqlite:///" + campaign_dir + "test.db"
-        elif db_type == 'json':
+        elif self.db_type == 'json':
             from .db.json import CampaignDB
         else:
             message = (f"Invalid 'db_type' {db_type}. Supported types are "
@@ -106,6 +108,19 @@ class Campaign:
         logger.info(f"Loading campaign from state file '{state_file}'")
         self.load_state(state_file)
 
+        if self.db_type == 'sql':
+            from .db.sql import CampaignDB
+        elif self.db_type == 'json':
+            from .db.json import CampaignDB
+        else:
+            message = (f"Invalid 'db_type' {db_type}. Supported types are "
+                       f"'sql' or 'json'.")
+            logger.critical(message)
+            raise RuntimeError(message)
+
+        logger.info(f"Opening session with CampaignDB at {self.db_location}")
+        self.campaign_db = CampaignDB(location=self.db_location, new_campaign=False, name=self.campaign_name)
+
     def save_state(self, state_filename):
         """Save the current Campaign state to file in JSON format
         Parameters
@@ -118,6 +133,7 @@ class Campaign:
 
         output_json = {
             "db_location": self.db_location,
+            "db_type": self.db_type,
             "campaign_name": self.campaign_name,
             "campaign_id": self.campaign_id,
             "log": self._log
@@ -139,6 +155,7 @@ class Campaign:
             input_json = json.load(infile)
 
         self.db_location = input_json["db_location"]
+        self.db_type = input_json["db_type"]
         self.campaign_name = input_json["campaign_name"]
         self.campaign_id = input_json["campaign_id"]
         self._log = input_json["log"]
