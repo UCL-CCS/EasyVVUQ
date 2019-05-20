@@ -273,6 +273,11 @@ class Campaign:
 
         """
 
+        if self._active_app is None:
+            msg = "No app is currently set for this campaign. Use set_app('name_of_app')."
+            logging.error(msg)
+            raise Exception(msg)
+
         app_default_params = self._active_app["params"]
 
         # Check if parameter names match those already known for this app
@@ -296,7 +301,7 @@ class Campaign:
                 new_run[param] = default_val
 
         # Add to run queue
-        # TODO: Get correct sampler and campaign IDs to pass to RunInfo
+        # TODO: Get correct sampler ID to pass to RunInfo
         run_info = RunInfo(app=self._active_app['id'],
                            params=new_run,
                            sample=self._active_sampler_id,
