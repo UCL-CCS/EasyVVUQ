@@ -45,12 +45,12 @@ class Campaign:
             state_file=None):
 
         self.campaign_name = None
-        self.campaign_id = None
+        self.campaign_dir = None
         self.db_location = None
         self.db_type = None
-
         self._log = []
 
+        self.campaign_id = None
         self._active_app = None
         self._active_app_encoder = None
         self.campaign_db = None
@@ -74,7 +74,7 @@ class Campaign:
     def init_fresh(self, name, db_type, db_location, workdir):
 
         # Create temp dir for campaign
-        campaign_dir = tempfile.mkdtemp(prefix=default_campaign_prefix,
+        self.campaign_dir = tempfile.mkdtemp(prefix=default_campaign_prefix,
                                         dir=workdir)
 
         self.db_location = db_location
@@ -83,7 +83,7 @@ class Campaign:
         if self.db_type == 'sql':
             from .db.sql import CampaignDB
             if self.db_location is None:
-                self.db_location = "sqlite:///" + campaign_dir + "test.db"
+                self.db_location = "sqlite:///" + self.campaign_dir + "test.db"
         elif self.db_type == 'json':
             from .db.json import CampaignDB
         else:
@@ -96,7 +96,7 @@ class Campaign:
             name=name,
             campaign_dir_prefix=default_campaign_prefix,
             easyvvuq_version=__easyvvuq_version__,
-            campaign_dir=campaign_dir)
+            campaign_dir=self.campaign_dir)
         self.campaign_db = CampaignDB(location=self.db_location, new_campaign=True,
                                       name=name, info=info)
 
@@ -136,6 +136,7 @@ class Campaign:
             "db_location": self.db_location,
             "db_type": self.db_type,
             "campaign_name": self.campaign_name,
+            "campaign_dir": self.campaign_dir,
             "log": self._log
         }
         with open(state_filename, "w") as outfile:
@@ -157,6 +158,7 @@ class Campaign:
         self.db_location = input_json["db_location"]
         self.db_type = input_json["db_type"]
         self.campaign_name = input_json["campaign_name"]
+        self.campaign_dir = input_json["campaign_dir"]
         self._log = input_json["log"]
 
     def add_app(self, name=None, params=None, encoder=None, decoder=None,
@@ -478,6 +480,7 @@ class Campaign:
 
         return (f"db_location = {self.db_location}\n"
                 f"campaign_name = {self.campaign_name}\n"
+                f"campaign_dir = {self.campaign_dir}\n"
                 f"campaign_id = {self.campaign_id}\n"
                 f"log = {self._log}\n")
 
