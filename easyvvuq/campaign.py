@@ -52,9 +52,8 @@ class Campaign:
 
         self.campaign_id = None
         self._active_app = None
-        self._active_app_encoder = None
         self.campaign_db = None
-        self.state_file = state_file
+
         self.last_collation_dataframe = None
         self.last_analysis = None
 
