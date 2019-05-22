@@ -48,5 +48,5 @@ class BaseElement(object):
             "element_name": self.element_name(),
             "element_version": self.element_version(),
             "element_category": self.element_category(),
-            "state": self.serialized_state()
+            "state": None
         })
