@@ -93,11 +93,10 @@ class SimpleCSV(BaseDecoder, decoder_name="csv"):
 
         return data
 
-    def serialize(self):
-        return {"decoder_name": self.decoder_name,
-                "target_filename": self.target_filename,
+    def serialized_state(self):
+        return {"target_filename": self.target_filename,
                 "output_columns": json.dumps(self.output_columns),
                 "header": self.header}
 
-    def deserialize(self):
-        raise NotImplementedError
+    def element_version(self):
+        return "0.1"

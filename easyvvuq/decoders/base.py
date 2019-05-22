@@ -10,7 +10,7 @@ AVAILABLE_DECODERS : dict
     Registers all imported decoders.
 """
 from easyvvuq import OutputType
-
+from easyvvuq.base_element import BaseElement
 __copyright__ = """
 
     Copyright 2018 Robin A. Richardson, David W. Wright
@@ -39,7 +39,7 @@ __license__ = "LGPL"
 AVAILABLE_DECODERS = {}
 
 
-class BaseDecoder:
+class BaseDecoder(BaseElement):
     """Baseclass for all EasyVVUQ decoders.
 
     Skeleton decoder which establishes the format and provides the basis of our
@@ -100,8 +100,8 @@ class BaseDecoder:
         """
         raise NotImplementedError
 
-    def serialize(self):
-        raise NotImplementedError
+    def element_category(self):
+        return "decoding"
 
-    def deserialize(self):
-        raise NotImplementedError
+    def element_name(self):
+        return self.decoder_name
