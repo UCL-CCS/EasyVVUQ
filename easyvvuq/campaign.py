@@ -424,7 +424,12 @@ class Campaign:
         runs_dir = self.campaign_db.runs_dir()
 
         # Loop through all runs in this campaign
-        for run_id in runs.keys():
+        for run_id, run_data in runs.items():
+
+            # Only do this for runs that have status "created"
+            if run_data['status'] != "created":
+                continue
+
             dir_name = os.path.join(runs_dir, run_id)
             print("Applying " + action.__module__ + " to " + dir_name + "...")
 
