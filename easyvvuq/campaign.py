@@ -62,6 +62,7 @@ class Campaign:
         self._active_app_decoder = None
         self._active_app_collation = None
         self._active_sampler = None
+        self._active_sampler_id = None
 
         # Load campaign from state_file, if provided. Else make a fresh new
         # campaign with a new campaign database
@@ -74,7 +75,7 @@ class Campaign:
 
         # Create temp dir for campaign
         self.campaign_dir = tempfile.mkdtemp(prefix=default_campaign_prefix,
-                                        dir=workdir)
+                                             dir=workdir)
 
         self.db_location = db_location
         self.db_type = db_type
@@ -96,7 +97,8 @@ class Campaign:
             campaign_dir_prefix=default_campaign_prefix,
             easyvvuq_version=__easyvvuq_version__,
             campaign_dir=self.campaign_dir)
-        self.campaign_db = CampaignDB(location=self.db_location, new_campaign=True,
+        self.campaign_db = CampaignDB(location=self.db_location,
+                                      new_campaign=True,
                                       name=name, info=info)
 
         # Record the campaign's name and its associated ID in the database
@@ -112,13 +114,15 @@ class Campaign:
         elif self.db_type == 'json':
             from .db.json import CampaignDB
         else:
-            message = (f"Invalid 'db_type' {db_type}. Supported types are "
+            message = (f"Invalid 'db_type' {self.db_type}. Supported types are "
                        f"'sql' or 'json'.")
             logger.critical(message)
             raise RuntimeError(message)
 
         logger.info(f"Opening session with CampaignDB at {self.db_location}")
-        self.campaign_db = CampaignDB(location=self.db_location, new_campaign=False, name=self.campaign_name)
+        self.campaign_db = CampaignDB(location=self.db_location,
+                                      new_campaign=False,
+                                      name=self.campaign_name)
         self.campaign_id = self.campaign_db.get_campaign_id(self.campaign_name)
 
     def save_state(self, state_filename):
@@ -161,7 +165,8 @@ class Campaign:
         self._log = input_json["log"]
 
         if not os.path.exists(self.campaign_dir):
-            message = (f"Campaign directory in state_file {state_filename} ({self.campaign_dir}) does not exist.")
+            message = (f"Campaign directory in state_file {state_filename}"
+                       f" ({self.campaign_dir}) does not exist.")
             logger.critical(message)
             raise RuntimeError(message)
 
@@ -192,7 +197,8 @@ class Campaign:
             raise Exception(msg)
 
         if len(params) == 0:
-            msg = "params must not be empty. At least one parameter should be specified."
+            msg = ("params must not be empty. At least one parameter "
+                   "should be specified.")
             logger.error(msg)
             raise Exception(msg)
 
@@ -257,7 +263,7 @@ class Campaign:
         self._active_sampler = sampler
         self._active_sampler_id = self.campaign_db.add_sampler(sampler)
 
-    def add_run(self, new_run, prefix='Run_'):
+    def add_run(self, new_run):
         """Add a new run to the queue
 
         Parameters
@@ -265,8 +271,6 @@ class Campaign:
         new_run     : dict
             Defines the value of each model parameter listed in
             `self.params_info` for a run to be added to `self.runs`
-        prefix      : str
-            Prepended to the key used to identify the run in `self.runs`
 
         Returns
         -------
@@ -274,7 +278,8 @@ class Campaign:
         """
 
         if self._active_app is None:
-            msg = "No app is currently set for this campaign. Use set_app('name_of_app')."
+            msg = ("No app is currently set for this campaign. "
+                   "Use set_app('name_of_app').")
             logging.error(msg)
             raise Exception(msg)
 
@@ -317,15 +322,15 @@ class Campaign:
         new_run = {}
         self.add_run(new_run)
 
-    def draw_samples(self, N=0):
+    def draw_samples(self, n=0):
         """Draws N samples from the currently set sampler, resulting in N new
-        runs added to the runs list. If N is 0 (its default value) then this
+        runs added to the runs list. If `n` is 0 (its default value) then this
         method draws ALL samples from the sampler, until exhaustion (this will
         fail if the sampler is not finite).
 
         Parameters
         ----------
-        N     : int
+        n     : int
                 Number of samples to draw from the active sampling element.
                 By default is 0 (draw ALL samples)
 
@@ -334,12 +339,12 @@ class Campaign:
 
         """
 
-        # Make sure N is not 0 for an infinite generator (this would add runs
+        # Make sure n is not 0 for an infinite generator (this would add runs
         # forever...)
         if self._active_sampler.is_finite() is False and N <= 0:
             msg = (f"Sampling_element '{self._active_sampler.element_name()}' "
                    f"is an infinite generator, therefore a finite number of "
-                   f"draws (N > 0) must be specified.")
+                   f"draws (n > 0) must be specified.")
             raise RuntimeError(msg)
 
         num_added = 0
@@ -348,7 +353,7 @@ class Campaign:
             self.add_run(new_run)
 
             num_added += 1
-            if num_added == N:
+            if num_added == n:
                 break
 
         # Log application of this sampling element
@@ -492,7 +497,6 @@ class Campaign:
                 f"campaign_dir = {self.campaign_dir}\n"
                 f"campaign_id = {self.campaign_id}\n"
                 f"log = {self._log}\n")
-
 
     def log_element_application(self, element, further_info):
         """

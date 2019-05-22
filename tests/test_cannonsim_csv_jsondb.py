@@ -124,7 +124,7 @@ def test_cannonsim_csv_jsondb(tmpdir):
     my_campaign.set_sampler(sampler1)
 
     # Draw 5 samples
-    my_campaign.draw_samples(N=5)
+    my_campaign.draw_samples(n=5)
 
     # Print the list of runs now in the campaign db
     print("List of runs added:")
