@@ -41,12 +41,12 @@ class BaseElement(object):
         raise NotImplementedError
 
     def serialized_state(self):
-        raise NotImplementedError
+        return "UNSERIALIZABLE"
 
     def serialize(self):
         return json.dumps({
             "element_name": self.element_name(),
             "element_version": self.element_version(),
             "element_category": self.element_category(),
-            "state": None
+            "state": self.serialized_state()
         })

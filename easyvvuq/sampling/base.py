@@ -45,9 +45,3 @@ class BaseSamplingElement(BaseElement):
 
     def generate_runs(self):
         raise NotImplementedError
-
-    def serialized_state(self):
-        raise NotImplementedError
-
-    def serialize(self):
-        raise NotImplementedError
