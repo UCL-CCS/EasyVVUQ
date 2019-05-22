@@ -1,3 +1,4 @@
+import logging
 from .base import BaseSamplingElement
 
 __copyright__ = """
@@ -23,23 +24,49 @@ __copyright__ = """
 __license__ = "LGPL"
 
 
+logger = logging.getLogger(__name__)
+
+
 class Replicate(BaseSamplingElement):
 
-    def __init__(self, campaign, selection={}, replicates=2):
+    def __init__(self, campaign=None, sampler=None, run_name=None,
+                 replicates=2):
+
+        if replicates < 1:
+            msg = (f"Number of replicates requested in 'replicate_samples' "
+                   f"must be >= 1 (passed: {replicates}).")
+            logging.error(msg)
+            raise ValueError(msg)
+
+        if campaign is None and sampler is None and run_name is None:
+            logging.warning("Replicating all runs as no sampler, campaign or "
+                            "run_name selected.")
+
         self.campaign = campaign
-        self.selection = selection
+        self.sampler = sampler
+        self.run_name = run_name
         self.replicates = replicates
 
-    def element_name(self):
-        return "replicate"
-
-    def element_version(self):
-        return "0.1"
+    def element_category(self):
+        return "sampling"
 
     def is_finite(self):
         return True
 
+    def element_name(self):
+        return "replicate_samples"
+
+    def element_version(self):
+        return "0.2"
+
     def generate_runs(self):
+
+
+
+        # Get filtered list of unique runs
+        # If no runs match then give error
+        # Else loop through run specifications and replicates - yield new run
+
         runs = self.campaign.unique_runs()
         reps_made = False
         for run_info in runs:
@@ -59,3 +86,9 @@ class Replicate(BaseSamplingElement):
                     new_reps = self.replicates - n_reps
                     for rep_no in range(new_reps):
                         yield dict(copy_info)
+
+    def serialized_state(self):
+        raise NotImplementedError
+
+    def serialize(self):
+        raise NotImplementedError

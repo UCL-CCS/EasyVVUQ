@@ -10,7 +10,7 @@ AVAILABLE_ENCODERS : dict
     Registers all imported encoders.
 """
 import easyvvuq.utils.json as json_utils
-from easyvvuq.utils import fixtures
+from easyvvuq.base_element import BaseElement
 
 __copyright__ = """
 
@@ -39,7 +39,7 @@ __license__ = "LGPL"
 AVAILABLE_ENCODERS = {}
 
 
-class BaseEncoder:
+class BaseEncoder(BaseElement):
     """Baseclass for all EasyVVUQ encoders.
 
     Skeleton encoder which establishes the format and provides the basis of our
@@ -84,8 +84,8 @@ class BaseEncoder:
         """
         raise NotImplementedError
 
-    def serialize(self):
-        raise NotImplementedError
+    def element_category(self):
+        return "encoding"
 
-    def deserialize(self):
-        raise NotImplementedError
+    def element_name(self):
+        return self.encoder_name

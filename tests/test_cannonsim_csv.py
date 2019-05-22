@@ -135,7 +135,7 @@ def test_cannonsim_csv(tmpdir):
     print("---")
 
     # Encode all runs into a local directory
-    print(
+    pprint(
         f"Encoding all runs to campaign runs dir {my_campaign.get_campaign_runs_dir()}")
     my_campaign.populate_runs_dir()
 
@@ -150,6 +150,19 @@ def test_cannonsim_csv(tmpdir):
     # Collate all data into one pandas data frame
     my_campaign.collate()
     print("data:", my_campaign.get_last_collation())
+
+    # Draw 3 more samples, execute, and collate onto existing dataframe
+    print("Running 3 more samples...")
+    my_campaign.draw_samples(n=3)
+    my_campaign.populate_runs_dir()
+    my_campaign.apply_for_each_run_dir(uq.actions.ExecuteLocal(
+        "tests/cannonsim/bin/cannonsim in.cannon output.csv"))
+    my_campaign.collate()
+    print("data:", my_campaign.get_last_collation())
+
+
+    sys.exit(0)
+
 
     # Create a BasicStats analysis element and apply it to the campaign
     stats = uq.analysis.BasicStats(params_cols=['Dist', 'lastvx', 'lastvy'])
@@ -166,6 +179,10 @@ def test_cannonsim_csv(tmpdir):
     # Load state in new campaign object
     new = uq.Campaign(state_file=state_file, workdir=tmpdir)
     print(new)
+
+    print("List of runs added:")
+    pprint(my_campaign.list_runs())
+    print("---")
 
 if __name__ == "__main__":
     test_cannonsim_csv("/tmp/")

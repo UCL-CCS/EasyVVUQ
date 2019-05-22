@@ -105,11 +105,10 @@ class GenericEncoder(BaseEncoder, encoder_name="generic_template"):
 
         raise KeyError(reasoning)
 
-    def serialize(self):
-        return {"encoder_name": self.encoder_name,
-                "delimiter": self.encoder_delimiter,
+    def serialized_state(self):
+        return {"delimiter": self.encoder_delimiter,
                 "target_filename": self.target_filename,
                 "template_fname": self.template_fname}
 
-    def deserialize(self):
-        raise NotImplementedError
+    def element_version(self):
+        return "0.1"

@@ -47,4 +47,4 @@ class BaseSamplingElement(BaseElement):
         raise NotImplementedError
 
     def serialized_state(self):
-        raise NotImplementedError
+        return "UNSERIALIZABLE"

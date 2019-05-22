@@ -335,6 +335,28 @@ class CampaignDB(BaseCampaignDB):
         selected.run_dir = run_dir
         self.session.commit()
 
+    def set_run_status(self, run_name, status, campaign=None, sampler=None):
+        if campaign is None and sampler is None:
+            selected = self.session.query(
+                RunTable).filter_by(run_name=run_name)
+        elif campaign is not None and sampler is not None:
+            selected = self.session.query(RunTable).filter_by(
+                run_name=run_name, campaign=campaign, sample=sampler)
+        elif campaign is not None:
+            selected = self.session.query(RunTable).filter_by(
+                run_name=run_name, campaign=campaign)
+        else:
+            selected = self.session.query(RunTable).filter_by(
+                run_name=run_name, sample=sampler)
+
+        if selected.count() != 1:
+            logging.warning('Multiple runs selected - using the first')
+
+        selected = selected.first()
+
+        selected.status = status
+        self.session.commit()
+
     def campaigns(self):
         """Get list of campaigns for which information is stored in the
         database.
