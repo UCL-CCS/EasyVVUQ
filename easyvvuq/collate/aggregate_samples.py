@@ -66,8 +66,6 @@ class AggregateSamples(BaseCollationElement):
         for run_id, run_info in runs.items():
             if decoder.sim_complete(run_info=run_info):
 
-                # TODO: Communicate this completion flag back to the database properly
-                #                runs[run_id]['completed'] = True
                 campaign.campaign_db.set_run_status(run_id, "completed")
 
                 run_data = decoder.parse_sim_output(run_info=run_info)

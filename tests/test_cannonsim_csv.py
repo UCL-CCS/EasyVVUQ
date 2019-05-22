@@ -135,7 +135,7 @@ def test_cannonsim_csv(tmpdir):
     print("---")
 
     # Encode all runs into a local directory
-    print(
+    pprint(
         f"Encoding all runs to campaign runs dir {my_campaign.get_campaign_runs_dir()}")
     my_campaign.populate_runs_dir()
 
@@ -165,7 +165,12 @@ def test_cannonsim_csv(tmpdir):
 
     # Load state in new campaign object
     new = uq.Campaign(state_file=state_file, workdir=tmpdir)
-    print(new)
+    pprint(new)
+
+    print("List of runs added:")
+    pprint(my_campaign.list_runs())
+    print("---")
+
 
 if __name__ == "__main__":
     test_cannonsim_csv("/tmp/")
