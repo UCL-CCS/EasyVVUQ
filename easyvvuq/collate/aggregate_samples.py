@@ -68,6 +68,7 @@ class AggregateSamples(BaseCollationElement):
 
                 # TODO: Communicate this completion flag back to the database properly
                 #                runs[run_id]['completed'] = True
+                campaign.campaign_db.set_run_status(run_id, "completed")
 
                 run_data = decoder.parse_sim_output(run_info=run_info)
 
@@ -88,8 +89,5 @@ class AggregateSamples(BaseCollationElement):
 
         return full_data
 
-    def serialize(self):
-        return {
-            "element_name": self.element_name(),
-            "element_version": self.element_version(),
-            "average": self.average}
+    def serialized_state(self):
+        return {"average": self.average}

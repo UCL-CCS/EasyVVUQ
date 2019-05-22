@@ -51,6 +51,3 @@ class BaseCollationElement(BaseElement):
 
     def element_category(self):
         return "collation"
-
-    def serialize(self):
-        raise NotImplementedError
