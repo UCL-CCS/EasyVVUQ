@@ -34,8 +34,20 @@ class BaseSamplingElement(BaseElement):
     def element_category(self):
         return "sampling"
 
+    def element_name(self):
+        raise NotImplementedError
+
+    def element_version(self):
+        raise NotImplementedError
+
     def is_finite(self):
         raise NotImplementedError
 
     def generate_runs(self):
+        raise NotImplementedError
+
+    def serialized_state(self):
+        raise NotImplementedError
+
+    def serialize(self):
         raise NotImplementedError
