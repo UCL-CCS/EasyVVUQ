@@ -48,6 +48,3 @@ class BaseSamplingElement(BaseElement):
 
     def serialized_state(self):
         raise NotImplementedError
-
-    def serialize(self):
-        raise NotImplementedError
