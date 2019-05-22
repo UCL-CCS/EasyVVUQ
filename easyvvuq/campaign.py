@@ -388,6 +388,10 @@ class Campaign:
 
         for run_id, run_data in runs.items():
 
+            # Only do this for runs that have status "created"
+            if run_data['status'] != "created":
+                continue
+
             # Make run directory
             target_dir = os.path.join(runs_dir, run_id)
             os.makedirs(target_dir)
