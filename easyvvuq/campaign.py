@@ -323,10 +323,10 @@ class Campaign:
         self.add_run(new_run)
 
     def draw_samples(self, n=0):
-        """Draws N samples from the currently set sampler, resulting in N new
-        runs added to the runs list. If `n` is 0 (its default value) then this
-        method draws ALL samples from the sampler, until exhaustion (this will
-        fail if the sampler is not finite).
+        """Draws `n` samples from the currently set sampler, resulting in `n`
+        new runs added to the runs list. If `n` is 0 (its default value) then
+        this method draws ALL samples from the sampler, until exhaustion (this
+        will fail if the sampler is not finite).
 
         Parameters
         ----------
