@@ -8,6 +8,7 @@ from sqlalchemy.orm import sessionmaker
 from easyvvuq import constants
 from .base import BaseCampaignDB
 from easyvvuq.sampling.base import BaseSamplingElement
+from easyvvuq.encoders.base import BaseEncoder
 
 
 __copyright__ = """
@@ -223,6 +224,11 @@ class CampaignDB(BaseCampaignDB):
         serialized_sampler = self.session.query(SamplerTable).get(sampler_ID).sampler
         sampler = BaseSamplingElement.deserialize(serialized_sampler) 
         return sampler
+
+    def resurrect_app(self, app_name):
+        app_info = self.app(app_name)
+        encoder = BaseEncoder.deserialize(app_info['input_encoder'])
+        return encoder, None
 
     def update_sampler(self, sampler_ID, sampler_element):
         selected = self.session.query(SamplerTable).get(sampler_ID)

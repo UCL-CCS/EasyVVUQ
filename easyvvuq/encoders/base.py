@@ -11,6 +11,7 @@ AVAILABLE_ENCODERS : dict
 """
 import easyvvuq.utils.json as json_utils
 from easyvvuq.base_element import BaseElement
+import json
 
 __copyright__ = """
 
@@ -89,3 +90,11 @@ class BaseEncoder(BaseElement):
 
     def element_name(self):
         return self.encoder_name
+
+    @staticmethod
+    def deserialize(encoderstr):
+        print("Deserializing:", encoderstr)
+        encoderdict = json.loads(encoderstr)
+        print(encoderdict.keys())
+        encoder = AVAILABLE_ENCODERS[encoderdict["element_name"]](**encoderdict["state"])
+        return encoder
