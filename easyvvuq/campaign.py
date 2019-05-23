@@ -238,7 +238,6 @@ class Campaign:
         # TODO: Find somewhere sensible to store/resume/set the *live* encoder
         # and decoder for a given app.
         # Currently not possible from the "dead" form stored in the DB
-        self._active_app_encoder = encoder
         self._active_app_decoder = decoder
         self._active_app_collation = collation
 
