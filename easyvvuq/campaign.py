@@ -329,18 +329,22 @@ class Campaign:
         new_run = {}
         self.add_run(new_run)
 
-    def draw_samples(self, n=0):
-        """Draws `n` samples from the currently set sampler, resulting in `n`
-        new runs added to the runs list. If `n` is 0 (its default value) then
+    def draw_samples(self, num_samples=0, replicas=1):
+        """Draws `num_samples` sets of parameters from the currently set
+        sampler, resulting in `num_samples` * `replicas` new runs added to the
+        runs list. If `num_samples` is 0 (its default value) then
         this method draws ALL samples from the sampler, until exhaustion (this
         will fail if the sampler is not finite).
 
         Parameters
         ----------
-        n     : int
+        num_samples : int
                 Number of samples to draw from the active sampling element.
                 By default is 0 (draw ALL samples)
-
+        replicas : int
+                Number of replica runs to be created with the sample parameters.
+                Default is 1 - so only a single run added for each set of
+                parameters.
         Returns
         -------
 
@@ -357,10 +361,11 @@ class Campaign:
         num_added = 0
         for new_run in self._active_sampler.generate_runs():
 
-            self.add_run(new_run)
+            for rep in range(replicas):
+                self.add_run(new_run)
 
             num_added += 1
-            if num_added == n:
+            if num_added == num_samples:
                 break
 
         # Write sampler's new state to database
