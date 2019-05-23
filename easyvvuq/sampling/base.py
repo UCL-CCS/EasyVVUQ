@@ -1,4 +1,5 @@
 from .. import BaseElement
+import json
 
 __copyright__ = """
 
@@ -79,7 +80,10 @@ class Vary:
         return self.vary.items()
 
     def serialize(self):
-        pass
+        serialized_vary = {}
+        for var, dist in self.vary.items():
+            serialized_vary[var] = dist.__class__.__module__
+        return json.dumps(serialized_vary)
 
     @staticmethod
     def deserialize():
