@@ -160,10 +160,6 @@ def test_cannonsim_csv(tmpdir):
     my_campaign.collate()
     print("data:", my_campaign.get_last_collation())
 
-
-    sys.exit(0)
-
-
     # Create a BasicStats analysis element and apply it to the campaign
     stats = uq.analysis.BasicStats(params_cols=['Dist', 'lastvx', 'lastvy'])
     my_campaign.apply_analysis(stats)
@@ -178,6 +174,9 @@ def test_cannonsim_csv(tmpdir):
 
     # Load state in new campaign object
     new = uq.Campaign(state_file=state_file, workdir=tmpdir)
+
+    sys.exit(0)
+
     print(new)
 
     print("List of runs added:")

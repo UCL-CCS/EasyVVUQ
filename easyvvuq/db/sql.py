@@ -7,6 +7,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from easyvvuq import constants
 from .base import BaseCampaignDB
+from easyvvuq.sampling.base import BaseSamplingElement
 
 
 __copyright__ = """
@@ -217,6 +218,11 @@ class CampaignDB(BaseCampaignDB):
         self.session.commit()
 
         return db_entry.id
+
+    def resurrect_sampler(self, sampler_ID):
+        serialized_sampler = self.session.query(SamplerTable).get(sampler_ID).sampler
+        sampler = BaseSamplingElement.deserialize(serialized_sampler) 
+        return sampler
 
     def add_run(self, run_info=None, prefix='Run_'):
         """

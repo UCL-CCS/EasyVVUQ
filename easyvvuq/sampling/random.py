@@ -72,4 +72,4 @@ class RandomSampler(BaseSamplingElement):
             yield(run_dict)
 
     def serialized_state(self):
-        return json.dumps({"count": self.count})
+        return json.dumps({"vary": self.vary, "count": self.count})

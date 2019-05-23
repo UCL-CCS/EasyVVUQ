@@ -45,3 +45,10 @@ class BaseSamplingElement(BaseElement):
 
     def generate_runs(self):
         raise NotImplementedError
+
+    @staticmethod
+    def deserialize(samplerdict):
+        print("Deserializing:", samplerdict)
+        if samplerdict["element_name"] == "random_sampler":
+            return RandomSampler()
+        return None
