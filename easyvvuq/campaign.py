@@ -352,7 +352,7 @@ class Campaign:
 
         # Make sure n is not 0 for an infinite generator (this would add runs
         # forever...)
-        if self._active_sampler.is_finite() is False and num_samples <= 0:
+        if not self._active_sampler.is_finite() and num_samples <= 0:
             msg = (f"Sampling_element '{self._active_sampler.element_name()}' "
                    f"is an infinite generator, therefore a finite number of "
                    f"draws (n > 0) must be specified.")
