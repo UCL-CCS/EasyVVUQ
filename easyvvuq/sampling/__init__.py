@@ -1,4 +1,4 @@
-from .base import BaseSamplingElement
+from .base import BaseSamplingElement, Vary
 from .random import RandomSampler
 from .ensemble import Replicate
 from .stochastic_collocation import SCSampler

@@ -1,4 +1,5 @@
-from .base import BaseSamplingElement
+from .base import BaseSamplingElement, Vary
+from easyvvuq import distributions
 import logging
 import json
 
@@ -32,24 +33,7 @@ class RandomSampler(BaseSamplingElement):
             Expects dict of var names, and their corresponding distributions
         """
 
-        if vary is None:
-            msg = ("'vary' cannot be None. RandomSampler must be passed a "
-                   "dict of the names of the parameters you want to vary, "
-                   "and their corresponding distributions.")
-            logging.error(msg)
-            raise Exception(msg)
-        if not isinstance(vary, dict):
-            msg = ("'vary' must be a dictionary of the names of the "
-                   "parameters you want to vary, and their corresponding "
-                   "distributions.")
-            logging.error(msg)
-            raise Exception(msg)
-        if len(vary) == 0:
-            msg = "'vary' cannot be empty."
-            logging.error(msg)
-            raise Exception(msg)
-
-        self.vary = vary
+        self.vary = Vary(vary)
 
         # Keep track of how many samples we have drawn
         self.count = 0
@@ -66,10 +50,10 @@ class RandomSampler(BaseSamplingElement):
     def generate_runs(self) -> dict:
         while True:
             run_dict = {}
-            for param_name, dist in self.vary.items():
+            for param_name, dist in self.vary.get_items():
                 run_dict[param_name] = dist.sample(1)[0]
             self.count += 1
             yield(run_dict)
 
     def serialized_state(self):
-        return json.dumps({"vary": self.vary, "count": self.count})
+        return json.dumps({"vary": self.vary.serialize(), "count": self.count})

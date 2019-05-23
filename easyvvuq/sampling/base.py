@@ -52,3 +52,35 @@ class BaseSamplingElement(BaseElement):
         if samplerdict["element_name"] == "random_sampler":
             return RandomSampler()
         return None
+
+
+class Vary:
+    def __init__(self, vary):
+        if vary is None:
+            msg = ("'vary' cannot be None. RandomSampler must be passed a "
+                   "dict of the names of the parameters you want to vary, "
+                   "and their corresponding distributions.")
+            logging.error(msg)
+            raise Exception(msg)
+        if not isinstance(vary, dict):
+            msg = ("'vary' must be a dictionary of the names of the "
+                   "parameters you want to vary, and their corresponding "
+                   "distributions.")
+            logging.error(msg)
+            raise Exception(msg)
+        if len(vary) == 0:
+            msg = "'vary' cannot be empty."
+            logging.error(msg)
+            raise Exception(msg)
+
+        self.vary = vary
+
+    def get_items(self):
+        return self.vary.items()
+
+    def serialize(self):
+        pass
+
+    @staticmethod
+    def deserialize():
+        pass
