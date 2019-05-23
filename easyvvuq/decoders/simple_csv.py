@@ -95,7 +95,7 @@ class SimpleCSV(BaseDecoder, decoder_name="csv"):
 
     def serialized_state(self):
         return {"target_filename": self.target_filename,
-                "output_columns": json.dumps(self.output_columns),
+                "output_columns": self.output_columns,
                 "header": self.header}
 
     def element_version(self):
