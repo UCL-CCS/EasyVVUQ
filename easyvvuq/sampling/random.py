@@ -26,7 +26,7 @@ __copyright__ = """
 __license__ = "LGPL"
 
 
-class RandomSampler(BaseSamplingElement):
+class RandomSampler(BaseSamplingElement, sampler_name="random_sampler"):
 
     def __init__(self, vary=None):
         """
@@ -37,9 +37,6 @@ class RandomSampler(BaseSamplingElement):
 
         # Keep track of how many samples we have drawn
         self.count = 0
-
-    def element_name(self):
-        return "random_sampler"
 
     def element_version(self):
         return "0.1"

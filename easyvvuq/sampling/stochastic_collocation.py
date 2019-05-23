@@ -26,7 +26,7 @@ __copyright__ = """
 __license__ = "LGPL"
 
 
-class SCSampler(BaseSamplingElement):
+class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
 
     def __init__(self, campaign, polynomial_order=4, quadrature_rule="G"):
 
@@ -46,11 +46,8 @@ class SCSampler(BaseSamplingElement):
 
         self.number_of_samples = self.xi_d.shape[0]
 
-#        # required counter in generate_runs()
+        # required counter in generate_runs()
         self.counter = 0
-
-    def element_name(self):
-        return "sc_sampler"
 
     def element_version(self):
         return "0.2"

@@ -24,6 +24,10 @@ __copyright__ = """
 __license__ = "LGPL"
 
 
+# Dict to store all registered samplers (any class which extends
+# BaseSamplingElement is automatically registered as a sampler)
+AVAILABLE_SAMPLERS = {}
+
 class BaseSamplingElement(BaseElement):
     """Baseclass for all EasyVVUQ sampling elements.
 
@@ -32,11 +36,23 @@ class BaseSamplingElement(BaseElement):
 
     """
 
+    def __init_subclass__(cls, sampler_name, **kwargs):
+        """
+        Catch any new samplers (all samplers must inherit from BaseSamplingElement) and add them
+        to the dict of available samplers.
+        """
+        super().__init_subclass__(**kwargs)
+
+        cls.sampler_name = sampler_name
+
+        # Register new sampler
+        AVAILABLE_SAMPLERS[sampler_name] = cls
+
     def element_category(self):
         return "sampling"
 
     def element_name(self):
-        raise NotImplementedError
+        return self.sampler_name
 
     def element_version(self):
         raise NotImplementedError
@@ -86,5 +102,6 @@ class Vary:
         return json.dumps(serialized_vary)
 
     @staticmethod
-    def deserialize():
-        pass
+    def deserialize(serialized_vary):
+        vary = json.loads(serialized_vary)
+        print(vary)

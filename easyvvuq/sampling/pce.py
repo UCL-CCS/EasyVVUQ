@@ -8,7 +8,7 @@ import json
 __license__ = "LGPL"
 
 
-class PCESampler(BaseSamplingElement):
+class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
     def __init__(self,
                  vary=None,
                  polynomial_order=4,
@@ -77,9 +77,6 @@ class PCESampler(BaseSamplingElement):
 
         # Keep track of how many samples we have drawn
         self.count = 0
-
-    def element_name(self):
-        return "PCE_sampler"
 
     def element_version(self):
         return "0.3"

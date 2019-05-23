@@ -23,15 +23,12 @@ __copyright__ = """
 __license__ = "LGPL"
 
 
-class Replicate(BaseSamplingElement):
+class Replicate(BaseSamplingElement, sampler_name="replicate"):
 
     def __init__(self, campaign, selection={}, replicates=2):
         self.campaign = campaign
         self.selection = selection
         self.replicates = replicates
-
-    def element_name(self):
-        return "replicate"
 
     def element_version(self):
         return "0.1"
