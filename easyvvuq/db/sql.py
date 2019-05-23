@@ -9,7 +9,7 @@ from easyvvuq import constants
 from .base import BaseCampaignDB
 from easyvvuq.sampling.base import BaseSamplingElement
 from easyvvuq.encoders.base import BaseEncoder
-
+from easyvvuq.decoders.base import BaseDecoder
 
 __copyright__ = """
 
@@ -228,7 +228,8 @@ class CampaignDB(BaseCampaignDB):
     def resurrect_app(self, app_name):
         app_info = self.app(app_name)
         encoder = BaseEncoder.deserialize(app_info['input_encoder'])
-        return encoder, None
+        decoder = BaseDecoder.deserialize(app_info['output_decoder'])
+        return encoder, decoder
 
     def update_sampler(self, sampler_ID, sampler_element):
         selected = self.session.query(SamplerTable).get(sampler_ID)

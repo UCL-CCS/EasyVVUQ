@@ -11,6 +11,8 @@ AVAILABLE_DECODERS : dict
 """
 from easyvvuq import OutputType
 from easyvvuq.base_element import BaseElement
+import json
+
 __copyright__ = """
 
     Copyright 2018 Robin A. Richardson, David W. Wright
@@ -37,7 +39,6 @@ __license__ = "LGPL"
 # Dict to store all registered decoders (any class which extends
 # BaseDecoder is automatically registered as an decoder)
 AVAILABLE_DECODERS = {}
-
 
 class BaseDecoder(BaseElement):
     """Baseclass for all EasyVVUQ decoders.
@@ -105,3 +106,12 @@ class BaseDecoder(BaseElement):
 
     def element_name(self):
         return self.decoder_name
+
+    @staticmethod
+    def deserialize(decoderstr):
+        print("Deserializing:", decoderstr)
+        decoderdict = json.loads(decoderstr)
+        print(decoderdict.keys())
+        decoder = AVAILABLE_DECODERS[decoderdict["element_name"]](**decoderdict["state"])
+        return decoder
+
