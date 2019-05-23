@@ -128,9 +128,6 @@ class Campaign:
         # Resurrect the sampler using the ID
         self._active_sampler = self.campaign_db.resurrect_sampler(self._active_sampler_id)
 
-    def resurrect_sampler(self, samplerinfo):
-        print("samplerinfo", samplerinfo)
-
     def save_state(self, state_filename):
         """Save the current Campaign state to file in JSON format
         Parameters
@@ -363,6 +360,9 @@ class Campaign:
             num_added += 1
             if num_added == n:
                 break
+
+        # Write sampler's new state to database
+        self.campaign_db.update_sampler(self._active_sampler_id, self._active_sampler)
 
         # Log application of this sampling element
         self.log_element_application(

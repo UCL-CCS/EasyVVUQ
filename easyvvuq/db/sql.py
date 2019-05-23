@@ -224,6 +224,11 @@ class CampaignDB(BaseCampaignDB):
         sampler = BaseSamplingElement.deserialize(serialized_sampler) 
         return sampler
 
+    def update_sampler(self, sampler_ID, sampler_element):
+        selected = self.session.query(SamplerTable).get(sampler_ID)
+        selected.sampler = sampler_element.serialize()
+        self.session.commit()
+
     def add_run(self, run_info=None, prefix='Run_'):
         """
         Add run to the `runs` table in the database.
