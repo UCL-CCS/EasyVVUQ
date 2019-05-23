@@ -67,17 +67,9 @@ def test_gauss(tmpdir):
     my_campaign.set_sampler(sampler1)
 
     # Draw samples
-    my_campaign.draw_samples(N=number_of_samples)
+    my_campaign.draw_samples(num_samples=number_of_samples, replicas=number_of_replicas)
 
-    # TODO: Assert no. samples in db = number_of_samples
-
-    # TODO: Create a replicator that works in new style
-
-    replicator = uq.sampling.ensemble.Replicate(
-        my_campaign, replicates=number_of_replicas)
-    my_campaign.add_runs(replicator)
-
-    assert(len(my_campaign.runs) == number_of_samples * number_of_replicas)
+    # TODO: Assert no. samples in db = number_of_samples*number_of_replicas
 
     my_campaign.populate_runs_dir()
 
