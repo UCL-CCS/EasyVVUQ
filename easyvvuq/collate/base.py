@@ -27,6 +27,10 @@ __copyright__ = """
 __license__ = "LGPL"
 
 
+# Dict to store all registered collaters (any class which extends
+# BaseCollationElement is automatically registered as a collater)
+AVAILABLE_COLLATERS = {}
+
 class BaseCollationElement(BaseElement):
     """Baseclass for all EasyVVUQ collation elements.
 
@@ -42,6 +46,18 @@ class BaseCollationElement(BaseElement):
 
     """
 
+    def __init_subclass__(cls, collater_name, **kwargs):
+        """
+        Catch any new collaters (all collaters must inherit from BaseCollationElement) and add them
+        to the dict of available collaters.
+        """
+        super().__init_subclass__(**kwargs)
+
+        cls.collater_name = collater_name
+
+        # Register new collater
+        AVAILABLE_COLLATERS[collater_name] = cls
+
     def collate(self):
         """
         Collates the campaign run output into a pandas dataframe.
@@ -51,3 +67,15 @@ class BaseCollationElement(BaseElement):
 
     def element_category(self):
         return "collation"
+
+    def element_name(self):
+        return self.collater_name
+
+    @staticmethod
+    def deserialize(collaterstr):
+        print("Deserializing:", collaterstr)
+        collaterdict = json.loads(collaterstr)
+        print(collaterdict.keys())
+        collater = AVAILABLE_COLLATERS[collaterdict["element_name"]](**collaterdict["state"])
+        return decoder
+
