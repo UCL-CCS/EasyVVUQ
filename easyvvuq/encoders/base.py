@@ -93,8 +93,6 @@ class BaseEncoder(BaseElement):
 
     @staticmethod
     def deserialize(encoderstr):
-        print("Deserializing:", encoderstr)
         encoderdict = json.loads(encoderstr)
-        print(encoderdict.keys())
         encoder = AVAILABLE_ENCODERS[encoderdict["element_name"]](**encoderdict["state"])
         return encoder

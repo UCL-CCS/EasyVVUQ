@@ -74,9 +74,7 @@ class BaseCollationElement(BaseElement):
 
     @staticmethod
     def deserialize(collaterstr):
-        print("Deserializing:", collaterstr)
         collaterdict = json.loads(collaterstr)
-        print(collaterdict.keys())
         collater = AVAILABLE_COLLATERS[collaterdict["element_name"]](**collaterdict["state"])
         return collater
 

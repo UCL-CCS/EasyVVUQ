@@ -67,7 +67,6 @@ class BaseSamplingElement(BaseElement):
 
     @staticmethod
     def deserialize(samplerstr):
-        print("Deserializing:", samplerstr)
         samplerdict = json.loads(samplerstr)
         sampler = AVAILABLE_SAMPLERS[samplerdict["element_name"]](state=samplerdict["state"])
         return sampler
