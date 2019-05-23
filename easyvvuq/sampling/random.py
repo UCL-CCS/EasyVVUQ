@@ -28,18 +28,12 @@ __license__ = "LGPL"
 
 class RandomSampler(BaseSamplingElement, sampler_name="random_sampler"):
 
-    def __init__(self, vary=None, state=None):
+    def __init__(self, vary=None, count=0):
         """
             Expects dict of var names, and their corresponding distributions
         """
-
-        if state is not None:
-            state_dict = json.loads(state)
-            self.vary = Vary.deserialize(state_dict["vary"])
-            self.count = state_dict["count"]
-        else:
-            self.vary = Vary(vary)
-            self.count = 0
+        self.vary = Vary(vary)
+        self.count = 0
 
     def element_version(self):
         return "0.1"
@@ -56,4 +50,4 @@ class RandomSampler(BaseSamplingElement, sampler_name="random_sampler"):
             yield(run_dict)
 
     def serialized_state(self):
-        return json.dumps({"vary": self.vary.serialize(), "count": self.count})
+        return {"vary": self.vary.serialize(), "count": self.count}
