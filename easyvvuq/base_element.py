@@ -40,13 +40,13 @@ class BaseElement(object):
     def element_category(self):
         raise NotImplementedError
 
-    def serialized_state(self):
-        return "UNSERIALIZABLE"
+    def get_restart_dict(self):
+        return None
 
     def serialize(self):
         return json.dumps({
             "element_name": self.element_name(),
             "element_version": self.element_version(),
             "element_category": self.element_category(),
-            "state": self.serialized_state()
+            "state": self.get_restart_dict()
         })

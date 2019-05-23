@@ -84,5 +84,5 @@ class AggregateSamples(BaseCollationElement, collater_name="aggregate_samples"):
 
         return full_data
 
-    def serialized_state(self):
+    def get_restart_dict(self):
         return {"average": self.average}

@@ -96,5 +96,5 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
             self.count += 1
             yield run_dict
 
-    def serialized_state(self):
+    def get_restart_dict(self):
         return json.dumps({"count": self.count})

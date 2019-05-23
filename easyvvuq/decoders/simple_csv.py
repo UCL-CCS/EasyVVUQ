@@ -93,7 +93,7 @@ class SimpleCSV(BaseDecoder, decoder_name="csv"):
 
         return data
 
-    def serialized_state(self):
+    def get_restart_dict(self):
         return {"target_filename": self.target_filename,
                 "output_columns": self.output_columns,
                 "header": self.header}

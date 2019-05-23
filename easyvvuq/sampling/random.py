@@ -49,5 +49,5 @@ class RandomSampler(BaseSamplingElement, sampler_name="random_sampler"):
             self.count += 1
             yield(run_dict)
 
-    def serialized_state(self):
+    def get_restart_dict(self):
         return {"vary": self.vary.serialize(), "count": self.count}

@@ -105,7 +105,7 @@ class GenericEncoder(BaseEncoder, encoder_name="generic_template"):
 
         raise KeyError(reasoning)
 
-    def serialized_state(self):
+    def get_restart_dict(self):
         return {"delimiter": self.encoder_delimiter,
                 "target_filename": self.target_filename,
                 "template_fname": self.template_fname}
