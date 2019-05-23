@@ -10,6 +10,7 @@ from .base import BaseCampaignDB
 from easyvvuq.sampling.base import BaseSamplingElement
 from easyvvuq.encoders.base import BaseEncoder
 from easyvvuq.decoders.base import BaseDecoder
+from easyvvuq.collate.base import BaseCollationElement
 
 __copyright__ = """
 
@@ -76,7 +77,6 @@ class RunTable(Base):
     run_dir = Column(String)
     campaign = Column(Integer, ForeignKey('campaign_info.id'))
     sample = Column(Integer, ForeignKey('sample.id'))
-
 
 class SamplerTable(Base):
     """An SQLAlchemy schema for the run table.
@@ -229,7 +229,8 @@ class CampaignDB(BaseCampaignDB):
         app_info = self.app(app_name)
         encoder = BaseEncoder.deserialize(app_info['input_encoder'])
         decoder = BaseDecoder.deserialize(app_info['output_decoder'])
-        return encoder, decoder
+        collater = BaseCollationElement.deserialize(app_info['collation'])
+        return encoder, decoder, collater
 
     def update_sampler(self, sampler_ID, sampler_element):
         selected = self.session.query(SamplerTable).get(sampler_ID)

@@ -235,12 +235,6 @@ class Campaign:
         if set_active:
             self.set_app(app.name)
 
-        # TODO: Find somewhere sensible to store/resume/set the *live* encoder
-        # and decoder for a given app.
-        # Currently not possible from the "dead" form stored in the DB
-        self._active_app_decoder = decoder
-        self._active_app_collation = collation
-
     def set_app(self, app_name):
         """
         Set the app to be in active use by this campaign. Gets the app info from
@@ -258,8 +252,8 @@ class Campaign:
 
         self._active_app = self.campaign_db.app(name=app_name)
 
-        # Resurrect the app encoder and decoder
-        self._active_app_encoder, self._active_app_decoder = self.campaign_db.resurrect_app(app_name)
+        # Resurrect the app encoder, decoder and collater
+        self._active_app_encoder, self._active_app_decoder, self._active_app_collation = self.campaign_db.resurrect_app(app_name)
 
     def set_sampler(self, sampler):
         if not isinstance(sampler, uq.sampling.BaseSamplingElement):

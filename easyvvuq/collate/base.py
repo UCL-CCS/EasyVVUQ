@@ -3,6 +3,7 @@ import tempfile
 from easyvvuq import Campaign
 from easyvvuq import OutputType
 from .. import BaseElement
+import json
 
 __copyright__ = """
 
@@ -77,5 +78,5 @@ class BaseCollationElement(BaseElement):
         collaterdict = json.loads(collaterstr)
         print(collaterdict.keys())
         collater = AVAILABLE_COLLATERS[collaterdict["element_name"]](**collaterdict["state"])
-        return decoder
+        return collater
 
