@@ -35,8 +35,11 @@ class RandomSampler(BaseSamplingElement, sampler_name="random_sampler"):
 
         if state is not None:
             state_dict = json.loads(state)
-            self.vary = state_dict["vary"]
+            self.vary = Vary.deserialize(state_dict["vary"])
             self.count = state_dict["count"]
+
+            print(self.vary, type(self.vary))
+
         else:
             self.vary = Vary(vary)
             self.count = 0

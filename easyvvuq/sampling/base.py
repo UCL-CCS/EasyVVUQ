@@ -1,4 +1,5 @@
 from .. import BaseElement
+import importlib
 import logging
 import json
 
@@ -96,6 +97,9 @@ class Vary:
     def get_items(self):
         return self.vary.items()
 
+    def __str__(self):
+        return self.vary.__str__()
+
     def serialize(self):
         serialized_vary = {}
         for var, dist in self.vary.items():
@@ -105,4 +109,6 @@ class Vary:
     @staticmethod
     def deserialize(serialized_vary):
         vary = json.loads(serialized_vary)
-        print(**vary)
+        for var, dist in vary.items():
+            vary[var] = importlib.import_module(dist)
+        return Vary(vary)
