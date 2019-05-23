@@ -153,7 +153,7 @@ def test_cannonsim_csv(tmpdir):
 
     # Draw 3 more samples, execute, and collate onto existing dataframe
     print("Running 3 more samples...")
-    my_campaign.draw_samples(n=3)
+    my_campaign.draw_samples(num_samples=3)
     my_campaign.populate_runs_dir()
     my_campaign.apply_for_each_run_dir(uq.actions.ExecuteLocal(
         "tests/cannonsim/bin/cannonsim in.cannon output.csv"))
