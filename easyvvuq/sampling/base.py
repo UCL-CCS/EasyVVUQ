@@ -1,4 +1,5 @@
 from .. import BaseElement
+import logging
 import json
 
 __copyright__ = """
@@ -64,11 +65,11 @@ class BaseSamplingElement(BaseElement):
         raise NotImplementedError
 
     @staticmethod
-    def deserialize(samplerdict):
-        print("Deserializing:", samplerdict)
-        if samplerdict["element_name"] == "random_sampler":
-            return RandomSampler()
-        return None
+    def deserialize(samplerstr):
+        print("Deserializing:", samplerstr)
+        samplerdict = json.loads(samplerstr)
+        sampler = AVAILABLE_SAMPLERS[samplerdict["element_name"]](state=samplerdict["state"])
+        return sampler
 
 
 class Vary:
@@ -104,4 +105,4 @@ class Vary:
     @staticmethod
     def deserialize(serialized_vary):
         vary = json.loads(serialized_vary)
-        print(vary)
+        print(**vary)

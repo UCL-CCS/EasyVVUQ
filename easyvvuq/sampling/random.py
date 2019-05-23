@@ -28,15 +28,18 @@ __license__ = "LGPL"
 
 class RandomSampler(BaseSamplingElement, sampler_name="random_sampler"):
 
-    def __init__(self, vary=None):
+    def __init__(self, vary=None, state=None):
         """
             Expects dict of var names, and their corresponding distributions
         """
 
-        self.vary = Vary(vary)
-
-        # Keep track of how many samples we have drawn
-        self.count = 0
+        if state is not None:
+            state_dict = json.loads(state)
+            self.vary = state_dict["vary"]
+            self.count = state_dict["count"]
+        else:
+            self.vary = Vary(vary)
+            self.count = 0
 
     def element_version(self):
         return "0.1"
