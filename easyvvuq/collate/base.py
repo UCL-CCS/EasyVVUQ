@@ -72,6 +72,9 @@ class BaseCollationElement(BaseElement):
     def element_name(self):
         return self.collater_name
 
+    def is_restartable(self):                                                                        
+        return True
+
     @staticmethod
     def deserialize(collaterstr):
         collaterdict = json.loads(collaterstr)

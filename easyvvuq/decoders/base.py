@@ -107,6 +107,9 @@ class BaseDecoder(BaseElement):
     def element_name(self):
         return self.decoder_name
 
+    def is_restartable(self):                                                                        
+        return True
+
     @staticmethod
     def deserialize(decoderstr):
         decoderdict = json.loads(decoderstr)
