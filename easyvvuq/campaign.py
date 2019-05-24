@@ -1,9 +1,7 @@
 import os
-import sys
 import logging
 import tempfile
 import json
-import pprint
 import easyvvuq as uq
 from easyvvuq.constants import __easyvvuq_version__, default_campaign_prefix
 from easyvvuq.data_structs import RunInfo
@@ -41,7 +39,7 @@ class Campaign:
             name=None,
             db_type="sql",
             db_location=None,
-            workdir="./",
+            work_dir="./",
             state_file=None):
 
         self.campaign_name = None
@@ -69,13 +67,13 @@ class Campaign:
         if state_file is not None:
             self.init_from_state_file(state_file)
         else:
-            self.init_fresh(name, db_type, db_location, workdir)
+            self.init_fresh(name, db_type, db_location, work_dir)
 
-    def init_fresh(self, name, db_type, db_location, workdir):
+    def init_fresh(self, name, db_type, db_location, work_dir):
 
         # Create temp dir for campaign
         self.campaign_dir = tempfile.mkdtemp(prefix=default_campaign_prefix,
-                                             dir=workdir)
+                                             dir=work_dir)
 
         self.db_location = db_location
         self.db_type = db_type
@@ -106,6 +104,10 @@ class Campaign:
         self.campaign_id = self.campaign_db.get_campaign_id(self.campaign_name)
 
     def init_from_state_file(self, state_file):
+
+        campaign_db = self.campaign_db
+        active_sampler_id = self._active_sampler_id
+
         logger.info(f"Loading campaign from state file '{state_file}'")
         self.load_state(state_file)
 
@@ -114,19 +116,19 @@ class Campaign:
         elif self.db_type == 'json':
             from .db.json import CampaignDB
         else:
-            message = (f"Invalid 'db_type' {self.db_type}. Supported types are "
-                       f"'sql' or 'json'.")
+            message = (f"Invalid 'db_type' {self.db_type}. Supported types "
+                       f"are 'sql' or 'json'.")
             logger.critical(message)
             raise RuntimeError(message)
 
         logger.info(f"Opening session with CampaignDB at {self.db_location}")
-        self.campaign_db = CampaignDB(location=self.db_location,
-                                      new_campaign=False,
-                                      name=self.campaign_name)
-        self.campaign_id = self.campaign_db.get_campaign_id(self.campaign_name)
+        campaign_db = CampaignDB(location=self.db_location,
+                                 new_campaign=False,
+                                 name=self.campaign_name)
+        self.campaign_id = campaign_db.get_campaign_id(self.campaign_name)
 
         # Resurrect the sampler using the ID
-        self._active_sampler = self.campaign_db.resurrect_sampler(self._active_sampler_id)
+        self._active_sampler = campaign_db.resurrect_sampler(active_sampler_id)
 
     def save_state(self, state_filename):
         """Save the current Campaign state to file in JSON format
@@ -237,8 +239,8 @@ class Campaign:
 
     def set_app(self, app_name):
         """
-        Set the app to be in active use by this campaign. Gets the app info from
-        the database.
+        Set the app to be in active use by this campaign. Gets the app info
+        from the database.
 
         Parameters
         ----------
@@ -252,8 +254,10 @@ class Campaign:
 
         self._active_app = self.campaign_db.app(name=app_name)
 
-        # Resurrect the app encoder, decoder and collater
-        self._active_app_encoder, self._active_app_decoder, self._active_app_collation = self.campaign_db.resurrect_app(app_name)
+        # Resurrect the app encoder, decoder and collation elements
+        (self._active_app_encoder,
+         self._active_app_decoder,
+         self._active_app_collation) = self.campaign_db.resurrect_app(app_name)
 
     def set_sampler(self, sampler):
         if not isinstance(sampler, uq.sampling.BaseSamplingElement):
@@ -336,7 +340,7 @@ class Campaign:
                 Number of samples to draw from the active sampling element.
                 By default is 0 (draw ALL samples)
         replicas : int
-                Number of replica runs to be created with the sample parameters.
+                Number of replica runs to create with each set of parameters.
                 Default is 1 - so only a single run added for each set of
                 parameters.
         Returns
@@ -367,7 +371,8 @@ class Campaign:
                 break
 
         # Write sampler's new state to database
-        self.campaign_db.update_sampler(self._active_sampler_id, self._active_sampler)
+        self.campaign_db.update_sampler(self._active_sampler_id,
+                                        self._active_sampler)
 
         # Log application of this sampling element
         self.log_element_application(
