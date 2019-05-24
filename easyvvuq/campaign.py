@@ -140,10 +140,10 @@ class Campaign:
         """
 
         campaign_db = self.campaign_db
-        active_sampler_id = self._active_sampler_id
 
         logger.info(f"Loading campaign from state file '{state_file}'")
         self.load_state(state_file)
+        active_sampler_id = self._active_sampler_id
 
         if self.db_type == 'sql':
             from .db.sql import CampaignDB
