@@ -47,7 +47,7 @@ def test_gauss(tmpdir):
     # Create an encoder, decoder and collation element for the cannonsim app
     encoder = uq.encoders.GenericEncoder(template_fname='tests/gauss/gauss.template',
                                          target_filename='gauss_in.json')
-    decoder = GaussDecoder()
+    decoder = GaussDecoder(target_filename=params['out_file']['default'])
     collation = uq.collate.AggregateSamples(average=True)
 
     my_campaign.add_app(name="gauss",
@@ -74,17 +74,18 @@ def test_gauss(tmpdir):
 
     my_campaign.populate_runs_dir()
 
-    assert(len(my_campaign.runs_dir) > 0)
-    assert(os.path.exists(my_campaign.runs_dir))
-    assert(os.path.isdir(my_campaign.runs_dir))
+    assert(len(my_campaign.get_campaign_runs_dir()) > 0)
+    runs_dir = my_campaign.get_campaign_runs_dir()
+    assert(os.path.exists(runs_dir))
+    assert(os.path.isdir(runs_dir))
 
     my_campaign.apply_for_each_run_dir(
         uq.actions.ExecuteLocal("tests/gauss/gauss_json.py gauss_in.json"))
 
-    my_campaign.collate(store=False)
+    my_campaign.collate()
 
     # Create a BasicStats analysis element and apply it to the campaign
-    stats = uq.analysis.EnsembleBoot()
+    stats = uq.analysis.EnsembleBoot(groupby=["mu"], qoi_cols=["Value"])
     my_campaign.apply_analysis(stats)
     print("stats:", my_campaign.get_last_analysis())
 

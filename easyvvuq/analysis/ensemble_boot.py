@@ -92,21 +92,21 @@ def bootstrap(data, stat_func=None, alpha=0.05,
     return confidence_interval(dist, stat, alpha, pivotal=pivotal)
 
 
-def ensemble_bootstrap(data, params_cols=[], value_cols=[],
+def ensemble_bootstrap(data, groupby=[], qoi_cols=[],
                        stat_func=None, alpha=0.05,
                        sample_size=None, n_samples=1000,
                        pivotal=False, stat_name='boot'):
 
     agg_funcs = {}
 
-    if not value_cols:
-        value_cols = [
-            x for x in data.columns if x not in params_cols + ['run_id', 'completed']]
+    if not qoi_cols:
+        qoi_cols = [
+            x for x in data.columns if x not in groupby + ['run_id', 'status']]
 
     if stat_func is None:
         stat_func = np.mean
 
-    for col in value_cols:
+    for col in qoi_cols:
         agg_funcs[col] = lambda x: bootstrap(
             x,
             stat_func=stat_func,
@@ -115,7 +115,7 @@ def ensemble_bootstrap(data, params_cols=[], value_cols=[],
             n_samples=n_samples,
             pivotal=pivotal)
 
-    grouped_data = data.groupby(params_cols)
+    grouped_data = data.groupby(groupby)
 
     # Apply bootstrapping to all value columns selected
     # Note results come a tuple per cell
@@ -127,7 +127,7 @@ def ensemble_bootstrap(data, params_cols=[], value_cols=[],
     results = pd.concat({col: results[col].apply(
         lambda cell: pd.Series(cell, index=outputs)
     )
-        for col in value_cols}, axis=1)
+        for col in qoi_cols}, axis=1)
 
     return results
 
@@ -140,33 +140,13 @@ class EnsembleBoot(BaseAnalysisElement):
     def element_version(self):
         return "0.1"
 
-    def __init__(self, data_src, params_cols=[], value_cols=[],
+    def __init__(self, groupby=[], qoi_cols=[],
                  stat_func=None, alpha=0.05,
                  sample_size=None, n_boot_samples=1000,
-                 pivotal=False, stat_name='boot',
-                 *args, **kwargs):
+                 pivotal=False, stat_name='boot'):
 
-        # Handles creation of `self.data_src` attribute (dict)
-        super().__init__(data_src, *args, **kwargs)
-
-        data_src = self.data_src
-
-        if data_src:
-            if 'files' in data_src:
-                if len(data_src['files']) != 1:
-                    raise RuntimeError("Data source must contain a SINGLE file"
-                                       " path for this VVUQ element")
-                else:
-                    self.data_frame = pd.read_csv(
-                        data_src['files'][0], sep='\t')
-
-        self.value_cols = value_cols
-        if self.campaign is not None:
-            if not params_cols:
-                self.params_cols = list(self.campaign.params_info.keys())
-            self.value_cols = self.campaign.decoder.output_columns
-        else:
-            self.params_cols = params_cols
+        self.groupby = groupby
+        self.qoi_cols = qoi_cols
 
         self.stat_func = stat_func
         self.alpha = alpha
@@ -177,37 +157,21 @@ class EnsembleBoot(BaseAnalysisElement):
 
         self.output_type = OutputType.SUMMARY
 
-    def _apply_analysis(self):
+    def analyse(self, data_frame=None):
 
-        if self.data_frame is None:
+        if data_frame is None:
             raise RuntimeError(
                 "This VVUQ element needs a data frame to analyse")
 
-        data_frame = self.data_frame
-        params_cols = self.params_cols
-        value_cols = self.value_cols
-        stat_func = self.stat_func
-        alpha = self.alpha
-        sample_size = self.sample_size
-        n_boot_samples = self.n_boot_samples
-        pivotal = self.pivotal
-        stat_name = self.stat_name
-        output_dir = self.output_dir
-
-        output_file = os.path.join(output_dir, 'ensemble_boot.tsv')
-
         results = ensemble_bootstrap(
             data_frame,
-            params_cols=params_cols,
-            value_cols=value_cols,
-            stat_func=stat_func,
-            alpha=alpha,
-            sample_size=sample_size,
-            n_samples=n_boot_samples,
-            pivotal=pivotal,
-            stat_name=stat_name)
+            groupby=self.groupby,
+            qoi_cols=self.qoi_cols,
+            stat_func=self.stat_func,
+            alpha=self.alpha,
+            sample_size=self.sample_size,
+            n_samples=self.n_boot_samples,
+            pivotal=self.pivotal,
+            stat_name=self.stat_name)
 
-        results.to_csv(output_file, sep='\t')
-        self.output_file = output_file
-
-        return results, output_file
+        return results

@@ -1,4 +1,5 @@
 import os
+import json
 from easyvvuq.encoders import BaseEncoder
 
 __copyright__ = """
@@ -26,7 +27,7 @@ __license__ = "LGPL"
 
 class GaussEncoder(BaseEncoder, encoder_name="gauss"):
 
-    def __init__(self, target_filename, *args, **kwargs):
+    def __init__(self, target_filename="gauss_input.json"):
         self.target_filename = target_filename
 
     def encode(self, params={}, target_dir=''):
@@ -35,17 +36,17 @@ class GaussEncoder(BaseEncoder, encoder_name="gauss"):
         num_steps = params['num_steps']
         mu = params['mu']
         sigma = params['sigma']
-        output_str = '{"outfile": "' + out_file + '", "num_steps": "' + str(num_steps) + \
-                     '", "mu": "' + str(mu) + '", "sigma": "' + str(sigma) + '"}\n'
 
-        encoder_outfname = os.path.join(target_dir, "gauss_input.json")
-        with open(encoder_outfname, "w") as outfile:
+        output_str = (f'{{"outfile": "{out_file}"", "num_steps": "{num_steps}",'
+                      f'"mu": "{mu}", "sigma": "{sigma}"}}\n')
+
+        target_file_path = os.path.join(target_dir, self.target_filename)
+        with open(target_file_path, "w") as outfile:
             outfile.write(output_str)
 
-    def serialize(self):
-        return {"encoder_name": self.encoder_name,
-                "target_filename": self.target_filename,
+    def get_restart_dict(self):
+        return {"target_filename": self.target_filename,
                 }
 
-    def deserialize(self):
-        raise NotImplementedError
+    def element_version(self):
+        return "0.1"
