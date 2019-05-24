@@ -161,6 +161,9 @@ class CampaignDB(BaseCampaignDB):
 
         self._sample = sampler
 
+        # For JSON db, sampler ID is always 1
+        return 1
+
     def resurrect_app(self, app_name):                                                           
         if not self._app:
             message = ('No app in JSON database')
