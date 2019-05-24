@@ -69,7 +69,29 @@ class Campaign:
         else:
             self.init_fresh(name, db_type, db_location, work_dir)
 
-    def init_fresh(self, name, db_type, db_location, work_dir):
+    def init_fresh(self, name, db_type='sql',
+                   db_location=None, work_dir='.'):
+        """
+        Initialise a new campaign - create database and output directory
+        (`campaign_dir`, a uniquely named directory in `work_dir`).
+
+        Parameters
+        ----------
+        name : str
+            Campaign name.
+        db_type : str
+            Database type - current options are 'sql' and 'json'.
+        db_location : str or None
+            Path in which to create campaign database - defaults to None which
+            results in the database being placed in `campaign_dir` with a
+            default name.
+        work_dir : str
+            Path in which to create the `campaign_dir`.
+
+        Returns
+        -------
+
+        """
 
         # Create temp dir for campaign
         self.campaign_dir = tempfile.mkdtemp(prefix=default_campaign_prefix,
@@ -104,6 +126,18 @@ class Campaign:
         self.campaign_id = self.campaign_db.get_campaign_id(self.campaign_name)
 
     def init_from_state_file(self, state_file):
+        """
+        Load campaign start from file.
+
+        Parameters
+        ----------
+        state_file : str
+            Path to the file containing the campaign state.
+
+        Returns
+        -------
+
+        """
 
         campaign_db = self.campaign_db
         active_sampler_id = self._active_sampler_id
@@ -203,7 +237,7 @@ class Campaign:
             logger.error(msg)
             raise Exception(msg)
 
-        if len(params) == 0:
+        if not params:
             msg = ("params must not be empty. At least one parameter "
                    "should be specified.")
             logger.error(msg)
@@ -363,7 +397,7 @@ class Campaign:
         num_added = 0
         for new_run in self._active_sampler.generate_runs():
 
-            for rep in range(replicas):
+            for __ in range(replicas):
                 self.add_run(new_run)
 
             num_added += 1
