@@ -68,6 +68,12 @@ class BaseSamplingElement(BaseElement):
     @staticmethod
     def deserialize(samplerstr):
         samplerdict = json.loads(samplerstr)
+
+        if samplerdict["restartable"] == False:
+            msg = (f'Sampler {samplerdict["element_name"]} is not restartable')
+            logging.error(msg)                                                                       
+            raise Exception(msg) 
+
         samplerdict["state"]["vary"] = Vary.deserialize(samplerdict["state"]["vary"]).vary
         sampler = AVAILABLE_SAMPLERS[samplerdict["element_name"]](**samplerdict["state"])
         return sampler
