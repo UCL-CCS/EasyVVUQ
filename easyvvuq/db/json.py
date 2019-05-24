@@ -167,6 +167,15 @@ class CampaignDB(BaseCampaignDB):
         self._sample = sampler_element.serialize()                                  
         self._save()
 
+    def resurrect_sampler(self, sampler_ID):                                                         
+        if sampler_ID != 1:
+            message = ('JSON/Python dict database does not support a sampler_ID other than 1')
+            logger.critical(message)
+            raise RuntimeError(message)
+
+        sampler = BaseSamplingElement.deserialize(self._sample)
+        return sampler               
+
     def resurrect_app(self, app_name):                                                           
         if not self._app:
             message = ('No app in JSON database')
