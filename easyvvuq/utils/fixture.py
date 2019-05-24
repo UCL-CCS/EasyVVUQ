@@ -61,6 +61,7 @@ class Fixture(object):
 
             self.src_path = path
 
+        self.path = path
         self.target_name = target_name
         self.common = common
         self._common_copied = False
