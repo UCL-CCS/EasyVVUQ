@@ -5,7 +5,11 @@ import json
 import logging
 import tempfile
 from easyvvuq.constants import __easyvvuq_version__
-from .base import BaseCampaignDB
+from .base import BaseCampaignDB                                                                     
+from easyvvuq.sampling.base import BaseSamplingElement                                               
+from easyvvuq.encoders.base import BaseEncoder                                                       
+from easyvvuq.decoders.base import BaseDecoder                                                       
+from easyvvuq.collate.base import BaseCollationElement
 
 __copyright__ = """
 
@@ -156,6 +160,23 @@ class CampaignDB(BaseCampaignDB):
             raise RuntimeError(message)
 
         self._sample = sampler
+
+    def resurrect_app(self, app_name):                                                           
+        if not self._app:
+            message = ('No app in JSON database')
+            logger.critical(message)
+            raise RuntimeError(message)
+
+        if self._app['name'] != app_name:
+            message = (f"JSON database does not contain app {app_name}"
+                       f"App found was {self._app['name']}")
+            logger.critical(message)
+            raise RuntimeError(message)
+         
+        encoder = BaseEncoder.deserialize(self._app['input_encoder'])                                 
+        decoder = BaseDecoder.deserialize(self._app['output_decoder'])                                
+        collater = BaseCollationElement.deserialize(self._app['collation'])                           
+        return encoder, decoder, collater 
 
     def add_run(self, run_info=None, prefix='Run_'):
         """
