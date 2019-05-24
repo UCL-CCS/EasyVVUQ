@@ -78,6 +78,7 @@ class RunTable(Base):
     campaign = Column(Integer, ForeignKey('campaign_info.id'))
     sample = Column(Integer, ForeignKey('sample.id'))
 
+
 class SamplerTable(Base):
     """An SQLAlchemy schema for the run table.
     """
