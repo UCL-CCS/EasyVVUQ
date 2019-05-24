@@ -54,13 +54,9 @@ class CampaignDB(BaseCampaignDB):
             self._next_run = 0
 
             if location is None:
-
-                location = tempfile.mkstemp(
-                    suffix='json', prefix='easyvvuq')[1]
-                logging.info(
-                    'No database location provided - db will be saved '
-                    'in {location}.')
-
+                message = (f"No location given for JSON db location")
+                logger.critical(message)
+                raise RuntimeError(message)
         else:
             self._load_campaign(location, name)
             self._next_run = len(self._runs)
@@ -68,7 +64,6 @@ class CampaignDB(BaseCampaignDB):
         self.location = location
 
     def _load_campaign(self, src, name):
-
         with open(src, "r") as infile:
             input_info = json.load(infile)
 
