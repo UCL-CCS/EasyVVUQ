@@ -224,7 +224,7 @@ class CampaignDB(BaseCampaignDB):
 
     def resurrect_sampler(self, sampler_ID):
         serialized_sampler = self.session.query(SamplerTable).get(sampler_ID).sampler
-        sampler = BaseSamplingElement.deserialize(serialized_sampler) 
+        sampler = BaseSamplingElement.deserialize(serialized_sampler)
         return sampler
 
     def resurrect_app(self, app_name):

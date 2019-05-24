@@ -32,6 +32,7 @@ __license__ = "LGPL"
 # BaseCollationElement is automatically registered as a collater)
 AVAILABLE_COLLATERS = {}
 
+
 class BaseCollationElement(BaseElement):
     """Baseclass for all EasyVVUQ collation elements.
 
@@ -72,7 +73,7 @@ class BaseCollationElement(BaseElement):
     def element_name(self):
         return self.collater_name
 
-    def is_restartable(self):                                                                        
+    def is_restartable(self):
         return True
 
     @staticmethod
@@ -80,4 +81,3 @@ class BaseCollationElement(BaseElement):
         collaterdict = json.loads(collaterstr)
         collater = AVAILABLE_COLLATERS[collaterdict["element_name"]](**collaterdict["state"])
         return collater
-

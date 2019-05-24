@@ -40,6 +40,7 @@ __license__ = "LGPL"
 # BaseDecoder is automatically registered as an decoder)
 AVAILABLE_DECODERS = {}
 
+
 class BaseDecoder(BaseElement):
     """Baseclass for all EasyVVUQ decoders.
 
@@ -107,7 +108,7 @@ class BaseDecoder(BaseElement):
     def element_name(self):
         return self.decoder_name
 
-    def is_restartable(self):                                                                        
+    def is_restartable(self):
         return True
 
     @staticmethod
@@ -115,4 +116,3 @@ class BaseDecoder(BaseElement):
         decoderdict = json.loads(decoderstr)
         decoder = AVAILABLE_DECODERS[decoderdict["element_name"]](**decoderdict["state"])
         return decoder
-

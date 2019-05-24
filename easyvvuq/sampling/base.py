@@ -30,6 +30,7 @@ __license__ = "LGPL"
 # BaseSamplingElement is automatically registered as a sampler)
 AVAILABLE_SAMPLERS = {}
 
+
 class BaseSamplingElement(BaseElement):
     """Baseclass for all EasyVVUQ sampling elements.
 
@@ -69,14 +70,15 @@ class BaseSamplingElement(BaseElement):
     def deserialize(samplerstr):
         samplerdict = json.loads(samplerstr)
 
-        if samplerdict["restartable"] == False:
+        if not samplerdict["restartable"]:
             msg = (f'Sampler {samplerdict["element_name"]} is not restartable')
-            logging.error(msg)                                                                       
-            raise Exception(msg) 
+            logging.error(msg)
+            raise Exception(msg)
 
         samplerdict["state"]["vary"] = Vary.deserialize(samplerdict["state"]["vary"]).vary
         sampler = AVAILABLE_SAMPLERS[samplerdict["element_name"]](**samplerdict["state"])
         return sampler
+
 
 class Vary:
     def __init__(self, vary):

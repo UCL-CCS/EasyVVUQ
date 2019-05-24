@@ -177,7 +177,7 @@ class AppInfo:
             out_dict = self.to_dict()
 
             for field in [
-                'params', 'collation']:
+                    'params', 'collation']:
                 out_dict[field] = json.dumps(out_dict[field])
 
         else:

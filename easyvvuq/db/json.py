@@ -5,10 +5,10 @@ import json
 import logging
 import tempfile
 from easyvvuq.constants import __easyvvuq_version__
-from .base import BaseCampaignDB                                                                     
-from easyvvuq.sampling.base import BaseSamplingElement                                               
-from easyvvuq.encoders.base import BaseEncoder                                                       
-from easyvvuq.decoders.base import BaseDecoder                                                       
+from .base import BaseCampaignDB
+from easyvvuq.sampling.base import BaseSamplingElement
+from easyvvuq.encoders.base import BaseEncoder
+from easyvvuq.decoders.base import BaseDecoder
 from easyvvuq.collate.base import BaseCollationElement
 
 __copyright__ = """
@@ -158,25 +158,25 @@ class CampaignDB(BaseCampaignDB):
         # For JSON db, sampler ID is always 1
         return 1
 
-    def update_sampler(self, sampler_ID, sampler_element):                                           
+    def update_sampler(self, sampler_ID, sampler_element):
         if sampler_ID != 1:
             message = ('JSON/Python dict database does not support a sampler_ID other than 1')
             logger.critical(message)
             raise RuntimeError(message)
 
-        self._sample = sampler_element.serialize()                                  
+        self._sample = sampler_element.serialize()
         self._save()
 
-    def resurrect_sampler(self, sampler_ID):                                                         
+    def resurrect_sampler(self, sampler_ID):
         if sampler_ID != 1:
             message = ('JSON/Python dict database does not support a sampler_ID other than 1')
             logger.critical(message)
             raise RuntimeError(message)
 
         sampler = BaseSamplingElement.deserialize(self._sample)
-        return sampler               
+        return sampler
 
-    def resurrect_app(self, app_name):                                                           
+    def resurrect_app(self, app_name):
         if not self._app:
             message = ('No app in JSON database')
             logger.critical(message)
@@ -187,11 +187,11 @@ class CampaignDB(BaseCampaignDB):
                        f"App found was {self._app['name']}")
             logger.critical(message)
             raise RuntimeError(message)
-         
-        encoder = BaseEncoder.deserialize(self._app['input_encoder'])                                 
-        decoder = BaseDecoder.deserialize(self._app['output_decoder'])                                
-        collater = BaseCollationElement.deserialize(self._app['collation'])                           
-        return encoder, decoder, collater 
+
+        encoder = BaseEncoder.deserialize(self._app['input_encoder'])
+        decoder = BaseDecoder.deserialize(self._app['output_decoder'])
+        collater = BaseCollationElement.deserialize(self._app['collation'])
+        return encoder, decoder, collater
 
     def add_run(self, run_info=None, prefix='Run_'):
         """
@@ -294,7 +294,7 @@ class CampaignDB(BaseCampaignDB):
 
         return self._campaign_info['runs_dir']
 
-    def get_campaign_id(self, name):                                                                 
+    def get_campaign_id(self, name):
         logger.warning("JSON database only allows for one campaign. Campaign ID is always 1.")
         return 1
 
@@ -303,6 +303,6 @@ class CampaignDB(BaseCampaignDB):
             logger.warning("Only 1 campaign is possible in JSON db")
         if sampler is not None:
             logger.warning("Only 1 sampler is possible in JSON db")
-                                                                                                     
+
         self._runs[run_name]['status'] = status
         self._save()
