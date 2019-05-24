@@ -124,10 +124,10 @@ class Campaign:
 
         if "params" not in input_json:
             raise RuntimeError("Input does not contain an 'params' block")
-        
+ 
         if "runs" in input_json:
-            self._runs = input_json["runs"]    
-            
+            self._runs = input_json["runs"]
+
         self.params_info = input_json["params"]
 
         if "fixtures" in input_json:
