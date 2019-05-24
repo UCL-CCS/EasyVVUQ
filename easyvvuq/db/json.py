@@ -257,3 +257,7 @@ class CampaignDB(BaseCampaignDB):
             logger.warning(message)
 
         return self._campaign_info['runs_dir']
+
+    def get_campaign_id(self, name):                                                                 
+        logger.warning("JSON database only allows for one campaign. Campaign ID is always 1.")
+        return 1
