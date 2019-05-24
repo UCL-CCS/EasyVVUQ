@@ -70,6 +70,7 @@ class SCAnalysis(BaseAnalysisElement):
     """
     Compute the first two statistical moments
     """
+
     def get_moments(self, polynomial_order=4, quadrature_rule="G"):
 
         self.polynomial_order = polynomial_order
@@ -271,7 +272,7 @@ class SCAnalysis(BaseAnalysisElement):
         mom, _ = self.get_moments(polynomial_order=polynomial_order)
         mu = mom['mean_f'].values.flatten()
         D = mom['var_f'].values.flatten()
-        
+
         # multi indices
         U = range(self.d)
 

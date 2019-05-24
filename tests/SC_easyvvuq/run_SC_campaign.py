@@ -37,7 +37,8 @@ my_campaign.populate_runs_dir()
 
 # 5. Run execution - note this method of running all jobs is just for demo
 #    purposes.
-my_campaign.apply_for_each_run_dir(uq.actions.ExecuteLocal("run_ADE.py ade_in.json"))
+my_campaign.apply_for_each_run_dir(
+    uq.actions.ExecuteLocal("run_ADE.py ade_in.json"))
 
 # 6. Aggregate the results from all runs.
 #    This makes use of the `Decoder` selected in the input file to interpret the
@@ -62,7 +63,8 @@ aggregate.apply()
 sc_analysis = uq.elements.analysis.SCAnalysis(
     my_campaign, value_cols=output_columns)
 
-results, output_file = sc_analysis.get_moments(polynomial_order=m)  # moment calculation
+results, output_file = sc_analysis.get_moments(
+    polynomial_order=m)  # moment calculation
 
 # 8. Use the SC samples and integration weights to estimate the
 #    (1-st order or all) Sobol indices. In this example, at x=1 the Sobol indices

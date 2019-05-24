@@ -123,10 +123,15 @@ class Campaign:
 
     """
 
-    def __init__(self, name, new_campaign=False, state_filename=None,
-                 workdir='./', default_campaign_dir_prefix='EasyVVUQ_Campaign_',
-                 db_uri=None,
-                 **kwargs):
+    def __init__(
+            self,
+            name,
+            new_campaign=False,
+            state_filename=None,
+            workdir='./',
+            default_campaign_dir_prefix='EasyVVUQ_Campaign_',
+            db_uri=None,
+            **kwargs):
         """
         Parameters
         ----------
@@ -173,10 +178,12 @@ class Campaign:
 
         self.session = Session()
         if db_uri is not None and not new_campaign:
-            self.campaign_row = self.session.query(CampaignDB).filter_by(name=name).first()
+            self.campaign_row = self.session.query(
+                CampaignDB).filter_by(name=name).first()
             if self.campaign_row is None:
                 raise ValueError('Campaign with the given name not found.')
-            self.app = self.session.query(App).filter_by(id=self.campaign_row.app).first()
+            self.app = self.session.query(App).filter_by(
+                id=self.campaign_row.app).first()
             self.app_info['input_encoder'] = self.app.input_encoder
             self.app_info['encoder_delimiter'] = self.app.encoder_delimiter
             self.app_info['output_decoder'] = self.app.output_decoder
@@ -238,10 +245,10 @@ class Campaign:
             raise RuntimeError("Input does not contain an 'params' block")
 
         self.params_info = input_json["params"]
-        
+
         if "runs" in input_json:
             self._runs = input_json["runs"]
-        
+
         if "fixtures" in input_json:
             self._fixtures = input_json["fixtures"]
 
@@ -459,7 +466,8 @@ class Campaign:
         -------
 
         """
-        campaign = self.session.query(CampaignDB).filter_by(id=self.campaign_id_).first()
+        campaign = self.session.query(CampaignDB).filter_by(
+            id=self.campaign_id_).first()
         app = self.session.query(App).filter_by(id=campaign.app).first()
         runs = self.session.query(Run).filter_by(campaign=campaign.id)
         logs = self.session.query(Log).filter_by(campaign=campaign.id)
