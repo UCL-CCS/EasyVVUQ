@@ -95,7 +95,7 @@ def test_cannonsim_csv_jsondb(tmpdir):
     decoder = uq.decoders.SimpleCSV(
         target_filename='output.csv', output_columns=[
             'Dist', 'lastvx', 'lastvy'], header=0)
-    collation = uq.elements.collate.AggregateSamples(average=False)
+    collation = uq.collate.AggregateSamples(average=False)
 
     print("Serialized encoder:", encoder.serialize())
     print("Serialized decoder:", decoder.serialize())
@@ -119,7 +119,7 @@ def test_cannonsim_csv_jsondb(tmpdir):
         "velocity": cp.Normal(10.0, 1.0),
         "mass": cp.Uniform(5.0, 1.0)
     }
-    sampler1 = uq.elements.sampling.RandomSampler(vary=vary)
+    sampler1 = uq.sampling.RandomSampler(vary=vary)
 
     # Set the campaign to use this sampler
     my_campaign.set_sampler(sampler1)
@@ -151,7 +151,7 @@ def test_cannonsim_csv_jsondb(tmpdir):
     print("data:", my_campaign.get_last_collation())
 
     # Create a BasicStats analysis element and apply it to the campaign
-    stats = uq.elements.analysis.BasicStats(
+    stats = uq.analysis.BasicStats(
         params_cols=['Dist', 'lastvx', 'lastvy'])
     my_campaign.apply_analysis(stats)
     print("stats:", my_campaign.get_last_analysis())
