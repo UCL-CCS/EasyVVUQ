@@ -37,8 +37,8 @@ class GaussEncoder(BaseEncoder, encoder_name="gauss"):
         mu = params['mu']
         sigma = params['sigma']
 
-        output_str = (f'{{"outfile": "{out_file}"", "num_steps": "{num_steps}",'
-                      f'"mu": "{mu}", "sigma": "{sigma}"}}\n')
+        output_str = (f'{{"outfile": "{out_file}", "num_steps": "{num_steps}",'
+                      f' "mu": "{mu}", "sigma": "{sigma}"}}\n')
 
         target_file_path = os.path.join(target_dir, self.target_filename)
         with open(target_file_path, "w") as outfile:
