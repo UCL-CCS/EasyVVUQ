@@ -40,7 +40,7 @@ def test_gauss_fix(tmpdir):
     my_campaign = uq.Campaign(
         name='test_campaign',
         state_filename=input_json,
-        workdir=tmpdir
+        work_dir=tmpdir
     )
 
     assert(my_campaign is not None)

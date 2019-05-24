@@ -28,18 +28,19 @@ __copyright__ = """
 __license__ = "LGPL"
 
 
-# If cannonsim has not been built (to do so, run the Makefile in tests/cannonsim/src/)
-# then skip this test
+# If cannonsim has not been built (to do so, run the Makefile in
+# tests/cannonsim/src/) then skip this test
 if not os.path.exists("tests/cannonsim/bin/cannonsim"):
     pytest.skip(
-        "Skipping cannonsim test (cannonsim is not installed in tests/cannonsim/bin/)",
+        "Skipping cannonsim test (cannonsim is not installed in "
+        "tests/cannonsim/bin/)",
         allow_module_level=True)
 
 
 def test_cannonsim_csv_jsondb(tmpdir):
 
     # Set up a fresh campaign called "cannon"
-    my_campaign = uq.Campaign(name='cannon', workdir=tmpdir, db_type="json")
+    my_campaign = uq.Campaign(name='cannon', work_dir=tmpdir, db_type="json")
 
     # Define parameter space for the cannonsim app
     params = {
@@ -133,7 +134,8 @@ def test_cannonsim_csv_jsondb(tmpdir):
 
     # Encode all runs into a local directory
     print(
-        f"Encoding all runs to campaign runs dir {my_campaign.get_campaign_runs_dir()}")
+        f"Encoding all runs to campaign runs "
+        f"dir {my_campaign.get_campaign_runs_dir()}")
     my_campaign.populate_runs_dir()
 
     assert(len(my_campaign.get_campaign_runs_dir()) > 0)

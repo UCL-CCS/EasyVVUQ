@@ -8,7 +8,7 @@ __license__ = "LGPL"
 def test_pce(tmpdir):
 
     # Set up a fresh campaign called "pce"
-    my_campaign = uq.Campaign(name='pce', workdir=tmpdir)
+    my_campaign = uq.Campaign(name='pce', work_dir=tmpdir)
 
     # Define parameter space
     params = {

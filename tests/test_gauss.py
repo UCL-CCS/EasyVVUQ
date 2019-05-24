@@ -29,7 +29,7 @@ __license__ = "LGPL"
 def test_gauss(tmpdir):
 
     # Set up a fresh campaign called "cannon"
-    my_campaign = uq.Campaign(name='gauss_custom', workdir=tmpdir)
+    my_campaign = uq.Campaign(name='gauss_custom', work_dir=tmpdir)
 
     params = {
       "sigma":      {"type": "real", "min": "0.0", "max": "100000.0",
@@ -67,7 +67,8 @@ def test_gauss(tmpdir):
     my_campaign.set_sampler(sampler1)
 
     # Draw samples
-    my_campaign.draw_samples(num_samples=number_of_samples, replicas=number_of_replicas)
+    my_campaign.draw_samples(num_samples=number_of_samples,
+                             replicas=number_of_replicas)
 
     # TODO: Assert no. samples in db = number_of_samples*number_of_replicas
 
