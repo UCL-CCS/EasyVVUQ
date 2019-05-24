@@ -158,12 +158,12 @@ def test_cannonsim_csv(tmpdir):
     my_campaign.apply_for_each_run_dir(uq.actions.ExecuteLocal(
         "tests/cannonsim/bin/cannonsim in.cannon output.csv"))
     my_campaign.collate()
-    print("data:", my_campaign.get_last_collation())
+    print("data:\n", my_campaign.get_last_collation())
 
     # Create a BasicStats analysis element and apply it to the campaign
-    stats = uq.analysis.BasicStats(params_cols=['Dist', 'lastvx', 'lastvy'])
+    stats = uq.analysis.BasicStats(qoi_cols=['Dist', 'lastvx', 'lastvy'])
     my_campaign.apply_analysis(stats)
-    print("stats:", my_campaign.get_last_analysis())
+    print("stats:\n", my_campaign.get_last_analysis())
 
     # Print the campaign log
     pprint(my_campaign._log)

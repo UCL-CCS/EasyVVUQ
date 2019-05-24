@@ -34,20 +34,31 @@ class BasicStats(BaseAnalysisElement):
     def element_version(self):
         return "0.1"
 
-    def __init__(self, params_cols=None, qoi=None):
+    def __init__(self, groupby=None, qoi_cols=[]):
 
-        self.params_cols = params_cols
+        self.groupby = groupby
+        self.qoi_cols = qoi_cols
         self.output_type = OutputType.SUMMARY
 
     def analyse(self, data_frame=None):
+
+        qoi_cols = self.qoi_cols
 
         if data_frame is None:
             raise RuntimeError("Analysis element needs a data frame to "
                                "analyse")
 
         # Get summary statistics
-        # TODO: Filter to only show QOI?
-        grouped_data = data_frame.groupby(self.params_cols)
-        results = grouped_data.describe()
+        if self.groupby:
+            grouped_data = data_frame.groupby(self.groupby)
+            results = grouped_data.describe()
+            if qoi_cols:
+                results = results[qoi_cols]
+
+        else:
+            if qoi_cols:
+                results = data_frame[qoi_cols].describe()
+            else:
+                results = data_frame.describe()
 
         return results
