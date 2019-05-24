@@ -29,7 +29,7 @@ __license__ = "LGPL"
 def test_gauss(tmpdir):
 
     # Set up a fresh campaign called "cannon"
-    my_campaign = uq.Campaign(name='gauss_custom', work_dir=tmpdir)
+    my_campaign = uq.Campaign(name='gauss', work_dir=tmpdir)
 
     params = {
       "sigma":      {"type": "real", "min": "0.0", "max": "100000.0",
