@@ -42,10 +42,10 @@ class CampaignDB(BaseCampaignDB):
     def __init__(self, location=None, new_campaign=False, name=None,
                  info=None):
 
-        self._campaign_info = {}
-        self._app = {}
-        self._runs = {}
-        self._sample = {}
+        self._campaign_info = None
+        self._app = None
+        self._runs = None
+        self._sample = None
 
         if new_campaign:
 
@@ -90,12 +90,16 @@ class CampaignDB(BaseCampaignDB):
         self._sample = input_info.get('sample', {})
 
     def _save(self):
+        if self._sample:
+            serialized_sampler = self._sample.serialize()
+        else:
+            serialized_sampler = None
 
         out_dict = {
             'campaign': self._campaign_info,
             'app': self._app,
             'runs': self._runs,
-            'sample': self._sample,
+            'sample': serialized_sampler,
         }
 
         with open(self.location, "w") as outfile:
@@ -160,6 +164,8 @@ class CampaignDB(BaseCampaignDB):
             raise RuntimeError(message)
 
         self._sample = sampler
+
+        print(self._sample)
 
         # For JSON db, sampler ID is always 1
         return 1
