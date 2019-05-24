@@ -39,7 +39,7 @@ if not os.path.exists("tests/cannonsim/bin/cannonsim"):
 def test_cannonsim_csv(tmpdir):
 
     # Set up a fresh campaign called "cannon"
-    my_campaign = uq.Campaign(name='cannon', workdir=tmpdir)
+    my_campaign = uq.Campaign(name='cannon', work_dir=tmpdir)
 
     # Define parameter space for the cannonsim app
     params = {
@@ -173,7 +173,7 @@ def test_cannonsim_csv(tmpdir):
     my_campaign.save_state(state_file)
 
     # Load state in new campaign object
-    new = uq.Campaign(state_file=state_file, workdir=tmpdir)
+    new = uq.Campaign(state_file=state_file, work_dir=tmpdir)
 
     sys.exit(0)
 
@@ -182,6 +182,7 @@ def test_cannonsim_csv(tmpdir):
     print("List of runs added:")
     pprint(my_campaign.list_runs())
     print("---")
+
 
 if __name__ == "__main__":
     test_cannonsim_csv("/tmp/")
