@@ -54,7 +54,7 @@ class CampaignDB(BaseCampaignDB):
             self._next_run = 0
 
             if location is None:
-                message = (f"No location given for JSON db location")
+                message = f"No location given for JSON db location"
                 logger.critical(message)
                 raise RuntimeError(message)
         else:
@@ -158,18 +158,20 @@ class CampaignDB(BaseCampaignDB):
         # For JSON db, sampler ID is always 1
         return 1
 
-    def update_sampler(self, sampler_ID, sampler_element):
-        if sampler_ID != 1:
-            message = ('JSON/Python dict database does not support a sampler_ID other than 1')
+    def update_sampler(self, sampler_id, sampler_element):
+        if sampler_id != 1:
+            message = ('JSON/Python dict database does not support a '
+                       'sampler_id other than 1')
             logger.critical(message)
             raise RuntimeError(message)
 
         self._sample = sampler_element.serialize()
         self._save()
 
-    def resurrect_sampler(self, sampler_ID):
-        if sampler_ID != 1:
-            message = ('JSON/Python dict database does not support a sampler_ID other than 1')
+    def resurrect_sampler(self, sampler_id):
+        if sampler_id != 1:
+            message = ('JSON/Python dict database does not support a '
+                       'sampler_id other than 1')
             logger.critical(message)
             raise RuntimeError(message)
 
@@ -178,7 +180,7 @@ class CampaignDB(BaseCampaignDB):
 
     def resurrect_app(self, app_name):
         if not self._app:
-            message = ('No app in JSON database')
+            message = 'No app in JSON database'
             logger.critical(message)
             raise RuntimeError(message)
 
@@ -295,7 +297,8 @@ class CampaignDB(BaseCampaignDB):
         return self._campaign_info['runs_dir']
 
     def get_campaign_id(self, name):
-        logger.warning("JSON database only allows for one campaign. Campaign ID is always 1.")
+        logger.warning("JSON database only allows for one campaign. "
+                       "Campaign ID is always 1.")
         return 1
 
     def set_run_status(self, run_name, status, campaign=None, sampler=None):

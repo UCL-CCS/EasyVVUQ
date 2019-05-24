@@ -2,7 +2,6 @@ import os
 import logging
 import json
 import easyvvuq as uq
-from easyvvuq.constants import __easyvvuq_version__
 
 logger = logging.getLogger(__name__)
 
@@ -126,6 +125,7 @@ class AppInfo:
             self,
             name=None,
             params=None,
+            fixtures=None,
             encoder=None,
             decoder=None,
             collation=None):
@@ -135,6 +135,7 @@ class AppInfo:
         self.output_decoder = decoder
         self.collation = collation
         self.params = params
+        self.fixtures = fixtures
 
     @property
     def input_encoder(self):
@@ -145,11 +146,10 @@ class AppInfo:
         available_encoders = uq.encoders.base.AVAILABLE_ENCODERS
 
         # TODO: Fix/relocate check. Problem is with live/serialized encoder info.
-#        if encoder not in available_encoders:
-#            message = (f"Encoder not found. Looking for {encoder}.\n"
-#                       f"Available encoders are {available_encoders}.")
-#            logging.critical(message)
-#            raise RuntimeError(message)
+        # if encoder not in available_encoders:
+        #     message = (f"Encoder not found. Looking for {encoder}.\n"
+        #                f"Available encoders are {available_encoders}.")
+        #     logging.critical(message)
 
         self._input_encoder = encoder
 
@@ -162,22 +162,27 @@ class AppInfo:
         available_decoders = uq.decoders.base.AVAILABLE_DECODERS
 
         # TODO: Fix/relocate check. Problem is with live/serialized encoder info.
-#        if decoder not in available_decoders:
-#            message = (f"Decoder not found. Looking for {decoder}.\n"
-#                       f"Available decoders are {available_decoders}.")
-#            logging.critical(message)
-#            raise RuntimeError(message)
+        # if decoder not in available_decoders:
+        #     message = (f"Decoder not found. Looking for {decoder}.\n"
+        #                f"Available decoders are {available_decoders}.")
+        #     logging.critical(message)
+        #     raise RuntimeError(message)
 
         self._output_decoder = decoder
 
     def to_dict(self, flatten=False):
+
+        if self.fixtures is None:
+            fixtures = {}
+        else:
+            fixtures = self.fixtures
 
         if flatten:
 
             out_dict = self.to_dict()
 
             for field in [
-                    'params', 'collation']:
+                    'params', 'collation', 'fixtures']:
                 out_dict[field] = json.dumps(out_dict[field])
 
         else:
@@ -185,6 +190,7 @@ class AppInfo:
             out_dict = {
                 'name': self.name,
                 'params': self.params,
+                'fixtures': fixtures,
                 'input_encoder': self.input_encoder.serialize(),
                 'output_decoder': self.output_decoder.serialize(),
                 'collation': self.collation.serialize()

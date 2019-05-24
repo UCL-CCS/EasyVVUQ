@@ -60,6 +60,7 @@ class AppTable(Base):
     input_encoder = Column(String)
     output_decoder = Column(String)
     params = Column(String)
+    fixtures = Column(String)
     collation = Column(String)
 
 
@@ -165,6 +166,7 @@ class CampaignDB(BaseCampaignDB):
             'input_encoder': selected_app.input_encoder,
             'output_decoder': selected_app.output_decoder,
             'params': json.loads(selected_app.params),
+            'fixtures': json.loads(selected_app.fixtures),
             'collation': json.loads(selected_app.collation)
         }
 
@@ -222,8 +224,8 @@ class CampaignDB(BaseCampaignDB):
 
         return db_entry.id
 
-    def resurrect_sampler(self, sampler_ID):
-        serialized_sampler = self.session.query(SamplerTable).get(sampler_ID).sampler
+    def resurrect_sampler(self, sampler_id):
+        serialized_sampler = self.session.query(SamplerTable).get(sampler_id).sampler
         sampler = BaseSamplingElement.deserialize(serialized_sampler)
         return sampler
 
@@ -234,8 +236,8 @@ class CampaignDB(BaseCampaignDB):
         collater = BaseCollationElement.deserialize(app_info['collation'])
         return encoder, decoder, collater
 
-    def update_sampler(self, sampler_ID, sampler_element):
-        selected = self.session.query(SamplerTable).get(sampler_ID)
+    def update_sampler(self, sampler_id, sampler_element):
+        selected = self.session.query(SamplerTable).get(sampler_id)
         selected.sampler = sampler_element.serialize()
         self.session.commit()
 

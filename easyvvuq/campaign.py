@@ -213,14 +213,16 @@ class Campaign:
             logger.critical(message)
             raise RuntimeError(message)
 
-    def add_app(self, name=None, params=None, encoder=None, decoder=None,
+    def add_app(self, name=None, params=None, fixtures=None,
+                encoder=None, decoder=None,
                 collation=None, set_active=True):
         """
 
         Parameters
         ----------
         name
-        params: dict
+        params : dict
+        fixtures : dict
         encoder
         decoder
         collation
@@ -264,6 +266,7 @@ class Campaign:
         app = uq.data_structs.AppInfo(
             name=name,
             params=params,
+            fixtures=fixtures,
             encoder=encoder,
             decoder=decoder,
             collation=collation
