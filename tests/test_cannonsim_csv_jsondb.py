@@ -175,8 +175,6 @@ def test_cannonsim_csv(tmpdir):
     # Load state in new campaign object
     new = uq.Campaign(state_file=state_file, work_dir=tmpdir)
 
-    sys.exit(0)
-
     print(new)
 
     print("List of runs added:")
