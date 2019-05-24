@@ -28,19 +28,18 @@ __copyright__ = """
 __license__ = "LGPL"
 
 
-# If cannonsim has not been built (to do so, run the Makefile in
-# tests/cannonsim/src/) then skip this test
+# If cannonsim has not been built (to do so, run the Makefile in tests/cannonsim/src/)
+# then skip this test
 if not os.path.exists("tests/cannonsim/bin/cannonsim"):
     pytest.skip(
-        "Skipping cannonsim test (cannonsim is not installed in "
-        "tests/cannonsim/bin/)",
+        "Skipping cannonsim test (cannonsim is not installed in tests/cannonsim/bin/)",
         allow_module_level=True)
 
 
-def test_cannonsim_csv_jsondb(tmpdir):
+def test_cannonsim_csv(tmpdir):
 
     # Set up a fresh campaign called "cannon"
-    my_campaign = uq.Campaign(name='cannon', work_dir=tmpdir, db_type="json")
+    my_campaign = uq.Campaign(name='cannon', work_dir=tmpdir, db_type='json')
 
     # Define parameter space for the cannonsim app
     params = {
@@ -109,7 +108,8 @@ def test_cannonsim_csv_jsondb(tmpdir):
                         collation=collation
                         )
 
-    # Set the active app to be cannonsim
+    # Set the active app to be cannonsim (this is redundant when only one app
+    # has been added)
     my_campaign.set_app("cannonsim")
 
     # Make a random sampler
@@ -120,6 +120,8 @@ def test_cannonsim_csv_jsondb(tmpdir):
         "mass": cp.Uniform(5.0, 1.0)
     }
     sampler1 = uq.sampling.RandomSampler(vary=vary)
+
+    print("Serialized sampler:", sampler1.serialize())
 
     # Set the campaign to use this sampler
     my_campaign.set_sampler(sampler1)
@@ -133,9 +135,8 @@ def test_cannonsim_csv_jsondb(tmpdir):
     print("---")
 
     # Encode all runs into a local directory
-    print(
-        f"Encoding all runs to campaign runs "
-        f"dir {my_campaign.get_campaign_runs_dir()}")
+    pprint(
+        f"Encoding all runs to campaign runs dir {my_campaign.get_campaign_runs_dir()}")
     my_campaign.populate_runs_dir()
 
     assert(len(my_campaign.get_campaign_runs_dir()) > 0)
@@ -147,15 +148,41 @@ def test_cannonsim_csv_jsondb(tmpdir):
         "tests/cannonsim/bin/cannonsim in.cannon output.csv"))
 
     # Collate all data into one pandas data frame
-    my_campaign.collate(store=False)
+    my_campaign.collate()
     print("data:", my_campaign.get_last_collation())
 
+    # Draw 3 more samples, execute, and collate onto existing dataframe
+    print("Running 3 more samples...")
+    my_campaign.draw_samples(num_samples=3)
+    my_campaign.populate_runs_dir()
+    my_campaign.apply_for_each_run_dir(uq.actions.ExecuteLocal(
+        "tests/cannonsim/bin/cannonsim in.cannon output.csv"))
+    my_campaign.collate()
+    print("data:\n", my_campaign.get_last_collation())
+
     # Create a BasicStats analysis element and apply it to the campaign
-    stats = uq.analysis.BasicStats(
-        params_cols=['Dist', 'lastvx', 'lastvy'])
+    stats = uq.analysis.BasicStats(qoi_cols=['Dist', 'lastvx', 'lastvy'])
     my_campaign.apply_analysis(stats)
-    print("stats:", my_campaign.get_last_analysis())
+    print("stats:\n", my_campaign.get_last_analysis())
+
+    # Print the campaign log
+    pprint(my_campaign._log)
+
+    # Save the state of the campaign
+    state_file = tmpdir + "cannonsim_state.json"
+    my_campaign.save_state(state_file)
+
+    # Load state in new campaign object
+    new = uq.Campaign(state_file=state_file, work_dir=tmpdir)
+
+    sys.exit(0)
+
+    print(new)
+
+    print("List of runs added:")
+    pprint(my_campaign.list_runs())
+    print("---")
 
 
 if __name__ == "__main__":
-    test_cannonsim_csv_jsondb("/tmp/")
+    test_cannonsim_csv("/tmp/")

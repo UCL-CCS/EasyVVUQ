@@ -44,7 +44,7 @@ class CampaignDB(BaseCampaignDB):
 
         self._campaign_info = None
         self._app = None
-        self._runs = None
+        self._runs = {}
         self._sample = None
 
         if new_campaign:
@@ -90,16 +90,11 @@ class CampaignDB(BaseCampaignDB):
         self._sample = input_info.get('sample', {})
 
     def _save(self):
-        if self._sample:
-            serialized_sampler = self._sample.serialize()
-        else:
-            serialized_sampler = None
-
         out_dict = {
             'campaign': self._campaign_info,
             'app': self._app,
             'runs': self._runs,
-            'sample': serialized_sampler,
+            'sample': self._sample,
         }
 
         with open(self.location, "w") as outfile:
@@ -163,12 +158,19 @@ class CampaignDB(BaseCampaignDB):
             logger.critical(message)
             raise RuntimeError(message)
 
-        self._sample = sampler
-
-        print(self._sample)
+        self._sample = sampler.serialize()
 
         # For JSON db, sampler ID is always 1
         return 1
+
+    def update_sampler(self, sampler_ID, sampler_element):                                           
+        if sampler_ID != 1:
+            message = ('JSON/Python dict database does not support a sampler_ID other than 1')
+            logger.critical(message)
+            raise RuntimeError(message)
+
+        self._sample = sampler_element.serialize()                                  
+        self._save()
 
     def resurrect_app(self, app_name):                                                           
         if not self._app:
