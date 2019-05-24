@@ -25,7 +25,7 @@ __copyright__ = """
 __license__ = "LGPL"
 
 
-class AggregateSamples(BaseCollationElement):
+class AggregateSamples(BaseCollationElement, collater_name="aggregate_samples"):
     """
     Aggregate the results of all completed simulations described by the
     Campaign.
@@ -35,9 +35,6 @@ class AggregateSamples(BaseCollationElement):
     average:
         Should the values read in be averaged (mean).
     """
-
-    def element_name(self):
-        return "aggregate_samples"
 
     def element_version(self):
         return "0.1"
@@ -87,5 +84,5 @@ class AggregateSamples(BaseCollationElement):
 
         return full_data
 
-    def serialized_state(self):
+    def get_restart_dict(self):
         return {"average": self.average}

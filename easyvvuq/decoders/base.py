@@ -109,9 +109,7 @@ class BaseDecoder(BaseElement):
 
     @staticmethod
     def deserialize(decoderstr):
-        print("Deserializing:", decoderstr)
         decoderdict = json.loads(decoderstr)
-        print(decoderdict.keys())
         decoder = AVAILABLE_DECODERS[decoderdict["element_name"]](**decoderdict["state"])
         return decoder
 

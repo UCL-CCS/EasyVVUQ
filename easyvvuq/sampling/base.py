@@ -67,11 +67,10 @@ class BaseSamplingElement(BaseElement):
 
     @staticmethod
     def deserialize(samplerstr):
-        print("Deserializing:", samplerstr)
         samplerdict = json.loads(samplerstr)
-        sampler = AVAILABLE_SAMPLERS[samplerdict["element_name"]](state=samplerdict["state"])
+        samplerdict["state"]["vary"] = Vary.deserialize(samplerdict["state"]["vary"]).vary
+        sampler = AVAILABLE_SAMPLERS[samplerdict["element_name"]](**samplerdict["state"])
         return sampler
-
 
 class Vary:
     def __init__(self, vary):
