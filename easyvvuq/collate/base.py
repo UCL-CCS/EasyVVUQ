@@ -1,7 +1,4 @@
-import os
-import tempfile
 from easyvvuq import Campaign
-from easyvvuq import OutputType
 from .. import BaseElement
 import json
 
