@@ -1,8 +1,4 @@
 import os
-import sys
-import json
-import easyvvuq.utils.json as json_utils
-import tempfile
 from string import Template
 from .base import BaseEncoder
 import logging
