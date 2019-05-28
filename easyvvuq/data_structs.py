@@ -1,7 +1,32 @@
+"""Data structures to ensure consistency during serialization for databases.
+
+"""
 import os
 import logging
 import json
 import easyvvuq as uq
+
+__copyright__ = """
+
+    Copyright 2018 Robin A. Richardson, David W. Wright
+
+    This file is part of EasyVVUQ
+
+    EasyVVUQ is free software: you can redistribute it and/or modify
+    it under the terms of the Lesser GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    EasyVVUQ is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    Lesser GNU General Public License for more details.
+
+    You should have received a copy of the Lesser GNU General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+"""
+__license__ = "LGPL"
 
 logger = logging.getLogger(__name__)
 
@@ -14,7 +39,7 @@ def check_local_dir(path, dir_type='campaign'):
     ----------
     path : str
         Directory location to check.
-    dir_type :
+    dir_type : str, default='campaign'
         Type of directory we are checking (used for user and debugging
         information.)
 
@@ -46,7 +71,7 @@ def check_reference(ref, run_name, ref_type='campaign'):
     run_name : str
         Name of run for which the check is being performed (user info/
         debugging).
-    ref_type : str
+    ref_type : str, default='campaign'
         Are we checking for a campaign, sampler or app (user info/
         debugging).
 
@@ -68,6 +93,32 @@ def check_reference(ref, run_name, ref_type='campaign'):
 
 
 class RunInfo:
+    """Handles information for individual application runs.
+
+    Parameters
+    ----------
+    run_name : str
+        Human readable name of the run.
+    app : None or int
+        ID of the associated application.
+    params : None or dict
+        Dictionary of parameter values for this run.
+    sample: None or int
+        ID of the sampler that created the run.
+    campaign: None or int
+        ID of the associated campaign.
+
+    Attributes
+    ----------
+    campaign : int
+        ID of the associated campaign.
+    sample : int
+        ID of the sampler that created the run.
+    app : int
+        ID of the associated application.
+    run_name : str
+        Human readable name of the run.
+    """
 
     def __init__(self, run_name='', app=None, params=None, sample=None,
                  campaign=None):
@@ -93,6 +144,20 @@ class RunInfo:
         self.status = 'created'
 
     def to_dict(self, flatten=False):
+        """Convert to a dictionary (optionally flatten to single level)
+
+        Parameters
+        ----------
+        flatten : bool
+            Should the return dictionary be single level (i.e. should `params`
+            or other dictionary variables be serialized).
+
+        Returns
+        -------
+        dict
+            Dictionary representing the run - if flattened then params are
+            returned as a JSON format sting.
+        """
 
         if flatten:
 
@@ -120,6 +185,38 @@ class RunInfo:
 
 
 class AppInfo:
+    """Handles information for particular application.
+
+    Parameters
+    ----------
+    name : str or None
+        Human readable application name.
+    params : dict or None
+        Description of possible parameter values.
+    fixtures : dict or None
+        Description of files/assets for runs.
+    encoder : :obj:`easyvvuq.encoders.base.BaseEncoderElement` or None
+        Encoder element for application.
+    decoder : :obj:`easyvvuq.decoders.base.BaseDecoderElement` or None
+        Decoder element for application.
+    collation : :obj:`easyvvuq.collation.base.BaseCollationElement` or None
+        Collation element for collecting output data.
+
+    Attributes
+    ----------
+    name : str or None
+        Human readable application name.
+    params : dict or None
+        Description of possible parameter values.
+    fixtures : dict or None
+        Description of files/assets for runs.
+    input_encoder : :obj:`easyvvuq.encoders.base.BaseEncoderElement` or None
+        Encoder element for application.
+    output_decoder : :obj:`easyvvuq.decoders.base.BaseDecoderElement` or None
+        Decoder element for application.
+    collation : :obj:`easyvvuq.collation.base.BaseCollationElement` or None
+        Collation element for collecting output data.
+    """
 
     def __init__(
             self,
@@ -171,6 +268,20 @@ class AppInfo:
         self._output_decoder = decoder
 
     def to_dict(self, flatten=False):
+        """Convert to a dictionary (optionally flatten to single level)
+
+        Parameters
+        ----------
+        flatten : bool
+            Should the return dictionary be single level (i.e. should `params`,
+            `collation` & `fixtures` variables be serialized).
+
+        Returns
+        -------
+        dict
+            Dictionary representing the application- if flattened then `params`,
+            `collation` & `fixtures` are returned as a JSON format sting.
+        """
 
         if self.fixtures is None:
             fixtures = {}
@@ -200,6 +311,37 @@ class AppInfo:
 
 
 class CampaignInfo:
+    """Handles information on Campaign.
+
+    Parameters
+    ----------
+    name : str or None
+        Human readable campaign name.
+    easyvvuq_version : str or None
+        Version of EasyVVUQ used to create the campaign.
+    campaign_dir_prefix : str or None
+        Prefix test for campaign directory.
+    campaign_dir : str or None,
+        Path to the campaign directory.
+    runs_dir : str or None
+        path to run directory (within the campaign directory)
+    local : bool, default=False
+        Is this campaign designed to be created and executed on the same
+        machine?
+
+    Attributes
+    ----------
+    name : str or None
+        Human readable campaign name.
+    easyvvuq_version : str or None
+        Version of EasyVVUQ used to create the campaign.
+    campaign_dir_prefix : str or None
+        Prefix test for campaign directory.
+    campaign_dir : str or None,
+        Path to the campaign directory.
+    runs_dir : str or None
+        path to run directory (within the campaign directory)
+    """
 
     def __init__(self, name=None, easyvvuq_version=None,
                  campaign_dir_prefix=None, campaign_dir=None,
@@ -244,6 +386,18 @@ class CampaignInfo:
         self._easyvvuq_version = version_no
 
     def to_dict(self, flatten=False):
+        """Convert this to a dictionary
+
+        Parameters
+        ----------
+        flatten : bool
+            Should the return dictionary be single level (always true here).
+
+        Returns
+        -------
+        dict
+            Dictionary representing the campaign.
+        """
 
         out_dict = {
             'name': self.name,
