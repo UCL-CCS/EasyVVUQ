@@ -7,8 +7,9 @@ from easyvvuq import OutputType
 from .base import BaseAnalysisElement
 
 
-#Author: Wouter Edeling
+# Author: Wouter Edeling
 __license__ = "LGPL"
+
 
 class SCAnalysis(BaseAnalysisElement):
 
@@ -32,8 +33,8 @@ class SCAnalysis(BaseAnalysisElement):
         self.qoi_cols = qoi_cols
         self.output_type = OutputType.SUMMARY
         self.sampler = sampler
-        
-    #main analysis subroutine
+
+    # main analysis subroutine
     def analyse(self, data_frame=None):
 
         if data_frame is None:
@@ -42,10 +43,10 @@ class SCAnalysis(BaseAnalysisElement):
 
         qoi_cols = self.qoi_cols
 
-        results = {'statistical_moments': {}, 
+        results = {'statistical_moments': {},
                    'sobol_indices': {k: {} for k in qoi_cols}}
 
-        #Chaospy computation of 1D weights
+        # Chaospy computation of 1D weights
         xi = []
         wi = []
         for dist in self.sampler.vary.values():
@@ -56,7 +57,7 @@ class SCAnalysis(BaseAnalysisElement):
         self.xi = xi
         self.wi = wi
 
-        #Compute tensor product nodes and weights                
+        # Compute tensor product nodes and weights
         xi_d, self.wi_d = cp.generate_quadrature(order=self.sampler.quad_order,
                                                  domain=self.sampler.joint_dist,
                                                  rule=self.sampler.quad_rule)
@@ -72,27 +73,27 @@ class SCAnalysis(BaseAnalysisElement):
         self.samples = samples
         self._number_of_samples = self.sampler._number_of_samples
 
-        #number of uncertain parameters
+        # number of uncertain parameters
         self.d = self.xi_d.shape[1]
-        
+
         # size of one code sample
         self.N_qoi = self.samples[qoi_cols[0]][0].size
-        
+
         # Compute descriptive statistics for each quantity of interest
         for qoi_k in qoi_cols:
             mean_k, var_k = self.get_moments(qoi_k)
             std_k = var_k**0.5
-            
-            #compute statistical moments
+
+            # compute statistical moments
             results['statistical_moments'][qoi_k] = {'mean': mean_k,
                                                      'var': var_k,
                                                      'std': std_k}
-            
-            #compute all Sobol indices
+
+            # compute all Sobol indices
             results['sobol_indices'][qoi_k] = self.get_Sobol_indices(qoi_k, 'all')
-            
+
         return results
-        
+
     # Compute the first two statistical moments
     def get_moments(self, qoi):
 
@@ -101,17 +102,17 @@ class SCAnalysis(BaseAnalysisElement):
         var_f = np.zeros([self.N_qoi, 1])
 
         for k in range(self._number_of_samples):
-            sample_k = (self.samples[qoi][k]).values.reshape([self.N_qoi,1])
+            sample_k = (self.samples[qoi][k]).values.reshape([self.N_qoi, 1])
             mean_f += sample_k * self.wi_d[k].prod()
 
         for k in range(self._number_of_samples):
-            sample_k = (self.samples[qoi][k]).values.reshape([self.N_qoi,1])
+            sample_k = (self.samples[qoi][k]).values.reshape([self.N_qoi, 1])
             var_f += (sample_k - mean_f)**2 * self.wi_d[k].prod()
 
         return mean_f, var_f
 
+    # use the SC expansion as a surrogate
 
-    #use the SC expansion as a surrogate
     def surrogate(self, qoi, x):
         # interpolated QoI
         f_int = np.zeros([self.N_qoi, 1])
@@ -214,7 +215,7 @@ class SCAnalysis(BaseAnalysisElement):
 
         # multi indices
         U = list(range(self.d))
-        
+
         if typ == 'first_order':
             P = list(powerset(U))[0:self.d + 1]
         elif typ == 'all':
@@ -225,8 +226,8 @@ class SCAnalysis(BaseAnalysisElement):
         mu, D = self.get_moments(qoi)
         mu = mu.flatten()
         D = D.flatten()
-            
-        #list of 1D nodes and quad weights
+
+        # list of 1D nodes and quad weights
         xi = self.xi
         wi = self.wi
 
@@ -289,12 +290,16 @@ class SCAnalysis(BaseAnalysisElement):
     #########################
 
 # https://docs.python.org/3/library/itertools.html#recipes
+
+
 def powerset(iterable):
     "powerset([1,2,3]) --> () (1,) (2,) (3,) (1,2) (1,3) (2,3) (1,2,3)"
     s = list(iterable)
     return chain.from_iterable(combinations(s, r) for r in range(len(s) + 1))
 
 # Lagrange polynomials used for interpolation
+
+
 def LagrangePoly(x, x_i, j):
 
     l_j = 1.0

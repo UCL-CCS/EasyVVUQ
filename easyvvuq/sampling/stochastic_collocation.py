@@ -5,7 +5,7 @@ import chaospy as cp
 #from itertools import product
 
 
-#Author: Wouter Edeling
+# Author: Wouter Edeling
 
 __license__ = "LGPL"
 
@@ -16,7 +16,6 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
                  vary=None,
                  polynomial_order=4,
                  quadrature_rule="G"):
-
         """
         Create the sampler for the Polynomial Chaos Expansion method.
 
@@ -59,13 +58,13 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
 
         # Multivariate distribution
         self.joint_dist = cp.J(*params_distribution)
-        
+
         # The quadrature information: order, rule and sparsity
         self.quad_order = polynomial_order + 1
         self.quad_rule = quadrature_rule
         #self.quad_sparse = sparse
-        
-        #the nodes of the collocation grid
+
+        # the nodes of the collocation grid
         xi_d, _ = cp.generate_quadrature(self.quad_order, self.joint_dist, rule=quadrature_rule)
 
         self.xi_d = xi_d.T
