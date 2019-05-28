@@ -6,171 +6,113 @@ from itertools import product, chain, combinations
 from easyvvuq import OutputType
 from .base import BaseAnalysisElement
 
-__copyright__ = """
 
-    Copyright 2018 Robin A. Richardson, David W. Wright
-
-    This file is part of EasyVVUQ
-
-    EasyVVUQ is free software: you can redistribute it and/or modify
-    it under the terms of the Lesser GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    EasyVVUQ is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    Lesser GNU General Public License for more details.
-
-    You should have received a copy of the Lesser GNU General Public License
-    along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
-"""
+#Author: Wouter Edeling
 __license__ = "LGPL"
-
 
 class SCAnalysis(BaseAnalysisElement):
 
     def element_name(self):
-        return "basic_stats"
+        return "SC_analysis"
 
     def element_version(self):
-        return "0.2"
+        return "0.3"
 
-    def __init__(self, data_src, params_cols=[], value_cols=[],
-                 *args, **kwargs):
+    def __init__(self, params_cols=None, sampler=None, qoi_cols=None):
 
-        # TODO: Fix this to allow more flexibility - basically pass through
-        # available options to `pd.DataFrame.describe()`
+        if sampler is None:
+            msg = 'PCE analysis requires a paired sampler to be passed'
+            raise RuntimeError(msg)
 
-        # Handles creation of `self.data_src` attribute (dict)
-        super().__init__(data_src, *args, **kwargs)
+        if qoi_cols is None:
+            raise RuntimeError("Analysis element requires a list of "
+                               "quantities of interest (qoi)")
 
-        data_src = self.data_src
-
-        if data_src:
-            if 'files' in data_src:
-                if len(data_src['files']) != 1:
-                    raise RuntimeError(
-                        "Data source must contain a SINGLE file path for this UQP")
-                else:
-                    self.data_frame = pd.read_csv(
-                        data_src['files'][0], sep='\t')
-
-        self.value_cols = value_cols
-
-        if self.campaign is not None:
-            if not params_cols:
-                self.params_cols = list(self.campaign.params_info.keys())
-            self.value_cols = self.campaign.decoder.output_columns
-        else:
-            self.params_cols = params_cols
+        self.params_cols = params_cols
+        self.qoi_cols = qoi_cols
         self.output_type = OutputType.SUMMARY
+        self.sampler = sampler
+        
+    #main analysis subroutine
+    def analyse(self, data_frame=None):
 
-    """
-    Compute the first two statistical moments
-    """
+        if data_frame is None:
+            raise RuntimeError("Analysis element needs a data frame to "
+                               "analyse")
 
-    def get_moments(self, polynomial_order=4, quadrature_rule="G"):
+        qoi_cols = self.qoi_cols
 
-        self.polynomial_order = polynomial_order
-        self.quadrature_rule = quadrature_rule
+        results = {'statistical_moments': {}, 
+                   'sobol_indices': {k: {} for k in qoi_cols}}
 
-        # load code samples, colloc point and weights
-        self.load_samples()
-
-        if self.data_frame is None:
-            raise RuntimeError("UQP needs a data frame to analyse")
-
-        df = self.data_frame
-
-        number_of_samples = self.xi_d.shape[0]
-
-        # extract code output, per run, from Dataframe
-        samples = {}
-        for i in range(number_of_samples):
-            samples[i] = df.loc[df['run_id'] ==
-                                'Run_' + str(i)][self.value_cols]
-
-        # size of one code sample
-        N_qoi = samples[0].size
-
-        # compute the mean and variance of the code samples, using quad weights
-        mean_f = np.zeros([N_qoi, 1])
-        var_f = np.zeros([N_qoi, 1])
-
-        for k in range(number_of_samples):
-            mean_f += samples[k] * self.wi_d[k].prod()
-
-        for k in range(number_of_samples):
-            var_f += (samples[k] - mean_f)**2 * self.wi_d[k].prod()
-
-        # store results in pandas Dataframe
-        results = pd.DataFrame(
-            {'mean_f': mean_f.flatten(), 'var_f': var_f.flatten()})
-
-        # write result to csv file
-        output_dir = self.output_dir
-        output_file = os.path.join(output_dir, 'sc_moments.tsv')
-        results.to_csv(output_file, sep='\t')
-        self.output_file = output_file
-
-        return results, output_file
-
-    # load the samples from the data frame and use Chaospy to compute the weights
-    # and collocation points
-    def load_samples(self):
-
-        if self.data_frame is None:
-            raise RuntimeError("UQP needs a data frame to analyse")
-
-        # total code output in pandas Dataframe
-        df = self.data_frame
-
-        # list with the 1D weights/colloc points of all uncertain parameters
-        self.all_vars = self.campaign.vars
-
-#       Old implementation
-#        xi = [self.all_vars[param]['xi_1d'] for param in self.all_vars.keys()]
-#        wi = [self.all_vars[param]['wi_1d'] for param in self.all_vars.keys()]
-#
-#        self.xi_d = np.array(list(product(*xi)))
-#        self.wi_d = np.array(list(product(*wi)))
-
-        # Chaospy computation of 1D weights
+        #Chaospy computation of 1D weights
         xi = []
         wi = []
-        for dist in self.all_vars.values():
+        for dist in self.sampler.vary.values():
             xi_i, wi_i = cp.generate_quadrature(
-                self.polynomial_order, dist, rule=self.quadrature_rule)
+                self.sampler.quad_order, dist, rule=self.sampler.quad_rule)
             xi.append(xi_i.flatten())
             wi.append(wi_i.flatten())
-
-        # create tensor product
-        self.xi_d = np.array(list(product(*xi)))
-        self.wi_d = np.array(list(product(*wi)))
-
-        # also store 1d weights and collocation points
         self.xi = xi
         self.wi = wi
 
-        # number of uncertain parameters
-        self.d = self.xi_d.shape[1]
+        #Compute tensor product nodes and weights                
+        xi_d, self.wi_d = cp.generate_quadrature(order=self.sampler.quad_order,
+                                                 domain=self.sampler.joint_dist,
+                                                 rule=self.sampler.quad_rule)
+        self.xi_d = xi_d.T
 
-        # number of code samples
-        self.number_of_samples = self.xi_d.shape[0]
-
-        # extract code output, per run, from Dataframe
-        samples = {}
-        for i in range(self.number_of_samples):
-            samples[i] = df.loc[df['run_id'] ==
-                                'Run_' + str(i)][self.value_cols]
+        # Extract output values for each quantity of interest from Dataframe
+        samples = {k: [] for k in qoi_cols}
+        for run_id in data_frame.run_id.unique():
+            for k in qoi_cols:
+                values = data_frame.loc[data_frame['run_id'] == run_id][k]
+                samples[k].append(values)
 
         self.samples = samples
-        # size of one code sample
-        self.N_qoi = samples[0].size
+        self._number_of_samples = self.sampler._number_of_samples
 
-    def surrogate(self, x):
+        #number of uncertain parameters
+        self.d = self.xi_d.shape[1]
+        
+        # size of one code sample
+        self.N_qoi = self.samples[qoi_cols[0]][0].size
+        
+        # Compute descriptive statistics for each quantity of interest
+        for qoi_k in qoi_cols:
+            mean_k, var_k = self.get_moments(qoi_k)
+            std_k = var_k**0.5
+            
+            #compute statistical moments
+            results['statistical_moments'][qoi_k] = {'mean': mean_k,
+                                                     'var': var_k,
+                                                     'std': std_k}
+            
+            #compute all Sobol indices
+            results['sobol_indices'][qoi_k] = self.get_Sobol_indices(qoi_k, 'all')
+            
+        return results
+        
+    # Compute the first two statistical moments
+    def get_moments(self, qoi):
+
+        # compute the mean and variance of the code samples, using quad weights
+        mean_f = np.zeros([self.N_qoi, 1])
+        var_f = np.zeros([self.N_qoi, 1])
+
+        for k in range(self._number_of_samples):
+            sample_k = (self.samples[qoi][k]).values.reshape([self.N_qoi,1])
+            mean_f += sample_k * self.wi_d[k].prod()
+
+        for k in range(self._number_of_samples):
+            sample_k = (self.samples[qoi][k]).values.reshape([self.N_qoi,1])
+            var_f += (sample_k - mean_f)**2 * self.wi_d[k].prod()
+
+        return mean_f, var_f
+
+
+    #use the SC expansion as a surrogate
+    def surrogate(self, qoi, x):
         # interpolated QoI
         f_int = np.zeros([self.N_qoi, 1])
 
@@ -179,7 +121,7 @@ class SCAnalysis(BaseAnalysisElement):
         C = self.xi
 
         # loop over all samples
-        for k in range(self.number_of_samples):
+        for k in range(self._number_of_samples):
 
             idx = {}
             for i in range(self.d):
@@ -193,16 +135,18 @@ class SCAnalysis(BaseAnalysisElement):
                 L.append(LagrangePoly(x[i], C[i], idx[i]))
 
             # current sample
-            qoi_k = self.samples[k]  # .reshape(self.N_qoi)
+            qoi_k = self.samples[qoi][k].values.reshape([self.N_qoi, 1])  # .reshape(self.N_qoi)
 
             # surrogate: samples interpolated via Lagrange polynomials
             f_int += qoi_k * np.prod(L)
 
         return f_int
 
-    #############################
-    # BEGIN SOBOL SUBROUTINES
-    #############################
+    ####################################################################
+    # BEGIN SOBOL SUBROUTINES                                          #
+    # Method: 'Global Sensitivity Analysis for Stocastic Collocation'  #
+    #          G. Tang and G. Iaccarino, AIAA 2922, 2010               #
+    ####################################################################
 
     def compute_tensor_prod_u(self, xi, wi, u, u_prime):
         # tensor products with dimension of u
@@ -230,7 +174,7 @@ class SCAnalysis(BaseAnalysisElement):
 
     #############################
 
-    def compute_h(self, u, u_prime, xi_d_u, xi_d_u_prime, wi_d_u_prime):
+    def compute_h(self, qoi, u, u_prime, xi_d_u, xi_d_u_prime, wi_d_u_prime):
         S_u = xi_d_u.shape[0]
         S_u_prime = xi_d_u_prime.shape[0]
 
@@ -258,7 +202,7 @@ class SCAnalysis(BaseAnalysisElement):
                 #
                 tmp = np.prod(self.xi_d == xi_s, axis=1)
                 idx = np.where(tmp == 1)[0][0]
-                h[i_u] += self.samples[idx].values.flatten() * \
+                h[i_u] += self.samples[qoi][idx].values.flatten() * \
                     wi_d_u_prime[i_up].prod()
 
         return h
@@ -266,11 +210,11 @@ class SCAnalysis(BaseAnalysisElement):
     #############################
 
     # Computes Sobol indices using Stochastic Collocation
-    def get_Sobol_indices(self, typ):
+    def get_Sobol_indices(self, qoi, typ):
 
         # multi indices
-        U = range(self.d)
-
+        U = list(range(self.d))
+        
         if typ == 'first_order':
             P = list(powerset(U))[0:self.d + 1]
         elif typ == 'all':
@@ -278,14 +222,11 @@ class SCAnalysis(BaseAnalysisElement):
             P = list(powerset(U))
 
         # get first two moments
-        mom, _ = self.get_moments()
-        mu = mom['mean_f'].values.flatten()
-        D = mom['var_f'].values.flatten()
-
-        # list with the 1d collocation points of all uncertain parameters
-        #xi = [self.all_vars[param]['xi_1d'] for param in self.all_vars.keys()]
-        #wi = [self.all_vars[param]['wi_1d'] for param in self.all_vars.keys()]
-
+        mu, D = self.get_moments(qoi)
+        mu = mu.flatten()
+        D = D.flatten()
+            
+        #list of 1D nodes and quad weights
         xi = self.xi
         wi = self.wi
 
@@ -315,7 +256,7 @@ class SCAnalysis(BaseAnalysisElement):
             S_u = xi_d_u.shape[0]
 
             # h coefficients
-            h = self.compute_h(u, u_prime, xi_d_u, xi_d_u_prime, wi_d_u_prime)
+            h = self.compute_h(qoi, u, u_prime, xi_d_u, xi_d_u_prime, wi_d_u_prime)
 
             # partial variance
             D_u[u] = 0.0
@@ -336,28 +277,24 @@ class SCAnalysis(BaseAnalysisElement):
 
         sort = []
         for u in P[1:]:
-            print('Sobol index ', u, ' = ', sobol[u])
+            #print('Sobol index ', u, ' = ', sobol[u])
             sort.append(sobol[u])
 
         # print('Total sum = ', np.sum(sobol.values())/self.N_qoi)
 
-        return sort
+        return sobol
 
-    #############################
-    # END SOBOL SUBROUTINES
-    #############################
+    #########################
+    # END SOBOL SUBROUTINES #
+    #########################
 
 # https://docs.python.org/3/library/itertools.html#recipes
-
-
 def powerset(iterable):
     "powerset([1,2,3]) --> () (1,) (2,) (3,) (1,2) (1,3) (2,3) (1,2,3)"
     s = list(iterable)
     return chain.from_iterable(combinations(s, r) for r in range(len(s) + 1))
 
 # Lagrange polynomials used for interpolation
-
-
 def LagrangePoly(x, x_i, j):
 
     l_j = 1.0
