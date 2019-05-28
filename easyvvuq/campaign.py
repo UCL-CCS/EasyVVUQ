@@ -350,7 +350,6 @@ class Campaign:
                 new_run[param] = default_val
 
         # Add to run queue
-        # TODO: Get correct sampler ID to pass to RunInfo
         run_info = RunInfo(app=self._active_app['id'],
                            params=new_run,
                            sample=self._active_sampler_id,
@@ -436,12 +435,18 @@ class Campaign:
 
         """
 
-        runs = self.campaign_db.runs()
-        runs_dir = self.campaign_db.runs_dir()
+        active_encoder = self._active_app_encoder
 
-        if self._active_app_encoder is None:
+        if active_encoder is None:
             raise RuntimeError('Cannot populate runs without valid '
                                'encoder in campaign')
+
+        use_fixtures = active_encoder.fixture_support
+
+        fixtures = self._active_app['fixtures']
+
+        runs = self.campaign_db.runs()
+        runs_dir = self.campaign_db.runs_dir()
 
         for run_id, run_data in runs.items():
 
@@ -457,8 +462,14 @@ class Campaign:
             #  certainly will be hammering the database for large run lists)
             self.campaign_db.set_dir_for_run(run_id, target_dir)
 
-            self._active_app_encoder.encode(params=run_data['params'],
-                                            target_dir=target_dir)
+            if use_fixtures:
+
+                active_encoder.encode(params=run_data['params'],
+                                      fixtures=fixtures,
+                                      target_dir=target_dir)
+            else:
+                active_encoder.encode(params=run_data['params'],
+                                      target_dir=target_dir)
 
     def get_campaign_runs_dir(self):
         return self.campaign_db.runs_dir()

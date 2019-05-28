@@ -9,7 +9,7 @@ Attributes
 AVAILABLE_ENCODERS : dict
     Registers all imported encoders.
 """
-import easyvvuq.utils.json as json_utils
+import easyvvuq.utils.fixture as fixture
 from easyvvuq.base_element import BaseElement
 import json
 
@@ -63,11 +63,37 @@ class BaseEncoder(BaseElement):
         super().__init_subclass__(**kwargs)
 
         cls.encoder_name = encoder_name
+        cls.fixture_support = False
 
         # Register new encoder
         AVAILABLE_ENCODERS[encoder_name] = cls
 
-    def encode(self, params=None, target_dir=''):
+    @staticmethod
+    def substitute_fixtures_params(params, fixtures, target_dir, path_depth=0):
+
+        fixed_params = dict(params)
+
+        for key, current_fixture in fixtures.items():
+
+            if current_fixture['type'] == 'dir':
+                is_dir = True
+            else:
+                is_dir = False
+
+            fix = fixture.Fixture(
+                current_fixture['path'],
+                is_dir=is_dir,
+                common=current_fixture['common'],
+                exists_local=current_fixture['exists_local'],
+                target_name=current_fixture['target'],
+                group=current_fixture['group'])
+
+            fixed_params[key] = fix.fixture_path(depth_in_run=path_depth)
+            fix.copy_to_target(target_dir=target_dir)
+
+        return fixed_params
+
+    def encode(self, params=None, fixtures=None, target_dir=''):
         """
         Takes list of generic parameter values from `params` and
         converts them into simulation input files (in `target_dir`).
@@ -76,6 +102,8 @@ class BaseEncoder(BaseElement):
         ----------
         params: dict or None
             Dictionary containing parameter names and values.
+        fixtures: dict or None
+            Dictionary containing fixture information.
         target_dir: str
             Path into which output will be written.
 
