@@ -3,7 +3,6 @@ CampaignDB.
 """
 import json
 import logging
-import tempfile
 from easyvvuq.constants import __easyvvuq_version__
 from .base import BaseCampaignDB
 from easyvvuq.sampling.base import BaseSamplingElement
