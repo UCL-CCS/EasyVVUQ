@@ -42,7 +42,7 @@ class Campaign:
             work_dir="./",
             state_file=None,
             change_to_state=False
-            ):
+    ):
 
         self.work_dir = os.path.realpath(os.path.expanduser(work_dir))
 
