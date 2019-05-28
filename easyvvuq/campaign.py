@@ -1,3 +1,8 @@
+"""EasyVVUQ Campaign
+
+This module contains the Campaign class that is used to coordinate all
+EasyVVUQ workflows.
+"""
 import os
 import logging
 import tempfile
@@ -33,6 +38,52 @@ logger = logging.getLogger(__name__)
 
 
 class Campaign:
+    """Campaigns organise the dataflow in EasyVVUQ workflows.
+
+    The Campaign functions as as state machine for the VVUQ workflows. It uses a
+    database (CampaignDB) to store information on both the target application
+    and the VVUQ algorithms being employed.
+
+    Notes
+    -----
+
+    Multiple campaigns can be combined in a CampaignDB. Hence the particular
+    campaign we are currently working on will be specified using `campaign_id`.
+
+    The JSON CampaignDB only supports a single campaign.
+
+    Parameters
+    ----------
+    name : :obj:`str`, optional
+        Description of `param1`.
+    db_type : str, default="sql"
+        Type of database to use for CampaignDB. Options at present are "sql"
+        and "json".
+    db_location : :obj:`str`, optional
+        Location of the underlying campaign database - either a path or
+        acceptable URI for SQLAlchemy.
+    work_dir : :obj:`str`, optional, default='./'
+        Path to working directory - used to store campaign directory.
+    state_file : :obj:`str`, optional
+        Path to serialised state - used to initialise the Campaign.
+    change_to_state : bool, optional, default=False
+        Should we change to the directory containing any specified `state_file`
+        in order to make relative paths work.
+
+    Attributes
+    ----------
+    campaign_name : str or None
+        Name for the campaign/workflow.
+    db_location : str or None
+        Location of the underlying campaign database - either a path or
+        acceptable URI for SQLAlchemy.
+    db_type : str or None
+        Type of CampaignDB ("sql" or "json").
+    campaign_id : int
+        ID number for the current campaign in the CampaignDB.
+    last_analysis : :obj:`pandas.DataFrame`
+        Output from the last applied analysis element
+    """
 
     def __init__(
             self,
@@ -56,7 +107,7 @@ class Campaign:
         self._active_app = None
         self.campaign_db = None
 
-        self.last_collation_dataframe = None
+        self._last_collation_dataframe = None
         self.last_analysis = None
 
         # TODO: These definitely shouldn't be here. Probably should be in DB.
@@ -69,15 +120,23 @@ class Campaign:
         # Load campaign from state_file, if provided. Else make a fresh new
         # campaign with a new campaign database
         if state_file is not None:
-            self.state_dir = self.init_from_state_file(state_file)
+            self._state_dir = self.init_from_state_file(state_file)
             if change_to_state:
-                os.chdir(self.state_dir)
+                os.chdir(self._state_dir)
         else:
             self.init_fresh(name, db_type, db_location, work_dir)
-            self.state_dir = None
+            self._state_dir = None
 
     @property
     def campaign_dir(self):
+        """Get the path in which to load/save files related to the campaign.
+
+        Returns
+        -------
+        str
+            Path to the campaign directory - given as a subdirectory of the
+            working directory.
+        """
 
         return os.path.join(self.work_dir, self._campaign_dir)
 
@@ -142,9 +201,7 @@ class Campaign:
         self.campaign_id = self.campaign_db.get_campaign_id(self.campaign_name)
 
     def init_from_state_file(self, state_file):
-        """
-        Load campaign state from file. Change to the directory containing
-        `state_file` - to ensure relative paths in input make sense.
+        """Load campaign state from file.
 
         Parameters
         ----------
@@ -202,7 +259,7 @@ class Campaign:
         """Save the current Campaign state to file in JSON format
         Parameters
         ----------
-        state_filename  :   str
+        state_filename : str
             Name of file in which to save the state
         Returns
         -------
@@ -221,12 +278,15 @@ class Campaign:
 
     def load_state(self, state_filename):
         """Load up a Campaign state from the specified JSON file
+
         Parameters
         ----------
-        state_filename  :   str
+        state_filename : str
             Name of file from which to load the state
+
         Returns
         -------
+
         """
 
         with open(state_filename, "r") as infile:
@@ -248,26 +308,34 @@ class Campaign:
     def add_app(self, name=None, params=None, fixtures=None,
                 encoder=None, decoder=None,
                 collation=None, set_active=True):
-        """
+        """Add an application to the CampaignDB.
 
         Parameters
         ----------
-        name
+        name : str
+            Name of the application.
         params : dict
+            Description of the parameters to associate with the application.
         fixtures : dict
-        encoder
-        decoder
-        collation
+            Description of files/assets.
+        encoder : :obj:`easyvvuq.encoders.base.BaseEncoder`
+            Encoder element to convert parameters into application run inputs.
+        decoder : :obj:`easyvvuq.decoders.base.BaseDecoder`
+            Decoder element to convert application run output into data for
+            VVUQ analysis.
+        collation : :obj:``
+            Collation element which brings together the data from individual
+            runs (after being decoded).
         set_active: bool
-            Should the added app be set to be teh currently active app?
+            Should the added app be set to be the currently active app?
 
         Returns
         -------
 
         """
 
-        # Verify input parameters dict:
-        # Check params is a dict
+        # Verify input parameters dict
+
         if not isinstance(params, dict):
             msg = "params must be of type 'dict'"
             logger.error(msg)
@@ -309,15 +377,16 @@ class Campaign:
             self.set_app(app.name)
 
     def set_app(self, app_name):
-        """
-        Set the app to be in active use by this campaign. Gets the app info
-        from the database.
+        """Set active app for the campaign.
+
+        Application information is retrieved from `self.campaign_db`.
 
         Parameters
         ----------
         app_name: str or None
             Name of selected app, if `None` given then first app will be
             selected.
+
         Returns
         -------
 
@@ -331,6 +400,18 @@ class Campaign:
          self._active_app_collation) = self.campaign_db.resurrect_app(app_name)
 
     def set_sampler(self, sampler):
+        """Set active sampler.
+
+        Parameters
+        ----------
+        sampler : `easyvvuq.sampling.base.BaseSamplingElement`
+            Sampler that will be used to create runs for the current
+            application.
+
+        Returns
+        -------
+
+        """
         if not isinstance(sampler, uq.sampling.BaseSamplingElement):
             msg = "set_sampler() must be passed a sampling element"
             logging.error(msg)
@@ -340,11 +421,11 @@ class Campaign:
         self._active_sampler_id = self.campaign_db.add_sampler(sampler)
 
     def add_run(self, new_run):
-        """Add a new run to the queue
+        """Add a new run to the queue.
 
         Parameters
         ----------
-        new_run     : dict
+        new_run : dict
             Defines the value of each model parameter listed in
             `self.params_info` for a run to be added to `self.runs`
 
@@ -413,6 +494,7 @@ class Campaign:
                 Number of replica runs to create with each set of parameters.
                 Default is 1 - so only a single run added for each set of
                 parameters.
+
         Returns
         -------
 
@@ -450,17 +532,20 @@ class Campaign:
                 "num_added": num_added})
 
     def list_runs(self):
+        """Get list of runs in the CampaignDB.
+
+        Returns
+        -------
+
+        """
         return self.campaign_db.runs()
 
     def populate_runs_dir(self):
-        """Populate run directories based on runs in the DB
+        """Populate run directories based on runs in the CampaignDB.
 
-        This calls the App encoder object to create input files for the
-        specified application in each run directory, usually with varying input
-        (scientific) parameters.
-
-        Parameters
-        ----------
+        This calls the encoder element defined for the current application to
+        create input files for it in each run directory, usually with varying
+        input (scientific) parameters.
 
         Returns
         -------
@@ -504,6 +589,14 @@ class Campaign:
                                       target_dir=target_dir)
 
     def get_campaign_runs_dir(self):
+        """Get the runs directory from the CampaignDB.
+
+        Returns
+        -------
+        str
+            Path in which the runs information will be written.
+
+        """
         return self.campaign_db.runs_dir()
 
     def apply_for_each_run_dir(self, action):
@@ -516,6 +609,7 @@ class Campaign:
         action : the action to be applied to each run directory
             The function to be applied to each run directory. func() will
             be called with the run directory path as its only argument.
+
         Returns
         -------
         """
@@ -537,9 +631,17 @@ class Campaign:
             action.act_on_dir(dir_name)
 
     def collate(self):
+        """Combine the output from all runs associated with the current app.
+
+        Uses the collation element held in `self._active_app_collation`.
+
+        Returns
+        -------
+
+        """
 
         # Apply collation element, and obtain the resulting dataframe
-        self.last_collation_dataframe = self._active_app_collation.collate(
+        self._last_collation_dataframe = self._active_app_collation.collate(
             self)
 
         # Log application of this collation element
@@ -547,27 +649,51 @@ class Campaign:
             self._active_app_collation, None)
 
     def get_last_collation(self):
-        if self.last_collation_dataframe is None:
+        """Return the dataframe output by the last executed collation element.
+
+        Returns
+        -------
+        `pandas.DataFrame` or None
+
+        """
+        if self._last_collation_dataframe is None:
             logging.warning("No dataframe available as no collation has been "
                             "done. Was this campaign's collate() function run "
                             "first?")
-            return None
-        return self.last_collation_dataframe
 
-    def apply_analysis(self, analysis_element):
+        return self._last_collation_dataframe
+
+    def apply_analysis(self, analysis):
+        """Run the `analysis` element on the output of the last run collation.
+
+        Parameters
+        ----------
+        analysis : `easyvvuq.analysis.base.BaseAnalysisElement`
+            Element that performs a VVUQ analysis on a dataframe summary of
+            run outputs.
+
+        Returns
+        -------
+
+        """
+
         # Apply analysis element to most recent collation result
-        self.last_analysis = analysis_element.analyse(
-            self.get_last_collation())
+        self.last_analysis = analysis.analyse(
+            data_frame=self.get_last_collation())
 
         # Log application of this analysis element
-        self.log_element_application(analysis_element, None)
+        self.log_element_application(analysis, None)
 
     def get_last_analysis(self):
+        """Return the output of the most recently run analysis element.
+
+        Returns
+        -------
+
+        """
         if self.last_analysis is None:
-            logging.warning("No last analysis available as no analysis has "
-                            "been done. Was this campaign's collate() "
-                            "function run?")
-            return None
+            logging.warning("No last analysis output available.")
+
         return self.last_analysis
 
     def scan_completed(self, *args, **kwargs):
@@ -609,11 +735,20 @@ class Campaign:
                 f"log = {self._log}\n")
 
     def log_element_application(self, element, further_info):
-        """
-        Adds an entry to the campaign log for the given element, with the
-        provided further_info dictionary. The further_info dict should give
-        specific information about this element's application, where
-        suitable.
+        """Add an entry to the campaign log for the given element.
+
+        The `further_info` dictionary adds detail to the log. The `further_info`
+        dict should give specific information about this element's application,
+        where suitable.
+
+        Parameters
+        ----------
+        element
+        further_info
+
+        Returns
+        -------
+
         """
 
         log_entry = {
