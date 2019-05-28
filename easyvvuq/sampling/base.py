@@ -51,7 +51,7 @@ class BaseSamplingElement(BaseElement):
         sampler_name : str
             Name of the particular sampler.
         """
-        
+
         super().__init_subclass__(**kwargs)
 
         cls.sampler_name = sampler_name
