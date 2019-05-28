@@ -36,14 +36,22 @@ class BaseSamplingElement(BaseElement):
 
     Attributes
     ----------
+    sampler_name : str
+        Name of the particular sampler.
 
     """
 
     def __init_subclass__(cls, sampler_name, **kwargs):
         """
-        Catch any new samplers (all samplers must inherit from BaseSamplingElement) and add them
-        to the dict of available samplers.
+        Catch any new samplers (all samplers must inherit from
+        BaseSamplingElement) and add them to the dict of available samplers.
+
+        Parameters
+        ----------
+        sampler_name : str
+            Name of the particular sampler.
         """
+        
         super().__init_subclass__(**kwargs)
 
         cls.sampler_name = sampler_name
