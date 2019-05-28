@@ -6,6 +6,11 @@
 Welcome to EasyVVUQ's documentation!
 ====================================
 
+EasyVVUQ is a Python library designed to facilitate verification, validation 
+and uncertainty quantification (VVUQ) for a wide variety of simulations.
+Development was funded by the EU Horizon 2020 project 
+`VECMA <http://www.vecma.eu/>`_.
+
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
