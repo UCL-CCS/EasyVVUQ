@@ -129,7 +129,8 @@ class Campaign:
 
     def init_from_state_file(self, state_file):
         """
-        Load campaign start from file.
+        Load campaign state from file. Change to the directory containing
+        `state_file` - to ensure relative paths in input make sense.
 
         Parameters
         ----------
@@ -143,8 +144,25 @@ class Campaign:
 
         campaign_db = self.campaign_db
 
-        logger.info(f"Loading campaign from state file '{state_file}'")
-        self.load_state(state_file)
+        full_state_path = os.path.realpath(os.path.expanduser(state_file))
+
+        if not os.path.isfile(full_state_path):
+            if not os.path.exists(full_state_path):
+                msg = (f"Unable to open state file (no file exists): "
+                       f"{state_file}")
+            else:
+                msg = (f"Unable to open state file (path is not a file): "
+                       f"{state_file}")
+
+            logger.error(msg)
+            raise RuntimeError(msg)
+
+        state_dir = os.path.dirname(full_state_path)
+
+        os.chdir(state_dir)
+
+        logger.info(f"Loading campaign from state file '{full_state_path}'")
+        self.load_state(full_state_path)
         active_sampler_id = self._active_sampler_id
 
         if self.db_type == 'sql':
