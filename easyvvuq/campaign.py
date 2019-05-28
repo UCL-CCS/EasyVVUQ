@@ -485,6 +485,12 @@ class Campaign:
         this method draws ALL samples from the sampler, until exhaustion (this
         will fail if the sampler is not finite).
 
+        Notes
+        -----
+        Do NOT use this in cases where you need 'replicas' with a different
+        random seed. In those cases need to sample from a uniform_integer
+        distribution and filter at analysis step.
+
         Parameters
         ----------
         num_samples : int
@@ -500,8 +506,8 @@ class Campaign:
 
         """
 
-        # Make sure n is not 0 for an infinite generator (this would add runs
-        # forever...)
+        # Make sure `num_samples` is not 0 for an infinite generator
+        # (this would add runs forever...)
         if not self._active_sampler.is_finite() and num_samples <= 0:
             msg = (f"Sampling_element '{self._active_sampler.element_name()}' "
                    f"is an infinite generator, therefore a finite number of "
