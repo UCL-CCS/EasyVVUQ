@@ -9,7 +9,6 @@ Attributes
 AVAILABLE_DECODERS : dict
     Registers all imported decoders.
 """
-from easyvvuq import OutputType
 from easyvvuq.base_element import BaseElement
 import json
 
