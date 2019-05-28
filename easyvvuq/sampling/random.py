@@ -33,7 +33,7 @@ class RandomSampler(BaseSamplingElement, sampler_name="random_sampler"):
             Expects dict of var names, and their corresponding distributions
         """
         self.vary = Vary(vary)
-        self.count = 0
+        self.count = count
 
     def element_version(self):
         return "0.1"
