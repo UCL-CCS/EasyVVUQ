@@ -32,7 +32,7 @@ def test_sc(tmpdir):
 
     # Create an encoder, decoder and collation element for PCE test app
     encoder = uq.encoders.GenericEncoder(
-        template_fname='./sc/sc.template',
+        template_fname='tests/sc/sc.template',
         delimiter='$',
         target_filename='sc_in.json')
     decoder = uq.decoders.SimpleCSV(target_filename=output_filename,
@@ -63,8 +63,7 @@ def test_sc(tmpdir):
     my_campaign.draw_samples()
 
     my_campaign.populate_runs_dir()
-    my_campaign.apply_for_each_run_dir(uq.actions.ExecuteLocal(
-        "./sc/sc_model.py sc_in.json"))
+    my_campaign.apply_for_each_run_dir(uq.actions.ExecuteLocal("tests/sc/sc_model.py sc_in.json"))
 
     my_campaign.collate()
 
