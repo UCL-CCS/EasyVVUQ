@@ -1,5 +1,3 @@
-import os
-import pandas as pd
 from easyvvuq import OutputType
 from .base import BaseAnalysisElement
 

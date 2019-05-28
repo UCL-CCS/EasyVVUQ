@@ -1,10 +1,4 @@
-import os
-import tempfile
-import json
-import easyvvuq.utils.json as json_utils
-from pandas import DataFrame
 from easyvvuq import Campaign
-from easyvvuq import constants
 from .. import BaseElement
 
 
