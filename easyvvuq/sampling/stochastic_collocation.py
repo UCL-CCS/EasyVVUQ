@@ -1,71 +1,96 @@
+import logging
 from .base import BaseSamplingElement
-import numpy as np
+#import numpy as np
 import chaospy as cp
-from itertools import product
+#from itertools import product
 
-__copyright__ = """
 
-    Copyright 2018 Robin A. Richardson, David W. Wright
+#Author: Wouter Edeling
 
-    This file is part of EasyVVUQ
-
-    EasyVVUQ is free software: you can redistribute it and/or modify
-    it under the terms of the Lesser GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    EasyVVUQ is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    Lesser GNU General Public License for more details.
-
-    You should have received a copy of the Lesser GNU General Public License
-    along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
-"""
 __license__ = "LGPL"
 
 
 class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
 
-    def __init__(self, campaign, polynomial_order=4, quadrature_rule="G"):
+    def __init__(self,
+                 vary=None,
+                 polynomial_order=4,
+                 quadrature_rule="G"):
 
-        self.campaign = campaign
-        self.all_vars = self.campaign.vars
+        """
+        Create the sampler for the Polynomial Chaos Expansion method.
 
-        # The probality distributions of uncertain parameters
-        params_distribution = list(self.all_vars.values())
+        Parameters
+        ----------
+        vary: dict or None
+            keys = parameters to be sampled, values = distributions.
+        polynomial_order : int, optional
+            The polynomial order, default is 4.
+
+        quadrature_rule : char, optional
+            The quadrature method, default is Gaussian "G".
+
+        sparse : bool, optional
+            If True use sparse grid instead of normal tensor product grid,
+            default is False.
+        """
+
+        if vary is None:
+            msg = ("'vary' cannot be None. RandomSampler must be passed a "
+                   "dict of the names of the parameters you want to vary, "
+                   "and their corresponding distributions.")
+            logging.error(msg)
+            raise Exception(msg)
+        if not isinstance(vary, dict):
+            msg = ("'vary' must be a dictionary of the names of the "
+                   "parameters you want to vary, and their corresponding "
+                   "distributions.")
+            logging.error(msg)
+            raise Exception(msg)
+        if len(vary) == 0:
+            msg = "'vary' cannot be empty."
+            logging.error(msg)
+            raise Exception(msg)
+
+        self.vary = vary
+
+        # List of the probability distributions of uncertain parameters
+        params_distribution = list(vary.values())
 
         # Multivariate distribution
-        joint = cp.J(*params_distribution)
-
-        xi_d, _ = cp.generate_quadrature(
-            polynomial_order, joint, rule=quadrature_rule)
+        self.joint_dist = cp.J(*params_distribution)
+        
+        # The quadrature information: order, rule and sparsity
+        self.quad_order = polynomial_order + 1
+        self.quad_rule = quadrature_rule
+        #self.quad_sparse = sparse
+        
+        #the nodes of the collocation grid
+        xi_d, _ = cp.generate_quadrature(self.quad_order, self.joint_dist, rule=quadrature_rule)
 
         self.xi_d = xi_d.T
 
-        self.number_of_samples = self.xi_d.shape[0]
+        self._number_of_samples = self.xi_d.shape[0]
 
         # required counter in generate_runs()
-        self.counter = 0
+        self.count = 0
 
     def element_version(self):
-        return "0.2"
+        return "0.3"
 
     def is_finite(self):
-        return False
+        return True
 
     # SC collocations points are not random, generate_runs simply returns
     # one collocation point from the tensor product after the other
     def generate_runs(self):
-        #all_vars = self.campaign.vars
 
-        while True:
-            idx = 0
-
+        for i_val in range(self._number_of_samples):
             run_dict = {}
-            for key in self.all_vars.keys():
-                run_dict[key] = self.xi_d[self.counter][idx]
-                idx += 1
-            self.counter += 1
+            i_par = 0
+            for param_name in self.vary.keys():
+                run_dict[param_name] = self.xi_d[i_val][i_par]
+                i_par += 1
+
+            self.count += 1
             yield run_dict
