@@ -5,15 +5,17 @@ import sys
 import numpy as np
 import math
 
-#Author: Wouter Edeling
+# Author: Wouter Edeling
 
-#solves the steady advection diffusion equation at Peclet number Pe and 
-#constant forcing term f, using Finite Elements with linear shape functions.
+# solves the steady advection diffusion equation at Peclet number Pe and
+# constant forcing term f, using Finite Elements with linear shape functions.
+
+
 def solve(Pe, f, nel):
 
     print('Solving advection diffusion equation at Pe = ', Pe, ' and f = ', f)
 
-    h = 1.0/nel
+    h = 1.0 / nel
 
     K = np.zeros([nel + 1, nel + 1])
     F = np.zeros(nel + 1)
@@ -76,11 +78,14 @@ def solve(Pe, f, nel):
     return np.linalg.solve(K, F)
 
 # Finite element linear shape functions and their derivatives
+
+
 def der_shape(h, Q):
     N1x = -1 / h * np.ones(Q)
     N2x = 1 / h * np.ones(Q)
 
     return [N1x, N2x]
+
 
 def shape(x, XA1, XA2):
 
@@ -94,6 +99,7 @@ def shape(x, XA1, XA2):
     N1 = 0.5 * (1 - eps)
     N2 = 0.5 * (1 + eps)
     return [N1, N2]
+
 
 # the json input file containing the values of the parameters, and the
 # output file

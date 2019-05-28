@@ -6,8 +6,9 @@ import matplotlib.pyplot as plt
 # author: Wouter Edeling
 __license__ = "LGPL"
 
+
 def test_sc(tmpdir):
-    
+
     # Set up a fresh campaign called "sc"
     my_campaign = uq.Campaign(name='sc', work_dir=tmpdir)
 
@@ -76,66 +77,67 @@ def test_sc(tmpdir):
 
     return results, sc_analysis
 
+
 if __name__ == "__main__":
 
     results, sc_analysis = test_sc("/tmp/")
     mu = results['statistical_moments']['u']['mean']
     std = results['statistical_moments']['u']['std']
-    
+
     x = np.linspace(0, 1, mu.size)
-    
+
     ###################################
     # Plot the moments and SC samples #
     ###################################
-    
+
     fig = plt.figure(figsize=[10, 5])
     ax = fig.add_subplot(121, xlabel='x', ylabel='u',
                          title=r'code mean +/- standard deviation')
     ax.plot(x, mu, 'b', label='mean')
     ax.plot(x, mu + std, '--r', label='std-dev')
     ax.plot(x, mu - std, '--r')
-    
+
     #####################################
     # Plot the random surrogate samples #
     #####################################
-    
+
     ax = fig.add_subplot(122, xlabel='x', ylabel='u',
                          title='some Monte Carlo surrogate samples')
-    
+
     # generate random samples of unobserved parameter values
     n_mc = 100
     dists = sc_analysis.sampler.vary
     xi_mc = np.zeros([n_mc, 2])
     xi_mc[:, 0] = dists['Pe'].sample(n_mc)
     xi_mc[:, 1] = dists['f'].sample(n_mc)
-    
+
     # evaluate the surrogate at these values
     for i in range(n_mc):
         ax.plot(x, sc_analysis.surrogate('u', xi_mc[i]), 'g')
-    
+
     plt.tight_layout()
-    
+
     ######################
     # Plot Sobol indices #
     ######################
-    
+
     fig = plt.figure()
     ax = fig.add_subplot(
         111,
         xlabel='x',
         ylabel='Sobol indices',
         title='spatial dist. Sobol indices, Pe only important in viscous regions')
-    
+
     lbl = ['Pe', 'f', 'Pe-f interaction']
     idx = 0
-    
+
     for S_i in results['sobol_indices']['u']:
         ax.plot(x, results['sobol_indices']['u'][S_i], label=lbl[idx])
         idx += 1
-    
+
     leg = plt.legend(loc=0)
     leg.draggable(True)
-    
+
     plt.tight_layout()
-    
+
     plt.show()
