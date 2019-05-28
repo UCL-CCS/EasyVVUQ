@@ -40,10 +40,14 @@ class Campaign:
             db_type="sql",
             db_location=None,
             work_dir="./",
-            state_file=None):
+            state_file=None,
+            change_to_state=False
+            ):
+
+        self.work_dir = os.path.realpath(os.path.expanduser(work_dir))
 
         self.campaign_name = None
-        self.campaign_dir = None
+        self._campaign_dir = None
         self.db_location = None
         self.db_type = None
         self._log = []
@@ -65,9 +69,17 @@ class Campaign:
         # Load campaign from state_file, if provided. Else make a fresh new
         # campaign with a new campaign database
         if state_file is not None:
-            self.init_from_state_file(state_file)
+            self.state_dir = self.init_from_state_file(state_file)
+            if change_to_state:
+                os.chdir(self.state_dir)
         else:
             self.init_fresh(name, db_type, db_location, work_dir)
+            self.state_dir = None
+
+    @property
+    def campaign_dir(self):
+
+        return os.path.join(self.work_dir, self._campaign_dir)
 
     def init_fresh(self, name, db_type='sql',
                    db_location=None, work_dir='.'):
@@ -94,8 +106,10 @@ class Campaign:
         """
 
         # Create temp dir for campaign
-        self.campaign_dir = tempfile.mkdtemp(prefix=default_campaign_prefix,
-                                             dir=work_dir)
+        campaign_dir = tempfile.mkdtemp(prefix=default_campaign_prefix,
+                                        dir=work_dir)
+
+        self._campaign_dir = os.path.relpath(campaign_dir, start=work_dir)
 
         self.db_location = db_location
         self.db_type = db_type
@@ -159,8 +173,6 @@ class Campaign:
 
         state_dir = os.path.dirname(full_state_path)
 
-        os.chdir(state_dir)
-
         logger.info(f"Loading campaign from state file '{full_state_path}'")
         self.load_state(full_state_path)
         active_sampler_id = self._active_sampler_id
@@ -184,6 +196,8 @@ class Campaign:
         # Resurrect the sampler using the ID
         self._active_sampler = campaign_db.resurrect_sampler(active_sampler_id)
 
+        return state_dir
+
     def save_state(self, state_filename):
         """Save the current Campaign state to file in JSON format
         Parameters
@@ -199,7 +213,7 @@ class Campaign:
             "db_type": self.db_type,
             "active_sampler_id": self._active_sampler_id,
             "campaign_name": self.campaign_name,
-            "campaign_dir": self.campaign_dir,
+            "campaign_dir": self._campaign_dir,
             "log": self._log
         }
         with open(state_filename, "w") as outfile:
@@ -222,7 +236,7 @@ class Campaign:
         self.db_type = input_json["db_type"]
         self._active_sampler_id = input_json["active_sampler_id"]
         self.campaign_name = input_json["campaign_name"]
-        self.campaign_dir = input_json["campaign_dir"]
+        self._campaign_dir = input_json["campaign_dir"]
         self._log = input_json["log"]
 
         if not os.path.exists(self.campaign_dir):
