@@ -67,16 +67,28 @@ class BaseSamplingElement(BaseElement):
         raise NotImplementedError
 
     @staticmethod
-    def deserialize(samplerstr):
-        samplerdict = json.loads(samplerstr)
+    def deserialize(serialized_sampler):
+        """Deserialize a sampler element.
 
-        if not samplerdict["restartable"]:
-            msg = (f'Sampler {samplerdict["element_name"]} is not restartable')
+        Parameters
+        ----------
+        serialized_sampler : str
+            Sampler serialized in JSON format.
+
+        Returns
+        -------
+
+        """
+
+        inputs = json.loads(serialized_sampler)
+
+        if not inputs["restartable"]:
+            msg = f'Sampler {inputs["element_name"]} is not restartable'
             logging.error(msg)
             raise Exception(msg)
 
-        samplerdict["state"]["vary"] = Vary.deserialize(samplerdict["state"]["vary"]).vary
-        sampler = AVAILABLE_SAMPLERS[samplerdict["element_name"]](**samplerdict["state"])
+        inputs["state"]["vary"] = Vary.deserialize(inputs["state"]["vary"]).vary
+        sampler = AVAILABLE_SAMPLERS[inputs["element_name"]](**inputs["state"])
         return sampler
 
 
