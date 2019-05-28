@@ -1,4 +1,3 @@
-# First make sure python version is 3.6+
 import sys
 from .constants import OutputType
 from . import data_structs
@@ -13,6 +12,7 @@ from . import analysis
 from . import comparison
 from . import collate
 
+# First make sure python version is 3.6+
 assert sys.version_info >= (3, 6), (f"Python version must be >= 3.6,"
                                     f"found {sys.version_info}")
 
