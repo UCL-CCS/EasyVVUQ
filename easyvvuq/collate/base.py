@@ -33,22 +33,23 @@ AVAILABLE_COLLATERS = {}
 class BaseCollationElement(BaseElement):
     """Baseclass for all EasyVVUQ collation elements.
 
-    Parameters
-    ----------
-    data_src    : dict or Campaign or stream
-        Information on the infomration Application information.
-        Will try interpreting as a dict or JSON file/stream or filename.
-
-
     Attributes
     ----------
+    collater_name : str
+        Name of particular collation element.
 
     """
 
     def __init_subclass__(cls, collater_name, **kwargs):
         """
-        Catch any new collaters (all collaters must inherit from BaseCollationElement) and add them
-        to the dict of available collaters.
+        Catch any new collaters (all collaters must inherit from
+        BaseCollationElement) and add them to the dict of available collaters.
+
+        Parameters
+        ----------
+        collater_name : str
+            Name of the collater element represented by the class.
+
         """
         super().__init_subclass__(**kwargs)
 
@@ -74,7 +75,7 @@ class BaseCollationElement(BaseElement):
         return True
 
     @staticmethod
-    def deserialize(collaterstr):
-        collaterdict = json.loads(collaterstr)
-        collater = AVAILABLE_COLLATERS[collaterdict["element_name"]](**collaterdict["state"])
-        return collater
+    def deserialize(serialized_collater):
+        info = json.loads(serialized_collater)
+
+        return AVAILABLE_COLLATERS[info["element_name"]](**info["state"])
