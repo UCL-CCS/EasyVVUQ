@@ -29,7 +29,7 @@ __license__ = "LGPL"
 
 def test_gauss_fix(tmpdir):
 
-    # Set up a fresh campaign called "cannon"
+    # Set up a fresh campaign called "gauss_fix"
     my_campaign = uq.Campaign(name='gauss_fix', work_dir=tmpdir)
 
     params = {

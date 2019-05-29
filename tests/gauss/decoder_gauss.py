@@ -42,7 +42,6 @@ class GaussDecoder(BaseDecoder, decoder_name="gauss"):
             logging.error(msg)
             raise Exception(msg)
 
-        self.output_type = OutputType('sample')
         self.target_filename = target_filename
 
     @staticmethod
