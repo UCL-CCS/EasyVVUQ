@@ -29,7 +29,7 @@ __license__ = "LGPL"
 
 
 if len(sys.argv) != 2:
-    sys.exit("Usage: python3 JSONIN")
+    sys.exit("Usage: python3 gauss.py JSONIN")
 
 json_input = sys.argv[1]
 
