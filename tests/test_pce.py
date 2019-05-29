@@ -1,109 +1,91 @@
-import os
-import numpy as np
 import chaospy as cp
 import easyvvuq as uq
-# import matplotlib.pyplot as plt
 
 # author: Jalal Lakhlili
-
-# ...
+__license__ = "LGPL"
 
 
 def test_pce(tmpdir):
-    input_json = "tests/pce/pce_in.json"
-    output_json = os.path.join(tmpdir, "out_pce.json")
 
-    assert(os.path.exists(input_json))
+    # Set up a fresh campaign called "pce"
+    my_campaign = uq.Campaign(name='pce', work_dir=tmpdir)
 
-    # Initialize Campaign object
-    my_campaign = uq.Campaign(state_filename=input_json, workdir=tmpdir)
+    # Define parameter space
+    params = {
+        "kappa": {
+            "type": "real",
+            "min": "0.0",
+            "max": "0.1",
+            "default": "0.025"},
+        "t_env": {
+            "type": "real",
+            "min": "0.0",
+            "max": "40.0",
+            "default": "15.0"},
+        "out_file": {
+            "type": "str",
+            "default": "output.csv"}}
 
-    # Define the parameters dictionary
-    my_campaign.vary_param("kappa", dist=cp.Uniform(0.025, 0.075))
-    my_campaign.vary_param("t_env", dist=cp.Uniform(15, 25))
+    output_filename = params["out_file"]["default"]
+    output_columns = ["te", "ti"]
+
+    # Create an encoder, decoder and collation element for PCE test app
+    encoder = uq.encoders.GenericEncoder(
+        template_fname='tests/pce/pce.template',
+        delimiter='$',
+        target_filename='pce_in.json')
+    decoder = uq.decoders.SimpleCSV(target_filename=output_filename,
+                                    output_columns=output_columns,
+                                    header=0)
+    collation = uq.collate.AggregateSamples(average=False)
+
+    # Add the PCE app (automatically set as current app)
+    my_campaign.add_app(name="pce",
+                        params=params,
+                        encoder=encoder,
+                        decoder=decoder,
+                        collation=collation
+                        )
 
     # Create the sampler
-    my_sampler = uq.elements.sampling.PCESampler(my_campaign)
+    vary = {
+        "kappa": cp.Uniform(0.025, 0.075),
+        "t_env": cp.Uniform(15, 25)
+    }
 
-    # Use the sampler
-    my_campaign.add_runs(my_sampler)
+    my_sampler = uq.sampling.PCESampler(vary=vary, polynomial_order=3)
+
+    # Associate the sampler with the campaign
+    my_campaign.set_sampler(my_sampler)
+
+    # Will draw all (of the finite set of samples)
+    my_campaign.draw_samples()
+
     my_campaign.populate_runs_dir()
+    my_campaign.apply_for_each_run_dir(uq.actions.ExecuteLocal(
+        "tests/pce/pce_model.py pce_in.json"))
 
-    # Execute runs
-    my_campaign.apply_for_each_run_dir(
-        uq.actions.ExecuteLocal("tests/pce/pce_model.py pce_in.json"))
+    my_campaign.collate()
 
-    # Aggregate the results from all runs.
-    output_filename = my_campaign.params_info['out_file']['default']
-    output_columns = ['te']
+    # Update after here
 
-    aggregate = uq.elements.collate.AggregateSamples(
-        my_campaign,
-        output_filename=output_filename,
-        output_columns=output_columns,
-        header=0,
-    )
+    # Post-processing analysis
+    pce_analysis = uq.analysis.PCEAnalysis(sampler=my_sampler,
+                                           qoi_cols=output_columns)
 
-    aggregate.apply()
+    my_campaign.apply_analysis(pce_analysis)
 
-    # Post-processing analysis: computes the 1st two statistical moments and
-    analysis = uq.elements.analysis.PCEAnalysis(
-        my_campaign, value_cols=output_columns)
+    results = my_campaign.get_last_analysis()
 
-    stats, sobols, output_file = analysis.apply()
+    # Get Descriptive Statistics
+    stats = results['statistical_moments']['te']
+    per = results['percentiles']['te']
+    sobols = results['sobol_indices']['te'][1]
+    dist_out = results['output_distributions']['te']
 
-    return stats, sobols
-# ...
+    return stats, per, sobols, dist_out
 
 
 if __name__ == "__main__":
-    stats, sobols = test_pce("/tmp/")
 
-    # plots
-    mean = stats["mean"].to_numpy()
-    std = stats["std"].to_numpy()
-    var = stats["var"].to_numpy()
-
-    s_kappa = sobols["kappa"].to_numpy()
-    s_t_env = sobols["t_env"].to_numpy()
-
-    t = np.linspace(0, 200, 150)
-
-#    fig1 = plt.figure()
-#
-#    ax11 = fig1.add_subplot(111)
-#    ax11.plot(t, mean, 'g-', alpha=0.75, label='Mean')
-#    ax11.plot(t, mean - std, 'b-', alpha=0.25)
-#    ax11.plot(t, mean + std, 'b-', alpha=0.25)
-#    ax11.fill_between(
-#        t,
-#        mean - std,
-#        mean + std,
-#        alpha=0.25,
-#        label=r'Mean $\pm$ deviation')
-#    ax11.set_xlabel('Time')
-#    ax11.set_ylabel('Temperature', color='b')
-#    ax11.tick_params('y', colors='b')
-#    ax11.legend()
-#
-#    ax12 = ax11.twinx()
-#    ax12.plot(t, var, 'r-', alpha=0.5)
-#    ax12.set_ylabel('Variance', color='r')
-#    ax12.tick_params('y', colors='r')
-#
-#    ax11.grid()
-#    plt.title('Statistical moments')
-#
-#    fig2 = plt.figure()
-#    ax2 = fig2.add_subplot(111)
-#    ax2.plot(t, s_kappa, 'b-', label=r'$\kappa$')
-#    ax2.plot(t, s_t_env, 'g-', label=r'$t_{env}$')
-#    ax2.legend()
-#    ax2.set_xlabel('Time')
-#    ax2.set_ylabel('Sobol indices')
-#    ax2.set_title('First order Sobol indices')
-#
-#    ax2.grid()
-#    ax2.legend()
-#
-#    plt.show()
+    stats, per, sobols, dist_out = test_pce("/tmp/")

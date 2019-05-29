@@ -1,4 +1,6 @@
-from .distributions import uniform_integer, custom_histogram, legendre
+from easyvvuq import Campaign
+from .. import BaseElement
+
 
 __copyright__ = """
 
@@ -21,3 +23,25 @@ __copyright__ = """
 
 """
 __license__ = "LGPL"
+
+
+class BaseAnalysisElement(BaseElement):
+    """Baseclass for all EasyVVUQ analysis elements.
+
+    Parameters
+    ----------
+    data_src    : dict or Campaign or stream
+        Information on the infomration Application information.
+        Will try interpreting as a dict or JSON file/stream or filename.
+
+
+    Attributes
+    ----------
+
+    """
+
+    def analyse(self):
+        raise NotImplementedError
+
+    def element_category(self):
+        return "analysis"

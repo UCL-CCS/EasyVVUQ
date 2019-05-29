@@ -1,4 +1,7 @@
-from .distributions import uniform_integer, custom_histogram, legendre
+from .base import BaseSamplingElement, Vary
+from .random import RandomSampler
+from .stochastic_collocation import SCSampler
+from .pce import PCESampler
 
 __copyright__ = """
 

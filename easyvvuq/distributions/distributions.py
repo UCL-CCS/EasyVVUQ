@@ -44,48 +44,7 @@ def options(choices):
             yield choice
 
 
-def normal(mean, sigma):
-    """
-    Generator returning samples picked from the specified normal distribution
-
-    Parameters
-    ----------
-    mean:   float
-        Mean of the normal distribution
-    sigma:  float
-        Standard deviation of the normal distribution
-
-    Yields
-    -------
-    float
-        Number drawn from provided distribution
-    """
-
-    while True:
-        yield np.random.normal(mean, sigma)
-
-
-def uniform(min_val, max_val):
-    """
-    Generator returning values picked from the specified uniform distribution
-
-    Parameters
-    ----------
-    min_val:    float
-        Minimum value covered by the distribution
-    max_val:    float
-        Maximum value covered by the distribution
-
-    Yields
-    -------
-    float
-        Number drawn from provided distribution
-
-    """
-    while True:
-        yield np.random.uniform(min_val, max_val)
-
-
+# TODO: Convert this to a chaospy style distribution
 def uniform_integer(min_val, max_val):
     """
     Generator returning integer values picked from the specified uniform distribution
@@ -107,6 +66,7 @@ def uniform_integer(min_val, max_val):
         yield np.random.randint(min_val, max_val)
 
 
+# TODO: Convert this to a chaospy style distribution
 def custom_histogram(filename):
     """
     Create a generator from histogram read from a CSV file
@@ -141,6 +101,9 @@ def custom_histogram(filename):
 
     while True:
         yield np.random.choice(values, p=probabilities)
+
+# TODO: This is deprecated. Chaospy version should be used from now on.
+# Remove once nothing depends on this.
 
 
 def legendre(m):

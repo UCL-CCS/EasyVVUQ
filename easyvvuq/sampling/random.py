@@ -1,6 +1,7 @@
-import os
+from .base import BaseSamplingElement, Vary
+from easyvvuq import distributions
+import logging
 import json
-from easyvvuq.encoders import BaseEncoder
 
 __copyright__ = """
 
@@ -25,28 +26,31 @@ __copyright__ = """
 __license__ = "LGPL"
 
 
-class GaussEncoder(BaseEncoder, encoder_name="gauss"):
+class RandomSampler(BaseSamplingElement, sampler_name="random_sampler"):
 
-    def __init__(self, target_filename="gauss_input.json"):
-        self.target_filename = target_filename
-
-    def encode(self, params={}, target_dir=''):
-
-        out_file = params['out_file']
-        num_steps = params['num_steps']
-        mu = params['mu']
-        sigma = params['sigma']
-
-        output_str = (f'{{"outfile": "{out_file}", "num_steps": "{num_steps}",'
-                      f' "mu": "{mu}", "sigma": "{sigma}"}}\n')
-
-        target_file_path = os.path.join(target_dir, self.target_filename)
-        with open(target_file_path, "w") as outfile:
-            outfile.write(output_str)
-
-    def get_restart_dict(self):
-        return {"target_filename": self.target_filename,
-                }
+    def __init__(self, vary=None, count=0):
+        """
+            Expects dict of var names, and their corresponding distributions
+        """
+        self.vary = Vary(vary)
+        self.count = count
 
     def element_version(self):
         return "0.1"
+
+    def is_finite(self):
+        return False
+
+    def generate_runs(self) -> dict:
+        while True:
+            run_dict = {}
+            for param_name, dist in self.vary.get_items():
+                run_dict[param_name] = dist.sample(1)[0]
+            self.count += 1
+            yield(run_dict)
+
+    def is_restartable(self):
+        return True
+
+    def get_restart_dict(self):
+        return {"vary": self.vary.serialize(), "count": self.count}

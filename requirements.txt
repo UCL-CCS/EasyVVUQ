@@ -4,3 +4,6 @@ scipy==1.2.1
 chaospy
 pytest
 pytest-pep8
+SQLAlchemy
+sqlalchemy-utils
+matplotlib

@@ -1,4 +1,16 @@
-from easyvvuq import OutputType
+"""Provides baseclass for all decoders and dictionary to register all imported
+decoders.
+
+Decoders are objects which provide functions to check simulation runs have
+completed and parse the output when they have.
+
+Attributes
+----------
+AVAILABLE_DECODERS : dict
+    Registers all imported decoders.
+"""
+from easyvvuq.base_element import BaseElement
+import json
 
 __copyright__ = """
 
@@ -25,10 +37,10 @@ __license__ = "LGPL"
 
 # Dict to store all registered decoders (any class which extends
 # BaseDecoder is automatically registered as an decoder)
-available_decoders = {}
+AVAILABLE_DECODERS = {}
 
 
-class BaseDecoder(object):
+class BaseDecoder(BaseElement):
     """Baseclass for all EasyVVUQ decoders.
 
     Skeleton decoder which establishes the format and provides the basis of our
@@ -43,11 +55,6 @@ class BaseDecoder(object):
 
     """
 
-    def __init__(self, *args, **kwargs):
-
-        self.output_type = OutputType('sample')
-        self.output_columns = []
-
     def __init_subclass__(cls, decoder_name, **kwargs):
         """
         Catch any new decoders (all decoders must inherit from BaseDecoder) and add them
@@ -55,11 +62,56 @@ class BaseDecoder(object):
         """
         super().__init_subclass__(**kwargs)
 
+        cls.decoder_name = decoder_name
+
         # Register new decoder
-        available_decoders[decoder_name] = cls
+        AVAILABLE_DECODERS[decoder_name] = cls
 
-    def sim_complete(self, run_info={}, *args, **kwargs):
+    def sim_complete(self, run_info=None):
+        """
+        Check whether the simulation specified by `run_info` has completed and
+        produced results.
+
+        Parameters
+        ----------
+        run_info: dict or None
+            Information defining the run to check.
+
+        Returns
+        -------
+
+        """
         raise NotImplementedError
 
-    def parse_sim_output(self, *args, run_info={}, **kwargs):
+    def parse_sim_output(self, run_info=None):
+        """
+
+        Parameters
+        ----------
+        run_info: dict or None
+            Information defining the run for which we want to parse the output.
+        *args
+            Variable length argument list.
+        **kwargs
+            Arbitrary keyword arguments.
+
+        Returns
+        -------
+
+        """
         raise NotImplementedError
+
+    def element_category(self):
+        return "decoding"
+
+    def element_name(self):
+        return self.decoder_name
+
+    def is_restartable(self):
+        return True
+
+    @staticmethod
+    def deserialize(decoderstr):
+        decoderdict = json.loads(decoderstr)
+        decoder = AVAILABLE_DECODERS[decoderdict["element_name"]](**decoderdict["state"])
+        return decoder
