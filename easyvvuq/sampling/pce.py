@@ -1,7 +1,7 @@
 import logging
 import numpy as np
 import chaospy as cp
-from .base import BaseSamplingElement
+from .base import BaseSamplingElement, Vary
 import json
 
 # author: Jalal Lakhlili
@@ -11,6 +11,7 @@ __license__ = "LGPL"
 class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
     def __init__(self,
                  vary=None,
+                 count=0,
                  polynomial_order=4,
                  quadrature_rule="G",
                  sparse=False):
@@ -50,7 +51,11 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
             logging.error(msg)
             raise Exception(msg)
 
-        self.vary = vary
+        self.vary = Vary(vary)
+        self.count = count
+        self.polynomial_order = polynomial_order
+        self.quadrature_rule = quadrature_rule
+        self.sparse = sparse
 
         # List of the probability distributions of uncertain parameters
         params_distribution = list(vary.values())
@@ -75,26 +80,31 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
         # Number of samples
         self._number_of_samples = len(self._nodes[0])
 
-        # Keep track of how many samples we have drawn
-        self.count = 0
-
     def element_version(self):
         return "0.3"
 
     def is_finite(self):
         return True
 
-    def generate_runs(self):
+    def is_restartable(self):
+        return True
 
-        for i_val in range(self._number_of_samples):
+    def __next__(self):
+        if self.count < self._number_of_samples:
             run_dict = {}
             i_par = 0
-            for param_name in self.vary.keys():
-                run_dict[param_name] = self._nodes.T[i_val][i_par]
+            for param_name in self.vary.get_keys():
+                run_dict[param_name] = self._nodes.T[self.count][i_par]
                 i_par += 1
-
             self.count += 1
-            yield run_dict
+            return run_dict
+        else:
+            raise StopIteration
 
     def get_restart_dict(self):
-        return json.dumps({"count": self.count})
+        return json.dumps({
+                "vary": self.vary.serialize(),
+                "count": self.count,
+                "polynomial_order": self.polynomial_order,
+                "quadrature_rule": self.quadrature_rule,
+                "sparse": self.sparse})

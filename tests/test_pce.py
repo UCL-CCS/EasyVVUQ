@@ -83,6 +83,14 @@ def test_pce(tmpdir):
     sobols = results['sobol_indices']['te'][1]
     dist_out = results['output_distributions']['te']
 
+
+    # Test saving and reloading campaign
+    state_file = tmpdir + "pce_state.json"
+    my_campaign.save_state(state_file)
+    new = uq.Campaign(state_file=state_file, work_dir=tmpdir)
+    print(new)
+
+
     return stats, per, sobols, dist_out
 
 
