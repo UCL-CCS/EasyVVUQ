@@ -1,94 +1,73 @@
 import os
 import easyvvuq as uq
 import chaospy as cp
-from gauss.decoder_gauss import GaussDecoder
 
-__copyright__ = """
+# 0. Setup some variables describing app to be run
+#
+# gauss.py is in current directory and takes one input file
+# and writes to 'output.csv'.
+cwd = os.cwd()
+input_filename = gauss_in.json
+cmd = f"{cwd}/gauss.py {input_filename}"
+out_file = "output.csv"
+# Template input to substitute values into for each run
+template = f"{cwd}/gauss_in.template"
 
-    Copyright 2018 Robin A. Richardson, David W. Wright
+# 1. Create campaign with the name "gauss"
+my_campaign = uq.Campaign(name='gauss', work_dir=".")
 
-    This file is part of EasyVVUQ
+# 2. Parameter space definition
+params = {
+    "sigma": {"type": "real", "min": "0.0", "max": "100000.0",
+              "default": "0.25"},
+    "mu": {"type": "real", "min": "0.0", "max": "100000.0",
+           "default": "1"},
+    "num_steps": {"type": "int", "min": "0", "max": "100000",
+                  "default": "10"},
+    "out_file": {"type": "str", "default": out_file}
+}
 
-    EasyVVUQ is free software: you can redistribute it and/or modify
-    it under the terms of the Lesser GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+# 3. Create and add elements to the campaign
+encoder = uq.encoders.GenericEncoder(template_fname=template,
+                                     target_filename=input_filename)
 
-    EasyVVUQ is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    Lesser GNU General Public License for more details.
+decoder = uq.decoders.SimpleCSV(
+            target_filename=out_file, 
+            output_columns=['Step', 'Value'], 
+            header=0)
 
-    You should have received a copy of the Lesser GNU General Public License
-    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+collation = uq.collate.AggregateSamples(average=True)
 
-"""
-__license__ = "LGPL"
+my_campaign.add_app(name="gauss",
+                    params=params,
+                    encoder=encoder,
+                    decoder=decoder,
+                    collation=collation
+                    )
 
+# 4. Make a random sampler to vary the `mu` parameter and add to campaign
+vary = {
+    "mu": cp.Uniform(1.0, 100.0),
+}
 
-def test_gauss(tmpdir):
+my_sampler = uq.sampling.RandomSampler(vary=vary)
 
-    # Set up a fresh campaign called "cannon"
-    my_campaign = uq.Campaign(name='gauss', work_dir=tmpdir)
+my_campaign.set_sampler(my_sampler)
 
-    params = {
-        "sigma": {"type": "real", "min": "0.0", "max": "100000.0",
-                  "default": "0.25"},
-        "mu": {"type": "real", "min": "0.0", "max": "100000.0",
-               "default": "1"},
-        "num_steps": {"type": "int", "min": "0", "max": "100000",
-                      "default": "10"},
-        "out_file": {"type": "str", "default": "output.csv"}
-    }
+# 5. Create sample run parameter sets
+my_campaign.draw_samples(num_samples=3,
+                         replicas=5)
 
-    number_of_samples = 3
-    number_of_replicas = 5
+# 6. Create input directories for each sample
+my_campaign.populate_runs_dir()
 
-    # Create an encoder, decoder and collation element for the cannonsim app
-    encoder = uq.encoders.GenericEncoder(template_fname='tests/gauss/gauss.template',
-                                         target_filename='gauss_in.json')
-    decoder = GaussDecoder(target_filename=params['out_file']['default'])
-    collation = uq.collate.AggregateSamples(average=True)
+# 7. Run gauss for each sample
+my_campaign.apply_for_each_run_dir(uq.actions.ExecuteLocal(cmd)
 
-    my_campaign.add_app(name="gauss",
-                        params=params,
-                        encoder=encoder,
-                        decoder=decoder,
-                        collation=collation
-                        )
+# 8. Collate output from all samples
+my_campaign.collate()
 
-    # Make a random sampler
-    vary = {
-        "mu": cp.Uniform(1.0, 100.0),
-    }
-    sampler1 = uq.sampling.RandomSampler(vary=vary)
-
-    # Set the campaign to use this sampler
-    my_campaign.set_sampler(sampler1)
-
-    # Draw samples
-    my_campaign.draw_samples(num_samples=number_of_samples,
-                             replicas=number_of_replicas)
-
-    # TODO: Assert no. samples in db = number_of_samples*number_of_replicas
-
-    my_campaign.populate_runs_dir()
-
-    assert(len(my_campaign.get_campaign_runs_dir()) > 0)
-    runs_dir = my_campaign.get_campaign_runs_dir()
-    assert(os.path.exists(runs_dir))
-    assert(os.path.isdir(runs_dir))
-
-    my_campaign.apply_for_each_run_dir(
-        uq.actions.ExecuteLocal("tests/gauss/gauss_json.py gauss_in.json"))
-
-    my_campaign.collate()
-
-    # Create a BasicStats analysis element and apply it to the campaign
-    stats = uq.analysis.EnsembleBoot(groupby=["mu"], qoi_cols=["Value"])
-    my_campaign.apply_analysis(stats)
-    print("stats:", my_campaign.get_last_analysis())
-
-
-if __name__ == "__main__":
-    test_gauss("/tmp/")
+# 9. Calculate bootstrap statistics to collated data
+stats = uq.analysis.EnsembleBoot(groupby=["mu"], qoi_cols=["Value"])
+my_campaign.apply_analysis(stats)
+print("stats:", my_campaign.get_last_analysis())
