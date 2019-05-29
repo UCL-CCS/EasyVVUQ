@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 setup(
     name='easyvvuq',
 
-    version='0.0.1.dev1',
+    version='0.0.3.dev1',
 
     description=('Library to facilitate simple Verification, Validation and '
                  'Uncertainty Quantification of simulation codes'),
