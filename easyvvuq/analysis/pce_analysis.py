@@ -34,10 +34,10 @@ class PCEAnalysis(BaseAnalysisElement):
             raise RuntimeError("Analysis element requires a list of "
                                "quantities of interest (qoi)")
 
-        if sobol_order > len(sampler.vary):
+        if sobol_order > len(sampler.vary.vary_dict):
             logger.warning("sobol_order too high - set to number of "
                            "variables from sampler")
-            sobol_order = len(sampler.vary)
+            sobol_order = len(sampler.vary.vary_dict)
 
         self.sobol_order = sobol_order
         self.params_cols = params_cols
@@ -102,7 +102,7 @@ class PCEAnalysis(BaseAnalysisElement):
             sobol_first_narr = cp.Sens_m(fit, self.sampler.distribution)
             sobol_first_dict = {}
             i_par = 0
-            for param_name in self.sampler.vary.keys():
+            for param_name in self.sampler.vary.get_keys():
                 sobol_first_dict[param_name] = sobol_first_narr[i_par]
                 i_par += 1
             # 1 here = order

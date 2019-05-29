@@ -102,9 +102,8 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
             raise StopIteration
 
     def get_restart_dict(self):
-        return json.dumps({
-                "vary": self.vary.serialize(),
+        return {"vary": self.vary.serialize(),
                 "count": self.count,
                 "polynomial_order": self.polynomial_order,
                 "quadrature_rule": self.quadrature_rule,
-                "sparse": self.sparse})
+                "sparse": self.sparse}
