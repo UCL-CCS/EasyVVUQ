@@ -44,7 +44,7 @@ def test_gauss(tmpdir):
     number_of_samples = 3
     number_of_replicas = 5
 
-    # Create an encoder, decoder and collation element for the cannonsim app
+    # Create an encoder, decoder and collation element for the gauss app
     encoder = uq.encoders.GenericEncoder(template_fname='tests/gauss/gauss.template',
                                          target_filename='gauss_in.json')
     decoder = GaussDecoder(target_filename=params['out_file']['default'])
