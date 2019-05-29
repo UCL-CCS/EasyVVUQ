@@ -66,19 +66,22 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
     def is_finite(self):
         return True
 
+    def __iter__(self):
+        return self
+
     # SC collocations points are not random, generate_runs simply returns
     # one collocation point from the tensor product after the other
-    def generate_runs(self):
-
-        for i_val in range(self._number_of_samples):
+    def __next__(self):
+        if self.count < self._number_of_samples:
             run_dict = {}
             i_par = 0
             for param_name in self.vary.get_keys():
-                run_dict[param_name] = self.xi_d[i_val][i_par]
+                run_dict[param_name] = self.xi_d[self.count][i_par]
                 i_par += 1
-
             self.count += 1
-            yield run_dict
+            return run_dict
+        else:
+            raise StopIteration
 
     def is_restartable(self):
         return True

@@ -146,8 +146,6 @@ class Vary:
         for var, dist in self.vary_dict.items():
             serialized_vary[var] = self.serialize_distribution(dist)
 
-        print(serialized_vary)
-
         return json.dumps(serialized_vary)
 
     @staticmethod
@@ -155,7 +153,5 @@ class Vary:
         vary = json.loads(serialized_vary)
         for var, sdist in vary.items():
             vary[var] = Vary.deserialize_distribution(sdist)
-
-        print("deser")
 
         return Vary(vary)
