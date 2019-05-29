@@ -12,6 +12,7 @@ dist/
 easyvvuq.egg-info/
 .idea/
 .vscode/
+docs/_build/
 run_tests_psm.sh
 pep.sh
 *.swp
