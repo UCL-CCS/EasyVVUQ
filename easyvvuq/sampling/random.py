@@ -28,12 +28,11 @@ __license__ = "LGPL"
 
 class RandomSampler(BaseSamplingElement, sampler_name="random_sampler"):
 
-    def __init__(self, vary=None, count=0):
+    def __init__(self, vary=None):
         """
             Expects dict of var names, and their corresponding distributions
         """
         self.vary = Vary(vary)
-        self.count = count
 
     def element_version(self):
         return "0.1"
@@ -41,16 +40,17 @@ class RandomSampler(BaseSamplingElement, sampler_name="random_sampler"):
     def is_finite(self):
         return False
 
-    def generate_runs(self) -> dict:
-        while True:
-            run_dict = {}
-            for param_name, dist in self.vary.get_items():
-                run_dict[param_name] = dist.sample(1)[0]
-            self.count += 1
-            yield(run_dict)
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        run_dict = {}
+        for param_name, dist in self.vary.get_items():
+            run_dict[param_name] = dist.sample(1)[0]
+        return run_dict
 
     def is_restartable(self):
         return True
 
     def get_restart_dict(self):
-        return {"vary": self.vary.serialize(), "count": self.count}
+        return {"vary": self.vary.serialize()}
