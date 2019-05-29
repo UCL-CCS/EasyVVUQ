@@ -6,3 +6,4 @@ pytest
 pytest-pep8
 SQLAlchemy
 sqlalchemy-utils
+matplotlib

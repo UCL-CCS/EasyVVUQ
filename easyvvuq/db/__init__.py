@@ -1,20 +1,4 @@
-import sys
-from .constants import OutputType
-from . import data_structs
-from .campaign import Campaign
-from . import actions
-from . import distributions
-from . import encoders
-from . import decoders
-from .base_element import BaseElement
-from . import sampling
-from . import analysis
-from . import comparison
-from . import collate
-
-# First make sure python version is 3.6+
-assert sys.version_info >= (3, 6), (f"Python version must be >= 3.6,"
-                                    f"found {sys.version_info}")
+from .base import BaseCampaignDB
 
 __copyright__ = """
 

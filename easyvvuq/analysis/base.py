@@ -1,20 +1,6 @@
-import sys
-from .constants import OutputType
-from . import data_structs
-from .campaign import Campaign
-from . import actions
-from . import distributions
-from . import encoders
-from . import decoders
-from .base_element import BaseElement
-from . import sampling
-from . import analysis
-from . import comparison
-from . import collate
+from easyvvuq import Campaign
+from .. import BaseElement
 
-# First make sure python version is 3.6+
-assert sys.version_info >= (3, 6), (f"Python version must be >= 3.6,"
-                                    f"found {sys.version_info}")
 
 __copyright__ = """
 
@@ -37,3 +23,25 @@ __copyright__ = """
 
 """
 __license__ = "LGPL"
+
+
+class BaseAnalysisElement(BaseElement):
+    """Baseclass for all EasyVVUQ analysis elements.
+
+    Parameters
+    ----------
+    data_src    : dict or Campaign or stream
+        Information on the infomration Application information.
+        Will try interpreting as a dict or JSON file/stream or filename.
+
+
+    Attributes
+    ----------
+
+    """
+
+    def analyse(self):
+        raise NotImplementedError
+
+    def element_category(self):
+        return "analysis"

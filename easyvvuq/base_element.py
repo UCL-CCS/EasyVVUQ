@@ -1,20 +1,4 @@
-import sys
-from .constants import OutputType
-from . import data_structs
-from .campaign import Campaign
-from . import actions
-from . import distributions
-from . import encoders
-from . import decoders
-from .base_element import BaseElement
-from . import sampling
-from . import analysis
-from . import comparison
-from . import collate
-
-# First make sure python version is 3.6+
-assert sys.version_info >= (3, 6), (f"Python version must be >= 3.6,"
-                                    f"found {sys.version_info}")
+import json
 
 __copyright__ = """
 
@@ -37,3 +21,36 @@ __copyright__ = """
 
 """
 __license__ = "LGPL"
+
+
+class BaseElement(object):
+    """Baseclass for all EasyVVUQ elements.
+
+    Attributes
+    ----------
+
+    """
+
+    def element_name(self):
+        raise NotImplementedError
+
+    def element_version(self):
+        raise NotImplementedError
+
+    def element_category(self):
+        raise NotImplementedError
+
+    def is_restartable(self):
+        return False
+
+    def get_restart_dict(self):
+        return None
+
+    def serialize(self):
+        return json.dumps({
+            "element_name": self.element_name(),
+            "element_version": self.element_version(),
+            "element_category": self.element_category(),
+            "restartable": self.is_restartable(),
+            "state": self.get_restart_dict()
+        })
