@@ -72,7 +72,22 @@ class BaseSamplingElement(BaseElement):
     def is_finite(self):
         raise NotImplementedError
 
-    def generate_runs(self):
+    def __iter__(self):
+        """
+        This method allows the sampler to be used as an iterator.
+        The campaign object's draw_samples() method uses samplers
+        in that manner.
+        """
+        return self
+
+    def __next__(self):
+        """
+        This must be implemented by any sampler class.
+        It should return the next run in the sequence.
+        In the case of a finite sampler, when there are
+        no more runs remaining, __next__() should
+        raise a StopIteration exception
+        """
         raise NotImplementedError
 
     @staticmethod

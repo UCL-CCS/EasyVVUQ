@@ -40,9 +40,6 @@ class RandomSampler(BaseSamplingElement, sampler_name="random_sampler"):
     def is_finite(self):
         return False
 
-    def __iter__(self):
-        return self
-
     def __next__(self):
         run_dict = {}
         for param_name, dist in self.vary.get_items():
