@@ -114,7 +114,7 @@ if __name__ == "__main__":
 
     # generate random samples of unobserved parameter values
     n_mc = 100
-    dists = sc_analysis.sampler.vary
+    dists = sc_analysis.sampler.vary.vary_dict
     xi_mc = np.zeros([n_mc, 2])
     xi_mc[:, 0] = dists['Pe'].sample(n_mc)
     xi_mc[:, 1] = dists['f'].sample(n_mc)
