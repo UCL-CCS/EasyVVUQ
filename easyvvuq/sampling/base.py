@@ -124,6 +124,12 @@ class Vary:
     def get_items(self):
         return self.vary.items()
 
+    def get_values(self):
+        return self.vary.values()
+
+    def get_keys(self):
+        return self.vary.keys()
+
     def __str__(self):
         return self.vary.__str__()
 

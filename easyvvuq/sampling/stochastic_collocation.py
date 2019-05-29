@@ -1,5 +1,5 @@
 import logging
-from .base import BaseSamplingElement
+from .base import BaseSamplingElement, Vary
 #import numpy as np
 import chaospy as cp
 #from itertools import product
@@ -34,27 +34,10 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
             default is False.
         """
 
-        if vary is None:
-            msg = ("'vary' cannot be None. RandomSampler must be passed a "
-                   "dict of the names of the parameters you want to vary, "
-                   "and their corresponding distributions.")
-            logging.error(msg)
-            raise Exception(msg)
-        if not isinstance(vary, dict):
-            msg = ("'vary' must be a dictionary of the names of the "
-                   "parameters you want to vary, and their corresponding "
-                   "distributions.")
-            logging.error(msg)
-            raise Exception(msg)
-        if len(vary) == 0:
-            msg = "'vary' cannot be empty."
-            logging.error(msg)
-            raise Exception(msg)
-
-        self.vary = vary
+        self.vary = Vary(vary)
 
         # List of the probability distributions of uncertain parameters
-        params_distribution = list(vary.values())
+        params_distribution = list(self.vary.get_values())
 
         # Multivariate distribution
         self.joint_dist = cp.J(*params_distribution)
@@ -87,9 +70,15 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
         for i_val in range(self._number_of_samples):
             run_dict = {}
             i_par = 0
-            for param_name in self.vary.keys():
+            for param_name in self.vary.get_keys():
                 run_dict[param_name] = self.xi_d[i_val][i_par]
                 i_par += 1
 
             self.count += 1
             yield run_dict
+
+    def is_restartable(self):
+        return True
+
+    def get_restart_dict(self):
+        return {"vary": self.vary.serialize(), "count": self.count}
