@@ -30,7 +30,7 @@ __license__ = "LGPL"
 
 def test_gauss_custom_encoder(tmpdir):
 
-    # Set up a fresh campaign called "cannon"
+    # Set up a fresh campaign called "gauss_custom"
     my_campaign = uq.Campaign(name='gauss_custom', work_dir=tmpdir)
 
     params = {
@@ -46,7 +46,7 @@ def test_gauss_custom_encoder(tmpdir):
     number_of_samples = 3
     number_of_replicas = 5
 
-    # Create an encoder, decoder and collation element for the cannonsim app
+    # Create an encoder, decoder and collation element for the gauss app
     encoder = GaussEncoder(target_filename='gauss_in.json')
     decoder = GaussDecoder(target_filename=params['out_file']['default'])
     collation = uq.collate.AggregateSamples(average=True)
@@ -85,7 +85,7 @@ def test_gauss_custom_encoder(tmpdir):
 
     my_campaign.collate()
 
-    # Create a BasicStats analysis element and apply it to the campaign
+    # Create a EnsembleBoot analysis element and apply it to the campaign
     stats = uq.analysis.EnsembleBoot(groupby=["mu"], qoi_cols=["Value"])
     my_campaign.apply_analysis(stats)
     print("stats:", my_campaign.get_last_analysis())

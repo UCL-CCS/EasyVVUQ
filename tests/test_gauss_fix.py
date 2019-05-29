@@ -97,7 +97,7 @@ def test_gauss_fix(tmpdir):
 
     my_campaign.collate()
 
-    # Create a BasicStats analysis element and apply it to the campaign
+    # Create a EnsembleBoot analysis element and apply it to the campaign
     stats = uq.analysis.EnsembleBoot(groupby=["mu"], qoi_cols=["Value"])
     my_campaign.apply_analysis(stats)
     print("stats:", my_campaign.get_last_analysis())
