@@ -75,6 +75,12 @@ def test_sc(tmpdir):
 
     results = my_campaign.get_last_analysis()
 
+    # Save and reload campaign
+    state_file = tmpdir + "sc_state.json"
+    my_campaign.save_state(state_file)
+    new = uq.Campaign(state_file=state_file, work_dir=tmpdir)
+    print(new)
+
     return results, sc_analysis
 
 
