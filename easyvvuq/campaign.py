@@ -519,7 +519,7 @@ class Campaign:
             raise RuntimeError(msg)
 
         num_added = 0
-        for new_run in self._active_sampler.generate_runs():
+        for new_run in self._active_sampler:
 
             for __ in range(replicas):
                 self.add_run(new_run)

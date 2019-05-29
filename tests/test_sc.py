@@ -60,6 +60,8 @@ def test_sc(tmpdir):
     # Associate the sampler with the campaign
     my_campaign.set_sampler(my_sampler)
 
+    print(my_sampler.serialize())
+
     # Will draw all (of the finite set of samples)
     my_campaign.draw_samples()
 
@@ -74,6 +76,12 @@ def test_sc(tmpdir):
     my_campaign.apply_analysis(sc_analysis)
 
     results = my_campaign.get_last_analysis()
+
+    # Save and reload campaign
+    state_file = tmpdir + "sc_state.json"
+    my_campaign.save_state(state_file)
+    new = uq.Campaign(state_file=state_file, work_dir=tmpdir)
+    print(new)
 
     return results, sc_analysis
 
@@ -106,7 +114,7 @@ if __name__ == "__main__":
 
     # generate random samples of unobserved parameter values
     n_mc = 100
-    dists = sc_analysis.sampler.vary
+    dists = sc_analysis.sampler.vary.vary_dict
     xi_mc = np.zeros([n_mc, 2])
     xi_mc[:, 0] = dists['Pe'].sample(n_mc)
     xi_mc[:, 1] = dists['f'].sample(n_mc)
