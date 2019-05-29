@@ -49,7 +49,7 @@ class SCAnalysis(BaseAnalysisElement):
         # Chaospy computation of 1D weights
         xi = []
         wi = []
-        for dist in self.sampler.vary.values():
+        for dist in self.sampler.vary.get_values():
             xi_i, wi_i = cp.generate_quadrature(
                 self.sampler.quad_order, dist, rule=self.sampler.quad_rule)
             xi.append(xi_i.flatten())

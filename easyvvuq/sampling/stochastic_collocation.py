@@ -15,7 +15,8 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
     def __init__(self,
                  vary=None,
                  polynomial_order=4,
-                 quadrature_rule="G"):
+                 quadrature_rule="G",
+                 count=0):
         """
         Create the sampler for the Polynomial Chaos Expansion method.
 
@@ -35,9 +36,14 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
         """
 
         self.vary = Vary(vary)
+        self.polynomial_order = polynomial_order
+        self.quadrature_rule = quadrature_rule
+        self.count = 0
 
         # List of the probability distributions of uncertain parameters
         params_distribution = list(self.vary.get_values())
+
+        print("param dist", params_distribution)
 
         # Multivariate distribution
         self.joint_dist = cp.J(*params_distribution)
@@ -53,9 +59,6 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
         self.xi_d = xi_d.T
 
         self._number_of_samples = self.xi_d.shape[0]
-
-        # required counter in generate_runs()
-        self.count = 0
 
     def element_version(self):
         return "0.3"
@@ -81,4 +84,8 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
         return True
 
     def get_restart_dict(self):
-        return {"vary": self.vary.serialize(), "count": self.count}
+        return {
+            "vary": self.vary.serialize(),
+            "polynomial_order": self.polynomial_order,
+            "quadrature_rule": self.quadrature_rule,
+            "count": self.count}

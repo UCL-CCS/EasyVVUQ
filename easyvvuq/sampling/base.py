@@ -2,6 +2,7 @@ from .. import BaseElement
 import importlib
 import logging
 import json
+import jsonpickle
 
 __copyright__ = """
 
@@ -95,53 +96,66 @@ class BaseSamplingElement(BaseElement):
             logging.error(msg)
             raise Exception(msg)
 
-        inputs["state"]["vary"] = Vary.deserialize(inputs["state"]["vary"]).vary
+        inputs["state"]["vary"] = Vary.deserialize(inputs["state"]["vary"]).vary_dict
         sampler = AVAILABLE_SAMPLERS[inputs["element_name"]](**inputs["state"])
         return sampler
 
 
 class Vary:
-    def __init__(self, vary):
-        if vary is None:
-            msg = ("'vary' cannot be None. RandomSampler must be passed a "
+    def __init__(self, vary_dict):
+        if vary_dict is None:
+            msg = ("'vary_dict' cannot be None. RandomSampler must be passed a "
                    "dict of the names of the parameters you want to vary, "
                    "and their corresponding distributions.")
             logging.error(msg)
             raise Exception(msg)
-        if not isinstance(vary, dict):
-            msg = ("'vary' must be a dictionary of the names of the "
+        if not isinstance(vary_dict, dict):
+            msg = ("'vary_dict' must be a dictionary of the names of the "
                    "parameters you want to vary, and their corresponding "
                    "distributions.")
             logging.error(msg)
             raise Exception(msg)
-        if len(vary) == 0:
-            msg = "'vary' cannot be empty."
+        if len(vary_dict) == 0:
+            msg = "'vary_dict' cannot be empty."
             logging.error(msg)
             raise Exception(msg)
 
-        self.vary = vary
+        self.vary_dict = vary_dict
 
     def get_items(self):
-        return self.vary.items()
+        return self.vary_dict.items()
 
     def get_values(self):
-        return self.vary.values()
+        return self.vary_dict.values()
 
     def get_keys(self):
-        return self.vary.keys()
+        return self.vary_dict.keys()
 
     def __str__(self):
-        return self.vary.__str__()
+        return self.vary_dict.__str__()
+
+    def serialize_distribution(self, dist):
+        return jsonpickle.encode(dist)
+
+    @staticmethod
+    def deserialize_distribution(sdist):
+        return jsonpickle.decode(sdist)
 
     def serialize(self):
         serialized_vary = {}
-        for var, dist in self.vary.items():
-            serialized_vary[var] = dist.__class__.__module__
+        for var, dist in self.vary_dict.items():
+            serialized_vary[var] = self.serialize_distribution(dist)
+
+        print(serialized_vary)
+
         return json.dumps(serialized_vary)
 
     @staticmethod
     def deserialize(serialized_vary):
         vary = json.loads(serialized_vary)
-        for var, dist in vary.items():
-            vary[var] = importlib.import_module(dist)
+        for var, sdist in vary.items():
+            vary[var] = Vary.deserialize_distribution(sdist)
+
+        print("deser")
+
         return Vary(vary)

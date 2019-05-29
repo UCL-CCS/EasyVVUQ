@@ -60,6 +60,8 @@ def test_sc(tmpdir):
     # Associate the sampler with the campaign
     my_campaign.set_sampler(my_sampler)
 
+    print(my_sampler.serialize())
+
     # Will draw all (of the finite set of samples)
     my_campaign.draw_samples()
 
