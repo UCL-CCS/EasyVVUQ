@@ -6,12 +6,12 @@ import chaospy as cp
 #
 #    gauss.py is in current directory and takes one input file
 #    and writes to 'output.csv'.
-cwd = os.cwd()
-input_filename = gauss_in.json
+cwd = os.getcwd()
+input_filename = 'gauss_in.json'
 cmd = f"{cwd}/gauss.py {input_filename}"
 out_file = "output.csv"
 # Template input to substitute values into for each run
-template = f"{cwd}/gauss_in.template"
+template = f"{cwd}/gauss.template"
 
 # 1. Create campaign
 my_campaign = uq.Campaign(name='gauss', work_dir=".")
@@ -65,7 +65,7 @@ my_campaign.populate_runs_dir()
 
 # 7. Run Application
 #    - gauss is executed for each sample
-my_campaign.apply_for_each_run_dir(uq.actions.ExecuteLocal(cmd)
+my_campaign.apply_for_each_run_dir(uq.actions.ExecuteLocal(cmd))
 
 # 8. Collate output
 my_campaign.collate()
