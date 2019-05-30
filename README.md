@@ -32,4 +32,4 @@ make -C tests/cannonsim/src/
 
 ## Getting Started
 
-Some very basic documentation on how to use EasyVVUQ is available in the [wiki](https://github.com/UCL-CCS/EasyVVUQ/wiki/Getting-Started).
+Documentation, including a basic tutorial, is avalable [here](https://easyvvuq.readthedocs.io).
