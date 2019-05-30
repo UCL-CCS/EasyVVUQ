@@ -22,7 +22,7 @@ setup(
     author='CCS',
 
     install_requires=['numpy', 'pandas', 'pytest', 'SQLAlchemy', 'chaospy',
-                      'sqlalchemy-utils', 'matplotlib'],
+                      'sqlalchemy-utils', 'matplotlib', 'jsonpickle'],
 
     packages=find_packages(),
 
