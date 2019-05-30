@@ -165,8 +165,7 @@ class Campaign:
         """
 
         # Create temp dir for campaign
-        campaign_dir = tempfile.mkdtemp(prefix=default_campaign_prefix,
-                                        dir=work_dir)
+        campaign_dir = tempfile.mkdtemp(prefix=default_campaign_prefix, dir=work_dir)
 
         self._campaign_dir = os.path.relpath(campaign_dir, start=work_dir)
 
@@ -529,8 +528,7 @@ class Campaign:
                 break
 
         # Write sampler's new state to database
-        self.campaign_db.update_sampler(self._active_sampler_id,
-                                        self._active_sampler)
+        self.campaign_db.update_sampler(self._active_sampler_id, self._active_sampler)
 
         # Log application of this sampling element
         self.log_element_application(
@@ -586,7 +584,6 @@ class Campaign:
             self.campaign_db.set_dir_for_run(run_id, target_dir)
 
             if use_fixtures:
-
                 active_encoder.encode(params=run_data['params'],
                                       fixtures=fixtures,
                                       target_dir=target_dir)
@@ -651,8 +648,7 @@ class Campaign:
             self)
 
         # Log application of this collation element
-        self.log_element_application(
-            self._active_app_collation, None)
+        self.log_element_application(self._active_app_collation, None)
 
     def get_last_collation(self):
         """Return the dataframe output by the last executed collation element.
@@ -684,8 +680,7 @@ class Campaign:
         """
 
         # Apply analysis element to most recent collation result
-        self.last_analysis = analysis.analyse(
-            data_frame=self.get_last_collation())
+        self.last_analysis = analysis.analyse(data_frame=self.get_last_collation())
 
         # Log application of this analysis element
         self.log_element_application(analysis, None)
