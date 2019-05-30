@@ -29,7 +29,7 @@ __license__ = "LGPL"
 
 def test_gauss_fix(tmpdir):
 
-    # Set up a fresh campaign called "cannon"
+    # Set up a fresh campaign called "gauss_fix"
     my_campaign = uq.Campaign(name='gauss_fix', work_dir=tmpdir)
 
     params = {
@@ -97,7 +97,7 @@ def test_gauss_fix(tmpdir):
 
     my_campaign.collate()
 
-    # Create a BasicStats analysis element and apply it to the campaign
+    # Create a EnsembleBoot analysis element and apply it to the campaign
     stats = uq.analysis.EnsembleBoot(groupby=["mu"], qoi_cols=["Value"])
     my_campaign.apply_analysis(stats)
     print("stats:", my_campaign.get_last_analysis())
