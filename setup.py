@@ -15,7 +15,7 @@ setup(
                  'Uncertainty Quantification of simulation codes'),
 
     long_description=long_description,
-    long_description_content_type='text/markdown'
+    long_description_content_type='text/markdown',
 
     url='http://ccs.chem.ucl.ac.uk',
 
