@@ -32,4 +32,4 @@ make -C tests/cannonsim/src/
 
 ## Getting Started
 
-Documentation, including an basic tutorial, is avalable [here](https://easyvvuq.readthedocs.io).
+Documentation, including a basic tutorial, is avalable [here](https://easyvvuq.readthedocs.io).
