@@ -9,7 +9,7 @@ with open(path.join(this_directory, 'README.md'), encoding='utf-8') as f:
 setup(
     name='easyvvuq',
 
-    version='0.0.3.dev1',
+    version='0.3.dev1',
 
     description=('Library to facilitate simple Verification, Validation and '
                  'Uncertainty Quantification of simulation codes'),
