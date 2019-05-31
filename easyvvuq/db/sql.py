@@ -48,7 +48,7 @@ class CampaignTable(Base):
     campaign_dir_prefix = Column(String)
     campaign_dir = Column(String)
     runs_dir = Column(String)
-
+    collation = Column(String)
 
 class AppTable(Base):
     """An SQLAlchemy schema for the app table.
@@ -60,8 +60,6 @@ class AppTable(Base):
     output_decoder = Column(String)
     params = Column(String)
     fixtures = Column(String)
-    collation = Column(String)
-
 
 class RunTable(Base):
     """An SQLAlchemy schema for the run table.
@@ -77,7 +75,6 @@ class RunTable(Base):
     run_dir = Column(String)
     campaign = Column(Integer, ForeignKey('campaign_info.id'))
     sample = Column(Integer, ForeignKey('sample.id'))
-
 
 class SamplerTable(Base):
     """An SQLAlchemy schema for the run table.
@@ -165,8 +162,7 @@ class CampaignDB(BaseCampaignDB):
             'input_encoder': selected_app.input_encoder,
             'output_decoder': selected_app.output_decoder,
             'params': json.loads(selected_app.params),
-            'fixtures': json.loads(selected_app.fixtures),
-            'collation': json.loads(selected_app.collation)
+            'fixtures': json.loads(selected_app.fixtures)
         }
 
         return app_dict
@@ -187,8 +183,7 @@ class CampaignDB(BaseCampaignDB):
 
         # Check that no app with same name exists
         name = app_info.name
-        selected = self.session.query(
-            AppTable).filter_by(name=name).all()
+        selected = self.session.query(AppTable).filter_by(name=name).all()
         if len(selected) > 0:
             message = (
                 f'There is already an app in this database with name {name}'
@@ -223,17 +218,26 @@ class CampaignDB(BaseCampaignDB):
 
         return db_entry.id
 
+    def set_campaign_collater(self, collater, campaign_id):
+        selected = self.session.query(CampaignTable).get(campaign_id)
+        selected.collater = collater.serialize()
+        self.session.commit()
+
     def resurrect_sampler(self, sampler_id):
         serialized_sampler = self.session.query(SamplerTable).get(sampler_id).sampler
         sampler = BaseSamplingElement.deserialize(serialized_sampler)
         return sampler
 
+    def resurrect_collation(self, campaign_id):
+        serialized_collation = self.session.query(CampaignTable).get(campaign_id).collation
+        collater = BaseCollationElement.deserialize(json.loads(serialized_collation))
+        return collater
+
     def resurrect_app(self, app_name):
         app_info = self.app(app_name)
         encoder = BaseEncoder.deserialize(app_info['input_encoder'])
         decoder = BaseDecoder.deserialize(app_info['output_decoder'])
-        collater = BaseCollationElement.deserialize(app_info['collation'])
-        return encoder, decoder, collater
+        return encoder, decoder
 
     def update_sampler(self, sampler_id, sampler_element):
         selected = self.session.query(SamplerTable).get(sampler_id)
@@ -350,12 +354,33 @@ class CampaignDB(BaseCampaignDB):
                 run_name=run_name, sample=sampler)
 
         if selected.count() != 1:
-            logging.warning('Multiple runs selected - using the first')
+            logging.critical('Multiple runs selected - using the first')
 
         selected = selected.first()
 
         selected.run_dir = run_dir
         self.session.commit()
+
+    def get_run_status(self, run_name, campaign=None, sampler=None):
+        if campaign is None and sampler is None:
+            selected = self.session.query(
+                RunTable).filter_by(run_name=run_name)
+        elif campaign is not None and sampler is not None:
+            selected = self.session.query(RunTable).filter_by(
+                run_name=run_name, campaign=campaign, sample=sampler)
+        elif campaign is not None:
+            selected = self.session.query(RunTable).filter_by(
+                run_name=run_name, campaign=campaign)
+        else:
+            selected = self.session.query(RunTable).filter_by(
+                run_name=run_name, sample=sampler)
+
+        if selected.count() != 1:
+            logging.critical('Multiple runs selected - using the first')
+
+        selected = selected.first()
+
+        return selected.status
 
     def set_run_status(self, run_name, status, campaign=None, sampler=None):
         if campaign is None and sampler is None:

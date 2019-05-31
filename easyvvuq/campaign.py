@@ -110,10 +110,11 @@ class Campaign:
         self._last_collation_dataframe = None
         self.last_analysis = None
 
-        # TODO: These definitely shouldn't be here. Probably should be in DB.
+        self._active_app_id = None
         self._active_app_encoder = None
         self._active_app_decoder = None
-        self._active_app_collation = None
+
+        self._active_collater = None
         self._active_sampler = None
         self._active_sampler_id = None
 
@@ -229,7 +230,6 @@ class Campaign:
 
         logger.info(f"Loading campaign from state file '{full_state_path}'")
         self.load_state(full_state_path)
-        active_sampler_id = self._active_sampler_id
 
         if self.db_type == 'sql':
             from .db.sql import CampaignDB
@@ -248,8 +248,9 @@ class Campaign:
         campaign_db = self.campaign_db
         self.campaign_id = campaign_db.get_campaign_id(self.campaign_name)
 
-        # Resurrect the sampler using the ID
-        self._active_sampler = campaign_db.resurrect_sampler(active_sampler_id)
+        # Resurrect the sampler and collation elements
+        self._active_sampler = campaign_db.resurrect_sampler(self._active_sampler_id)
+        self._active_collater = campaign_db.resurrect_collation(self.campaign_id)
 
         return state_dir
 
@@ -366,8 +367,7 @@ class Campaign:
             params=params,
             fixtures=fixtures,
             encoder=encoder,
-            decoder=decoder,
-            collation=collation
+            decoder=decoder
         )
 
         self.campaign_db.add_app(app)
@@ -392,10 +392,9 @@ class Campaign:
 
         self._active_app = self.campaign_db.app(name=app_name)
 
-        # Resurrect the app encoder, decoder and collation elements
+        # Resurrect the app encoder and decoder elements
         (self._active_app_encoder,
-         self._active_app_decoder,
-         self._active_app_collation) = self.campaign_db.resurrect_app(app_name)
+         self._active_app_decoder) = self.campaign_db.resurrect_app(app_name)
 
     def set_sampler(self, sampler):
         """Set active sampler.
@@ -403,8 +402,7 @@ class Campaign:
         Parameters
         ----------
         sampler : `easyvvuq.sampling.base.BaseSamplingElement`
-            Sampler that will be used to create runs for the current
-            application.
+            Sampler that will be used to create runs for the current campaign.
 
         Returns
         -------
@@ -417,6 +415,26 @@ class Campaign:
 
         self._active_sampler = sampler
         self._active_sampler_id = self.campaign_db.add_sampler(sampler)
+
+    def set_collater(self, collater):
+        """Set a collater for this campaign.
+
+        Parameters
+        ----------
+        collater : `easyvvuq.collate.base.BaseCollationElement`
+            Collation that will be used to create runs for the current campaign.
+
+        Returns
+        -------
+
+        """
+        if not isinstance(collater, uq.collate.BaseCollationElement):
+            msg = "set_collater() must be passed a collation element"
+            logging.error(msg)
+            raise Exception(msg)
+
+        self.campaign_db.set_campaign_collater(collater, self.campaign_id)
+        self._active_collater = collater
 
     def add_run(self, new_run):
         """Add a new run to the queue.
@@ -635,7 +653,7 @@ class Campaign:
     def collate(self):
         """Combine the output from all runs associated with the current app.
 
-        Uses the collation element held in `self._active_app_collation`.
+        Uses the collation element held in `self._active_collater`.
 
         Returns
         -------
@@ -643,10 +661,10 @@ class Campaign:
         """
 
         # Apply collation element, and obtain the resulting dataframe
-        self._last_collation_dataframe = self._active_app_collation.collate(self)
+        self._last_collation_dataframe = self._active_collater.collate(self)
 
         # Log application of this collation element
-        self.log_element_application(self._active_app_collation, None)
+        self.log_element_application(self._active_collater, None)
 
     def get_last_collation(self):
         """Return the dataframe output by the last executed collation element.

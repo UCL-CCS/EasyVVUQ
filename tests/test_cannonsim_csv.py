@@ -86,7 +86,7 @@ def test_cannonsim_csv(tmpdir):
             "default": "10.0",
             "variable": "True"}}
 
-    # Create an encoder, decoder and collation element for the cannonsim app
+    # Create an encoder and decoder for the cannonsim app
     encoder = uq.encoders.GenericEncoder(
         template_fname='tests/cannonsim/test_input/cannonsim.template',
         delimiter='#',
@@ -94,23 +94,24 @@ def test_cannonsim_csv(tmpdir):
     decoder = uq.decoders.SimpleCSV(
         target_filename='output.csv', output_columns=[
             'Dist', 'lastvx', 'lastvy'], header=0)
-    collation = uq.collate.AggregateSamples(average=False)
 
     print("Serialized encoder:", encoder.serialize())
     print("Serialized decoder:", decoder.serialize())
-    print("Serialized collation:", collation.serialize())
 
     # Add the cannonsim app
     my_campaign.add_app(name="cannonsim",
                         params=params,
                         encoder=encoder,
-                        decoder=decoder,
-                        collation=collation
-                        )
+                        decoder=decoder)
 
     # Set the active app to be cannonsim (this is redundant when only one app
     # has been added)
     my_campaign.set_app("cannonsim")
+
+    # Create a collation element for this campaign
+    collater = uq.collate.AggregateSamples(average=False)
+    my_campaign.set_collater(collater)
+    print("Serialized collation:", collater.serialize())
 
     # Make a random sampler
     vary = {

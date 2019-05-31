@@ -224,13 +224,11 @@ class AppInfo:
             params=None,
             fixtures=None,
             encoder=None,
-            decoder=None,
-            collation=None):
+            decoder=None):
 
         self.name = name
         self.input_encoder = encoder
         self.output_decoder = decoder
-        self.collation = collation
         self.params = params
         self.fixtures = fixtures
 
@@ -293,7 +291,7 @@ class AppInfo:
             out_dict = self.to_dict()
 
             for field in [
-                    'params', 'collation', 'fixtures']:
+                    'params', 'fixtures']:
                 out_dict[field] = json.dumps(out_dict[field])
 
         else:
@@ -303,8 +301,7 @@ class AppInfo:
                 'params': self.params,
                 'fixtures': fixtures,
                 'input_encoder': self.input_encoder.serialize(),
-                'output_decoder': self.output_decoder.serialize(),
-                'collation': self.collation.serialize()
+                'output_decoder': self.output_decoder.serialize()
             }
 
         return out_dict
