@@ -1,5 +1,17 @@
-import easyvvuq.utils.json as json_utils
-import easyvvuq.utils.fixtures as fixtures
+"""Provided base class for all encoders and dictionary to register all imported
+encoders.
+
+Encoders provide functions to convert generic problem space parameters lists
+into inputs for particular simulation codes.
+
+Attributes
+----------
+AVAILABLE_ENCODERS : dict
+    Registers all imported encoders.
+"""
+import easyvvuq.utils.fixture as fixture
+from easyvvuq.base_element import BaseElement
+import json
 
 __copyright__ = """
 
@@ -25,38 +37,23 @@ __license__ = "LGPL"
 
 # Dict to store all registered encoders (any class which extends
 # BaseEncoder is automatically registered as an encoder)
-available_encoders = {}
+AVAILABLE_ENCODERS = {}
 
 
-class BaseEncoder(object):
+class BaseEncoder(BaseElement):
     """Baseclass for all EasyVVUQ encoders.
 
     Skeleton encoder which establishes the format and provides the basis of our
-    contract - take in ``app_info`` and provide an ``encode``
+    contract - provide an ``encode``
     method to parse these and write relevant run file to a target directory.
-
-    TODO: If we end up converting Attributes to Properties with ``@property``
-    of Kristof style ``@advanced_property`` decorators then they should be
-    documented in the property's getter method.
 
     Parameters
     ----------
-    app_info    : dict, optional
-        Application information. Will try interpreting as a dict or JSON
-        file/stream or filename.
 
     Attributes
     ----------
-    app_info    : dict
-        Contains application information.
 
     """
-
-    def __init__(self, app_info, *args, **kwargs):
-        if not hasattr(app_info, 'items'):
-            self.app_info = json_utils.process_json(app_info)
-        else:
-            self.app_info = app_info
 
     def __init_subclass__(cls, encoder_name, **kwargs):
         """
@@ -65,38 +62,68 @@ class BaseEncoder(object):
         """
         super().__init_subclass__(**kwargs)
 
-        # Register new encoder
-        available_encoders[encoder_name] = cls
+        cls.encoder_name = encoder_name
+        cls.fixture_support = False
 
-    def encode(self, params={}, target_dir=''):
+        # Register new encoder
+        AVAILABLE_ENCODERS[encoder_name] = cls
+
+    @staticmethod
+    def substitute_fixtures_params(params, fixtures, target_dir, path_depth=0):
+
+        fixed_params = dict(params)
+
+        for key, current_fixture in fixtures.items():
+
+            if current_fixture['type'] == 'dir':
+                is_dir = True
+            else:
+                is_dir = False
+
+            fix = fixture.Fixture(
+                current_fixture['path'],
+                is_dir=is_dir,
+                common=current_fixture['common'],
+                exists_local=current_fixture['exists_local'],
+                target_name=current_fixture['target'],
+                group=current_fixture['group'])
+
+            fixed_params[key] = fix.fixture_path(depth_in_run=path_depth)
+            fix.copy_to_target(target_dir=target_dir)
+
+        return fixed_params
+
+    def encode(self, params=None, fixtures=None, target_dir=''):
+        """
+        Takes list of generic parameter values from `params` and
+        converts them into simulation input files (in `target_dir`).
+
+        Parameters
+        ----------
+        params: dict or None
+            Dictionary containing parameter names and values.
+        fixtures: dict or None
+            Dictionary containing fixture information.
+        target_dir: str
+            Path into which output will be written.
+
+        Returns
+        -------
+
+        """
         raise NotImplementedError
 
-    def parse_fixtures_params(self, info, target_dir, path_depth=0):
+    def element_category(self):
+        return "encoding"
 
-        fixture_list = info['fixtures']
+    def element_name(self):
+        return self.encoder_name
 
-        if fixture_list:
-            for key, current_fixture in fixture_list.items():
+    def is_restartable(self):
+        return True
 
-                path = current_fixture['path']
-                if current_fixture['type'] == 'dir':
-                    is_dir = True
-                else:
-                    is_dir = False
-                common = current_fixture['common']
-                exists_local = current_fixture['exists_local']
-                target_name = current_fixture['target']
-                group = current_fixture['group']
-
-                tmp_fixture = fixtures.Fixture(
-                    path,
-                    is_dir=is_dir,
-                    common=common,
-                    exists_local=exists_local,
-                    target_name=target_name,
-                    group=group)
-
-                info[key] = tmp_fixture.fixture_path(depth_in_run=path_depth)
-                tmp_fixture.copy_to_target(target_dir=target_dir)
-
-        return info
+    @staticmethod
+    def deserialize(encoderstr):
+        encoderdict = json.loads(encoderstr)
+        encoder = AVAILABLE_ENCODERS[encoderdict["element_name"]](**encoderdict["state"])
+        return encoder

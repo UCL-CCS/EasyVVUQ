@@ -1,10 +1,7 @@
 import os
-import sys
-import json
-import easyvvuq.utils.json as json_utils
-import tempfile
 from string import Template
 from .base import BaseEncoder
+import logging
 
 __copyright__ = """
 
@@ -29,7 +26,7 @@ __copyright__ = """
 __license__ = "LGPL"
 
 
-def getCustomTemplate(template_txt, custom_delimiter='$'):
+def get_custom_template(template_txt, custom_delimiter='$'):
     class CustomTemplate(Template):
         delimiter = custom_delimiter
     return CustomTemplate(template_txt)
@@ -38,129 +35,84 @@ def getCustomTemplate(template_txt, custom_delimiter='$'):
 class GenericEncoder(BaseEncoder, encoder_name="generic_template"):
     """GenericEncoder for substituting values into application template input.
 
-    The `app_info` dictionary needs to contain either a `template` filename or
-    `template_txt` string as the source of the application input template.
-    Values from the `params` dict are then substituted in by the `encode` method.
-
     Parameters
     ----------
-    app_info      : dict, dict or str or File
-        Application information. Will try interpreting as a dict or JSON
-        file/stream or filename.
-
 
     Attributes
     ----------
-    app_info    : dict
-        Contains application information.
 
     """
 
-    def __init__(self, app_info, *args, **kwargs):
+    def __init__(self, template_fname=None, delimiter='$',
+                 target_filename="app_input.txt"):
 
-        # Handles creation of `self.app_info` attribute (dicts)
-        super().__init__(app_info, *args, **kwargs)
-        app_info = self.app_info
-        print(app_info)
+        self.encoder_delimiter = delimiter
+        self.target_filename = target_filename
+        self.template_fname = template_fname
 
-        # Check if an encoder delimiter is specified in the app_info. Else use
-        # $ by default.
-        self.encoder_delimiter = '$'
-        if 'encoder_delimiter' in app_info:
-            self.encoder_delimiter = app_info['encoder_delimiter']
+        self.fixture_support = True
 
-        # Look for the template text ( specified either in a file, or in
-        # app_info['template_txt'] )
-        if 'template' in app_info:
-            with open(app_info['template'], 'r') as template_file:
-                template_txt = template_file.read()
-            self.template = getCustomTemplate(
+        # Check that user has specified the file to use as template
+        if template_fname is None:
+            msg = ("GenericEncoder must be given 'template_fname' - the "
+                   "location of a file containing the template text.")
+            logging.error(msg)
+            raise RuntimeError(msg)
+
+        with open(template_fname, 'r') as template_file:
+            template_txt = template_file.read()
+            self.template = get_custom_template(
                 template_txt, custom_delimiter=self.encoder_delimiter)
-        elif 'template_txt' in app_info:
-            self.template = getCustomTemplate(
-                app_info['template_txt'],
-                custom_delimiter=self.encoder_delimiter
-            )
-        else:
-            raise RuntimeError(
-                'Template required in "app" specification input to GenericEncoder')
 
-        # Check what name to give the output of this encoder
-        if 'input_filename' in app_info:
-            self.target_filename = app_info['input_filename']
-        else:
-            self.target_filename = 'app_input.txt'
-
-        self.app_input_txt = None
-
-    def encode(self, params={}, target_dir=''):
-        """Substitutes `params` into a template application input, saves in target_dir
+    def encode(self, params={}, target_dir='', fixtures=None):
+        """Substitutes `params` into a template application input, saves in
+        `target_dir`
 
         Parameters
         ----------
-        params        : dict, dict or str or File
-            Parameter information. Will try interpreting as a dict or JSON
-            file/stream or filename.
+        params        : dict
+            Parameter information in dictionary.
         target_dir    : str
             Path to directory where application input will be written.
+        fixtures      : dict
+            Information of files/assets for fixture type parameters.
         """
+
+        if fixtures is not None:
+            local_params = self.substitute_fixtures_params(params, fixtures,
+                                                           target_dir)
+        else:
+            local_params = params
 
         if not target_dir:
             raise RuntimeError('No target directory specified to encoder')
 
-        if not hasattr(params, 'items'):
-            params = json_utils.process_json(params)
-
-        params = self.parse_fixtures_params(params, target_dir)
-
         str_params = {}
-        for key, value in params.items():
+        for key, value in local_params.items():
             str_params[key] = str(value)
 
-        template = self.template
-        target_filename = self.target_filename
-        app_input_txt = self.app_input_txt
-
         try:
-            app_input_txt = template.substitute(str_params)
+            app_input_txt = self.template.substitute(str_params)
         except KeyError as e:
-            # TODO: Should we pass str_params here?
-            self._log_substitution_failure(params, e)
+            self._log_substitution_failure(e)
 
         # Write target input file
-        target_file_path = os.path.join(target_dir, target_filename)
+        target_file_path = os.path.join(target_dir, self.target_filename)
         with open(target_file_path, 'w') as fp:
             fp.write(app_input_txt)
 
-    def _log_substitution_failure(self, params, exception):
-        app_info = self.app_info
-        if 'template_txt' in app_info:
-            fle, temp_filename = tempfile.mkstemp(text=True)
+    def _log_substitution_failure(self, exception):
+        reasoning = (f"\nFailed substituting into template "
+                     f"{self.template_fname}.\n"
+                     f"KeyError: {str(exception)}.\n")
+        logging.error(reasoning)
 
-            with open(temp_filename, 'w') as temp_file:
-                for line in app_info['template_txt']:
-                    temp_file.write(line)
-            reasoning = f"\nFailed substituting into template {temp_filename}.\n"
-        else:
-            reasoning = f"\nFailed substituting into template {app_info['template']}.\n"
+        raise KeyError(reasoning)
 
-        fle, temp_filename = tempfile.mkstemp(text=True)
-        with open(temp_filename, 'w') as temp_params_file:
-            json.dump(params, temp_params_file)
+    def get_restart_dict(self):
+        return {"delimiter": self.encoder_delimiter,
+                "target_filename": self.target_filename,
+                "template_fname": self.template_fname}
 
-        reasoning += f"Parameters used in substitution written to {temp_filename}.\n"
-
-        print(reasoning)
-        raise KeyError(exception)
-
-
-if __name__ == "__main__":
-
-    if len(sys.argv) != 3:
-        sys.exit("Usage: python3 generic_template.py INPUT_JSON_FILE OUTPUT_DIR")
-
-    input_json_file = sys.argv[1]
-    output_dir = sys.argv[2]
-
-    encoder = GenericEncoder(params=input_json_file, target_dir=output_dir)
-    encoder.encode()
+    def element_version(self):
+        return "0.1"
