@@ -31,7 +31,6 @@ def test_gauss(tmpdir):
     # Set up a fresh campaign called "gauss"
     my_campaign = uq.Campaign(name='gauss', work_dir=tmpdir)
 
-
     params = {
         "sigma": {
             "type": "real",
