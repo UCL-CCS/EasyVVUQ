@@ -643,8 +643,7 @@ class Campaign:
         """
 
         # Apply collation element, and obtain the resulting dataframe
-        self._last_collation_dataframe = self._active_app_collation.collate(
-            self)
+        self._last_collation_dataframe = self._active_app_collation.collate(self)
 
         # Log application of this collation element
         self.log_element_application(self._active_app_collation, None)

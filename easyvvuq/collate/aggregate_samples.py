@@ -61,6 +61,12 @@ class AggregateSamples(BaseCollationElement, collater_name="aggregate_samples"):
         runs = campaign.campaign_db.runs()
 
         for run_id, run_info in runs.items():
+
+            # Skip runs which have already been collated
+            if campaign.campaign_db.get_run_status(run_id) == "collated":
+                continue
+
+            # Use decoder to check if run has completed (in general application-specific)
             if decoder.sim_complete(run_info=run_info):
 
                 campaign.campaign_db.set_run_status(run_id, "completed")
