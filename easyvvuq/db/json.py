@@ -3,7 +3,6 @@ CampaignDB.
 """
 import json
 import logging
-from easyvvuq.constants import __easyvvuq_version__
 from .base import BaseCampaignDB
 from easyvvuq.sampling.base import BaseSamplingElement
 from easyvvuq.encoders.base import BaseEncoder
@@ -49,7 +48,6 @@ class CampaignDB(BaseCampaignDB):
         if new_campaign:
 
             self._campaign_info = info.to_dict()
-            self._campaign_info['easyvvuq_version'] = __easyvvuq_version__
             self._next_run = 0
 
             if location is None:
