@@ -1,4 +1,3 @@
-from easyvvuq import Campaign
 from .. import BaseElement
 import json
 
@@ -58,7 +57,7 @@ class BaseCollationElement(BaseElement):
         # Register new collater
         AVAILABLE_COLLATERS[collater_name] = cls
 
-    def collate(self):
+    def collate(self, campaign):
         """
         Collates the campaign run output into a pandas dataframe.
         Must be implemented by all collation subclasses.
