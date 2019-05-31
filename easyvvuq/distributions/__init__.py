@@ -1,4 +1,4 @@
-from .distributions import uniform_integer, custom_histogram, legendre
+from .distributions import uniform_integer
 
 __copyright__ = """
 
