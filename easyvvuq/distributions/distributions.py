@@ -44,26 +44,16 @@ def options(choices):
             yield choice
 
 
-# TODO: Convert this to a chaospy style distribution
-def uniform_integer(min_val, max_val):
-    """
-    Generator returning integer values picked from the specified uniform distribution
+# A discrete distribution (integers only) for use with random seeds.
+# TODO: At present this implements a sample() method to make it look like
+# a chaospy dist. Can we make this less hacky?
+class uniform_integer:
+    def __init__(self, min_val, max_val):
+        self.min_val = min_val
+        self.max_val = max_val
 
-    Parameters
-    ----------
-    min_val:    int
-        Minimum value covered by the distribution
-    max_val:    int
-        Maximum value covered by the distribution
-
-    Yields
-    -------
-    int
-        Number drawn from provided distribution
-
-    """
-    while True:
-        yield np.random.randint(min_val, max_val)
+    def sample(self, n):
+        return [np.random.randint(self.min_val, self.max_val) for i in range(n)]
 
 
 # TODO: Convert this to a chaospy style distribution
