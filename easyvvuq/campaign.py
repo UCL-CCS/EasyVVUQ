@@ -8,7 +8,7 @@ import logging
 import tempfile
 import json
 import easyvvuq as uq
-from easyvvuq.constants import __easyvvuq_version__, default_campaign_prefix
+from easyvvuq.constants import default_campaign_prefix
 from easyvvuq.data_structs import RunInfo
 
 __copyright__ = """
@@ -189,7 +189,7 @@ class Campaign:
         info = uq.data_structs.CampaignInfo(
             name=name,
             campaign_dir_prefix=default_campaign_prefix,
-            easyvvuq_version=__easyvvuq_version__,
+            easyvvuq_version=uq.__version__,
             campaign_dir=self.campaign_dir)
         self.campaign_db = CampaignDB(location=self.db_location,
                                       new_campaign=True,
