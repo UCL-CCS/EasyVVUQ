@@ -1,5 +1,4 @@
 from .. import BaseElement
-import importlib
 import logging
 import json
 import jsonpickle

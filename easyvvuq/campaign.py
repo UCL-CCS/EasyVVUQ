@@ -212,8 +212,6 @@ class Campaign:
 
         """
 
-        campaign_db = self.campaign_db
-
         full_state_path = os.path.realpath(os.path.expanduser(state_file))
 
         if not os.path.isfile(full_state_path):
@@ -244,9 +242,10 @@ class Campaign:
             raise RuntimeError(message)
 
         logger.info(f"Opening session with CampaignDB at {self.db_location}")
-        campaign_db = CampaignDB(location=self.db_location,
-                                 new_campaign=False,
-                                 name=self.campaign_name)
+        self.campaign_db = CampaignDB(location=self.db_location,
+                                      new_campaign=False,
+                                      name=self.campaign_name)
+        campaign_db = self.campaign_db
         self.campaign_id = campaign_db.get_campaign_id(self.campaign_name)
 
         # Resurrect the sampler using the ID

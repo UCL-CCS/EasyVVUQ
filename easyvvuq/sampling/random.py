@@ -1,7 +1,4 @@
 from .base import BaseSamplingElement, Vary
-from easyvvuq import distributions
-import logging
-import json
 
 __copyright__ = """
 
