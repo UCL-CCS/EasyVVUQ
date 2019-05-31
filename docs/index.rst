@@ -36,6 +36,7 @@ Table of contents
    :maxdepth: 1
 
    installation
+   concepts
    basic_tutorial
 
 
