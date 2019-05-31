@@ -3,7 +3,7 @@
 Conceptual Basis
 ================
 
-.. figure:: imahes/vecma-algorithms.svg
+.. figure:: images/vecma-algorithms.svg
    :scale: 50 %
    :alt: VVUQ algorithm as connected elements.
 
