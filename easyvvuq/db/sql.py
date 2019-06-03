@@ -48,7 +48,7 @@ class CampaignTable(Base):
     campaign_dir_prefix = Column(String)
     campaign_dir = Column(String)
     runs_dir = Column(String)
-    collation = Column(String)
+    collater = Column(String)
 
 class AppTable(Base):
     """An SQLAlchemy schema for the app table.
@@ -229,8 +229,11 @@ class CampaignDB(BaseCampaignDB):
         return sampler
 
     def resurrect_collation(self, campaign_id):
-        serialized_collation = self.session.query(CampaignTable).get(campaign_id).collation
-        collater = BaseCollationElement.deserialize(json.loads(serialized_collation))
+        serialized_collater = self.session.query(CampaignTable).get(campaign_id).collater
+        if serialized_collater == None:
+            print("Loaded campaign does not have a collation element currently set")
+            return None
+        collater = BaseCollationElement.deserialize(serialized_collater)
         return collater
 
     def resurrect_app(self, app_name):

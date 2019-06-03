@@ -341,7 +341,7 @@ class CampaignInfo:
 
     def __init__(self, name=None, easyvvuq_version=None,
                  campaign_dir_prefix=None, campaign_dir=None,
-                 runs_dir=None):
+                 runs_dir=None, local=False):
 
         if name is None:
             message = "CampaignInfo constructor must be passed a 'name'."
@@ -401,6 +401,7 @@ class CampaignInfo:
             'campaign_dir_prefix': self.campaign_dir_prefix,
             'runs_dir': self.runs_dir,
             'easyvvuq_version': self.easyvvuq_version,
+            'collater': None
         }
 
         return out_dict
