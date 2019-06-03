@@ -1,0 +1,2 @@
+include versioneer.py
+include easyvvuq/_version.py

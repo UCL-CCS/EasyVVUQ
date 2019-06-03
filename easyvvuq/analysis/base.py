@@ -1,6 +1,4 @@
-from easyvvuq import Campaign
 from .. import BaseElement
-
 
 __copyright__ = """
 
@@ -40,7 +38,7 @@ class BaseAnalysisElement(BaseElement):
 
     """
 
-    def analyse(self):
+    def analyse(self, data_frame=None):
         raise NotImplementedError
 
     def element_category(self):
