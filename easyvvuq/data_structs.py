@@ -141,7 +141,7 @@ class RunInfo:
 
         self.params = params
 
-        self.status = 'created'
+        self.status = 'new'
 
     def to_dict(self, flatten=False):
         """Convert to a dictionary (optionally flatten to single level)

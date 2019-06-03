@@ -584,8 +584,8 @@ class Campaign:
 
         for run_id, run_data in runs.items():
 
-            # Only do this for runs that have status "created"
-            if run_data['status'] != "created":
+            # Only do this for runs that have status "new"
+            if run_data['status'] != "new":
                 continue
 
             # Make run directory
@@ -603,6 +603,8 @@ class Campaign:
             else:
                 active_encoder.encode(params=run_data['params'],
                                       target_dir=target_dir)
+
+            self.campaign_db.set_run_status(run_id, "encoded")
 
     def get_campaign_runs_dir(self):
         """Get the runs directory from the CampaignDB.
@@ -636,8 +638,8 @@ class Campaign:
         # Loop through all runs in this campaign
         for run_id, run_data in runs.items():
 
-            # Only do this for runs that have status "created"
-            if run_data['status'] != "created":
+            # Only do this for runs that have status "encoded"
+            if run_data['status'] != "encoded":
                 continue
 
             dir_name = os.path.join(runs_dir, run_id)
