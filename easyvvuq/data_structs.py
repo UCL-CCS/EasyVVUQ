@@ -306,7 +306,6 @@ class AppInfo:
 
         return out_dict
 
-
 class CampaignInfo:
     """Handles information on Campaign.
 
@@ -342,7 +341,7 @@ class CampaignInfo:
 
     def __init__(self, name=None, easyvvuq_version=None,
                  campaign_dir_prefix=None, campaign_dir=None,
-                 runs_dir=None, local=False):
+                 runs_dir=None):
 
         if name is None:
             message = "CampaignInfo constructor must be passed a 'name'."
