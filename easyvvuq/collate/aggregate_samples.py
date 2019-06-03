@@ -43,6 +43,8 @@ class AggregateSamples(BaseCollationElement, collater_name="aggregate_samples"):
         self.average = average
         self.storagemode = storagemode
 
+        self.full_data = pd.DataFrame()
+
         allowed_storage_modes = ['campaigndb']
         if self.storagemode not in allowed_storage_modes:
             msg = (f'storage mode "{storagemode}" is not in the allowed modes:'
@@ -93,6 +95,11 @@ class AggregateSamples(BaseCollationElement, collater_name="aggregate_samples"):
                 run_data = run_data[column_list]
                 run_data['run_id'] = run_id
                 new_data = new_data.append(run_data, ignore_index=True)
+
+        self.full_data.append(new_data)
+
+    def get_collated_dataframe(self):
+        return self.full_data
 
     def get_restart_dict(self):
         return {"storagemode":self.storagemode, "average": self.average}

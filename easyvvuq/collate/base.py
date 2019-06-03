@@ -59,8 +59,14 @@ class BaseCollationElement(BaseElement):
 
     def collate(self, campaign):
         """
-        Collates the campaign run output into a pandas dataframe.
+        Collates the campaign's decoded run output.
         Must be implemented by all collation subclasses.
+        """
+        raise NotImplementedError
+
+    def get_collated_dataframe(self):
+        """
+        Returns collated data as a pandas dataframe
         """
         raise NotImplementedError
 

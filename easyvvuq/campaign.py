@@ -107,7 +107,6 @@ class Campaign:
         self._active_app = None
         self.campaign_db = None
 
-        self._last_collation_dataframe = None
         self.last_analysis = None
 
         self._active_app_id = None
@@ -660,26 +659,14 @@ class Campaign:
 
         """
 
-        # Apply collation element, and obtain the resulting dataframe
-        self._last_collation_dataframe = self._active_collater.collate(self)
+        # Apply collation element
+        info = self._active_collater.collate(self)
 
         # Log application of this collation element
-        self.log_element_application(self._active_collater, None)
+        self.log_element_application(self._active_collater, info)
 
     def get_last_collation(self):
-        """Return the dataframe output by the last executed collation element.
-
-        Returns
-        -------
-        `pandas.DataFrame` or None
-
-        """
-        if self._last_collation_dataframe is None:
-            logging.warning("No dataframe available as no collation has been "
-                            "done. Was this campaign's collate() function run "
-                            "first?")
-
-        return self._last_collation_dataframe
+        return self._active_collater.get_collated_dataframe()
 
     def apply_analysis(self, analysis):
         """Run the `analysis` element on the output of the last run collation.
