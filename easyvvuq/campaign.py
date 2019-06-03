@@ -664,7 +664,7 @@ class Campaign:
         # Log application of this collation element
         self.log_element_application(self._active_collater, info)
 
-    def get_last_collation(self):
+    def get_collation_result(self):
         return self._active_collater.get_collated_dataframe()
 
     def apply_analysis(self, analysis):
@@ -682,7 +682,7 @@ class Campaign:
         """
 
         # Apply analysis element to most recent collation result
-        self.last_analysis = analysis.analyse(data_frame=self.get_last_collation())
+        self.last_analysis = analysis.analyse(data_frame=self.get_collation_result())
 
         # Log application of this analysis element
         self.log_element_application(analysis, None)

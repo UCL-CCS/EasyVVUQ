@@ -150,7 +150,7 @@ def test_cannonsim_csv(tmpdir):
 
     # Collate all data into one pandas data frame
     my_campaign.collate()
-    print("data:", my_campaign.get_last_collation())
+    print("data:", my_campaign.get_collation_result())
 
     # Save the state of the campaign
     state_file = tmpdir + "cannonsim_state.json"
@@ -174,7 +174,7 @@ def test_cannonsim_csv(tmpdir):
         "tests/cannonsim/bin/cannonsim in.cannon output.csv"))
 
     reloaded_campaign.collate()
-    print("data:\n", reloaded_campaign.get_last_collation())
+    print("data:\n", reloaded_campaign.get_collation_result())
 
     # Create a BasicStats analysis element and apply it to the campaign
     stats = uq.analysis.BasicStats(qoi_cols=['Dist', 'lastvx', 'lastvy'])

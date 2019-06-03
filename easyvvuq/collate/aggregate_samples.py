@@ -99,7 +99,7 @@ class AggregateSamples(BaseCollationElement, collater_name="aggregate_samples"):
 
                 num_added += 1
 
-        self.full_data.append(new_data)
+        self.full_data = self.full_data.append(new_data)
 
         return {"num_added": num_added}
 
