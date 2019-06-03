@@ -152,35 +152,37 @@ def test_cannonsim_csv(tmpdir):
     my_campaign.collate()
     print("data:", my_campaign.get_last_collation())
 
-    # Draw 3 more samples, execute, and collate onto existing dataframe
-    print("Running 3 more samples...")
-    my_campaign.draw_samples(num_samples=3)
-    my_campaign.populate_runs_dir()
-    my_campaign.apply_for_each_run_dir(uq.actions.ExecuteLocal(
-        "tests/cannonsim/bin/cannonsim in.cannon output.csv"))
-    my_campaign.collate()
-    print("data:\n", my_campaign.get_last_collation())
-
-    # Create a BasicStats analysis element and apply it to the campaign
-    stats = uq.analysis.BasicStats(qoi_cols=['Dist', 'lastvx', 'lastvy'])
-    my_campaign.apply_analysis(stats)
-    print("stats:\n", my_campaign.get_last_analysis())
-
-    # Print the campaign log
-    pprint(my_campaign._log)
-
     # Save the state of the campaign
     state_file = tmpdir + "cannonsim_state.json"
     my_campaign.save_state(state_file)
 
+    my_campaign = None
+
     # Load state in new campaign object
-    new = uq.Campaign(state_file=state_file, work_dir=tmpdir)
+    reloaded_campaign = uq.Campaign(state_file=state_file, work_dir=tmpdir)
+    reloaded_campaign.set_app("cannonsim")
 
-    print(new)
-
+    # Draw 3 more samples, execute, and collate onto existing dataframe
+    print("Running 3 more samples...")
+    reloaded_campaign.draw_samples(num_samples=3)
     print("List of runs added:")
-    pprint(my_campaign.list_runs())
+    pprint(reloaded_campaign.list_runs())
     print("---")
+
+    reloaded_campaign.populate_runs_dir()
+    reloaded_campaign.apply_for_each_run_dir(uq.actions.ExecuteLocal(
+        "tests/cannonsim/bin/cannonsim in.cannon output.csv"))
+
+    reloaded_campaign.collate()
+    print("data:\n", reloaded_campaign.get_last_collation())
+
+    # Create a BasicStats analysis element and apply it to the campaign
+    stats = uq.analysis.BasicStats(qoi_cols=['Dist', 'lastvx', 'lastvy'])
+    reloaded_campaign.apply_analysis(stats)
+    print("stats:\n", reloaded_campaign.get_last_analysis())
+
+    # Print the campaign log
+    pprint(reloaded_campaign._log)
 
 
 if __name__ == "__main__":
