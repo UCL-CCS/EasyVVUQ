@@ -34,8 +34,8 @@ In an HPC context the model evaluation step is generally equivalent to the
 execution of a (computationally expensive) simulation.
 The actual simulation execution is beyond the remit of the package but
 EasyVVUQ is designed to wrap around simulation execution, providing functions
-to generate input (`Encoder`s) and to transform simulation output in to common
-formats for analysis (`Decoder`s).
+to generate input (`Encoder` s) and to transform simulation output in to common
+formats for analysis (`Decoder` s).
 Below we describe the coponents of EasyVVUQ designed to perform each step in
 more detail.
 
@@ -105,7 +105,7 @@ Decoders
 
 The role of a `Decoder` is twofold, to record simulation completion in the
 `CampaignDB` and to extract the output information from the simulation runs.
-Similarly to `Encoder`s, `Decoder`s are designed to be user extendable to 
+Similarly to `Encoder` s, `Decoder` s are designed to be user extendable to 
 facilitate analysis of a wide range of applications. 
 
 .. _collation:
