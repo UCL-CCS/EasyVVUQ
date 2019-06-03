@@ -55,7 +55,7 @@ class ExecuteLocal(BaseAction):
 
         """
 
-        full_cmd = f'cd {target_dir}\nself.run_cmd\n'
+        full_cmd = f'cd {target_dir}\n{self.run_cmd}\n'
         result = os.system(full_cmd)
         if result != 0:
             sys.exit(f'Non-zero exit code from command "{full_cmd}"\n')
