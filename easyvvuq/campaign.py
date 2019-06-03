@@ -305,7 +305,7 @@ class Campaign:
 
     def add_app(self, name=None, params=None, fixtures=None,
                 encoder=None, decoder=None,
-                collation=None, set_active=True):
+                set_active=True):
         """Add an application to the CampaignDB.
 
         Parameters
@@ -321,9 +321,6 @@ class Campaign:
         decoder : :obj:`easyvvuq.decoders.base.BaseDecoder`
             Decoder element to convert application run output into data for
             VVUQ analysis.
-        collation : :obj:``
-            Collation element which brings together the data from individual
-            runs (after being decoded).
         set_active: bool
             Should the added app be set to be the currently active app?
 
