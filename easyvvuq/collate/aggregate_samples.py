@@ -39,22 +39,28 @@ class AggregateSamples(BaseCollationElement, collater_name="aggregate_samples"):
     def element_version(self):
         return "0.1"
 
-    def __init__(self, average=False):
+    def __init__(self, average=False, storagemode='campaigndb'):
         self.average = average
+        self.storagemode = storagemode
+
+        allowed_storage_modes = ['campaigndb']
+        if self.storagemode not in allowed_storage_modes:
+            msg = (f'storage mode "{storagemode}" is not in the allowed modes:'
+                   f'\n{str(allowed_storage_modes)}')
+            logger.critical(msg)
+            raise RuntimeException(msg)
 
     def collate(self, campaign):
         """
-        Returns
-        -------
-        `pd.DataFrame`:
-            Aggregated data from all completed runs referenced in the input Campaign.
+        Collected the decoded run results for all completed runs without 'collated' status
         """
         decoder = campaign._active_app_decoder
 
         if decoder.output_type != OutputType.SAMPLE:
             raise RuntimeError('Can only aggregate sample type data')
 
-        full_data = pd.DataFrame()
+        # Aggregate any uncollated runs into a dataframe (for appending to existing full df)
+        new_data = pd.DataFrame()
 
         # TODO: Find nicer way than forcing collate to access deep internal
         # vars of campaign object like this
@@ -86,9 +92,7 @@ class AggregateSamples(BaseCollationElement, collater_name="aggregate_samples"):
                 # Reorder columns
                 run_data = run_data[column_list]
                 run_data['run_id'] = run_id
-                full_data = full_data.append(run_data, ignore_index=True)
-
-        return full_data
+                new_data = new_data.append(run_data, ignore_index=True)
 
     def get_restart_dict(self):
-        return {"average": self.average}
+        return {"storagemode":self.storagemode, "average": self.average}
