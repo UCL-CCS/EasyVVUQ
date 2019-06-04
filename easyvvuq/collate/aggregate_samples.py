@@ -36,7 +36,7 @@ class AggregateSamples(BaseCollationElement, collater_name="aggregate_samples"):
         Should the values read in be averaged (mean).
     """
 
-    def __init__(self, storagemode='memory', average=False):
+    def __init__(self, storagemode='csv', average=False):
         super().__init__(storagemode)
         self.average = average
 
