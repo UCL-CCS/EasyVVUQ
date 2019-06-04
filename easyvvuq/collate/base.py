@@ -1,5 +1,6 @@
 from .. import BaseElement
 import json
+import pandas as pd
 
 __copyright__ = """
 
@@ -39,6 +40,13 @@ class BaseCollationElement(BaseElement):
 
     """
 
+    def collate(self, campaign):
+        """
+        Collates the campaign's decoded run output.
+        Must be implemented by all collation subclasses.
+        """
+        raise NotImplementedError
+
     def __init_subclass__(cls, collater_name, **kwargs):
         """
         Catch any new collaters (all collaters must inherit from
@@ -57,18 +65,31 @@ class BaseCollationElement(BaseElement):
         # Register new collater
         AVAILABLE_COLLATERS[collater_name] = cls
 
-    def collate(self, campaign):
-        """
-        Collates the campaign's decoded run output.
-        Must be implemented by all collation subclasses.
-        """
-        raise NotImplementedError
+    def __init__(self, storagemode=None):
+        self.storagemode = storagemode
+
+        # Check requested storage mode is a recognised mode
+        allowed_storage_modes = ['memory', 'campaigndb']
+        if self.storagemode not in allowed_storage_modes:
+            msg = (f'storage mode "{self.storagemode}" is not in the allowed modes:'
+                   f'\n{str(allowed_storage_modes)}')
+            logger.critical(msg)
+            raise RuntimeException(msg)
+
+        # Set up storage
+        if self.storagemode == 'memory':
+           self.memory_dataframe = pd.DataFrame()
 
     def get_collated_dataframe(self):
         """
         Returns collated data as a pandas dataframe
         """
-        raise NotImplementedError
+        if self.storagemode == 'memory':
+            return self.memory_dataframe
+
+    def append_data(self, new_data):
+        if self.storagemode == 'memory':
+            self.memory_dataframe = self.memory_dataframe.append(new_data)
 
     def element_category(self):
         return "collation"
@@ -76,11 +97,14 @@ class BaseCollationElement(BaseElement):
     def element_name(self):
         return self.collater_name
 
-    def is_restartable(self):
-        return True
-
     @staticmethod
     def deserialize(serialized_collater):
         info = json.loads(serialized_collater)
 
         return AVAILABLE_COLLATERS[info["element_name"]](**info["state"])
+
+    def is_restartable(self):
+        restartable_modes = ['csv']
+        if self.storagemode in restartable_modes:
+            return True
+        return False

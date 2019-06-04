@@ -36,21 +36,9 @@ class AggregateSamples(BaseCollationElement, collater_name="aggregate_samples"):
         Should the values read in be averaged (mean).
     """
 
-    def element_version(self):
-        return "0.1"
-
-    def __init__(self, average=False, storagemode='campaigndb'):
+    def __init__(self, storagemode='memory', average=False):
+        super().__init__(storagemode)
         self.average = average
-        self.storagemode = storagemode
-
-        self.full_data = pd.DataFrame()
-
-        allowed_storage_modes = ['campaigndb']
-        if self.storagemode not in allowed_storage_modes:
-            msg = (f'storage mode "{storagemode}" is not in the allowed modes:'
-                   f'\n{str(allowed_storage_modes)}')
-            logger.critical(msg)
-            raise RuntimeException(msg)
 
     def collate(self, campaign):
         """
@@ -99,12 +87,12 @@ class AggregateSamples(BaseCollationElement, collater_name="aggregate_samples"):
 
                 num_added += 1
 
-        self.full_data = self.full_data.append(new_data)
+        self.append_data(new_data)
 
         return {"num_added": num_added}
 
-    def get_collated_dataframe(self):
-        return self.full_data
+    def element_version(self):
+        return "0.1"
 
     def get_restart_dict(self):
         return {"storagemode":self.storagemode, "average": self.average}
