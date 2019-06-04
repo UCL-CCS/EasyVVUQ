@@ -1,3 +1,5 @@
+"""Provides analysis element for ensemble bootstrapping analysis.
+"""
 import numpy as np
 import pandas as pd
 from easyvvuq import OutputType
@@ -74,6 +76,32 @@ def confidence_interval(dist, value, alpha, pivotal=False):
 def bootstrap(data, stat_func=None, alpha=0.05,
               sample_size=None, n_samples=1000,
               pivotal=False):
+    """
+
+    Parameters
+    ----------
+    data : :obj:`pandas.DataFrame`
+        Input data to be analysed.
+    stat_func : function
+        Statistical function to be applied to data for bootstrapping.
+    alpha : float
+        Produce estimate of 100.0*(1-`alpha`) confidence interval.
+    sample_size : int
+        Size of the sample to be drawn from the input data.
+    n_samples : int
+        Number of times samples are to be drawn from the input data.
+    pivotal : bool
+        Use the pivotal method? Default to percentile method.
+
+    Returns
+    -------
+    float:
+          Value of the bootstrap statistic
+    float:
+          Highest value of the confidence interval
+    float:
+          Lowest value of the confidence interval
+    """
 
     stat = data.apply(stat_func)
 
@@ -95,6 +123,39 @@ def ensemble_bootstrap(data, groupby=[], qoi_cols=[],
                        stat_func=None, alpha=0.05,
                        sample_size=None, n_samples=1000,
                        pivotal=False, stat_name='boot'):
+    """
+    Perform bootstrapping analysis on input data.
+
+    Parameters
+    ----------
+    data : :obj:`pandas.DataFrame`
+        Date to be analysed.
+    groupby : list or None
+        Columns to use to group the data in `analyse` method before
+        calculating stats.
+    qoi_cols : list or None
+        Columns of quantities of interest (for which stats will be
+        calculated).
+    stat_func : function
+        Statistical function to be applied to data for bootstrapping.
+    alpha : float, default=0.05
+        Produce estimate of 100.0*(1-`alpha`) confidence interval.
+    sample_size : int
+        Size of the sample to be drawn from the input data.
+    n_samples : int, default=1000
+        Number of times samples are to be drawn from the input data.
+    pivotal : bool, default=False
+        Use the pivotal method? Default to percentile method.
+    stat_name : str, default='boot'
+        Name to use to describe columns containing output statistic (for example
+        'mean').
+
+    Returns
+    -------
+    :obj:`pandas.DataFrame`
+        Description of input data using bootstrap statistic and high/low
+        confidence intervals.
+    """
 
     agg_funcs = {}
 
@@ -133,16 +194,35 @@ def ensemble_bootstrap(data, groupby=[], qoi_cols=[],
 
 class EnsembleBoot(BaseAnalysisElement):
 
-    def element_name(self):
-        return "ensemble_boot"
-
-    def element_version(self):
-        return "0.1"
-
     def __init__(self, groupby=[], qoi_cols=[],
                  stat_func=None, alpha=0.05,
                  sample_size=None, n_boot_samples=1000,
                  pivotal=False, stat_name='boot'):
+        """
+        Element to perform bootstrapping on collated simulation output.
+
+        Parameters
+        ----------
+        groupby : list or None
+            Columns to use to group the data in `analyse` method before
+            calculating stats.
+        qoi_cols : list or None
+            Columns of quantities of interest (for which stats will be
+            calculated).
+        stat_func : function
+            Statistical function to be applied to data for bootstrapping.
+        alpha : float, default=0.05
+            Produce estimate of 100.0*(1-`alpha`) confidence interval.
+        sample_size : int
+            Size of the sample to be drawn from the input data.
+        n_boot_samples : int, default=1000
+            Number of times samples are to be drawn from the input data.
+        pivotal : bool, default=False
+            Use the pivotal method? Default to percentile method.
+        stat_name : str, default='boot'
+            Name to use to describe columns containing output statistic (for example
+            'mean').
+        """
 
         self.groupby = groupby
         self.qoi_cols = qoi_cols
@@ -156,7 +236,30 @@ class EnsembleBoot(BaseAnalysisElement):
 
         self.output_type = OutputType.SUMMARY
 
+    def element_name(self):
+        """Name for this element for logging purposes"""
+        return "ensemble_boot"
+
+    def element_version(self):
+        """Version of this element for logging purposes"""
+        return "0.1"
+
     def analyse(self, data_frame=None):
+        """Perform bootstrapping analysis on the input `data_frame`.
+
+        The data_frame is grouped according to `self.groupby` if specified and
+        analysis is performed on the columns selected in `self.qoi_cols` if set.
+
+        Parameters
+        ----------
+        data_frame : :obj:`pandas.DataFrame`
+            Summary data produced through collation of simulation output.
+
+        Returns
+        -------
+        :obj:`pandas.DataFrame`
+            Basic statistic for selected columns and groupings of data.
+        """
 
         if data_frame is None:
             raise RuntimeError(

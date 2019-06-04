@@ -3,6 +3,7 @@
 
 import os
 import sys
+import logging
 from . import BaseAction
 
 __copyright__ = """
@@ -27,6 +28,8 @@ __copyright__ = """
 """
 __license__ = "LGPL"
 
+logger = logging.getLogger(__name__)
+
 
 class ExecuteLocal(BaseAction):
 
@@ -42,6 +45,12 @@ class ExecuteLocal(BaseAction):
             Command to execute.
 
         """
+
+        if os.name == 'nt':
+            msg = ('Local execution is provided for testing on Posix systems'
+                   'only. We detect you are using Windows.')
+            logger.error(msg)
+            raise NotImplementedError(msg)
 
         # Need to expand users, get absolute path and dereference symlinks
         self.run_cmd = os.path.realpath(os.path.expanduser(run_cmd))

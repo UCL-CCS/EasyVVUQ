@@ -1,34 +1,42 @@
+"""Analysis element for polynomial chaos expansion (PCE).
+"""
 import logging
 import chaospy as cp
 from easyvvuq import OutputType
 from .base import BaseAnalysisElement
 
-# author: Jalal Lakhlili
+__author__ = 'Jalal Lakhlili'
 __license__ = "LGPL"
 
 logger = logging.getLogger(__name__)
 
-# TODO:
-# 1. Work out how to get multiple Sobol indices
-# 1. a. Note that may require different orders for different qoi?
-# 2. Add pd.read_hdf (https://pandas.pydata.org/pandas-docs/stable/user_guide/io.html#io-hdf5).
-# 3. Test cp.fit_regression to approximate solver.
+# TODO: Enhancements - issue #101
+#       - Work out how to get multiple Sobol indices
+#         + Note that may require different orders for different qoi?
+#       - Add pd.read_hdf (https://pandas.pydata.org/pandas-docs/stable/user_guide/io.html#io-hdf5)
+#       - Test cp.fit_regression to approximate solver
 
 
 class PCEAnalysis(BaseAnalysisElement):
 
-    def element_name(self):
-        return "PCE_Analysis"
+    def __init__(self, sampler=None, qoi_cols=None, sobol_order=1):
+        """Analysis element for polynomial chaos expansion (PCE).
 
-    def element_version(self):
-        return "0.3"
-
-    def __init__(self, params_cols=None, sampler=None, qoi_cols=None,
-                 sobol_order=1):
+        Parameters
+        ----------
+        sampler : :obj:`easyvvuq.sampling.pce.PCESampler`
+            Sampler used to initiate the PCE analysis
+        qoi_cols : list or None
+            Column names for quantities of interest (for which analysis is
+            performed).
+        sobol_order : int, default=1
+            Order of Sobol indices to calculate.
+        """
 
         if sampler is None:
             msg = 'PCE analysis requires a paired sampler to be passed'
             raise RuntimeError(msg)
+        # TODO: Check that this is a viable PCE sampler?
 
         if qoi_cols is None:
             raise RuntimeError("Analysis element requires a list of "
@@ -40,12 +48,33 @@ class PCEAnalysis(BaseAnalysisElement):
             sobol_order = len(sampler.vary.vary_dict)
 
         self.sobol_order = sobol_order
-        self.params_cols = params_cols
         self.qoi_cols = qoi_cols
         self.output_type = OutputType.SUMMARY
         self.sampler = sampler
 
+    def element_name(self):
+        """Name for this element for logging purposes"""
+        return "PCE_Analysis"
+
+    def element_version(self):
+        """Version of this element for logging purposes"""
+        return "0.3"
+
     def analyse(self, data_frame=None):
+        """Perform PCE analysis on input `data_frame`.
+
+        Parameters
+        ----------
+        data_frame : :obj:`pandas.DataFrame`
+            Input data for analysis.
+
+        Returns
+        -------
+        dict:
+            Contains analysis results in sub-dicts with keys -
+            ['statistical_moments', 'percentiles', 'sobol_indices',
+             'correlation_matrices', 'output_distributions']
+        """
 
         if data_frame is None:
             raise RuntimeError("Analysis element needs a data frame to "
@@ -75,8 +104,6 @@ class PCEAnalysis(BaseAnalysisElement):
             for k in qoi_cols:
                 values = data_frame.loc[data_frame['run_id'] == run_id][k]
                 samples[k].append(values)
-
-        output_distributions = {}
 
         # Compute descriptive statistics for each quantity of interest
         for k in qoi_cols:
