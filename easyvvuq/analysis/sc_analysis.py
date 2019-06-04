@@ -93,7 +93,7 @@ class SCAnalysis(BaseAnalysisElement):
         elif data_frame.empty:
             raise RuntimeError(
                 "No data in data frame passed to analyse element")
-        
+
         qoi_cols = self.qoi_cols
 
         results = {'statistical_moments': {},
