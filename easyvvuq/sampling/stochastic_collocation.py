@@ -64,7 +64,7 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
         self.joint_dist = cp.J(*params_distribution)
 
         # The quadrature information: order, rule and sparsity
-        self.quad_order = polynomial_order# + 1
+        self.quad_order = polynomial_order
         self.quad_rule = quadrature_rule
         # self.quad_sparse = sparse
 
