@@ -66,10 +66,12 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
         # The quadrature information: order, rule and sparsity
         self.quad_order = polynomial_order + 1
         self.quad_rule = quadrature_rule
-        #self.quad_sparse = sparse
+        # self.quad_sparse = sparse
 
         # the nodes of the collocation grid
-        xi_d, _ = cp.generate_quadrature(self.quad_order, self.joint_dist, rule=quadrature_rule)
+        xi_d, _ = cp.generate_quadrature(self.quad_order,
+                                         self.joint_dist,
+                                         rule=quadrature_rule)
 
         self.xi_d = xi_d.T
 
