@@ -11,10 +11,10 @@ __license__ = "LGPL"
 logger = logging.getLogger(__name__)
 
 # TODO: Enhancements - issue #101
-#       -  Work out how to get multiple Sobol indices
-#          + Note that may require different orders for different qoi?
-#       -  Add pd.read_hdf (https://pandas.pydata.org/pandas-docs/stable/user_guide/io.html#io-hdf5).
-#       -  Test cp.fit_regression to approximate solver.
+#       - Work out how to get multiple Sobol indices
+#         + Note that may require different orders for different qoi?
+#       - Add pd.read_hdf (https://pandas.pydata.org/pandas-docs/stable/user_guide/io.html#io-hdf5)
+#       - Test cp.fit_regression to approximate solver
 
 
 class PCEAnalysis(BaseAnalysisElement):
