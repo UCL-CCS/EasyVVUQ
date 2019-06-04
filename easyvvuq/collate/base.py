@@ -1,6 +1,7 @@
 from .. import BaseElement
 import json
 import pandas as pd
+import logging
 
 __copyright__ = """
 
@@ -100,6 +101,11 @@ class BaseCollationElement(BaseElement):
     @staticmethod
     def deserialize(serialized_collater):
         info = json.loads(serialized_collater)
+
+        if not info["restartable"]:
+            msg = f'Collater {info["element_name"]} is not restartable'
+            logging.error(msg)
+            raise Exception(msg)
 
         return AVAILABLE_COLLATERS[info["element_name"]](**info["state"])
 
