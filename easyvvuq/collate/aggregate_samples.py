@@ -72,7 +72,7 @@ class AggregateSamples(BaseCollationElement, collater_name="aggregate_samples"):
         for run_id, run_info in runs.items():
 
             # Only look through runs which have been 'encoded' (but not 'collated')
-            if campaign.campaign_db.get_run_status(run_id) == "encoded":
+            if campaign.campaign_db.get_run_status(run_id) != "encoded":
                 continue
 
             # Use decoder to check if run has completed (in general application-specific)

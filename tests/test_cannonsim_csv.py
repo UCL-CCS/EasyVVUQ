@@ -176,6 +176,8 @@ def test_cannonsim_csv(tmpdir):
     reloaded_campaign.collate()
     print("data:\n", reloaded_campaign.get_collation_result())
 
+    print(reloaded_campaign)
+
     # Create a BasicStats analysis element and apply it to the campaign
     stats = uq.analysis.BasicStats(qoi_cols=['Dist', 'lastvx', 'lastvy'])
     reloaded_campaign.apply_analysis(stats)
