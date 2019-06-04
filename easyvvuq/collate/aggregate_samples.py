@@ -26,29 +26,40 @@ __license__ = "LGPL"
 
 
 class AggregateSamples(BaseCollationElement, collater_name="aggregate_samples"):
-    """
-    Aggregate the results of all completed simulations described by the
-    Campaign.
-
-    Parameters
-    ----------
-    average:
-        Should the values read in be averaged (mean).
-    """
-
-    def element_version(self):
-        return "0.1"
 
     def __init__(self, average=False):
+        """
+        Aggregate the results of all completed simulations described by the
+        Campaign.
+
+        Parameters
+        ----------
+        average : bool
+            Should the values read in be averaged (mean).
+        """
+
         self.average = average
 
+    def element_version(self):
+        """Version of this element for logging."""
+        return "0.1"
+
     def collate(self, campaign):
-        """
+        """Aggregate data from all completed runs in the Campaign runs database.
+
+        Parameters
+        ----------
+        campaign : :obj:`easyvvuq.campaign.Campaign`
+            EasyVVUQ coordination object from which to get information on runs
+            to be collated.
+
         Returns
         -------
         `pd.DataFrame`:
-            Aggregated data from all completed runs referenced in the input Campaign.
+            Aggregated data from all completed runs referenced in the
+            input Campaign.
         """
+
         decoder = campaign._active_app_decoder
 
         if decoder.output_type != OutputType.SAMPLE:
@@ -57,7 +68,7 @@ class AggregateSamples(BaseCollationElement, collater_name="aggregate_samples"):
         full_data = pd.DataFrame()
 
         # TODO: Find nicer way than forcing collate to access deep internal
-        # vars of campaign object like this
+        #       vars of campaign object like this
         runs = campaign.campaign_db.runs()
 
         for run_id, run_info in runs.items():
@@ -85,4 +96,12 @@ class AggregateSamples(BaseCollationElement, collater_name="aggregate_samples"):
         return full_data
 
     def get_restart_dict(self):
+        """Return dict required for restart from serlialized form.
+
+        Returns
+        -------
+        dict:
+            Only parameter needed for restart is the flag for averaging of
+            collated data.
+        """
         return {"average": self.average}
