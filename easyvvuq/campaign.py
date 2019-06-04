@@ -604,7 +604,7 @@ class Campaign:
                 active_encoder.encode(params=run_data['params'],
                                       target_dir=target_dir)
 
-            self.campaign_db.set_run_status(run_id, "encoded")
+            self.campaign_db.set_run_statuses([run_id], "encoded")
 
     def get_campaign_runs_dir(self):
         """Get the runs directory from the CampaignDB.

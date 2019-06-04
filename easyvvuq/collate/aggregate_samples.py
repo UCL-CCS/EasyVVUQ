@@ -56,7 +56,6 @@ class AggregateSamples(BaseCollationElement, collater_name="aggregate_samples"):
         # vars of campaign object like this
         runs = campaign.campaign_db.runs()
 
-        num_added = 0
         for run_id, run_info in runs.items():
 
             # Only look through runs which have been 'encoded' (but not 'collated')
@@ -64,17 +63,14 @@ class AggregateSamples(BaseCollationElement, collater_name="aggregate_samples"):
                 continue
 
             # Use decoder to check if run has completed (in general application-specific)
+            processed_run_IDs = []
             if decoder.sim_complete(run_info=run_info):
-
-#                campaign.campaign_db.set_run_status(run_id, "completed")
-
                 run_data = decoder.parse_sim_output(run_info=run_info)
 
                 if self.average:
                     run_data = pd.DataFrame(run_data.mean()).transpose()
 
                 params = run_info['params']
-
                 column_list = list(params.keys()) + run_data.columns.tolist()
 
                 for param, value in params.items():
@@ -85,11 +81,13 @@ class AggregateSamples(BaseCollationElement, collater_name="aggregate_samples"):
                 run_data['run_id'] = run_id
                 new_data = new_data.append(run_data, ignore_index=True)
 
-                num_added += 1
+                processed_run_IDs.append(run_id)
 
         self.append_data(new_data)
 
-        return {"num_added": num_added}
+        self.campaign.campaign_db.set_run_statuses(run_id, "collated")
+
+        return {"num_added": len(processed_run_IDs)}
 
     def element_version(self):
         return "0.1"
