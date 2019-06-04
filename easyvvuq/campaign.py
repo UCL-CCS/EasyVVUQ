@@ -105,6 +105,7 @@ class Campaign:
 
         self.campaign_id = None
         self._active_app = None
+        self._active_app_name = None
         self.campaign_db = None
 
         self._last_collation_dataframe = None
@@ -229,6 +230,7 @@ class Campaign:
 
         logger.info(f"Loading campaign from state file '{full_state_path}'")
         self.load_state(full_state_path)
+
         active_sampler_id = self._active_sampler_id
 
         if self.db_type == 'sql':
@@ -247,6 +249,8 @@ class Campaign:
                                       name=self.campaign_name)
         campaign_db = self.campaign_db
         self.campaign_id = campaign_db.get_campaign_id(self.campaign_name)
+
+        self.set_app(self._active_app_name)
 
         # Resurrect the sampler using the ID
         self._active_sampler = campaign_db.resurrect_sampler(active_sampler_id)
@@ -267,6 +271,7 @@ class Campaign:
             "db_location": self.db_location,
             "db_type": self.db_type,
             "active_sampler_id": self._active_sampler_id,
+            "active_app": self._active_app_name,
             "campaign_name": self.campaign_name,
             "campaign_dir": self._campaign_dir,
             "log": self._log
@@ -293,6 +298,7 @@ class Campaign:
         self.db_location = input_json["db_location"]
         self.db_type = input_json["db_type"]
         self._active_sampler_id = input_json["active_sampler_id"]
+        self._active_app_name = input_json["active_app"]
         self.campaign_name = input_json["campaign_name"]
         self._campaign_dir = input_json["campaign_dir"]
         self._log = input_json["log"]
@@ -390,6 +396,7 @@ class Campaign:
 
         """
 
+        self._active_app_name = app_name
         self._active_app = self.campaign_db.app(name=app_name)
 
         # Resurrect the app encoder, decoder and collation elements
