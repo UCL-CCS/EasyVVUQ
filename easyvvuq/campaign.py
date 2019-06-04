@@ -653,6 +653,9 @@ class Campaign:
         self._last_collation_dataframe = self._active_app_collation.collate(
             self)
 
+        if self._last_collation_dataframe.empty:
+            logger.warning('No data collected during collation.')
+
         # Log application of this collation element
         self.log_element_application(self._active_app_collation, None)
 
