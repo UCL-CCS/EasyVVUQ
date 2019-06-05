@@ -4,6 +4,7 @@ CampaignDB.
 import json
 import logging
 import os
+import pandas as pd
 from .base import BaseCampaignDB
 from easyvvuq.sampling.base import BaseSamplingElement
 from easyvvuq.encoders.base import BaseEncoder
@@ -212,11 +213,11 @@ class CampaignDB(BaseCampaignDB):
             logger.critical(message)
             raise RuntimeError(message)
 
-        if self._campaign_info['collation'] == None:
+        if self._campaign_info['collater'] == None:
             print("Loaded campaign does not have a collation element currently set")
             return None
 
-        collater = BaseCollationElement.deserialize(self._campaign_info['collation'])
+        collater = BaseCollationElement.deserialize(self._campaign_info['collater'])
         return collater
 
     def add_run(self, run_info=None, prefix='Run_'):
@@ -346,4 +347,8 @@ class CampaignDB(BaseCampaignDB):
             df.to_csv(self._collation_csv, mode='a', header=False)
         else:
             df.to_csv(self._collation_csv, mode='w', header=True)
+
+    def get_collation_dataframe(self):
+        df = pd.read_csv(self._collation_csv)
+        return df
 
