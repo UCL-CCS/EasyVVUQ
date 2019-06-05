@@ -43,6 +43,8 @@ class AggregateSamples(BaseCollationElement, collater_name="aggregate_samples"):
         """
         Collected the decoded run results for all completed runs without 'collated' status
         """
+        self.campaign = campaign
+
         decoder = campaign._active_app_decoder
 
         if decoder.output_type != OutputType.SAMPLE:
@@ -82,16 +84,16 @@ class AggregateSamples(BaseCollationElement, collater_name="aggregate_samples"):
 
                 processed_run_IDs.append(run_id)
 
-        self.append_data(new_data, campaign)
+        self.append_data(new_data)
         campaign.campaign_db.set_run_statuses(processed_run_IDs, "collated")
 
         return {"num_collated": len(processed_run_IDs)}
 
-    def append_data(self, new_data, campaign):
-        campaign.campaign_db.append_collation_dataframe(new_data)
+    def append_data(self, new_data):
+        self.campaign.campaign_db.append_collation_dataframe(new_data)
 
     def get_collated_dataframe(self):
-        pass
+        return self.campaign.campaign_db.get_collation_dataframe()
 
     def element_version(self):
         return "0.1"

@@ -2,6 +2,7 @@
 """
 import json
 import logging
+import pandas as pd
 from sqlalchemy import create_engine, Column, Integer, String, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
@@ -522,4 +523,9 @@ class CampaignDB(BaseCampaignDB):
         return self._get_campaign_info(campaign_name=campaign_name).runs_dir
 
     def append_collation_dataframe(self, df):
-        df.to_sql("CollationResult", self.engine, if_exists='append')
+        df.to_sql("COLLATIONRESULT", self.engine, if_exists='append')
+
+    def get_collation_dataframe(self):
+        query = "select * from COLLATIONRESULT"
+        df = pd.read_sql_query(query, self.engine)
+        return df
