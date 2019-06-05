@@ -3,6 +3,7 @@ CampaignDB.
 """
 import json
 import logging
+import os
 from .base import BaseCampaignDB
 from easyvvuq.sampling.base import BaseSamplingElement
 from easyvvuq.encoders.base import BaseEncoder
@@ -45,6 +46,8 @@ class CampaignDB(BaseCampaignDB):
         self._runs = {}
         self._sample = None
 
+        self._collation_csv = "COLLATIONRESULT.csv"
+
         if new_campaign:
 
             self._campaign_info = info.to_dict()
@@ -80,13 +83,15 @@ class CampaignDB(BaseCampaignDB):
         self._app = input_info.get('app', {})
         self._runs = input_info.get('runs', {})
         self._sample = input_info.get('sample', {})
+        self._collation_csv = input_info.get('collation_csv', {})
 
     def _save(self):
         out_dict = {
             'campaign': self._campaign_info,
             'app': self._app,
             'runs': self._runs,
-            'sample': self._sample
+            'sample': self._sample,
+            'collation_csv': self._collation_csv
         }
 
         with open(self.location, "w") as outfile:
@@ -335,3 +340,10 @@ class CampaignDB(BaseCampaignDB):
         for run_name in run_name_list:
             self._runs[run_name]['status'] = status
         self._save()
+
+    def append_collation_dataframe(self, df):
+        if os.path.exists(self._collation_csv):
+            df.to_csv(self._collation_csv, mode='a', header=False)
+        else:
+            df.to_csv(self._collation_csv, mode='w', header=True)
+
