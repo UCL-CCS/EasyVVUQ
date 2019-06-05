@@ -40,10 +40,6 @@ class AggregateSamples(BaseCollationElement, collater_name="aggregate_samples"):
 
         self.average = average
 
-    def element_version(self):
-        """Version of this element for logging."""
-        return "0.1"
-
     def collate(self, campaign):
         """
         Collected the decoded run results for all completed runs with 'encoded' status
