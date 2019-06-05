@@ -117,7 +117,6 @@ class CampaignDB(BaseCampaignDB):
         """
 
         if name is not None:
-            # TODO: Should this raise and Exception?
             message = (f'JSON/Python dictionary database can only support one '
                        f'application - ignoring selected name ({name}).')
             logger.warning(message)
