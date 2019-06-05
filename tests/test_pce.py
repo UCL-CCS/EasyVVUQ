@@ -1,7 +1,7 @@
 import chaospy as cp
 import easyvvuq as uq
 
-# author: Jalal Lakhlili
+__author__ = 'Jalal Lakhlili'
 __license__ = "LGPL"
 
 

@@ -1,3 +1,13 @@
+"""Constants and Enums to set defaults and constrain selections
+
+
+Attributes
+----------
+
+default_campaign_prefix : str
+    Text used to ensure campaign names are identifiable and somewhat human
+    readable.
+"""
 from enum import Enum
 
 __copyright__ = """

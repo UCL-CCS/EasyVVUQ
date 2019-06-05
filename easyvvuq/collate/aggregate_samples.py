@@ -26,22 +26,38 @@ __license__ = "LGPL"
 
 
 class AggregateSamples(BaseCollationElement, collater_name="aggregate_samples"):
-    """
-    Aggregate the results of all completed simulations described by the
-    Campaign.
-
-    Parameters
-    ----------
-    average:
-        Should the values read in be averaged (mean).
-    """
 
     def __init__(self, average=False):
+        """
+        Aggregate the results of all completed simulations described by the
+        Campaign.
+
+        Parameters
+        ----------
+        average : bool
+            Should the values read in be averaged (mean).
+        """
+
         self.average = average
+
+    def element_version(self):
+        """Version of this element for logging."""
+        return "0.1"
 
     def collate(self, campaign):
         """
-        Collected the decoded run results for all completed runs without 'collated' status
+        Collected the decoded run results for all completed runs with 'encoded' status
+
+        Parameters
+        ----------
+        campaign : :obj:`easyvvuq.campaign.Campaign`
+            EasyVVUQ coordination object from which to get information on runs
+            to be collated.
+
+        Returns
+        -------
+        `int`:
+            The number of new data rows added during collation 
         """
         self.campaign = campaign
 
@@ -54,7 +70,7 @@ class AggregateSamples(BaseCollationElement, collater_name="aggregate_samples"):
         new_data = pd.DataFrame()
 
         # TODO: Find nicer way than forcing collate to access deep internal
-        # vars of campaign object like this
+        #       vars of campaign object like this
         runs = campaign.campaign_db.runs()
 
         processed_run_IDs = []
@@ -87,7 +103,7 @@ class AggregateSamples(BaseCollationElement, collater_name="aggregate_samples"):
         self.append_data(new_data)
         campaign.campaign_db.set_run_statuses(processed_run_IDs, "collated")
 
-        return {"num_collated": len(processed_run_IDs)}
+        return len(processed_run_IDs)
 
     def append_data(self, new_data):
         self.campaign.campaign_db.append_collation_dataframe(new_data)
@@ -102,4 +118,12 @@ class AggregateSamples(BaseCollationElement, collater_name="aggregate_samples"):
         return True
 
     def get_restart_dict(self):
+        """Return dict required for restart from serlialized form.
+
+        Returns
+        -------
+        dict:
+            Only parameter needed for restart is the flag for averaging of
+            collated data.
+        """
         return {"average": self.average}

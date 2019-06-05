@@ -1,3 +1,6 @@
+"""Templates for elements that perform actions on a specified directory.
+"""
+
 __copyright__ = """
 
     Copyright 2018 Robin A. Richardson, David W. Wright
@@ -21,7 +24,7 @@ __copyright__ = """
 __license__ = "LGPL"
 
 
-class BaseAction(object):
+class BaseAction:
     """
     Baseclass for all EasyVVUQ Actions.
 
@@ -31,5 +34,12 @@ class BaseAction(object):
         """
         Function that will perform some action on the specified directory.
         Must be implemented by subclass.
+
+        Parameters
+        ----------
+
+        target_dir : str
+            Directory upon which the action will be performed
+
         """
         raise NotImplementedError

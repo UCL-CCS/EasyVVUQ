@@ -3,7 +3,7 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-EasyVVUQ: Errorbars for everyone!
+EasyVVUQ: Error bars for everyone!
 ====================================
 
 EasyVVUQ is a Python library designed to facilitate verification, validation 
@@ -36,6 +36,7 @@ Table of contents
    :maxdepth: 1
 
    installation
+   concepts
    basic_tutorial
 
 
