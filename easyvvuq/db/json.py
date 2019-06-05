@@ -305,7 +305,8 @@ class CampaignDB(BaseCampaignDB):
                        f'campaign - {campaign}/ sampler {sampler}')
             logger.warning(message)
 
-        return self._runs
+        for run_id, run_info in self._runs.items():
+            yield run_id, run_info
 
     def runs_dir(self, campaign_name=None):
 
