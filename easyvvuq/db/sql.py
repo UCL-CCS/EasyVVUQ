@@ -462,8 +462,7 @@ class CampaignDB(BaseCampaignDB):
 
     def runs(self, campaign=None, sampler=None):
         """
-        Get a dictionary of all run information for selected `campaign` and
-        `sampler`.
+        A generator to return all run information for selected `campaign` and `sampler`.
 
         Parameters
         ----------
@@ -486,12 +485,9 @@ class CampaignDB(BaseCampaignDB):
         if sampler:
             filter_options['sampler'] = sampler
 
-        # TODO: This is a bad idea - find a better generator solution
-#        selected = self.session.query(RunTable).filter_by(**filter_options).all()
-        selected = self.session.query(RunTable).filter_by(**filter_options)#.yield_per(1000)
-#        return {r.run_name: self._run_to_dict(r) for r in selected}
+        # Note that for some databases this can be sped up with a yield_per(), but not all
+        selected = self.session.query(RunTable).filter_by(**filter_options)
         for r in selected:
-            print(r)
             yield r.run_name, self._run_to_dict(r)
 
     def runs_dir(self, campaign_name=None):

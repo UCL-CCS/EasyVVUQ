@@ -585,10 +585,8 @@ class Campaign:
 
         fixtures = self._active_app['fixtures']
 
-#        runs = self.campaign_db.runs()
         runs_dir = self.campaign_db.runs_dir()
 
-#        for run_id, run_data in runs.items():
         for run_id, run_data in self.campaign_db.runs():
 
             # Only do this for runs that have status "new"
@@ -639,7 +637,6 @@ class Campaign:
         -------
         """
 
-#        runs = self.campaign_db.runs()
         runs_dir = self.campaign_db.runs_dir()
 
         # Loop through all runs in this campaign

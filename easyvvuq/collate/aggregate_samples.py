@@ -65,10 +65,6 @@ class AggregateSamples(BaseCollationElement, collater_name="aggregate_samples"):
         # Aggregate any uncollated runs into a dataframe (for appending to existing full df)
         new_data = pd.DataFrame()
 
-        # TODO: Find nicer way than forcing collate to access deep internal
-        #       vars of campaign object like this
-#        runs = campaign.campaign_db.runs()
-
         processed_run_IDs = []
         for run_id, run_info in campaign.campaign_db.runs():
 
