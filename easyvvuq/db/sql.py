@@ -466,12 +466,14 @@ class CampaignDB(BaseCampaignDB):
 
         Parameters
         ----------
-        campaign: int
+        campaign: int or None
             Campaign id to filter for.
-        sampler: int
+        sampler: int or None
             Sampler id to filter for.
-        status: str
+        status: str or None
             Status string to filter for.
+        not_status: str or None
+            Exclude runs with this status string
 
         Returns
         -------
@@ -501,12 +503,14 @@ class CampaignDB(BaseCampaignDB):
 
         Parameters
         ----------
-        campaign: int
+        campaign: int or None
             Campaign id to filter for.
-        sampler: int
+        sampler: int or None
             Sampler id to filter for.
-        status: str
+        status: str or None
             Status string to filter for.
+        not_status: str or None
+            Exclude runs with this status string
 
         Returns
         -------
