@@ -29,7 +29,7 @@ def test_pce(tmpdir):
     output_filename = params["out_file"]["default"]
     output_columns = ["te", "ti"]
 
-    # Create an encoder, decoder and collation element for PCE test app
+    # Create an encoder and decoder for PCE test app
     encoder = uq.encoders.GenericEncoder(
         template_fname='tests/pce/pce.template',
         delimiter='$',
@@ -37,15 +37,17 @@ def test_pce(tmpdir):
     decoder = uq.decoders.SimpleCSV(target_filename=output_filename,
                                     output_columns=output_columns,
                                     header=0)
-    collation = uq.collate.AggregateSamples(average=False)
 
     # Add the PCE app (automatically set as current app)
     my_campaign.add_app(name="pce",
                         params=params,
                         encoder=encoder,
-                        decoder=decoder,
-                        collation=collation
+                        decoder=decoder
                         )
+
+    # Create a collation element for this campaign
+    collater = uq.collate.AggregateSamples(average=False)
+    my_campaign.set_collater(collater)
 
     # Create the sampler
     vary = {
