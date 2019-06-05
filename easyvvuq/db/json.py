@@ -318,6 +318,14 @@ class CampaignDB(BaseCampaignDB):
                        "Campaign ID is always 1.")
         return 1
 
+    def get_run_status(self, run_name, campaign=None, sampler=None):
+        if campaign is not None:
+            logger.warning("Only 1 campaign is possible in JSON db")
+        if sampler is not None:
+            logger.warning("Only 1 sampler is possible in JSON db")
+
+        return self._runs[run_name]['status']
+
     def set_run_statuses(self, run_name_list, status, campaign=None, sampler=None):
         if campaign is not None:
             logger.warning("Only 1 campaign is possible in JSON db")
