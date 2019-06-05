@@ -86,7 +86,7 @@ class CampaignDB(BaseCampaignDB):
             'campaign': self._campaign_info,
             'app': self._app,
             'runs': self._runs,
-            'sample': self._sample,
+            'sample': self._sample
         }
 
         with open(self.location, "w") as outfile:
@@ -189,8 +189,30 @@ class CampaignDB(BaseCampaignDB):
 
         encoder = BaseEncoder.deserialize(self._app['input_encoder'])
         decoder = BaseDecoder.deserialize(self._app['output_decoder'])
-        collater = BaseCollationElement.deserialize(self._app['collation'])
-        return encoder, decoder, collater
+        return encoder, decoder
+
+    def set_campaign_collater(self, collater, campaign_id):
+        if campaign_id != 1:
+            message = ('JSON/Python dict database does not support a '
+                       'campaign_id other than 1')
+            logger.critical(message)
+            raise RuntimeError(message)
+
+        self._campaign_info['collater'] = collater.serialize()
+
+    def resurrect_collation(self, campaign_id):
+        if campaign_id != 1:
+            message = ('JSON/Python dict database does not support a '
+                       'campaign_id other than 1')
+            logger.critical(message)
+            raise RuntimeError(message)
+
+        if self._campaign_info['collation'] == None:
+            print("Loaded campaign does not have a collation element currently set")
+            return None
+
+        collater = BaseCollationElement.deserialize(self._campaign_info['collation'])
+        return collater
 
     def add_run(self, run_info=None, prefix='Run_'):
         """
@@ -216,9 +238,7 @@ class CampaignDB(BaseCampaignDB):
         this_run['run_name'] = name
 
         self._runs[name] = this_run
-
         self._next_run += 1
-
         self._save()
 
     def run(self, run_name, campaign=None, sampler=None):
@@ -298,11 +318,12 @@ class CampaignDB(BaseCampaignDB):
                        "Campaign ID is always 1.")
         return 1
 
-    def set_run_status(self, run_name, status, campaign=None, sampler=None):
+    def set_run_statuses(self, run_name_list, status, campaign=None, sampler=None):
         if campaign is not None:
             logger.warning("Only 1 campaign is possible in JSON db")
         if sampler is not None:
             logger.warning("Only 1 sampler is possible in JSON db")
 
-        self._runs[run_name]['status'] = status
+        for run_name in run_name_list:
+            self._runs[run_name]['status'] = status
         self._save()

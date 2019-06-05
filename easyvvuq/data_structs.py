@@ -371,6 +371,7 @@ class CampaignInfo:
             check_local_dir(runs_dir, 'runs')
 
         self.runs_dir = runs_dir
+        self.collater = None
 
     @property
     def easyvvuq_version(self):
@@ -401,7 +402,7 @@ class CampaignInfo:
             'campaign_dir_prefix': self.campaign_dir_prefix,
             'runs_dir': self.runs_dir,
             'easyvvuq_version': self.easyvvuq_version,
-            'collater': None
+            'collater': self.collater
         }
 
         return out_dict
