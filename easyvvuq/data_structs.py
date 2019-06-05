@@ -195,12 +195,10 @@ class AppInfo:
         Description of possible parameter values.
     fixtures : dict or None
         Description of files/assets for runs.
-    encoder : :obj:`easyvvuq.encoders.base.BaseEncoderElement` or None
+    encoder : :obj:`easyvvuq.encoders.base.BaseEncoder`
         Encoder element for application.
-    decoder : :obj:`easyvvuq.decoders.base.BaseDecoderElement` or None
+    decoder : :obj:`easyvvuq.decoders.base.BaseDecoder`
         Decoder element for application.
-    collation : :obj:`easyvvuq.collation.base.BaseCollationElement` or None
-        Collation element for collecting output data.
 
     Attributes
     ----------
@@ -210,12 +208,10 @@ class AppInfo:
         Description of possible parameter values.
     fixtures : dict or None
         Description of files/assets for runs.
-    input_encoder : :obj:`easyvvuq.encoders.base.BaseEncoderElement` or None
+    input_encoder : :obj:`easyvvuq.encoders.base.BaseEncoder`
         Encoder element for application.
-    output_decoder : :obj:`easyvvuq.decoders.base.BaseDecoderElement` or None
+    output_decoder : :obj:`easyvvuq.decoders.base.BaseDecoder`
         Decoder element for application.
-    collation : :obj:`easyvvuq.collation.base.BaseCollationElement` or None
-        Collation element for collecting output data.
     """
 
     def __init__(
