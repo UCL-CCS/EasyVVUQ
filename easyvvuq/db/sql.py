@@ -325,18 +325,13 @@ class CampaignDB(BaseCampaignDB):
             campaign, app)
         """
 
-        if campaign is None and sampler is None:
-            selected = self.session.query(
-                RunTable).filter_by(run_name=run_name)
-        elif campaign is not None and sampler is not None:
-            selected = self.session.query(RunTable).filter_by(
-                run_name=run_name, campaign=campaign, sample=sampler)
-        elif campaign is not None:
-            selected = self.session.query(RunTable).filter_by(
-                run_name=run_name, campaign=campaign)
-        else:
-            selected = self.session.query(RunTable).filter_by(
-                run_name=run_name, sample=sampler)
+        filter_options = {'run_name': run_name}
+        if campaign:
+            filter_options['campaign'] = campaign
+        if sampler:
+            filter_options['sampler'] = sampler
+
+        selected = self.session.query(RunTable).filter_by(**filter_options)
 
         if selected.count() != 1:
             logging.warning('Multiple runs selected - using the first')
@@ -492,7 +487,6 @@ class CampaignDB(BaseCampaignDB):
             run information fields.).
 
         """
-        # TODO: This is a bad idea - find a better generator solution
 
         filter_options = {}
         if campaign:
@@ -500,6 +494,7 @@ class CampaignDB(BaseCampaignDB):
         if sampler:
             filter_options['sampler'] = sampler
 
+        # TODO: This is a bad idea - find a better generator solution
         selected = self.session.query(RunTable).filter_by(**filter_options).all()
 
         return {r.run_name: self._run_to_dict(r) for r in selected}
