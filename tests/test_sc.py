@@ -31,7 +31,7 @@ def test_sc(tmpdir):
     output_filename = params["out_file"]["default"]
     output_columns = ["u"]
 
-    # Create an encoder, decoder and collation element for PCE test app
+    # Create an encoder and decoder for SC test app
     encoder = uq.encoders.GenericEncoder(
         template_fname='./sc/sc.template',
         delimiter='$',
@@ -39,15 +39,17 @@ def test_sc(tmpdir):
     decoder = uq.decoders.SimpleCSV(target_filename=output_filename,
                                     output_columns=output_columns,
                                     header=0)
-    collation = uq.collate.AggregateSamples(average=False)
 
     # Add the SC app (automatically set as current app)
     my_campaign.add_app(name="sc",
                         params=params,
                         encoder=encoder,
-                        decoder=decoder,
-                        collation=collation
+                        decoder=decoder
                         )
+
+    # Create a collation element for this campaign
+    collater = uq.collate.AggregateSamples(average=False)
+    my_campaign.set_collater(collater)
 
     # Create the sampler
     vary = {

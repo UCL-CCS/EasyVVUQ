@@ -264,6 +264,9 @@ class EnsembleBoot(BaseAnalysisElement):
         if data_frame is None:
             raise RuntimeError(
                 "This VVUQ element needs a data frame to analyse")
+        elif data_frame.empty:
+            raise RuntimeError(
+                "No data in data frame passed to analyse element")
 
         results = ensemble_bootstrap(
             data_frame,

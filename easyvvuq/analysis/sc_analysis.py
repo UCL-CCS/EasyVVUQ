@@ -1,3 +1,8 @@
+"""Analysis element for Stochastic Collocation (SC).
+
+Method: 'Global Sensitivity Analysis for Stochastic Collocation'
+        G. Tang and G. Iaccarino, AIAA 2922, 2010
+"""
 import numpy as np
 import chaospy as cp
 from itertools import product, chain, combinations
@@ -30,33 +35,64 @@ __license__ = "LGPL"
 
 class SCAnalysis(BaseAnalysisElement):
 
-    def element_name(self):
-        return "SC_analysis"
+    def __init__(self, sampler=None, qoi_cols=None):
+        """Analysis element for Stochastic Collocation (SC).
 
-    def element_version(self):
-        return "0.3"
+        Method: 'Global Sensitivity Analysis for Stocastic Collocation'
+                G. Tang and G. Iaccarino, AIAA 2922, 2010
 
-    def __init__(self, params_cols=None, sampler=None, qoi_cols=None):
+        Parameters
+        ----------
+        sampler : :obj:`easyvvuq.sampling.stochastic_collocation.SCSampler`
+            Sampler used to initiate the PCE analysis
+        qoi_cols : list or None
+            Column names for quantities of interest (for which analysis is
+            performed).
+        """
 
         if sampler is None:
-            msg = 'PCE analysis requires a paired sampler to be passed'
+            msg = 'SC analysis requires a paired sampler to be passed'
             raise RuntimeError(msg)
 
         if qoi_cols is None:
             raise RuntimeError("Analysis element requires a list of "
                                "quantities of interest (qoi)")
 
-        self.params_cols = params_cols
         self.qoi_cols = qoi_cols
         self.output_type = OutputType.SUMMARY
         self.sampler = sampler
+        self._number_of_samples = sampler._number_of_samples
 
-    # main analysis subroutine
+    def element_name(self):
+        """Name for this element for logging purposes"""
+        return "SC_Analysis"
+
+    def element_version(self):
+        """Version of this element for logging purposes"""
+        return "0.3"
+
     def analyse(self, data_frame=None):
+        """Perform PCE analysis on input `data_frame`.
+
+        Parameters
+        ----------
+        data_frame : :obj:`pandas.DataFrame`
+            Input data for analysis.
+
+        Returns
+        -------
+        dict
+            Results dictionary with sub-dicts with keys:
+            ['statistical_moments', 'sobol_indices'].
+            Each dict has an entry for each item in `qoi_cols`.
+        """
 
         if data_frame is None:
             raise RuntimeError("Analysis element needs a data frame to "
                                "analyse")
+        elif data_frame.empty:
+            raise RuntimeError(
+                "No data in data frame passed to analyse element")
 
         qoi_cols = self.qoi_cols
 
@@ -88,7 +124,6 @@ class SCAnalysis(BaseAnalysisElement):
                 samples[k].append(values)
 
         self.samples = samples
-        self._number_of_samples = self.sampler._number_of_samples
 
         # number of uncertain parameters
         self.d = self.xi_d.shape[1]
@@ -107,12 +142,25 @@ class SCAnalysis(BaseAnalysisElement):
                                                      'std': std_k}
 
             # compute all Sobol indices
-            results['sobol_indices'][qoi_k] = self.get_Sobol_indices(qoi_k, 'all')
+            results['sobol_indices'][qoi_k] = self.get_sobol_indices(qoi_k, 'all')
 
         return results
 
-    # Compute the first two statistical moments
     def get_moments(self, qoi):
+        """Compute the first two statistical moments.
+
+        Parameters
+        ----------
+        qoi : str
+            column name of quantity of interest
+
+        Returns
+        -------
+        float:
+            Mean of samples, using quad weights
+        float:
+            Variance of samples, using quad weights
+        """
 
         # compute the mean and variance of the code samples, using quad weights
         mean_f = np.zeros([self.N_qoi, 1])
@@ -128,9 +176,21 @@ class SCAnalysis(BaseAnalysisElement):
 
         return mean_f, var_f
 
-    # use the SC expansion as a surrogate
-
     def surrogate(self, qoi, x):
+        """Use the SC expansion as a surrogate.
+
+        Parameters
+        ----------
+        qoi : str
+            Column name of quantity of interest
+        x :
+
+
+        Returns
+        -------
+
+        """
+
         # interpolated QoI
         f_int = np.zeros([self.N_qoi, 1])
 
@@ -150,7 +210,7 @@ class SCAnalysis(BaseAnalysisElement):
             L = []
             for i in range(self.d):
                 # values of Lagrange polynomials at x
-                L.append(LagrangePoly(x[i], C[i], idx[i]))
+                L.append(lagrange_poly(x[i], C[i], idx[i]))
 
             # current sample
             qoi_k = self.samples[qoi][k].values.reshape([self.N_qoi, 1])  # .reshape(self.N_qoi)
@@ -160,13 +220,24 @@ class SCAnalysis(BaseAnalysisElement):
 
         return f_int
 
-    ####################################################################
-    # BEGIN SOBOL SUBROUTINES                                          #
-    # Method: 'Global Sensitivity Analysis for Stocastic Collocation'  #
-    #          G. Tang and G. Iaccarino, AIAA 2922, 2010               #
-    ####################################################################
+    # Start SC specific methods
 
-    def compute_tensor_prod_u(self, xi, wi, u, u_prime):
+    @staticmethod
+    def compute_tensor_prod_u(xi, wi, u, u_prime):
+        """Calculate tensor products with dimension of u
+
+        Parameters
+        ----------
+        xi
+        wi
+        u
+        u_prime
+
+        Returns
+        -------
+
+        """
+
         # tensor products with dimension of u
         xi_u = {}
         wi_u = {}
@@ -190,9 +261,23 @@ class SCAnalysis(BaseAnalysisElement):
         return {'xi_d_u': xi_d_u, 'wi_d_u': wi_d_u,
                 'xi_d_u_prime': xi_d_u_prime, 'wi_d_u_prime': wi_d_u_prime}
 
-    #############################
-
     def compute_h(self, qoi, u, u_prime, xi_d_u, xi_d_u_prime, wi_d_u_prime):
+        """
+
+        Parameters
+        ----------
+        qoi
+        u
+        u_prime
+        xi_d_u
+        xi_d_u_prime
+        wi_d_u_prime
+
+        Returns
+        -------
+
+        """
+
         S_u = xi_d_u.shape[0]
         S_u_prime = xi_d_u_prime.shape[0]
 
@@ -225,10 +310,18 @@ class SCAnalysis(BaseAnalysisElement):
 
         return h
 
-    #############################
+    def get_sobol_indices(self, qoi, typ):
+        """Computes Sobol indices using Stochastic Collocation
 
-    # Computes Sobol indices using Stochastic Collocation
-    def get_Sobol_indices(self, qoi, typ):
+        Parameters
+        ----------
+        qoi
+        typ
+
+        Returns
+        -------
+
+        """
 
         # multi indices
         U = list(range(self.d))
@@ -252,9 +345,7 @@ class SCAnalysis(BaseAnalysisElement):
         # idx_gt0 = np.where(D > 0)[0]
 
         # partial variances
-        D_u = {}
-        # D_0 = mu**2
-        D_u[P[0]] = mu**2
+        D_u = {P[0]: mu**2}
 
         sobol = {}
 
@@ -295,37 +386,62 @@ class SCAnalysis(BaseAnalysisElement):
 
         sort = []
         for u in P[1:]:
-            #print('Sobol index ', u, ' = ', sobol[u])
-            sort.append(sobol[u])
 
-        # print('Total sum = ', np.sum(sobol.values())/self.N_qoi)
+            sort.append(sobol[u])
 
         return sobol
 
-    #########################
-    # END SOBOL SUBROUTINES #
-    #########################
-
-# https://docs.python.org/3/library/itertools.html#recipes
+    # End SC specific methods
 
 
 def powerset(iterable):
-    "powerset([1,2,3]) --> () (1,) (2,) (3,) (1,2) (1,3) (2,3) (1,2,3)"
+    """powerset([1,2,3]) --> () (1,) (2,) (3,) (1,2) (1,3) (2,3) (1,2,3)
+
+    Taken from: https://docs.python.org/3/library/itertools.html#recipes
+
+    Parameters
+    ----------
+    iterable : iterable
+        Input sequence
+
+    Returns
+    -------
+
+    """
+
     s = list(iterable)
     return chain.from_iterable(combinations(s, r) for r in range(len(s) + 1))
 
-# Lagrange polynomials used for interpolation
 
+def lagrange_poly(x, x_i, j):
+    """Lagrange polynomials used for interpolation
 
-def LagrangePoly(x, x_i, j):
+    l_j(x) = product(x - x_m / x_j - x_m) with 0 <= m <= k
+                                               and m !=j
+
+    TODO: Complete this docstring
+
+    Parameters
+    ----------
+    x : float
+
+    x_i : list or array of float
+
+    j : float
+
+    Returns
+    -------
+    float
+        l_j(x) calculated as shown above.
+    """
 
     l_j = 1.0
 
-    for i in range(len(x_i)):
+    for m in range(len(x_i)):
 
-        if i != j:
-            denom = x_i[j] - x_i[i]
-            nom = x - x_i[i]
+        if m != j:
+            denom = x_i[j] - x_i[m]
+            nom = x - x_i[m]
 
             l_j *= nom / denom
 
