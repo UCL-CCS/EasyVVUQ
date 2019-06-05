@@ -238,13 +238,11 @@ class AppInfo:
 
     @input_encoder.setter
     def input_encoder(self, encoder):
-        available_encoders = uq.encoders.base.AVAILABLE_ENCODERS
-
-        # TODO: Fix/relocate check. Problem is with live/serialized encoder info.
-        # if encoder not in available_encoders:
-        #     message = (f"Encoder not found. Looking for {encoder}.\n"
-        #                f"Available encoders are {available_encoders}.")
-        #     logging.critical(message)
+        print("ARSE")
+        if not isinstance(encoder, uq.encoders.BaseEncoder):
+            msg = f"Provided 'encoder' must be derived from type BaseEncoder"
+            logger.error(msg)
+            raise Exception(msg)
 
         self._input_encoder = encoder
 
