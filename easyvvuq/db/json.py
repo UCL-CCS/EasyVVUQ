@@ -213,7 +213,7 @@ class CampaignDB(BaseCampaignDB):
             logger.critical(message)
             raise RuntimeError(message)
 
-        if self._campaign_info['collater'] == None:
+        if self._campaign_info['collater'] is None:
             print("Loaded campaign does not have a collation element currently set")
             return None
 
@@ -351,4 +351,3 @@ class CampaignDB(BaseCampaignDB):
     def get_collation_dataframe(self):
         df = pd.read_csv(self._collation_csv)
         return df
-

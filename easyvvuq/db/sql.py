@@ -51,6 +51,7 @@ class CampaignTable(Base):
     runs_dir = Column(String)
     collater = Column(String)
 
+
 class AppTable(Base):
     """An SQLAlchemy schema for the app table.
     """
@@ -61,6 +62,7 @@ class AppTable(Base):
     output_decoder = Column(String)
     params = Column(String)
     fixtures = Column(String)
+
 
 class RunTable(Base):
     """An SQLAlchemy schema for the run table.
@@ -76,6 +78,7 @@ class RunTable(Base):
     run_dir = Column(String)
     campaign = Column(Integer, ForeignKey('campaign_info.id'))
     sample = Column(Integer, ForeignKey('sample.id'))
+
 
 class SamplerTable(Base):
     """An SQLAlchemy schema for the run table.
@@ -231,7 +234,7 @@ class CampaignDB(BaseCampaignDB):
 
     def resurrect_collation(self, campaign_id):
         serialized_collater = self.session.query(CampaignTable).get(campaign_id).collater
-        if serialized_collater == None:
+        if serialized_collater is None:
             print("Loaded campaign does not have a collation element currently set")
             return None
         collater = BaseCollationElement.deserialize(serialized_collater)
@@ -387,7 +390,8 @@ class CampaignDB(BaseCampaignDB):
         return selected.status
 
     def set_run_statuses(self, run_ID_list, status):
-        selected = self.session.query(RunTable).filter(RunTable.run_name.in_(set(run_ID_list))).all()
+        selected = self.session.query(RunTable).filter(
+            RunTable.run_name.in_(set(run_ID_list))).all()
 
         for run in selected:
             run.status = status

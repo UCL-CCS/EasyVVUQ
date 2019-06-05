@@ -306,6 +306,7 @@ class AppInfo:
 
         return out_dict
 
+
 class CampaignInfo:
     """Handles information on Campaign.
 

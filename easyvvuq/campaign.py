@@ -36,6 +36,7 @@ __license__ = "LGPL"
 
 logger = logging.getLogger(__name__)
 
+
 class Campaign:
     """Campaigns organise the dataflow in EasyVVUQ workflows.
 
