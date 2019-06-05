@@ -33,7 +33,7 @@ def test_sc(tmpdir):
 
     # Create an encoder, decoder and collation element for PCE test app
     encoder = uq.encoders.GenericEncoder(
-        template_fname='tests/sc/sc.template',
+        template_fname='./sc/sc.template',
         delimiter='$',
         target_filename='sc_in.json')
     decoder = uq.decoders.SimpleCSV(target_filename=output_filename,
@@ -55,7 +55,7 @@ def test_sc(tmpdir):
         "f": cp.Normal(1.0, 0.1)
     }
 
-    my_sampler = uq.sampling.SCSampler(vary=vary, polynomial_order=4)
+    my_sampler = uq.sampling.SCSampler(vary=vary, polynomial_order=1)
 
     # Associate the sampler with the campaign
     my_campaign.set_sampler(my_sampler)
@@ -66,7 +66,7 @@ def test_sc(tmpdir):
     my_campaign.draw_samples()
 
     my_campaign.populate_runs_dir()
-    my_campaign.apply_for_each_run_dir(uq.actions.ExecuteLocal("tests/sc/sc_model.py sc_in.json"))
+    my_campaign.apply_for_each_run_dir(uq.actions.ExecuteLocal("./sc/sc_model.py sc_in.json"))
 
     my_campaign.collate()
 
