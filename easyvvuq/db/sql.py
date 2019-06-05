@@ -494,17 +494,13 @@ class CampaignDB(BaseCampaignDB):
         """
         # TODO: This is a bad idea - find a better generator solution
 
-        if campaign is None and sampler is None:
-            selected = self.session.query(RunTable).all()
-        elif campaign is not None and sampler is not None:
-            selected = self.session.query(RunTable).filter_by(
-                campaign=campaign, sample=sampler).all()
-        elif campaign is not None:
-            selected = self.session.query(RunTable)
-            selected = selected.filter_by(campaign=campaign).all()
-        else:
-            selected = self.session.query(
-                RunTable).filter_by(sample=sampler).all()
+        filter_options = {}
+        if campaign:
+            filter_options['campaign'] = campaign
+        if sampler:
+            filter_options['sampler'] = sampler
+
+        selected = self.session.query(RunTable).filter_by(**filter_options).all()
 
         return {r.run_name: self._run_to_dict(r) for r in selected}
 
