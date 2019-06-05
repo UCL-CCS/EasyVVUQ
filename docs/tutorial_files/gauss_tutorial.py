@@ -18,13 +18,28 @@ my_campaign = uq.Campaign(name='gauss', work_dir=".")
 
 # 2. Parameter space definition
 params = {
-    "sigma": {"type": "real", "min": "0.0", "max": "100000.0",
-              "default": "0.25"},
-    "mu": {"type": "real", "min": "0.0", "max": "100000.0",
-           "default": "1"},
-    "num_steps": {"type": "int", "min": "0", "max": "100000",
-                  "default": "10"},
-    "out_file": {"type": "str", "default": out_file}
+    "sigma": {
+        "type": "real",
+        "min": "0.0",
+        "max": "100000.0",
+        "default": "0.25"
+    },
+    "mu": {
+        "type": "real",
+        "min": "0.0",
+        "max": "100000.0",
+        "default": "1"
+    },
+    "num_steps": {
+        "type": "int",
+        "min": "0",
+        "max": "100000",
+        "default": "10"
+    },
+    "out_file": {
+        "type": "str",
+        "default": "output.csv"
+    }
 }
 
 # 3. Wrap Application
@@ -33,8 +48,8 @@ encoder = uq.encoders.GenericEncoder(template_fname=template,
                                      target_filename=input_filename)
 
 decoder = uq.decoders.SimpleCSV(
-            target_filename=out_file, 
-            output_columns=['Step', 'Value'], 
+            target_filename=out_file,
+            output_columns=['Step', 'Value'],
             header=0)
 
 collation = uq.collate.AggregateSamples(average=True)
@@ -46,7 +61,7 @@ my_campaign.add_app(name="gauss",
                     collation=collation
                     )
 
-# 4. Specify Sampler 
+# 4. Specify Sampler
 #    -  vary the `mu` parameter only
 vary = {
     "mu": cp.Uniform(1.0, 100.0),
