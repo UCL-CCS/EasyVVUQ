@@ -193,5 +193,6 @@ def test_cannonsim_csv(tmpdir):
 
     print("All completed?", reloaded_campaign.all_complete())
 
+
 if __name__ == "__main__":
     test_cannonsim_csv("/tmp/")

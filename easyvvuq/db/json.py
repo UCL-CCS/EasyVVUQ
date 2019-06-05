@@ -306,7 +306,8 @@ class CampaignDB(BaseCampaignDB):
             logger.warning(message)
 
         for run_id, run_info in self._runs.items():
-            if (status is None or run_info['status'] == status) and run_info['status'] != not_status:
+            if (status is None or run_info['status'] ==
+                    status) and run_info['status'] != not_status:
                 yield run_id, run_info
 
     def get_num_runs(self, campaign=None, sampler=None, status=None, not_status=None):
@@ -319,7 +320,8 @@ class CampaignDB(BaseCampaignDB):
 
         num = 0
         for run_id, run_info in self._runs.items():
-            if (status is None or run_info['status'] == status) and run_info['status'] != not_status:
+            if (status is None or run_info['status'] ==
+                    status) and run_info['status'] != not_status:
                 num += 1
         return num
 
