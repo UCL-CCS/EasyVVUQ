@@ -45,7 +45,8 @@ class AggregateSamples(BaseCollationElement, collater_name="aggregate_samples"):
         return "0.1"
 
     def collate(self, campaign):
-        """Aggregate data from all completed runs in the Campaign runs database.
+        """
+        Collected the decoded run results for all completed runs with 'encoded' status
 
         Parameters
         ----------
@@ -55,34 +56,38 @@ class AggregateSamples(BaseCollationElement, collater_name="aggregate_samples"):
 
         Returns
         -------
-        `pd.DataFrame`:
-            Aggregated data from all completed runs referenced in the
-            input Campaign.
+        `int`:
+            The number of new data rows added during collation
         """
+        self.campaign = campaign
 
         decoder = campaign._active_app_decoder
 
         if decoder.output_type != OutputType.SAMPLE:
             raise RuntimeError('Can only aggregate sample type data')
 
-        full_data = pd.DataFrame()
+        # Aggregate any uncollated runs into a dataframe (for appending to existing full df)
+        new_data = pd.DataFrame()
 
         # TODO: Find nicer way than forcing collate to access deep internal
         #       vars of campaign object like this
         runs = campaign.campaign_db.runs()
 
+        processed_run_IDs = []
         for run_id, run_info in runs.items():
+
+            # Only look through runs which have been 'encoded' (but not 'collated')
+            if campaign.campaign_db.get_run_status(run_id) != "encoded":
+                continue
+
+            # Use decoder to check if run has completed (in general application-specific)
             if decoder.sim_complete(run_info=run_info):
-
-                campaign.campaign_db.set_run_status(run_id, "completed")
-
                 run_data = decoder.parse_sim_output(run_info=run_info)
 
                 if self.average:
                     run_data = pd.DataFrame(run_data.mean()).transpose()
 
                 params = run_info['params']
-
                 column_list = list(params.keys()) + run_data.columns.tolist()
 
                 for param, value in params.items():
@@ -91,9 +96,26 @@ class AggregateSamples(BaseCollationElement, collater_name="aggregate_samples"):
                 # Reorder columns
                 run_data = run_data[column_list]
                 run_data['run_id'] = run_id
-                full_data = full_data.append(run_data, ignore_index=True)
+                new_data = new_data.append(run_data, ignore_index=True)
 
-        return full_data
+                processed_run_IDs.append(run_id)
+
+        self.append_data(new_data)
+        campaign.campaign_db.set_run_statuses(processed_run_IDs, "collated")
+
+        return len(processed_run_IDs)
+
+    def append_data(self, new_data):
+        self.campaign.campaign_db.append_collation_dataframe(new_data)
+
+    def get_collated_dataframe(self):
+        return self.campaign.campaign_db.get_collation_dataframe()
+
+    def element_version(self):
+        return "0.1"
+
+    def is_restartable(self):
+        return True
 
     def get_restart_dict(self):
         """Return dict required for restart from serlialized form.
