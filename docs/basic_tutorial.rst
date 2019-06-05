@@ -209,22 +209,12 @@ and the columns to keep in the data for analysis::
                 output_columns=['Step', 'Value'],
                 header=0)
 
-In addition to providing and *Encoder* and *Decoder* to wrap the application we need
-to bring the output data together in a single data structure for analysis.
-This is called *collation* in EasyVVUQ teminology.
-Here we use the *AggregateSamples* element to add the output from each *Decoder* to
-a summary `pandas.DataFrame` (the average option here means that rather than have
-data from each step in each run we use the mean to represent each one)::
-
-    collation = uq.collate.AggregateSamples(average=True)
-
 These choices are then added to the *Campaign*::
 
     my_campaign.add_app(name="gauss",
                         params=params,
                         encoder=encoder,
-                        decoder=decoder,
-                        collation=collation
+                        decoder=decoder
                         )
 
 Section 4: Specify Sampler
@@ -253,7 +243,20 @@ Real world examples are likely to use more complicated algorithms (such as
 quasi-Monte Carlo or stochastic collocation) but the way of specifying
 parameters to vary remains the same.
 
-Section 5: Get Run Parameters
+Section 5: Specify Collater
+------------------------------------
+
+We will also need to bring the output data together in a single data structure for analysis.
+This is called *collation* in EasyVVUQ teminology.
+Here we use the *AggregateSamples* element to add the output from each *Decoder* to
+a summary `pandas.DataFrame` (the average option here means that rather than have
+data from each step in each run we use the mean to represent each one)::
+
+    collater = uq.collate.AggregateSamples(average=True)
+
+    my_campaign.set_collater(collater)
+
+Section 6: Get Run Parameters
 -----------------------------
 
 Now that the *Campaign* is setup it can provide sets of parameters to
@@ -267,7 +270,7 @@ Here we have chosen to have 5 replicas (repeats) of each sample drawn.
 At this stage all that happens is the parameter sets are added to the
 *CampaignDB*, no input files have been generated.
 
-Section 6: Create Input Directories
+Section 7: Create Input Directories
 -----------------------------------
 
 We now need to create the input files for each run.
@@ -276,7 +279,7 @@ and uses the specified *Encoder* to produce the appropriate input files::
 
     my_campaign.populate_runs_dir()
 
-Section 7: Run Application
+Section 8: Run Application
 --------------------------
 
 To create our samples we need to execute all of the runs.
@@ -287,18 +290,19 @@ command we specified in Step 0::
 
     my_campaign.apply_for_each_run_dir(uq.actions.ExecuteLocal(cmd))
 
-Section 8: Collate Output
+Section 9: Collate Output
 -------------------------
 
 The collection of simulation output simply handled by the *Campaign*::
 
     my_campaign.collate()
 
-Under the hood this method combines the use of the specified *Decoder* and
-*Collation* elements to produce a summary `pandas.DataFrame` including data
-from all runs.
+Under the hood this method combines the use of the specified *Decoder* for
+the current application, and the set *Collation* element to produce a summary
+`pandas.DataFrame` including data from all runs. Each time this method is called,
+it will append any new results to the dataframe.
 
-Section 9: Run Analysis
+Section 10: Run Analysis
 -----------------------
 
 The final element in the workflow is the analysis.
