@@ -141,7 +141,6 @@ class CampaignDB(BaseCampaignDB):
             Application information.
         """
 
-        # TODO: Find efficient way for this
         if name is None:
             logging.warning('No app name provided so using first app '
                             'in database')
