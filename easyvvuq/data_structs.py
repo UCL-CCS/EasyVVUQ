@@ -238,7 +238,6 @@ class AppInfo:
 
     @input_encoder.setter
     def input_encoder(self, encoder):
-        print("ARSE")
         if not isinstance(encoder, uq.encoders.BaseEncoder):
             msg = f"Provided 'encoder' must be derived from type BaseEncoder"
             logger.error(msg)
@@ -252,14 +251,10 @@ class AppInfo:
 
     @output_decoder.setter
     def output_decoder(self, decoder):
-        available_decoders = uq.decoders.base.AVAILABLE_DECODERS
-
-        # TODO: Fix/relocate check. Problem is with live/serialized encoder info.
-        # if decoder not in available_decoders:
-        #     message = (f"Decoder not found. Looking for {decoder}.\n"
-        #                f"Available decoders are {available_decoders}.")
-        #     logging.critical(message)
-        #     raise RuntimeError(message)
+        if not isinstance(decoder, uq.decoders.BaseDecoder):
+            msg = f"Provided 'decoder' must be derived from type BaseDecoder"
+            logger.error(msg)
+            raise Exception(msg)
 
         self._output_decoder = decoder
 
