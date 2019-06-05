@@ -1,6 +1,5 @@
 from .. import BaseElement
 import json
-import pandas as pd
 import logging
 
 __copyright__ = """
