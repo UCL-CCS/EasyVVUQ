@@ -660,6 +660,9 @@ class Campaign:
         # Apply collation element
         info = self._active_collater.collate(self)
 
+        if info['num_collated'] < 1:
+            logger.warning("No new data collated.")
+
         # Log application of this collation element
         self.log_element_application(self._active_collater, info)
 
