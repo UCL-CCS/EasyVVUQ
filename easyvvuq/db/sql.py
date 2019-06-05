@@ -520,3 +520,6 @@ class CampaignDB(BaseCampaignDB):
         """
 
         return self._get_campaign_info(campaign_name=campaign_name).runs_dir
+
+    def append_collation_dataframe(self, df):
+        df.to_sql("CollationResult", self.engine, if_exists='append')

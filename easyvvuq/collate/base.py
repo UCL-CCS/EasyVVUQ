@@ -66,43 +66,11 @@ class BaseCollationElement(BaseElement):
         # Register new collater
         AVAILABLE_COLLATERS[collater_name] = cls
 
-    def __init__(self, storagemode=None):
-        self.storagemode = storagemode
-
-        self.check_storage_mode(self.storagemode)
-
-        # Set up storage
-        if self.storagemode == 'memory':
-           self.memory_dataframe = pd.DataFrame()
-        elif self.storagemode == 'csv':
-            self.csv_fname = self.campaign._campaign_dir + '/collation.csv'
-
-    def check_storage_mode(self, mode):
-        # Check requested storage mode is a recognised mode
-        allowed_storage_modes = ['memory', 'csv']
-        if mode not in allowed_storage_modes:
-            msg = (f'storage mode "{mode}" is not in the allowed modes:'
-                   f'\n{str(allowed_storage_modes)}')
-            logger.critical(msg)
-            raise RuntimeException(msg)
-
     def get_collated_dataframe(self):
         """
         Returns collated data as a pandas dataframe
         """
-        if self.storagemode == 'memory':
-            return self.memory_dataframe
-        elif self.storagemode == 'csv':
-            return df.read_csv(self.csv_fname)
-
-    def append_data(self, new_data):
-        if self.storagemode == 'memory':
-            self.memory_dataframe = self.memory_dataframe.append(new_data)
-        elif self.storagemode == 'csv':
-            if os.path.exists(self.csv_fname):
-                df.to_csv(self.csv_fname, mode='a', header=False)
-            else:
-                df.to_csv(self.csv_fname, mode='w', header=True)
+        raise NotImplementedError
 
     def element_category(self):
         return "collation"
@@ -122,7 +90,4 @@ class BaseCollationElement(BaseElement):
         return AVAILABLE_COLLATERS[info["element_name"]](**info["state"])
 
     def is_restartable(self):
-        restartable_modes = ['csv']
-        if self.storagemode in restartable_modes:
-            return True
-        return False
+        raise NotImplementedError

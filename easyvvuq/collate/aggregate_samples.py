@@ -36,8 +36,7 @@ class AggregateSamples(BaseCollationElement, collater_name="aggregate_samples"):
         Should the values read in be averaged (mean).
     """
 
-    def __init__(self, storagemode='csv', average=False):
-        super().__init__(storagemode)
+    def __init__(self, average=False):
         self.average = average
 
     def collate(self, campaign):
@@ -83,13 +82,22 @@ class AggregateSamples(BaseCollationElement, collater_name="aggregate_samples"):
 
                 processed_run_IDs.append(run_id)
 
-        self.append_data(new_data)
+        self.append_data(new_data, campaign)
         campaign.campaign_db.set_run_statuses(processed_run_IDs, "collated")
 
         return {"num_collated": len(processed_run_IDs)}
 
+    def append_data(self, new_data, campaign):
+        campaign.campaign_db.append_collation_dataframe(new_data)
+
+    def get_collated_dataframe(self):
+        pass
+
     def element_version(self):
         return "0.1"
 
+    def is_restartable(self):
+        return True
+
     def get_restart_dict(self):
-        return {"storagemode":self.storagemode, "average": self.average}
+        return {"average": self.average}
