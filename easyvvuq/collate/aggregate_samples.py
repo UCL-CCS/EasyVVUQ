@@ -57,7 +57,7 @@ class AggregateSamples(BaseCollationElement, collater_name="aggregate_samples"):
         Returns
         -------
         `int`:
-            The number of new data rows added during collation 
+            The number of new data rows added during collation
         """
         self.campaign = campaign
 
