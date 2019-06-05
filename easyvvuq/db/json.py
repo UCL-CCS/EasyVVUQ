@@ -297,7 +297,7 @@ class CampaignDB(BaseCampaignDB):
 
         return self._campaign_info['campaign_dir']
 
-    def runs(self, campaign=None, sampler=None):
+    def runs(self, campaign=None, sampler=None, status=None, not_status=None):
 
         if campaign is not None or sampler is not None:
             message = (f'JSON/Python dictionary database only supports '
@@ -306,7 +306,22 @@ class CampaignDB(BaseCampaignDB):
             logger.warning(message)
 
         for run_id, run_info in self._runs.items():
-            yield run_id, run_info
+            if run_info['status'] == status and run_info['status'] != not_status:
+                yield run_id, run_info
+
+    def get_num_runs(self, campaign=None, sampler=None, status=None, not_status=None):
+
+        if campaign is not None or sampler is not None:
+            message = (f'JSON/Python dictionary database only supports '
+                       f'single campaign and sampler workflows - ignoring'
+                       f'campaign - {campaign}/ sampler {sampler}')
+            logger.warning(message)
+
+        num = 0
+        for run_id, run_info in self._runs.items():
+            if run_info['status'] == status and run_info['status'] != not_status:
+                num += 1
+        return num
 
     def runs_dir(self, campaign_name=None):
 
