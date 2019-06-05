@@ -460,7 +460,7 @@ class CampaignDB(BaseCampaignDB):
 
         self._get_campaign_info(campaign_name=campaign_name).campaign_dir
 
-    def runs(self, campaign=None, sampler=None, status=None):
+    def runs(self, campaign=None, sampler=None, status=None, not_status=None):
         """
         A generator to return all run information for selected `campaign` and `sampler`.
 
@@ -490,11 +490,12 @@ class CampaignDB(BaseCampaignDB):
             filter_options['status'] = status
 
         # Note that for some databases this can be sped up with a yield_per(), but not all
-        selected = self.session.query(RunTable).filter_by(**filter_options)
+        selected = self.session.query(RunTable).filter_by(**filter_options).filter(RunTable.status != not_status)
+
         for r in selected:
             yield r.run_name, self._run_to_dict(r)
 
-    def runs(self, campaign=None, sampler=None, status=None, not_status=None):
+    def get_num_runs(self, campaign=None, sampler=None, status=None, not_status=None):
         """
         Returns the number of runs matching the filtering criteria.
 
@@ -525,8 +526,7 @@ class CampaignDB(BaseCampaignDB):
         # Note that for some databases this can be sped up with a yield_per(), but not all
         selected = self.session.query(RunTable).filter_by(**filter_options).filter(RunTable.status != not_status)
 
-        for r in selected:
-            yield r.run_name, self._run_to_dict(r)
+        return selected.count()
 
     def runs_dir(self, campaign_name=None):
         """
