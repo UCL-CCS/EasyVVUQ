@@ -231,8 +231,6 @@ class Campaign:
         logger.info(f"Loading campaign from state file '{full_state_path}'")
         self.load_state(full_state_path)
 
-        active_sampler_id = self._active_sampler_id
-
         if self.db_type == 'sql':
             from .db.sql import CampaignDB
         elif self.db_type == 'json':
