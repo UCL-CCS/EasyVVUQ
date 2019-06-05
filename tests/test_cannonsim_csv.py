@@ -176,6 +176,8 @@ def test_cannonsim_csv(tmpdir):
     print("Completed runs:")
     pprint(reloaded_campaign.scan_completed())
 
+    print("All completed?", reloaded_campaign.all_complete())
+
     reloaded_campaign.collate()
     print("data:\n", reloaded_campaign.get_collation_result())
 
@@ -189,6 +191,7 @@ def test_cannonsim_csv(tmpdir):
     # Print the campaign log
     pprint(reloaded_campaign._log)
 
+    print("All completed?", reloaded_campaign.all_complete())
 
 if __name__ == "__main__":
     test_cannonsim_csv("/tmp/")

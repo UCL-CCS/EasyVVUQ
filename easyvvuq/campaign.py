@@ -571,7 +571,6 @@ class Campaign:
         -------
 
         """
-
         return self.list_runs(status='collated')
 
     def all_complete(self):
@@ -584,9 +583,10 @@ class Campaign:
 
         """
 
-        # TODO: Recreate functionality
-
-        pass
+        num = self.campaign_db.get_num_runs(not_status="collated")
+        if num == 0:
+            return True
+        return False
 
     def populate_runs_dir(self):
         """Populate run directories based on runs in the CampaignDB.

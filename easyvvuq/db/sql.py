@@ -476,8 +476,8 @@ class CampaignDB(BaseCampaignDB):
         Returns
         -------
         dict:
-            Information on all selected runs (key = run_name, value = dict of
-            run information fields.).
+            Information on each selected run (key = run_name, value = dict of
+            run information fields.), one at a time.
 
         """
 
@@ -491,6 +491,40 @@ class CampaignDB(BaseCampaignDB):
 
         # Note that for some databases this can be sped up with a yield_per(), but not all
         selected = self.session.query(RunTable).filter_by(**filter_options)
+        for r in selected:
+            yield r.run_name, self._run_to_dict(r)
+
+    def runs(self, campaign=None, sampler=None, status=None, not_status=None):
+        """
+        Returns the number of runs matching the filtering criteria.
+
+        Parameters
+        ----------
+        campaign: int
+            Campaign id to filter for.
+        sampler: int
+            Sampler id to filter for.
+        status: str
+            Status string to filter for.
+
+        Returns
+        -------
+        int:
+            The number of runs in the database matching the filtering criteria
+
+        """
+
+        filter_options = {}
+        if campaign:
+            filter_options['campaign'] = campaign
+        if sampler:
+            filter_options['sampler'] = sampler
+        if status:
+            filter_options['status'] = status
+
+        # Note that for some databases this can be sped up with a yield_per(), but not all
+        selected = self.session.query(RunTable).filter_by(**filter_options).filter(RunTable.status != not_status)
+
         for r in selected:
             yield r.run_name, self._run_to_dict(r)
 
