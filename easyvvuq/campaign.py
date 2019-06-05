@@ -180,7 +180,7 @@ class Campaign:
         elif self.db_type == 'json':
             from .db.json import CampaignDB
             if self.db_location is None:
-                self.db_location = tempfile.mkstemp(suffix='json', prefix='easyvvuq')[1]
+                self.db_location = tempfile.mkstemp(suffix='.json', prefix='easyvvuq')[1]
         else:
             message = (f"Invalid 'db_type' {db_type}. Supported types are "
                        f"'sql' or 'json'.")

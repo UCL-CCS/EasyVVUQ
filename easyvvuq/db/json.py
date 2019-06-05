@@ -46,8 +46,7 @@ class CampaignDB(BaseCampaignDB):
         self._app = None
         self._runs = {}
         self._sample = None
-
-        self._collation_csv = "COLLATIONRESULT.csv"
+        self._collation_csv = None
 
         if new_campaign:
 
@@ -58,6 +57,8 @@ class CampaignDB(BaseCampaignDB):
                 message = f"No location given for JSON db location"
                 logger.critical(message)
                 raise RuntimeError(message)
+
+            self._collation_csv = location + ".COLLATION"
         else:
             self._load_campaign(location, name)
             self._next_run = len(self._runs)
