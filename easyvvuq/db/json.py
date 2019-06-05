@@ -290,7 +290,6 @@ class CampaignDB(BaseCampaignDB):
     def campaign_dir(self, campaign_name=None):
 
         if campaign_name is not None:
-            # TODO: Should this raise and Exception?
             message = (
                 f'JSON/Python dictionary database can only support one '
                 f'application - ignoring selected name ({campaign_name}).')
@@ -312,7 +311,6 @@ class CampaignDB(BaseCampaignDB):
     def runs_dir(self, campaign_name=None):
 
         if campaign_name is not None:
-            # TODO: Should this raise and Exception?
             message = (
                 f'JSON/Python dictionary database can only support one '
                 f'application - ignoring selected name ({campaign_name}).')
