@@ -487,9 +487,12 @@ class CampaignDB(BaseCampaignDB):
             filter_options['sampler'] = sampler
 
         # TODO: This is a bad idea - find a better generator solution
-        selected = self.session.query(RunTable).filter_by(**filter_options).all()
-
-        return {r.run_name: self._run_to_dict(r) for r in selected}
+#        selected = self.session.query(RunTable).filter_by(**filter_options).all()
+        selected = self.session.query(RunTable).filter_by(**filter_options)#.yield_per(1000)
+#        return {r.run_name: self._run_to_dict(r) for r in selected}
+        for r in selected:
+            print(r)
+            yield r.run_name, self._run_to_dict(r)
 
     def runs_dir(self, campaign_name=None):
         """

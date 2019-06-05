@@ -67,10 +67,10 @@ class AggregateSamples(BaseCollationElement, collater_name="aggregate_samples"):
 
         # TODO: Find nicer way than forcing collate to access deep internal
         #       vars of campaign object like this
-        runs = campaign.campaign_db.runs()
+#        runs = campaign.campaign_db.runs()
 
         processed_run_IDs = []
-        for run_id, run_info in runs.items():
+        for run_id, run_info in campaign.campaign_db.runs():
 
             # Only look through runs which have been 'encoded' (but not 'collated')
             if campaign.campaign_db.get_run_status(run_id) != "encoded":
