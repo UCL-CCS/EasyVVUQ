@@ -460,7 +460,7 @@ class CampaignDB(BaseCampaignDB):
 
         self._get_campaign_info(campaign_name=campaign_name).campaign_dir
 
-    def runs(self, campaign=None, sampler=None):
+    def runs(self, campaign=None, sampler=None, status=None):
         """
         A generator to return all run information for selected `campaign` and `sampler`.
 
@@ -470,6 +470,8 @@ class CampaignDB(BaseCampaignDB):
             Campaign id to filter for.
         sampler: int
             Sampler id to filter for.
+        status: str
+            Status string to filter for.
 
         Returns
         -------
@@ -484,6 +486,8 @@ class CampaignDB(BaseCampaignDB):
             filter_options['campaign'] = campaign
         if sampler:
             filter_options['sampler'] = sampler
+        if status:
+            filter_options['status'] = status
 
         # Note that for some databases this can be sped up with a yield_per(), but not all
         selected = self.session.query(RunTable).filter_by(**filter_options)

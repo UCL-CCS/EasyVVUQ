@@ -173,6 +173,9 @@ def test_cannonsim_csv(tmpdir):
     reloaded_campaign.apply_for_each_run_dir(uq.actions.ExecuteLocal(
         "tests/cannonsim/bin/cannonsim in.cannon output.csv"))
 
+    print("Completed runs:")
+    pprint(reloaded_campaign.scan_completed())
+
     reloaded_campaign.collate()
     print("data:\n", reloaded_campaign.get_collation_result())
 
