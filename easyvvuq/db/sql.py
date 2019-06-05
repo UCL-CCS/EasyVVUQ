@@ -341,18 +341,14 @@ class CampaignDB(BaseCampaignDB):
         return self._run_to_dict(selected)
 
     def set_dir_for_run(self, run_name, run_dir, campaign=None, sampler=None):
-        if campaign is None and sampler is None:
-            selected = self.session.query(
-                RunTable).filter_by(run_name=run_name)
-        elif campaign is not None and sampler is not None:
-            selected = self.session.query(RunTable).filter_by(
-                run_name=run_name, campaign=campaign, sample=sampler)
-        elif campaign is not None:
-            selected = self.session.query(RunTable).filter_by(
-                run_name=run_name, campaign=campaign)
-        else:
-            selected = self.session.query(RunTable).filter_by(
-                run_name=run_name, sample=sampler)
+
+        filter_options = {'run_name': run_name}
+        if campaign:
+            filter_options['campaign'] = campaign
+        if sampler:
+            filter_options['sampler'] = sampler
+
+        selected = self.session.query(RunTable).filter_by(**filter_options)
 
         if selected.count() != 1:
             logging.critical('Multiple runs selected - using the first')
