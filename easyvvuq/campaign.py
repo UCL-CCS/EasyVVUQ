@@ -561,7 +561,7 @@ class Campaign:
         -------
 
         """
-        return self.campaign_db.runs()
+        return list(self.campaign_db.runs())
 
     def populate_runs_dir(self):
         """Populate run directories based on runs in the CampaignDB.
