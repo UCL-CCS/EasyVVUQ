@@ -65,12 +65,9 @@ class AggregateSamples(BaseCollationElement, collater_name="aggregate_samples"):
         # Aggregate any uncollated runs into a dataframe (for appending to existing full df)
         new_data = pd.DataFrame()
 
+        # Loop through all runs with status ENCODED (and therefore not yet COLLATED)
         processed_run_IDs = []
-        for run_id, run_info in campaign.campaign_db.runs():
-
-            # Only look through runs which have been 'encoded' (but not 'collated')
-            if campaign.campaign_db.get_run_status(run_id) != constants.Status.ENCODED:
-                continue
+        for run_id, run_info in campaign.campaign_db.runs(status=constants.Status.ENCODED):
 
             # Use decoder to check if run has completed (in general application-specific)
             if decoder.sim_complete(run_info=run_info):
