@@ -13,7 +13,21 @@ Development was funded by the EU Horizon 2020 project [VECMA](http://www.vecma.e
 
 To use the library you will need Python 3.6+.
 
-## Installation
+## Installation using pip
+
+The following should fully install the library:
+```
+pip3 install easyvvuq
+```
+
+## Manual installation from repository
+
+Alternatively, you can manually install EasyVVUQ. First clone the repository to your computer:
+
+```
+git clone https://github.com/UCL-CCS/EasyVVUQ.git
+cd EasyVVUQ/
+```
 
 We are trying to keep dependencies at a minimum but a few are inevitable, to install them use:
 
