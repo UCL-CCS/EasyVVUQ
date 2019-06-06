@@ -632,7 +632,7 @@ class Campaign:
                 active_encoder.encode(params=run_data['params'],
                                       target_dir=target_dir)
 
-            self.campaign_db.set_run_statuses([run_id], "encoded")
+            self.campaign_db.set_run_statuses([run_id], constants.Status.ENCODED)
 
     def get_campaign_runs_dir(self):
         """Get the runs directory from the CampaignDB.
@@ -666,7 +666,7 @@ class Campaign:
         for run_id, run_data in self.campaign_db.runs():
 
             # Only do this for runs that have status "encoded"
-            if run_data['status'] != "encoded":
+            if run_data['status'] != constants.Status.ENCODED:
                 continue
 
             dir_name = os.path.join(runs_dir, run_id)
