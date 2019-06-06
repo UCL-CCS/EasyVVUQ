@@ -5,6 +5,7 @@ import os
 import logging
 import json
 import easyvvuq as uq
+from easyvvuq import constants
 
 __copyright__ = """
 
@@ -141,7 +142,7 @@ class RunInfo:
 
         self.params = params
 
-        self.status = 'new'
+        self.status = constants.Status.NEW
 
     def to_dict(self, flatten=False):
         """Convert to a dictionary (optionally flatten to single level)
