@@ -42,7 +42,7 @@ class AggregateSamples(BaseCollationElement, collater_name="aggregate_samples"):
 
     def collate(self, campaign):
         """
-        Collected the decoded run results for all completed runs with 'encoded' status
+        Collected the decoded run results for all completed runs with ENCODED status
 
         Parameters
         ----------

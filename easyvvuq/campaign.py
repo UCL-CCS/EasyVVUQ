@@ -566,7 +566,7 @@ class Campaign:
 
     def scan_completed(self, *args, **kwargs):
         """
-        Check campaign database for completed runs (defined as runs with 'collated' status)
+        Check campaign database for completed runs (defined as runs with COLLATED status)
 
         Returns
         -------
