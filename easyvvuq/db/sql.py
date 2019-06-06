@@ -296,7 +296,7 @@ class CampaignDB(BaseCampaignDB):
         run_info = {
             'run_name': run_row.run_name,
             'params': json.loads(run_row.params),
-            'status': run_row.status,
+            'status': constants.Status(run_row.status),
             'sample': run_row.sample,
             'campaign': run_row.campaign,
             'app': run_row.app,
@@ -373,7 +373,7 @@ class CampaignDB(BaseCampaignDB):
 
         selected = selected.first()
 
-        return selected.status
+        return constants.Status(selected.status)
 
     def set_run_statuses(self, run_ID_list, status):
         selected = self.session.query(RunTable).filter(
