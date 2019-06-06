@@ -8,6 +8,7 @@ import logging
 import tempfile
 import json
 import easyvvuq as uq
+from easyvvuq import constants
 from easyvvuq.constants import default_campaign_prefix
 from easyvvuq.data_structs import RunInfo
 
@@ -615,7 +616,7 @@ class Campaign:
         for run_id, run_data in self.campaign_db.runs():
 
             # Only do this for runs that have status "new"
-            if run_data['status'] != "new":
+            if run_data['status'] != constants.Status.NEW:
                 continue
 
             # Make run directory
