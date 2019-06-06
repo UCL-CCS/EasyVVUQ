@@ -8,6 +8,7 @@ import logging
 import tempfile
 import json
 import easyvvuq as uq
+from easyvvuq import constants
 from easyvvuq.constants import default_campaign_prefix
 from easyvvuq.data_structs import RunInfo
 
@@ -565,13 +566,13 @@ class Campaign:
 
     def scan_completed(self, *args, **kwargs):
         """
-        Check campaign database for completed runs (defined as runs with 'collated' status)
+        Check campaign database for completed runs (defined as runs with COLLATED status)
 
         Returns
         -------
 
         """
-        return self.list_runs(status='collated')
+        return self.list_runs(status=uq.constants.Status.COLLATED)
 
     def all_complete(self):
         """
@@ -583,7 +584,7 @@ class Campaign:
 
         """
 
-        num = self.campaign_db.get_num_runs(not_status="collated")
+        num = self.campaign_db.get_num_runs(not_status=constants.Status.COLLATED)
         if num == 0:
             return True
         return False
@@ -612,11 +613,8 @@ class Campaign:
 
         runs_dir = self.campaign_db.runs_dir()
 
-        for run_id, run_data in self.campaign_db.runs():
-
-            # Only do this for runs that have status "new"
-            if run_data['status'] != "new":
-                continue
+        # Loop through all runs with status NEW
+        for run_id, run_data in self.campaign_db.runs(status=constants.Status.NEW):
 
             # Make run directory
             target_dir = os.path.join(runs_dir, run_id)
@@ -634,7 +632,7 @@ class Campaign:
                 active_encoder.encode(params=run_data['params'],
                                       target_dir=target_dir)
 
-            self.campaign_db.set_run_statuses([run_id], "encoded")
+            self.campaign_db.set_run_statuses([run_id], constants.Status.ENCODED)
 
     def get_campaign_runs_dir(self):
         """Get the runs directory from the CampaignDB.
@@ -664,12 +662,8 @@ class Campaign:
 
         runs_dir = self.campaign_db.runs_dir()
 
-        # Loop through all runs in this campaign
-        for run_id, run_data in self.campaign_db.runs():
-
-            # Only do this for runs that have status "encoded"
-            if run_data['status'] != "encoded":
-                continue
+        # Loop through all runs in this campaign with status ENCODED
+        for run_id, run_data in self.campaign_db.runs(status=constants.Status.ENCODED):
 
             dir_name = os.path.join(runs_dir, run_id)
             print("Applying " + action.__module__ + " to " + dir_name + "...")

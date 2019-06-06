@@ -1,5 +1,5 @@
 from .base import BaseCollationElement
-from easyvvuq import OutputType
+from easyvvuq import OutputType, constants
 import pandas as pd
 
 __copyright__ = """
@@ -42,7 +42,7 @@ class AggregateSamples(BaseCollationElement, collater_name="aggregate_samples"):
 
     def collate(self, campaign):
         """
-        Collected the decoded run results for all completed runs with 'encoded' status
+        Collected the decoded run results for all completed runs with ENCODED status
 
         Parameters
         ----------
@@ -65,12 +65,9 @@ class AggregateSamples(BaseCollationElement, collater_name="aggregate_samples"):
         # Aggregate any uncollated runs into a dataframe (for appending to existing full df)
         new_data = pd.DataFrame()
 
+        # Loop through all runs with status ENCODED (and therefore not yet COLLATED)
         processed_run_IDs = []
-        for run_id, run_info in campaign.campaign_db.runs():
-
-            # Only look through runs which have been 'encoded' (but not 'collated')
-            if campaign.campaign_db.get_run_status(run_id) != "encoded":
-                continue
+        for run_id, run_info in campaign.campaign_db.runs(status=constants.Status.ENCODED):
 
             # Use decoder to check if run has completed (in general application-specific)
             if decoder.sim_complete(run_info=run_info):
@@ -93,7 +90,7 @@ class AggregateSamples(BaseCollationElement, collater_name="aggregate_samples"):
                 processed_run_IDs.append(run_id)
 
         self.append_data(new_data)
-        campaign.campaign_db.set_run_statuses(processed_run_IDs, "collated")
+        campaign.campaign_db.set_run_statuses(processed_run_IDs, constants.Status.COLLATED)
 
         return len(processed_run_IDs)
 

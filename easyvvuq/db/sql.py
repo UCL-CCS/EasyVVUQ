@@ -7,6 +7,7 @@ from sqlalchemy import create_engine, Column, Integer, String, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from .base import BaseCampaignDB
+from easyvvuq import constants
 from easyvvuq.sampling.base import BaseSamplingElement
 from easyvvuq.encoders.base import BaseEncoder
 from easyvvuq.decoders.base import BaseDecoder
@@ -73,8 +74,7 @@ class RunTable(Base):
     app = Column(Integer, ForeignKey('app.id'))
     # Parameter values for this run
     params = Column(String)
-    # TODO: Consider making status an ENUM to enforce relevant EasyVVUQ values
-    status = Column(String)
+    status = Column(Integer)
     run_dir = Column(String)
     campaign = Column(Integer, ForeignKey('campaign_info.id'))
     sample = Column(Integer, ForeignKey('sample.id'))
@@ -296,7 +296,7 @@ class CampaignDB(BaseCampaignDB):
         run_info = {
             'run_name': run_row.run_name,
             'params': json.loads(run_row.params),
-            'status': run_row.status,
+            'status': constants.Status(run_row.status),
             'sample': run_row.sample,
             'campaign': run_row.campaign,
             'app': run_row.app,
@@ -373,7 +373,7 @@ class CampaignDB(BaseCampaignDB):
 
         selected = selected.first()
 
-        return selected.status
+        return constants.Status(selected.status)
 
     def set_run_statuses(self, run_ID_list, status):
         selected = self.session.query(RunTable).filter(
@@ -470,9 +470,9 @@ class CampaignDB(BaseCampaignDB):
             Campaign id to filter for.
         sampler: int or None
             Sampler id to filter for.
-        status: str or None
+        status: enum(Status) or None
             Status string to filter for.
-        not_status: str or None
+        not_status: enum(Status) or None
             Exclude runs with this status string
 
         Returns
@@ -508,9 +508,9 @@ class CampaignDB(BaseCampaignDB):
             Campaign id to filter for.
         sampler: int or None
             Sampler id to filter for.
-        status: str or None
+        status: enum(Status) or None
             Status string to filter for.
-        not_status: str or None
+        not_status: enum(Status) or None
             Exclude runs with this status string
 
         Returns
