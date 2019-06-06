@@ -1,5 +1,5 @@
 from .base import BaseCollationElement
-from easyvvuq import OutputType
+from easyvvuq import OutputType, constants
 import pandas as pd
 
 __copyright__ = """
@@ -93,7 +93,7 @@ class AggregateSamples(BaseCollationElement, collater_name="aggregate_samples"):
                 processed_run_IDs.append(run_id)
 
         self.append_data(new_data)
-        campaign.campaign_db.set_run_statuses(processed_run_IDs, "collated")
+        campaign.campaign_db.set_run_statuses(processed_run_IDs, constants.Status.COLLATED)
 
         return len(processed_run_IDs)
 

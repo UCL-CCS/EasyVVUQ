@@ -7,6 +7,7 @@ from sqlalchemy import create_engine, Column, Integer, String, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from .base import BaseCampaignDB
+from easyvvuq import constants
 from easyvvuq.sampling.base import BaseSamplingElement
 from easyvvuq.encoders.base import BaseEncoder
 from easyvvuq.decoders.base import BaseDecoder
@@ -73,8 +74,7 @@ class RunTable(Base):
     app = Column(Integer, ForeignKey('app.id'))
     # Parameter values for this run
     params = Column(String)
-    # TODO: Consider making status an ENUM to enforce relevant EasyVVUQ values
-    status = Column(String)
+    status = Column(Integer)
     run_dir = Column(String)
     campaign = Column(Integer, ForeignKey('campaign_info.id'))
     sample = Column(Integer, ForeignKey('sample.id'))

@@ -571,7 +571,7 @@ class Campaign:
         -------
 
         """
-        return self.list_runs(status='collated')
+        return self.list_runs(status=uq.constants.Status.COLLATED)
 
     def all_complete(self):
         """
@@ -583,7 +583,7 @@ class Campaign:
 
         """
 
-        num = self.campaign_db.get_num_runs(not_status="collated")
+        num = self.campaign_db.get_num_runs(not_status=constants.Status.COLLATED)
         if num == 0:
             return True
         return False
