@@ -8,7 +8,7 @@ default_campaign_prefix : str
     Text used to ensure campaign names are identifiable and somewhat human
     readable.
 """
-from enum import Enum
+from enum import Enum, IntEnum
 
 __copyright__ = """
 
@@ -46,7 +46,7 @@ class OutputType(Enum):
     TRACK = 'track'
     SUMMARY = 'summary'
 
-class Status(Enum):
+class Status(IntEnum):
     """
     Status of runs in the Run Table
     """
