@@ -11,7 +11,7 @@ import easyvvuq
 from easyvvuq.constants import default_campaign_prefix, Status
 from easyvvuq.data_structs import RunInfo, CampaignInfo, AppInfo
 from easyvvuq.sampling import BaseSamplingElement
-from easyvvuq.collation import BaseCollationElement
+from easyvvuq.collate import BaseCollationElement
 
 __copyright__ = """
 
