@@ -662,12 +662,8 @@ class Campaign:
 
         runs_dir = self.campaign_db.runs_dir()
 
-        # Loop through all runs in this campaign
-        for run_id, run_data in self.campaign_db.runs():
-
-            # Only do this for runs that have status "encoded"
-            if run_data['status'] != constants.Status.ENCODED:
-                continue
+        # Loop through all runs in this campaign with status ENCODED
+        for run_id, run_data in self.campaign_db.runs(status=constants.Status.ENCODED):
 
             dir_name = os.path.join(runs_dir, run_id)
             print("Applying " + action.__module__ + " to " + dir_name + "...")
