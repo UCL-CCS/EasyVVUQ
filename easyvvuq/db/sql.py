@@ -470,9 +470,9 @@ class CampaignDB(BaseCampaignDB):
             Campaign id to filter for.
         sampler: int or None
             Sampler id to filter for.
-        status: str or None
+        status: enum(Status) or None
             Status string to filter for.
-        not_status: str or None
+        not_status: enum(Status) or None
             Exclude runs with this status string
 
         Returns
@@ -508,9 +508,9 @@ class CampaignDB(BaseCampaignDB):
             Campaign id to filter for.
         sampler: int or None
             Sampler id to filter for.
-        status: str or None
+        status: enum(Status) or None
             Status string to filter for.
-        not_status: str or None
+        not_status: enum(Status) or None
             Exclude runs with this status string
 
         Returns
