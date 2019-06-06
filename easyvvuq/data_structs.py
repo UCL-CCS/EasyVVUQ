@@ -4,8 +4,9 @@
 import os
 import logging
 import json
-import easyvvuq as uq
 from easyvvuq import constants
+from easyvvuq.encoders import BaseEncoder
+from easyvvuq.decoders import BaseDecoder
 
 __copyright__ = """
 
@@ -235,7 +236,7 @@ class AppInfo:
 
     @input_encoder.setter
     def input_encoder(self, encoder):
-        if not isinstance(encoder, uq.encoders.BaseEncoder):
+        if not isinstance(encoder, BaseEncoder):
             msg = f"Provided 'encoder' must be derived from type BaseEncoder"
             logger.error(msg)
             raise Exception(msg)
@@ -248,7 +249,7 @@ class AppInfo:
 
     @output_decoder.setter
     def output_decoder(self, decoder):
-        if not isinstance(decoder, uq.decoders.BaseDecoder):
+        if not isinstance(decoder, BaseDecoder):
             msg = f"Provided 'decoder' must be derived from type BaseDecoder"
             logger.error(msg)
             raise Exception(msg)
