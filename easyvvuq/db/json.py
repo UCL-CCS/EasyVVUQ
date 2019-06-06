@@ -3,6 +3,8 @@ CampaignDB.
 """
 import json
 import logging
+import os
+import pandas as pd
 from .base import BaseCampaignDB
 from easyvvuq.sampling.base import BaseSamplingElement
 from easyvvuq.encoders.base import BaseEncoder
@@ -44,6 +46,7 @@ class CampaignDB(BaseCampaignDB):
         self._app = None
         self._runs = {}
         self._sample = None
+        self._collation_csv = None
 
         if new_campaign:
 
@@ -54,6 +57,8 @@ class CampaignDB(BaseCampaignDB):
                 message = f"No location given for JSON db location"
                 logger.critical(message)
                 raise RuntimeError(message)
+
+            self._collation_csv = location + ".COLLATION"
         else:
             self._load_campaign(location, name)
             self._next_run = len(self._runs)
@@ -80,6 +85,7 @@ class CampaignDB(BaseCampaignDB):
         self._app = input_info.get('app', {})
         self._runs = input_info.get('runs', {})
         self._sample = input_info.get('sample', {})
+        self._collation_csv = input_info.get('collation_csv', {})
 
     def _save(self):
         out_dict = {
@@ -87,6 +93,7 @@ class CampaignDB(BaseCampaignDB):
             'app': self._app,
             'runs': self._runs,
             'sample': self._sample,
+            'collation_csv': self._collation_csv
         }
 
         with open(self.location, "w") as outfile:
@@ -111,7 +118,6 @@ class CampaignDB(BaseCampaignDB):
         """
 
         if name is not None:
-            # TODO: Should this raise and Exception?
             message = (f'JSON/Python dictionary database can only support one '
                        f'application - ignoring selected name ({name}).')
             logger.warning(message)
@@ -189,8 +195,30 @@ class CampaignDB(BaseCampaignDB):
 
         encoder = BaseEncoder.deserialize(self._app['input_encoder'])
         decoder = BaseDecoder.deserialize(self._app['output_decoder'])
-        collater = BaseCollationElement.deserialize(self._app['collation'])
-        return encoder, decoder, collater
+        return encoder, decoder
+
+    def set_campaign_collater(self, collater, campaign_id):
+        if campaign_id != 1:
+            message = ('JSON/Python dict database does not support a '
+                       'campaign_id other than 1')
+            logger.critical(message)
+            raise RuntimeError(message)
+
+        self._campaign_info['collater'] = collater.serialize()
+
+    def resurrect_collation(self, campaign_id):
+        if campaign_id != 1:
+            message = ('JSON/Python dict database does not support a '
+                       'campaign_id other than 1')
+            logger.critical(message)
+            raise RuntimeError(message)
+
+        if self._campaign_info['collater'] is None:
+            print("Loaded campaign does not have a collation element currently set")
+            return None
+
+        collater = BaseCollationElement.deserialize(self._campaign_info['collater'])
+        return collater
 
     def add_run(self, run_info=None, prefix='Run_'):
         """
@@ -216,9 +244,7 @@ class CampaignDB(BaseCampaignDB):
         this_run['run_name'] = name
 
         self._runs[name] = this_run
-
         self._next_run += 1
-
         self._save()
 
     def run(self, run_name, campaign=None, sampler=None):
@@ -264,7 +290,6 @@ class CampaignDB(BaseCampaignDB):
     def campaign_dir(self, campaign_name=None):
 
         if campaign_name is not None:
-            # TODO: Should this raise and Exception?
             message = (
                 f'JSON/Python dictionary database can only support one '
                 f'application - ignoring selected name ({campaign_name}).')
@@ -272,7 +297,7 @@ class CampaignDB(BaseCampaignDB):
 
         return self._campaign_info['campaign_dir']
 
-    def runs(self, campaign=None, sampler=None):
+    def runs(self, campaign=None, sampler=None, status=None, not_status=None):
 
         if campaign is not None or sampler is not None:
             message = (f'JSON/Python dictionary database only supports '
@@ -280,12 +305,29 @@ class CampaignDB(BaseCampaignDB):
                        f'campaign - {campaign}/ sampler {sampler}')
             logger.warning(message)
 
-        return self._runs
+        for run_id, run_info in self._runs.items():
+            if (status is None or run_info['status'] ==
+                    status) and run_info['status'] != not_status:
+                yield run_id, run_info
+
+    def get_num_runs(self, campaign=None, sampler=None, status=None, not_status=None):
+
+        if campaign is not None or sampler is not None:
+            message = (f'JSON/Python dictionary database only supports '
+                       f'single campaign and sampler workflows - ignoring'
+                       f'campaign - {campaign}/ sampler {sampler}')
+            logger.warning(message)
+
+        num = 0
+        for run_id, run_info in self._runs.items():
+            if (status is None or run_info['status'] ==
+                    status) and run_info['status'] != not_status:
+                num += 1
+        return num
 
     def runs_dir(self, campaign_name=None):
 
         if campaign_name is not None:
-            # TODO: Should this raise and Exception?
             message = (
                 f'JSON/Python dictionary database can only support one '
                 f'application - ignoring selected name ({campaign_name}).')
@@ -298,11 +340,30 @@ class CampaignDB(BaseCampaignDB):
                        "Campaign ID is always 1.")
         return 1
 
-    def set_run_status(self, run_name, status, campaign=None, sampler=None):
+    def get_run_status(self, run_name, campaign=None, sampler=None):
         if campaign is not None:
             logger.warning("Only 1 campaign is possible in JSON db")
         if sampler is not None:
             logger.warning("Only 1 sampler is possible in JSON db")
 
-        self._runs[run_name]['status'] = status
+        return self._runs[run_name]['status']
+
+    def set_run_statuses(self, run_name_list, status, campaign=None, sampler=None):
+        if campaign is not None:
+            logger.warning("Only 1 campaign is possible in JSON db")
+        if sampler is not None:
+            logger.warning("Only 1 sampler is possible in JSON db")
+
+        for run_name in run_name_list:
+            self._runs[run_name]['status'] = status
         self._save()
+
+    def append_collation_dataframe(self, df):
+        if os.path.exists(self._collation_csv):
+            df.to_csv(self._collation_csv, mode='a', header=False)
+        else:
+            df.to_csv(self._collation_csv, mode='w', header=True)
+
+    def get_collation_dataframe(self):
+        df = pd.read_csv(self._collation_csv)
+        return df

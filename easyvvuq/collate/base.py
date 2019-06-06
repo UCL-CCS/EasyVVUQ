@@ -1,5 +1,6 @@
 from .. import BaseElement
 import json
+import logging
 
 __copyright__ = """
 
@@ -39,6 +40,13 @@ class BaseCollationElement(BaseElement):
 
     """
 
+    def collate(self, campaign):
+        """
+        Collates the campaign's decoded run output.
+        Must be implemented by all collation subclasses.
+        """
+        raise NotImplementedError
+
     def __init_subclass__(cls, collater_name, **kwargs):
         """
         Catch any new collaters (all collaters must inherit from
@@ -57,10 +65,9 @@ class BaseCollationElement(BaseElement):
         # Register new collater
         AVAILABLE_COLLATERS[collater_name] = cls
 
-    def collate(self, campaign):
+    def get_collated_dataframe(self):
         """
-        Collates the campaign run output into a pandas dataframe.
-        Must be implemented by all collation subclasses.
+        Returns collated data as a pandas dataframe
         """
         raise NotImplementedError
 
@@ -70,11 +77,16 @@ class BaseCollationElement(BaseElement):
     def element_name(self):
         return self.collater_name
 
-    def is_restartable(self):
-        return True
-
     @staticmethod
     def deserialize(serialized_collater):
         info = json.loads(serialized_collater)
+        print(info)
+        if not info["restartable"]:
+            msg = (f'Collater {info["element_name"]} is not restartable')
+            logging.error(msg)
+            raise Exception(msg)
 
         return AVAILABLE_COLLATERS[info["element_name"]](**info["state"])
+
+    def is_restartable(self):
+        raise NotImplementedError

@@ -141,7 +141,7 @@ class RunInfo:
 
         self.params = params
 
-        self.status = 'created'
+        self.status = 'new'
 
     def to_dict(self, flatten=False):
         """Convert to a dictionary (optionally flatten to single level)
@@ -195,12 +195,10 @@ class AppInfo:
         Description of possible parameter values.
     fixtures : dict or None
         Description of files/assets for runs.
-    encoder : :obj:`easyvvuq.encoders.base.BaseEncoderElement` or None
+    encoder : :obj:`easyvvuq.encoders.base.BaseEncoder`
         Encoder element for application.
-    decoder : :obj:`easyvvuq.decoders.base.BaseDecoderElement` or None
+    decoder : :obj:`easyvvuq.decoders.base.BaseDecoder`
         Decoder element for application.
-    collation : :obj:`easyvvuq.collation.base.BaseCollationElement` or None
-        Collation element for collecting output data.
 
     Attributes
     ----------
@@ -210,12 +208,10 @@ class AppInfo:
         Description of possible parameter values.
     fixtures : dict or None
         Description of files/assets for runs.
-    input_encoder : :obj:`easyvvuq.encoders.base.BaseEncoderElement` or None
+    input_encoder : :obj:`easyvvuq.encoders.base.BaseEncoder`
         Encoder element for application.
-    output_decoder : :obj:`easyvvuq.decoders.base.BaseDecoderElement` or None
+    output_decoder : :obj:`easyvvuq.decoders.base.BaseDecoder`
         Decoder element for application.
-    collation : :obj:`easyvvuq.collation.base.BaseCollationElement` or None
-        Collation element for collecting output data.
     """
 
     def __init__(
@@ -224,13 +220,11 @@ class AppInfo:
             params=None,
             fixtures=None,
             encoder=None,
-            decoder=None,
-            collation=None):
+            decoder=None):
 
         self.name = name
         self.input_encoder = encoder
         self.output_decoder = decoder
-        self.collation = collation
         self.params = params
         self.fixtures = fixtures
 
@@ -240,13 +234,10 @@ class AppInfo:
 
     @input_encoder.setter
     def input_encoder(self, encoder):
-        available_encoders = uq.encoders.base.AVAILABLE_ENCODERS
-
-        # TODO: Fix/relocate check. Problem is with live/serialized encoder info.
-        # if encoder not in available_encoders:
-        #     message = (f"Encoder not found. Looking for {encoder}.\n"
-        #                f"Available encoders are {available_encoders}.")
-        #     logging.critical(message)
+        if not isinstance(encoder, uq.encoders.BaseEncoder):
+            msg = f"Provided 'encoder' must be derived from type BaseEncoder"
+            logger.error(msg)
+            raise Exception(msg)
 
         self._input_encoder = encoder
 
@@ -256,14 +247,10 @@ class AppInfo:
 
     @output_decoder.setter
     def output_decoder(self, decoder):
-        available_decoders = uq.decoders.base.AVAILABLE_DECODERS
-
-        # TODO: Fix/relocate check. Problem is with live/serialized encoder info.
-        # if decoder not in available_decoders:
-        #     message = (f"Decoder not found. Looking for {decoder}.\n"
-        #                f"Available decoders are {available_decoders}.")
-        #     logging.critical(message)
-        #     raise RuntimeError(message)
+        if not isinstance(decoder, uq.decoders.BaseDecoder):
+            msg = f"Provided 'decoder' must be derived from type BaseDecoder"
+            logger.error(msg)
+            raise Exception(msg)
 
         self._output_decoder = decoder
 
@@ -293,7 +280,7 @@ class AppInfo:
             out_dict = self.to_dict()
 
             for field in [
-                    'params', 'collation', 'fixtures']:
+                    'params', 'fixtures']:
                 out_dict[field] = json.dumps(out_dict[field])
 
         else:
@@ -303,8 +290,7 @@ class AppInfo:
                 'params': self.params,
                 'fixtures': fixtures,
                 'input_encoder': self.input_encoder.serialize(),
-                'output_decoder': self.output_decoder.serialize(),
-                'collation': self.collation.serialize()
+                'output_decoder': self.output_decoder.serialize()
             }
 
         return out_dict
@@ -375,6 +361,7 @@ class CampaignInfo:
             check_local_dir(runs_dir, 'runs')
 
         self.runs_dir = runs_dir
+        self.collater = None
 
     @property
     def easyvvuq_version(self):
@@ -405,6 +392,7 @@ class CampaignInfo:
             'campaign_dir_prefix': self.campaign_dir_prefix,
             'runs_dir': self.runs_dir,
             'easyvvuq_version': self.easyvvuq_version,
+            'collater': self.collater
         }
 
         return out_dict

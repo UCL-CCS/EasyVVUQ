@@ -2,6 +2,7 @@
 """
 import json
 import logging
+import pandas as pd
 from sqlalchemy import create_engine, Column, Integer, String, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
@@ -48,6 +49,7 @@ class CampaignTable(Base):
     campaign_dir_prefix = Column(String)
     campaign_dir = Column(String)
     runs_dir = Column(String)
+    collater = Column(String)
 
 
 class AppTable(Base):
@@ -60,7 +62,6 @@ class AppTable(Base):
     output_decoder = Column(String)
     params = Column(String)
     fixtures = Column(String)
-    collation = Column(String)
 
 
 class RunTable(Base):
@@ -140,7 +141,6 @@ class CampaignDB(BaseCampaignDB):
             Application information.
         """
 
-        # TODO: Find efficient way for this
         if name is None:
             logging.warning('No app name provided so using first app '
                             'in database')
@@ -165,8 +165,7 @@ class CampaignDB(BaseCampaignDB):
             'input_encoder': selected_app.input_encoder,
             'output_decoder': selected_app.output_decoder,
             'params': json.loads(selected_app.params),
-            'fixtures': json.loads(selected_app.fixtures),
-            'collation': json.loads(selected_app.collation)
+            'fixtures': json.loads(selected_app.fixtures)
         }
 
         return app_dict
@@ -187,8 +186,7 @@ class CampaignDB(BaseCampaignDB):
 
         # Check that no app with same name exists
         name = app_info.name
-        selected = self.session.query(
-            AppTable).filter_by(name=name).all()
+        selected = self.session.query(AppTable).filter_by(name=name).all()
         if len(selected) > 0:
             message = (
                 f'There is already an app in this database with name {name}'
@@ -223,17 +221,29 @@ class CampaignDB(BaseCampaignDB):
 
         return db_entry.id
 
+    def set_campaign_collater(self, collater, campaign_id):
+        selected = self.session.query(CampaignTable).get(campaign_id)
+        selected.collater = collater.serialize()
+        self.session.commit()
+
     def resurrect_sampler(self, sampler_id):
         serialized_sampler = self.session.query(SamplerTable).get(sampler_id).sampler
         sampler = BaseSamplingElement.deserialize(serialized_sampler)
         return sampler
 
+    def resurrect_collation(self, campaign_id):
+        serialized_collater = self.session.query(CampaignTable).get(campaign_id).collater
+        if serialized_collater is None:
+            print("Loaded campaign does not have a collation element currently set")
+            return None
+        collater = BaseCollationElement.deserialize(serialized_collater)
+        return collater
+
     def resurrect_app(self, app_name):
         app_info = self.app(app_name)
         encoder = BaseEncoder.deserialize(app_info['input_encoder'])
         decoder = BaseDecoder.deserialize(app_info['output_decoder'])
-        collater = BaseCollationElement.deserialize(app_info['collation'])
-        return encoder, decoder, collater
+        return encoder, decoder
 
     def update_sampler(self, sampler_id, sampler_element):
         selected = self.session.query(SamplerTable).get(sampler_id)
@@ -315,18 +325,13 @@ class CampaignDB(BaseCampaignDB):
             campaign, app)
         """
 
-        if campaign is None and sampler is None:
-            selected = self.session.query(
-                RunTable).filter_by(run_name=run_name)
-        elif campaign is not None and sampler is not None:
-            selected = self.session.query(RunTable).filter_by(
-                run_name=run_name, campaign=campaign, sample=sampler)
-        elif campaign is not None:
-            selected = self.session.query(RunTable).filter_by(
-                run_name=run_name, campaign=campaign)
-        else:
-            selected = self.session.query(RunTable).filter_by(
-                run_name=run_name, sample=sampler)
+        filter_options = {'run_name': run_name}
+        if campaign:
+            filter_options['campaign'] = campaign
+        if sampler:
+            filter_options['sampler'] = sampler
+
+        selected = self.session.query(RunTable).filter_by(**filter_options)
 
         if selected.count() != 1:
             logging.warning('Multiple runs selected - using the first')
@@ -336,47 +341,47 @@ class CampaignDB(BaseCampaignDB):
         return self._run_to_dict(selected)
 
     def set_dir_for_run(self, run_name, run_dir, campaign=None, sampler=None):
-        if campaign is None and sampler is None:
-            selected = self.session.query(
-                RunTable).filter_by(run_name=run_name)
-        elif campaign is not None and sampler is not None:
-            selected = self.session.query(RunTable).filter_by(
-                run_name=run_name, campaign=campaign, sample=sampler)
-        elif campaign is not None:
-            selected = self.session.query(RunTable).filter_by(
-                run_name=run_name, campaign=campaign)
-        else:
-            selected = self.session.query(RunTable).filter_by(
-                run_name=run_name, sample=sampler)
+
+        filter_options = {'run_name': run_name}
+        if campaign:
+            filter_options['campaign'] = campaign
+        if sampler:
+            filter_options['sampler'] = sampler
+
+        selected = self.session.query(RunTable).filter_by(**filter_options)
 
         if selected.count() != 1:
-            logging.warning('Multiple runs selected - using the first')
+            logging.critical('Multiple runs selected - using the first')
 
         selected = selected.first()
 
         selected.run_dir = run_dir
         self.session.commit()
 
-    def set_run_status(self, run_name, status, campaign=None, sampler=None):
-        if campaign is None and sampler is None:
-            selected = self.session.query(
-                RunTable).filter_by(run_name=run_name)
-        elif campaign is not None and sampler is not None:
-            selected = self.session.query(RunTable).filter_by(
-                run_name=run_name, campaign=campaign, sample=sampler)
-        elif campaign is not None:
-            selected = self.session.query(RunTable).filter_by(
-                run_name=run_name, campaign=campaign)
-        else:
-            selected = self.session.query(RunTable).filter_by(
-                run_name=run_name, sample=sampler)
+    def get_run_status(self, run_name, campaign=None, sampler=None):
+
+        filter_options = {'run_name': run_name}
+        if campaign:
+            filter_options['campaign'] = campaign
+        if sampler:
+            filter_options['sampler'] = sampler
+
+        selected = self.session.query(RunTable).filter_by(**filter_options)
 
         if selected.count() != 1:
-            logging.warning('Multiple runs selected - using the first')
+            logging.critical('Multiple runs selected - using the first')
 
         selected = selected.first()
 
-        selected.status = status
+        return selected.status
+
+    def set_run_statuses(self, run_ID_list, status):
+        selected = self.session.query(RunTable).filter(
+            RunTable.run_name.in_(set(run_ID_list))).all()
+
+        for run in selected:
+            run.status = status
+
         self.session.commit()
 
     def campaigns(self):
@@ -455,40 +460,79 @@ class CampaignDB(BaseCampaignDB):
 
         self._get_campaign_info(campaign_name=campaign_name).campaign_dir
 
-    def runs(self, campaign=None, sampler=None):
+    def runs(self, campaign=None, sampler=None, status=None, not_status=None):
         """
-        Get a dictionary of all run information for selected `campaign` and
-        `sampler`.
+        A generator to return all run information for selected `campaign` and `sampler`.
 
         Parameters
         ----------
-        campaign: int
+        campaign: int or None
             Campaign id to filter for.
-        sampler: int
+        sampler: int or None
             Sampler id to filter for.
+        status: str or None
+            Status string to filter for.
+        not_status: str or None
+            Exclude runs with this status string
 
         Returns
         -------
         dict:
-            Information on all selected runs (key = run_name, value = dict of
-            run information fields.).
+            Information on each selected run (key = run_name, value = dict of
+            run information fields.), one at a time.
 
         """
-        # TODO: This is a bad idea - find a better generator solution
 
-        if campaign is None and sampler is None:
-            selected = self.session.query(RunTable).all()
-        elif campaign is not None and sampler is not None:
-            selected = self.session.query(RunTable).filter_by(
-                campaign=campaign, sample=sampler).all()
-        elif campaign is not None:
-            selected = self.session.query(RunTable)
-            selected = selected.filter_by(campaign=campaign).all()
-        else:
-            selected = self.session.query(
-                RunTable).filter_by(sample=sampler).all()
+        filter_options = {}
+        if campaign:
+            filter_options['campaign'] = campaign
+        if sampler:
+            filter_options['sampler'] = sampler
+        if status:
+            filter_options['status'] = status
 
-        return {r.run_name: self._run_to_dict(r) for r in selected}
+        # Note that for some databases this can be sped up with a yield_per(), but not all
+        selected = self.session.query(RunTable).filter_by(
+            **filter_options).filter(RunTable.status != not_status)
+
+        for r in selected:
+            yield r.run_name, self._run_to_dict(r)
+
+    def get_num_runs(self, campaign=None, sampler=None, status=None, not_status=None):
+        """
+        Returns the number of runs matching the filtering criteria.
+
+        Parameters
+        ----------
+        campaign: int or None
+            Campaign id to filter for.
+        sampler: int or None
+            Sampler id to filter for.
+        status: str or None
+            Status string to filter for.
+        not_status: str or None
+            Exclude runs with this status string
+
+        Returns
+        -------
+        int:
+            The number of runs in the database matching the filtering criteria
+
+        """
+
+        filter_options = {}
+        if campaign:
+            filter_options['campaign'] = campaign
+        if sampler:
+            filter_options['sampler'] = sampler
+        if status:
+            filter_options['status'] = status
+
+        # Note that for some databases this can be sped up with a yield_per(), but not all
+        selected = self.session.query(RunTable).filter_by(
+            **filter_options).filter(RunTable.status != not_status)
+
+        return selected.count()
 
     def runs_dir(self, campaign_name=None):
         """
@@ -506,3 +550,11 @@ class CampaignDB(BaseCampaignDB):
         """
 
         return self._get_campaign_info(campaign_name=campaign_name).runs_dir
+
+    def append_collation_dataframe(self, df):
+        df.to_sql("COLLATIONRESULT", self.engine, if_exists='append')
+
+    def get_collation_dataframe(self):
+        query = "select * from COLLATIONRESULT"
+        df = pd.read_sql_query(query, self.engine)
+        return df

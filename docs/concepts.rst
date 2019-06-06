@@ -4,16 +4,16 @@ Conceptual Basis
 ================
 
 EasyVVUQ was created as part of the `VECMA <http://www.vecma.eu/>`_ project.
-The aim of this project was to make state of the art VVUQ algorithms 
+The aim of this project was to make state of the art VVUQ algorithms
 available for use in HPC applications (and specifically multiscale models).
 The basis of making generic tools within VECMA is the idea of *Patterns*,
 which are:
 
-    “abstractions that describe, in a non-application and non-domain 
-    specific manner, a workflow or algorithm for conducting validation, 
-    verification, uncertainty quantification or sensitivity analysis”
+    “abstractions that describe, in a non-application and non-domain
+    specific manner, a workflow or algorithm for conducting validation,
+    verification, uncertainty quantification or sensitivity analysis”.
 
-Making use of Patterns in practice requires that they are decomposed into 
+Making use of Patterns in practice requires that they are decomposed into
 components which can be flexibly combined to implement a range of algorithms.
 
 .. figure:: images/vecma-algorithms.svg

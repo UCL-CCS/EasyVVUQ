@@ -59,18 +59,20 @@ def test_gauss(tmpdir):
     number_of_samples = 3
     number_of_replicas = 5
 
-    # Create an encoder, decoder and collation element for the gauss app
+    # Create an encoder and decoder for the gauss app
     encoder = uq.encoders.GenericEncoder(template_fname='tests/gauss/gauss.template',
                                          target_filename='gauss_in.json')
     decoder = GaussDecoder(target_filename=params['out_file']['default'])
-    collation = uq.collate.AggregateSamples(average=True)
 
     my_campaign.add_app(name="gauss",
                         params=params,
                         encoder=encoder,
-                        decoder=decoder,
-                        collation=collation
+                        decoder=decoder
                         )
+
+    # Create a collation element for this campaign
+    collater = uq.collate.AggregateSamples(average=False)
+    my_campaign.set_collater(collater)
 
     # Make a random sampler
     vary = {

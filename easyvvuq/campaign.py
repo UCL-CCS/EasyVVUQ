@@ -105,15 +105,16 @@ class Campaign:
 
         self.campaign_id = None
         self._active_app = None
+        self._active_app_name = None
         self.campaign_db = None
 
-        self._last_collation_dataframe = None
         self.last_analysis = None
 
-        # TODO: These definitely shouldn't be here. Probably should be in DB.
+        self._active_app_id = None
         self._active_app_encoder = None
         self._active_app_decoder = None
-        self._active_app_collation = None
+
+        self._active_collater = None
         self._active_sampler = None
         self._active_sampler_id = None
 
@@ -179,7 +180,7 @@ class Campaign:
         elif self.db_type == 'json':
             from .db.json import CampaignDB
             if self.db_location is None:
-                self.db_location = tempfile.mkstemp(suffix='json', prefix='easyvvuq')[1]
+                self.db_location = tempfile.mkstemp(suffix='.json', prefix='easyvvuq')[1]
         else:
             message = (f"Invalid 'db_type' {db_type}. Supported types are "
                        f"'sql' or 'json'.")
@@ -229,7 +230,6 @@ class Campaign:
 
         logger.info(f"Loading campaign from state file '{full_state_path}'")
         self.load_state(full_state_path)
-        active_sampler_id = self._active_sampler_id
 
         if self.db_type == 'sql':
             from .db.sql import CampaignDB
@@ -248,8 +248,11 @@ class Campaign:
         campaign_db = self.campaign_db
         self.campaign_id = campaign_db.get_campaign_id(self.campaign_name)
 
-        # Resurrect the sampler using the ID
-        self._active_sampler = campaign_db.resurrect_sampler(active_sampler_id)
+        # Resurrect the sampler and collation elements
+        self._active_sampler = campaign_db.resurrect_sampler(self._active_sampler_id)
+        self._active_collater = campaign_db.resurrect_collation(self.campaign_id)
+
+        self.set_app(self._active_app_name)
 
         return state_dir
 
@@ -267,6 +270,7 @@ class Campaign:
             "db_location": self.db_location,
             "db_type": self.db_type,
             "active_sampler_id": self._active_sampler_id,
+            "active_app": self._active_app_name,
             "campaign_name": self.campaign_name,
             "campaign_dir": self._campaign_dir,
             "log": self._log
@@ -293,6 +297,7 @@ class Campaign:
         self.db_location = input_json["db_location"]
         self.db_type = input_json["db_type"]
         self._active_sampler_id = input_json["active_sampler_id"]
+        self._active_app_name = input_json["active_app"]
         self.campaign_name = input_json["campaign_name"]
         self._campaign_dir = input_json["campaign_dir"]
         self._log = input_json["log"]
@@ -305,7 +310,7 @@ class Campaign:
 
     def add_app(self, name=None, params=None, fixtures=None,
                 encoder=None, decoder=None,
-                collation=None, set_active=True):
+                set_active=True):
         """Add an application to the CampaignDB.
 
         Parameters
@@ -321,9 +326,6 @@ class Campaign:
         decoder : :obj:`easyvvuq.decoders.base.BaseDecoder`
             Decoder element to convert application run output into data for
             VVUQ analysis.
-        collation : :obj:``
-            Collation element which brings together the data from individual
-            runs (after being decoded).
         set_active: bool
             Should the added app be set to be the currently active app?
 
@@ -366,8 +368,7 @@ class Campaign:
             params=params,
             fixtures=fixtures,
             encoder=encoder,
-            decoder=decoder,
-            collation=collation
+            decoder=decoder
         )
 
         self.campaign_db.add_app(app)
@@ -390,12 +391,12 @@ class Campaign:
 
         """
 
+        self._active_app_name = app_name
         self._active_app = self.campaign_db.app(name=app_name)
 
-        # Resurrect the app encoder, decoder and collation elements
+        # Resurrect the app encoder and decoder elements
         (self._active_app_encoder,
-         self._active_app_decoder,
-         self._active_app_collation) = self.campaign_db.resurrect_app(app_name)
+         self._active_app_decoder) = self.campaign_db.resurrect_app(app_name)
 
     def set_sampler(self, sampler):
         """Set active sampler.
@@ -403,8 +404,7 @@ class Campaign:
         Parameters
         ----------
         sampler : `easyvvuq.sampling.base.BaseSamplingElement`
-            Sampler that will be used to create runs for the current
-            application.
+            Sampler that will be used to create runs for the current campaign.
 
         Returns
         -------
@@ -417,6 +417,26 @@ class Campaign:
 
         self._active_sampler = sampler
         self._active_sampler_id = self.campaign_db.add_sampler(sampler)
+
+    def set_collater(self, collater):
+        """Set a collater for this campaign.
+
+        Parameters
+        ----------
+        collater : `easyvvuq.collate.base.BaseCollationElement`
+            Collation that will be used to create runs for the current campaign.
+
+        Returns
+        -------
+
+        """
+        if not isinstance(collater, uq.collate.BaseCollationElement):
+            msg = "set_collater() must be passed a collation element"
+            logging.error(msg)
+            raise Exception(msg)
+
+        self.campaign_db.set_campaign_collater(collater, self.campaign_id)
+        self._active_collater = collater
 
     def add_run(self, new_run):
         """Add a new run to the queue.
@@ -534,14 +554,39 @@ class Campaign:
             self._active_sampler, {
                 "num_added": num_added})
 
-    def list_runs(self):
+    def list_runs(self, sampler=None, campaign=None, status=None):
         """Get list of runs in the CampaignDB.
 
         Returns
         -------
 
         """
-        return self.campaign_db.runs()
+        return list(self.campaign_db.runs(sampler=sampler, campaign=campaign, status=status))
+
+    def scan_completed(self, *args, **kwargs):
+        """
+        Check campaign database for completed runs (defined as runs with 'collated' status)
+
+        Returns
+        -------
+
+        """
+        return self.list_runs(status='collated')
+
+    def all_complete(self):
+        """
+        Check if all runs have reported having output generated by
+        a completed simulation.
+
+        Returns
+        -------
+
+        """
+
+        num = self.campaign_db.get_num_runs(not_status="collated")
+        if num == 0:
+            return True
+        return False
 
     def populate_runs_dir(self):
         """Populate run directories based on runs in the CampaignDB.
@@ -565,13 +610,12 @@ class Campaign:
 
         fixtures = self._active_app['fixtures']
 
-        runs = self.campaign_db.runs()
         runs_dir = self.campaign_db.runs_dir()
 
-        for run_id, run_data in runs.items():
+        for run_id, run_data in self.campaign_db.runs():
 
-            # Only do this for runs that have status "created"
-            if run_data['status'] != "created":
+            # Only do this for runs that have status "new"
+            if run_data['status'] != "new":
                 continue
 
             # Make run directory
@@ -589,6 +633,8 @@ class Campaign:
             else:
                 active_encoder.encode(params=run_data['params'],
                                       target_dir=target_dir)
+
+            self.campaign_db.set_run_statuses([run_id], "encoded")
 
     def get_campaign_runs_dir(self):
         """Get the runs directory from the CampaignDB.
@@ -616,14 +662,13 @@ class Campaign:
         -------
         """
 
-        runs = self.campaign_db.runs()
         runs_dir = self.campaign_db.runs_dir()
 
         # Loop through all runs in this campaign
-        for run_id, run_data in runs.items():
+        for run_id, run_data in self.campaign_db.runs():
 
-            # Only do this for runs that have status "created"
-            if run_data['status'] != "created":
+            # Only do this for runs that have status "encoded"
+            if run_data['status'] != "encoded":
                 continue
 
             dir_name = os.path.join(runs_dir, run_id)
@@ -635,34 +680,25 @@ class Campaign:
     def collate(self):
         """Combine the output from all runs associated with the current app.
 
-        Uses the collation element held in `self._active_app_collation`.
+        Uses the collation element held in `self._active_collater`.
 
         Returns
         -------
 
         """
 
-        # Apply collation element, and obtain the resulting dataframe
-        self._last_collation_dataframe = self._active_app_collation.collate(
-            self)
+        # Apply collation element
+        num_collated = self._active_collater.collate(self)
+
+        if num_collated < 1:
+            logger.warning("No data collected during collation.")
 
         # Log application of this collation element
-        self.log_element_application(self._active_app_collation, None)
+        info = {'num_collated': num_collated}
+        self.log_element_application(self._active_collater, info)
 
-    def get_last_collation(self):
-        """Return the dataframe output by the last executed collation element.
-
-        Returns
-        -------
-        `pandas.DataFrame` or None
-
-        """
-        if self._last_collation_dataframe is None:
-            logging.warning("No dataframe available as no collation has been "
-                            "done. Was this campaign's collate() function run "
-                            "first?")
-
-        return self._last_collation_dataframe
+    def get_collation_result(self):
+        return self._active_collater.get_collated_dataframe()
 
     def apply_analysis(self, analysis):
         """Run the `analysis` element on the output of the last run collation.
@@ -679,7 +715,7 @@ class Campaign:
         """
 
         # Apply analysis element to most recent collation result
-        self.last_analysis = analysis.analyse(data_frame=self.get_last_collation())
+        self.last_analysis = analysis.analyse(data_frame=self.get_collation_result())
 
         # Log application of this analysis element
         self.log_element_application(analysis, None)
@@ -695,33 +731,6 @@ class Campaign:
             logging.warning("No last analysis output available.")
 
         return self.last_analysis
-
-    def scan_completed(self, *args, **kwargs):
-        """
-        Check campaign database for completed runs.
-
-        Returns
-        -------
-
-        """
-
-        # TODO: Recreate functionality
-
-        pass
-
-    def all_complete(self):
-        """
-        Check if all runs have reported having output generated by
-        a completed simulation.
-
-        Returns
-        -------
-
-        """
-
-        # TODO: Recreate functionality
-
-        pass
 
     def __str__(self):
         """Returns formatted summary of the current Campaign state.

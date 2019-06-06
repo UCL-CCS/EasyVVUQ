@@ -1,3 +1,5 @@
+"""Provides base class for all analysis elements.
+"""
 from .. import BaseElement
 
 __copyright__ = """
@@ -24,14 +26,7 @@ __license__ = "LGPL"
 
 
 class BaseAnalysisElement(BaseElement):
-    """Baseclass for all EasyVVUQ analysis elements.
-
-    Parameters
-    ----------
-    data_src    : dict or Campaign or stream
-        Information on the infomration Application information.
-        Will try interpreting as a dict or JSON file/stream or filename.
-
+    """Base class for all EasyVVUQ analysis elements.
 
     Attributes
     ----------
@@ -39,7 +34,27 @@ class BaseAnalysisElement(BaseElement):
     """
 
     def analyse(self, data_frame=None):
+        """Perform analysis on input `data_frame`.
+
+        Parameters
+        ----------
+        data_frame : :obj:`pandas.DataFrame`
+            Input data for analysis.
+
+        Returns
+        -------
+
+        """
         raise NotImplementedError
 
     def element_category(self):
+        """Element type for logging and verification"""
         return "analysis"
+
+    def element_name(self):
+        """Name for this element for logging purposes"""
+        raise NotImplementedError
+
+    def element_version(self):
+        """Version of this element for logging purposes"""
+        raise NotImplementedError

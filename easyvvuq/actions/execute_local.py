@@ -1,5 +1,9 @@
+"""Provides element to execute a shell command in a given directory.
+"""
+
 import os
 import sys
+import logging
 from . import BaseAction
 
 __copyright__ = """
@@ -24,17 +28,43 @@ __copyright__ = """
 """
 __license__ = "LGPL"
 
+logger = logging.getLogger(__name__)
+
 
 class ExecuteLocal(BaseAction):
 
     def __init__(self, run_cmd):
+        """
+        Provides an action element to run a shell command in a specified
+        directory.
+
+        Parameters
+        ----------
+
+        run_cmd : str
+            Command to execute.
+
+        """
+
+        if os.name == 'nt':
+            msg = ('Local execution is provided for testing on Posix systems'
+                   'only. We detect you are using Windows.')
+            logger.error(msg)
+            raise NotImplementedError(msg)
 
         # Need to expand users, get absolute path and dereference symlinks
         self.run_cmd = os.path.realpath(os.path.expanduser(run_cmd))
 
-    def act_on_dir(self, dirname):
+    def act_on_dir(self, target_dir):
+        """
+        Executes `self.run_cmd` in the shell in `target_dir`.
 
-        full_cmd = 'cd ' + dirname + '\n' + self.run_cmd + '\n'
+        target_dir : str
+            Directory in which to execute command.
+
+        """
+
+        full_cmd = f'cd {target_dir}\n{self.run_cmd}\n'
         result = os.system(full_cmd)
         if result != 0:
-            sys.exit("Non-zero exit code from command '" + full_cmd + "'\n")
+            sys.exit(f'Non-zero exit code from command "{full_cmd}"\n')
