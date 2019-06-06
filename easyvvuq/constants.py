@@ -46,6 +46,7 @@ class OutputType(Enum):
     TRACK = 'track'
     SUMMARY = 'summary'
 
+
 class Status(IntEnum):
     """
     Status of runs in the Run Table
