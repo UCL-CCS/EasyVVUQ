@@ -10,6 +10,7 @@ from easyvvuq.sampling.base import BaseSamplingElement
 from easyvvuq.encoders.base import BaseEncoder
 from easyvvuq.decoders.base import BaseDecoder
 from easyvvuq.collate.base import BaseCollationElement
+from easyvvuq import constants
 
 __copyright__ = """
 
@@ -86,6 +87,10 @@ class CampaignDB(BaseCampaignDB):
         self._runs = input_info.get('runs', {})
         self._sample = input_info.get('sample', {})
         self._collation_csv = input_info.get('collation_csv', {})
+
+        # Convert run statuses to enums
+        for run_id in self._runs:
+            self._runs[run_id]['status'] = constants.Status(self._runs[run_id]['status'])
 
     def _save(self):
         out_dict = {
@@ -346,7 +351,7 @@ class CampaignDB(BaseCampaignDB):
         if sampler is not None:
             logger.warning("Only 1 sampler is possible in JSON db")
 
-        return self._runs[run_name]['status']
+        return constants.Status(self._runs[run_name]['status'])
 
     def set_run_statuses(self, run_name_list, status, campaign=None, sampler=None):
         if campaign is not None:

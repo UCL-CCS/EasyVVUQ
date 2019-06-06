@@ -119,10 +119,11 @@ class RunInfo:
         ID of the associated application.
     run_name : str
         Human readable name of the run.
+    status : enum(Status)
     """
 
     def __init__(self, run_name='', app=None, params=None, sample=None,
-                 campaign=None):
+                 campaign=None, status=constants.Status.NEW):
 
         # TODO: Handle fixtures
 
@@ -141,8 +142,7 @@ class RunInfo:
             raise RuntimeError(message)
 
         self.params = params
-
-        self.status = constants.Status.NEW
+        self.status = status
 
     def to_dict(self, flatten=False):
         """Convert to a dictionary (optionally flatten to single level)
@@ -165,7 +165,7 @@ class RunInfo:
             out_dict = {
                 'run_name': self.run_name,
                 'params': json.dumps(self.params),
-                'status': self.status,
+                'status': constants.Status(self.status),
                 'campaign': self.campaign,
                 'sample': self.sample,
                 'app': self.app,
@@ -176,7 +176,7 @@ class RunInfo:
             out_dict = {
                 'run_name': self.run_name,
                 'params': self.params,
-                'status': self.status,
+                'status': constants.Status(self.status),
                 'campaign': self.campaign,
                 'sample': self.sample,
                 'app': self.app,
