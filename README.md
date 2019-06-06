@@ -26,6 +26,7 @@ Alternatively, you can manually install EasyVVUQ. First clone the repository to 
 
 ```
 git clone https://github.com/UCL-CCS/EasyVVUQ.git
+
 cd EasyVVUQ/
 ```
 
