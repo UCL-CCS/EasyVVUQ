@@ -613,11 +613,8 @@ class Campaign:
 
         runs_dir = self.campaign_db.runs_dir()
 
-        for run_id, run_data in self.campaign_db.runs():
-
-            # Only do this for runs that have status "new"
-            if run_data['status'] != constants.Status.NEW:
-                continue
+        # Loop through all runs with status NEW
+        for run_id, run_data in self.campaign_db.runs(status=constants.Status.NEW):
 
             # Make run directory
             target_dir = os.path.join(runs_dir, run_id)
