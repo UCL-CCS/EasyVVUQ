@@ -7,10 +7,11 @@ import os
 import logging
 import tempfile
 import json
-import easyvvuq as uq
+import easyvvuq
 from easyvvuq.constants import default_campaign_prefix, Status
 from easyvvuq.data_structs import RunInfo, CampaignInfo, AppInfo
 from easyvvuq.sampling import BaseSamplingElement
+from easyvvuq.collation import BaseCollationElement
 
 __copyright__ = """
 
@@ -191,7 +192,7 @@ class Campaign:
         info = CampaignInfo(
             name=name,
             campaign_dir_prefix=default_campaign_prefix,
-            easyvvuq_version=uq.__version__,
+            easyvvuq_version=easyvvuq.__version__,
             campaign_dir=self.campaign_dir)
         self.campaign_db = CampaignDB(location=self.db_location,
                                       new_campaign=True,
@@ -431,7 +432,7 @@ class Campaign:
         -------
 
         """
-        if not isinstance(collater, uq.collate.BaseCollationElement):
+        if not isinstance(collater, BaseCollationElement):
             msg = "set_collater() must be passed a collation element"
             logging.error(msg)
             raise Exception(msg)
