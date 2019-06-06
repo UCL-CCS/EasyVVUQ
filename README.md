@@ -26,13 +26,13 @@ Alternatively, you can manually install EasyVVUQ. First clone the repository to 
 
 ```
 git clone https://github.com/UCL-CCS/EasyVVUQ.git
-
-cd EasyVVUQ/
 ```
 
 We are trying to keep dependencies at a minimum but a few are inevitable, to install them use:
 
 ```
+cd EasyVVUQ/
+
 pip3 install -r requirements.txt
 ```
 
