@@ -32,4 +32,5 @@ class Validate(BaseComparisonElement):
         return "0.1"
 
     def compare(self, dataframe1, dataframe2):
-        return "df"
+        # TODO: Implement simple comparison
+        raise NotImplementedError

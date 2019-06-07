@@ -156,7 +156,7 @@ class BaseCampaignDB:
         """
         raise NotImplementedError
 
-    def runs(self, campaign=None, sampler=None):
+    def runs(self, campaign=None, sampler=None, status=None, not_status=None):
         """
         Get a dictionary of all run information for selected `campaign` and
         `sampler`.

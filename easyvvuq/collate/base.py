@@ -1,6 +1,5 @@
-from .. import BaseElement
+from easyvvuq.base_element import BaseElement
 import json
-import pandas as pd
 import logging
 
 __copyright__ = """

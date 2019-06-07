@@ -7,6 +7,7 @@ from sqlalchemy import create_engine, Column, Integer, String, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from .base import BaseCampaignDB
+from easyvvuq import constants
 from easyvvuq.sampling.base import BaseSamplingElement
 from easyvvuq.encoders.base import BaseEncoder
 from easyvvuq.decoders.base import BaseDecoder
@@ -73,8 +74,7 @@ class RunTable(Base):
     app = Column(Integer, ForeignKey('app.id'))
     # Parameter values for this run
     params = Column(String)
-    # TODO: Consider making status an ENUM to enforce relevant EasyVVUQ values
-    status = Column(String)
+    status = Column(Integer)
     run_dir = Column(String)
     campaign = Column(Integer, ForeignKey('campaign_info.id'))
     sample = Column(Integer, ForeignKey('sample.id'))
@@ -141,7 +141,6 @@ class CampaignDB(BaseCampaignDB):
             Application information.
         """
 
-        # TODO: Find efficient way for this
         if name is None:
             logging.warning('No app name provided so using first app '
                             'in database')
@@ -297,7 +296,7 @@ class CampaignDB(BaseCampaignDB):
         run_info = {
             'run_name': run_row.run_name,
             'params': json.loads(run_row.params),
-            'status': run_row.status,
+            'status': constants.Status(run_row.status),
             'sample': run_row.sample,
             'campaign': run_row.campaign,
             'app': run_row.app,
@@ -326,18 +325,13 @@ class CampaignDB(BaseCampaignDB):
             campaign, app)
         """
 
-        if campaign is None and sampler is None:
-            selected = self.session.query(
-                RunTable).filter_by(run_name=run_name)
-        elif campaign is not None and sampler is not None:
-            selected = self.session.query(RunTable).filter_by(
-                run_name=run_name, campaign=campaign, sample=sampler)
-        elif campaign is not None:
-            selected = self.session.query(RunTable).filter_by(
-                run_name=run_name, campaign=campaign)
-        else:
-            selected = self.session.query(RunTable).filter_by(
-                run_name=run_name, sample=sampler)
+        filter_options = {'run_name': run_name}
+        if campaign:
+            filter_options['campaign'] = campaign
+        if sampler:
+            filter_options['sampler'] = sampler
+
+        selected = self.session.query(RunTable).filter_by(**filter_options)
 
         if selected.count() != 1:
             logging.warning('Multiple runs selected - using the first')
@@ -347,18 +341,14 @@ class CampaignDB(BaseCampaignDB):
         return self._run_to_dict(selected)
 
     def set_dir_for_run(self, run_name, run_dir, campaign=None, sampler=None):
-        if campaign is None and sampler is None:
-            selected = self.session.query(
-                RunTable).filter_by(run_name=run_name)
-        elif campaign is not None and sampler is not None:
-            selected = self.session.query(RunTable).filter_by(
-                run_name=run_name, campaign=campaign, sample=sampler)
-        elif campaign is not None:
-            selected = self.session.query(RunTable).filter_by(
-                run_name=run_name, campaign=campaign)
-        else:
-            selected = self.session.query(RunTable).filter_by(
-                run_name=run_name, sample=sampler)
+
+        filter_options = {'run_name': run_name}
+        if campaign:
+            filter_options['campaign'] = campaign
+        if sampler:
+            filter_options['sampler'] = sampler
+
+        selected = self.session.query(RunTable).filter_by(**filter_options)
 
         if selected.count() != 1:
             logging.critical('Multiple runs selected - using the first')
@@ -369,25 +359,21 @@ class CampaignDB(BaseCampaignDB):
         self.session.commit()
 
     def get_run_status(self, run_name, campaign=None, sampler=None):
-        if campaign is None and sampler is None:
-            selected = self.session.query(
-                RunTable).filter_by(run_name=run_name)
-        elif campaign is not None and sampler is not None:
-            selected = self.session.query(RunTable).filter_by(
-                run_name=run_name, campaign=campaign, sample=sampler)
-        elif campaign is not None:
-            selected = self.session.query(RunTable).filter_by(
-                run_name=run_name, campaign=campaign)
-        else:
-            selected = self.session.query(RunTable).filter_by(
-                run_name=run_name, sample=sampler)
+
+        filter_options = {'run_name': run_name}
+        if campaign:
+            filter_options['campaign'] = campaign
+        if sampler:
+            filter_options['sampler'] = sampler
+
+        selected = self.session.query(RunTable).filter_by(**filter_options)
 
         if selected.count() != 1:
             logging.critical('Multiple runs selected - using the first')
 
         selected = selected.first()
 
-        return selected.status
+        return constants.Status(selected.status)
 
     def set_run_statuses(self, run_ID_list, status):
         selected = self.session.query(RunTable).filter(
@@ -474,40 +460,79 @@ class CampaignDB(BaseCampaignDB):
 
         self._get_campaign_info(campaign_name=campaign_name).campaign_dir
 
-    def runs(self, campaign=None, sampler=None):
+    def runs(self, campaign=None, sampler=None, status=None, not_status=None):
         """
-        Get a dictionary of all run information for selected `campaign` and
-        `sampler`.
+        A generator to return all run information for selected `campaign` and `sampler`.
 
         Parameters
         ----------
-        campaign: int
+        campaign: int or None
             Campaign id to filter for.
-        sampler: int
+        sampler: int or None
             Sampler id to filter for.
+        status: enum(Status) or None
+            Status string to filter for.
+        not_status: enum(Status) or None
+            Exclude runs with this status string
 
         Returns
         -------
         dict:
-            Information on all selected runs (key = run_name, value = dict of
-            run information fields.).
+            Information on each selected run (key = run_name, value = dict of
+            run information fields.), one at a time.
 
         """
-        # TODO: This is a bad idea - find a better generator solution
 
-        if campaign is None and sampler is None:
-            selected = self.session.query(RunTable).all()
-        elif campaign is not None and sampler is not None:
-            selected = self.session.query(RunTable).filter_by(
-                campaign=campaign, sample=sampler).all()
-        elif campaign is not None:
-            selected = self.session.query(RunTable)
-            selected = selected.filter_by(campaign=campaign).all()
-        else:
-            selected = self.session.query(
-                RunTable).filter_by(sample=sampler).all()
+        filter_options = {}
+        if campaign:
+            filter_options['campaign'] = campaign
+        if sampler:
+            filter_options['sampler'] = sampler
+        if status:
+            filter_options['status'] = status
 
-        return {r.run_name: self._run_to_dict(r) for r in selected}
+        # Note that for some databases this can be sped up with a yield_per(), but not all
+        selected = self.session.query(RunTable).filter_by(
+            **filter_options).filter(RunTable.status != not_status)
+
+        for r in selected:
+            yield r.run_name, self._run_to_dict(r)
+
+    def get_num_runs(self, campaign=None, sampler=None, status=None, not_status=None):
+        """
+        Returns the number of runs matching the filtering criteria.
+
+        Parameters
+        ----------
+        campaign: int or None
+            Campaign id to filter for.
+        sampler: int or None
+            Sampler id to filter for.
+        status: enum(Status) or None
+            Status string to filter for.
+        not_status: enum(Status) or None
+            Exclude runs with this status string
+
+        Returns
+        -------
+        int:
+            The number of runs in the database matching the filtering criteria
+
+        """
+
+        filter_options = {}
+        if campaign:
+            filter_options['campaign'] = campaign
+        if sampler:
+            filter_options['sampler'] = sampler
+        if status:
+            filter_options['status'] = status
+
+        # Note that for some databases this can be sped up with a yield_per(), but not all
+        selected = self.session.query(RunTable).filter_by(
+            **filter_options).filter(RunTable.status != not_status)
+
+        return selected.count()
 
     def runs_dir(self, campaign_name=None):
         """

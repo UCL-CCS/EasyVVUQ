@@ -4,7 +4,9 @@
 import os
 import logging
 import json
-import easyvvuq as uq
+from easyvvuq import constants
+from easyvvuq.encoders import BaseEncoder
+from easyvvuq.decoders import BaseDecoder
 
 __copyright__ = """
 
@@ -118,10 +120,11 @@ class RunInfo:
         ID of the associated application.
     run_name : str
         Human readable name of the run.
+    status : enum(Status)
     """
 
     def __init__(self, run_name='', app=None, params=None, sample=None,
-                 campaign=None):
+                 campaign=None, status=constants.Status.NEW):
 
         # TODO: Handle fixtures
 
@@ -140,8 +143,7 @@ class RunInfo:
             raise RuntimeError(message)
 
         self.params = params
-
-        self.status = 'new'
+        self.status = status
 
     def to_dict(self, flatten=False):
         """Convert to a dictionary (optionally flatten to single level)
@@ -164,7 +166,7 @@ class RunInfo:
             out_dict = {
                 'run_name': self.run_name,
                 'params': json.dumps(self.params),
-                'status': self.status,
+                'status': constants.Status(self.status),
                 'campaign': self.campaign,
                 'sample': self.sample,
                 'app': self.app,
@@ -175,7 +177,7 @@ class RunInfo:
             out_dict = {
                 'run_name': self.run_name,
                 'params': self.params,
-                'status': self.status,
+                'status': constants.Status(self.status),
                 'campaign': self.campaign,
                 'sample': self.sample,
                 'app': self.app,
@@ -195,12 +197,10 @@ class AppInfo:
         Description of possible parameter values.
     fixtures : dict or None
         Description of files/assets for runs.
-    encoder : :obj:`easyvvuq.encoders.base.BaseEncoderElement` or None
+    encoder : :obj:`easyvvuq.encoders.base.BaseEncoder`
         Encoder element for application.
-    decoder : :obj:`easyvvuq.decoders.base.BaseDecoderElement` or None
+    decoder : :obj:`easyvvuq.decoders.base.BaseDecoder`
         Decoder element for application.
-    collation : :obj:`easyvvuq.collation.base.BaseCollationElement` or None
-        Collation element for collecting output data.
 
     Attributes
     ----------
@@ -210,12 +210,10 @@ class AppInfo:
         Description of possible parameter values.
     fixtures : dict or None
         Description of files/assets for runs.
-    input_encoder : :obj:`easyvvuq.encoders.base.BaseEncoderElement` or None
+    input_encoder : :obj:`easyvvuq.encoders.base.BaseEncoder`
         Encoder element for application.
-    output_decoder : :obj:`easyvvuq.decoders.base.BaseDecoderElement` or None
+    output_decoder : :obj:`easyvvuq.decoders.base.BaseDecoder`
         Decoder element for application.
-    collation : :obj:`easyvvuq.collation.base.BaseCollationElement` or None
-        Collation element for collecting output data.
     """
 
     def __init__(
@@ -238,13 +236,10 @@ class AppInfo:
 
     @input_encoder.setter
     def input_encoder(self, encoder):
-        available_encoders = uq.encoders.base.AVAILABLE_ENCODERS
-
-        # TODO: Fix/relocate check. Problem is with live/serialized encoder info.
-        # if encoder not in available_encoders:
-        #     message = (f"Encoder not found. Looking for {encoder}.\n"
-        #                f"Available encoders are {available_encoders}.")
-        #     logging.critical(message)
+        if not isinstance(encoder, BaseEncoder):
+            msg = f"Provided 'encoder' must be derived from type BaseEncoder"
+            logger.error(msg)
+            raise Exception(msg)
 
         self._input_encoder = encoder
 
@@ -254,14 +249,10 @@ class AppInfo:
 
     @output_decoder.setter
     def output_decoder(self, decoder):
-        available_decoders = uq.decoders.base.AVAILABLE_DECODERS
-
-        # TODO: Fix/relocate check. Problem is with live/serialized encoder info.
-        # if decoder not in available_decoders:
-        #     message = (f"Decoder not found. Looking for {decoder}.\n"
-        #                f"Available decoders are {available_decoders}.")
-        #     logging.critical(message)
-        #     raise RuntimeError(message)
+        if not isinstance(decoder, BaseDecoder):
+            msg = f"Provided 'decoder' must be derived from type BaseDecoder"
+            logger.error(msg)
+            raise Exception(msg)
 
         self._output_decoder = decoder
 

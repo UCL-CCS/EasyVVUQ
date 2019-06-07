@@ -8,7 +8,7 @@ default_campaign_prefix : str
     Text used to ensure campaign names are identifiable and somewhat human
     readable.
 """
-from enum import Enum
+from enum import Enum, IntEnum
 
 __copyright__ = """
 
@@ -36,7 +36,8 @@ default_campaign_prefix = 'EasyVVUQ_Campaign_'
 
 
 class OutputType(Enum):
-    """Types of data output by UQPs/VVPs
+    """
+    Types of data output by UQPs/VVPs
     """
 
     SAMPLE = 'sample'
@@ -44,3 +45,13 @@ class OutputType(Enum):
     SAMPLE_ARRAY = 'sample_array'
     TRACK = 'track'
     SUMMARY = 'summary'
+
+
+class Status(IntEnum):
+    """
+    Status of runs in the Run Table
+    """
+
+    NEW = 1
+    ENCODED = 2
+    COLLATED = 3
