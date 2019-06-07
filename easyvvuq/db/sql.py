@@ -72,7 +72,6 @@ class RunTable(Base):
     id = Column(Integer, primary_key=True)
     run_name = Column(String)
     app = Column(Integer, ForeignKey('app.id'))
-    # Parameter values for this run
     params = Column(String)
     status = Column(Integer)
     run_dir = Column(String)
