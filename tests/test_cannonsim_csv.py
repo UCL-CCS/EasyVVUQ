@@ -37,11 +37,11 @@ if not os.path.exists("tests/cannonsim/bin/cannonsim"):
         allow_module_level=True)
 
 
-logging.basicConfig(level=logging.NOTSET)
+logging.basicConfig(level=logging.CRITICAL)
 
 @pytest.fixture
 def campaign():
-    def _campaign(work_dir, params):
+    def _campaign(work_dir):
         my_campaign = uq.Campaign(name='cannon', work_dir=work_dir)
     return _campaign
 
