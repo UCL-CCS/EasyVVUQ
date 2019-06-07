@@ -304,41 +304,6 @@ class CampaignDB(BaseCampaignDB):
 
         return run_info
 
-    def run(self, run_name, campaign=None, sampler=None):
-        """
-        Get the information for a specified run.
-
-        Parameters
-        ----------
-        run_name: str
-            Name of run to filter for.
-        campaign:  int or None
-            Campaign id to filter for.
-        sampler: int or None
-            Sampler id to filter for.
-
-        Returns
-        -------
-        dict
-            Containing run information (run_name, params, status, sample,
-            campaign, app)
-        """
-
-        filter_options = {'run_name': run_name}
-        if campaign:
-            filter_options['campaign'] = campaign
-        if sampler:
-            filter_options['sampler'] = sampler
-
-        selected = self.session.query(RunTable).filter_by(**filter_options)
-
-        if selected.count() != 1:
-            logging.warning('Multiple runs selected - using the first')
-
-        selected = selected.first()
-
-        return self._run_to_dict(selected)
-
     def set_dir_for_run(self, run_name, run_dir, campaign=None, sampler=None):
 
         filter_options = {'run_name': run_name}
@@ -458,6 +423,41 @@ class CampaignDB(BaseCampaignDB):
         """
 
         self._get_campaign_info(campaign_name=campaign_name).campaign_dir
+
+    def run(self, run_name, campaign=None, sampler=None):
+        """
+        Get the information for a specified run.
+
+        Parameters
+        ----------
+        run_name: str
+            Name of run to filter for.
+        campaign:  int or None
+            Campaign id to filter for.
+        sampler: int or None
+            Sampler id to filter for.
+
+        Returns
+        -------
+        dict
+            Containing run information (run_name, params, status, sample,
+            campaign, app)
+        """
+
+        filter_options = {'run_name': run_name}
+        if campaign:
+            filter_options['campaign'] = campaign
+        if sampler:
+            filter_options['sampler'] = sampler
+
+        selected = self.session.query(RunTable).filter_by(**filter_options)
+
+        if selected.count() != 1:
+            logging.warning('Multiple runs selected - using the first')
+
+        selected = selected.first()
+
+        return self._run_to_dict(selected)
 
     def runs(self, campaign=None, sampler=None, status=None, not_status=None):
         """
