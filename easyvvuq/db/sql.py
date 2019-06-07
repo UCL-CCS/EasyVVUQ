@@ -499,7 +499,6 @@ class CampaignDB(BaseCampaignDB):
         """
 
         selected = self._select_runs(
-            name=name,
             campaign=campaign,
             sampler=sampler,
             status=status,
@@ -531,7 +530,6 @@ class CampaignDB(BaseCampaignDB):
         """
 
         selected = self._select_runs(
-            name=name,
             campaign=campaign,
             sampler=sampler,
             status=status,
