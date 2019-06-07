@@ -435,6 +435,7 @@ class CampaignDB(BaseCampaignDB):
         if status:
             filter_options['status'] = status
 
+        # Note that for some databases this can be sped up with a yield_per(), but not all
         selected = self.session.query(RunTable).filter_by(
             **filter_options).filter(RunTable.status != not_status)
 
@@ -497,17 +498,12 @@ class CampaignDB(BaseCampaignDB):
 
         """
 
-        filter_options = {}
-        if campaign:
-            filter_options['campaign'] = campaign
-        if sampler:
-            filter_options['sampler'] = sampler
-        if status:
-            filter_options['status'] = status
-
-        # Note that for some databases this can be sped up with a yield_per(), but not all
-        selected = self.session.query(RunTable).filter_by(
-            **filter_options).filter(RunTable.status != not_status)
+        selected = self._select_runs(
+            name=name,
+            campaign=campaign,
+            sampler=sampler,
+            status=status,
+            not_status=not_status)
 
         for r in selected:
             yield r.run_name, self._run_to_dict(r)
@@ -534,17 +530,12 @@ class CampaignDB(BaseCampaignDB):
 
         """
 
-        filter_options = {}
-        if campaign:
-            filter_options['campaign'] = campaign
-        if sampler:
-            filter_options['sampler'] = sampler
-        if status:
-            filter_options['status'] = status
-
-        # Note that for some databases this can be sped up with a yield_per(), but not all
-        selected = self.session.query(RunTable).filter_by(
-            **filter_options).filter(RunTable.status != not_status)
+        selected = self._select_runs(
+            name=name,
+            campaign=campaign,
+            sampler=sampler,
+            status=status,
+            not_status=not_status)
 
         return selected.count()
 
