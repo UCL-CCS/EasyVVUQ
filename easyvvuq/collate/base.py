@@ -1,4 +1,4 @@
-from .. import BaseElement
+from easyvvuq.base_element import BaseElement
 import json
 import logging
 

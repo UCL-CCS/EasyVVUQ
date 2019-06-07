@@ -7,10 +7,11 @@ import os
 import logging
 import tempfile
 import json
-import easyvvuq as uq
-from easyvvuq import constants
-from easyvvuq.constants import default_campaign_prefix
-from easyvvuq.data_structs import RunInfo
+import easyvvuq
+from easyvvuq.constants import default_campaign_prefix, Status
+from easyvvuq.data_structs import RunInfo, CampaignInfo, AppInfo
+from easyvvuq.sampling import BaseSamplingElement
+from easyvvuq.collate import BaseCollationElement
 
 __copyright__ = """
 
@@ -188,10 +189,10 @@ class Campaign:
             logger.critical(message)
             raise RuntimeError(message)
 
-        info = uq.data_structs.CampaignInfo(
+        info = CampaignInfo(
             name=name,
             campaign_dir_prefix=default_campaign_prefix,
-            easyvvuq_version=uq.__version__,
+            easyvvuq_version=easyvvuq.__version__,
             campaign_dir=self.campaign_dir)
         self.campaign_db = CampaignDB(location=self.db_location,
                                       new_campaign=True,
@@ -364,7 +365,7 @@ class Campaign:
                 raise Exception(msg)
 
         # validate application input
-        app = uq.data_structs.AppInfo(
+        app = AppInfo(
             name=name,
             params=params,
             fixtures=fixtures,
@@ -411,7 +412,7 @@ class Campaign:
         -------
 
         """
-        if not isinstance(sampler, uq.sampling.BaseSamplingElement):
+        if not isinstance(sampler, BaseSamplingElement):
             msg = "set_sampler() must be passed a sampling element"
             logging.error(msg)
             raise Exception(msg)
@@ -431,7 +432,7 @@ class Campaign:
         -------
 
         """
-        if not isinstance(collater, uq.collate.BaseCollationElement):
+        if not isinstance(collater, BaseCollationElement):
             msg = "set_collater() must be passed a collation element"
             logging.error(msg)
             raise Exception(msg)
@@ -572,7 +573,7 @@ class Campaign:
         -------
 
         """
-        return self.list_runs(status=uq.constants.Status.COLLATED)
+        return self.list_runs(status=Status.COLLATED)
 
     def all_complete(self):
         """
@@ -584,7 +585,7 @@ class Campaign:
 
         """
 
-        num = self.campaign_db.get_num_runs(not_status=constants.Status.COLLATED)
+        num = self.campaign_db.get_num_runs(not_status=Status.COLLATED)
         if num == 0:
             return True
         return False
@@ -614,7 +615,7 @@ class Campaign:
         runs_dir = self.campaign_db.runs_dir()
 
         # Loop through all runs with status NEW
-        for run_id, run_data in self.campaign_db.runs(status=constants.Status.NEW):
+        for run_id, run_data in self.campaign_db.runs(status=Status.NEW):
 
             # Make run directory
             target_dir = os.path.join(runs_dir, run_id)
@@ -632,7 +633,7 @@ class Campaign:
                 active_encoder.encode(params=run_data['params'],
                                       target_dir=target_dir)
 
-            self.campaign_db.set_run_statuses([run_id], constants.Status.ENCODED)
+            self.campaign_db.set_run_statuses([run_id], Status.ENCODED)
 
     def get_campaign_runs_dir(self):
         """Get the runs directory from the CampaignDB.
@@ -663,7 +664,7 @@ class Campaign:
         runs_dir = self.campaign_db.runs_dir()
 
         # Loop through all runs in this campaign with status ENCODED
-        for run_id, run_data in self.campaign_db.runs(status=constants.Status.ENCODED):
+        for run_id, run_data in self.campaign_db.runs(status=Status.ENCODED):
 
             dir_name = os.path.join(runs_dir, run_id)
             print("Applying " + action.__module__ + " to " + dir_name + "...")

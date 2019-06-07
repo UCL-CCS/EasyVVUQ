@@ -82,7 +82,8 @@ my_campaign.populate_runs_dir()
 
 # 8. Run Application
 #    - gauss is executed for each sample
-my_campaign.apply_for_each_run_dir(uq.actions.ExecuteLocal(cmd))
+my_campaign.apply_for_each_run_dir(uq.actions.ExecuteLocal(cmd,
+                                                           interpret='python3'))
 
 # 9. Collate output
 my_campaign.collate()
