@@ -460,7 +460,12 @@ class CampaignDB(BaseCampaignDB):
             campaign, app)
         """
 
-        selected = self._select_runs(name=name, campaign=campaign, sampler=sampler, status=status, not_status=not_status)
+        selected = self._select_runs(
+            name=name,
+            campaign=campaign,
+            sampler=sampler,
+            status=status,
+            not_status=not_status)
 
         if selected.count() != 1:
             logging.warning('Multiple runs selected - using the first')
