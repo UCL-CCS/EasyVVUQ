@@ -33,7 +33,7 @@ def test_sc(tmpdir):
 
     # Create an encoder and decoder for SC test app
     encoder = uq.encoders.GenericEncoder(
-        template_fname='tests/sc/sc.template',
+        template_fname='./sc/sc.template',
         delimiter='$',
         target_filename='sc_in.json')
     decoder = uq.decoders.SimpleCSV(target_filename=output_filename,
@@ -57,7 +57,7 @@ def test_sc(tmpdir):
         "f": cp.Normal(1.0, 0.1)
     }
 
-    my_sampler = uq.sampling.SCSampler(vary=vary, polynomial_order=4)
+    my_sampler = uq.sampling.SCSampler(vary=vary, polynomial_order=1)
 
     # Associate the sampler with the campaign
     my_campaign.set_sampler(my_sampler)
@@ -68,7 +68,7 @@ def test_sc(tmpdir):
     my_campaign.draw_samples()
 
     my_campaign.populate_runs_dir()
-    my_campaign.apply_for_each_run_dir(uq.actions.ExecuteLocal("tests/sc/sc_model.py sc_in.json"))
+    my_campaign.apply_for_each_run_dir(uq.actions.ExecuteLocal("./sc/sc_model.py sc_in.json"))
 
     my_campaign.collate()
 
@@ -90,7 +90,11 @@ def test_sc(tmpdir):
 
 if __name__ == "__main__":
 
-    results, sc_analysis = test_sc("/tmp/")
+
+    #home dir of this file    
+    HOME = os.path.abspath(os.path.dirname(__file__))
+
+    results, analysis = test_sc("/tmp/")
     mu = results['statistical_moments']['u']['mean']
     std = results['statistical_moments']['u']['std']
 
@@ -111,21 +115,23 @@ if __name__ == "__main__":
     # Plot the random surrogate samples #
     #####################################
 
-    ax = fig.add_subplot(122, xlabel='x', ylabel='u',
-                         title='some Monte Carlo surrogate samples')
-
-    # generate random samples of unobserved parameter values
-    n_mc = 100
-    dists = sc_analysis.sampler.vary.vary_dict
-    xi_mc = np.zeros([n_mc, 2])
-    xi_mc[:, 0] = dists['Pe'].sample(n_mc)
-    xi_mc[:, 1] = dists['f'].sample(n_mc)
-
-    # evaluate the surrogate at these values
-    for i in range(n_mc):
-        ax.plot(x, sc_analysis.surrogate('u', xi_mc[i]), 'g')
-
-    plt.tight_layout()
+    #for now, only implemented in SC
+    if analysis.element_name() == 'SC_Analysis':
+        ax = fig.add_subplot(122, xlabel='x', ylabel='u',
+                             title='some Monte Carlo surrogate samples')
+    
+        # generate random samples of unobserved parameter values
+        n_mc = 100
+        dists = analysis.sampler.vary.vary_dict
+        xi_mc = np.zeros([n_mc, 2])
+        xi_mc[:, 0] = dists['Pe'].sample(n_mc)
+        xi_mc[:, 1] = dists['f'].sample(n_mc)
+    
+        # evaluate the surrogate at these values
+        for i in range(n_mc):
+            ax.plot(x, analysis.surrogate('u', xi_mc[i]), 'g')
+    
+        plt.tight_layout()
 
     ######################
     # Plot Sobol indices #
@@ -141,13 +147,17 @@ if __name__ == "__main__":
     lbl = ['Pe', 'f', 'Pe-f interaction']
     idx = 0
 
-    for S_i in results['sobol_indices']['u']:
-        ax.plot(x, results['sobol_indices']['u'][S_i], label=lbl[idx])
-        idx += 1
+    if analysis.element_name() == 'SC_Analysis':
+        
+        for S_i in results['sobol_indices']['u']:
+            ax.plot(x, results['sobol_indices']['u'][S_i], label=lbl[idx])
+            idx += 1
+    else:
+        for S_i in results['sobol_indices']['u'][1]:
+            ax.plot(x, results['sobol_indices']['u'][1][S_i], label=lbl[idx])
+            idx += 1
 
     leg = plt.legend(loc=0)
-    leg.draggable(True)
+    leg.set_draggable(True)
 
     plt.tight_layout()
-
-    plt.show()
