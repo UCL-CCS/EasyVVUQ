@@ -33,7 +33,7 @@ logger = logging.getLogger(__name__)
 
 class ExecuteLocal(BaseAction):
 
-    def __init__(self, run_cmd):
+    def __init__(self, run_cmd, interpret=None):
         """
         Provides an action element to run a shell command in a specified
         directory.
@@ -43,6 +43,8 @@ class ExecuteLocal(BaseAction):
 
         run_cmd : str
             Command to execute.
+        interpret : str or None
+            Interpreter to use to execute cmd.
 
         """
 
@@ -54,6 +56,7 @@ class ExecuteLocal(BaseAction):
 
         # Need to expand users, get absolute path and dereference symlinks
         self.run_cmd = os.path.realpath(os.path.expanduser(run_cmd))
+        self.interpreter = interpret
 
     def act_on_dir(self, target_dir):
         """
@@ -64,7 +67,10 @@ class ExecuteLocal(BaseAction):
 
         """
 
-        full_cmd = f'cd {target_dir}\n{self.run_cmd}\n'
+        if self.interpreter is None:
+            full_cmd = f'cd {target_dir}\n{self.run_cmd}\n'
+        else:
+            full_cmd = f'cd {target_dir}\n{self.interpreter} {self.run_cmd}\n'
         result = os.system(full_cmd)
         if result != 0:
             sys.exit(f'Non-zero exit code from command "{full_cmd}"\n')
