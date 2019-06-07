@@ -95,6 +95,21 @@ class BaseCampaignDB:
         """
         raise NotImplementedError
 
+    def update_sampler(self, sampler_id, sampler_element):
+        raise NotImplementedError
+
+    def resurrect_sampler(self, sampler_id):
+        raise NotImplementedError
+
+    def set_campaign_collater(self, collater, campaign_id):
+        raise NotImplementedError
+
+    def resurrect_collation(self, campaign_id):
+        raise NotImplementedError
+
+    def resurrect_app(self, app_name):
+        raise NotImplementedError
+
     def add_run(self, run_info=None, prefix='Run_'):
         """
         Add run to the `runs` table in the database.
@@ -112,6 +127,9 @@ class BaseCampaignDB:
         -------
 
         """
+        raise NotImplementedError
+
+    def set_dir_for_run(self, run_name, run_dir, campaign=None, sampler=None):
         raise NotImplementedError
 
     def run(self, run_name, campaign=None, sampler=None):
@@ -192,3 +210,22 @@ class BaseCampaignDB:
             Path containing run outputs.
         """
         raise NotImplementedError
+
+    def get_num_runs(self, campaign=None, sampler=None, status=None, not_status=None):
+        raise NotImplementedError
+
+    def get_campaign_id(self, name):
+        raise NotImplementedError
+
+    def get_run_status(self, run_name, campaign=None, sampler=None):
+        raise NotImplementedError
+
+    def set_run_statuses(self, run_ID_list, status):
+        raise NotImplementedError
+
+    def append_collation_dataframe(self, df):
+        raise NotImplementedError
+
+    def get_collation_dataframe(self):
+        raise NotImplementedError
+
