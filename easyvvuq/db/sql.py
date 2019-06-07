@@ -424,7 +424,7 @@ class CampaignDB(BaseCampaignDB):
 
         self._get_campaign_info(campaign_name=campaign_name).campaign_dir
 
-    def run(self, run_name, campaign=None, sampler=None):
+    def run(self, run_name, campaign=None, sampler=None, status=None, not_status=None):
         """
         Get the information for a specified run.
 
@@ -449,8 +449,11 @@ class CampaignDB(BaseCampaignDB):
             filter_options['campaign'] = campaign
         if sampler:
             filter_options['sampler'] = sampler
+        if status:
+            filter_options['status'] = status
 
-        selected = self.session.query(RunTable).filter_by(**filter_options)
+        selected = self.session.query(RunTable).filter_by(
+            **filter_options).filter(RunTable.status != not_status)
 
         if selected.count() != 1:
             logging.warning('Multiple runs selected - using the first')
