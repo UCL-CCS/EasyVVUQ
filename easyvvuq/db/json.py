@@ -10,6 +10,7 @@ from easyvvuq.sampling.base import BaseSamplingElement
 from easyvvuq.encoders.base import BaseEncoder
 from easyvvuq.decoders.base import BaseDecoder
 from easyvvuq.collate.base import BaseCollationElement
+from easyvvuq import constants
 
 __copyright__ = """
 
@@ -46,8 +47,7 @@ class CampaignDB(BaseCampaignDB):
         self._app = None
         self._runs = {}
         self._sample = None
-
-        self._collation_csv = "COLLATIONRESULT.csv"
+        self._collation_csv = None
 
         if new_campaign:
 
@@ -58,6 +58,8 @@ class CampaignDB(BaseCampaignDB):
                 message = f"No location given for JSON db location"
                 logger.critical(message)
                 raise RuntimeError(message)
+
+            self._collation_csv = location + ".COLLATION"
         else:
             self._load_campaign(location, name)
             self._next_run = len(self._runs)
@@ -85,6 +87,10 @@ class CampaignDB(BaseCampaignDB):
         self._runs = input_info.get('runs', {})
         self._sample = input_info.get('sample', {})
         self._collation_csv = input_info.get('collation_csv', {})
+
+        # Convert run statuses to enums
+        for run_id in self._runs:
+            self._runs[run_id]['status'] = constants.Status(self._runs[run_id]['status'])
 
     def _save(self):
         out_dict = {
@@ -117,7 +123,6 @@ class CampaignDB(BaseCampaignDB):
         """
 
         if name is not None:
-            # TODO: Should this raise and Exception?
             message = (f'JSON/Python dictionary database can only support one '
                        f'application - ignoring selected name ({name}).')
             logger.warning(message)
@@ -290,7 +295,6 @@ class CampaignDB(BaseCampaignDB):
     def campaign_dir(self, campaign_name=None):
 
         if campaign_name is not None:
-            # TODO: Should this raise and Exception?
             message = (
                 f'JSON/Python dictionary database can only support one '
                 f'application - ignoring selected name ({campaign_name}).')
@@ -298,7 +302,7 @@ class CampaignDB(BaseCampaignDB):
 
         return self._campaign_info['campaign_dir']
 
-    def runs(self, campaign=None, sampler=None):
+    def runs(self, campaign=None, sampler=None, status=None, not_status=None):
 
         if campaign is not None or sampler is not None:
             message = (f'JSON/Python dictionary database only supports '
@@ -306,12 +310,29 @@ class CampaignDB(BaseCampaignDB):
                        f'campaign - {campaign}/ sampler {sampler}')
             logger.warning(message)
 
-        return self._runs
+        for run_id, run_info in self._runs.items():
+            if (status is None or run_info['status'] ==
+                    status) and run_info['status'] != not_status:
+                yield run_id, run_info
+
+    def get_num_runs(self, campaign=None, sampler=None, status=None, not_status=None):
+
+        if campaign is not None or sampler is not None:
+            message = (f'JSON/Python dictionary database only supports '
+                       f'single campaign and sampler workflows - ignoring'
+                       f'campaign - {campaign}/ sampler {sampler}')
+            logger.warning(message)
+
+        num = 0
+        for run_id, run_info in self._runs.items():
+            if (status is None or run_info['status'] ==
+                    status) and run_info['status'] != not_status:
+                num += 1
+        return num
 
     def runs_dir(self, campaign_name=None):
 
         if campaign_name is not None:
-            # TODO: Should this raise and Exception?
             message = (
                 f'JSON/Python dictionary database can only support one '
                 f'application - ignoring selected name ({campaign_name}).')
@@ -330,7 +351,7 @@ class CampaignDB(BaseCampaignDB):
         if sampler is not None:
             logger.warning("Only 1 sampler is possible in JSON db")
 
-        return self._runs[run_name]['status']
+        return constants.Status(self._runs[run_name]['status'])
 
     def set_run_statuses(self, run_name_list, status, campaign=None, sampler=None):
         if campaign is not None:
