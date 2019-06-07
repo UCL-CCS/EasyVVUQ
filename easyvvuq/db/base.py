@@ -252,4 +252,3 @@ class BaseCampaignDB:
 
     def get_collation_dataframe(self):
         raise NotImplementedError
-
