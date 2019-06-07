@@ -37,7 +37,7 @@ if not os.path.exists("tests/cannonsim/bin/cannonsim"):
         allow_module_level=True)
 
 
-logging.basicConfig(filename='tests.log', level=logging.DEBUG)
+logging.basicConfig(level=logging.NOTSET)
 
 @pytest.fixture
 def campaign():
