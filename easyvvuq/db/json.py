@@ -40,8 +40,7 @@ logger = logging.getLogger(__name__)
 
 class CampaignDB(BaseCampaignDB):
 
-    def __init__(self, location=None, new_campaign=False, name=None,
-                 info=None):
+    def __init__(self, location=None, new_campaign=False, name=None, info=None):
 
         self._campaign_info = None
         self._app = None

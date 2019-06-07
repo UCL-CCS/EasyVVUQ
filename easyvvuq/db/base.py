@@ -42,57 +42,57 @@ class BaseCampaignDB:
         Information defining the campaign.
     """
 
-    def __init__(self, location=None, new_campaign=False, name=None,
-                 info=None):
+    def __init__(self, location=None, new_campaign=False, name=None, info=None):
         pass
 
     def app(self, name):
         """
-        Get app information. Note for this format (JSON/Python dict) only one
-        app can be stored in the database.
+        Get app information. Specific applications selected by `name`,
+        otherwise first entry in database 'app' selected.
 
         Parameters
         ----------
-        name: str or None
-            Name of selected app, provided for consistency with other formats -
-            here will be ignored as only one app.
+        name : str or None
+            Name of selected app, if `None` given then first app will be
+            selected.
 
         Returns
         -------
         dict:
             Application information.
-
         """
+
         raise NotImplementedError
 
     def add_app(self, app_info):
         """
-        Add application to the database.
+        Add application to the 'app' table.
 
         Parameters
         ----------
-        app_info: `easyvvuq.data_structs.AppInfo`
+        app_info: AppInfo
             Application definition.
 
         Returns
         -------
 
         """
+
         raise NotImplementedError
 
     def add_sampler(self, sampler):
         """
-        Add passed sampler information to the the database.
+        Add new Sampler to the 'sampler' table.
 
         Parameters
         ----------
-        sampler  :  dict
-            Information on the sampler that was used
+        sampler_element: BaseSamplingElement
 
         Returns
         -------
 
         """
+
         raise NotImplementedError
 
     def update_sampler(self, sampler_id, sampler_element):
@@ -176,23 +176,26 @@ class BaseCampaignDB:
 
     def runs(self, campaign=None, sampler=None, status=None, not_status=None):
         """
-        Get a dictionary of all run information for selected `campaign` and
-        `sampler`.
+        A generator to return all run information for selected `campaign` and `sampler`.
 
         Parameters
         ----------
-        campaign: int
+        campaign: int or None
             Campaign id to filter for.
-        sampler: int
+        sampler: int or None
             Sampler id to filter for.
+        status: enum(Status) or None
+            Status string to filter for.
+        not_status: enum(Status) or None
+            Exclude runs with this status string
 
         Returns
         -------
         dict:
-            Information on all selected runs (key = run_name, value = dict of
-            run information fields.).
-
+            Information on each selected run (key = run_name, value = dict of
+            run information fields.), one at a time.
         """
+
         raise NotImplementedError
 
     def runs_dir(self, campaign_name=None):
@@ -212,6 +215,27 @@ class BaseCampaignDB:
         raise NotImplementedError
 
     def get_num_runs(self, campaign=None, sampler=None, status=None, not_status=None):
+        """
+        Returns the number of runs matching the filtering criteria.
+
+        Parameters
+        ----------
+        campaign: int or None
+            Campaign id to filter for.
+        sampler: int or None
+            Sampler id to filter for.
+        status: enum(Status) or None
+            Status string to filter for.
+        not_status: enum(Status) or None
+            Exclude runs with this status string
+
+        Returns
+        -------
+        int:
+            The number of runs in the database matching the filtering criteria
+
+        """
+
         raise NotImplementedError
 
     def get_campaign_id(self, name):

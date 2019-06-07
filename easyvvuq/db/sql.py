@@ -89,8 +89,7 @@ class SamplerTable(Base):
 
 class CampaignDB(BaseCampaignDB):
 
-    def __init__(self, location=None, new_campaign=False, name=None,
-                 info=None):
+    def __init__(self, location=None, new_campaign=False, name=None, info=None):
 
         if location is not None:
             self.engine = create_engine(location)
