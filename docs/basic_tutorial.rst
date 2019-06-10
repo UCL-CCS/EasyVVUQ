@@ -200,7 +200,7 @@ We create the encoder using the following code::
                                          target_filename=input_filename)
 
 .. note:: The tags in the template here use the default $ delimiter.
-          Different delimiters can be specidied using the `delimeter` keyword.
+          Different delimiters can be specified using the `delimeter` keyword.
 
 The output of *gauss* is a CSV format files, so we use a *Decoder* called *SimpleCSV*.
 This requires us to specify the file to be read, the location of the header (line 0)
