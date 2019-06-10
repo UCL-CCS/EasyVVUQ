@@ -72,7 +72,6 @@ class RunTable(Base):
     id = Column(Integer, primary_key=True)
     run_name = Column(String)
     app = Column(Integer, ForeignKey('app.id'))
-    # Parameter values for this run
     params = Column(String)
     status = Column(Integer)
     run_dir = Column(String)
@@ -90,8 +89,7 @@ class SamplerTable(Base):
 
 class CampaignDB(BaseCampaignDB):
 
-    def __init__(self, location=None, new_campaign=False, name=None,
-                 info=None):
+    def __init__(self, location=None, new_campaign=False, name=None, info=None):
 
         if location is not None:
             self.engine = create_engine(location)
@@ -305,41 +303,6 @@ class CampaignDB(BaseCampaignDB):
 
         return run_info
 
-    def run(self, run_name, campaign=None, sampler=None):
-        """
-        Get the information for a specified run.
-
-        Parameters
-        ----------
-        run_name: str
-            Name of run to filter for.
-        campaign:  int or None
-            Campaign id to filter for.
-        sampler: int or None
-            Sampler id to filter for.
-
-        Returns
-        -------
-        dict
-            Containing run information (run_name, params, status, sample,
-            campaign, app)
-        """
-
-        filter_options = {'run_name': run_name}
-        if campaign:
-            filter_options['campaign'] = campaign
-        if sampler:
-            filter_options['sampler'] = sampler
-
-        selected = self.session.query(RunTable).filter_by(**filter_options)
-
-        if selected.count() != 1:
-            logging.warning('Multiple runs selected - using the first')
-
-        selected = selected.first()
-
-        return self._run_to_dict(selected)
-
     def set_dir_for_run(self, run_name, run_dir, campaign=None, sampler=None):
 
         filter_options = {'run_name': run_name}
@@ -460,6 +423,57 @@ class CampaignDB(BaseCampaignDB):
 
         self._get_campaign_info(campaign_name=campaign_name).campaign_dir
 
+    def _select_runs(self, name=None, campaign=None, sampler=None, status=None, not_status=None):
+        filter_options = {}
+        if name:
+            filter_options['run_name'] = name
+        if campaign:
+            filter_options['campaign'] = campaign
+        if sampler:
+            filter_options['sampler'] = sampler
+        if status:
+            filter_options['status'] = status
+
+        # Note that for some databases this can be sped up with a yield_per(), but not all
+        selected = self.session.query(RunTable).filter_by(
+            **filter_options).filter(RunTable.status != not_status)
+
+        return selected
+
+    def run(self, name, campaign=None, sampler=None, status=None, not_status=None):
+        """
+        Get the information for a specified run.
+
+        Parameters
+        ----------
+        run_name: str
+            Name of run to filter for.
+        campaign:  int or None
+            Campaign id to filter for.
+        sampler: int or None
+            Sampler id to filter for.
+
+        Returns
+        -------
+        dict
+            Containing run information (run_name, params, status, sample,
+            campaign, app)
+        """
+
+        selected = self._select_runs(
+            name=name,
+            campaign=campaign,
+            sampler=sampler,
+            status=status,
+            not_status=not_status)
+
+        if selected.count() != 1:
+            logging.warning('Multiple runs selected - using the first')
+
+        selected = selected.first()
+
+        return self._run_to_dict(selected)
+
     def runs(self, campaign=None, sampler=None, status=None, not_status=None):
         """
         A generator to return all run information for selected `campaign` and `sampler`.
@@ -483,17 +497,11 @@ class CampaignDB(BaseCampaignDB):
 
         """
 
-        filter_options = {}
-        if campaign:
-            filter_options['campaign'] = campaign
-        if sampler:
-            filter_options['sampler'] = sampler
-        if status:
-            filter_options['status'] = status
-
-        # Note that for some databases this can be sped up with a yield_per(), but not all
-        selected = self.session.query(RunTable).filter_by(
-            **filter_options).filter(RunTable.status != not_status)
+        selected = self._select_runs(
+            campaign=campaign,
+            sampler=sampler,
+            status=status,
+            not_status=not_status)
 
         for r in selected:
             yield r.run_name, self._run_to_dict(r)
@@ -520,17 +528,11 @@ class CampaignDB(BaseCampaignDB):
 
         """
 
-        filter_options = {}
-        if campaign:
-            filter_options['campaign'] = campaign
-        if sampler:
-            filter_options['sampler'] = sampler
-        if status:
-            filter_options['status'] = status
-
-        # Note that for some databases this can be sped up with a yield_per(), but not all
-        selected = self.session.query(RunTable).filter_by(
-            **filter_options).filter(RunTable.status != not_status)
+        selected = self._select_runs(
+            campaign=campaign,
+            sampler=sampler,
+            status=status,
+            not_status=not_status)
 
         return selected.count()
 
