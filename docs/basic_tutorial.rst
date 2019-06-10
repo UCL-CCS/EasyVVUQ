@@ -12,7 +12,7 @@ application and analyses output.
 The input files for this tutorial are the *gauss* application
 (:download:`here <tutorial_files/gauss.py>`), an input template
 (:download:`here <tutorial_files/gauss.template>`) and the EasyVVUQ workflow
-script (:download:`here <tutorial_files/gauss_tutorial.py>`).
+script (:download:`here <tutorial_files/easyvvuq_gauss_tutorial.py>`).
 In preparation for this tutorial download the files and place them in
 an empty directory, then change into this directory.
 
@@ -21,7 +21,7 @@ Gauss Application
 
 The usage of the `gauss.py` application is::
 
-    gauss.py in_file.json
+    gauss.py <input_file>
 
 It outputs a single file called `output.csv`, which has two columns
 'Steps' and 'Value'.
@@ -32,6 +32,8 @@ The `gauss.template` is a template input file, in JSON format ::
 
 The values for each key are tags (signified by the $ delimiter) which will
 be substituted by EasyVVUQ with values to sample the parameter space.
+In the following tutorial, the template will be used to generate files called
+`in_file.json` that will be the input to each run of `gauss.py`.
 
 Uncertainty Quantification Workflow
 -----------------------------------
