@@ -10,9 +10,9 @@ but illustrates how EasyVVUQ samples from a parameter space, wraps an
 application and analyses output.
 
 The input files for this tutorial are the *gauss* application
-(:download:`here <tutorial_files/gauss.py>`), an input template
-(:download:`here <tutorial_files/gauss.template>`) and the EasyVVUQ workflow
-script (:download:`here <tutorial_files/easyvvuq_gauss_tutorial.py>`).
+(:download:`gauss.py <tutorial_files/gauss.py>`), an input template
+(:download:`gauss.template <tutorial_files/gauss.template>`) and the EasyVVUQ workflow
+script (:download:`easyvvuq_gauss_tutorial.py <tutorial_files/easyvvuq_gauss_tutorial.py>`).
 In preparation for this tutorial download the files and place them in
 an empty directory, then change into this directory.
 
@@ -47,7 +47,7 @@ for each set of runs.
 EasyVVUQ Script Overview
 ------------------------
 
-The script `gauss_tutorial.py` implements the workflow described above using
+The script `easyvvuq_gauss_tutorial.py` implements the workflow described above using
 EasyVVUQ.
 The commands are split into sections which are indicated by numbered comments.
 Sections 1 to 9 contain the core EasyVVUQ workflow, section 0 sets up
@@ -59,7 +59,7 @@ convenience variables related to the application.
 
 To run the workflow execute the following command ::
 
-    python3 gauss_tutorial.py
+    python3 easyvvuq_gauss_tutorial.py
 
 If this works you should see 15 lines that look something like:
 
