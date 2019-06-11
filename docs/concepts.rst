@@ -64,7 +64,7 @@ Elements
 Within VECMA software components that can be reused in a wide range of
 application scenarios are known as `Elements`.
 Within EasyVVUQ we provide five classes of `Elements` (:ref:`samplers`,
-:ref:`decoders`, :ref:`encoders`, and those provinding :ref:`collation`,
+:ref:`decoders`, :ref:`encoders`, and those providing :ref:`collation`,
 for the aggregation step, and :ref:`analysis` functionality) which we 
 describe below.
 
