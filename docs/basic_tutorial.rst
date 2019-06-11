@@ -189,7 +189,7 @@ Within EasyVVUQ these actions are performed by *Encoders* and *Decoders*
 respectively.
 Both the *Encoder* and *Decoder* have to be executed for each run (sample).
 The *gauss* application is simple and the input and output formats can be
-interpretted by inbuilt classes.
+interpreted by inbuilt classes.
 
 The appropriate encoder here is the `GenericEncoder`, this takes a template file
 and substitutes in values from the parameter space description (ouputing to a
