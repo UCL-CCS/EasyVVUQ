@@ -15,21 +15,33 @@ To use the library you will need Python 3.6+.
 
 ## Installation using pip
 
+If you are unsure of the version of python your default `pip` works for type:
+```
+pip --version
+```
+
+If the output ends with `(python 2.7)` you should replace `pip` with `pip3` in the following commands.
+
 The following should fully install the library:
 ```
-pip3 install easyvvuq
+pip install easyvvuq
+```
+
+To upgrade the library use:
+
+```
+pip install easyvvuq --upgrade
 ```
 
 ## Manual installation from repository
 
-Alternatively, you can manually install EasyVVUQ. First clone the repository to your computer:
-
+Alternatively, you can manually install EasyVVUQ.
+First clone the repository to your computer:
 ```
 git clone https://github.com/UCL-CCS/EasyVVUQ.git
 ```
 
 We are trying to keep dependencies at a minimum but a few are inevitable, to install them use:
-
 ```
 cd EasyVVUQ/
 
