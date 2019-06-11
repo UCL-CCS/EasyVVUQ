@@ -28,7 +28,7 @@ components which can be flexibly combined to implement a range of algorithms.
 
 
 EasyVVUQ is designed around a breakdown of such workflows into four distinct
-stagesi (see Figure 1); *Sampling*, *Model Evaluation*, result *Aggregation*,
+stages (see Figure 1); *Sampling*, *Model Evaluation*, result *Aggregation*,
 and *Analysis*.
 In an HPC context the model evaluation step is generally equivalent to the
 execution of a (computationally expensive) simulation.
@@ -63,7 +63,6 @@ Elements
 
 Within VECMA software components that can be reused in a wide range of
 application scenarios are known as `Elements`.
-The function of an `Element` can be 
 Within EasyVVUQ we provide five classes of `Elements` (:ref:`samplers`,
 :ref:`decoders`, :ref:`encoders`, and those provinding :ref:`collation`,
 for the aggregation step, and :ref:`analysis` functionality) which we 
