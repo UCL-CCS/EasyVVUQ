@@ -68,8 +68,8 @@ html_theme_options = {
     "github_user": "UCL-CCS",
     "github_repo": "EasyVVUQ",
     "github_banner": True,
-    "logo" = "images/circle-logo.svg",
-    "description" = "Verification, validation and uncertainty quantification for HPC simulations"
+    "logo": "images/circle-logo.svg",
+    "description": "Verification, validation and uncertainty quantification for HPC simulations"
 }
 
 # Add any paths that contain custom static files (such as style sheets) here,
