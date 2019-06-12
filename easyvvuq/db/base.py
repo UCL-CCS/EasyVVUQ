@@ -263,6 +263,7 @@ class BaseCampaignDB:
         list:
             Campaign names.
         """
+
         raise NotImplementedError
 
     def campaign_dir(self, campaign_name=None):
@@ -273,6 +274,7 @@ class BaseCampaignDB:
         str:
             Path to campaign directory.
         """
+
         raise NotImplementedError
 
     def runs(self, campaign=None, sampler=None, status=None, not_status=None):
