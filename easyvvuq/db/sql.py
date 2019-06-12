@@ -261,7 +261,6 @@ class CampaignDB(BaseCampaignDB):
         sampler = BaseSamplingElement.deserialize(serialized_sampler)
         return sampler
 
-
     def set_campaign_collater(self, collater, campaign_id):
         """
         Store the state of the given collater object in the collation slot
