@@ -86,7 +86,7 @@ any application or workflow.
 Encoders
 --------
 
-The role of an Encoder is to convert generic parameter descriptions into
+The role of an ``Encoder`` is to convert generic parameter descriptions into
 inputs (for example configuration files) which can be used in a specific
 application.
 Included in the base application is a simple templating system in which
