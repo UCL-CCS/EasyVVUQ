@@ -30,7 +30,7 @@ The `gauss.template` is a template input file, in JSON format ::
 
     {"outfile": "$out_file", "num_steps": "$num_steps", "mu": "$mu", "sigma": "$sigma"}
 
-The values for each key are tags (signified by the $ delimiter) which will
+The values for each key are tags (signified by the ``$`` delimiter) which will
 be substituted by EasyVVUQ with values to sample the parameter space.
 In the following tutorial, the template will be used to generate files called
 `in_file.json` that will be the input to each run of `gauss.py`.

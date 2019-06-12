@@ -1,11 +1,13 @@
-# EasyVVUQ
+# EasyVVUQ ![alt text][logo] 
+
+[logo]: https://github.com/UCL-CCS/EasyVVUQ/blob/dev/docs/_static/circle-logo-75.png "EasyVVUQ"
 
 [![Build Status](https://travis-ci.org/UCL-CCS/EasyVVUQ.svg?branch=master)](https://travis-ci.org/UCL-CCS/EasyVVUQ)
 [![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/UCL-CCS/EasyVVUQ.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/UCL-CCS/EasyVVUQ/context:python)
 [![Documentation Status](https://readthedocs.org/projects/easyvvuq/badge/?version=latest)](https://easyvvuq.readthedocs.io/)
 
 The aim of this library is to facilitate verification, validation and 
-uncertainty quantification (VVUQ) for a wide variety of simulations.
+uncertainty quantification (VVUQ) for a wide variety of simulations. This library is currently in an **Alpha** "friendly users" phase of development, with only a core number of UQ elements currently implemented.
 
 Development was funded by the EU Horizon 2020 project [VECMA](http://www.vecma.eu/).
 
