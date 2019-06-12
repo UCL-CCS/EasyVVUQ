@@ -1,4 +1,5 @@
-# EasyVVUQ ![alt text][logo] 
+![alt text][logo] 
+# EasyVVUQ
 
 [logo]: https://github.com/UCL-CCS/EasyVVUQ/blob/dev/docs/_static/circle-logo-75.png "EasyVVUQ"
 
