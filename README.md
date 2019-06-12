@@ -1,4 +1,6 @@
-# EasyVVUQ
+# EasyVVUQ ![alt text][logo] 
+
+[logo]: https://github.com/UCL-CCS/EasyVVUQ/blob/dev/docs/_static/circle-logo.png "EasyVVUQ"
 
 [![Build Status](https://travis-ci.org/UCL-CCS/EasyVVUQ.svg?branch=master)](https://travis-ci.org/UCL-CCS/EasyVVUQ)
 [![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/UCL-CCS/EasyVVUQ.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/UCL-CCS/EasyVVUQ/context:python)
