@@ -68,7 +68,7 @@ html_theme_options = {
     "github_user": "UCL-CCS",
     "github_repo": "EasyVVUQ",
     "github_banner": True,
-    "logo": "images/circle-logo.svg",
+    "logo": "images/circle-logo.png",
     "description": "Verification, validation and uncertainty quantification for HPC simulations"
 }
 
