@@ -104,7 +104,7 @@ Decoders
 
 The role of a `Decoder` is twofold, to record simulation completion in the
 `CampaignDB` and to extract the output information from the simulation runs.
-Similarly to `Encoder` s, `Decoder` s are designed to be user extendable to 
+Similarly to ```Encoder```s, `Decoder` s are designed to be user extendable to 
 facilitate analysis of a wide range of applications. 
 
 .. _collation:
