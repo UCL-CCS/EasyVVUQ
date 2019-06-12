@@ -23,7 +23,7 @@ components which can be flexibly combined to implement a range of algorithms.
    Figure 1: Decomposition of generalized VVUQ workflow into different 
    functions.
    These are implemented as 'Elements' in EasyVVUQ.
-   Rounded boxes are specified by users to tailor general workflows to thier
+   Rounded boxes are specified by users to tailor general workflows to their
    particular use case
 
 
