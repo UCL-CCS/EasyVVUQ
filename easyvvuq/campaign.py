@@ -76,15 +76,35 @@ class Campaign:
     ----------
     campaign_name : str or None
         Name for the campaign/workflow.
+    _campaign_dir: str or None
+        Path to the directory campaign uses for local storage (runs inputs etc)
     db_location : str or None
         Location of the underlying campaign database - either a path or
         acceptable URI for SQLAlchemy.
     db_type : str or None
         Type of CampaignDB ("sql" or "json").
+    _log: list
+        The log of all elements that have been applied, with information about
+        their application
     campaign_id : int
         ID number for the current campaign in the CampaignDB.
-    last_analysis : :obj:`pandas.DataFrame`
-        Output from the last applied analysis element
+    _active_app: dict
+        Info about currently set app
+    campaign_db: easyvvuq.db.BaseCampaignDB
+        A campaign database object
+    last_analysis:
+        The result of the most recent analysis carried out on this campaign
+    _active_app_encoder: easyvvuq.encoders.BaseEncoder
+        The current Encoder object being used, from the currently set app
+    _active_app_decoder: easyvvuq.decoders.BaseDecoder
+        The current Decoder object being used, from the currently set app
+    _active_collater: easyvvuq.collate.BaseCollationElement
+        The current Collater object assigned to this campaign
+    _active_sampler: easyvvuq.sampling.BaseSamplingElement
+        The currently set Sampler object
+    _active_sampler_id: int
+        The database id of the currently set Sampler object
+
     """
 
     def __init__(
