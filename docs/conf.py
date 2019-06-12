@@ -69,6 +69,7 @@ html_theme_options = {
     "github_repo": "EasyVVUQ",
     "github_banner": True,
     "logo": "circle-logo.svg",
+    "logo_name": True,
     "description": "Verification, validation and uncertainty quantification for HPC simulations"
 }
 
