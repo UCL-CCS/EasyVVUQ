@@ -55,11 +55,21 @@ exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 #
 html_theme = 'alabaster'
 
+html_sidebars = {
+    '**': [
+        'about.html',
+        'navigation.html',
+        'relations.html',
+        'searchbox.html',
+    ]
+}
+
 html_theme_options = {
     "github_user": "UCL-CCS",
     "github_repo": "EasyVVUQ",
     "github_banner": True,
     "logo" = "images/circle-logo.svg",
+    "description" = "Verification, validation and uncertainty quantification for HPC simulations"
 }
 
 # Add any paths that contain custom static files (such as style sheets) here,
