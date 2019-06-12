@@ -34,8 +34,8 @@ In an HPC context the model evaluation step is generally equivalent to the
 execution of a (computationally expensive) simulation.
 The actual simulation execution is beyond the remit of the package but
 EasyVVUQ is designed to wrap around simulation execution, providing functions
-to generate input (`Encoder` s) and to transform simulation output in to common
-formats for analysis (`Decoder` s).
+to generate input (``Encoder`` s) and to transform simulation output in to common
+formats for analysis (``Decoder`` s).
 Below we describe the coponents of EasyVVUQ designed to perform each step in
 more detail.
 
@@ -51,8 +51,8 @@ value.
 Campaign
 --------
 
-EasyVVUQ workflows are coordinated by an object called a `Campaign`.
-This contains a common database, the `CampaignDB`, which contains information
+EasyVVUQ workflows are coordinated by an object called a ``Campaign``.
+This contains a common database, the ``CampaignDB``, which contains information
 on the application(s) being analysed alongside the runs mandated by the sampling
 algorithm(s) employed.
 The `Campaign` handles all validation and is transfers information between
@@ -62,7 +62,7 @@ Elements
 --------
 
 Within VECMA software components that can be reused in a wide range of
-application scenarios are known as `Elements`.
+application scenarios are known as ``Elements``.
 Within EasyVVUQ we provide five classes of `Elements` (:ref:`samplers`,
 :ref:`decoders`, :ref:`encoders`, and those providing :ref:`collation`,
 for the aggregation step, and :ref:`analysis` functionality) which we 
@@ -73,9 +73,9 @@ describe below.
 Samplers
 --------
 
-`Samplers` populate the `CampaignDB` with a set of run specifications based on
+``Sampler`` s populate the `CampaignDB` with a set of run specifications based on
 the parameter description provided by the user.
-Each `Sampler` is designed to employs one of a range of algorithms, such as
+Each ``Sampler`` is designed to employs one of a range of algorithms, such as
 the Monte Carlo or Quasi Monte Carlo approaches (Sobol, 1998).
 They deal with generic information in the sense that all parameters use the
 nomenclature and units provided by the user rather than anything specific to
@@ -102,9 +102,9 @@ experienced users.
 Decoders
 --------
 
-The role of a `Decoder` is twofold, to record simulation completion in the
-`CampaignDB` and to extract the output information from the simulation runs.
-Similarly to ``Encoder``s, `Decoder` s are designed to be user extendable to 
+The role of a ``Decoder`` is twofold, to record simulation completion in the
+``CampaignDB`` and to extract the output information from the simulation runs.
+Similarly to ``Encoder`` s, ``Decoder`` s are designed to be user extendable to 
 facilitate analysis of a wide range of applications. 
 
 .. _collation:
@@ -112,7 +112,7 @@ facilitate analysis of a wide range of applications.
 Collation
 ---------
 
-`Collation` elements gather `Decoder` output across multiple runs to provide a
+``Collation`` elements gather ``Decoder`` output across multiple runs to provide a
 combined and generic expression of the simulation results for further analysis
 (for example the default is to bring together output from all simulation runs
 in a Pandas dataframe).
