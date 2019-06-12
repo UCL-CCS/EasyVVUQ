@@ -5,7 +5,7 @@
 [![Documentation Status](https://readthedocs.org/projects/easyvvuq/badge/?version=latest)](https://easyvvuq.readthedocs.io/)
 
 The aim of this library is to facilitate verification, validation and 
-uncertainty quantification (VVUQ) for a wide variety of simulations.
+uncertainty quantification (VVUQ) for a wide variety of simulations. This library is currently in an **Alpha** "friendly users" phase of development, with only a core number of UQ elements currently implemented.
 
 Development was funded by the EU Horizon 2020 project [VECMA](http://www.vecma.eu/).
 
