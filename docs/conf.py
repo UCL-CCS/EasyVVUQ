@@ -70,6 +70,7 @@ html_theme_options = {
     "github_banner": True,
     "logo": "circle-logo.svg",
     "logo_name": True,
+    "logo_text_align": "center",
     "description": "Verification, validation and uncertainty quantification for HPC simulations"
 }
 
