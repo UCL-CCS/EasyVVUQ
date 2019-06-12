@@ -88,12 +88,14 @@ class Campaign:
         their application
     campaign_id : int
         ID number for the current campaign in the CampaignDB.
-    _active_app: dict
-        Info about currently set app
     campaign_db: easyvvuq.db.BaseCampaignDB
         A campaign database object
     last_analysis:
         The result of the most recent analysis carried out on this campaign
+    _active_app: dict
+        Info about currently set app
+    _active_app_name: str
+        Name of currently set app
     _active_app_encoder: easyvvuq.encoders.BaseEncoder
         The current Encoder object being used, from the currently set app
     _active_app_decoder: easyvvuq.decoders.BaseDecoder
