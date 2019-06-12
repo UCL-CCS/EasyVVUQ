@@ -126,13 +126,12 @@ class Campaign:
         self._log = []
 
         self.campaign_id = None
-        self._active_app = None
-        self._active_app_name = None
         self.campaign_db = None
 
         self.last_analysis = None
 
-        self._active_app_id = None
+        self._active_app = None
+        self._active_app_name = None
         self._active_app_encoder = None
         self._active_app_decoder = None
 
