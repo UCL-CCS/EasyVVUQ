@@ -208,9 +208,29 @@ class BaseCampaignDB:
         -------
 
         """
+
         raise NotImplementedError
 
     def set_dir_for_run(self, run_name, run_dir, campaign=None, sampler=None):
+        """
+        Set the 'run_dir' path for the specified run in the database.
+
+        Parameters
+        ----------
+        run_name: str
+            Name of run to filter for.
+        run_dir: str
+            Directory path associated to set for this run.
+        campaign:  int or None
+            Campaign id to filter for.
+        sampler: int or None
+            Sample id to filter for.
+
+        Returns
+        -------
+
+        """
+
         raise NotImplementedError
 
     def run(self, run_name, campaign=None, sampler=None):
