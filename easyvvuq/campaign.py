@@ -76,15 +76,37 @@ class Campaign:
     ----------
     campaign_name : str or None
         Name for the campaign/workflow.
+    _campaign_dir: str or None
+        Path to the directory campaign uses for local storage (runs inputs etc)
     db_location : str or None
         Location of the underlying campaign database - either a path or
         acceptable URI for SQLAlchemy.
     db_type : str or None
         Type of CampaignDB ("sql" or "json").
+    _log: list
+        The log of all elements that have been applied, with information about
+        their application
     campaign_id : int
         ID number for the current campaign in the CampaignDB.
-    last_analysis : :obj:`pandas.DataFrame`
-        Output from the last applied analysis element
+    campaign_db: easyvvuq.db.BaseCampaignDB
+        A campaign database object
+    last_analysis:
+        The result of the most recent analysis carried out on this campaign
+    _active_app: dict
+        Info about currently set app
+    _active_app_name: str
+        Name of currently set app
+    _active_app_encoder: easyvvuq.encoders.BaseEncoder
+        The current Encoder object being used, from the currently set app
+    _active_app_decoder: easyvvuq.decoders.BaseDecoder
+        The current Decoder object being used, from the currently set app
+    _active_collater: easyvvuq.collate.BaseCollationElement
+        The current Collater object assigned to this campaign
+    _active_sampler: easyvvuq.sampling.BaseSamplingElement
+        The currently set Sampler object
+    _active_sampler_id: int
+        The database id of the currently set Sampler object
+
     """
 
     def __init__(
@@ -106,13 +128,12 @@ class Campaign:
         self._log = []
 
         self.campaign_id = None
-        self._active_app = None
-        self._active_app_name = None
         self.campaign_db = None
 
         self.last_analysis = None
 
-        self._active_app_id = None
+        self._active_app = None
+        self._active_app_name = None
         self._active_app_encoder = None
         self._active_app_decoder = None
 
@@ -561,6 +582,7 @@ class Campaign:
 
         Returns
         -------
+            list of runs
 
         """
         return list(self.campaign_db.runs(sampler=sampler, campaign=campaign, status=status))
@@ -571,6 +593,7 @@ class Campaign:
 
         Returns
         -------
+            list of runs
 
         """
         return self.list_runs(status=Status.COLLATED)
@@ -582,6 +605,7 @@ class Campaign:
 
         Returns
         -------
+            list of runs
 
         """
 
@@ -693,6 +717,17 @@ class Campaign:
         self.log_element_application(self._active_collater, info)
 
     def get_collation_result(self):
+        """
+        Return dataframe containing all collated results
+
+        Parameters
+        ----------
+
+        Returns
+        -------
+            pandas dataframe
+
+        """
         return self._active_collater.get_collated_dataframe()
 
     def apply_analysis(self, analysis):
@@ -716,7 +751,8 @@ class Campaign:
         self.log_element_application(analysis, None)
 
     def get_last_analysis(self):
-        """Return the output of the most recently run analysis element.
+        """
+        Return the output of the most recently run analysis element.
 
         Returns
         -------

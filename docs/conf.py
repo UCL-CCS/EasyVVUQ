@@ -19,8 +19,8 @@ sys.path.insert(0, os.path.abspath('../'))
 # -- Project information -----------------------------------------------------
 
 project = 'EasyVVUQ'
-copyright = '2019, David W. Wright, Robin R. Richardson'
-author = 'David W. Wright, Robin R. Richardson'
+copyright = '2019, David W. Wright, Robin A. Richardson'
+author = 'David W. Wright, Robin A. Richardson'
 
 # The full version, including alpha/beta/rc tags
 release = '0.3'
@@ -53,12 +53,26 @@ exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #
+html_favicon = 'images/favicon.ico'
 html_theme = 'alabaster'
+
+html_sidebars = {
+    '**': [
+        'about.html',
+        'navigation.html',
+        'relations.html',
+        'searchbox.html',
+    ]
+}
 
 html_theme_options = {
     "github_user": "UCL-CCS",
     "github_repo": "EasyVVUQ",
     "github_banner": True,
+    "logo": "circle-logo.svg",
+    "logo_name": True,
+    "logo_text_align": "center",
+    "description": "Verification, validation and uncertainty quantification for HPC simulations"
 }
 
 # Add any paths that contain custom static files (such as style sheets) here,

@@ -153,6 +153,17 @@ class CampaignDB(BaseCampaignDB):
         self._save()
 
     def add_sampler(self, sampler):
+        """
+        Add new Sampler to the 'sampler' table.
+
+        Parameters
+        ----------
+        sampler_element: BaseSamplingElement
+
+        Returns
+        -------
+
+        """
 
         if self._sample:
             message = ('JSON/Python dict database does not support '
@@ -166,6 +177,22 @@ class CampaignDB(BaseCampaignDB):
         return 1
 
     def update_sampler(self, sampler_id, sampler_element):
+        """
+        Update the state of the Sampler with id 'sampler_id' to
+        that in the passed 'sampler_element'
+
+        Parameters
+        ----------
+        sampler_id: int
+            The id of the sampler in the db to update
+        sampler_element: BaseSamplingElement
+            The sampler whose state should be used as the new state
+
+        Returns
+        -------
+
+        """
+
         if sampler_id != 1:
             message = ('JSON/Python dict database does not support a '
                        'sampler_id other than 1')
@@ -176,6 +203,22 @@ class CampaignDB(BaseCampaignDB):
         self._save()
 
     def resurrect_sampler(self, sampler_id):
+        """
+        Return the sampler object corresponding to id sampler_id in the database.
+        It is deserialized from the state stored in the database.
+
+        Parameters
+        ----------
+        sampler_id: int
+            The id of the sampler to resurrect
+
+        Returns
+        -------
+        BaseSamplingElement
+            The 'live' sampler object, deserialized from the state in the db
+
+        """
+
         if sampler_id != 1:
             message = ('JSON/Python dict database does not support a '
                        'sampler_id other than 1')
@@ -186,6 +229,23 @@ class CampaignDB(BaseCampaignDB):
         return sampler
 
     def resurrect_app(self, app_name):
+        """
+        Return the 'live' encoder and decoder objects corresponding to the app with
+        name 'app_name' in the database. They are deserialized from the states
+        previously stored in the database.
+
+        Parameters
+        ----------
+        app_name: string
+            Name of the app to resurrect
+
+        Returns
+        -------
+        BaseEncoder, BaseDecoder
+            The 'live' encoder and decoder objects associated with this app
+
+        """
+
         if not self._app:
             message = 'No app in JSON database'
             logger.critical(message)
@@ -202,6 +262,22 @@ class CampaignDB(BaseCampaignDB):
         return encoder, decoder
 
     def set_campaign_collater(self, collater, campaign_id):
+        """
+        Store the state of the given collater object in the collation slot
+        for the campaign with id 'campaign_id'
+
+        Parameters
+        ----------
+        collater: BaseCollationElement
+            The collater object to serialize
+        campaign_id: int
+            The id of the campaign this collater should be assigned to
+
+        Returns
+        -------
+
+        """
+
         if campaign_id != 1:
             message = ('JSON/Python dict database does not support a '
                        'campaign_id other than 1')
@@ -211,6 +287,22 @@ class CampaignDB(BaseCampaignDB):
         self._campaign_info['collater'] = collater.serialize()
 
     def resurrect_collation(self, campaign_id):
+        """
+        Return the collater object corresponding to the campaign with id 'campaign_id'
+        in the database. It is deserialized from the state stored in the database.
+
+        Parameters
+        ----------
+        campaign_id: int
+            The id of the collater to resurrect
+
+        Returns
+        -------
+        BaseCollationElement
+            The 'live' collater object, deserialized from the state in the db
+
+        """
+
         if campaign_id != 1:
             message = ('JSON/Python dict database does not support a '
                        'campaign_id other than 1')
@@ -280,6 +372,25 @@ class CampaignDB(BaseCampaignDB):
         return self._runs[run_name]
 
     def set_dir_for_run(self, run_name, run_dir, campaign=None, sampler=None):
+        """
+        Set the 'run_dir' path for the specified run in the database.
+
+        Parameters
+        ----------
+        run_name: str
+            Name of run to filter for.
+        run_dir: str
+            Directory path associated to set for this run.
+        campaign:  int or None
+            Campaign id to filter for.
+        sampler: int or None
+            Sample id to filter for.
+
+        Returns
+        -------
+
+        """
+
         if campaign is not None or sampler is not None:
             message = (f'JSON/Python dictionary database only supports '
                        f'single campaign and sampler workflows - ignoring'
@@ -288,10 +399,25 @@ class CampaignDB(BaseCampaignDB):
         self._runs[run_name]['run_dir'] = run_dir
 
     def campaigns(self):
+        """Get list of campaigns for which information is stored in the
+        database.
+
+        Returns
+        -------
+        list:
+            Campaign names.
+        """
 
         return [self._campaign_info['name']]
 
     def campaign_dir(self, campaign_name=None):
+        """Get campaign directory for `campaign_name`.
+
+        Returns
+        -------
+        str:
+            Path to campaign directory.
+        """
 
         if campaign_name is not None:
             message = (
@@ -302,6 +428,26 @@ class CampaignDB(BaseCampaignDB):
         return self._campaign_info['campaign_dir']
 
     def runs(self, campaign=None, sampler=None, status=None, not_status=None):
+        """
+        A generator to return all run information for selected `campaign` and `sampler`.
+
+        Parameters
+        ----------
+        campaign: int or None
+            Campaign id to filter for.
+        sampler: int or None
+            Sampler id to filter for.
+        status: enum(Status) or None
+            Status string to filter for.
+        not_status: enum(Status) or None
+            Exclude runs with this status string
+
+        Returns
+        -------
+        dict:
+            Information on each selected run (key = run_name, value = dict of
+            run information fields.), one at a time.
+        """
 
         if campaign is not None or sampler is not None:
             message = (f'JSON/Python dictionary database only supports '
@@ -315,6 +461,26 @@ class CampaignDB(BaseCampaignDB):
                 yield run_id, run_info
 
     def get_num_runs(self, campaign=None, sampler=None, status=None, not_status=None):
+        """
+        Returns the number of runs matching the filtering criteria.
+
+        Parameters
+        ----------
+        campaign: int or None
+            Campaign id to filter for.
+        sampler: int or None
+            Sampler id to filter for.
+        status: enum(Status) or None
+            Status string to filter for.
+        not_status: enum(Status) or None
+            Exclude runs with this status string
+
+        Returns
+        -------
+        int:
+            The number of runs in the database matching the filtering criteria
+
+        """
 
         if campaign is not None or sampler is not None:
             message = (f'JSON/Python dictionary database only supports '
@@ -330,6 +496,19 @@ class CampaignDB(BaseCampaignDB):
         return num
 
     def runs_dir(self, campaign_name=None):
+        """
+        Get the directory used to store run information for `campaign_name`.
+
+        Parameters
+        ----------
+        campaign_name: str
+            Name of the selected campaign.
+
+        Returns
+        -------
+        str:
+            Path containing run outputs.
+        """
 
         if campaign_name is not None:
             message = (
@@ -340,11 +519,44 @@ class CampaignDB(BaseCampaignDB):
         return self._campaign_info['runs_dir']
 
     def get_campaign_id(self, name):
+        """
+        Return the (database) id corresponding to the campaign with name 'name'.
+
+        Parameters
+        ----------
+        name: str
+            Name of the campaign.
+
+        Returns
+        -------
+        int:
+            The id of the campaign with the specified name
+        """
+
         logger.warning("JSON database only allows for one campaign. "
                        "Campaign ID is always 1.")
         return 1
 
     def get_run_status(self, run_name, campaign=None, sampler=None):
+        """
+        Return the status (enum) for the run with name 'run_name' (and, optionally,
+        filtering for campaign and sampler by id)
+
+        Parameters
+        ----------
+        run_name: str
+            Name of the run
+        campaign: int
+            ID of the desired Campaign
+        sampler: int
+            ID of the desired Sampler
+
+        Returns
+        -------
+        status: enum(Status)
+            Status of the run.
+        """
+
         if campaign is not None:
             logger.warning("Only 1 campaign is possible in JSON db")
         if sampler is not None:
@@ -353,6 +565,21 @@ class CampaignDB(BaseCampaignDB):
         return constants.Status(self._runs[run_name]['status'])
 
     def set_run_statuses(self, run_name_list, status, campaign=None, sampler=None):
+        """
+        Set the specified 'status' (enum) for all runs in the list run_ID_list
+
+        Parameters
+        ----------
+        run_ID_list: list of ints
+            A list of run ids
+        status: enum(Status)
+            The new status all listed runs should now have
+
+        Returns
+        -------
+
+        """
+
         if campaign is not None:
             logger.warning("Only 1 campaign is possible in JSON db")
         if sampler is not None:
@@ -363,11 +590,36 @@ class CampaignDB(BaseCampaignDB):
         self._save()
 
     def append_collation_dataframe(self, df):
+        """
+        Append the data in dataframe 'df' to that already collated in the database
+
+        Parameters
+        ----------
+        df: pandas dataframe
+            The dataframe whose contents need to be appended to the collation store
+
+        Returns
+        -------
+        """
+
         if os.path.exists(self._collation_csv):
             df.to_csv(self._collation_csv, mode='a', header=False)
         else:
             df.to_csv(self._collation_csv, mode='w', header=True)
 
     def get_collation_dataframe(self):
+        """
+        Returns a dataframe containing the full collated results stored in this database
+        i.e. the total of what was added with the append_collation_dataframe() method.
+
+        Parameters
+        ----------
+
+        Returns
+        -------
+        df: pandas dataframe
+            The dataframe with all contents that were appended to this database
+        """
+
         df = pd.read_csv(self._collation_csv)
         return df

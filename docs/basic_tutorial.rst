@@ -10,9 +10,9 @@ but illustrates how EasyVVUQ samples from a parameter space, wraps an
 application and analyses output.
 
 The input files for this tutorial are the *gauss* application
-(:download:`here <tutorial_files/gauss.py>`), an input template
-(:download:`here <tutorial_files/gauss.template>`) and the EasyVVUQ workflow
-script (:download:`here <tutorial_files/gauss_tutorial.py>`).
+(:download:`gauss.py <tutorial_files/gauss.py>`), an input template
+(:download:`gauss.template <tutorial_files/gauss.template>`) and the EasyVVUQ workflow
+script (:download:`easyvvuq_gauss_tutorial.py <tutorial_files/easyvvuq_gauss_tutorial.py>`).
 In preparation for this tutorial download the files and place them in
 an empty directory, then change into this directory.
 
@@ -21,7 +21,7 @@ Gauss Application
 
 The usage of the `gauss.py` application is::
 
-    gauss.py in_file.json
+    gauss.py <input_file>
 
 It outputs a single file called `output.csv`, which has two columns
 'Steps' and 'Value'.
@@ -30,8 +30,10 @@ The `gauss.template` is a template input file, in JSON format ::
 
     {"outfile": "$out_file", "num_steps": "$num_steps", "mu": "$mu", "sigma": "$sigma"}
 
-The values for each key are tags (signified by the $ delimiter) which will
+The values for each key are tags (signified by the ``$`` delimiter) which will
 be substituted by EasyVVUQ with values to sample the parameter space.
+In the following tutorial, the template will be used to generate files called
+`in_file.json` that will be the input to each run of `gauss.py`.
 
 Uncertainty Quantification Workflow
 -----------------------------------
@@ -45,7 +47,7 @@ for each set of runs.
 EasyVVUQ Script Overview
 ------------------------
 
-The script `gauss_tutorial.py` implements the workflow described above using
+The script `easyvvuq_gauss_tutorial.py` implements the workflow described above using
 EasyVVUQ.
 The commands are split into sections which are indicated by numbered comments.
 Sections 1 to 9 contain the core EasyVVUQ workflow, section 0 sets up
@@ -57,7 +59,7 @@ convenience variables related to the application.
 
 To run the workflow execute the following command ::
 
-    python3 gauss_tutorial.py
+    python3 easyvvuq_gauss_tutorial.py
 
 If this works you should see 15 lines that look something like:
 
@@ -187,7 +189,7 @@ Within EasyVVUQ these actions are performed by *Encoders* and *Decoders*
 respectively.
 Both the *Encoder* and *Decoder* have to be executed for each run (sample).
 The *gauss* application is simple and the input and output formats can be
-interpretted by inbuilt classes.
+interpreted by inbuilt classes.
 
 The appropriate encoder here is the `GenericEncoder`, this takes a template file
 and substitutes in values from the parameter space description (ouputing to a
@@ -198,7 +200,7 @@ We create the encoder using the following code::
                                          target_filename=input_filename)
 
 .. note:: The tags in the template here use the default $ delimiter.
-          Different delimiters can be specidied using the `delimeter` keyword.
+          Different delimiters can be specified using the `delimeter` keyword.
 
 The output of *gauss* is a CSV format files, so we use a *Decoder* called *SimpleCSV*.
 This requires us to specify the file to be read, the location of the header (line 0)

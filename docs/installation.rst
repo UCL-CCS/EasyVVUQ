@@ -9,6 +9,10 @@ Installation should be straight forward::
 
     pip install easyvvuq
 
+To update an existing installation::
+
+    pip install easyvvuq --upgrade
+
 Alternatively, to get the most current version, the code can be installed from
 Github as follows::
 

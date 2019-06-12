@@ -219,17 +219,86 @@ class CampaignDB(BaseCampaignDB):
 
         return db_entry.id
 
-    def set_campaign_collater(self, collater, campaign_id):
-        selected = self.session.query(CampaignTable).get(campaign_id)
-        selected.collater = collater.serialize()
+    def update_sampler(self, sampler_id, sampler_element):
+        """
+        Update the state of the Sampler with id 'sampler_id' to
+        that in the passed 'sampler_element'
+
+        Parameters
+        ----------
+        sampler_id: int
+            The id of the sampler in the db to update
+        sampler_element: BaseSamplingElement
+            The sampler whose state should be used as the new state
+
+        Returns
+        -------
+
+        """
+
+        selected = self.session.query(SamplerTable).get(sampler_id)
+        selected.sampler = sampler_element.serialize()
         self.session.commit()
 
     def resurrect_sampler(self, sampler_id):
+        """
+        Return the sampler object corresponding to id sampler_id in the database.
+        It is deserialized from the state stored in the database.
+
+        Parameters
+        ----------
+        sampler_id: int
+            The id of the sampler to resurrect
+
+        Returns
+        -------
+        BaseSamplingElement
+            The 'live' sampler object, deserialized from the state in the db
+
+        """
+
         serialized_sampler = self.session.query(SamplerTable).get(sampler_id).sampler
         sampler = BaseSamplingElement.deserialize(serialized_sampler)
         return sampler
 
+    def set_campaign_collater(self, collater, campaign_id):
+        """
+        Store the state of the given collater object in the collation slot
+        for the campaign with id 'campaign_id'
+
+        Parameters
+        ----------
+        collater: BaseCollationElement
+            The collater object to serialize
+        campaign_id: int
+            The id of the campaign this collater should be assigned to
+
+        Returns
+        -------
+
+        """
+
+        selected = self.session.query(CampaignTable).get(campaign_id)
+        selected.collater = collater.serialize()
+        self.session.commit()
+
     def resurrect_collation(self, campaign_id):
+        """
+        Return the collater object corresponding to the campaign with id 'campaign_id'
+        in the database. It is deserialized from the state stored in the database.
+
+        Parameters
+        ----------
+        campaign_id: int
+            The id of the collater to resurrect
+
+        Returns
+        -------
+        BaseCollationElement
+            The 'live' collater object, deserialized from the state in the db
+
+        """
+
         serialized_collater = self.session.query(CampaignTable).get(campaign_id).collater
         if serialized_collater is None:
             print("Loaded campaign does not have a collation element currently set")
@@ -238,15 +307,27 @@ class CampaignDB(BaseCampaignDB):
         return collater
 
     def resurrect_app(self, app_name):
+        """
+        Return the 'live' encoder and decoder objects corresponding to the app with
+        name 'app_name' in the database. They are deserialized from the states
+        previously stored in the database.
+
+        Parameters
+        ----------
+        app_name: string
+            Name of the app to resurrect
+
+        Returns
+        -------
+        BaseEncoder, BaseDecoder
+            The 'live' encoder and decoder objects associated with this app
+
+        """
+
         app_info = self.app(app_name)
         encoder = BaseEncoder.deserialize(app_info['input_encoder'])
         decoder = BaseDecoder.deserialize(app_info['output_decoder'])
         return encoder, decoder
-
-    def update_sampler(self, sampler_id, sampler_element):
-        selected = self.session.query(SamplerTable).get(sampler_id)
-        selected.sampler = sampler_element.serialize()
-        self.session.commit()
 
     def add_run(self, run_info=None, prefix='Run_'):
         """
@@ -304,6 +385,24 @@ class CampaignDB(BaseCampaignDB):
         return run_info
 
     def set_dir_for_run(self, run_name, run_dir, campaign=None, sampler=None):
+        """
+        Set the 'run_dir' path for the specified run in the database.
+
+        Parameters
+        ----------
+        run_name: str
+            Name of run to filter for.
+        run_dir: str
+            Directory path associated to set for this run.
+        campaign:  int or None
+            Campaign id to filter for.
+        sampler: int or None
+            Sample id to filter for.
+
+        Returns
+        -------
+
+        """
 
         filter_options = {'run_name': run_name}
         if campaign:
@@ -322,6 +421,24 @@ class CampaignDB(BaseCampaignDB):
         self.session.commit()
 
     def get_run_status(self, run_name, campaign=None, sampler=None):
+        """
+        Return the status (enum) for the run with name 'run_name' (and, optionally,
+        filtering for campaign and sampler by id)
+
+        Parameters
+        ----------
+        run_name: str
+            Name of the run
+        campaign: int
+            ID of the desired Campaign
+        sampler: int
+            ID of the desired Sampler
+
+        Returns
+        -------
+        status: enum(Status)
+            Status of the run.
+        """
 
         filter_options = {'run_name': run_name}
         if campaign:
@@ -339,6 +456,21 @@ class CampaignDB(BaseCampaignDB):
         return constants.Status(selected.status)
 
     def set_run_statuses(self, run_ID_list, status):
+        """
+        Set the specified 'status' (enum) for all runs in the list run_ID_list
+
+        Parameters
+        ----------
+        run_ID_list: list of ints
+            A list of run ids
+        status: enum(Status)
+            The new status all listed runs should now have
+
+        Returns
+        -------
+
+        """
+
         selected = self.session.query(RunTable).filter(
             RunTable.run_name.in_(set(run_ID_list))).all()
 
@@ -368,6 +500,7 @@ class CampaignDB(BaseCampaignDB):
 
         Returns
         -------
+            sqlalchemy query for campaign with this name
 
         """
 
@@ -389,6 +522,20 @@ class CampaignDB(BaseCampaignDB):
         return campaign_info.first()
 
     def get_campaign_id(self, name):
+        """
+        Return the (database) id corresponding to the campaign with name 'name'.
+
+        Parameters
+        ----------
+        name: str
+            Name of the campaign.
+
+        Returns
+        -------
+        int:
+            The id of the campaign with the specified name
+        """
+
         selected = self.session.query(
             CampaignTable.name.label(name),
             CampaignTable.id).all()
@@ -554,9 +701,34 @@ class CampaignDB(BaseCampaignDB):
         return self._get_campaign_info(campaign_name=campaign_name).runs_dir
 
     def append_collation_dataframe(self, df):
+        """
+        Append the data in dataframe 'df' to that already collated in the database
+
+        Parameters
+        ----------
+        df: pandas dataframe
+            The dataframe whose contents need to be appended to the collation store
+
+        Returns
+        -------
+        """
+
         df.to_sql("COLLATIONRESULT", self.engine, if_exists='append')
 
     def get_collation_dataframe(self):
+        """
+        Returns a dataframe containing the full collated results stored in this database
+        i.e. the total of what was added with the append_collation_dataframe() method.
+
+        Parameters
+        ----------
+
+        Returns
+        -------
+        df: pandas dataframe
+            The dataframe with all contents that were appended to this database
+        """
+
         query = "select * from COLLATIONRESULT"
         df = pd.read_sql_query(query, self.engine)
         return df
