@@ -224,11 +224,6 @@ class CampaignDB(BaseCampaignDB):
         selected.collater = collater.serialize()
         self.session.commit()
 
-    def resurrect_sampler(self, sampler_id):
-        serialized_sampler = self.session.query(SamplerTable).get(sampler_id).sampler
-        sampler = BaseSamplingElement.deserialize(serialized_sampler)
-        return sampler
-
     def resurrect_collation(self, campaign_id):
         serialized_collater = self.session.query(CampaignTable).get(campaign_id).collater
         if serialized_collater is None:
@@ -247,6 +242,11 @@ class CampaignDB(BaseCampaignDB):
         selected = self.session.query(SamplerTable).get(sampler_id)
         selected.sampler = sampler_element.serialize()
         self.session.commit()
+
+    def resurrect_sampler(self, sampler_id):
+        serialized_sampler = self.session.query(SamplerTable).get(sampler_id).sampler
+        sampler = BaseSamplingElement.deserialize(serialized_sampler)
+        return sampler
 
     def add_run(self, run_info=None, prefix='Run_'):
         """
