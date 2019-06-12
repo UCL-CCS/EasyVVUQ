@@ -34,8 +34,8 @@ In an HPC context the model evaluation step is generally equivalent to the
 execution of a (computationally expensive) simulation.
 The actual simulation execution is beyond the remit of the package but
 EasyVVUQ is designed to wrap around simulation execution, providing functions
-to generate input (``Encoder`` s) and to transform simulation output in to common
-formats for analysis (``Decoder`` s).
+to generate input (an ``Encoder``) and to transform simulation output in to common
+formats for analysis (a ``Decoder``).
 Below we describe the coponents of EasyVVUQ designed to perform each step in
 more detail.
 
@@ -63,7 +63,7 @@ Elements
 
 Within VECMA software components that can be reused in a wide range of
 application scenarios are known as ``Elements``.
-Within EasyVVUQ we provide five classes of `Elements` (:ref:`samplers`,
+Within EasyVVUQ we provide five classes of ``Elements`` (:ref:`samplers`,
 :ref:`decoders`, :ref:`encoders`, and those providing :ref:`collation`,
 for the aggregation step, and :ref:`analysis` functionality) which we 
 describe below.
@@ -73,7 +73,7 @@ describe below.
 Samplers
 --------
 
-``Sampler`` s populate the `CampaignDB` with a set of run specifications based on
+A ``Sampler`` populates the `CampaignDB` with a set of run specifications based on
 the parameter description provided by the user.
 Each ``Sampler`` is designed to employs one of a range of algorithms, such as
 the Monte Carlo or Quasi Monte Carlo approaches (Sobol, 1998).
@@ -104,7 +104,7 @@ Decoders
 
 The role of a ``Decoder`` is twofold, to record simulation completion in the
 ``CampaignDB`` and to extract the output information from the simulation runs.
-Similarly to ``Encoder`` s, ``Decoder`` s are designed to be user extendable to 
+Similarly to an ``Encoder``, a ``Decoder`` is designed to be user extendable to 
 facilitate analysis of a wide range of applications. 
 
 .. _collation:
