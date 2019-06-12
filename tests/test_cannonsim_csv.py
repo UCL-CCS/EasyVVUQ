@@ -3,7 +3,8 @@ import chaospy as cp
 import os
 import sys
 import pytest
-from pprint import pprint
+import logging
+from pprint import pformat
 
 __copyright__ = """
 
@@ -36,10 +37,21 @@ if not os.path.exists("tests/cannonsim/bin/cannonsim"):
         allow_module_level=True)
 
 
-def test_cannonsim_csv(tmpdir):
+logging.basicConfig(filename='tests.log', level=logging.DEBUG)
+
+
+@pytest.fixture
+def campaign():
+    def _campaign(work_dir, params):
+        my_campaign = uq.Campaign(name='cannon', work_dir=work_dir)
+        
+    return _campaign
+
+
+def test_cannonsim_csv(tmpdir, campaign):
 
     # Set up a fresh campaign called "cannon"
-    my_campaign = uq.Campaign(name='cannon', work_dir=tmpdir)
+    my_campaign = campaign(tmpdir)
 
     # Define parameter space for the cannonsim app
     params = {
@@ -95,8 +107,9 @@ def test_cannonsim_csv(tmpdir):
         target_filename='output.csv', output_columns=[
             'Dist', 'lastvx', 'lastvy'], header=0)
 
-    print("Serialized encoder:", encoder.serialize())
-    print("Serialized decoder:", decoder.serialize())
+    logging.debug("Serialized encoder:", encoder.serialize())
+    logging.debug("Serialized decoder:", decoder.serialize())
+    logging.debug("Serialized collation:", collation.serialize())
 
     # Add the cannonsim app
     my_campaign.add_app(name="cannonsim",
@@ -122,7 +135,7 @@ def test_cannonsim_csv(tmpdir):
     }
     sampler1 = uq.sampling.RandomSampler(vary=vary)
 
-    print("Serialized sampler:", sampler1.serialize())
+    logging.debug("Serialized sampler:", sampler1.serialize())
 
     # Set the campaign to use this sampler
     my_campaign.set_sampler(sampler1)
@@ -131,13 +144,13 @@ def test_cannonsim_csv(tmpdir):
     my_campaign.draw_samples(num_samples=5)
 
     # Print the list of runs now in the campaign db
-    print("List of runs added:")
-    pprint(my_campaign.list_runs())
-    print("---")
+    logging.debug("List of runs added:")
+    logging.debug(pformat(my_campaign.list_runs()))
+    logging.debug("---")
 
     # Encode all runs into a local directory
-    pprint(
-        f"Encoding all runs to campaign runs dir {my_campaign.get_campaign_runs_dir()}")
+    logging.debug(pformat(
+        f"Encoding all runs to campaign runs dir {my_campaign.get_campaign_runs_dir()}"))
     my_campaign.populate_runs_dir()
 
     assert(len(my_campaign.get_campaign_runs_dir()) > 0)
@@ -150,6 +163,7 @@ def test_cannonsim_csv(tmpdir):
 
     # Collate all data into one pandas data frame
     my_campaign.collate()
+
     print("data:", my_campaign.get_collation_result())
 
     # Save the state of the campaign
@@ -192,7 +206,3 @@ def test_cannonsim_csv(tmpdir):
     pprint(reloaded_campaign._log)
 
     print("All completed?", reloaded_campaign.all_complete())
-
-
-if __name__ == "__main__":
-    test_cannonsim_csv("/tmp/")
