@@ -582,6 +582,7 @@ class Campaign:
 
         Returns
         -------
+            list of runs
 
         """
         return list(self.campaign_db.runs(sampler=sampler, campaign=campaign, status=status))
@@ -592,6 +593,7 @@ class Campaign:
 
         Returns
         -------
+            list of runs
 
         """
         return self.list_runs(status=Status.COLLATED)
@@ -603,6 +605,7 @@ class Campaign:
 
         Returns
         -------
+            list of runs
 
         """
 
@@ -714,6 +717,17 @@ class Campaign:
         self.log_element_application(self._active_collater, info)
 
     def get_collation_result(self):
+        """
+        Return dataframe containing all collated results
+
+        Parameters
+        ----------
+
+        Returns
+        -------
+            pandas dataframe
+
+        """
         return self._active_collater.get_collated_dataframe()
 
     def apply_analysis(self, analysis):
@@ -737,7 +751,8 @@ class Campaign:
         self.log_element_application(analysis, None)
 
     def get_last_analysis(self):
-        """Return the output of the most recently run analysis element.
+        """
+        Return the output of the most recently run analysis element.
 
         Returns
         -------
