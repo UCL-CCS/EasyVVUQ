@@ -168,5 +168,4 @@ def test_cannonsim_csv(tmpdir, campaign):
         "velocity": cp.Normal(10.0, 1.0),
         "mass": cp.Uniform(5.0, 1.0)
     }
-    
     campaign(tmpdir, params, encoder, decoder, collater, vary)
