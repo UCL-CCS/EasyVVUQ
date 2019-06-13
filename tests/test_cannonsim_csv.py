@@ -4,7 +4,7 @@ import os
 import sys
 import pytest
 import logging
-from pprint import pformat
+from pprint import pformat, pprint
 
 __copyright__ = """
 
@@ -42,16 +42,76 @@ logging.basicConfig(level=logging.CRITICAL)
 
 @pytest.fixture
 def campaign():
-    def _campaign(work_dir):
+    def _campaign(work_dir, params, encoder, decoder, collater, vary):
         my_campaign = uq.Campaign(name='cannon', work_dir=work_dir)
-        return my_campaign
+        print("Serialized encoder:", encoder.serialize())
+        print("Serialized decoder:", decoder.serialize())
+        # Add the cannonsim app
+        my_campaign.add_app(name="cannonsim",
+                            params=params,
+                            encoder=encoder,
+                            decoder=decoder)
+        my_campaign.set_app("cannonsim")
+        my_campaign.set_collater(collater)
+        print("Serialized collation:", collater.serialize())
+        sampler1 = uq.sampling.RandomSampler(vary=vary)
+        print("Serialized sampler:", sampler1.serialize())
+        # Set the campaign to use this sampler
+        my_campaign.set_sampler(sampler1)
+        # Draw 5 samples
+        my_campaign.draw_samples(num_samples=5)
+        # Print the list of runs now in the campaign db
+        print("List of runs added:")
+        pprint(my_campaign.list_runs())
+        print("---")
+        # Encode all runs into a local directory
+        pprint(
+            f"Encoding all runs to campaign runs dir {my_campaign.get_campaign_runs_dir()}")
+        my_campaign.populate_runs_dir()
+        assert(len(my_campaign.get_campaign_runs_dir()) > 0)
+        assert(os.path.exists(my_campaign.get_campaign_runs_dir()))
+        assert(os.path.isdir(my_campaign.get_campaign_runs_dir()))
+        # Local execution
+        my_campaign.apply_for_each_run_dir(uq.actions.ExecuteLocal(
+            "tests/cannonsim/bin/cannonsim in.cannon output.csv"))
+        # Collate all data into one pandas data frame
+        my_campaign.collate()
+        print("data:", my_campaign.get_collation_result())
+        # Save the state of the campaign
+        state_file = tmpdir + "cannonsim_state.json"
+        my_campaign.save_state(state_file)
+        my_campaign = None
+        # Load state in new campaign object
+        reloaded_campaign = uq.Campaign(state_file=state_file, work_dir=tmpdir)
+        reloaded_campaign.set_app("cannonsim")
+        # Draw 3 more samples, execute, and collate onto existing dataframe
+        print("Running 3 more samples...")
+        reloaded_campaign.draw_samples(num_samples=3)
+        print("List of runs added:")
+        pprint(reloaded_campaign.list_runs())
+        print("---")
+        reloaded_campaign.populate_runs_dir()
+        reloaded_campaign.apply_for_each_run_dir(uq.actions.ExecuteLocal(
+            "tests/cannonsim/bin/cannonsim in.cannon output.csv"))
+        print("Completed runs:")
+        pprint(reloaded_campaign.scan_completed())
+        print("All completed?", reloaded_campaign.all_complete())
+        reloaded_campaign.collate()
+        print("data:\n", reloaded_campaign.get_collation_result())
+        print(reloaded_campaign)
+        # Create a BasicStats analysis element and apply it to the campaign
+        stats = uq.analysis.BasicStats(qoi_cols=['Dist', 'lastvx', 'lastvy'])
+        reloaded_campaign.apply_analysis(stats)
+        print("stats:\n", reloaded_campaign.get_last_analysis())
+        # Print the campaign log
+        pprint(reloaded_campaign._log)
+        print("All completed?", reloaded_campaign.all_complete())
     return _campaign
 
 
 def test_cannonsim_csv(tmpdir, campaign):
 
     # Set up a fresh campaign called "cannon"
-    my_campaign = campaign(tmpdir)
 
     # Define parameter space for the cannonsim app
     params = {
@@ -106,25 +166,8 @@ def test_cannonsim_csv(tmpdir, campaign):
     decoder = uq.decoders.SimpleCSV(
         target_filename='output.csv', output_columns=[
             'Dist', 'lastvx', 'lastvy'], header=0)
-
-    logging.debug("Serialized encoder:", encoder.serialize())
-    logging.debug("Serialized decoder:", decoder.serialize())
-    logging.debug("Serialized collation:", collation.serialize())
-
-    # Add the cannonsim app
-    my_campaign.add_app(name="cannonsim",
-                        params=params,
-                        encoder=encoder,
-                        decoder=decoder)
-
-    # Set the active app to be cannonsim (this is redundant when only one app
-    # has been added)
-    my_campaign.set_app("cannonsim")
-
     # Create a collation element for this campaign
     collater = uq.collate.AggregateSamples(average=False)
-    my_campaign.set_collater(collater)
-    print("Serialized collation:", collater.serialize())
 
     # Make a random sampler
     vary = {
@@ -133,76 +176,5 @@ def test_cannonsim_csv(tmpdir, campaign):
         "velocity": cp.Normal(10.0, 1.0),
         "mass": cp.Uniform(5.0, 1.0)
     }
-    sampler1 = uq.sampling.RandomSampler(vary=vary)
-
-    logging.debug("Serialized sampler:", sampler1.serialize())
-
-    # Set the campaign to use this sampler
-    my_campaign.set_sampler(sampler1)
-
-    # Draw 5 samples
-    my_campaign.draw_samples(num_samples=5)
-
-    # Print the list of runs now in the campaign db
-    logging.debug("List of runs added:")
-    logging.debug(pformat(my_campaign.list_runs()))
-    logging.debug("---")
-
-    # Encode all runs into a local directory
-    logging.debug(pformat(
-        f"Encoding all runs to campaign runs dir {my_campaign.get_campaign_runs_dir()}"))
-    my_campaign.populate_runs_dir()
-
-    assert(len(my_campaign.get_campaign_runs_dir()) > 0)
-    assert(os.path.exists(my_campaign.get_campaign_runs_dir()))
-    assert(os.path.isdir(my_campaign.get_campaign_runs_dir()))
-
-    # Local execution
-    my_campaign.apply_for_each_run_dir(uq.actions.ExecuteLocal(
-        "tests/cannonsim/bin/cannonsim in.cannon output.csv"))
-
-    # Collate all data into one pandas data frame
-    my_campaign.collate()
-
-    print("data:", my_campaign.get_collation_result())
-
-    # Save the state of the campaign
-    state_file = tmpdir + "cannonsim_state.json"
-    my_campaign.save_state(state_file)
-
-    my_campaign = None
-
-    # Load state in new campaign object
-    reloaded_campaign = uq.Campaign(state_file=state_file, work_dir=tmpdir)
-    reloaded_campaign.set_app("cannonsim")
-
-    # Draw 3 more samples, execute, and collate onto existing dataframe
-    print("Running 3 more samples...")
-    reloaded_campaign.draw_samples(num_samples=3)
-    print("List of runs added:")
-    pprint(reloaded_campaign.list_runs())
-    print("---")
-
-    reloaded_campaign.populate_runs_dir()
-    reloaded_campaign.apply_for_each_run_dir(uq.actions.ExecuteLocal(
-        "tests/cannonsim/bin/cannonsim in.cannon output.csv"))
-
-    print("Completed runs:")
-    pprint(reloaded_campaign.scan_completed())
-
-    print("All completed?", reloaded_campaign.all_complete())
-
-    reloaded_campaign.collate()
-    print("data:\n", reloaded_campaign.get_collation_result())
-
-    print(reloaded_campaign)
-
-    # Create a BasicStats analysis element and apply it to the campaign
-    stats = uq.analysis.BasicStats(qoi_cols=['Dist', 'lastvx', 'lastvy'])
-    reloaded_campaign.apply_analysis(stats)
-    print("stats:\n", reloaded_campaign.get_last_analysis())
-
-    # Print the campaign log
-    pprint(reloaded_campaign._log)
-
-    print("All completed?", reloaded_campaign.all_complete())
+    
+    campaign(tmpdir, params, encoder, decoder, collater, vary)
