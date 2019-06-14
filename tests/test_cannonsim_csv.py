@@ -42,8 +42,8 @@ logging.basicConfig(level=logging.CRITICAL)
 
 @pytest.fixture
 def campaign():
-    def _campaign(work_dir, params, encoder, decoder, collater, vary):
-        my_campaign = uq.Campaign(name='cannon', work_dir=work_dir)
+    def _campaign(work_dir, params, encoder, decoder, collater, vary, db_type):
+        my_campaign = uq.Campaign(name='cannon', work_dir=work_dir, db_type=db_type)
         print("Serialized encoder:", encoder.serialize())
         print("Serialized decoder:", decoder.serialize())
         # Add the cannonsim app
@@ -176,4 +176,5 @@ def test_cannonsim_csv(tmpdir, campaign):
         "velocity": cp.Normal(10.0, 1.0),
         "mass": cp.Uniform(5.0, 1.0)
     }
-    campaign(tmpdir, params, encoder, decoder, collater, vary)
+    campaign(tmpdir, params, encoder, decoder, collater, vary, db_type='sql')
+    campaign(tmpdir, params, encoder, decoder, collater, vary, db_type='json')
