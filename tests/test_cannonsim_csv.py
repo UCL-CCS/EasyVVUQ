@@ -77,11 +77,11 @@ def campaign():
         my_campaign.collate()
         print("data:", my_campaign.get_collation_result())
         # Save the state of the campaign
-        state_file = tmpdir + "cannonsim_state.json"
+        state_file = work_dir + "cannonsim_state.json"
         my_campaign.save_state(state_file)
         my_campaign = None
         # Load state in new campaign object
-        reloaded_campaign = uq.Campaign(state_file=state_file, work_dir=tmpdir)
+        reloaded_campaign = uq.Campaign(state_file=state_file, work_dir=work_dir)
         reloaded_campaign.set_app("cannonsim")
         # Draw 3 more samples, execute, and collate onto existing dataframe
         print("Running 3 more samples...")
