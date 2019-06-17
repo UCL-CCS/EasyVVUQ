@@ -6,6 +6,8 @@ import pytest
 import logging
 from pprint import pformat, pprint
 
+from gauss.decoder_gauss import GaussDecoder
+
 __copyright__ = """
 
     Copyright 2018 Robin A. Richardson, David W. Wright
@@ -41,7 +43,7 @@ logging.basicConfig(level=logging.CRITICAL)
 
 @pytest.fixture
 def campaign():
-    def _campaign(work_dir, params, encoder, decoder, collater, vary, db_type):
+    def _campaign(work_dir, params, encoder, decoder, collater, vary, num_samples, replicas, db_type):
         my_campaign = uq.Campaign(name='cannon', work_dir=work_dir, db_type=db_type)
         print("Serialized encoder:", encoder.serialize())
         print("Serialized decoder:", decoder.serialize())
@@ -58,7 +60,7 @@ def campaign():
         # Set the campaign to use this sampler
         my_campaign.set_sampler(sampler1)
         # Draw 5 samples
-        my_campaign.draw_samples(num_samples=5)
+        my_campaign.draw_samples(num_samples=num_samples, replicas=replicas)
         # Print the list of runs now in the campaign db
         print("List of runs added:")
         pprint(my_campaign.list_runs())
@@ -85,7 +87,7 @@ def campaign():
         reloaded_campaign.set_app("cannonsim")
         # Draw 3 more samples, execute, and collate onto existing dataframe
         print("Running 3 more samples...")
-        reloaded_campaign.draw_samples(num_samples=3)
+        reloaded_campaign.draw_samples(num_samples=num_samples, replicas=replicas)
         print("List of runs added:")
         pprint(reloaded_campaign.list_runs())
         print("---")
@@ -168,5 +170,43 @@ def test_cannonsim_csv(tmpdir, campaign):
         "velocity": cp.Normal(10.0, 1.0),
         "mass": cp.Uniform(5.0, 1.0)
     }
-    campaign(tmpdir, params, encoder, decoder, collater, vary, db_type='sql')
-    campaign(tmpdir, params, encoder, decoder, collater, vary, db_type='json')
+    campaign(tmpdir, params, encoder, decoder, collater, vary, 5, 1, db_type='sql')
+    campaign(tmpdir, params, encoder, decoder, collater, vary, 5, 1, db_type='json')
+
+
+def test_gauss(tmpdir):
+    params = {
+        "sigma": {
+            "type": "real",
+            "min": "0.0",
+            "max": "100000.0",
+            "default": "0.25"
+        },
+        "mu": {
+            "type": "real",
+            "min": "0.0",
+            "max": "100000.0",
+            "default": "1"
+        },
+        "num_steps": {
+            "type": "int",
+            "min": "0",
+            "max": "100000",
+            "default": "10"
+        },
+        "out_file": {
+            "type": "str",
+            "default": "output.csv"
+        }
+    }
+    number_of_samples = 3
+    number_of_replicas = 5
+    encoder = uq.encoders.GenericEncoder(template_fname='tests/gauss/gauss.template',
+                                         target_filename='gauss_in.json')
+    decoder = GaussDecoder(target_filename=params['out_file']['default'])
+    collater = uq.collate.AggregateSamples(average=False)
+    vary = {
+        "mu": cp.Uniform(1.0, 100.0),
+    }
+    campaign(tmpdir, params, encoder, decoder, collater, vary, number_of_samples, number_of_replicas, db_type='sql')
+    campaign(tmpdir, params, encoder, decoder, collater, vary, number_of_samples, number_of_replicas, db_type='json')
