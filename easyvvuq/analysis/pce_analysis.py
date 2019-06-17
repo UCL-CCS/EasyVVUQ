@@ -11,8 +11,6 @@ __license__ = "LGPL"
 logger = logging.getLogger(__name__)
 
 # TODO: Enhancements - issue #101
-#       - Work out how to get multiple Sobol indices
-#         + Note that may require different orders for different qoi?
 #       - Add pd.read_hdf (https://pandas.pydata.org/pandas-docs/stable/user_guide/io.html#io-hdf5)
 #       - Test cp.fit_regression to approximate solver
 
@@ -126,17 +124,22 @@ class PCEAnalysis(BaseAnalysisElement):
             P90 = cp.Perc(fit, 90, self.sampler.distribution)
             results['percentiles'][k] = {'p10': P10, 'p90': P90}
 
-            # First Sobol indices
-            # TODO: Implement higher order indices
-            logger.warning('Only first order Sobol indices implemented')
+            # Sensitivity Analysis: First, Second and Total Sobol indices
             sobol_first_narr = cp.Sens_m(fit, self.sampler.distribution)
+            sobol_second_narr = cp.Sens_m2(fit, self.sampler.distribution)
+            sobol_total_narr = cp.Sens_t(fit, self.sampler.distribution)
             sobol_first_dict = {}
+            sobol_second_dict = {}
+            sobol_total_dict = {}
             i_par = 0
             for param_name in self.sampler.vary.get_keys():
                 sobol_first_dict[param_name] = sobol_first_narr[i_par]
+                sobol_second_dict[param_name] = sobol_second_narr[i_par]
+                sobol_total_dict[param_name] = sobol_total_narr[i_par]
                 i_par += 1
-            # 1 here = order
-            results['sobol_indices'][k][1] = sobol_first_dict
+            results['sobol_indices'][k]['first'] = sobol_first_dict
+            results['sobol_indices'][k]['second'] = sobol_second_dict
+            results['sobol_indices'][k]['total'] = sobol_total_dict
 
             # Correlation matrix
             results['correlation_matrices'][k] = cp.Corr(
