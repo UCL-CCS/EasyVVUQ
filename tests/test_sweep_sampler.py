@@ -149,5 +149,6 @@ def test_sweep_sampler(tmpdir):
 
     print("All completed?", my_campaign.all_complete())
 
+
 if __name__ == "__main__":
     test_sweep_sampler("/tmp/")

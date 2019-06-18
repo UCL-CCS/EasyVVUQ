@@ -23,9 +23,11 @@ __copyright__ = """
 """
 __license__ = "LGPL"
 
+
 def wrap_iterable(var_name, iterable):
     for val in iterable:
         yield (var_name, val)
+
 
 class BasicSweep(BaseSamplingElement, sampler_name="basic_sweep"):
 

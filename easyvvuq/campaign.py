@@ -483,7 +483,7 @@ class Campaign:
 
         app_default_params = self._active_app["params"]
 
-        if new_run == None:
+        if new_run is None:
             msg = ("add_run() was passed new_run of type None. Bad sampler?")
             logging.error(msg)
             raise Exception(msg)
