@@ -98,6 +98,16 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
         # Number of samples
         self._number_of_samples = len(self._nodes[0])
 
+        # Fast forward to specified count, if possible
+        if self.count >= self._number_of_samples:
+            msg = (f"Attempt to start sampler fastforwarded to count {self.count}, "
+                   f"but sampler only has {self._number_of_samples} samples, therefore"
+                   f"this sampler will not provide any more samples.")
+            logging.warning(msg)
+        else:
+            for i in range(count):
+                self.__next__()
+
     def element_version(self):
         return "0.3"
 

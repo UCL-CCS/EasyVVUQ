@@ -117,7 +117,7 @@ def test_sweep_sampler(tmpdir):
     }
     sampler1 = uq.sampling.SweepSampler(sweep=sweep)
 
-#    print("Serialized sampler:", sampler1.serialize())
+    print("Serialized sampler:", sampler1.serialize())
 
     # Set the campaign to use this sampler
     my_campaign.set_sampler(sampler1)
