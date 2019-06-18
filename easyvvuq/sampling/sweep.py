@@ -23,21 +23,21 @@ __copyright__ = """
 """
 __license__ = "LGPL"
 
-def wrap_dist(var_name, dist, max_num_draws):
-    for i in range(max_num_draws):
-        yield (var_name, dist.sample(1)[0])
+def wrap_iterable(var_name, iterable):
+    for val in iterable:
+        yield (var_name, val)
 
 class SweepSampler(BaseSamplingElement, sampler_name="sweep_sampler"):
 
-    def __init__(self, vary=None):
+    def __init__(self, sweep=None):
         """
-            Expects dict of var names, and their corresponding distributions
+            Expects dict of var names, and their corresponding lists of values to cycle through
         """
-        self.vary = Vary(vary)
+        self.sweep = sweep
 
         gens = []
-        for var_name, dist in self.vary.get_items():
-            gens.append(wrap_dist(var_name, dist, 3))
+        for var_name, iterable in self.sweep.items():
+            gens.append(wrap_iterable(var_name, iterable))
 
         # Combine all the iterables/generators into one
         self.sweep_iterator = itertools.product(*gens)
@@ -49,7 +49,6 @@ class SweepSampler(BaseSamplingElement, sampler_name="sweep_sampler"):
         return True
 
     def __next__(self):
-        # Build runs
         for sweep_run in self.sweep_iterator:
             run_dict = {}
             for var_name, value in sweep_run:
@@ -62,4 +61,4 @@ class SweepSampler(BaseSamplingElement, sampler_name="sweep_sampler"):
         return False
 
     def get_restart_dict(self):
-        return {"vary": self.vary.serialize()}
+        return {"sweep": self.sweep}

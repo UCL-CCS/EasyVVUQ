@@ -110,12 +110,12 @@ def test_sweep_sampler(tmpdir):
     my_campaign.set_collater(collater)
 
     # Make a sweep sampler
-    vary = {
-        "angle": cp.Uniform(0.0, 1.0),
-        "height": cp.Uniform(2.0, 10.0),
-        "velocity": cp.Normal(10.0, 1.0)
+    sweep = {
+        "angle": [0.1, 0.2, 0.3],
+        "height": [2.0, 10.0],
+        "velocity": [10.0, 10.1, 10.2]
     }
-    sampler1 = uq.sampling.SweepSampler(vary=vary)
+    sampler1 = uq.sampling.SweepSampler(sweep=sweep)
 
 #    print("Serialized sampler:", sampler1.serialize())
 
