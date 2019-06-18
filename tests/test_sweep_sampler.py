@@ -179,5 +179,6 @@ def test_sweep_sampler(tmpdir):
     # Print the campaign log
     pprint(reloaded_campaign._log)
 
+
 if __name__ == "__main__":
     test_sweep_sampler("/tmp/")
