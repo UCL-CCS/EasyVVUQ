@@ -1,4 +1,4 @@
-from .base import BaseSamplingElement, Vary
+from .base import BaseSamplingElement
 import itertools
 
 __copyright__ = """
