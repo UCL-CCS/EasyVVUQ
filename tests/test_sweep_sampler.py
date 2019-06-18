@@ -115,7 +115,7 @@ def test_sweep_sampler(tmpdir):
         "height": [2.0, 10.0],
         "velocity": [10.0, 10.1, 10.2]
     }
-    sampler1 = uq.sampling.SweepSampler(sweep=sweep)
+    sampler1 = uq.sampling.BasicSweep(sweep=sweep)
 
     print("Serialized sampler:", sampler1.serialize())
 

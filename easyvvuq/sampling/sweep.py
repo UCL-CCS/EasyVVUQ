@@ -27,7 +27,7 @@ def wrap_iterable(var_name, iterable):
     for val in iterable:
         yield (var_name, val)
 
-class SweepSampler(BaseSamplingElement, sampler_name="sweep_sampler"):
+class BasicSweep(BaseSamplingElement, sampler_name="basic_sweep"):
 
     def __init__(self, sweep=None):
         """
