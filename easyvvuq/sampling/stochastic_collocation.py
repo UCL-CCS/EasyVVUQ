@@ -54,7 +54,6 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
         self.vary = Vary(vary)
         self.polynomial_order = polynomial_order
         self.quadrature_rule = quadrature_rule
-        self.count = count
 
         # List of the probability distributions of uncertain parameters
         params_distribution = list(self.vary.get_values())
@@ -85,6 +84,7 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
                    f"this sampler will not provide any more samples.")
             logging.warning(msg)
         else:
+            self.count = 0
             for i in range(count):
                 self.__next__()
 

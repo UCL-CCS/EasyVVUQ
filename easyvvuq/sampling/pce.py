@@ -70,7 +70,6 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
             raise Exception(msg)
 
         self.vary = Vary(vary)
-        self.count = count
         self.polynomial_order = polynomial_order
         self.quadrature_rule = quadrature_rule
         self.sparse = sparse
@@ -105,6 +104,7 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
                    f"this sampler will not provide any more samples.")
             logging.warning(msg)
         else:
+            self.count = 0
             for i in range(count):
                 self.__next__()
 
