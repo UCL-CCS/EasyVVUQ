@@ -51,13 +51,13 @@ class BasicSweep(BaseSamplingElement, sampler_name="basic_sweep"):
         return True
 
     def __next__(self):
-        for sweep_run in self.sweep_iterator:
-            run_dict = {}
-            for var_name, value in sweep_run:
-                run_dict[var_name] = value
-            return run_dict
-        else:
-            raise StopIteration
+        # Will raise StopIteration when there are none left
+        sweep_run = self.sweep_iterator.__next__()
+
+        run_dict = {}
+        for var_name, value in sweep_run:
+            run_dict[var_name] = value
+        return run_dict
 
     def is_restartable(self):
         return False
