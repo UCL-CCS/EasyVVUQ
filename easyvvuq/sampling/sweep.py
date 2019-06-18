@@ -23,6 +23,9 @@ __copyright__ = """
 """
 __license__ = "LGPL"
 
+def wrap_dist(var_name, dist, max_num_draws):
+    for i in range(max_num_draws):
+        yield (var_name, dist.sample(1)[0])
 
 class SweepSampler(BaseSamplingElement, sampler_name="sweep_sampler"):
 
@@ -32,6 +35,13 @@ class SweepSampler(BaseSamplingElement, sampler_name="sweep_sampler"):
         """
         self.vary = Vary(vary)
 
+        gens = []
+        for var_name, dist in self.vary.get_items():
+            gens.append(wrap_dist(var_name, dist, 3))
+
+        # Combine all the iterables/generators into one
+        self.sweep_iterator = itertools.product(*gens)
+
     def element_version(self):
         return "0.1"
 
@@ -39,49 +49,14 @@ class SweepSampler(BaseSamplingElement, sampler_name="sweep_sampler"):
         return True
 
     def __next__(self):
-#        run_dict = {}
-#        for param_name, dist in self.vary.get_items():
-#            run_dict[param_name] = dist.sample(1)[0]
-#        return run_dict
-
-
-    params = campaign.params_info
-
-    # Extract static and dynamic variables from input
-    static_params = []
-    gens = []
-    for key in params.keys():
-        value = params[key]
-        func, args = value[0], value[1]
-        if func == "static":
-            static_params.append((key, args))
+        # Build runs
+        for sweep_run in self.sweep_iterator:
+            run_dict = {}
+            for var_name, value in sweep_run:
+                run_dict[var_name] = value
+            return run_dict
         else:
-            if func == "range":
-                # TODO: Change to use numpy linspace
-                gens.append(range_float(key, args[0], args[1], args[2]))
-            elif func == "normal":
-                gens.append(normal_dist(key, args[0], args[1], args[2]))
-            else:
-                sys.exit("Unrecognised function " + func + " for parameter " + key)
-
-    # Combine all the iterables/generators into one
-    mega_iter = itertools.product(*gens)
-
-    # Build runs
-    for dynamic_params in mega_iter:
-        run_dict = {}
-        for dp in dynamic_params:
-            key, value = dp
-            run_dict[key] = value
-        for sp in static_params:
-            key, value = sp
-            run_dict[key] = value
-
-        # Add run to Application's run list
-        campaign.add_run(run_dict)
-
-    campaign.sample_uqps.append(('random_sampler'))
-
+            raise StopIteration
 
     def is_restartable(self):
         return False

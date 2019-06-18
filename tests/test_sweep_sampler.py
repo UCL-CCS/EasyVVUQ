@@ -108,7 +108,6 @@ def test_sweep_sampler(tmpdir):
     # Create a collation element for this campaign
     collater = uq.collate.AggregateSamples(average=False)
     my_campaign.set_collater(collater)
-    print("Serialized collation:", collater.serialize())
 
     # Make a sweep sampler
     vary = {
