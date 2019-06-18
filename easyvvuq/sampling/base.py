@@ -110,7 +110,9 @@ class BaseSamplingElement(BaseElement):
             logging.error(msg)
             raise Exception(msg)
 
-        inputs["state"]["vary"] = Vary.deserialize(inputs["state"]["vary"]).vary_dict
+        if 'vary' in inputs["state"]:
+            inputs["state"]["vary"] = Vary.deserialize(inputs["state"]["vary"]).vary_dict
+
         sampler = AVAILABLE_SAMPLERS[inputs["element_name"]](**inputs["state"])
         return sampler
 

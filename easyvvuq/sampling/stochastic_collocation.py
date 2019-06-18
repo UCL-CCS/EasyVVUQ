@@ -1,5 +1,6 @@
 from .base import BaseSamplingElement, Vary
 import chaospy as cp
+import logging
 
 __author__ = "Wouter Edeling"
 __copyright__ = """
@@ -53,7 +54,6 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
         self.vary = Vary(vary)
         self.polynomial_order = polynomial_order
         self.quadrature_rule = quadrature_rule
-        self.count = count
 
         # List of the probability distributions of uncertain parameters
         params_distribution = list(self.vary.get_values())
@@ -76,6 +76,17 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
         self.xi_d = xi_d.T
 
         self._number_of_samples = self.xi_d.shape[0]
+
+        # Fast forward to specified count, if possible
+        self.count = 0
+        if self.count >= self._number_of_samples:
+            msg = (f"Attempt to start sampler fastforwarded to count {self.count}, "
+                   f"but sampler only has {self._number_of_samples} samples, therefore"
+                   f"this sampler will not provide any more samples.")
+            logging.warning(msg)
+        else:
+            for i in range(count):
+                self.__next__()
 
     def element_version(self):
         return "0.3"

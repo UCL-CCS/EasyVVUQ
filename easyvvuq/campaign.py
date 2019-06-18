@@ -483,6 +483,11 @@ class Campaign:
 
         app_default_params = self._active_app["params"]
 
+        if new_run is None:
+            msg = ("add_run() was passed new_run of type None. Bad sampler?")
+            logging.error(msg)
+            raise Exception(msg)
+
         # Check if parameter names match those already known for this app
         for param in new_run.keys():
             if param not in app_default_params.keys():
@@ -562,6 +567,7 @@ class Campaign:
         num_added = 0
         for new_run in self._active_sampler:
 
+            print(new_run)
             for __ in range(replicas):
                 self.add_run(new_run)
 
