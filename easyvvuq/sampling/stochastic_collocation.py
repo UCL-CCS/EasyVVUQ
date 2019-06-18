@@ -78,13 +78,13 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
         self._number_of_samples = self.xi_d.shape[0]
 
         # Fast forward to specified count, if possible
+        self.count = 0
         if self.count >= self._number_of_samples:
             msg = (f"Attempt to start sampler fastforwarded to count {self.count}, "
                    f"but sampler only has {self._number_of_samples} samples, therefore"
                    f"this sampler will not provide any more samples.")
             logging.warning(msg)
         else:
-            self.count = 0
             for i in range(count):
                 self.__next__()
 
