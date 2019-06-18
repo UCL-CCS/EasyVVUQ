@@ -60,7 +60,7 @@ class BasicSweep(BaseSamplingElement, sampler_name="basic_sweep"):
         return run_dict
 
     def is_restartable(self):
-        return False
+        return True
 
     def get_restart_dict(self):
         return {"sweep": self.sweep}
