@@ -1,5 +1,6 @@
 from .base import BaseSamplingElement
 import itertools
+import logging
 
 __copyright__ = """
 
@@ -31,7 +32,7 @@ def wrap_iterable(var_name, iterable):
 
 class BasicSweep(BaseSamplingElement, sampler_name="basic_sweep"):
 
-    def __init__(self, sweep=None):
+    def __init__(self, sweep=None, count=0):
         """
             Expects dict of var names, and their corresponding lists of values to cycle through
         """
@@ -43,6 +44,13 @@ class BasicSweep(BaseSamplingElement, sampler_name="basic_sweep"):
 
         # Combine all the iterables/generators into one
         self.sweep_iterator = itertools.product(*gens)
+
+        self.count = 0
+        for i in range(count):
+            try:
+                self.__next__()
+            except StopIteration:
+                logger.warning("BasicSweep constructed, but has no samples left to draw.")
 
     def element_version(self):
         return "0.1"
@@ -57,10 +65,12 @@ class BasicSweep(BaseSamplingElement, sampler_name="basic_sweep"):
         run_dict = {}
         for var_name, value in sweep_run:
             run_dict[var_name] = value
+
+        self.count += 1
         return run_dict
 
     def is_restartable(self):
         return True
 
     def get_restart_dict(self):
-        return {"sweep": self.sweep}
+        return {"sweep": self.sweep, "count": self.count}
