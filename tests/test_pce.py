@@ -82,9 +82,7 @@ def test_pce(tmpdir):
     # Get Descriptive Statistics
     stats = results['statistical_moments']['te']
     per = results['percentiles']['te']
-    S1 = results['sobol_indices']['te']['first']
-    St = results['sobol_indices']['te']['total']
-    sobols = [S1, St]
+    sobols = results['sobol_first_order']['te']
     dist_out = results['output_distributions']['te']
 
     # Test saving and reloading campaign

@@ -10,14 +10,10 @@ __license__ = "LGPL"
 
 logger = logging.getLogger(__name__)
 
-# TODO: Enhancements - issue #101
-#       - Add pd.read_hdf (https://pandas.pydata.org/pandas-docs/stable/user_guide/io.html#io-hdf5)
-#       - Test cp.fit_regression to approximate solver
-
 
 class PCEAnalysis(BaseAnalysisElement):
 
-    def __init__(self, sampler=None, qoi_cols=None, sobol_order=1):
+    def __init__(self, sampler=None, qoi_cols=None):
         """Analysis element for polynomial chaos expansion (PCE).
 
         Parameters
@@ -27,8 +23,6 @@ class PCEAnalysis(BaseAnalysisElement):
         qoi_cols : list or None
             Column names for quantities of interest (for which analysis is
             performed).
-        sobol_order : int, default=1
-            Order of Sobol indices to calculate.
         """
 
         if sampler is None:
@@ -40,12 +34,6 @@ class PCEAnalysis(BaseAnalysisElement):
             raise RuntimeError("Analysis element requires a list of "
                                "quantities of interest (qoi)")
 
-        if sobol_order > len(sampler.vary.vary_dict):
-            logger.warning("sobol_order too high - set to number of "
-                           "variables from sampler")
-            sobol_order = len(sampler.vary.vary_dict)
-
-        self.sobol_order = sobol_order
         self.qoi_cols = qoi_cols
         self.output_type = OutputType.SUMMARY
         self.sampler = sampler
@@ -85,7 +73,8 @@ class PCEAnalysis(BaseAnalysisElement):
 
         results = {'statistical_moments': {},
                    'percentiles': {},
-                   'sobol_indices': {k: {} for k in qoi_cols},
+                   'sobol_first_order': {k: {} for k in qoi_cols},
+                   'sobol_total_order': {k: {} for k in qoi_cols},
                    'correlation_matrices': {},
                    'output_distributions': {},
                    }
@@ -124,22 +113,18 @@ class PCEAnalysis(BaseAnalysisElement):
             P90 = cp.Perc(fit, 90, self.sampler.distribution)
             results['percentiles'][k] = {'p10': P10, 'p90': P90}
 
-            # Sensitivity Analysis: First, Second and Total Sobol indices
+            # Sensitivity Analysis: First and Total Sobol indices
             sobol_first_narr = cp.Sens_m(fit, self.sampler.distribution)
-            sobol_second_narr = cp.Sens_m2(fit, self.sampler.distribution)
             sobol_total_narr = cp.Sens_t(fit, self.sampler.distribution)
             sobol_first_dict = {}
-            sobol_second_dict = {}
             sobol_total_dict = {}
             i_par = 0
             for param_name in self.sampler.vary.get_keys():
                 sobol_first_dict[param_name] = sobol_first_narr[i_par]
-                sobol_second_dict[param_name] = sobol_second_narr[i_par]
                 sobol_total_dict[param_name] = sobol_total_narr[i_par]
                 i_par += 1
-            results['sobol_indices'][k]['first'] = sobol_first_dict
-            results['sobol_indices'][k]['second'] = sobol_second_dict
-            results['sobol_indices'][k]['total'] = sobol_total_dict
+            results['sobol_first_order'][k] = sobol_first_dict
+            results['sobol_total_order'][k] = sobol_total_dict
 
             # Correlation matrix
             results['correlation_matrices'][k] = cp.Corr(
