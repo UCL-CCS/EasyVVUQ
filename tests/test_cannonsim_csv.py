@@ -44,7 +44,8 @@ logging.basicConfig(level=logging.CRITICAL)
 
 @pytest.fixture
 def campaign():
-    def _campaign(work_dir, params, encoder, decoder, collater, vary, num_samples, replicas, db_type):
+    def _campaign(work_dir, campaign_name, app_name, params, encoder, decoder,
+                      collater, stats, vary, num_samples, replicas, db_type):
         my_campaign = uq.Campaign(name='cannon', work_dir=work_dir, db_type=db_type)
         print("Serialized encoder:", encoder.serialize())
         print("Serialized decoder:", decoder.serialize())
@@ -102,7 +103,6 @@ def campaign():
         print("data:\n", reloaded_campaign.get_collation_result())
         print(reloaded_campaign)
         # Create a BasicStats analysis element and apply it to the campaign
-        stats = uq.analysis.BasicStats(qoi_cols=['Dist', 'lastvx', 'lastvy'])
         reloaded_campaign.apply_analysis(stats)
         print("stats:\n", reloaded_campaign.get_last_analysis())
         # Print the campaign log
@@ -170,7 +170,7 @@ def test_cannonsim_csv(tmpdir, campaign):
             'Dist', 'lastvx', 'lastvy'], header=0)
     # Create a collation element for this campaign
     collater = uq.collate.AggregateSamples(average=False)
-
+    stats = uq.analysis.BasicStats(qoi_cols=['Dist', 'lastvx', 'lastvy'])
     # Make a random sampler
     vary = {
         "angle": cp.Uniform(0.0, 1.0),
@@ -178,11 +178,11 @@ def test_cannonsim_csv(tmpdir, campaign):
         "velocity": cp.Normal(10.0, 1.0),
         "mass": cp.Uniform(5.0, 1.0)
     }
-    campaign(tmpdir, params, encoder, decoder, collater, vary, 5, 1, db_type='sql')
-    campaign(tmpdir, params, encoder, decoder, collater, vary, 5, 1, db_type='json')
+    campaign(tmpdir, 'cannon', 'cannonsim', params, encoder, decoder, collater, stats, vary, 5, 1, db_type='sql')
+    campaign(tmpdir, 'cannon', 'cannonsim', params, encoder, decoder, collater, stats, vary, 5, 1, db_type='json')
 
 
-def test_gauss(tmpdir):
+def test_gauss(tmpdir, campaign):
     params = {
         "sigma": {
             "type": "real",
@@ -213,8 +213,9 @@ def test_gauss(tmpdir):
                                          target_filename='gauss_in.json')
     decoder = GaussDecoder(target_filename=params['out_file']['default'])
     collater = uq.collate.AggregateSamples(average=False)
+    stats = uq.analysis.EnsembleBoot(groupby=["mu"], qoi_cols=["Value"])
     vary = {
         "mu": cp.Uniform(1.0, 100.0),
     }
-    campaign(tmpdir, params, encoder, decoder, collater, vary, number_of_samples, number_of_replicas, db_type='sql')
-    campaign(tmpdir, params, encoder, decoder, collater, vary, number_of_samples, number_of_replicas, db_type='json')
+    campaign(tmpdir, 'gauss', 'gauss', params, encoder, decoder, collater, stats, vary, number_of_samples, number_of_replicas, db_type='sql')
+    campaign(tmpdir, 'gauss', 'gauss', params, encoder, decoder, collater, stats, vary, number_of_samples, number_of_replicas, db_type='json')
