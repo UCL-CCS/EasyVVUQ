@@ -2,6 +2,7 @@ from .basic_stats import BasicStats
 from .ensemble_boot import EnsembleBoot
 from .sc_analysis import SCAnalysis
 from .pce_analysis import PCEAnalysis
+from .qmc_analysis import QMCAnalysis
 
 __copyright__ = """
 

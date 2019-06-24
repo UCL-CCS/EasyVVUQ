@@ -2,6 +2,7 @@ from .base import BaseSamplingElement, Vary
 from .random import RandomSampler
 from .stochastic_collocation import SCSampler
 from .pce import PCESampler
+from .qmc import QMCSampler
 from .sweep import BasicSweep
 
 __copyright__ = """

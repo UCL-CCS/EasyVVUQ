@@ -6,7 +6,8 @@ import numpy as np
 
 # author: Jalal Lakhlili
 
-# ... A test model: Coffee_Cup from Uncertainpy
+# ... A test model: Cooling Coffee_Cup from Uncertainpy
+# it is used by PCE and QMC tests
 
 
 def model(time, kappa, T_env):
