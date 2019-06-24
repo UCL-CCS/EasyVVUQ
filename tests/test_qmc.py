@@ -72,7 +72,7 @@ def test_qmc(tmpdir):
 
     # Post-processing analysis
     my_analysis = uq.analysis.QMCAnalysis(sampler=my_sampler,
-                                           qoi_cols=output_columns)
+                                          qoi_cols=output_columns)
 
     my_campaign.apply_analysis(my_analysis)
 

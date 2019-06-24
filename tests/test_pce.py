@@ -74,7 +74,7 @@ def test_pce(tmpdir):
 
     # Post-processing analysis
     my_analysis = uq.analysis.PCEAnalysis(sampler=my_sampler,
-                                           qoi_cols=output_columns)
+                                          qoi_cols=output_columns)
 
     my_campaign.apply_analysis(my_analysis)
 
@@ -86,10 +86,10 @@ def test_pce(tmpdir):
     sobols = results['sobol_first_order']['te']
 
     # Test saving and reloading campaign
-    #state_file = tmpdir + "pce_state.json"
-    #my_campaign.save_state(state_file)
-    #new = uq.Campaign(state_file=state_file, work_dir=tmpdir)
-    #print(new)
+    state_file = tmpdir + "pce_state.json"
+    my_campaign.save_state(state_file)
+    new = uq.Campaign(state_file=state_file, work_dir=tmpdir)
+    print(new)
 
     return stats, per, sobols
 
