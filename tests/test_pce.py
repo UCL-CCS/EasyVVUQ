@@ -97,5 +97,3 @@ def test_pce(tmpdir):
 if __name__ == "__main__":
 
     stats, per, sobols = test_pce("/tmp/")
-
-

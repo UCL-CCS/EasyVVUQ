@@ -88,4 +88,3 @@ def test_qmc(tmpdir):
 if __name__ == "__main__":
 
     stats, per = test_qmc("/tmp/")
-
