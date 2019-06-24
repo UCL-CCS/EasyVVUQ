@@ -31,9 +31,9 @@ def test_pce(tmpdir):
 
     # Create an encoder and decoder for PCE test app
     encoder = uq.encoders.GenericEncoder(
-        template_fname='tests/pce/pce.template',
+        template_fname='tests/cooling/cooling.template',
         delimiter='$',
-        target_filename='pce_in.json')
+        target_filename='cooling_in.json')
     decoder = uq.decoders.SimpleCSV(target_filename=output_filename,
                                     output_columns=output_columns,
                                     header=0)
@@ -55,7 +55,8 @@ def test_pce(tmpdir):
         "t_env": cp.Uniform(15, 25)
     }
 
-    my_sampler = uq.sampling.PCESampler(vary=vary, polynomial_order=3)
+    my_sampler = uq.sampling.PCESampler(vary=vary,
+                                        polynomial_order=3)
 
     # Associate the sampler with the campaign
     my_campaign.set_sampler(my_sampler)
@@ -65,17 +66,17 @@ def test_pce(tmpdir):
 
     my_campaign.populate_runs_dir()
     my_campaign.apply_for_each_run_dir(uq.actions.ExecuteLocal(
-        "tests/pce/pce_model.py pce_in.json"))
+        "tests/cooling/cooling_model.py cooling_in.json"))
 
     my_campaign.collate()
 
     # Update after here
 
     # Post-processing analysis
-    pce_analysis = uq.analysis.PCEAnalysis(sampler=my_sampler,
+    my_analysis = uq.analysis.PCEAnalysis(sampler=my_sampler,
                                            qoi_cols=output_columns)
 
-    my_campaign.apply_analysis(pce_analysis)
+    my_campaign.apply_analysis(my_analysis)
 
     results = my_campaign.get_last_analysis()
 
@@ -83,17 +84,18 @@ def test_pce(tmpdir):
     stats = results['statistical_moments']['te']
     per = results['percentiles']['te']
     sobols = results['sobol_first_order']['te']
-    dist_out = results['output_distributions']['te']
 
     # Test saving and reloading campaign
-    state_file = tmpdir + "pce_state.json"
-    my_campaign.save_state(state_file)
-    new = uq.Campaign(state_file=state_file, work_dir=tmpdir)
-    print(new)
+    #state_file = tmpdir + "pce_state.json"
+    #my_campaign.save_state(state_file)
+    #new = uq.Campaign(state_file=state_file, work_dir=tmpdir)
+    #print(new)
 
-    return stats, per, sobols, dist_out
+    return stats, per, sobols
 
 
 if __name__ == "__main__":
 
-    stats, per, sobols, dist_out = test_pce("/tmp/")
+    stats, per, sobols = test_pce("/tmp/")
+
+

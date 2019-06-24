@@ -34,12 +34,17 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
                  quadrature_rule="G",
                  sparse=False):
         """
-        Create the sampler for the Polynomial Chaos Expansion method.
+        Create the sampler for the Polynomial Chaos Expansion method using
+        pseudo-spectral projection.
 
         Parameters
         ----------
         vary: dict or None
             keys = parameters to be sampled, values = distributions.
+
+        count : int, optional
+            Specified counter for Fast forward, default is 0.
+
         polynomial_order : int, optional
             The polynomial order, default is 4.
 
@@ -47,7 +52,7 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
             The quadrature method, default is Gaussian "G".
 
         sparse : bool, optional
-            If True use sparse grid instead of normal tensor product grid,
+            If True use Smolyak sparse grid instead of normal tensor product grid,
             default is False.
 
         """

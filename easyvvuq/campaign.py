@@ -567,7 +567,6 @@ class Campaign:
         num_added = 0
         for new_run in self._active_sampler:
 
-            print(new_run)
             for __ in range(replicas):
                 self.add_run(new_run)
 
