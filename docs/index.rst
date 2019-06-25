@@ -8,7 +8,7 @@ EasyVVUQ: Error bars for everyone!
 
 EasyVVUQ is a Python library designed to facilitate verification, validation 
 and uncertainty quantification (VVUQ) for a wide variety of simulations.
-It was concieved and developed within the EU funded `VECMA <http://www.vecma.eu/>`_ 
+It was conceived and developed within the EU funded `VECMA <http://www.vecma.eu/>`_ 
 (Verified Exascale Computing for Multiscale Applications) project.
 
 .. _goals:
