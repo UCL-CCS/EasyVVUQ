@@ -25,7 +25,7 @@ setup(
 
     author='CCS',
 
-    install_requires=['numpy', 'pandas>=0.24', 'scipy==1.2.1', 
+    install_requires=['numpy', 'pandas>=0.24', 'scipy', 
                       'pytest', 'SQLAlchemy', 'chaospy',
                       'sqlalchemy-utils', 'matplotlib', 'jsonpickle'],
 

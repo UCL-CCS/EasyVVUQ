@@ -1,6 +1,6 @@
 numpy
 pandas>=0.24
-scipy==1.2.1
+scipy
 chaospy
 pytest
 pytest-pep8
