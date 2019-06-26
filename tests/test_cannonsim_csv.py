@@ -5,7 +5,7 @@ import sys
 import pytest
 import logging
 from pprint import pformat, pprint
-
+from gauss.encoder_gauss import GaussEncoder
 from gauss.decoder_gauss import GaussDecoder
 
 __copyright__ = """
@@ -45,7 +45,7 @@ logging.basicConfig(level=logging.CRITICAL)
 @pytest.fixture
 def campaign():
     def _campaign(work_dir, campaign_name, app_name, params, encoder, decoder,
-                      collater, stats, vary, num_samples, replicas, db_type):
+                      collater, actions, stats, vary, num_samples, replicas, db_type):
         my_campaign = uq.Campaign(name='cannon', work_dir=work_dir, db_type=db_type)
         print("Serialized encoder:", encoder.serialize())
         print("Serialized decoder:", decoder.serialize())
@@ -75,8 +75,7 @@ def campaign():
         assert(os.path.exists(my_campaign.get_campaign_runs_dir()))
         assert(os.path.isdir(my_campaign.get_campaign_runs_dir()))
         # Local execution
-        my_campaign.apply_for_each_run_dir(uq.actions.ExecuteLocal(
-            "tests/cannonsim/bin/cannonsim in.cannon output.csv"))
+        my_campaign.apply_for_each_run_dir(actions)
         # Collate all data into one pandas data frame
         my_campaign.collate()
         print("data:", my_campaign.get_collation_result())
@@ -94,8 +93,7 @@ def campaign():
         pprint(reloaded_campaign.list_runs())
         print("---")
         reloaded_campaign.populate_runs_dir()
-        reloaded_campaign.apply_for_each_run_dir(uq.actions.ExecuteLocal(
-            "tests/cannonsim/bin/cannonsim in.cannon output.csv"))
+        reloaded_campaign.apply_for_each_run_dir(actions)
         print("Completed runs:")
         pprint(reloaded_campaign.scan_completed())
         print("All completed?", reloaded_campaign.all_complete())
@@ -170,6 +168,7 @@ def test_cannonsim_csv(tmpdir, campaign):
             'Dist', 'lastvx', 'lastvy'], header=0)
     # Create a collation element for this campaign
     collater = uq.collate.AggregateSamples(average=False)
+    actions = uq.actions.ExecuteLocal("tests/cannonsim/bin/cannonsim in.cannon output.csv")
     stats = uq.analysis.BasicStats(qoi_cols=['Dist', 'lastvx', 'lastvy'])
     # Make a random sampler
     vary = {
@@ -178,8 +177,10 @@ def test_cannonsim_csv(tmpdir, campaign):
         "velocity": cp.Normal(10.0, 1.0),
         "mass": cp.Uniform(5.0, 1.0)
     }
-    campaign(tmpdir, 'cannon', 'cannonsim', params, encoder, decoder, collater, stats, vary, 5, 1, db_type='sql')
-    campaign(tmpdir, 'cannon', 'cannonsim', params, encoder, decoder, collater, stats, vary, 5, 1, db_type='json')
+    campaign(tmpdir, 'cannon', 'cannonsim', params, encoder, decoder,
+                 collater, actions, stats, vary, 5, 1, db_type='sql')
+    campaign(tmpdir, 'cannon', 'cannonsim', params, encoder, decoder,
+                 collater, actions, stats, vary, 5, 1, db_type='json')
 
 
 def test_gauss(tmpdir, campaign):
@@ -207,15 +208,79 @@ def test_gauss(tmpdir, campaign):
             "default": "output.csv"
         }
     }
-    number_of_samples = 3
-    number_of_replicas = 5
     encoder = uq.encoders.GenericEncoder(template_fname='tests/gauss/gauss.template',
                                          target_filename='gauss_in.json')
     decoder = GaussDecoder(target_filename=params['out_file']['default'])
     collater = uq.collate.AggregateSamples(average=False)
+    actions = uq.actions.ExecuteLocal("tests/gauss/gauss_json.py gauss_in.json")
     stats = uq.analysis.EnsembleBoot(groupby=["mu"], qoi_cols=["Value"])
     vary = {
         "mu": cp.Uniform(1.0, 100.0),
     }
-    campaign(tmpdir, 'gauss', 'gauss', params, encoder, decoder, collater, stats, vary, number_of_samples, number_of_replicas, db_type='sql')
-    campaign(tmpdir, 'gauss', 'gauss', params, encoder, decoder, collater, stats, vary, number_of_samples, number_of_replicas, db_type='json')
+    campaign(tmpdir, 'gauss', 'gauss', params, encoder, decoder,
+                 collater, actions, stats, vary, 3, 5, db_type='sql')
+    campaign(tmpdir, 'gauss', 'gauss', params, encoder, decoder,
+                 collater, actions, stats, vary, 3, 5, db_type='json')
+
+
+def test_gauss_custom_encoder(tmpdir, campaign):
+    params = {
+        "sigma": {"type": "real", "min": "0.0", "max": "100000.0",
+                  "default": "0.25"},
+        "mu": {"type": "real", "min": "0.0", "max": "100000.0",
+               "default": "1"},
+        "num_steps": {"type": "int", "min": "0", "max": "100000",
+                      "default": "10"},
+        "out_file": {"type": "str", "default": "output.csv"}
+    }
+    # Create an encoder and decoder for the gauss app
+    encoder = GaussEncoder(target_filename='gauss_in.json')
+    decoder = GaussDecoder(target_filename=params['out_file']['default'])
+    # Create a collation element for this campaign
+    collater = uq.collate.AggregateSamples(average=False)
+    actions = uq.actions.ExecuteLocal("tests/gauss/gauss_json.py gauss_in.json")
+    stats = uq.analysis.EnsembleBoot(groupby=["mu"], qoi_cols=["Value"])
+    vary = {
+        "mu": cp.Uniform(1.0, 100.0),
+    }
+    campaign(tmpdir, 'gauss', 'gauss', params, encoder, decoder,
+                 collater, actions, stats, vary, 3, 5, db_type='sql')
+    campaign(tmpdir, 'gauss', 'gauss', params, encoder, decoder,
+                 collater, actions, stats, vary, 3, 5, db_type='json')
+
+
+def test_gauss_fix(tmpdir, campaign):
+    params = {
+        "sigma": {"type": "real", "min": "0.0", "max": "100000.0",
+                  "default": "0.25"},
+        "mu": {"type": "real", "min": "0.0", "max": "100000.0",
+               "default": "1"},
+        "num_steps": {"type": "int", "min": "0", "max": "100000",
+                      "default": "10"},
+        "out_file": {"type": "str", "default": "output.csv"},
+        "bias": {"type": "fixture", "options": ["bias1", "bias2"],
+                 "default": "bias1"}
+    }
+    fixtures = {
+        "bias1": {"type": "file", "path": "tests/gauss/bias1.txt",
+                  "common": False, "exists_local": True,
+                  "target": "", "group": ""},
+        "bias2": {"type": "file", "path": "tests/gauss/bias2.txt",
+                  "common": False, "exists_local": True,
+                  "target": "", "group": ""}
+    }
+    number_of_samples = 2
+    number_of_replicas = 2
+    encoder = uq.encoders.GenericEncoder(template_fname='tests/gauss/gauss.template',
+                                         target_filename='gauss_in.json')
+    decoder = GaussDecoder(target_filename=params['out_file']['default'])
+    collater = uq.collate.AggregateSamples(average=False)
+    actions = uq.actions.ExecuteLocal("tests/gauss/gauss_json.py gauss_in.json")
+    stats = uq.analysis.EnsembleBoot(groupby=["mu"], qoi_cols=["Value"])
+    vary = {
+        "mu": cp.Uniform(1.0, 100.0),
+    }
+    campaign(tmpdir, 'gauss', 'gauss', params, encoder, decoder,
+                 collater, actions, stats, vary, 3, 5, db_type='sql')
+    campaign(tmpdir, 'gauss', 'gauss', params, encoder, decoder,
+                 collater, actions, stats, vary, 3, 5, db_type='json')
