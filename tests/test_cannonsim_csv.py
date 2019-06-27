@@ -330,3 +330,42 @@ def test_pce(tmpdir, campaign):
                  collater, actions, stats, vary, 0, 1, db_type='sql')
     campaign(tmpdir, 'pce', 'pce', params, encoder, decoder, sampler,
                  collater, actions, stats, vary, 0, 1, db_type='json')
+
+
+def test_sc(tmpdir, campaign):
+    params = {
+        "Pe": {
+            "type": "real",
+            "min": "1.0",
+            "max": "2000.0",
+            "default": "100.0"},
+        "f": {
+            "type": "real",
+            "min": "0.0",
+            "max": "10.0",
+            "default": "1.0"},
+        "out_file": {
+            "type": "str",
+            "default": "output.csv"}}
+    output_filename = params["out_file"]["default"]
+    output_columns = ["u"]
+    encoder = uq.encoders.GenericEncoder(
+        template_fname=f'tests/sc/sc.template',
+        delimiter='$',
+        target_filename='sc_in.json')
+    decoder = uq.decoders.SimpleCSV(target_filename=output_filename,
+                                    output_columns=output_columns,
+                                    header=0)
+    collater = uq.collate.AggregateSamples(average=False)
+    vary = {
+        "Pe": cp.Uniform(100.0, 200.0),
+        "f": cp.Normal(1.0, 0.1)
+    }
+    sampler = uq.sampling.SCSampler(vary=vary, polynomial_order=1)
+    actions = uq.actions.ExecuteLocal(f"tests/sc/sc_model.py sc_in.json")
+    stats = uq.analysis.SCAnalysis(sampler=sampler, qoi_cols=output_columns)
+    campaign(tmpdir, 'sc', 'sc', params, encoder, decoder, sampler,
+                 collater, actions, stats, vary, 0, 1, db_type='sql')
+    campaign(tmpdir, 'sc', 'sc', params, encoder, decoder, sampler,
+                 collater, actions, stats, vary, 0, 1, db_type='json')
+    
