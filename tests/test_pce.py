@@ -83,7 +83,7 @@ def test_pce(tmpdir):
     # Get Descriptive Statistics
     stats = results['statistical_moments']['te']
     per = results['percentiles']['te']
-    sobols = results['sobol_first_order']['te']
+    sobols = results['sobols_first']['te']
 
     # Test saving and reloading campaign
     state_file = tmpdir + "pce_state.json"

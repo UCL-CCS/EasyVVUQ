@@ -73,8 +73,8 @@ class PCEAnalysis(BaseAnalysisElement):
 
         results = {'statistical_moments': {},
                    'percentiles': {},
-                   'sobol_first_order': {k: {} for k in qoi_cols},
-                   'sobol_total_order': {k: {} for k in qoi_cols},
+                   'sobols_first': {k: {} for k in qoi_cols},
+                   'sobols_total': {k: {} for k in qoi_cols},
                    'correlation_matrices': {},
                    'output_distributions': {},
                    }
@@ -114,17 +114,17 @@ class PCEAnalysis(BaseAnalysisElement):
             results['percentiles'][k] = {'p10': P10, 'p90': P90}
 
             # Sensitivity Analysis: First and Total Sobol indices
-            sobol_first_narr = cp.Sens_m(fit, self.sampler.distribution)
-            sobol_total_narr = cp.Sens_t(fit, self.sampler.distribution)
-            sobol_first_dict = {}
-            sobol_total_dict = {}
+            sobols_first_narr = cp.Sens_m(fit, self.sampler.distribution)
+            sobols_total_narr = cp.Sens_t(fit, self.sampler.distribution)
+            sobols_first_dict = {}
+            sobols_total_dict = {}
             i_par = 0
             for param_name in self.sampler.vary.get_keys():
-                sobol_first_dict[param_name] = sobol_first_narr[i_par]
-                sobol_total_dict[param_name] = sobol_total_narr[i_par]
+                sobols_first_dict[param_name] = sobols_first_narr[i_par]
+                sobols_total_dict[param_name] = sobols_total_narr[i_par]
                 i_par += 1
-            results['sobol_first_order'][k] = sobol_first_dict
-            results['sobol_total_order'][k] = sobol_total_dict
+            results['sobols_first'][k] = sobols_first_dict
+            results['sobols_total'][k] = sobols_total_dict
 
             # Correlation matrix
             results['correlation_matrices'][k] = cp.Corr(
