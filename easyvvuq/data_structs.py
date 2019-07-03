@@ -96,7 +96,7 @@ def check_reference(ref, run_name, ref_type='campaign'):
 
 class ParamsSpecification:
 
-    def __init__(self, params):
+    def __init__(self, params, appname=None):
 
         if not isinstance(params, dict):
             msg = "params must be of type 'dict'"
@@ -124,9 +124,23 @@ class ParamsSpecification:
                 raise Exception(msg)
 
         self.params_dict = params
+        self.appname=appname
 
     def get_dict(self):
         return self.params_dict
+
+    def verify_run(self, new_run):
+       # Check if parameter names match those already known for this app
+       for param in new_run.keys():
+           if param not in self.params_dict.keys():
+               allowed_params_str = ','.join(list(self.params_dict.keys()))
+               reasoning = (
+                   f"Run dict contains extra parameter, "
+                   f"{param}, which is not a known parameter name "
+                   f"of app {self.appname}.\n"
+                   f"The allowed param names for this app appear to be:\n"
+                   f"{allowed_params_str}")
+               raise RuntimeError(reasoning)
 
 class RunInfo:
     """Handles information for individual application runs.

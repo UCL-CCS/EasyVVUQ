@@ -358,7 +358,7 @@ class Campaign:
         """
 
         # Verify input parameters dict
-        paramsspec = ParamsSpecification(params)
+        paramsspec = ParamsSpecification(params, appname=name)
 
 #        if not isinstance(params, dict):
 #            msg = "params must be of type 'dict'"
@@ -489,18 +489,20 @@ class Campaign:
             logging.error(msg)
             raise Exception(msg)
 
-        # Check if parameter names match those already known for this app
-        for param in new_run.keys():
-            if param not in app_default_params.keys():
-                allowed_params_str = ','.join(list(app_default_params.keys()))
-                reasoning = (
-                    f"dict passed to add_run() contains extra parameter, "
-                    f"{param}, which is not a known parameter name "
-                    f"of app {self._active_app['name']}.\n"
-                    f"The allowed param names for this app appear to be:\n"
-                    f"{allowed_params_str}")
+        app_default_params.verify_run(new_run)
 
-                raise RuntimeError(reasoning)
+#       # Check if parameter names match those already known for this app
+#       for param in new_run.keys():
+#           if param not in app_default_params.keys():
+#               allowed_params_str = ','.join(list(app_default_params.keys()))
+#               reasoning = (
+#                   f"dict passed to add_run() contains extra parameter, "
+#                   f"{param}, which is not a known parameter name "
+#                   f"of app {self._active_app['name']}.\n"
+#                   f"The allowed param names for this app appear to be:\n"
+#                   f"{allowed_params_str}")
+#
+#               raise RuntimeError(reasoning)
 
         # If necessary parameter names are missing, fill them in from the
         # default values in params_info
