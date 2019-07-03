@@ -94,6 +94,14 @@ def check_reference(ref, run_name, ref_type='campaign'):
         raise RuntimeError(message)
 
 
+class ParamsInfo:
+
+    def __init__(self, params_dict):
+        self.params_dict = params_dict
+
+    def get_dict(self):
+        return self.params_dict
+
 class RunInfo:
     """Handles information for individual application runs.
 
