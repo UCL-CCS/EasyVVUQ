@@ -9,7 +9,7 @@ import tempfile
 import json
 import easyvvuq
 from easyvvuq.constants import default_campaign_prefix, Status
-from easyvvuq.data_structs import RunInfo, CampaignInfo, AppInfo
+from easyvvuq.data_structs import RunInfo, CampaignInfo, AppInfo, ParamsInfo
 from easyvvuq.sampling import BaseSamplingElement
 from easyvvuq.collate import BaseCollationElement
 
@@ -358,32 +358,33 @@ class Campaign:
         """
 
         # Verify input parameters dict
+        params_info = ParamsInfo(params)
 
-        if not isinstance(params, dict):
-            msg = "params must be of type 'dict'"
-            logger.error(msg)
-            raise Exception(msg)
-
-        if not params:
-            msg = ("params must not be empty. At least one parameter "
-                   "should be specified.")
-            logger.error(msg)
-            raise Exception(msg)
-
-        # Check each param has a dict as a value, and that dict has a "default"
-        # defined
-        for param_key, param_def in params.items():
-            if not isinstance(param_def, dict):
-                msg = f"Entry for param '{param_key}' must be a dictionary"
-                logger.error(msg)
-                raise Exception(msg)
-            if "default" not in param_def:
-                msg = (
-                    f"Entry for param '{param_key}' must be a dictionary"
-                    f"defining a 'default' value for this parameter."
-                )
-                logger.error(msg)
-                raise Exception(msg)
+#        if not isinstance(params, dict):
+#            msg = "params must be of type 'dict'"
+#            logger.error(msg)
+#            raise Exception(msg)
+#
+#        if not params:
+#            msg = ("params must not be empty. At least one parameter "
+#                   "should be specified.")
+#            logger.error(msg)
+#            raise Exception(msg)
+#
+#        # Check each param has a dict as a value, and that dict has a "default"
+#        # defined
+#        for param_key, param_def in params.items():
+#            if not isinstance(param_def, dict):
+#                msg = f"Entry for param '{param_key}' must be a dictionary"
+#                logger.error(msg)
+#                raise Exception(msg)
+#            if "default" not in param_def:
+#                msg = (
+#                    f"Entry for param '{param_key}' must be a dictionary"
+#                    f"defining a 'default' value for this parameter."
+#                )
+#                logger.error(msg)
+#                raise Exception(msg)
 
         # validate application input
         app = AppInfo(
