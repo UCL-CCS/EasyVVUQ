@@ -126,18 +126,30 @@ class ParamsSpecification:
         self.params_dict = params
         self.appname=appname
 
-    def verify_run(self, new_run):
-       # Check if parameter names match those already known for this app
-       for param in new_run.keys():
-           if param not in self.params_dict.keys():
-               allowed_params_str = ','.join(list(self.params_dict.keys()))
-               reasoning = (
-                   f"Run dict contains extra parameter, "
-                   f"{param}, which is not a known parameter name "
-                   f"of app {self.appname}.\n"
-                   f"The allowed param names for this app appear to be:\n"
-                   f"{allowed_params_str}")
-               raise RuntimeError(reasoning)
+    def process_run(self, new_run, verify=True):
+
+        if verify:
+           # Check if parameter names match those already known for this app
+           for param in new_run.keys():
+               if param not in self.params_dict.keys():
+                   allowed_params_str = ','.join(list(self.params_dict.keys()))
+                   reasoning = (
+                       f"Run dict contains extra parameter, "
+                       f"{param}, which is not a known parameter name "
+                       f"of app {self.appname}.\n"
+                       f"The allowed param names for this app appear to be:\n"
+                       f"{allowed_params_str}")
+                   raise RuntimeError(reasoning)
+
+        # If necessary parameter names are missing, fill them in from the
+        # default values in params_info
+        for param in self.params_dict.keys():
+            if param not in new_run.keys():
+                default_val = self.params_dict[param]["default"]
+                new_run[param] = default_val
+
+        return new_run
+
 
     def serialize(self):
         return json.dumps(self.params_dict)

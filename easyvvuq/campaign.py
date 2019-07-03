@@ -491,7 +491,7 @@ class Campaign:
 
         print(app_default_params)
 
-        app_default_params.verify_run(new_run)
+        new_run = app_default_params.process_run(new_run)
 
 #       # Check if parameter names match those already known for this app
 #       for param in new_run.keys():
@@ -506,12 +506,12 @@ class Campaign:
 #
 #               raise RuntimeError(reasoning)
 
-        # If necessary parameter names are missing, fill them in from the
-        # default values in params_info
-        for param in app_default_params.keys():
-            if param not in new_run.keys():
-                default_val = app_default_params[param]["default"]
-                new_run[param] = default_val
+#        # If necessary parameter names are missing, fill them in from the
+#        # default values in params_info
+#        for param in app_default_params.keys():
+#            if param not in new_run.keys():
+#                default_val = app_default_params[param]["default"]
+#                new_run[param] = default_val
 
         # Add to run queue
         run_info = RunInfo(app=self._active_app['id'],
