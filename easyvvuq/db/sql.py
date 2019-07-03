@@ -12,6 +12,7 @@ from easyvvuq.sampling.base import BaseSamplingElement
 from easyvvuq.encoders.base import BaseEncoder
 from easyvvuq.decoders.base import BaseDecoder
 from easyvvuq.collate.base import BaseCollationElement
+from easyvvuq.data_structs import ParamsSpecification
 
 __copyright__ = """
 
@@ -162,7 +163,7 @@ class CampaignDB(BaseCampaignDB):
             'name': selected_app.name,
             'input_encoder': selected_app.input_encoder,
             'output_decoder': selected_app.output_decoder,
-            'params': json.loads(selected_app.params),
+            'params': ParamsSpecification.deserialize(selected_app.params),
             'fixtures': json.loads(selected_app.fixtures)
         }
 

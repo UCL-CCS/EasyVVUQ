@@ -489,6 +489,8 @@ class Campaign:
             logging.error(msg)
             raise Exception(msg)
 
+        print(app_default_params)
+
         app_default_params.verify_run(new_run)
 
 #       # Check if parameter names match those already known for this app

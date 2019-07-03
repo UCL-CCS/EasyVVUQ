@@ -126,9 +126,6 @@ class ParamsSpecification:
         self.params_dict = params
         self.appname=appname
 
-    def get_dict(self):
-        return self.params_dict
-
     def verify_run(self, new_run):
        # Check if parameter names match those already known for this app
        for param in new_run.keys():
@@ -141,6 +138,13 @@ class ParamsSpecification:
                    f"The allowed param names for this app appear to be:\n"
                    f"{allowed_params_str}")
                raise RuntimeError(reasoning)
+
+    def serialize(self):
+        return json.dumps(self.params_dict)
+
+    @staticmethod
+    def deserialize(serialized_params):
+        return ParamsSpecification(json.loads(serialized_params))
 
 class RunInfo:
     """Handles information for individual application runs.
@@ -329,13 +333,13 @@ class AppInfo:
 
             out_dict = self.to_dict()
 
-            out_dict['params'] = json.dumps(self.paramsspec.get_dict())
+            out_dict['params'] = self.paramsspec.serialize()
             out_dict['fixtures'] = json.dumps(out_dict['fixtures'])
         else:
 
             out_dict = {
                 'name': self.name,
-                'params': json.dumps(self.paramsspec.get_dict()),
+                'params': self.paramsspec,
                 'fixtures': fixtures,
                 'input_encoder': self.input_encoder.serialize(),
                 'output_decoder': self.output_decoder.serialize()
