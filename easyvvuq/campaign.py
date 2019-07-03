@@ -9,7 +9,7 @@ import tempfile
 import json
 import easyvvuq
 from easyvvuq.constants import default_campaign_prefix, Status
-from easyvvuq.data_structs import RunInfo, CampaignInfo, AppInfo, ParamsInfo
+from easyvvuq.data_structs import RunInfo, CampaignInfo, AppInfo, ParamsSpecification
 from easyvvuq.sampling import BaseSamplingElement
 from easyvvuq.collate import BaseCollationElement
 
@@ -358,7 +358,7 @@ class Campaign:
         """
 
         # Verify input parameters dict
-        params_info = ParamsInfo(params)
+        paramsspec = ParamsSpecification(params)
 
 #        if not isinstance(params, dict):
 #            msg = "params must be of type 'dict'"
@@ -389,7 +389,7 @@ class Campaign:
         # validate application input
         app = AppInfo(
             name=name,
-            params=params,
+            paramsspec=paramsspec,
             fixtures=fixtures,
             encoder=encoder,
             decoder=decoder

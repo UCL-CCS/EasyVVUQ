@@ -94,7 +94,7 @@ def check_reference(ref, run_name, ref_type='campaign'):
         raise RuntimeError(message)
 
 
-class ParamsInfo:
+class ParamsSpecification:
 
     def __init__(self, params):
 
@@ -227,7 +227,7 @@ class AppInfo:
     ----------
     name : str or None
         Human readable application name.
-    params : dict or None
+    paramsspec : ParamsSpecification or None
         Description of possible parameter values.
     fixtures : dict or None
         Description of files/assets for runs.
@@ -240,7 +240,7 @@ class AppInfo:
     ----------
     name : str or None
         Human readable application name.
-    params : dict or None
+    paramsspec : ParamsSpecification or None
         Description of possible parameter values.
     fixtures : dict or None
         Description of files/assets for runs.
@@ -253,7 +253,7 @@ class AppInfo:
     def __init__(
             self,
             name=None,
-            params=None,
+            paramsspec=None,
             fixtures=None,
             encoder=None,
             decoder=None):
@@ -261,7 +261,7 @@ class AppInfo:
         self.name = name
         self.input_encoder = encoder
         self.output_decoder = decoder
-        self.params = params
+        self.paramsspec = paramsspec
         self.fixtures = fixtures
 
     @property
@@ -296,14 +296,14 @@ class AppInfo:
         Parameters
         ----------
         flatten : bool
-            Should the return dictionary be single level (i.e. should `params`,
-            `collation` & `fixtures` variables be serialized).
+            Should the return dictionary be single level (i.e. should `paramsspec`
+            and `fixtures` variables be serialized).
 
         Returns
         -------
         dict
-            Dictionary representing the application- if flattened then `params`,
-            `collation` & `fixtures` are returned as a JSON format sting.
+            Dictionary representing the application- if flattened then `paramsspec`,
+            and `fixtures` are returned as a JSON format sting.
         """
 
         if self.fixtures is None:
@@ -315,15 +315,13 @@ class AppInfo:
 
             out_dict = self.to_dict()
 
-            for field in [
-                    'params', 'fixtures']:
-                out_dict[field] = json.dumps(out_dict[field])
-
+            out_dict['params'] = json.dumps(self.paramsspec.get_dict())
+            out_dict['fixtures'] = json.dumps(out_dict['fixtures'])
         else:
 
             out_dict = {
                 'name': self.name,
-                'params': self.params,
+                'params': json.dumps(self.paramsspec.get_dict()),
                 'fixtures': fixtures,
                 'input_encoder': self.input_encoder.serialize(),
                 'output_decoder': self.output_decoder.serialize()
