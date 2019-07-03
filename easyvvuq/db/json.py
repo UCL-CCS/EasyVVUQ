@@ -11,6 +11,7 @@ from easyvvuq.encoders.base import BaseEncoder
 from easyvvuq.decoders.base import BaseDecoder
 from easyvvuq.collate.base import BaseCollationElement
 from easyvvuq import constants
+from easyvvuq.data_structs import ParamsSpecification
 
 __copyright__ = """
 
@@ -87,14 +88,18 @@ class CampaignDB(BaseCampaignDB):
         self._sample = input_info.get('sample', {})
         self._collation_csv = input_info.get('collation_csv', {})
 
+        self._app['params'] = ParamsSpecification.deserialize(self._app['params'])
+
         # Convert run statuses to enums
         for run_id in self._runs:
             self._runs[run_id]['status'] = constants.Status(self._runs[run_id]['status'])
 
     def _save(self):
+        serialized_app = self._app.copy()
+        serialized_app['params'] = serialized_app['params'].serialize()
         out_dict = {
             'campaign': self._campaign_info,
-            'app': self._app,
+            'app': serialized_app,
             'runs': self._runs,
             'sample': self._sample,
             'collation_csv': self._collation_csv
