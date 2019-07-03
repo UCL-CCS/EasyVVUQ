@@ -360,32 +360,6 @@ class Campaign:
         # Verify input parameters dict
         paramsspec = ParamsSpecification(params, appname=name)
 
-#        if not isinstance(params, dict):
-#            msg = "params must be of type 'dict'"
-#            logger.error(msg)
-#            raise Exception(msg)
-#
-#        if not params:
-#            msg = ("params must not be empty. At least one parameter "
-#                   "should be specified.")
-#            logger.error(msg)
-#            raise Exception(msg)
-#
-#        # Check each param has a dict as a value, and that dict has a "default"
-#        # defined
-#        for param_key, param_def in params.items():
-#            if not isinstance(param_def, dict):
-#                msg = f"Entry for param '{param_key}' must be a dictionary"
-#                logger.error(msg)
-#                raise Exception(msg)
-#            if "default" not in param_def:
-#                msg = (
-#                    f"Entry for param '{param_key}' must be a dictionary"
-#                    f"defining a 'default' value for this parameter."
-#                )
-#                logger.error(msg)
-#                raise Exception(msg)
-
         # validate application input
         app = AppInfo(
             name=name,
@@ -492,26 +466,6 @@ class Campaign:
         print(app_default_params)
 
         new_run = app_default_params.process_run(new_run)
-
-#       # Check if parameter names match those already known for this app
-#       for param in new_run.keys():
-#           if param not in app_default_params.keys():
-#               allowed_params_str = ','.join(list(app_default_params.keys()))
-#               reasoning = (
-#                   f"dict passed to add_run() contains extra parameter, "
-#                   f"{param}, which is not a known parameter name "
-#                   f"of app {self._active_app['name']}.\n"
-#                   f"The allowed param names for this app appear to be:\n"
-#                   f"{allowed_params_str}")
-#
-#               raise RuntimeError(reasoning)
-
-#        # If necessary parameter names are missing, fill them in from the
-#        # default values in params_info
-#        for param in app_default_params.keys():
-#            if param not in new_run.keys():
-#                default_val = app_default_params[param]["default"]
-#                new_run[param] = default_val
 
         # Add to run queue
         run_info = RunInfo(app=self._active_app['id'],
