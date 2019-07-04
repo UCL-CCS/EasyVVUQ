@@ -33,15 +33,11 @@ def test_gauss_fix(tmpdir):
     my_campaign = uq.Campaign(name='gauss_fix', work_dir=tmpdir)
 
     params = {
-        "sigma": {"type": "real", "min": "0.0", "max": "100000.0",
-                  "default": "0.25"},
-        "mu": {"type": "real", "min": "0.0", "max": "100000.0",
-               "default": "1"},
-        "num_steps": {"type": "int", "min": "0", "max": "100000",
-                      "default": "10"},
-        "out_file": {"type": "str", "default": "output.csv"},
-        "bias": {"type": "fixture", "options": ["bias1", "bias2"],
-                 "default": "bias1"}
+        "sigma": {"type": "float", "min": 0.0, "max": 100000.0, "default": 0.25},
+        "mu": {"type": "float", "min": 0.0, "max": 100000.0, "default": 1},
+        "num_steps": {"type": "integer", "min": 0, "max": 100000, "default": 10},
+        "out_file": {"type": "string", "default": "output.csv"},
+        "bias": {"type": "fixture", "allowed": ["bias1", "bias2"], "default": "bias1"}
     }
 
     fixtures = {

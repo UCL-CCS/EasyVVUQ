@@ -33,10 +33,9 @@ class EasyVVUQValidator(cerberus.Validator):
     def __init__(self, *args, **kwargs):
         super(EasyVVUQValidator, self).__init__(*args, **kwargs)
 
-    def _validate_type_fixture(self, field, value):
-        print("Fixtures not validated")
-        pass
-
+    def _validate_type_fixture(self, value):
+        # Fixtures type not validated at present
+        return True
 
 class ParamsSpecification:
 
