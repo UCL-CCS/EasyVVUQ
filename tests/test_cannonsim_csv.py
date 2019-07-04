@@ -45,39 +45,39 @@ def test_cannonsim_csv(tmpdir):
     params = {
         "angle": {
             "type": "float",
-            "min": "0.0",
-            "max": "6.28",
-            "default": "0.79"},
+            "min": 0.0,
+            "max": 6.28,
+            "default": 0.79},
         "air_resistance": {
             "type": "float",
-            "min": "0.0",
-            "max": "1.0",
-            "default": "0.2"},
+            "min": 0.0,
+            "max": 1.0,
+            "default": 0.2},
         "height": {
             "type": "float",
-            "min": "0.0",
-            "max": "1000.0",
-            "default": "1.0"},
+            "min": 0.0,
+            "max": 1000.0,
+            "default": 1.0},
         "time_step": {
             "type": "float",
-            "min": "0.0001",
-            "max": "1.0",
-            "default": "0.01"},
+            "min": 0.0001,
+            "max": 1.0,
+            "default": 0.01},
         "gravity": {
             "type": "float",
-            "min": "0.0",
-            "max": "1000.0",
-            "default": "9.8"},
+            "min": 0.0,
+            "max": 1000.0,
+            "default": 9.8},
         "mass": {
             "type": "float",
-            "min": "0.0001",
-            "max": "1000.0",
-            "default": "1.0"},
+            "min": 0.0001,
+            "max": 1000.0,
+            "default": 1.0},
         "velocity": {
             "type": "float",
-            "min": "0.0",
-            "max": "1000.0",
-            "default": "10.0"}}
+            "min": 0.0,
+            "max": 1000.0,
+            "default": 10.0}}
 
     # Create an encoder and decoder for the cannonsim app
     encoder = uq.encoders.GenericEncoder(
