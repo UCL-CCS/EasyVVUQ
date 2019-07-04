@@ -29,6 +29,15 @@ __license__ = "LGPL"
 
 logger = logging.getLogger(__name__)
 
+class EasyVVUQValidator(cerberus.Validator):
+    def __init__(self, *args, **kwargs):
+        super(EasyVVUQValidator, self).__init__(*args, **kwargs)
+
+    def _validate_type_fixture(self, field, value):
+        print("Fixtures not validated")
+        pass
+
+
 class ParamsSpecification:
 
     def __init__(self, params, appname=None):
@@ -62,7 +71,7 @@ class ParamsSpecification:
         self.appname = appname
 
         # Create a validator for the schema defined by params_dict
-        self.cerberus_validator = cerberus.Validator(self.params_dict)
+        self.cerberus_validator = EasyVVUQValidator(self.params_dict)
 
     def process_run(self, new_run, verify=True):
 
