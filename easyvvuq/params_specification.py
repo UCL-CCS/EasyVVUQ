@@ -3,6 +3,7 @@
 """
 import logging
 import cerberus
+import json
 
 __copyright__ = """
 
@@ -80,14 +81,14 @@ class ParamsSpecification:
                     raise RuntimeError(reasoning)
 
             if not self.cerberus_validator.validate(new_run):
-                    errors = self.cerberus_validator.errors
-                    msg = (
-                        f"Error during verification of params in added run:\n"
-                        f"{new_run}\n"
-                        f"Error was:\n"
-                        f"{errors}")
-                    logger.error(msg)
-                    raise RuntimeError(msg)
+                errors = self.cerberus_validator.errors
+                msg = (
+                    f"Error during verification of params in added run:\n"
+                    f"{new_run}\n"
+                    f"Error was:\n"
+                    f"{errors}")
+                logger.error(msg)
+                raise RuntimeError(msg)
 
         # If necessary parameter names are missing, fill them in from the
         # default values in params_info
