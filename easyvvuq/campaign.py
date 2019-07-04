@@ -8,8 +8,9 @@ import logging
 import tempfile
 import json
 import easyvvuq
+from easyvvuq import ParamsSpecification
 from easyvvuq.constants import default_campaign_prefix, Status
-from easyvvuq.data_structs import RunInfo, CampaignInfo, AppInfo, ParamsSpecification
+from easyvvuq.data_structs import RunInfo, CampaignInfo, AppInfo
 from easyvvuq.sampling import BaseSamplingElement
 from easyvvuq.collate import BaseCollationElement
 

@@ -1,6 +1,7 @@
 import sys
 from .constants import OutputType
 from . import data_structs
+from .params_specification import ParamsSpecification
 from .campaign import Campaign
 from . import actions
 from . import distributions
