@@ -7,6 +7,7 @@ import json
 from easyvvuq import constants
 from easyvvuq.encoders import BaseEncoder
 from easyvvuq.decoders import BaseDecoder
+import cerberus
 
 __copyright__ = """
 
@@ -126,6 +127,9 @@ class ParamsSpecification:
         self.params_dict = params
         self.appname = appname
 
+        # Create a validator for the schema defined by params_dict
+        self.cerberus_validator = cerberus.Validator(self.params_dict)
+
     def process_run(self, new_run, verify=True):
 
         if verify:
@@ -139,7 +143,18 @@ class ParamsSpecification:
                         f"of app {self.appname}.\n"
                         f"The allowed param names for this app appear to be:\n"
                         f"{allowed_params_str}")
+                    logger.error(reasoning)
                     raise RuntimeError(reasoning)
+
+            if not self.cerberus_validator.validate(new_run):
+                    errors = self.cerberus_validator.errors
+                    msg = (
+                        f"Error during verification of params in added run:\n"
+                        f"{new_run}\n"
+                        f"Error was:\n"
+                        f"{errors}")
+                    logger.error(msg)
+                    raise RuntimeError(msg)
 
         # If necessary parameter names are missing, fill them in from the
         # default values in params_info
