@@ -13,17 +13,17 @@ def test_qmc(tmpdir):
     # Define parameter space
     params = {
         "kappa": {
-            "type": "real",
-            "min": "0.0",
-            "max": "0.1",
-            "default": "0.025"},
+            "type": "float",
+            "min": 0.0,
+            "max": 0.1,
+            "default": 0.025},
         "t_env": {
-            "type": "real",
-            "min": "0.0",
-            "max": "40.0",
-            "default": "15.0"},
+            "type": "float",
+            "min": 0.0,
+            "max": 40.0,
+            "default": 15.0},
         "out_file": {
-            "type": "str",
+            "type": "string",
             "default": "output.csv"}}
 
     output_filename = params["out_file"]["default"]
