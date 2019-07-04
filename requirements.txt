@@ -7,4 +7,5 @@ pytest-pep8
 SQLAlchemy
 sqlalchemy-utils
 jsonpickle
+cerberus
 matplotlib
