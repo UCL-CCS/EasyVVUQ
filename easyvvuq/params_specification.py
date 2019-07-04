@@ -29,6 +29,7 @@ __license__ = "LGPL"
 
 logger = logging.getLogger(__name__)
 
+
 class EasyVVUQValidator(cerberus.Validator):
     def __init__(self, *args, **kwargs):
         super(EasyVVUQValidator, self).__init__(*args, **kwargs)
@@ -36,6 +37,7 @@ class EasyVVUQValidator(cerberus.Validator):
     def _validate_type_fixture(self, value):
         # Fixtures type not validated at present
         return True
+
 
 class ParamsSpecification:
 
