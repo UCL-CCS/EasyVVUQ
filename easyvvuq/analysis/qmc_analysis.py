@@ -1,7 +1,6 @@
 """Analysis element for Quasi-Monte Carlo (QMC).
 """
 import logging
-import chaospy as cp
 import numpy as np
 from easyvvuq import OutputType
 from .base import BaseAnalysisElement
