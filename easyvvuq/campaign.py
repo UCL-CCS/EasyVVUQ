@@ -464,8 +464,7 @@ class Campaign:
             logging.error(msg)
             raise Exception(msg)
 
-        print(app_default_params)
-
+        # Verify and complete run with missing/default param values
         new_run = app_default_params.process_run(new_run)
 
         # Add to run queue
