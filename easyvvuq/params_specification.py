@@ -73,27 +73,23 @@ class ParamsSpecification:
                 default_val = self.params_dict[param]["default"]
                 new_run[param] = default_val
 
+        # Optionally verify that all params are known for this app, that the types are
+        # correct, params are within specified ranges etc. Uses cerberus for this.
         if verify:
-            # Check if parameter names match those already known for this app
-#            for param in new_run.keys():
-#                if param not in self.params_dict.keys():
-#                    allowed_params_str = ','.join(list(self.params_dict.keys()))
-#                    reasoning = (
-#                        f"Run dict contains extra parameter, "
-#                        f"{param}, which is not a known parameter name "
-#                        f"of app {self.appname}.\n"
-#                        f"The allowed param names for this app appear to be:\n"
-#                        f"{allowed_params_str}")
-#                    logger.error(reasoning)
-#                    raise RuntimeError(reasoning)
-
             if not self.cerberus_validator.validate(new_run):
                 errors = self.cerberus_validator.errors
                 msg = (
-                    f"Error during verification of params in added run:\n"
+                    f"Error when verifying the following new run:\n"
                     f"{new_run}\n"
-                    f"Error was:\n"
-                    f"{errors}")
+                    f"Identified errors were:\n"
+                    f"{errors}\n")
+
+                errors_list = [error[0] for error in self.cerberus_validator.errors.values()]
+                if 'unknown field' in errors_list:
+                    msg += (
+                        f"The allowed parameter names for this app are:\n"
+                        f"{list(self.params_dict.keys())}")
+
                 logger.error(msg)
                 raise RuntimeError(msg)
 
