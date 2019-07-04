@@ -11,7 +11,7 @@ from easyvvuq.encoders.base import BaseEncoder
 from easyvvuq.decoders.base import BaseDecoder
 from easyvvuq.collate.base import BaseCollationElement
 from easyvvuq import constants
-from easyvvuq.data_structs import ParamsSpecification
+from easyvvuq import ParamsSpecification
 
 __copyright__ = """
 
