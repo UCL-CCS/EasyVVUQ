@@ -39,17 +39,17 @@ def test_sc(tmpdir):
     # Define parameter space
     params = {
         "Pe": {
-            "type": "real",
-            "min": "1.0",
-            "max": "2000.0",
-            "default": "100.0"},
+            "type": "float",
+            "min": 1.0,
+            "max": 2000.0,
+            "default": 100.0},
         "f": {
-            "type": "real",
-            "min": "0.0",
-            "max": "10.0",
-            "default": "1.0"},
+            "type": "float",
+            "min": 0.0,
+            "max": 10.0,
+            "default": 1.0},
         "out_file": {
-            "type": "str",
+            "type": "string",
             "default": "output.csv"}}
 
     output_filename = params["out_file"]["default"]
@@ -178,6 +178,5 @@ if __name__ == "__main__":
             idx += 1
 
     leg = plt.legend(loc=0)
-    leg.set_draggable(True)
 
     plt.tight_layout()
