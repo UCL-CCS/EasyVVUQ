@@ -641,6 +641,13 @@ class Campaign:
         """
         return self.campaign_db.runs_dir()
 
+    def call_for_each_run(self, fn, status=Status.ENCODED):
+
+        # Loop through all runs in this campaign with the specified status,
+        # and call the specified user function for each.
+        for run_id, run_data in self.campaign_db.runs(status=Status.ENCODED):
+            fn(run_data['run_dir'], run_data['params'])
+
     def apply_for_each_run_dir(self, action):
         """
         For each run in this Campaign's run list, apply the specified action
