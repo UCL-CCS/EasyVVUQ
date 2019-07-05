@@ -72,6 +72,11 @@ class Campaign:
     change_to_state : bool, optional, default=False
         Should we change to the directory containing any specified `state_file`
         in order to make relative paths work.
+    verify_all_runs: bool, optional, default=True
+        Check all new runs being added for unrecognised params (not defined for the currently set
+        app), values lying within defined physical range, type checking etc. This should normally
+        always be set to True, but in cases where the performance is too degraded, the checks can
+        be disabled by setting to False.
 
     Attributes
     ----------
@@ -117,10 +122,12 @@ class Campaign:
             db_location=None,
             work_dir="./",
             state_file=None,
-            change_to_state=False
+            change_to_state=False,
+            verify_all_runs=True
     ):
 
         self.work_dir = os.path.realpath(os.path.expanduser(work_dir))
+        self.verify_all_runs = verify_all_runs
 
         self.campaign_name = None
         self._campaign_dir = None
@@ -465,7 +472,7 @@ class Campaign:
             raise Exception(msg)
 
         # Verify and complete run with missing/default param values
-        new_run = app_default_params.process_run(new_run)
+        new_run = app_default_params.process_run(new_run, verify=self.verify_all_runs)
 
         # Add to run queue
         run_info = RunInfo(app=self._active_app['id'],
