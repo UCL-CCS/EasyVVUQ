@@ -22,13 +22,13 @@ The first 9 steps are identical to those detailed in the `Basic Tutorial <basic_
 Section 10. Print the list of runs
 ----------------------------------
 
-Before doing anything else, let's first print out the list of runs that have already been added to our `Campaign`. The following should display a (nicely formatted) list of the 15 runs present.::
+Before doing anything else, let's first print out the list of runs that have already been added to our `Campaign`. The following should display a (nicely formatted) list of the 15 runs present. ::
     pprint(my_campaign.list_runs())
 
 Section 11. Save the Campaign
 
 -----------------------------
-Now we want to save the state of our campaign so that we can reload it at a later time. Here we have chosen to save it in a file called 'campaign_state.json'::
+Now we want to save the state of our campaign so that we can reload it at a later time. Here we have chosen to save it in a file called 'campaign_state.json' ::
 
     my_campaign.save_state("campaign_state.json")
     
@@ -37,7 +37,7 @@ At this point we could in principle end the script, and reload the campaign in a
 Section 12. Load state in new campaign object
 ---------------------------------------------
 
-We can now make a new campaign object, which we shall call `reloaded_campaign` to make the distinction clearer. By specififying the state_file parameter, we can make this load the state of the previously saved campaign (stored in `campaign_state.json`).::
+We can now make a new campaign object, which we shall call `reloaded_campaign` to make the distinction clearer. By specififying the state_file parameter, we can make this load the state of the previously saved campaign (stored in `campaign_state.json`). ::
 
     reloaded_campaign = uq.Campaign(state_file="campaign_state.json", work_dir=".")
     
@@ -46,7 +46,7 @@ We can now make a new campaign object, which we shall call `reloaded_campaign` t
 Section 13. Do some more runs...
 --------------------------------
 
-In the following we draw some more samples, execute the runs, and collate the results into the existing dataframe.::
+In the following we draw some more samples, execute the runs, and collate the results into the existing dataframe. ::
 
     reloaded_campaign.draw_samples(num_samples=1, replicas=5)
     reloaded_campaign.populate_runs_dir()
@@ -55,7 +55,7 @@ In the following we draw some more samples, execute the runs, and collate the re
 
 Section 14. Print the list of runs again
 ----------------------------------------
-Finally, we can print the list of runs in the campaign again.::
+Finally, we can print the list of runs in the campaign again. ::
 
     pprint(reloaded_campaign.list_runs())
     
@@ -64,7 +64,7 @@ At which point we see there are now 20 of them.
 Section 15. Run Analysis
 ------------------------
 
-As in the basic tutorial, we can now carry out a bootstrap analysis on these 20 runs.::
+As in the basic tutorial, we can now carry out a bootstrap analysis on these 20 runs. ::
 
     stats = uq.analysis.EnsembleBoot(groupby=["mu"], qoi_cols=["Value"])
     my_campaign.apply_analysis(stats)
