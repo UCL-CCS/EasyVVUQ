@@ -1,4 +1,4 @@
-.. _basic_tutorial:
+.. _restartable_campaign_tutorial:
 
 Restarting a Campaign
 =====================
