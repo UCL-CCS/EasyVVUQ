@@ -656,16 +656,12 @@ class Campaign:
         -------
         """
 
-        runs_dir = self.campaign_db.runs_dir()
-
         # Loop through all runs in this campaign with status ENCODED
         for run_id, run_data in self.campaign_db.runs(status=Status.ENCODED):
 
-            dir_name = os.path.join(runs_dir, run_id)
-            print("Applying " + action.__module__ + " to " + dir_name + "...")
-
             # Run user-specified action on this directory
-            action.act_on_dir(dir_name)
+            logger.info("Applying " + action.__module__ + " to " + run_data['run_dir'])
+            action.act_on_dir(run_data['run_dir'])
 
     def collate(self):
         """Combine the output from all runs associated with the current app.
