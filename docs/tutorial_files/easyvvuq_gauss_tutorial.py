@@ -20,21 +20,21 @@ my_campaign = uq.Campaign(name='gauss', work_dir=".")
 params = {
     "sigma": {
         "type": "float",
-        "min": "0.0",
-        "max": "100000.0",
-        "default": "0.25"
+        "min": 0.0,
+        "max": 100000.0,
+        "default": 0.25
     },
     "mu": {
         "type": "float",
-        "min": "0.0",
-        "max": "100000.0",
-        "default": "1"
+        "min": 0.0,
+        "max": 100000.0,
+        "default": 1
     },
     "num_steps": {
         "type": "integer",
-        "min": "0",
-        "max": "100000",
-        "default": "10"
+        "min": 0,
+        "max": 100000,
+        "default": 10
     },
     "out_file": {
         "type": "string",
