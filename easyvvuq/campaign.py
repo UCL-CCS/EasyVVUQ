@@ -656,10 +656,9 @@ class Campaign:
         -------
         """
 
-        # Loop through all runs in this campaign with status ENCODED
+        # Loop through all runs in this campaign with status ENCODED, and
+        # run the specified action on each run's dir
         for run_id, run_data in self.campaign_db.runs(status=Status.ENCODED):
-
-            # Run user-specified action on this directory
             logger.info("Applying " + action.__module__ + " to " + run_data['run_dir'])
             action.act_on_dir(run_data['run_dir'])
 
