@@ -1,6 +1,7 @@
 import os
 import easyvvuq as uq
 import chaospy as cp
+from pprint import pprint
 
 # 0. Setup some variables describing app to be run
 #
@@ -86,19 +87,26 @@ my_campaign.apply_for_each_run_dir(uq.actions.ExecuteLocal(cmd, interpret='pytho
 # 9. Collate output
 my_campaign.collate()
 
-# 10. Save the Campaign
+# 10. Print the list of runs
+pprint(my_campaign.list_runs())
+
+# 11. Save the Campaign
 my_campaign.save_state("campaign_state.json")
 
-# 11. Load state in new campaign object
+# 12. Load state in new campaign object
+print("Reloading campaign...")
 reloaded_campaign = uq.Campaign(state_file="campaign_state.json", work_dir=".")
 
-# 12. Draw some more samples, execute the runs, and collate onto existing dataframe
+# 13. Draw some more samples, execute the runs, and collate onto existing dataframe
 reloaded_campaign.draw_samples(num_samples=1, replicas=5)
 reloaded_campaign.populate_runs_dir()
 my_campaign.apply_for_each_run_dir(uq.actions.ExecuteLocal(cmd, interpret='python3'))
 reloaded_campaign.collate()
 
-# 13. Run Analysis
+# 14. Print the list of runs again
+pprint(reloaded_campaign.list_runs())
+
+# 15. Run Analysis
 #     - Calculate bootstrap statistics for collated data
 stats = uq.analysis.EnsembleBoot(groupby=["mu"], qoi_cols=["Value"])
 my_campaign.apply_analysis(stats)
