@@ -38,6 +38,7 @@ Table of contents
    installation
    concepts
    basic_tutorial
+   restartable_campaign_tutorial
 
 
 Indices and tables
