@@ -36,8 +36,11 @@ if not os.path.exists("tests/cannonsim/bin/cannonsim"):
         allow_module_level=True)
 
 cannonsim_path = os.path.realpath(os.path.expanduser("tests/cannonsim/bin/cannonsim"))
+
+
 def execute_cannonsim(path, params):
     os.system(f"cd {path} && {cannonsim_path} in.cannon output.csv")
+
 
 def test_cannonsim_csv(tmpdir):
 
