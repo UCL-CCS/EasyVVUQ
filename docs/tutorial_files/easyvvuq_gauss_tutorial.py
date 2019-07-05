@@ -19,25 +19,25 @@ my_campaign = uq.Campaign(name='gauss', work_dir=".")
 # 2. Parameter space definition
 params = {
     "sigma": {
-        "type": "real",
+        "type": "float",
         "min": "0.0",
         "max": "100000.0",
         "default": "0.25"
     },
     "mu": {
-        "type": "real",
+        "type": "float",
         "min": "0.0",
         "max": "100000.0",
         "default": "1"
     },
     "num_steps": {
-        "type": "int",
+        "type": "integer",
         "min": "0",
         "max": "100000",
         "default": "10"
     },
     "out_file": {
-        "type": "str",
+        "type": "string",
         "default": "output.csv"
     }
 }
