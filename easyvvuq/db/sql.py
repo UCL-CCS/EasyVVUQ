@@ -133,8 +133,9 @@ class CampaignDB(BaseCampaignDB):
             if info is None:
                 raise ValueError('Campaign with the given name not found.')
 
-            self._next_run = self.session.query(DBInfoTable).first().next_run
-            self._next_ensemble = self.session.query(DBInfoTable).first().next_ensemble
+            db_info = self.session.query(DBInfoTable).first()
+            self._next_run = db_info.next_run
+            self._next_ensemble = db_info.next_ensemble
 
     def app(self, name=None):
         """
@@ -362,6 +363,7 @@ class CampaignDB(BaseCampaignDB):
 
         """
 
+        # Add all runs to RunTable
         for run_info in run_info_list:
             run_info.ensemble_name = f"{ensemble_prefix}{self._next_ensemble}"
             run_info.run_name = f"{run_prefix}{self._next_run}"
@@ -370,6 +372,11 @@ class CampaignDB(BaseCampaignDB):
             self.session.add(run)
             self._next_run += 1
         self._next_ensemble += 1
+
+        # Update run and ensemble counters in db
+        db_info = self.session.query(DBInfoTable).first()
+        db_info.next_run = self._next_run
+        db_info.next_ensemble = self._next_ensemble
 
         self.session.commit()
 
