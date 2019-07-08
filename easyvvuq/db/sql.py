@@ -384,31 +384,6 @@ class CampaignDB(BaseCampaignDB):
 
         self.session.commit()
 
-#    def add_run(self, run_info=None, prefix='Run_'):
-#        """
-#        Add run to the `runs` table in the database.
-#
-#        Parameters
-#        ----------
-#        run_info: RunInfo
-#            Contains relevant run fields: params, status (where in the
-#            EasyVVUQ workflow is this RunTable), campaign (id number),
-#            sample, app
-#        prefix: str
-#            Prefix for run id
-#
-#        Returns
-#        -------
-#
-#        """
-#
-#        run_info.run_name = f"{prefix}{self._next_run}"
-#
-#        run = RunTable(**run_info.to_dict(flatten=True))
-#        self.session.add(run)
-#        self.session.commit()
-#        self._next_run += 1
-
     @staticmethod
     def _run_to_dict(run_row):
         """
