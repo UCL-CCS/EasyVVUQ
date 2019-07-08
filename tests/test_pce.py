@@ -12,6 +12,11 @@ def test_pce(tmpdir):
 
     # Define parameter space
     params = {
+        "temp_init": {
+            "type": "float",
+            "min": 0.0,
+            "max": 100.0,
+            "default": 95.0},
         "kappa": {
             "type": "float",
             "min": 0.0,
