@@ -6,7 +6,7 @@ Restarting a Campaign
 This tutorial shows a simple case of saving and reloading a Campaign in EasyVVUQ. Restarting
 a Campaign can be useful in a number of cases, such as when the execution phase takes so long
 we can't (or don't want to) have our python workflow script running the whole time. This example
-uses the same Gauss test case as in the :doc:`Basic Tutorial<basic_tutorial>`.
+uses the same Gauss test case as in the :doc:`Basic Tutorial <basic\_tutorial>`.
 
 EasyVVUQ Script Overview
 ------------------------
