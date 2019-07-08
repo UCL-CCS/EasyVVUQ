@@ -40,6 +40,14 @@ logger = logging.getLogger(__name__)
 
 Base = declarative_base()
 
+class DBInfoTable(Base):
+    """An SQLAlchemy schema for the database information table.
+    """
+    __tablename__ = 'db_info'
+    id = Column(Integer, primary_key=True)
+    next_run = Column(Integer)
+    next_ensemble = Column(Integer)
+
 
 class CampaignTable(Base):
     """An SQLAlchemy schema for the campaign information table.
@@ -113,17 +121,20 @@ class CampaignDB(BaseCampaignDB):
                 raise RuntimeError(message)
             Base.metadata.create_all(self.engine)
 
-            self.session.add(CampaignTable(**info.to_dict(flatten=True)))
-            self.session.commit()
             self._next_run = 1
             self._next_ensemble = 1
+
+            self.session.add(CampaignTable(**info.to_dict(flatten=True)))
+            self.session.add(DBInfoTable(next_run=self._next_run, next_ensemble=self._next_ensemble))
+            self.session.commit()
         else:
             info = self.session.query(
                 CampaignTable).filter_by(name=name).first()
             if info is None:
                 raise ValueError('Campaign with the given name not found.')
 
-            self._next_run = self.session.query(RunTable).count() + 1
+            self._next_run = self.session.query(DBInfoTable).first().next_run
+            self._next_ensemble = self.session.query(DBInfoTable).first().next_ensemble
 
     def app(self, name=None):
         """
