@@ -544,9 +544,8 @@ class Campaign:
         self.campaign_db.update_sampler(self._active_sampler_id, self._active_sampler)
 
         # Log application of this sampling element
-        self.log_element_application(
-            self._active_sampler, {
-                "num_added": num_added})
+        self.log_element_application( self._active_sampler,
+            {"num_added": num_added, "replicas": replicas})
 
     def list_runs(self, sampler=None, campaign=None, status=None):
         """Get list of runs in the CampaignDB.
