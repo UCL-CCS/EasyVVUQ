@@ -572,6 +572,27 @@ class CampaignDB(BaseCampaignDB):
         self._get_campaign_info(campaign_name=campaign_name).campaign_dir
 
     def _select_runs(self, name=None, campaign=None, sampler=None, status=None, not_status=None):
+        """
+        Select all runs in the database which match the input criteria.
+
+        Parameters
+        ----------
+        name: str
+            Name of run to filter for.
+        campaign:  int or None
+            Campaign id to filter for.
+        sampler: int or None
+            Sampler id to filter for.
+        status: enum(Status) or None
+            Status string to filter for.
+        not_status: enum(Status) or None
+            Exclude runs with this status string
+
+        Returns
+        -------
+        sqlalchemy.orm.query.Query
+            Selected runs from the database run table.
+        """
         filter_options = {}
         if name:
             filter_options['run_name'] = name
