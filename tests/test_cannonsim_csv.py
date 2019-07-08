@@ -44,7 +44,7 @@ logging.basicConfig(level=logging.CRITICAL)
 @pytest.fixture
 def campaign():
     def _campaign(work_dir, campaign_name, app_name, params, encoder, decoder, sampler,
-                      collater, actions, stats, vary, num_samples, replicas, db_type):
+                  collater, actions, stats, vary, num_samples, replicas, db_type):
         my_campaign = uq.Campaign(name='cannon', work_dir=work_dir, db_type=db_type)
         print("Serialized encoder:", encoder.serialize())
         print("Serialized decoder:", decoder.serialize())
@@ -317,11 +317,11 @@ def test_pce(tmpdir, campaign):
     actions = uq.actions.ExecuteLocal("tests/pce/pce_model.py pce_in.json")
     # Post-processing analysis
     stats = uq.analysis.PCEAnalysis(sampler=sampler,
-                                        qoi_cols=output_columns)
+                                    qoi_cols=output_columns)
     campaign(tmpdir, 'pce', 'pce', params, encoder, decoder, sampler,
              collater, actions, stats, vary, 0, 1, db_type='sql')
     #campaign(tmpdir, 'pce', 'pce', params, encoder, decoder, sampler,
-    #             collater, actions, stats, vary, 0, 1, db_type='json')
+    #         collater, actions, stats, vary, 0, 1, db_type='json')
 
 
 def test_sc(tmpdir, campaign):
@@ -359,5 +359,4 @@ def test_sc(tmpdir, campaign):
     campaign(tmpdir, 'sc', 'sc', params, encoder, decoder, sampler,
              collater, actions, stats, vary, 0, 1, db_type='sql')
     #campaign(tmpdir, 'sc', 'sc', params, encoder, decoder, sampler,
-    #             collater, actions, stats, vary, 0, 1, db_type='json')
-    
+    #         collater, actions, stats, vary, 0, 1, db_type='json')
