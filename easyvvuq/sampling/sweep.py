@@ -1,5 +1,6 @@
 from .base import BaseSamplingElement
 import itertools
+import logging
 
 __copyright__ = """
 
@@ -22,6 +23,8 @@ __copyright__ = """
 
 """
 __license__ = "LGPL"
+
+logger = logging.getLogger(__name__)
 
 
 def wrap_iterable(var_name, iterable):
