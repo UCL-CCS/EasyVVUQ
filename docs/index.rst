@@ -39,6 +39,7 @@ Table of contents
    concepts
    basic_tutorial
    restartable_campaign_tutorial
+   cooling_coffee_cup
 
 
 Indices and tables
