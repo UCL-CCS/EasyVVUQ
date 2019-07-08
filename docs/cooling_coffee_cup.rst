@@ -4,14 +4,14 @@ A Cooling Coffee Cup with Polynomial Chaos Expansion
 ====================================================
 
 In this tutorial we will perform a Polynomial Chaos Expansion for a model of a cooling coffee cup.
-The model uses Newton's law of cooling to evolve the temperature, :math:`$T$`, over time (:math:`$t$`) in an environment at :math:`$T_{env}$`:
+The model uses Newton's law of cooling to evolve the temperature, :math:`T`, over time (:math:`t`) in an environment at :math:`T_{env}`:
 
 .. math::
     \frac{dT(t)}{dt} = -\kappa (T(t) -T_{env})
 
-The constant :math:`$\kappa$` characterizes the rate at which the coffee cup transfers heat to the environment.
+The constant :math:`\kappa` characterizes the rate at which the coffee cup transfers heat to the environment.
 In this example we will analyze this model using the polynomial chaos expansion (PCE) UQ algorithm.
-e will use a constant initial temperature :math:`$T_0 = 95 ^\circ\text{C}$`, and vary :math:`$\kappa$ and $T_{env}$` using a uniform distribution in the ranges 0.025-0.075 and 15-25 respectively.
+e will use a constant initial temperature :math:`T_0 = 95 ^\circ\text{C}`, and vary :math:`\kappa` and :math:`T_{env}` using a uniform distribution in the ranges :math:`0.025-0.075` and :math:`15-25` respectively.
 
 Below we provide a commented script that shows how the Campaign is built up and then employed.
 We also provide an outline of how each element is setup.
