@@ -52,7 +52,8 @@ class CampaignDB(BaseCampaignDB):
         if new_campaign:
 
             self._campaign_info = info.to_dict()
-            self._next_run = 0
+            self._next_run = 1
+            self._next_ensemble = 1
 
             if location is None:
                 message = f"No location given for JSON db location"
@@ -62,7 +63,6 @@ class CampaignDB(BaseCampaignDB):
             self._collation_csv = location + ".COLLATION"
         else:
             self._load_campaign(location, name)
-            self._next_run = len(self._runs)
 
         self.location = location
 
@@ -87,6 +87,8 @@ class CampaignDB(BaseCampaignDB):
         self._runs = input_info.get('runs', {})
         self._sample = input_info.get('sample', {})
         self._collation_csv = input_info.get('collation_csv', {})
+        self._next_run = input_info['next_run']
+        self._next_ensemble = input_info['next_ensemble']
 
         self._app['params'] = ParamsSpecification.deserialize(self._app['params'])
 
@@ -102,7 +104,9 @@ class CampaignDB(BaseCampaignDB):
             'app': serialized_app,
             'runs': self._runs,
             'sample': self._sample,
-            'collation_csv': self._collation_csv
+            'collation_csv': self._collation_csv,
+            'next_run': self._next_run,
+            'next_ensemble': self._next_ensemble
         }
 
         with open(self.location, "w") as outfile:
@@ -321,32 +325,66 @@ class CampaignDB(BaseCampaignDB):
         collater = BaseCollationElement.deserialize(self._campaign_info['collater'])
         return collater
 
-    def add_run(self, run_info=None, prefix='Run_'):
+    def add_runs(self, run_info_list=None, run_prefix='Run_', ensemble_prefix='Ensemble_'):
         """
-        Add run to the `runs` table in the database.
+        Add runs to the `runs` table in the database.
 
         Parameters
         ----------
-        run_info: RunInfo
-            Contains relevant run fields: params, status (where in the
+        run_info_list: List of RunInfo objects
+            Each RunInfo contains relevant run fields: params, status (where in the
             EasyVVUQ workflow is this RunTable), campaign (id number),
             sample, app
-        prefix: str
+        run_prefix: str
             Prefix for run id
+        ensemble_prefix: str
+            Prefix for ensemble id
 
         Returns
         -------
 
         """
 
-        name = f"{prefix}{self._next_run}"
+        for run_info in run_info_list:
+            name = f"{run_prefix}{self._next_run}"
+            ensemble = f"{ensemble_prefix}{self._next_ensemble}"
 
-        this_run = run_info.to_dict()
-        this_run['run_name'] = name
+            this_run = run_info.to_dict()
+            this_run['run_name'] = name
+            this_run['ensemble_name'] = ensemble
 
-        self._runs[name] = this_run
-        self._next_run += 1
+            self._runs[name] = this_run
+            self._next_run += 1
+        self._next_ensemble += 1
+
         self._save()
+
+#    def add_run(self, run_info=None, prefix='Run_'):
+#        """
+#        Add run to the `runs` table in the database.
+#
+#        Parameters
+#        ----------
+#        run_info: RunInfo
+#            Contains relevant run fields: params, status (where in the
+#            EasyVVUQ workflow is this RunTable), campaign (id number),
+#            sample, app
+#        prefix: str
+#            Prefix for run id
+#
+#        Returns
+#        -------
+#
+#        """
+#
+#        name = f"{prefix}{self._next_run}"
+#
+#        this_run = run_info.to_dict()
+#        this_run['run_name'] = name
+#
+#        self._runs[name] = this_run
+#        self._next_run += 1
+#        self._save()
 
     def run(self, run_name, campaign=None, sampler=None):
         """
