@@ -320,8 +320,8 @@ def test_pce(tmpdir, campaign):
                                         qoi_cols=output_columns)
     campaign(tmpdir, 'pce', 'pce', params, encoder, decoder, sampler,
                  collater, actions, stats, vary, 0, 1, db_type='sql')
-    campaign(tmpdir, 'pce', 'pce', params, encoder, decoder, sampler,
-                 collater, actions, stats, vary, 0, 1, db_type='json')
+    #campaign(tmpdir, 'pce', 'pce', params, encoder, decoder, sampler,
+    #             collater, actions, stats, vary, 0, 1, db_type='json')
 
 
 def test_sc(tmpdir, campaign):
@@ -358,6 +358,6 @@ def test_sc(tmpdir, campaign):
     stats = uq.analysis.SCAnalysis(sampler=sampler, qoi_cols=output_columns)
     campaign(tmpdir, 'sc', 'sc', params, encoder, decoder, sampler,
                  collater, actions, stats, vary, 0, 1, db_type='sql')
-    campaign(tmpdir, 'sc', 'sc', params, encoder, decoder, sampler,
-                 collater, actions, stats, vary, 0, 1, db_type='json')
+    #campaign(tmpdir, 'sc', 'sc', params, encoder, decoder, sampler,
+    #             collater, actions, stats, vary, 0, 1, db_type='json')
     
