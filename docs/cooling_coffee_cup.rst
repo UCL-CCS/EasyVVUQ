@@ -27,3 +27,34 @@ script (:download:`easyvvuq_pce_tutorial.py <tutorial_files/easyvvuq_pce_tutoria
 To run the script execute the following command ::
 
     python3 easyvvuq_pce_tutorial.py
+
+
+Parameter space definition
+--------------------------
+
+The parameter space is defined using a dictionary. Each entry in the dictionary follows the format: ::
+
+    "parameter_name": {"type" : "<value>", "min": "<value>"", "max": "<value>", "default": "<value>"}
+
+With a defined type, minimum and maximum value and default. If the parameter is not selected to vary in the Sampler (see below) then the default value is used for every run.
+
+App Creation
+------------
+In this example the GenericEncoder and SimpleCSV, both included in the  core EasyVVUQ library, were used as the encoder/decoder pair for this application.
+GenericEncoder performs simple text substitution into a supplied template, using a specified delimiter to identify where parameters should be placed.
+The template is shown below (\$ is used as the delimiter).
+The template substitution approach is likely to suit most simple applications but in practice many large applications have more complex requirements, for example the multiple input files or the creation of a directory hierarchy.
+In such cases, users may write their own encoders by extending the BaseEncoder class. ::
+
+    {
+       "T0":"$temp_init",
+       "kappa":"$kappa",
+       "t_env":"$t_env",
+       "out_file":"$out_file"
+    }
+
+As can be inferred from it's name SimpleCSV reads CVS files produced by the cooling model code.
+Again many applications output results in different formats, potentially requiring bespoke Decoders.
+
+In this workflow all application runs will be analyzed as individual datapoint, so we set the collator to AggregateSamples without averaging.
+This element simply extracts information using the assigned decoder and adds it to a summary dataframe.
