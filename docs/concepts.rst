@@ -34,7 +34,7 @@ In an HPC context the model evaluation step is generally equivalent to the
 execution of a (computationally expensive) simulation.
 The actual simulation execution is beyond the remit of the package but
 EasyVVUQ is designed to wrap around simulation execution, providing functions
-to generate input (an ``Encoder``) and to transform simulation output in to common
+to generate input (an ``Encoder``) and to transform simulation output into common
 formats for analysis (a ``Decoder``).
 Below we describe the components of EasyVVUQ designed to perform each step in
 more detail.
