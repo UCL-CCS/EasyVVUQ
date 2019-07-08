@@ -40,6 +40,7 @@ logger = logging.getLogger(__name__)
 
 Base = declarative_base()
 
+
 class DBInfoTable(Base):
     """An SQLAlchemy schema for the database information table.
     """
@@ -125,7 +126,10 @@ class CampaignDB(BaseCampaignDB):
             self._next_ensemble = 1
 
             self.session.add(CampaignTable(**info.to_dict(flatten=True)))
-            self.session.add(DBInfoTable(next_run=self._next_run, next_ensemble=self._next_ensemble))
+            self.session.add(
+                DBInfoTable(
+                    next_run=self._next_run,
+                    next_ensemble=self._next_ensemble))
             self.session.commit()
         else:
             info = self.session.query(
