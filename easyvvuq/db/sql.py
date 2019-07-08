@@ -594,12 +594,16 @@ class CampaignDB(BaseCampaignDB):
 
         Parameters
         ----------
-        run_name: str
+        name: str
             Name of run to filter for.
         campaign:  int or None
             Campaign id to filter for.
         sampler: int or None
             Sampler id to filter for.
+        status: enum(Status) or None
+            Status string to filter for.
+        not_status: enum(Status) or None
+            Exclude runs with this status string
 
         Returns
         -------
