@@ -34,7 +34,7 @@ Parameter space definition
 
 The parameter space is defined using a dictionary. Each entry in the dictionary follows the format: ::
 
-    "parameter_name": {"type" : "<value>", "min": "<value>"", "max": "<value>", "default": "<value>"}
+    "parameter_name": {"type" : "<value>", "min": <value>, "max": <value>, "default": <value>}
 
 With a defined type, minimum and maximum value and default. If the parameter is not selected to vary in the Sampler (see below) then the default value is used for every run.
 
