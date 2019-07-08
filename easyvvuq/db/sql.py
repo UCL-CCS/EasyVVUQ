@@ -72,6 +72,7 @@ class RunTable(Base):
     __tablename__ = 'run'
     id = Column(Integer, primary_key=True)
     run_name = Column(String)
+    ensemble_name = Column(String)
     app = Column(Integer, ForeignKey('app.id'))
     params = Column(String)
     status = Column(Integer)
@@ -115,6 +116,7 @@ class CampaignDB(BaseCampaignDB):
             self.session.add(CampaignTable(**info.to_dict(flatten=True)))
             self.session.commit()
             self._next_run = 1
+            self._next_ensemble = 1
         else:
             info = self.session.query(
                 CampaignTable).filter_by(name=name).first()
@@ -330,30 +332,60 @@ class CampaignDB(BaseCampaignDB):
         decoder = BaseDecoder.deserialize(app_info['output_decoder'])
         return encoder, decoder
 
-    def add_run(self, run_info=None, prefix='Run_'):
+    def add_runs(self, run_info_list=None, run_prefix='Run_', ensemble_prefix='Ensemble_'):
         """
-        Add run to the `runs` table in the database.
+        Add list of runs to the `runs` table in the database.
 
         Parameters
         ----------
-        run_info: RunInfo
-            Contains relevant run fields: params, status (where in the
-            EasyVVUQ workflow is this RunTable), campaign (id number),
-            sample, app
-        prefix: str
+        run_info_list: List of RunInfo objects
+            Each RunInfo object contains relevant run fields: params, status (where in the
+            EasyVVUQ workflow is this RunTable), campaign (id number), sample, app
+        run_prefix: str
             Prefix for run id
+        ensemble_prefix: str
+            Prefix for ensemble id
 
         Returns
         -------
 
         """
 
-        run_info.run_name = f"{prefix}{self._next_run}"
+        for run_info in run_info_list:
+            run_info.ensemble_name = f"{ensemble_prefix}{self._next_ensemble}"
+            run_info.run_name = f"{run_prefix}{self._next_run}"
 
-        run = RunTable(**run_info.to_dict(flatten=True))
-        self.session.add(run)
+            run = RunTable(**run_info.to_dict(flatten=True))
+            self.session.add(run)
+            self._next_run += 1
+        self._next_ensemble += 1
+
         self.session.commit()
-        self._next_run += 1
+
+#    def add_run(self, run_info=None, prefix='Run_'):
+#        """
+#        Add run to the `runs` table in the database.
+#
+#        Parameters
+#        ----------
+#        run_info: RunInfo
+#            Contains relevant run fields: params, status (where in the
+#            EasyVVUQ workflow is this RunTable), campaign (id number),
+#            sample, app
+#        prefix: str
+#            Prefix for run id
+#
+#        Returns
+#        -------
+#
+#        """
+#
+#        run_info.run_name = f"{prefix}{self._next_run}"
+#
+#        run = RunTable(**run_info.to_dict(flatten=True))
+#        self.session.add(run)
+#        self.session.commit()
+#        self._next_run += 1
 
     @staticmethod
     def _run_to_dict(run_row):
@@ -375,6 +407,7 @@ class CampaignDB(BaseCampaignDB):
 
         run_info = {
             'run_name': run_row.run_name,
+            'ensemble_name': run_row.ensemble_name,
             'params': json.loads(run_row.params),
             'status': constants.Status(run_row.status),
             'sample': run_row.sample,

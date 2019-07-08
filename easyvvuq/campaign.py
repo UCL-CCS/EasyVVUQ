@@ -444,13 +444,13 @@ class Campaign:
         self.campaign_db.set_campaign_collater(collater, self.campaign_id)
         self._active_collater = collater
 
-    def add_run(self, new_run):
+    def add_runs(self, runs):
         """Add a new run to the queue.
 
         Parameters
         ----------
-        new_run : dict
-            Defines the value of each model parameter listed in
+        runs : list of dicts
+            Each dict defines the value of each model parameter listed in
             `self.params_info` for a run to be added to `self.runs`
 
         Returns
@@ -466,20 +466,63 @@ class Campaign:
 
         app_default_params = self._active_app["params"]
 
-        if new_run is None:
-            msg = ("add_run() was passed new_run of type None. Bad sampler?")
-            logging.error(msg)
-            raise Exception(msg)
+        run_info_list = []
+        for new_run in runs:
 
-        # Verify and complete run with missing/default param values
-        new_run = app_default_params.process_run(new_run, verify=self.verify_all_runs)
+            if new_run is None:
+                msg = ("add_run() was passed new_run of type None. Bad sampler?")
+                logging.error(msg)
+                raise Exception(msg)
 
-        # Add to run queue
-        run_info = RunInfo(app=self._active_app['id'],
-                           params=new_run,
-                           sample=self._active_sampler_id,
-                           campaign=self.campaign_id)
-        self.campaign_db.add_run(run_info)
+            # Verify and complete run with missing/default param values
+            new_run = app_default_params.process_run(new_run, verify=self.verify_all_runs)
+
+            # Add to run queue
+            run_info = RunInfo(app=self._active_app['id'],
+                               params=new_run,
+                               sample=self._active_sampler_id,
+                               campaign=self.campaign_id)
+
+            run_info_list.append(run_info)
+
+        self.campaign_db.add_runs(run_info_list)
+
+#    def add_run(self, new_run):
+#        """Add a new run to the queue.
+#
+#        Parameters
+#        ----------
+#        new_run : dict
+#            Defines the value of each model parameter listed in
+#            `self.params_info` for a run to be added to `self.runs`
+#
+#        Returns
+#        -------
+#
+#        """
+#
+#        if self._active_app is None:
+#            msg = ("No app is currently set for this campaign. "
+#                   "Use set_app('name_of_app').")
+#            logging.error(msg)
+#            raise Exception(msg)
+#
+#        app_default_params = self._active_app["params"]
+#
+#        if new_run is None:
+#            msg = ("add_run() was passed new_run of type None. Bad sampler?")
+#            logging.error(msg)
+#            raise Exception(msg)
+#
+#        # Verify and complete run with missing/default param values
+#        new_run = app_default_params.process_run(new_run, verify=self.verify_all_runs)
+#
+#        # Add to run queue
+#        run_info = RunInfo(app=self._active_app['id'],
+#                           params=new_run,
+#                           sample=self._active_sampler_id,
+#                           campaign=self.campaign_id)
+#        self.campaign_db.add_run(run_info)
 
     def add_default_run(self):
         """
@@ -488,7 +531,7 @@ class Campaign:
         """
 
         new_run = {}
-        self.add_run(new_run)
+        self.add_runs([new_run])
 
     def draw_samples(self, num_samples=0, replicas=1):
         """Draws `num_samples` sets of parameters from the currently set
@@ -533,8 +576,8 @@ class Campaign:
         num_added = 0
         for new_run in self._active_sampler:
 
-            for __ in range(replicas):
-                self.add_run(new_run)
+            list_of_runs = [new_run for i in range(replicas)]
+            self.add_runs(list_of_runs)
 
             num_added += 1
             if num_added == num_samples:

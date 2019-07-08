@@ -101,6 +101,8 @@ class RunInfo:
     ----------
     run_name : str
         Human readable name of the run.
+    ensemble_name: str
+        Human readable name of the ensemble this run belongs to.
     app : None or int
         ID of the associated application.
     params : None or dict
@@ -120,10 +122,12 @@ class RunInfo:
         ID of the associated application.
     run_name : str
         Human readable name of the run.
+    ensemble_name: str
+        Human readable name of the ensemble this run belongs to.
     status : enum(Status)
     """
 
-    def __init__(self, run_name='', app=None, params=None, sample=None,
+    def __init__(self, run_name='', ensemble_name='', app=None, params=None, sample=None,
                  campaign=None, status=constants.Status.NEW):
 
         # TODO: Handle fixtures
@@ -136,6 +140,7 @@ class RunInfo:
         self.sample = sample
         self.app = app
         self.run_name = run_name
+        self.ensemble_name = ensemble_name
 
         if not params:
             message = f'No run configuration specified for run {run_name}'
@@ -165,6 +170,7 @@ class RunInfo:
 
             out_dict = {
                 'run_name': self.run_name,
+                'ensemble_name': self.ensemble_name,
                 'params': json.dumps(self.params),
                 'status': constants.Status(self.status),
                 'campaign': self.campaign,
@@ -176,6 +182,7 @@ class RunInfo:
 
             out_dict = {
                 'run_name': self.run_name,
+                'ensemble_name': self.ensemble_name,
                 'params': self.params,
                 'status': constants.Status(self.status),
                 'campaign': self.campaign,
