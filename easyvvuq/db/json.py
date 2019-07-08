@@ -359,33 +359,6 @@ class CampaignDB(BaseCampaignDB):
 
         self._save()
 
-#    def add_run(self, run_info=None, prefix='Run_'):
-#        """
-#        Add run to the `runs` table in the database.
-#
-#        Parameters
-#        ----------
-#        run_info: RunInfo
-#            Contains relevant run fields: params, status (where in the
-#            EasyVVUQ workflow is this RunTable), campaign (id number),
-#            sample, app
-#        prefix: str
-#            Prefix for run id
-#
-#        Returns
-#        -------
-#
-#        """
-#
-#        name = f"{prefix}{self._next_run}"
-#
-#        this_run = run_info.to_dict()
-#        this_run['run_name'] = name
-#
-#        self._runs[name] = this_run
-#        self._next_run += 1
-#        self._save()
-
     def run(self, run_name, campaign=None, sampler=None):
         """
         Get the information for a specified run.
