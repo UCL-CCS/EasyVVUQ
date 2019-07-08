@@ -85,7 +85,7 @@ class AggregateSamples(BaseCollationElement, collater_name="aggregate_samples"):
                 # Reorder columns
                 run_data = run_data[column_list]
                 run_data['run_id'] = run_id
-                run_data['ensemble_name'] = run_info['ensemble_name']
+                run_data['ensemble_id'] = run_info['ensemble_name']
                 new_data = new_data.append(run_data, ignore_index=True)
 
                 processed_run_IDs.append(run_id)
