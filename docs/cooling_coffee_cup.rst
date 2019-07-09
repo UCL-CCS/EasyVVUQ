@@ -146,3 +146,14 @@ The output of this is dependent on the type of analysis element. ::
     stats = results['statistical_moments']['te']
     per = results['percentiles']['te']
     sobols = results['sobols_first']['te']
+
+I don't want to use Polynomial Chaos
+------------------------------------
+If you wish to use something other than PCE, it is simply a matter of changing the sampling and analysis element used. For example, to use a Stochastic Collocation approach, replace the sampler line with: ::
+
+    my_sampler = uq.sampling.SCSampler(vary=vary, polynomial_order=3)
+
+And the analysis can be done with: ::
+
+    my_analysis = uq.analysis.SCAnalysis(sampler=my_sampler, qoi_cols=["te", "ti"])
+    my_campaign.apply_analysis(my_analysis)
