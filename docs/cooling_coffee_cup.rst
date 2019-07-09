@@ -117,9 +117,16 @@ Finally we set the campaign to use this sampler. ::
 
     my_campaign.set_sampler(my_sampler)
 
+Calling the campaign's draw\_samples() method will cause the specified number of samples to be added as runs to the campaign database, awaiting encoding and execution. If no arguments are passed to draw\_samples() then all samples will be drawn, unless the sampler is not finite. In this case PCESampler is finite (produces a finite number of samples) and we elect to draw all of them at once: ::
+
+    my_campaign.draw_samples()
+
 Execute Runs
 ------------
-my\_campaign.populate\_runs\_dir() will create a directory hierarchy containing the encoded input files for every run that has not yet been completed. Finally, in this example, a shell command is executed in each directory to execute the simple test code. In practice (in a real HPC workflow) this stage would be best handled using, for example, a pilot job manager.
+my\_campaign.populate\_runs\_dir() will create a directory hierarchy containing the encoded input files for every run that has not yet been completed. Finally, in this example, a shell command is executed in each directory to execute the simple test code. In practice (in a real HPC workflow) this stage would be best handled using, for example, a pilot job manager. ::
+
+    my_campaign.populate_runs_dir()
+    my_campaign.apply_for_each_run_dir(uq.actions.ExecuteLocal("python3 cooling_model.py cooling_in.json"))
 
 Collation and analysis
 ----------------------
