@@ -28,6 +28,19 @@ To run the script execute the following command ::
 
     python3 easyvvuq_pce_tutorial.py
 
+Import necessary libraries
+--------------------------
+For this example we import both easyvvuq and chaospy (for the distributions). EasyVVUQ will be referred to as 'uq' in the code. ::
+
+    import easyvvuq as uq
+    import chaospy as cp
+
+Create a new Campaign
+---------------------
+As in the basic tutorial, we start by creating an EasyVVUQ Campaign. Here we call it 'coffee_pce'. ::
+
+    # Set up a fresh campaign called "coffee_pce"
+    my_campaign = uq.Campaign(name='coffee_pce')
 
 Parameter space definition
 --------------------------
@@ -36,11 +49,19 @@ The parameter space is defined using a dictionary. Each entry in the dictionary 
 
     "parameter_name": {"type" : "<value>", "min": <value>, "max": <value>, "default": <value>}
 
-With a defined type, minimum and maximum value and default. If the parameter is not selected to vary in the Sampler (see below) then the default value is used for every run.
+With a defined type, minimum and maximum value and default. If the parameter is not selected to vary in the Sampler (see below) then the default value is used for every run. In this example, our full parameter space looks like the following: ::
+
+    # Define parameter space
+    params = {
+        "temp_init": {"type": "float", "min": 0.0, "max": 100.0, "default": 95.0},
+        "kappa": {"type": "float", "min": 0.0, "max": 0.1, "default": 0.025},
+        "t_env": {"type": "float", "min": 0.0, "max": 40.0, "default": 15.0},
+        "out_file": {"type": "string", "default": "output.csv"}
+    }
 
 App Creation
 ------------
-In this example the GenericEncoder and SimpleCSV, both included in the  core EasyVVUQ library, were used as the encoder/decoder pair for this application.
+In this example the GenericEncoder and SimpleCSV, both included in the core EasyVVUQ library, were used as the encoder/decoder pair for this application.
 GenericEncoder performs simple text substitution into a supplied template, using a specified delimiter to identify where parameters should be placed.
 The template is shown below (\$ is used as the delimiter).
 The template substitution approach is likely to suit most simple applications but in practice many large applications have more complex requirements, for example the multiple input files or the creation of a directory hierarchy.
