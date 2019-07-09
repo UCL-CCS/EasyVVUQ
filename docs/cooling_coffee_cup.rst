@@ -53,8 +53,25 @@ In such cases, users may write their own encoders by extending the BaseEncoder c
        "out_file":"$out_file"
     }
 
-As can be inferred from it's name SimpleCSV reads CVS files produced by the cooling model code.
+As can be inferred from its name SimpleCSV reads CVS files produced by the cooling model code.
 Again many applications output results in different formats, potentially requiring bespoke Decoders.
 
 In this workflow all application runs will be analyzed as individual datapoint, so we set the collator to AggregateSamples without averaging.
 This element simply extracts information using the assigned decoder and adds it to a summary dataframe.
+
+The Sampler
+-----------
+The user specified which parameters will vary and their corresponding distributions. In this case the kappa and t\_env parameters are varied, both according to a uniform distribution: ::
+
+    vary = {
+        "kappa": cp.Uniform(0.025, 0.075),
+        "t_env": cp.Uniform(15, 25)
+    }
+
+Execute Runs
+------------
+my\_campaign.populate\_runs\_dir() will create a directory hierarchy containing the encoded input files for every run that has not yet been completed. Finally, in this example, a shell command is executed in each directory to execute the simple test code. In practice (in a real HPC workflow) this stage would be best handled using, for example, a pilot job manager.
+
+Collation and analysis
+----------------------
+Calling my\_campaign.collate() at any stage causes the campaign to aggregate decoded simulation output for all runs which have not yet been collated. This collated data is stored in the campaign database. An analysis element, here PCEAnalysis, can then be applied to the campaign's collation result. The output of this is dependent on the type of analysis element.
