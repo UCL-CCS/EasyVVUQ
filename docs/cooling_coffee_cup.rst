@@ -39,7 +39,7 @@ For this example we import both easyvvuq and chaospy (for the distributions). Ea
 Create a new Campaign
 ---------------------
 
-As in the basic tutorial, we start by creating an EasyVVUQ Campaign. Here we call it 'coffee_pce'. ::
+As in the :doc:`Basic Tutorial <basic\_tutorial>`, we start by creating an EasyVVUQ Campaign. Here we call it 'coffee_pce'. ::
 
     my_campaign = uq.Campaign(name='coffee_pce')
 
