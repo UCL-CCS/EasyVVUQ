@@ -30,6 +30,7 @@ To run the script execute the following command ::
 
 Import necessary libraries
 --------------------------
+
 For this example we import both easyvvuq and chaospy (for the distributions). EasyVVUQ will be referred to as 'uq' in the code. ::
 
     import easyvvuq as uq
@@ -37,9 +38,9 @@ For this example we import both easyvvuq and chaospy (for the distributions). Ea
 
 Create a new Campaign
 ---------------------
+
 As in the basic tutorial, we start by creating an EasyVVUQ Campaign. Here we call it 'coffee_pce'. ::
 
-    # Set up a fresh campaign called "coffee_pce"
     my_campaign = uq.Campaign(name='coffee_pce')
 
 Parameter space definition
@@ -51,7 +52,6 @@ The parameter space is defined using a dictionary. Each entry in the dictionary 
 
 With a defined type, minimum and maximum value and default. If the parameter is not selected to vary in the Sampler (see below) then the default value is used for every run. In this example, our full parameter space looks like the following: ::
 
-    # Define parameter space
     params = {
         "temp_init": {"type": "float", "min": 0.0, "max": 100.0, "default": 95.0},
         "kappa": {"type": "float", "min": 0.0, "max": 0.1, "default": 0.025},
@@ -61,7 +61,17 @@ With a defined type, minimum and maximum value and default. If the parameter is 
 
 App Creation
 ------------
-In this example the GenericEncoder and SimpleCSV, both included in the core EasyVVUQ library, were used as the encoder/decoder pair for this application.
+In this example the GenericEncoder and SimpleCSV, both included in the core EasyVVUQ library, were used as the encoder/decoder pair for this application. ::
+
+    encoder = uq.encoders.GenericEncoder(
+        template_fname='tests/cooling/cooling.template',
+        delimiter='$',
+        target_filename='cooling_in.json')
+    
+    decoder = uq.decoders.SimpleCSV(target_filename="output.csv",
+                                output_columns=["te", "ti"],
+                                header=0)
+
 GenericEncoder performs simple text substitution into a supplied template, using a specified delimiter to identify where parameters should be placed.
 The template is shown below (\$ is used as the delimiter).
 The template substitution approach is likely to suit most simple applications but in practice many large applications have more complex requirements, for example the multiple input files or the creation of a directory hierarchy.
@@ -74,11 +84,21 @@ In such cases, users may write their own encoders by extending the BaseEncoder c
        "out_file":"$out_file"
     }
 
-As can be inferred from its name SimpleCSV reads CVS files produced by the cooling model code.
-Again many applications output results in different formats, potentially requiring bespoke Decoders.
+As can be inferred from its name SimpleCSV reads CVS files produced by the cooling model code. Again many applications output results in different formats, potentially requiring bespoke Decoders. Having created an encoder, decoder and parameter space definition for our `cooling' app, we can add it to our campaign. ::
 
-In this workflow all application runs will be analyzed as individual datapoint, so we set the collator to AggregateSamples without averaging.
-This element simply extracts information using the assigned decoder and adds it to a summary dataframe.
+    # Add the app (automatically set as current app)
+    my_campaign.add_app(name="cooling",
+                        params=params,
+                        encoder=encoder,
+                        decoder=decoder)
+
+Set a Collater
+--------------
+
+In this workflow all application runs will be analyzed as individual datapoint, so we set the collator to AggregateSamples without averaging. This element simply extracts information using the assigned decoder and adds it to a summary dataframe. ::
+
+    collater = uq.collate.AggregateSamples(average=False)
+    my_campaign.set_collater(collater)
 
 The Sampler
 -----------
@@ -88,6 +108,14 @@ The user specified which parameters will vary and their corresponding distributi
         "kappa": cp.Uniform(0.025, 0.075),
         "t_env": cp.Uniform(15, 25)
     }
+
+To perform a polynomial chaos expansion we will create a PCESampler, informing it which parameters to vary, and what polynomial rder to use for the PCE. ::
+
+    my_sampler = uq.sampling.PCESampler(vary=vary, polynomial_order=3)
+
+Finally we set the campaign to use this sampler. ::
+
+    my_campaign.set_sampler(my_sampler)
 
 Execute Runs
 ------------
