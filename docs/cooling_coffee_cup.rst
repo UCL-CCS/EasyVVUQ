@@ -130,4 +130,19 @@ my\_campaign.populate\_runs\_dir() will create a directory hierarchy containing 
 
 Collation and analysis
 ----------------------
-Calling my\_campaign.collate() at any stage causes the campaign to aggregate decoded simulation output for all runs which have not yet been collated. This collated data is stored in the campaign database. An analysis element, here PCEAnalysis, can then be applied to the campaign's collation result. The output of this is dependent on the type of analysis element.
+Calling my\_campaign.collate() at any stage causes the campaign to aggregate decoded simulation output for all runs which have not yet been collated. ::
+
+    my_campaign.collate()
+
+This collated data is stored in the campaign database. An analysis element, here PCEAnalysis, can then be applied to the campaign's collation result. ::
+
+    my_analysis = uq.analysis.PCEAnalysis(sampler=my_sampler, qoi_cols=["te", "ti"])
+    my_campaign.apply_analysis(my_analysis)
+
+The output of this is dependent on the type of analysis element. ::
+
+    # Get Descriptive Statistics
+    results = my_campaign.get_last_analysis()
+    stats = results['statistical_moments']['te']
+    per = results['percentiles']['te']
+    sobols = results['sobols_first']['te']
