@@ -49,7 +49,7 @@ my_campaign.draw_samples()
 
 my_campaign.populate_runs_dir()
 my_campaign.apply_for_each_run_dir(uq.actions.ExecuteLocal(
-    "cooling_model.py cooling_in.json"))
+    "python3 cooling_model.py cooling_in.json"))
 
 my_campaign.collate()
 
