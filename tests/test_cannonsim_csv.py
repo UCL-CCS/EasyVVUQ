@@ -41,6 +41,10 @@ if not os.path.exists("tests/cannonsim/bin/cannonsim"):
 
 logging.basicConfig(level=logging.CRITICAL)
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 32c90990361c1f9b4e0ad2aed6688b842a282a9e
 @pytest.fixture
 def campaign():
     def _campaign(work_dir, campaign_name, app_name, params, encoder, decoder, sampler,
