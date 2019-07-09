@@ -1,8 +1,8 @@
 import easyvvuq as uq
 import chaospy as cp
 
-# Set up a fresh campaign called "pce"
-my_campaign = uq.Campaign(name='pce')
+# Set up a fresh campaign called "coffee_pce"
+my_campaign = uq.Campaign(name='coffee_pce')
 
 # Define parameter space
 params = {
