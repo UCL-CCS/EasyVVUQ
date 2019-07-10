@@ -41,4 +41,4 @@ if __name__ == "__main__":
                     campaign_name=campaign_name,
                     app_name=app_name)
 
-    
+    worker.encode_runs(run_id_list)

@@ -3,6 +3,7 @@ from .constants import OutputType
 from . import data_structs
 from .params_specification import ParamsSpecification
 from .campaign import Campaign
+from .worker import Worker
 from . import actions
 from . import distributions
 from . import encoders

@@ -69,7 +69,7 @@ class Worker:
         (self._active_app_encoder,
          self._active_app_decoder) = self.campaign_db.resurrect_app(app_name)
 
-    def encode_run(self, run_id_list):
+    def encode_runs(self, run_id_list):
 
         # Get the encoder for this app. If none is set, only the directory structure
         # will be created.
@@ -101,7 +101,7 @@ class Worker:
                                           target_dir=target_dir)
 
         # Update run statuses in db
-        self.campaign_db.set_run_statuses([run_id_list], Status.ENCODED)
+        self.campaign_db.set_run_statuses(run_id_list, Status.ENCODED)
 
     def call_for_each_run(self, fn, status=Status.ENCODED):
 
