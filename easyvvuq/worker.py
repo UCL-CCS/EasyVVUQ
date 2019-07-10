@@ -36,10 +36,10 @@ logger = logging.getLogger(__name__)
 class Worker:
     def __init__(
             self,
-            campaign_name=None,
-            app_name=None,
             db_type="sql",
-            db_location=None
+            db_location=None,
+            campaign_name=None,
+            app_name=None
     ):
 
         self.campaign_name = campaign_name
@@ -69,7 +69,7 @@ class Worker:
         (self._active_app_encoder,
          self._active_app_decoder) = self.campaign_db.resurrect_app(app_name)
 
-    def encode_runs(self, run_id_list):
+    def encode_run(self, run_id_list):
 
         # Get the encoder for this app. If none is set, only the directory structure
         # will be created.
@@ -82,12 +82,13 @@ class Worker:
 
         # Loop through all runs in the run_id_list
         runs_dir = self.campaign_db.runs_dir()
-        for run_id, run_data in self.campaign_db.runs(status=Status.NEW):
+        for run_id in run_id_list:
+
+            run_data = self.campaign_db.run(run_id)
 
             # Make run directory
             target_dir = os.path.join(runs_dir, run_id)
             os.makedirs(target_dir)
-
             self.campaign_db.set_dir_for_run(run_id, target_dir)
 
             if active_encoder is not None:
@@ -99,8 +100,8 @@ class Worker:
                     active_encoder.encode(params=run_data['params'],
                                           target_dir=target_dir)
 
-            # Update run status in db
-            self.campaign_db.set_run_statuses([run_id], Status.ENCODED)
+        # Update run statuses in db
+        self.campaign_db.set_run_statuses([run_id_list], Status.ENCODED)
 
     def call_for_each_run(self, fn, status=Status.ENCODED):
 
