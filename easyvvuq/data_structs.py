@@ -127,7 +127,7 @@ class RunInfo:
     status : enum(Status)
     """
 
-    def __init__(self, run_name='', ensemble_name='', app=None, params=None, sample=None,
+    def __init__(self, run_name=None, ensemble_name=None, run_dir=None, app=None, params=None, sample=None,
                  campaign=None, status=constants.Status.NEW):
 
         # TODO: Handle fixtures
@@ -141,6 +141,7 @@ class RunInfo:
         self.app = app
         self.run_name = run_name
         self.ensemble_name = ensemble_name
+        self.run_dir = run_dir
 
         if not params:
             message = f'No run configuration specified for run {run_name}'
@@ -171,6 +172,7 @@ class RunInfo:
             out_dict = {
                 'run_name': self.run_name,
                 'ensemble_name': self.ensemble_name,
+                'run_dir': self.run_dir,
                 'params': json.dumps(self.params),
                 'status': constants.Status(self.status),
                 'campaign': self.campaign,
@@ -183,6 +185,7 @@ class RunInfo:
             out_dict = {
                 'run_name': self.run_name,
                 'ensemble_name': self.ensemble_name,
+                'run_dir': self.run_dir,
                 'params': self.params,
                 'status': constants.Status(self.status),
                 'campaign': self.campaign,
