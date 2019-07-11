@@ -111,8 +111,9 @@ def campaign():
         print("data:\n", reloaded_campaign.get_collation_result())
         print(reloaded_campaign)
         # Create a BasicStats analysis element and apply it to the campaign
-        reloaded_campaign.apply_analysis(stats)
-        print("stats:\n", reloaded_campaign.get_last_analysis())
+        if stats is not None:
+            reloaded_campaign.apply_analysis(stats)
+            print("stats:\n", reloaded_campaign.get_last_analysis())
         # Print the campaign log
         pprint(reloaded_campaign._log)
         print("All completed?", reloaded_campaign.all_complete())
@@ -441,3 +442,116 @@ def test_cannonsim_csv_call_fn(tmpdir, campaign):
              collater, None, stats, vary, 5, 1, db_type='sql', call_fn=execute_cannonsim)
     campaign(tmpdir, 'cannon', 'cannonsim', params, encoder, decoder, sampler,
              collater, None, stats, vary, 5, 1, db_type='json', call_fn=execute_cannonsim)
+
+
+def test_qmc(tmpdir, campaign):
+    # Define parameter space
+    params = {
+        "temp_init": {
+            "type": "float",
+            "min": 0.0,
+            "max": 100.0,
+            "default": 95.0},
+        "kappa": {
+            "type": "float",
+            "min": 0.0,
+            "max": 0.1,
+            "default": 0.025},
+        "t_env": {
+            "type": "float",
+            "min": 0.0,
+            "max": 40.0,
+            "default": 15.0},
+        "out_file": {
+            "type": "string",
+            "default": "output.csv"}}
+    output_filename = params["out_file"]["default"]
+    output_columns = ["te", "ti"]
+    # Create an encoder and decoder for QMC test app
+    encoder = uq.encoders.GenericEncoder(
+        template_fname='tests/cooling/cooling.template',
+        delimiter='$',
+        target_filename='cooling_in.json')
+    decoder = uq.decoders.SimpleCSV(target_filename=output_filename,
+                                    output_columns=output_columns,
+                                    header=0)
+    # Create a collation element for this campaign
+    collater = uq.collate.AggregateSamples(average=False)
+    # Create the sampler
+    vary = {
+        "kappa": cp.Uniform(0.025, 0.075),
+        "t_env": cp.Uniform(15, 25)
+    }
+    sampler = uq.sampling.QMCSampler(vary=vary,
+                                     number_of_samples=100)
+    actions = uq.actions.ExecuteLocal(
+        "tests/cooling/cooling_model.py cooling_in.json")
+    stats = uq.analysis.QMCAnalysis(sampler=sampler,
+                                    qoi_cols=output_columns)    
+    campaign(tmpdir, 'qmc', 'qmc', params, encoder, decoder, sampler,
+             collater, actions, stats, vary, 5, 1, db_type='sql')
+    campaign(tmpdir, 'qmc', 'qmc', params, encoder, decoder, sampler,
+             collater, actions, stats, vary, 5, 1, db_type='json')
+
+
+def test_sweep_sampler(tmpdir, campaign):
+    # Define parameter space for the cannonsim app
+    params = {
+        "angle": {
+            "type": "float",
+            "min": 0.0,
+            "max": 6.28,
+            "default": 0.79},
+        "air_resistance": {
+            "type": "float",
+            "min": 0.0,
+            "max": 1.0,
+            "default": 0.2},
+        "height": {
+            "type": "float",
+            "min": 0.0,
+            "max": 1000.0,
+            "default": 1.0},
+        "time_step": {
+            "type": "float",
+            "min": 0.0001,
+            "max": 1.0,
+            "default": 0.01},
+        "gravity": {
+            "type": "float",
+            "min": 0.0,
+            "max": 1000.0,
+            "default": 9.8},
+        "mass": {
+            "type": "float",
+            "min": 0.0001,
+            "max": 1000.0,
+            "default": 1.0},
+        "velocity": {
+            "type": "float",
+            "min": 0.0,
+            "max": 1000.0,
+            "default": 10.0}}
+    # Create an encoder and decoder for the cannonsim app
+    encoder = uq.encoders.GenericEncoder(
+        template_fname='tests/cannonsim/test_input/cannonsim.template',
+        delimiter='#',
+        target_filename='in.cannon')
+    decoder = uq.decoders.SimpleCSV(
+        target_filename='output.csv', output_columns=[
+            'Dist', 'lastvx', 'lastvy'], header=0)
+    # Create a collation element for this campaign
+    collater = uq.collate.AggregateSamples(average=False)
+    # Make a sweep sampler
+    sweep = {
+        "angle": [0.1, 0.2, 0.3],
+        "height": [2.0, 10.0],
+        "velocity": [10.0, 10.1, 10.2]
+    }
+    sampler = uq.sampling.BasicSweep(sweep=sweep)
+    actions = uq.actions.ExecuteLocal(
+        "tests/cannonsim/bin/cannonsim in.cannon output.csv")
+    campaign(tmpdir, 'cannonsim', 'cannonsim', params, encoder, decoder, sampler,
+             collater, actions, None, sweep, 5, 1, db_type='sql')
+    campaign(tmpdir, 'cannonsim', 'cannonsim', params, encoder, decoder, sampler,
+             collater, actions, None, sweep, 5, 1, db_type='json')
