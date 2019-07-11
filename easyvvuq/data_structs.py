@@ -127,8 +127,16 @@ class RunInfo:
     status : enum(Status)
     """
 
-    def __init__(self, run_name=None, ensemble_name=None, run_dir=None, app=None, params=None, sample=None,
-                 campaign=None, status=constants.Status.NEW):
+    def __init__(
+            self,
+            run_name=None,
+            ensemble_name=None,
+            run_dir=None,
+            app=None,
+            params=None,
+            sample=None,
+            campaign=None,
+            status=constants.Status.NEW):
 
         # TODO: Handle fixtures
 

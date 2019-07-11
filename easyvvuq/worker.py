@@ -33,6 +33,7 @@ __license__ = "LGPL"
 
 logger = logging.getLogger(__name__)
 
+
 class Worker:
     def __init__(
             self,

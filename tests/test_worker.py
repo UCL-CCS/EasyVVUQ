@@ -37,6 +37,7 @@ if not os.path.exists("tests/cannonsim/bin/cannonsim"):
 
 cannonsim_path = os.path.realpath(os.path.expanduser("tests/cannonsim/bin/cannonsim"))
 
+
 def test_worker(tmpdir):
 
     # Set up a fresh campaign called "cannon"
@@ -157,6 +158,7 @@ def test_worker(tmpdir):
     pprint(my_campaign._log)
 
     print("All completed?", my_campaign.all_complete())
+
 
 if __name__ == "__main__":
     test_worker("/tmp/")
