@@ -126,7 +126,16 @@ def test_worker(tmpdir):
     print("---")
 
     # Use external worker to encode all the runs
-    os.system("python3 easyvvuq/tools/external_encoder.py " + " ".join([my_campaign.db_type, my_campaign.db_location, "cannon", "cannonsim", "Run_1,Run_2"]))
+    enc_args = " ".join([
+        my_campaign.db_type,
+        my_campaign.db_location,
+        "cannon",
+        "cannonsim",
+        "Run_1,Run_2,Run_3,Run_4,Run_5"])
+    os.system("python3 easyvvuq/tools/external_encoder.py " + enc_args)
+
+    print("Runs list after encoding:")
+    pprint(my_campaign.list_runs())
 
     # Local execution
     my_campaign.apply_for_each_run_dir(uq.actions.ExecuteLocal(
