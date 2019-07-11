@@ -38,17 +38,19 @@ if not os.path.exists("tests/cannonsim/bin/cannonsim"):
         "Skipping cannonsim test (cannonsim is not installed in tests/cannonsim/bin/)",
         allow_module_level=True)
 
+cannonsim_path = os.path.realpath(os.path.expanduser("tests/cannonsim/bin/cannonsim"))
+
+def execute_cannonsim(path, params):
+    os.system(f"cd {path} && {cannonsim_path} in.cannon output.csv")
+
 
 logging.basicConfig(level=logging.CRITICAL)
 
-<<<<<<< HEAD
-=======
-
->>>>>>> 32c90990361c1f9b4e0ad2aed6688b842a282a9e
 @pytest.fixture
 def campaign():
     def _campaign(work_dir, campaign_name, app_name, params, encoder, decoder, sampler,
-                  collater, actions, stats, vary, num_samples, replicas, db_type):
+                  collater, actions, stats, vary, num_samples, replicas, db_type,
+                  call_fn=None):
         my_campaign = uq.Campaign(name='cannon', work_dir=work_dir, db_type=db_type)
         print("Serialized encoder:", encoder.serialize())
         print("Serialized decoder:", decoder.serialize())
@@ -76,8 +78,11 @@ def campaign():
         #assert(len(my_campaign.get_campaign_runs_dir()) > 0)
         #assert(os.path.exists(my_campaign.get_campaign_runs_dir()))
         #assert(os.path.isdir(my_campaign.get_campaign_runs_dir()))
+        if call_fn is not None:
+            my_campaign.call_for_each_run(call_fn)
         # Local execution
-        my_campaign.apply_for_each_run_dir(actions)
+        if actions is not None:
+            my_campaign.apply_for_each_run_dir(actions)
         # Collate all data into one pandas data frame
         my_campaign.collate()
         print("data:", my_campaign.get_collation_result())
@@ -95,7 +100,10 @@ def campaign():
         pprint(reloaded_campaign.list_runs())
         print("---")
         reloaded_campaign.populate_runs_dir()
-        reloaded_campaign.apply_for_each_run_dir(actions)
+        if call_fn is not None:
+            reloaded_campaign.call_for_each_run(call_fn)
+        if actions is not None:
+            reloaded_campaign.apply_for_each_run_dir(actions)
         print("Completed runs:")
         pprint(reloaded_campaign.scan_completed())
         print("All completed?", reloaded_campaign.all_complete())
@@ -182,25 +190,25 @@ def test_cannonsim_csv(tmpdir, campaign):
 def test_gauss(tmpdir, campaign):
     params = {
         "sigma": {
-            "type": "real",
-            "min": "0.0",
-            "max": "100000.0",
-            "default": "0.25"
+            "type": "float",
+            "min": 0.0,
+            "max": 100000.0,
+            "default": 0.25
         },
         "mu": {
-            "type": "real",
-            "min": "0.0",
-            "max": "100000.0",
-            "default": "1"
+            "type": "float",
+            "min": 0.0,
+            "max": 100000.0,
+            "default": 1
         },
         "num_steps": {
-            "type": "int",
-            "min": "0",
-            "max": "100000",
-            "default": "10"
+            "type": "integer",
+            "min": 0,
+            "max": 100000,
+            "default": 10
         },
         "out_file": {
-            "type": "str",
+            "type": "string",
             "default": "output.csv"
         }
     }
@@ -222,13 +230,13 @@ def test_gauss(tmpdir, campaign):
 
 def test_gauss_custom_encoder(tmpdir, campaign):
     params = {
-        "sigma": {"type": "real", "min": "0.0", "max": "100000.0",
-                  "default": "0.25"},
-        "mu": {"type": "real", "min": "0.0", "max": "100000.0",
-               "default": "1"},
-        "num_steps": {"type": "int", "min": "0", "max": "100000",
-                      "default": "10"},
-        "out_file": {"type": "str", "default": "output.csv"}
+        "sigma": {"type": "float", "min": 0.0, "max": 100000.0,
+                  "default": 0.25},
+        "mu": {"type": "float", "min": 0.0, "max": 100000.0,
+               "default": 1},
+        "num_steps": {"type": "integer", "min": 0, "max": 100000,
+                      "default": 10},
+        "out_file": {"type": "string", "default": "output.csv"}
     }
     # Create an encoder and decoder for the gauss app
     encoder = GaussEncoder(target_filename='gauss_in.json')
@@ -249,14 +257,14 @@ def test_gauss_custom_encoder(tmpdir, campaign):
 
 def test_gauss_fix(tmpdir, campaign):
     params = {
-        "sigma": {"type": "real", "min": "0.0", "max": "100000.0",
-                  "default": "0.25"},
-        "mu": {"type": "real", "min": "0.0", "max": "100000.0",
-               "default": "1"},
-        "num_steps": {"type": "int", "min": "0", "max": "100000",
-                      "default": "10"},
-        "out_file": {"type": "str", "default": "output.csv"},
-        "bias": {"type": "fixture", "options": ["bias1", "bias2"],
+        "sigma": {"type": "float", "min": 0.0, "max": 100000.0,
+                  "default": 0.25},
+        "mu": {"type": "float", "min": 0.0, "max": 100000.0,
+               "default": 1},
+        "num_steps": {"type": "integer", "min": 0, "max": 100000,
+                      "default": 10},
+        "out_file": {"type": "string", "default": "output.csv"},
+        "bias": {"type": "fixture", "allowed": ["bias1", "bias2"],
                  "default": "bias1"}
     }
     fixtures = {
@@ -288,25 +296,31 @@ def test_gauss_fix(tmpdir, campaign):
 def test_pce(tmpdir, campaign):
     # Define parameter space
     params = {
+        "temp_init": {
+            "type": "float",
+            "min": 0.0,
+            "max": 100.0,
+            "default": 95.0},
         "kappa": {
-            "type": "real",
-            "min": "0.0",
-            "max": "0.1",
-            "default": "0.025"},
+            "type": "float",
+            "min": 0.0,
+            "max": 0.1,
+            "default": 0.025},
         "t_env": {
-            "type": "real",
-            "min": "0.0",
-            "max": "40.0",
-            "default": "15.0"},
+            "type": "float",
+            "min": 0.0,
+            "max": 40.0,
+            "default": 15.0},
         "out_file": {
-            "type": "str",
+            "type": "string",
             "default": "output.csv"}}
     output_filename = params["out_file"]["default"]
     output_columns = ["te", "ti"]
+    # Create an encoder and decoder for PCE test app
     encoder = uq.encoders.GenericEncoder(
-        template_fname='tests/pce/pce.template',
+        template_fname='tests/cooling/cooling.template',
         delimiter='$',
-        target_filename='pce_in.json')
+        target_filename='cooling_in.json')
     decoder = uq.decoders.SimpleCSV(target_filename=output_filename,
                                     output_columns=output_columns,
                                     header=0)
@@ -317,9 +331,9 @@ def test_pce(tmpdir, campaign):
         "kappa": cp.Uniform(0.025, 0.075),
         "t_env": cp.Uniform(15, 25)
     }
-    sampler = uq.sampling.PCESampler(vary=vary, polynomial_order=3)
-    actions = uq.actions.ExecuteLocal("tests/pce/pce_model.py pce_in.json")
-    # Post-processing analysis
+    sampler = uq.sampling.PCESampler(vary=vary,
+                                     polynomial_order=3)
+    actions = uq.actions.ExecuteLocal("tests/cooling/cooling_model.py cooling_in.json")
     stats = uq.analysis.PCEAnalysis(sampler=sampler,
                                     qoi_cols=output_columns)
     campaign(tmpdir, 'pce', 'pce', params, encoder, decoder, sampler,
@@ -331,17 +345,17 @@ def test_pce(tmpdir, campaign):
 def test_sc(tmpdir, campaign):
     params = {
         "Pe": {
-            "type": "real",
+            "type": "float",
             "min": "1.0",
             "max": "2000.0",
             "default": "100.0"},
         "f": {
-            "type": "real",
+            "type": "float",
             "min": "0.0",
             "max": "10.0",
             "default": "1.0"},
         "out_file": {
-            "type": "str",
+            "type": "string",
             "default": "output.csv"}}
     output_filename = params["out_file"]["default"]
     output_columns = ["u"]
@@ -364,3 +378,66 @@ def test_sc(tmpdir, campaign):
              collater, actions, stats, vary, 0, 1, db_type='sql')
     #campaign(tmpdir, 'sc', 'sc', params, encoder, decoder, sampler,
     #         collater, actions, stats, vary, 0, 1, db_type='json')
+
+
+def test_cannonsim_csv_call_fn(tmpdir, campaign):
+    # Define parameter space for the cannonsim app
+    params = {
+        "angle": {
+            "type": "float",
+            "min": 0.0,
+            "max": 6.28,
+            "default": 0.79},
+        "air_resistance": {
+            "type": "float",
+            "min": 0.0,
+            "max": 1.0,
+            "default": 0.2},
+        "height": {
+            "type": "float",
+            "min": 0.0,
+            "max": 1000.0,
+            "default": 1.0},
+        "time_step": {
+            "type": "float",
+            "min": 0.0001,
+            "max": 1.0,
+            "default": 0.01},
+        "gravity": {
+            "type": "float",
+            "min": 0.0,
+            "max": 1000.0,
+            "default": 9.8},
+        "mass": {
+            "type": "float",
+            "min": 0.0001,
+            "max": 1000.0,
+            "default": 1.0},
+        "velocity": {
+            "type": "float",
+            "min": 0.0,
+            "max": 1000.0,
+            "default": 10.0}}
+
+    # Create an encoder and decoder for the cannonsim app
+    encoder = uq.encoders.GenericEncoder(
+        template_fname='tests/cannonsim/test_input/cannonsim.template',
+        delimiter='#',
+        target_filename='in.cannon')
+    decoder = uq.decoders.SimpleCSV(
+        target_filename='output.csv', output_columns=[
+            'Dist', 'lastvx', 'lastvy'], header=0)
+    collater = uq.collate.AggregateSamples(average=False)
+    # Make a random sampler
+    vary = {
+        "angle": cp.Uniform(0.0, 1.0),
+        "height": cp.Uniform(2.0, 10.0),
+        "velocity": cp.Normal(10.0, 1.0),
+        "mass": cp.Uniform(5.0, 1.0)
+    }
+    sampler = uq.sampling.RandomSampler(vary=vary)
+    stats = uq.analysis.BasicStats(qoi_cols=['Dist', 'lastvx', 'lastvy'])
+    campaign(tmpdir, 'cannon', 'cannonsim', params, encoder, decoder, sampler,
+             collater, None, stats, vary, 5, 1, db_type='sql', call_fn=execute_cannonsim)
+    campaign(tmpdir, 'cannon', 'cannonsim', params, encoder, decoder, sampler,
+             collater, None, stats, vary, 5, 1, db_type='json', call_fn=execute_cannonsim)
