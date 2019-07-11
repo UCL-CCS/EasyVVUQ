@@ -29,7 +29,9 @@ __license__ = "LGPL"
 if __name__ == "__main__":
     if len(sys.argv) != 6:
         sys.exit(
-            "Usage: python3 external_encoder.py db_type db_location campaign_name app_name comma_separated_run_id_list")
+            f("Usage: python3 external_encoder.py db_type db_location"
+              "campaign_name app_name comma_separated_run_id_list")
+        )
 
     db_type = sys.argv[1]
     db_location = sys.argv[2]
