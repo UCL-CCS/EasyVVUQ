@@ -35,6 +35,7 @@ if not os.path.exists("tests/cannonsim/bin/cannonsim"):
         "Skipping cannonsim test (cannonsim is not installed in tests/cannonsim/bin/)",
         allow_module_level=True)
 
+cannonsim_path = os.path.realpath(os.path.expanduser("tests/cannonsim/bin/cannonsim"))
 
 def test_worker(tmpdir):
 
@@ -125,21 +126,23 @@ def test_worker(tmpdir):
     pprint(my_campaign.list_runs())
     print("---")
 
-    # Use external worker to encode all the runs
-    enc_args = " ".join([
-        my_campaign.db_type,
-        my_campaign.db_location,
-        "cannon",
-        "cannonsim",
-        "Run_1,Run_2,Run_3,Run_4,Run_5"])
-    os.system("python3 easyvvuq/tools/external_encoder.py " + enc_args)
+    # User defined function
+    def encode_and_execute_cannonsim(run_id, run_data):
+        enc_args = " ".join([
+            my_campaign.db_type,
+            my_campaign.db_location,
+            "cannon",
+            "cannonsim",
+            run_id])
+        os.system("python3 easyvvuq/tools/external_encoder.py " + enc_args)
 
-    print("Runs list after encoding:")
+        os.system(f"cd {run_data['run_dir']} && {cannonsim_path} in.cannon output.csv")
+
+    # Encode and execute. Note to call function for all runs with status NEW (and not ENCODED)
+    my_campaign.call_for_each_run(encode_and_execute_cannonsim, status=uq.constants.Status.NEW)
+
+    print("Runs list after encoding and execution:")
     pprint(my_campaign.list_runs())
-
-    # Local execution
-    my_campaign.apply_for_each_run_dir(uq.actions.ExecuteLocal(
-        "tests/cannonsim/bin/cannonsim in.cannon output.csv"))
 
     # Collate all data into one pandas data frame
     my_campaign.collate()
