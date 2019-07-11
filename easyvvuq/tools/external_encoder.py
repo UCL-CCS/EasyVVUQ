@@ -1,7 +1,4 @@
-import os
 import sys
-import logging
-
 import easyvvuq as uq
 
 __copyright__ = """
