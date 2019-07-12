@@ -29,6 +29,12 @@ logger = logging.getLogger(__name__)
 
 
 class Worker:
+    """
+    A Worker is a stripped down version of the Campaign, providing access to runs in the database,
+    encoding etc. The purpose is, for example, to allow encoding/running/decoding of runs to take
+    place in a separate process (script) from the main script.
+    """
+
     def __init__(
             self,
             db_type="sql",
@@ -65,6 +71,9 @@ class Worker:
          self._active_app_decoder) = self.campaign_db.resurrect_app(app_name)
 
     def encode_runs(self, run_id_list):
+        """
+        Runs the encoder for all run ids listed in run_id_list.
+        """
 
         # Get the encoder for this app. If none is set, only the directory structure
         # will be created.
@@ -99,8 +108,9 @@ class Worker:
         self.campaign_db.set_run_statuses(run_id_list, Status.ENCODED)
 
     def call_for_each_run(self, fn, status=Status.ENCODED):
-
-        # Loop through all runs in this campaign with the specified status,
-        # and call the specified user function for each.
+        """
+        Loop through all runs in this campaign with the specified status,
+        and call the specified user function for each.
+        """
         for run_id, run_data in self.campaign_db.runs(status=status):
             fn(run_data['run_dir'], run_data['params'])
