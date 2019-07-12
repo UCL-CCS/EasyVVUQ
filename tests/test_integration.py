@@ -52,7 +52,7 @@ logging.basicConfig(level=logging.CRITICAL)
 def campaign():
     def _campaign(work_dir, campaign_name, app_name, params, encoder, decoder, sampler,
                   collater, actions, stats, vary, num_samples, replicas, db_type,
-                  call_fn=None):
+                  call_fn=None, fixtures=None):
         my_campaign = uq.Campaign(name=campaign_name, work_dir=work_dir, db_type=db_type)
         logging.debug("Serialized encoder:", encoder.serialize())
         logging.debug("Serialized decoder:", decoder.serialize())
@@ -60,7 +60,8 @@ def campaign():
         my_campaign.add_app(name=app_name,
                             params=params,
                             encoder=encoder,
-                            decoder=decoder)
+                            decoder=decoder,
+                            fixtures=fixtures)
         my_campaign.set_app(app_name)
         my_campaign.set_collater(collater)
         logging.debug("Serialized collation:", collater.serialize())
@@ -281,9 +282,9 @@ def test_gauss_fix(tmpdir, campaign):
     }
     sampler = uq.sampling.RandomSampler(vary=vary)
     campaign(tmpdir, 'gauss', 'gauss', params, encoder, decoder, sampler,
-             collater, actions, stats, vary, 3, 5, db_type='sql')
+             collater, actions, stats, vary, 3, 5, db_type='sql', fixtures=fixtures)
     campaign(tmpdir, 'gauss', 'gauss', params, encoder, decoder, sampler,
-             collater, actions, stats, vary, 3, 5, db_type='json')
+             collater, actions, stats, vary, 3, 5, db_type='json', fixtures=fixtures)
 
 
 def test_pce(tmpdir, campaign):
