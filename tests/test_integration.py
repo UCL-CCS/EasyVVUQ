@@ -488,7 +488,7 @@ def test_qmc(tmpdir, campaign):
                                      number_of_samples=100)
     actions = uq.actions.ExecuteLocal("tests/cooling/cooling_model.py cooling_in.json")
     stats = uq.analysis.QMCAnalysis(sampler=sampler,
-                                    qoi_cols=output_columns)    
+                                    qoi_cols=output_columns)
     campaign(tmpdir, 'qmc', 'qmc', params, encoder, decoder, sampler,
              collater, actions, stats, vary, 5, 1, db_type='sql')
     campaign(tmpdir, 'qmc', 'qmc', params, encoder, decoder, sampler,
