@@ -202,7 +202,6 @@ def test_cannonsim(tmpdir, campaign):
              collater, actions, None, sweep, 5, 1, db_type='json')
 
 
-
 def test_gauss(tmpdir, campaign):
     params = {
         "sigma": {
@@ -242,29 +241,7 @@ def test_gauss(tmpdir, campaign):
              collater, actions, stats, vary, 3, 5, db_type='sql')
     campaign(tmpdir, 'gauss', 'gauss', params, encoder, decoder, sampler,
              collater, actions, stats, vary, 3, 5, db_type='json')
-
-
-def test_gauss_custom_encoder(tmpdir, campaign):
-    params = {
-        "sigma": {"type": "float", "min": 0.0, "max": 100000.0,
-                  "default": 0.25},
-        "mu": {"type": "float", "min": 0.0, "max": 100000.0,
-               "default": 1},
-        "num_steps": {"type": "integer", "min": 0, "max": 100000,
-                      "default": 10},
-        "out_file": {"type": "string", "default": "output.csv"}
-    }
-    # Create an encoder and decoder for the gauss app
     encoder = GaussEncoder(target_filename='gauss_in.json')
-    decoder = GaussDecoder(target_filename=params['out_file']['default'])
-    # Create a collation element for this campaign
-    collater = uq.collate.AggregateSamples(average=False)
-    actions = uq.actions.ExecuteLocal("tests/gauss/gauss_json.py gauss_in.json")
-    stats = uq.analysis.EnsembleBoot(groupby=["mu"], qoi_cols=["Value"])
-    vary = {
-        "mu": cp.Uniform(1.0, 100.0),
-    }
-    sampler = uq.sampling.RandomSampler(vary=vary)
     campaign(tmpdir, 'gauss', 'gauss', params, encoder, decoder, sampler,
              collater, actions, stats, vary, 3, 5, db_type='sql')
     campaign(tmpdir, 'gauss', 'gauss', params, encoder, decoder, sampler,
