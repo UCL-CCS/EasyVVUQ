@@ -40,11 +40,13 @@ if not os.path.exists("tests/cannonsim/bin/cannonsim"):
 
 cannonsim_path = os.path.realpath(os.path.expanduser("tests/cannonsim/bin/cannonsim"))
 
+
 def execute_cannonsim(path, params):
     os.system(f"cd {path} && {cannonsim_path} in.cannon output.csv")
 
 
 logging.basicConfig(level=logging.CRITICAL)
+
 
 @pytest.fixture
 def campaign():
@@ -484,8 +486,7 @@ def test_qmc(tmpdir, campaign):
     }
     sampler = uq.sampling.QMCSampler(vary=vary,
                                      number_of_samples=100)
-    actions = uq.actions.ExecuteLocal(
-        "tests/cooling/cooling_model.py cooling_in.json")
+    actions = uq.actions.ExecuteLocal("tests/cooling/cooling_model.py cooling_in.json")
     stats = uq.analysis.QMCAnalysis(sampler=sampler,
                                     qoi_cols=output_columns)    
     campaign(tmpdir, 'qmc', 'qmc', params, encoder, decoder, sampler,
