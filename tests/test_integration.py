@@ -122,7 +122,7 @@ def campaign():
     return _campaign
 
 
-def test_cannonsim_csv(tmpdir, campaign):
+def test_cannonsim(tmpdir, campaign):
     # Define parameter space for the cannonsim app
     params = {
         "angle": {
@@ -185,6 +185,22 @@ def test_cannonsim_csv(tmpdir, campaign):
              collater, actions, stats, vary, 5, 1, db_type='sql')
     campaign(tmpdir, 'cannon', 'cannonsim', params, encoder, decoder, sampler,
              collater, actions, stats, vary, 5, 1, db_type='json')
+    campaign(tmpdir, 'cannon', 'cannonsim', params, encoder, decoder, sampler,
+             collater, None, stats, vary, 5, 1, db_type='sql', call_fn=execute_cannonsim)
+    campaign(tmpdir, 'cannon', 'cannonsim', params, encoder, decoder, sampler,
+             collater, None, stats, vary, 5, 1, db_type='json', call_fn=execute_cannonsim)
+    # Make a sweep sampler
+    sweep = {
+        "angle": [0.1, 0.2, 0.3],
+        "height": [2.0, 10.0],
+        "velocity": [10.0, 10.1, 10.2]
+    }
+    sampler = uq.sampling.BasicSweep(sweep=sweep)
+    campaign(tmpdir, 'cannonsim', 'cannonsim', params, encoder, decoder, sampler,
+             collater, actions, None, sweep, 5, 1, db_type='sql')
+    campaign(tmpdir, 'cannonsim', 'cannonsim', params, encoder, decoder, sampler,
+             collater, actions, None, sweep, 5, 1, db_type='json')
+
 
 
 def test_gauss(tmpdir, campaign):
@@ -380,69 +396,6 @@ def test_sc(tmpdir, campaign):
     #         collater, actions, stats, vary, 0, 1, db_type='json')
 
 
-def test_cannonsim_csv_call_fn(tmpdir, campaign):
-    # Define parameter space for the cannonsim app
-    params = {
-        "angle": {
-            "type": "float",
-            "min": 0.0,
-            "max": 6.28,
-            "default": 0.79},
-        "air_resistance": {
-            "type": "float",
-            "min": 0.0,
-            "max": 1.0,
-            "default": 0.2},
-        "height": {
-            "type": "float",
-            "min": 0.0,
-            "max": 1000.0,
-            "default": 1.0},
-        "time_step": {
-            "type": "float",
-            "min": 0.0001,
-            "max": 1.0,
-            "default": 0.01},
-        "gravity": {
-            "type": "float",
-            "min": 0.0,
-            "max": 1000.0,
-            "default": 9.8},
-        "mass": {
-            "type": "float",
-            "min": 0.0001,
-            "max": 1000.0,
-            "default": 1.0},
-        "velocity": {
-            "type": "float",
-            "min": 0.0,
-            "max": 1000.0,
-            "default": 10.0}}
-
-    # Create an encoder and decoder for the cannonsim app
-    encoder = uq.encoders.GenericEncoder(
-        template_fname='tests/cannonsim/test_input/cannonsim.template',
-        delimiter='#',
-        target_filename='in.cannon')
-    decoder = uq.decoders.SimpleCSV(
-        target_filename='output.csv', output_columns=[
-            'Dist', 'lastvx', 'lastvy'], header=0)
-    collater = uq.collate.AggregateSamples(average=False)
-    # Make a random sampler
-    vary = {
-        "angle": cp.Uniform(0.0, 1.0),
-        "height": cp.Uniform(2.0, 10.0),
-        "velocity": cp.Normal(10.0, 1.0),
-        "mass": cp.Uniform(5.0, 1.0)
-    }
-    sampler = uq.sampling.RandomSampler(vary=vary)
-    stats = uq.analysis.BasicStats(qoi_cols=['Dist', 'lastvx', 'lastvy'])
-    campaign(tmpdir, 'cannon', 'cannonsim', params, encoder, decoder, sampler,
-             collater, None, stats, vary, 5, 1, db_type='sql', call_fn=execute_cannonsim)
-    campaign(tmpdir, 'cannon', 'cannonsim', params, encoder, decoder, sampler,
-             collater, None, stats, vary, 5, 1, db_type='json', call_fn=execute_cannonsim)
-
-
 def test_qmc(tmpdir, campaign):
     # Define parameter space
     params = {
@@ -490,66 +443,3 @@ def test_qmc(tmpdir, campaign):
              collater, actions, stats, vary, 5, 1, db_type='sql')
     campaign(tmpdir, 'qmc', 'qmc', params, encoder, decoder, sampler,
              collater, actions, stats, vary, 5, 1, db_type='json')
-
-
-def test_sweep_sampler(tmpdir, campaign):
-    # Define parameter space for the cannonsim app
-    params = {
-        "angle": {
-            "type": "float",
-            "min": 0.0,
-            "max": 6.28,
-            "default": 0.79},
-        "air_resistance": {
-            "type": "float",
-            "min": 0.0,
-            "max": 1.0,
-            "default": 0.2},
-        "height": {
-            "type": "float",
-            "min": 0.0,
-            "max": 1000.0,
-            "default": 1.0},
-        "time_step": {
-            "type": "float",
-            "min": 0.0001,
-            "max": 1.0,
-            "default": 0.01},
-        "gravity": {
-            "type": "float",
-            "min": 0.0,
-            "max": 1000.0,
-            "default": 9.8},
-        "mass": {
-            "type": "float",
-            "min": 0.0001,
-            "max": 1000.0,
-            "default": 1.0},
-        "velocity": {
-            "type": "float",
-            "min": 0.0,
-            "max": 1000.0,
-            "default": 10.0}}
-    # Create an encoder and decoder for the cannonsim app
-    encoder = uq.encoders.GenericEncoder(
-        template_fname='tests/cannonsim/test_input/cannonsim.template',
-        delimiter='#',
-        target_filename='in.cannon')
-    decoder = uq.decoders.SimpleCSV(
-        target_filename='output.csv', output_columns=[
-            'Dist', 'lastvx', 'lastvy'], header=0)
-    # Create a collation element for this campaign
-    collater = uq.collate.AggregateSamples(average=False)
-    # Make a sweep sampler
-    sweep = {
-        "angle": [0.1, 0.2, 0.3],
-        "height": [2.0, 10.0],
-        "velocity": [10.0, 10.1, 10.2]
-    }
-    sampler = uq.sampling.BasicSweep(sweep=sweep)
-    actions = uq.actions.ExecuteLocal(
-        "tests/cannonsim/bin/cannonsim in.cannon output.csv")
-    campaign(tmpdir, 'cannonsim', 'cannonsim', params, encoder, decoder, sampler,
-             collater, actions, None, sweep, 5, 1, db_type='sql')
-    campaign(tmpdir, 'cannonsim', 'cannonsim', params, encoder, decoder, sampler,
-             collater, actions, None, sweep, 5, 1, db_type='json')
