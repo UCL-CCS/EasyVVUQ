@@ -1,7 +1,6 @@
 import easyvvuq as uq
 import chaospy as cp
 import os
-import sys
 import pytest
 from pprint import pprint
 
@@ -35,7 +34,7 @@ if not os.path.exists("tests/cannonsim/bin/cannonsim"):
         "Skipping cannonsim test (cannonsim is not installed in tests/cannonsim/bin/)",
         allow_module_level=True)
 
-cannonsim_path = os.path.realpath(os.path.expanduser("tests/cannonsim/bin/cannonsim"))
+CANNONSIM_PATH = os.path.realpath(os.path.expanduser("tests/cannonsim/bin/cannonsim"))
 
 
 def test_worker(tmpdir):
@@ -135,9 +134,11 @@ def test_worker(tmpdir):
             "cannon",
             "cannonsim",
             run_id])
-        os.system("python3 easyvvuq/tools/external_encoder.py " + enc_args)
 
-        os.system(f"cd {run_data['run_dir']} && {cannonsim_path} in.cannon output.csv")
+        encoder_path = f"{uq.__path__[0]}/tools/external_encoder.py"
+        os.system(f"python3 {encoder_path} " + enc_args)
+
+        os.system(f"cd {run_data['run_dir']} && {CANNONSIM_PATH} in.cannon output.csv")
 
     # Encode and execute. Note to call function for all runs with status NEW (and not ENCODED)
     my_campaign.call_for_each_run(encode_and_execute_cannonsim, status=uq.constants.Status.NEW)
