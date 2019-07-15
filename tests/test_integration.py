@@ -49,6 +49,16 @@ logging.basicConfig(level=logging.CRITICAL)
 
 
 @pytest.fixture
+def campaign_test():
+    class CampaignTest:
+        def __init__(self, campaign_name, work_dir, db_type='sql'):
+            self.campaign = uq.Campaign(name=campaign_name, work_dir=work_dir, db_type=db_type)
+
+        def run_tests(self):
+            pass
+
+
+@pytest.fixture
 def campaign():
     def _campaign(work_dir, campaign_name, app_name, params, encoder, decoder, sampler,
                   collater, actions, stats, vary, num_samples=0, replicas=1, db_type='sql',
@@ -183,13 +193,9 @@ def test_cannonsim(tmpdir, campaign):
     }
     sampler = uq.sampling.RandomSampler(vary=vary)
     campaign(tmpdir, 'cannon', 'cannonsim', params, encoder, decoder, sampler,
-             collater, actions, stats, vary, 5, 1, db_type='sql')
+             collater, actions, stats, vary, 5, 1)
     campaign(tmpdir, 'cannon', 'cannonsim', params, encoder, decoder, sampler,
-             collater, actions, stats, vary, 5, 1, db_type='json')
-    campaign(tmpdir, 'cannon', 'cannonsim', params, encoder, decoder, sampler,
-             collater, None, stats, vary, 5, 1, db_type='sql', call_fn=execute_cannonsim)
-    campaign(tmpdir, 'cannon', 'cannonsim', params, encoder, decoder, sampler,
-             collater, None, stats, vary, 5, 1, db_type='json', call_fn=execute_cannonsim)
+             collater, None, stats, vary, 5, 1, call_fn=execute_cannonsim)
     # Make a sweep sampler
     sweep = {
         "angle": [0.1, 0.2, 0.3],
@@ -198,9 +204,7 @@ def test_cannonsim(tmpdir, campaign):
     }
     sampler = uq.sampling.BasicSweep(sweep=sweep)
     campaign(tmpdir, 'cannonsim', 'cannonsim', params, encoder, decoder, sampler,
-             collater, actions, None, sweep, 5, 1, db_type='sql')
-    campaign(tmpdir, 'cannonsim', 'cannonsim', params, encoder, decoder, sampler,
-             collater, actions, None, sweep, 5, 1, db_type='json')
+             collater, actions, None, sweep, 5, 1)
 
 
 def test_gauss(tmpdir, campaign):
@@ -258,16 +262,12 @@ def test_gauss(tmpdir, campaign):
     }
     sampler = uq.sampling.RandomSampler(vary=vary)
     campaign(tmpdir, 'gauss', 'gauss', params, encoder, decoder, sampler,
-             collater, actions, stats, vary, 2, 2, db_type='sql')
-    campaign(tmpdir, 'gauss', 'gauss', params, encoder, decoder, sampler,
-             collater, actions, stats, vary, 2, 2, db_type='json')
+             collater, actions, stats, vary, 2, 2)
     encoder = GaussEncoder(target_filename='gauss_in.json')
     campaign(tmpdir, 'gauss', 'gauss', params, encoder, decoder, sampler,
-             collater, actions, stats, vary, 2, 2, db_type='sql')
+             collater, actions, stats, vary, 2, 2)
     campaign(tmpdir, 'gauss', 'gauss', params, encoder, decoder, sampler,
-             collater, actions, stats, vary, 2, 2, db_type='json')
-    campaign(tmpdir, 'gauss', 'gauss', params, encoder, decoder, sampler,
-             collater, actions, stats, vary, 2, 2, db_type='sql', fixtures=fixtures)
+             collater, actions, stats, vary, 2, 2, fixtures=fixtures)
     campaign(tmpdir, 'gauss', 'gauss', params, encoder, decoder, sampler,
              collater, actions, stats, vary, 2, 2, db_type='json', fixtures=fixtures)
 
@@ -316,9 +316,7 @@ def test_pce(tmpdir, campaign):
     stats = uq.analysis.PCEAnalysis(sampler=sampler,
                                     qoi_cols=output_columns)
     campaign(tmpdir, 'pce', 'pce', params, encoder, decoder, sampler,
-             collater, actions, stats, vary, 0, 1, db_type='sql')
-    #campaign(tmpdir, 'pce', 'pce', params, encoder, decoder, sampler,
-    #         collater, actions, stats, vary, 0, 1, db_type='json')
+             collater, actions, stats, vary, 0, 1)
 
 
 def test_sc(tmpdir, campaign):
@@ -354,9 +352,7 @@ def test_sc(tmpdir, campaign):
     actions = uq.actions.ExecuteLocal(f"tests/sc/sc_model.py sc_in.json")
     stats = uq.analysis.SCAnalysis(sampler=sampler, qoi_cols=output_columns)
     campaign(tmpdir, 'sc', 'sc', params, encoder, decoder, sampler,
-             collater, actions, stats, vary, 0, 1, db_type='sql')
-    #campaign(tmpdir, 'sc', 'sc', params, encoder, decoder, sampler,
-    #         collater, actions, stats, vary, 0, 1, db_type='json')
+             collater, actions, stats, vary, 0, 1)
 
 
 def test_qmc(tmpdir, campaign):
@@ -403,6 +399,4 @@ def test_qmc(tmpdir, campaign):
     stats = uq.analysis.QMCAnalysis(sampler=sampler,
                                     qoi_cols=output_columns)
     campaign(tmpdir, 'qmc', 'qmc', params, encoder, decoder, sampler,
-             collater, actions, stats, vary, 5, 1, db_type='sql')
-    campaign(tmpdir, 'qmc', 'qmc', params, encoder, decoder, sampler,
-             collater, actions, stats, vary, 5, 1, db_type='json')
+             collater, actions, stats, vary, 5, 1)
