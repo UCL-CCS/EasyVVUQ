@@ -51,7 +51,7 @@ logging.basicConfig(level=logging.CRITICAL)
 @pytest.fixture
 def campaign():
     def _campaign(work_dir, campaign_name, app_name, params, encoder, decoder, sampler,
-                  collater, actions, stats, vary, num_samples, replicas, db_type,
+                  collater, actions, stats, vary, num_samples=0, replicas=1, db_type='sql',
                   call_fn=None, fixtures=None):
         my_campaign = uq.Campaign(name=campaign_name, work_dir=work_dir, db_type=db_type)
         logging.debug("Serialized encoder:", encoder.serialize())
@@ -226,6 +226,25 @@ def test_gauss(tmpdir, campaign):
         "out_file": {
             "type": "string",
             "default": "output.csv"
+        },
+        "bias": {
+            "type": "fixture",
+            "allowed": ["bias1", "bias2"],
+            "default": "bias1"
+        }
+    }
+    fixtures = {
+        "bias1": {
+            "type": "file", "path": "tests/gauss/bias1.txt",
+            "common": False, "exists_local": True,
+            "target": "",
+            "group": ""
+        },
+        "bias2": {
+            "type": "file", "path": "tests/gauss/bias2.txt",
+            "common": False, "exists_local": True,
+            "target": "",
+            "group": ""
         }
     }
     encoder = uq.encoders.GenericEncoder(template_fname='tests/gauss/gauss.template',
@@ -239,52 +258,18 @@ def test_gauss(tmpdir, campaign):
     }
     sampler = uq.sampling.RandomSampler(vary=vary)
     campaign(tmpdir, 'gauss', 'gauss', params, encoder, decoder, sampler,
-             collater, actions, stats, vary, 3, 5, db_type='sql')
+             collater, actions, stats, vary, 2, 2, db_type='sql')
     campaign(tmpdir, 'gauss', 'gauss', params, encoder, decoder, sampler,
-             collater, actions, stats, vary, 3, 5, db_type='json')
+             collater, actions, stats, vary, 2, 2, db_type='json')
     encoder = GaussEncoder(target_filename='gauss_in.json')
     campaign(tmpdir, 'gauss', 'gauss', params, encoder, decoder, sampler,
-             collater, actions, stats, vary, 3, 5, db_type='sql')
+             collater, actions, stats, vary, 2, 2, db_type='sql')
     campaign(tmpdir, 'gauss', 'gauss', params, encoder, decoder, sampler,
-             collater, actions, stats, vary, 3, 5, db_type='json')
-
-
-def test_gauss_fix(tmpdir, campaign):
-    params = {
-        "sigma": {"type": "float", "min": 0.0, "max": 100000.0,
-                  "default": 0.25},
-        "mu": {"type": "float", "min": 0.0, "max": 100000.0,
-               "default": 1},
-        "num_steps": {"type": "integer", "min": 0, "max": 100000,
-                      "default": 10},
-        "out_file": {"type": "string", "default": "output.csv"},
-        "bias": {"type": "fixture", "allowed": ["bias1", "bias2"],
-                 "default": "bias1"}
-    }
-    fixtures = {
-        "bias1": {"type": "file", "path": "tests/gauss/bias1.txt",
-                  "common": False, "exists_local": True,
-                  "target": "", "group": ""},
-        "bias2": {"type": "file", "path": "tests/gauss/bias2.txt",
-                  "common": False, "exists_local": True,
-                  "target": "", "group": ""}
-    }
-    number_of_samples = 2
-    number_of_replicas = 2
-    encoder = uq.encoders.GenericEncoder(template_fname='tests/gauss/gauss.template',
-                                         target_filename='gauss_in.json')
-    decoder = GaussDecoder(target_filename=params['out_file']['default'])
-    collater = uq.collate.AggregateSamples(average=False)
-    actions = uq.actions.ExecuteLocal("tests/gauss/gauss_json.py gauss_in.json")
-    stats = uq.analysis.EnsembleBoot(groupby=["mu"], qoi_cols=["Value"])
-    vary = {
-        "mu": cp.Uniform(1.0, 100.0),
-    }
-    sampler = uq.sampling.RandomSampler(vary=vary)
+             collater, actions, stats, vary, 2, 2, db_type='json')
     campaign(tmpdir, 'gauss', 'gauss', params, encoder, decoder, sampler,
-             collater, actions, stats, vary, 3, 5, db_type='sql', fixtures=fixtures)
+             collater, actions, stats, vary, 2, 2, db_type='sql', fixtures=fixtures)
     campaign(tmpdir, 'gauss', 'gauss', params, encoder, decoder, sampler,
-             collater, actions, stats, vary, 3, 5, db_type='json', fixtures=fixtures)
+             collater, actions, stats, vary, 2, 2, db_type='json', fixtures=fixtures)    
 
 
 def test_pce(tmpdir, campaign):
