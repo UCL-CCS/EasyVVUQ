@@ -269,7 +269,7 @@ def test_gauss(tmpdir, campaign):
     campaign(tmpdir, 'gauss', 'gauss', params, encoder, decoder, sampler,
              collater, actions, stats, vary, 2, 2, db_type='sql', fixtures=fixtures)
     campaign(tmpdir, 'gauss', 'gauss', params, encoder, decoder, sampler,
-             collater, actions, stats, vary, 2, 2, db_type='json', fixtures=fixtures)    
+             collater, actions, stats, vary, 2, 2, db_type='json', fixtures=fixtures)
 
 
 def test_pce(tmpdir, campaign):
