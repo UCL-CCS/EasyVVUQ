@@ -1,3 +1,5 @@
+"""Provides base class for all comparison/validation elements.
+"""
 from .. import BaseElement
 
 __copyright__ = """
