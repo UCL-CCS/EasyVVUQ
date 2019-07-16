@@ -552,7 +552,58 @@ class CampaignDB(BaseCampaignDB):
 
         logger.warning("JSON database only allows for one campaign. "
                        "Campaign ID is always 1.")
+
         return 1
+
+    def get_sampler_id(self, campaign_id):
+        """
+        Return the (database) id corresponding to the sampler currently set
+        for the campaign with id 'campaign_id'
+
+        Parameters
+        ----------
+        campaign_id: int
+            ID of the campaign.
+
+        Returns
+        -------
+        int:
+            The id of the sampler set for the specified campaign
+        """
+
+        logger.warning("JSON database only allows for one sampler. "
+                       "Sampler ID is always 1.")
+
+        return 1
+
+    def set_sampler(self, campaign_id, sampler_id):
+        """
+        Set specified campaign to be using specified sampler
+
+        Parameters
+        ----------
+        campaign_id: int
+            ID of the campaign.
+        sampler_id: int
+            ID of the sampler.
+
+        Returns
+        -------
+        """
+
+        if campaign_id != 1:
+            message = ('JSON/Python dict database does not support a '
+                       'campaign_id other than 1')
+            logger.critical(message)
+            raise RuntimeError(message)
+
+        if sampler_id != 1:
+            message = ('JSON/Python dict database does not support a '
+                       'sampler_id other than 1')
+            logger.critical(message)
+            raise RuntimeError(message)
+
+       # Do nothing, as JSON db sampler_id is already always set to 1
 
     def get_run_status(self, run_name, campaign=None, sampler=None):
         """
