@@ -62,6 +62,7 @@ class CampaignTable(Base):
     campaign_dir = Column(String)
     runs_dir = Column(String)
     collater = Column(String)
+    sampler = Column(Integer, ForeignKey('sample.id'))
 
 
 class AppTable(Base):
@@ -587,6 +588,43 @@ class CampaignDB(BaseCampaignDB):
 
         # Return the database ID for the specified campaign
         return selected[0][1]
+
+    def get_sampler_id(self, campaign_id):
+        """
+        Return the (database) id corresponding to the sampler currently set
+        for the campaign with id 'campaign_id'
+
+        Parameters
+        ----------
+        campaign_id: int
+            ID of the campaign.
+
+        Returns
+        -------
+        int:
+            The id of the sampler set for the specified campaign
+        """
+
+        sampler_id = self.session.query(CampaignTable).get(campaign_id).sampler
+        return sampler_id
+
+    def set_sampler(self, campaign_id, sampler_id):
+        """
+        Set specified campaign to be using specified sampler
+
+        Parameters
+        ----------
+        campaign_id: int
+            ID of the campaign.
+        sampler_id: int
+            ID of the sampler.
+
+        Returns
+        -------
+        """
+
+        self.session.query(CampaignTable).get(campaign_id).sampler = sampler_id
+        self.session.commit()
 
     def campaign_dir(self, campaign_name=None):
         """Get campaign directory for `campaign_name`.

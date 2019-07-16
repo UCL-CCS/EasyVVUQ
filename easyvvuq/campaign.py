@@ -280,6 +280,7 @@ class Campaign:
         self.campaign_id = campaign_db.get_campaign_id(self.campaign_name)
 
         # Resurrect the sampler and collation elements
+        self._active_sampler_id = campaign_db.get_sampler_id(self.campaign_id)
         self._active_sampler = campaign_db.resurrect_sampler(self._active_sampler_id)
         self._active_collater = campaign_db.resurrect_collation(self.campaign_id)
 
@@ -300,7 +301,7 @@ class Campaign:
         output_json = {
             "db_location": self.db_location,
             "db_type": self.db_type,
-            "active_sampler_id": self._active_sampler_id,
+#            "active_sampler_id": self._active_sampler_id,
             "active_app": self._active_app_name,
             "campaign_name": self.campaign_name,
             "campaign_dir": self._campaign_dir,
@@ -327,7 +328,7 @@ class Campaign:
 
         self.db_location = input_json["db_location"]
         self.db_type = input_json["db_type"]
-        self._active_sampler_id = input_json["active_sampler_id"]
+#        self._active_sampler_id = input_json["active_sampler_id"]
         self._active_app_name = input_json["active_app"]
         self.campaign_name = input_json["campaign_name"]
         self._campaign_dir = input_json["campaign_dir"]
@@ -423,6 +424,7 @@ class Campaign:
 
         self._active_sampler = sampler
         self._active_sampler_id = self.campaign_db.add_sampler(sampler)
+        self.campaign_db.set_sampler(self.campaign_id, self._active_sampler_id)
 
     def set_collater(self, collater):
         """Set a collater for this campaign.
