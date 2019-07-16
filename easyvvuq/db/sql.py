@@ -470,14 +470,13 @@ class CampaignDB(BaseCampaignDB):
         -------
 
         """
-
-        selected = self.session.query(RunTable).filter(
-            RunTable.run_name.in_(set(run_ID_list))).all()
-
-        for run in selected:
-            run.status = status
-
-        self.session.commit()
+        max_entries = 900
+        for i in range(0, len(run_ID_list), max_entries):
+            selected = self.session.query(RunTable).filter(
+                RunTable.run_name.in_(set(run_ID_list[i:i + max_entries]))).all()
+            for run in selected:
+                run.status = status
+            self.session.commit()
 
     def campaigns(self):
         """Get list of campaigns for which information is stored in the
