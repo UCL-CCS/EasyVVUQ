@@ -301,7 +301,6 @@ class Campaign:
         output_json = {
             "db_location": self.db_location,
             "db_type": self.db_type,
-#            "active_sampler_id": self._active_sampler_id,
             "active_app": self._active_app_name,
             "campaign_name": self.campaign_name,
             "campaign_dir": self._campaign_dir,
@@ -328,7 +327,6 @@ class Campaign:
 
         self.db_location = input_json["db_location"]
         self.db_type = input_json["db_type"]
-#        self._active_sampler_id = input_json["active_sampler_id"]
         self._active_app_name = input_json["active_app"]
         self.campaign_name = input_json["campaign_name"]
         self._campaign_dir = input_json["campaign_dir"]
