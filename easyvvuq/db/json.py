@@ -603,7 +603,7 @@ class CampaignDB(BaseCampaignDB):
             logger.critical(message)
             raise RuntimeError(message)
 
-       # Do nothing, as JSON db sampler_id is already always set to 1
+        # Do nothing, as JSON db sampler_id is already always set to 1
 
     def get_run_status(self, run_name, campaign=None, sampler=None):
         """
