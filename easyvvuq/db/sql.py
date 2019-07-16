@@ -1,5 +1,6 @@
 """Provides class that allows access to an SQL format CampaignDB.
 """
+import os
 import json
 import logging
 import pandas as pd
@@ -368,9 +369,11 @@ class CampaignDB(BaseCampaignDB):
         """
 
         # Add all runs to RunTable
+        runs_dir = self.runs_dir()
         for run_info in run_info_list:
             run_info.ensemble_name = f"{ensemble_prefix}{self._next_ensemble}"
             run_info.run_name = f"{run_prefix}{self._next_run}"
+            run_info.run_dir = os.path.join(runs_dir, run_info.run_name)
 
             run = RunTable(**run_info.to_dict(flatten=True))
             self.session.add(run)

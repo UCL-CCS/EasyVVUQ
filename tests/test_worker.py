@@ -1,7 +1,6 @@
 import easyvvuq as uq
 import chaospy as cp
 import os
-import sys
 import pytest
 from pprint import pprint
 
@@ -35,14 +34,10 @@ if not os.path.exists("tests/cannonsim/bin/cannonsim"):
         "Skipping cannonsim test (cannonsim is not installed in tests/cannonsim/bin/)",
         allow_module_level=True)
 
-cannonsim_path = os.path.realpath(os.path.expanduser("tests/cannonsim/bin/cannonsim"))
+CANNONSIM_PATH = os.path.realpath(os.path.expanduser("tests/cannonsim/bin/cannonsim"))
 
 
-def execute_cannonsim(run_id, run_data):
-    os.system(f"cd {run_data['run_dir']} && {cannonsim_path} in.cannon output.csv")
-
-
-def test_cannonsim_csv(tmpdir):
+def test_worker(tmpdir):
 
     # Set up a fresh campaign called "cannon"
     my_campaign = uq.Campaign(name='cannon', work_dir=tmpdir)
@@ -94,9 +89,6 @@ def test_cannonsim_csv(tmpdir):
         target_filename='output.csv', output_columns=[
             'Dist', 'lastvx', 'lastvy'], header=0)
 
-    print("Serialized encoder:", encoder.serialize())
-    print("Serialized decoder:", decoder.serialize())
-
     # Add the cannonsim app
     my_campaign.add_app(name="cannonsim",
                         params=params,
@@ -134,62 +126,40 @@ def test_cannonsim_csv(tmpdir):
     pprint(my_campaign.list_runs())
     print("---")
 
-    # Encode all runs into a local directory
-    pprint(
-        f"Encoding all runs to campaign runs dir {my_campaign.get_campaign_runs_dir()}")
-    my_campaign.populate_runs_dir()
+    # User defined function
+    def encode_and_execute_cannonsim(run_id, run_data):
+        enc_args = " ".join([
+            my_campaign.db_type,
+            my_campaign.db_location,
+            "cannon",
+            "cannonsim",
+            run_id])
 
-    assert(len(my_campaign.get_campaign_runs_dir()) > 0)
-    assert(os.path.exists(my_campaign.get_campaign_runs_dir()))
-    assert(os.path.isdir(my_campaign.get_campaign_runs_dir()))
+        encoder_path = f"{uq.__path__[0]}/tools/external_encoder.py"
+        os.system(f"python3 {encoder_path} " + enc_args)
 
-    # Local execution
-    my_campaign.call_for_each_run(execute_cannonsim)
+        os.system(f"cd {run_data['run_dir']} && {CANNONSIM_PATH} in.cannon output.csv")
+
+    # Encode and execute. Note to call function for all runs with status NEW (and not ENCODED)
+    my_campaign.call_for_each_run(encode_and_execute_cannonsim, status=uq.constants.Status.NEW)
+
+    print("Runs list after encoding and execution:")
+    pprint(my_campaign.list_runs())
 
     # Collate all data into one pandas data frame
     my_campaign.collate()
     print("data:", my_campaign.get_collation_result())
 
-    # Save the state of the campaign
-    state_file = tmpdir + "cannonsim_state.json"
-    my_campaign.save_state(state_file)
-
-    my_campaign = None
-
-    # Load state in new campaign object
-    reloaded_campaign = uq.Campaign(state_file=state_file, work_dir=tmpdir)
-    reloaded_campaign.set_app("cannonsim")
-
-    # Draw 3 more samples, execute, and collate onto existing dataframe
-    print("Running 3 more samples...")
-    reloaded_campaign.draw_samples(num_samples=3)
-    print("List of runs added:")
-    pprint(reloaded_campaign.list_runs())
-    print("---")
-
-    reloaded_campaign.populate_runs_dir()
-    reloaded_campaign.call_for_each_run(execute_cannonsim)
-
-    print("Completed runs:")
-    pprint(reloaded_campaign.scan_completed())
-
-    print("All completed?", reloaded_campaign.all_complete())
-
-    reloaded_campaign.collate()
-    print("data:\n", reloaded_campaign.get_collation_result())
-
-    print(reloaded_campaign)
-
     # Create a BasicStats analysis element and apply it to the campaign
     stats = uq.analysis.BasicStats(qoi_cols=['Dist', 'lastvx', 'lastvy'])
-    reloaded_campaign.apply_analysis(stats)
-    print("stats:\n", reloaded_campaign.get_last_analysis())
+    my_campaign.apply_analysis(stats)
+    print("stats:\n", my_campaign.get_last_analysis())
 
     # Print the campaign log
-    pprint(reloaded_campaign._log)
+    pprint(my_campaign._log)
 
-    print("All completed?", reloaded_campaign.all_complete())
+    print("All completed?", my_campaign.all_complete())
 
 
 if __name__ == "__main__":
-    test_cannonsim_csv("/tmp/")
+    test_worker("/tmp/")
