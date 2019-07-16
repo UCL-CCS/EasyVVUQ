@@ -511,7 +511,6 @@ class CampaignDB(BaseCampaignDB):
                 RunTable.run_name.in_(set(run_ID_list[i:i + max_entries]))).all()
             for run in selected:
                 run.status = status
-            print(selected)
             self.session.commit()
 
     def campaigns(self):
