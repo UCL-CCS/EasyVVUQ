@@ -613,6 +613,7 @@ class Campaign:
 
         # Loop through all runs with status NEW
         runs_dir = self.campaign_db.runs_dir()
+        run_ids = []
         for run_id, run_data in self.campaign_db.runs(status=Status.NEW):
 
             # Make run directory
@@ -632,8 +633,8 @@ class Campaign:
                     active_encoder.encode(params=run_data['params'],
                                           target_dir=target_dir)
 
-            # Update run status in db
-            self.campaign_db.set_run_statuses([run_id], Status.ENCODED)
+            run_ids.append(run_id)
+        self.campaign_db.set_run_statuses(run_ids, Status.ENCODED)
 
     def get_campaign_runs_dir(self):
         """Get the runs directory from the CampaignDB.
