@@ -1,3 +1,5 @@
+"""Provides base class for all collation elements.
+"""
 from easyvvuq.base_element import BaseElement
 import json
 import logging

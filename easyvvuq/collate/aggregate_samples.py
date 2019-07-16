@@ -1,3 +1,6 @@
+"""Provides an element for aggregation of results from all complete runs.
+"""
+
 from .base import BaseCollationElement
 from easyvvuq import OutputType, constants
 import pandas as pd
