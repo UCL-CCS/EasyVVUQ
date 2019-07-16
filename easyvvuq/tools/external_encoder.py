@@ -1,22 +1,5 @@
 import sys
-from .constants import OutputType
-from . import data_structs
-from .params_specification import ParamsSpecification
-from .campaign import Campaign
-from .worker import Worker
-from . import actions
-from . import distributions
-from . import encoders
-from . import decoders
-from .base_element import BaseElement
-from . import sampling
-from . import analysis
-from . import comparison
-from . import collate
-
-# First make sure python version is 3.6+
-assert sys.version_info >= (3, 6), (f"Python version must be >= 3.6,"
-                                    f"found {sys.version_info}")
+import easyvvuq as uq
 
 __copyright__ = """
 
@@ -40,6 +23,23 @@ __copyright__ = """
 """
 __license__ = "LGPL"
 
-from ._version import get_versions
-__version__ = get_versions()['version']
-del get_versions
+if __name__ == "__main__":
+    if len(sys.argv) != 6:
+        sys.exit(
+            f("Usage: python3 external_encoder.py db_type db_location"
+              "campaign_name app_name comma_separated_run_id_list")
+        )
+
+    db_type = sys.argv[1]
+    db_location = sys.argv[2]
+    campaign_name = sys.argv[3]
+    app_name = sys.argv[4]
+    run_id_list = sys.argv[5].split(',')
+
+    worker = uq.Worker(
+        db_type=db_type,
+        db_location=db_location,
+        campaign_name=campaign_name,
+        app_name=app_name)
+
+    worker.encode_runs(run_id_list)
