@@ -507,7 +507,7 @@ class CampaignDB(BaseCampaignDB):
         max_entries = 900
         for i in range(0, len(run_ID_list), max_entries):
             selected = self.session.query(RunTable).filter(
-                RunTable.run_name.in_(set(run_ID_list[i:i+max_entries]))).all()
+                RunTable.run_name.in_(set(run_ID_list[i:i + max_entries]))).all()
             for run in selected:
                 run.status = status
             print(selected)
