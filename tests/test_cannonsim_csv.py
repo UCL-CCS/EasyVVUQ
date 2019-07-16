@@ -139,7 +139,7 @@ def test_cannonsim_csv(tmpdir):
 
     # Local execution
     my_campaign.apply_for_each_run_dir(uq.actions.ExecuteLocal(
-        "tests/cannonsim/bin/cannonsim in.cannon output.csv"))
+fo        "tests/cannonsim/bin/cannonsim in.cannon output.csv"))
 
     # Collate all data into one pandas data frame
     my_campaign.collate()
