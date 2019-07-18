@@ -194,8 +194,8 @@ def test_cannonsim(tmpdir, campaign):
     sampler = uq.sampling.RandomSampler(vary=vary)
     campaign(tmpdir, 'cannon', 'cannonsim', params, encoder, decoder, sampler,
              collater, actions, stats, vary, 5, 1)
-    campaign(tmpdir, 'cannon', 'cannonsim', params, encoder, decoder, sampler,
-             collater, None, stats, vary, 5, 1, call_fn=execute_cannonsim)
+    #campaign(tmpdir, 'cannon', 'cannonsim', params, encoder, decoder, sampler,
+    #         collater, None, stats, vary, 5, 1, call_fn=execute_cannonsim)
     # Make a sweep sampler
     sweep = {
         "angle": [0.1, 0.2, 0.3],
