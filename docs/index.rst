@@ -40,6 +40,7 @@ Table of contents
    basic_tutorial
    cooling_coffee_cup
    restartable_campaign_tutorial
+   custom_encoder
 
 Indices and tables
 ==================

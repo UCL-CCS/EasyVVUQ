@@ -352,6 +352,7 @@ class CampaignDB(BaseCampaignDB):
             this_run = run_info.to_dict()
             this_run['run_name'] = name
             this_run['ensemble_name'] = ensemble
+            this_run['run_dir'] = os.path.join(self._campaign_info['runs_dir'], name)
 
             self._runs[name] = this_run
             self._next_run += 1

@@ -1,5 +1,6 @@
 """Provides class that allows access to an SQL format CampaignDB.
 """
+import os
 import json
 import logging
 import pandas as pd
@@ -368,9 +369,11 @@ class CampaignDB(BaseCampaignDB):
         """
 
         # Add all runs to RunTable
+        runs_dir = self.runs_dir()
         for run_info in run_info_list:
             run_info.ensemble_name = f"{ensemble_prefix}{self._next_ensemble}"
             run_info.run_name = f"{run_prefix}{self._next_run}"
+            run_info.run_dir = os.path.join(runs_dir, run_info.run_name)
 
             run = RunTable(**run_info.to_dict(flatten=True))
             self.session.add(run)
@@ -501,14 +504,14 @@ class CampaignDB(BaseCampaignDB):
         -------
 
         """
-
-        selected = self.session.query(RunTable).filter(
-            RunTable.run_name.in_(set(run_ID_list))).all()
-
-        for run in selected:
-            run.status = status
-
-        self.session.commit()
+        max_entries = 900
+        for i in range(0, len(run_ID_list), max_entries):
+            selected = self.session.query(RunTable).filter(
+                RunTable.run_name.in_(set(run_ID_list[i:i + max_entries]))).all()
+            for run in selected:
+                run.status = status
+            print(selected)
+            self.session.commit()
 
     def campaigns(self):
         """Get list of campaigns for which information is stored in the

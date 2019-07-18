@@ -25,9 +25,10 @@ setup(
 
     author='CCS',
 
-    install_requires=['numpy', 'pandas>=0.24', 'scipy', 
+    install_requires=['numpy', 'pandas>=0.24', 'scipy',
                       'pytest', 'SQLAlchemy', 'chaospy',
-                      'sqlalchemy-utils', 'matplotlib', 'jsonpickle'],
+                      'sqlalchemy-utils', 'matplotlib',
+                      'jsonpickle', 'cerberus'],
 
     packages=find_packages(),
 

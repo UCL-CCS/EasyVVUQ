@@ -611,29 +611,25 @@ class Campaign:
             use_fixtures = active_encoder.fixture_support
             fixtures = self._active_app['fixtures']
 
-        # Loop through all runs with status NEW
-        runs_dir = self.campaign_db.runs_dir()
+        run_ids = []
+
         for run_id, run_data in self.campaign_db.runs(status=Status.NEW):
 
-            # Make run directory
-            target_dir = os.path.join(runs_dir, run_id)
-            os.makedirs(target_dir)
+            # Make directory for this run's output
+            os.makedirs(run_data['run_dir'])
 
-            # TODO: Check that this isn't insanely inefficient (almost
-            #  certainly will be hammering the database for large run lists)
-            self.campaign_db.set_dir_for_run(run_id, target_dir)
-
+            # Encode run
             if active_encoder is not None:
                 if use_fixtures:
                     active_encoder.encode(params=run_data['params'],
                                           fixtures=fixtures,
-                                          target_dir=target_dir)
+                                          target_dir=run_data['run_dir'])
                 else:
                     active_encoder.encode(params=run_data['params'],
-                                          target_dir=target_dir)
+                                          target_dir=run_data['run_dir'])
 
-            # Update run status in db
-            self.campaign_db.set_run_statuses([run_id], Status.ENCODED)
+            run_ids.append(run_id)
+        self.campaign_db.set_run_statuses(run_ids, Status.ENCODED)
 
     def get_campaign_runs_dir(self):
         """Get the runs directory from the CampaignDB.
@@ -651,7 +647,7 @@ class Campaign:
         # Loop through all runs in this campaign with the specified status,
         # and call the specified user function for each.
         for run_id, run_data in self.campaign_db.runs(status=status):
-            fn(run_data['run_dir'], run_data['params'])
+            fn(run_id, run_data)
 
     def apply_for_each_run_dir(self, action):
         """
