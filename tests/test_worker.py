@@ -135,7 +135,7 @@ def test_worker(tmpdir):
             "cannon",
             "cannonsim",
             run_id
-            ]
+        ]
         encoder_path = os.path.realpath(os.path.expanduser("easyvvuq/tools/external_encoder.py"))
         subprocess.run(['python3', encoder_path] + enc_args)
         subprocess.run([CANNONSIM_PATH, "in.cannon", "output.csv"], cwd=run_data['run_dir'])
