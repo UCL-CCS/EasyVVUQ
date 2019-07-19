@@ -3,6 +3,7 @@ import chaospy as cp
 import os
 import pytest
 from pprint import pprint
+import subprocess
 
 __copyright__ = """
 
@@ -128,17 +129,16 @@ def test_worker(tmpdir):
 
     # User defined function
     def encode_and_execute_cannonsim(run_id, run_data):
-        enc_args = " ".join([
+        enc_args = [
             my_campaign.db_type,
             my_campaign.db_location,
             "cannon",
             "cannonsim",
-            run_id])
-
-        encoder_path = f"{uq.__path__[0]}/tools/external_encoder.py"
-        os.system(f"python3 {encoder_path} " + enc_args)
-
-        os.system(f"cd {run_data['run_dir']} && {CANNONSIM_PATH} in.cannon output.csv")
+            run_id
+        ]
+        encoder_path = os.path.realpath(os.path.expanduser("easyvvuq/tools/external_encoder.py"))
+        subprocess.run(['python3', encoder_path] + enc_args)
+        subprocess.run([CANNONSIM_PATH, "in.cannon", "output.csv"], cwd=run_data['run_dir'])
 
     # Encode and execute. Note to call function for all runs with status NEW (and not ENCODED)
     my_campaign.call_for_each_run(encode_and_execute_cannonsim, status=uq.constants.Status.NEW)
