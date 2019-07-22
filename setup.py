@@ -21,7 +21,7 @@ setup(
     long_description=long_description,
     long_description_content_type='text/markdown',
 
-    url='http://ccs.chem.ucl.ac.uk',
+    url='https://readthedocs.org/projects/easyvvuq/',
 
     author='CCS',
 
