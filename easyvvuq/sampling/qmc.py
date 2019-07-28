@@ -1,5 +1,7 @@
 import logging
+import numpy as np
 import chaospy as cp
+from SALib.sample import saltelli
 from .base import BaseSamplingElement, Vary
 
 __author__ = "Jalal Lakhlili"
@@ -30,8 +32,7 @@ class QMCSampler(BaseSamplingElement, sampler_name="QMC_sampler"):
     def __init__(self,
                  vary=None,
                  count=0,
-                 number_of_samples=1000,
-                 sampling_rule="L"):
+                 n_samples=10**4):
         """
         Create the sampler using Quasi-Monte Carlo Method
 
@@ -43,13 +44,11 @@ class QMCSampler(BaseSamplingElement, sampler_name="QMC_sampler"):
         count : int, optional
             Specified counter for Fast forward, default is 0.
 
-        number_of_samples : int
+        n_samples : int, optional
             The number of samples requierd to get a given acccuray,
-            default is 1000.
-
-        sampling_rule : char, optional
-            The sampling method, default is Latin Hypercube "L".
-
+            default is 10**4. To be able to compute the Sobol indices,
+            n_total_samples = (n_samples/2)*(n_uncertain_params + 2)
+            samples are quasi-randomly drawn using Saltelli's sampling scheme.
         """
 
         if vary is None:
@@ -70,8 +69,7 @@ class QMCSampler(BaseSamplingElement, sampler_name="QMC_sampler"):
             raise Exception(msg)
 
         self.vary = Vary(vary)
-        self.sampling_rule = sampling_rule
-        self.number_of_samples = number_of_samples
+        self.n_samples = n_samples
 
         # List of the probability distributions of uncertain parameters
         params_distribution = list(vary.values())
@@ -80,13 +78,30 @@ class QMCSampler(BaseSamplingElement, sampler_name="QMC_sampler"):
         self.distribution = cp.J(*params_distribution)
 
         # Generate samples
-        self._samples = self.distribution.sample(size=number_of_samples, rule=sampling_rule)
+        self.n_uncertain_params = len(vary)
+        n_sobol_samples = int(np.round(self.n_samples / 2.))
+
+        dist_U = []
+        for i in range(self.n_uncertain_params):
+            dist_U.append(cp.Uniform())
+        dist_U = cp.J(*dist_U)
+
+        problem = {
+            "num_vars": self.n_uncertain_params,
+            "names": list(vary.keys()),
+            "bounds": [[0, 1]] * self.n_uncertain_params
+        }
+
+        nodes = saltelli.sample(problem, n_sobol_samples, calc_second_order=False)
+        self._samples = self.distribution.inv(dist_U.fwd(nodes.transpose()))
+
+        self.n_total_samples = n_sobol_samples * (self.n_uncertain_params + 2)
 
         # Fast forward to specified count, if possible
         self.count = 0
-        if self.count >= self.number_of_samples:
+        if self.count >= self.n_total_samples:
             msg = (f"Attempt to start sampler fastforwarded to count {self.count}, "
-                   f"but sampler only has {self._number_of_samples} samples, therefore"
+                   f"but sampler only has {self.n_total_samples} samples, therefore"
                    f"this sampler will not provide any more samples.")
             logging.warning(msg)
         else:
@@ -94,7 +109,7 @@ class QMCSampler(BaseSamplingElement, sampler_name="QMC_sampler"):
                 self.__next__()
 
     def element_version(self):
-        return "0.1"
+        return "0.2"
 
     def is_finite(self):
         return True
@@ -103,7 +118,7 @@ class QMCSampler(BaseSamplingElement, sampler_name="QMC_sampler"):
         return True
 
     def __next__(self):
-        if self.count < self.number_of_samples:
+        if self.count < self.n_total_samples:
             run_dict = {}
             i_par = 0
             for param_name in self.vary.get_keys():
@@ -117,5 +132,4 @@ class QMCSampler(BaseSamplingElement, sampler_name="QMC_sampler"):
     def get_restart_dict(self):
         return {"vary": self.vary.serialize(),
                 "count": self.count,
-                "number_of_samples": self.number_of_samples,
-                "sampling_rule": self.sampling_rule}
+                "n_samples": self.n_samples}

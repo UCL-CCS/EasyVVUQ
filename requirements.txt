@@ -2,6 +2,7 @@ numpy
 pandas>=0.24
 scipy
 chaospy
+SALib
 pytest
 pytest-pep8
 SQLAlchemy
