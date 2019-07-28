@@ -43,7 +43,7 @@ class QMCAnalysis(BaseAnalysisElement):
 
     def element_version(self):
         """Version of this element for logging purposes"""
-        return "0.1"
+        return "0.2"
 
     def analyse(self, data_frame=None):
         """Perform QMC analysis on input `data_frame`.
@@ -72,11 +72,14 @@ class QMCAnalysis(BaseAnalysisElement):
 
         results = {'statistical_moments': {},
                    'percentiles': {},
+                   'sobols_first': {k: {} for k in qoi_cols},
+                   'sobols_total': {k: {} for k in qoi_cols},
                    'correlation_matrices': {},
                    }
 
-        # Get the number of samples: TODO for SA
-        number_of_samples = self.sampler.number_of_samples
+        # Get the number of samples and uncertain parameters
+        n_sobol_samples = int(np.round(self.sampler.n_samples / 2.))
+        n_uncertain_params = self.sampler.n_uncertain_params
 
         # Extract output values for each quantity of interest from Dataframe
         samples = {k: [] for k in qoi_cols}
@@ -101,9 +104,44 @@ class QMCAnalysis(BaseAnalysisElement):
             results['percentiles'][k] = {'p10': P10, 'p90': P90}
 
             # Sensitivity Analysis: First and Total Sobol indices
-            # TODO use saltelli method
+            A, B, AB = self._separate_output_values(samples[k],
+                                                    n_uncertain_params,
+                                                    n_sobol_samples)
+            sobols_first_dict = {}
+            sobols_total_dict = {}
+            i_par = 0
+            for param_name in self.sampler.vary.get_keys():
+                sobols_first_dict[param_name] = self._first_order(A, AB[:, i_par], B)
+                sobols_total_dict[param_name] = self._total_order(A, AB[:, i_par], B)
+                i_par += 1
+            results['sobols_first'][k] = sobols_first_dict
+            results['sobols_total'][k] = sobols_total_dict
 
             # Correlation matrix
             results['correlation_matrices'][k] = np.corrcoef(samples[k])
 
         return results
+
+    # Adapted from SALib
+    def _separate_output_values(self, evaluations, n_uncertain_params, n_samples):
+        evaluations = np.array(evaluations)
+
+        shape = (n_samples, n_uncertain_params) + evaluations[0].shape
+        step = n_uncertain_params + 2
+        AB = np.zeros(shape)
+
+        A = evaluations[0:evaluations.shape[0]:step]
+        B = evaluations[(step - 1):evaluations.shape[0]:step]
+
+        for i in range(n_uncertain_params):
+            AB[:, i] = evaluations[(i + 1):evaluations.shape[0]:step]
+
+        return A, B, AB
+
+    def _first_order(self, A, AB, B):
+        V = np.var(np.r_[A, B], axis=0)
+        return np.mean(B * (AB - A), axis=0) / (V + (V == 0)) * (V != 0)
+
+    def _total_order(slef, A, AB, B):
+        V = np.var(np.r_[A, B], axis=0)
+        return 0.5 * np.mean((A - AB) ** 2, axis=0) / (V + (V == 0)) * (V != 0)
