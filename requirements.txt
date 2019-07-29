@@ -10,3 +10,4 @@ sqlalchemy-utils
 jsonpickle
 cerberus
 matplotlib
+SALib
