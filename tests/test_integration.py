@@ -40,7 +40,6 @@ if not os.path.exists("tests/cannonsim/bin/cannonsim"):
 
 cannonsim_path = os.path.realpath(os.path.expanduser("tests/cannonsim/bin/cannonsim"))
 
-
 def execute_cannonsim(path, params):
     os.system(f"cd {path} && {cannonsim_path} in.cannon output.csv")
 
@@ -48,14 +47,67 @@ def execute_cannonsim(path, params):
 logging.basicConfig(level=logging.CRITICAL)
 
 
-@pytest.fixture
-def campaign_test():
-    class CampaignTest:
-        def __init__(self, campaign_name, work_dir, db_type='sql'):
-            self.campaign = uq.Campaign(name=campaign_name, work_dir=work_dir, db_type=db_type)
+class CampaignTest:
+    def __init__(self, campaign_name, work_dir, db_type='sql'):
+        self.work_dir = work_dir
+        self.__sampler = None
+        self.__collater = None
+        self.actions = None
+        self.call_fn = None
 
-        def run_tests(self):
-            pass
+    @property
+    def collater(self):
+        return self.__collater
+
+    @collater.setter
+    def collater(self, collater):
+        self.__colater = collater
+        self.campaign.set_collater(collater)
+
+    @property
+    def sampler(self):
+        return self.__sampler
+
+    @sampler.setter
+    def sampler(self, sampler):
+        self.__sampler = sampler
+        self.campaign.set_sampler(sampler)
+
+    def add_app(self, name, params, encoder, decoder, fixtures=None):
+        self.app_name = name
+        self.campaign.add_app(name=name,
+                        params=params,
+                        encoder=encoder,
+                        decoder=decoder,
+                        fixtures=fixtures)
+        self.campaign.set_app(name)
+
+    def test_campaign(self, num_samples, replicas):
+        self.campaign.draw_samples(num_samples=num_samples, replicas=replicas)
+        self.campaign.populate_runs_dir()
+        assert(len(self.campaign.get_campaign_runs_dir()) > 0)
+        assert(os.path.exists(self.campaign.get_campaign_runs_dir()))
+        assert(os.path.isdir(self.campaign.get_campaign_runs_dir()))
+        if self.call_fn is not None:
+            self.campaign.call_for_each_run(self.call_fn)
+        if self.actions is not None:
+            self.campaign.apply_for_each_run_dir(self.actions)
+        self.campaign.collate()
+        self.state_file = self.work_dir + "{}_state.json".format(self.app_name)
+        self.campaign.save_state(self.state_file)
+
+    def test_reloading(self, num_samples, replicas, stats):
+        campaign = uq.Campaign(state_file=self.state_file, work_dir=self.work_dir)
+        campaign.set_app(self.app_name)
+        campaign.draw_samples(num_samples=num_samples, replicas=replicas)
+        campaign.populate_runs_dir()
+        if self.call_fn is not None:
+            campaign.call_for_each_run(self.call_fn)
+        if self.actions is not None:
+            campaign.apply_for_each_run_dir(self.actions)
+        campaign.collate()
+        if stats is not None:
+            campaign.apply_analysis(stats)            
 
 
 @pytest.fixture
@@ -133,8 +185,7 @@ def campaign():
     return _campaign
 
 
-def test_cannonsim(tmpdir, campaign):
-    # Define parameter space for the cannonsim app
+def test_cannonsim(tmpdir):
     params = {
         "angle": {
             "type": "float",
@@ -171,8 +222,6 @@ def test_cannonsim(tmpdir, campaign):
             "min": 0.0,
             "max": 1000.0,
             "default": 10.0}}
-
-    # Create an encoder and decoder for the cannonsim app
     encoder = uq.encoders.GenericEncoder(
         template_fname='tests/cannonsim/test_input/cannonsim.template',
         delimiter='#',
@@ -180,11 +229,9 @@ def test_cannonsim(tmpdir, campaign):
     decoder = uq.decoders.SimpleCSV(
         target_filename='output.csv', output_columns=[
             'Dist', 'lastvx', 'lastvy'], header=0)
-    # Create a collation element for this campaign
     collater = uq.collate.AggregateSamples(average=False)
     actions = uq.actions.ExecuteLocal("tests/cannonsim/bin/cannonsim in.cannon output.csv")
     stats = uq.analysis.BasicStats(qoi_cols=['Dist', 'lastvx', 'lastvy'])
-    # Make a random sampler
     vary = {
         "angle": cp.Uniform(0.0, 1.0),
         "height": cp.Uniform(2.0, 10.0),
@@ -192,19 +239,23 @@ def test_cannonsim(tmpdir, campaign):
         "mass": cp.Uniform(5.0, 1.0)
     }
     sampler = uq.sampling.RandomSampler(vary=vary)
-    campaign(tmpdir, 'cannon', 'cannonsim', params, encoder, decoder, sampler,
-             collater, actions, stats, vary, 5, 1)
-    #campaign(tmpdir, 'cannon', 'cannonsim', params, encoder, decoder, sampler,
-    #         collater, None, stats, vary, 5, 1, call_fn=execute_cannonsim)
-    # Make a sweep sampler
+    campaign = CampaignTest('cannon', tmpdir)
+    campaign.add_app('cannonsim', params, encoder, decoder)
+    campaign.collater = collater
+    campaign.actions = actions
+    campaign.sampler = sampler
+    campaign.test_campaign(5, 1)
+    campaign.call_fn = execute_cannonsim
+    campaign.test_campaign(5, 1)
     sweep = {
         "angle": [0.1, 0.2, 0.3],
         "height": [2.0, 10.0],
         "velocity": [10.0, 10.1, 10.2]
     }
     sampler = uq.sampling.BasicSweep(sweep=sweep)
-    campaign(tmpdir, 'cannonsim', 'cannonsim', params, encoder, decoder, sampler,
-             collater, actions, None, sweep, 5, 1)
+    campaign.sampler = sampler
+    campaign.test_campaign(5, 1)
+    campaign.test_reloading(5, 1, stats)
 
 
 def test_gauss(tmpdir, campaign):
