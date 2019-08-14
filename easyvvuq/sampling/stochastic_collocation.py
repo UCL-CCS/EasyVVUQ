@@ -1,5 +1,7 @@
 from .base import BaseSamplingElement, Vary
 import chaospy as cp
+import numpy as np
+from itertools import product, chain
 import logging
 
 __author__ = "Wouter Edeling"
@@ -30,11 +32,13 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
 
     def __init__(self,
                  vary=None,
-                 polynomial_order=4,
+                 quad_order=4,
                  quadrature_rule="G",
-                 count=0):
+                 count=0,
+                 growth=False,
+                 sparse=False):
         """
-        Create the sampler for the Polynomial Chaos Expansion method.
+        Create the sampler for the Stochastic Collocation method.
 
         Parameters
         ----------
@@ -45,6 +49,11 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
 
         quadrature_rule : char, optional
             The quadrature method, default is Gaussian "G".
+            
+        growth: bool, optional
+             Sets the growth rule to exponential for Clenshaw Curtis quadrature,
+             which makes it nested, and therefore more efficient for sparse grids.
+             Default is False.
 
         sparse : bool, optional
             If True use sparse grid instead of normal tensor product grid,
@@ -52,7 +61,7 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
         """
 
         self.vary = Vary(vary)
-        self.polynomial_order = polynomial_order
+        #self.polynomial_order = polynomial_order
         self.quadrature_rule = quadrature_rule
 
         # List of the probability distributions of uncertain parameters
@@ -64,16 +73,59 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
         self.joint_dist = cp.J(*params_distribution)
 
         # The quadrature information: order, rule and sparsity
-        self.quad_order = polynomial_order
+        #self.quad_order = polynomial_order
+        self.quad_order = quad_order
         self.quad_rule = quadrature_rule
-        # self.quad_sparse = sparse
+        self.sparse = sparse
+        self.quad_sparse = sparse
+        self.growth = growth
 
-        # the nodes of the collocation grid
-        xi_d, _ = cp.generate_quadrature(self.quad_order,
-                                         self.joint_dist,
-                                         rule=quadrature_rule)
+        if sparse == False:
+            # the nodes of the collocation grid
+            xi_d, _ = cp.generate_quadrature(self.quad_order,
+                                             self.joint_dist,
+                                             rule=quadrature_rule)
+            self.xi_d = xi_d.T
+        #sparse grid = a linear combination of tensor products of 1D rules
+        #of different order. Use chaospy to compute these 1D quadrature rules
+        else:
+            #q = level of sparse grid
+            q = self.quad_order
+            #N = number of uncertain parameters
+            N = len(params_distribution)
 
-        self.xi_d = xi_d.T
+            #q >= N must hold
+            if q < N:
+                print("*************************************************************")
+                print("Level of sparse grid is lower than the dimension N (# params)")
+                print("Increase level (quad_order) q such that q >= N")
+                print("*************************************************************")
+                import sys; sys.exit()
+
+            #for every dimension (parameter), create a hierachy of 1D 
+            #quadrature rules or increasing order
+            
+            self.xi_1d = {}
+            self.wi_1d = {}
+
+            for n in range(N):
+                self.xi_1d[n] = {}
+                self.wi_1d[n] = {}
+
+            for n in range(N):
+                for i in range(1, quad_order):
+                    xi_i, wi_i = cp.generate_quadrature(i, 
+                                                        params_distribution[n], 
+                                                        rule=self.quad_rule, 
+                                                        growth=self.growth)
+                    self.xi_1d[n][i] = xi_i[0]
+                    self.wi_1d[n][i] = wi_i
+                
+            #create sparse grid of dimension N and level q using the 1d 
+            #rules in self.xi_1d
+            self.xi_d = self.sparse_grid_q_N(q, N)
+            self.q = q
+            self.N = N
 
         self._number_of_samples = self.xi_d.shape[0]
 
@@ -89,7 +141,7 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
                 self.__next__()
 
     def element_version(self):
-        return "0.3"
+        return "0.4"
 
     def is_finite(self):
         return True
@@ -114,6 +166,44 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
     def get_restart_dict(self):
         return {
             "vary": self.vary.serialize(),
-            "polynomial_order": self.polynomial_order,
+            "quad_order": self.quad_order,
             "quadrature_rule": self.quadrature_rule,
-            "count": self.count}
+            "count": self.count,
+            "growth": self.growth,
+            "sparse": self.sparse}
+        
+    """
+    =======================
+    SPARSE GRID SUBROUTINES
+    =======================
+    """
+
+    def sparse_grid_q_N(self, q, N):
+        """
+        Compute an isotropic sparse grid H_q_N of N dimensions and level q
+        """
+        #multi-index i, such that |i| <= q
+        i_norm_le_q = self.compute_sparse_multi_idx(q, N)
+            
+        H_q_N = []      
+        #loop over all multi indices i
+        for i in i_norm_le_q:
+            
+            #compute the tensor product of nodes indexed by i
+            X_i = [self.xi_1d[n][i[n]] for n in range(N)]
+            H_q_N.append(list(product(*X_i)))
+        
+        #flatten the list of lists
+        H_q_N = np.array(list(chain(*H_q_N)))
+        
+        #return unique nodes
+        return np.unique(H_q_N, axis=0)
+    
+    def compute_sparse_multi_idx(self, q, N):
+        """
+        computes all N dimensional multi-indices i = (i1,...,iN) such that
+        |i| <= Q. Here |i| is the internal sum of i (i1+...+iN)
+        """
+        P = np.array(list(product(range(1,q+1), repeat=N)))
+        i_norm_le_q = P[np.where(np.sum(P, axis=1) <= q)[0]]
+        return i_norm_le_q

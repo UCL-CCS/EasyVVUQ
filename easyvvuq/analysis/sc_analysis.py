@@ -94,11 +94,23 @@ class SCAnalysis(BaseAnalysisElement):
             raise RuntimeError(
                 "No data in data frame passed to analyse element")
 
-        qoi_cols = self.qoi_cols
-
         results = {'statistical_moments': {},
-                   'sobol_indices': {k: {} for k in qoi_cols}}
+                   'sobol_indices': {k: {} for k in self.qoi_cols}}
 
+        if self.sampler.sparse == False:
+            self.analyse_tensor_grid(results, self.qoi_cols, data_frame)
+        else:
+            self.analyse_sparse_grid(results, self.qoi_cols, data_frame)
+
+        return results
+
+        
+    def analyse_tensor_grid(self, results, qoi_cols, data_frame):
+        """
+        Perform the post-processing analysis for a full tensor product grid
+        (sparse = False)
+        """
+        
         # Chaospy computation of 1D weights
         xi = []
         wi = []
@@ -145,6 +157,104 @@ class SCAnalysis(BaseAnalysisElement):
             results['sobol_indices'][qoi_k] = self.get_sobol_indices(qoi_k, 'all')
 
         return results
+    
+    def analyse_sparse_grid(self, results, qoi_cols, data_frame):
+        """
+        Perform the post-processing analysis for a sparse grid
+        (sparse = True)
+        """
+        #use this above too?
+        self.xi_d = self.sampler.xi_d
+        self.xi_1d = self.sampler.xi_1d
+        self.wi_1d = self.sampler.wi_1d
+
+        self.L = self.sampler.q
+        self.N = self.sampler.N
+        
+        self.Map = {}
+        for level in range(self.N, self.L+1):
+            self.Map[level] = self.create_map(self.N, level)
+
+        # Extract output values for each quantity of interest from Dataframe
+        idx = 0
+        samples = {k: {} for k in qoi_cols}
+        
+        for run_id in data_frame.run_id.unique():
+            for k in qoi_cols:
+                values = data_frame.loc[data_frame['run_id'] == run_id][k]
+                samples[k][self.xi_d[idx].tobytes()] = values
+            idx += 1
+        self.samples = samples
+
+        self.N_qoi = samples[qoi_cols[0]][self.xi_d[0].tobytes()].size
+
+        # Extract output values for each quantity of interest from Dataframe
+        samples2 = {k: [] for k in qoi_cols}
+        for run_id in data_frame.run_id.unique():
+            for k in qoi_cols:
+                values = data_frame.loc[data_frame['run_id'] == run_id][k].values
+                samples2[k].append(values)
+        self.samples2 = samples2
+        self.data_frame = data_frame
+        
+        self.test = []
+        
+        # Compute descriptive statistics for each quantity of interest
+        for qoi_k in qoi_cols:
+            mean_k, var_k = self.get_moments(qoi_k)
+            std_k = var_k**0.5
+            
+            # compute statistical moments
+            results['statistical_moments'][qoi_k] = {'mean': mean_k,
+                                                     'var': var_k,
+                                                     'std': std_k}
+            # compute all Sobol indices
+            #results['sobol_indices'][qoi_k] = self.get_sobol_indices(qoi_k, 'all')            
+            
+    def compute_Q_diff(self, i, qoi, mean_f = []):
+    
+        """
+        =======================================================================
+        For every multi index i = (i1, i2, ..., id), Smolyak sums over 
+        tensor products difference quadrature rules:
+        (Q^1_{i1} - Q^1_{i1-1}) X ... X (Q^1_{id) - Q^1_{id-1})
+        Below this product is expanded into individual tensor products, each 
+        of which is then computed as:
+        Q^1_{k1} X ... X Q^1_{kd} = sum...sum w_{k1}*...*w{kd}*f(x_{k1},...,x_{kd}) 
+        =======================================================================
+        """
+        #expand the multi-index indices of the tensor product
+        #(Q^1_{i1} - Q^1_{i1-1}) X ... X (Q^1_{id) - Q^1_{id-1})
+        diff_idx = np.array(list(product(*[[k, -(k-1)] for k in i])))
+        
+        #Delta will be the sum of all expanded tensor products
+        #Q^1_{k1} X ... X Q^1_{kd} = sum...sum w_{k1}*...*w{kd}*f(x_{k1},...,x_{kd})
+        Delta = 0.0
+    
+        for diff in diff_idx:
+            #Q_0 = 0, so if present do not compute Q^1_{k1} X ... X Q^1_{kd} 
+            if not np.in1d(0, diff):
+                X_k = [self.xi_1d[n][np.abs(diff)[n]] for n in range(self.N)]
+                X_k = np.array(list(product(*X_k)))
+                f_k = np.array([self.samples[qoi][x.tobytes()] for x in X_k])
+                W_k = [self.wi_1d[n][np.abs(diff)[n]] for n in range(self.N)]
+                W_k = np.array(list(product(*W_k)))
+                W_k = np.prod(W_k, axis=1)
+                
+                #do some reshaping to align for multiplication
+                f_k = f_k.reshape([f_k.shape[0], self.N_qoi])
+                W_k = W_k.reshape([W_k.shape[0], 1])                
+                
+                if mean_f == []:
+                    Q_prod = np.sum(f_k*W_k, axis=0).T
+                else:
+                    Q_prod = np.sum((f_k - mean_f)**2, axis=0).T
+            else:
+                Q_prod = 0.0
+            
+            Delta += np.sign(np.prod(diff))*Q_prod
+            
+        return Delta
 
     def get_moments(self, qoi):
         """Compute the first two statistical moments.
@@ -161,20 +271,103 @@ class SCAnalysis(BaseAnalysisElement):
         float:
             Variance of samples, using quad weights
         """
+        
+        if self.sampler.sparse == False:
+            mean_f = np.zeros([self.N_qoi, 1])
+            var_f = np.zeros([self.N_qoi, 1])
+    
+            for k in range(self._number_of_samples):
+                sample_k = (self.samples[qoi][k]).values.reshape([self.N_qoi, 1])
+                mean_f += sample_k * self.wi_d[k]#.prod()
+    
+            for k in range(self._number_of_samples):
+                sample_k = (self.samples[qoi][k]).values.reshape([self.N_qoi, 1])
+                var_f += (sample_k - mean_f)**2 * self.wi_d[k]#.prod()
+    
+            return mean_f, var_f
+        else:
+            
+            i_norm_le_q = self.sampler.compute_sparse_multi_idx(self.L, self.N)
+    
+            #compute quadrature sum_i(Delta_i1 X ... X Delta__iN)
+            Delta = []
+            for i in i_norm_le_q:
+                Delta.append(self.compute_Q_diff(i, qoi))
+                
+            mean_f = np.sum(Delta, axis = 0)
+            
+            #compute quadrature sum_i(Delta_i1 X ... X Delta__iN)
+            Delta = []
+            for i in i_norm_le_q:
+                Delta.append(self.compute_Q_diff(i, qoi, mean_f))
+                
+            var_f = np.sum(Delta, axis = 0)
+                
+            return mean_f, var_f
 
-        # compute the mean and variance of the code samples, using quad weights
-        mean_f = np.zeros([self.N_qoi, 1])
-        var_f = np.zeros([self.N_qoi, 1])
-
+    def get_sample_array(self, qoi):
+        """
+        Returns an array of all samples of qoi
+        """
+        
+        tmp = np.zeros([self._number_of_samples, self.N_qoi])
+        
         for k in range(self._number_of_samples):
-            sample_k = (self.samples[qoi][k]).values.reshape([self.N_qoi, 1])
-            mean_f += sample_k * self.wi_d[k].prod()
+            tmp[k, :] = (self.samples[qoi][k]).values
+        
+        return tmp
+    
+    def create_map(self, N, L):
+        l_norm_le_L = self.sampler.compute_sparse_multi_idx(L, N)
+        
+        k = 0
+        Map = {}        
+        
+        for l in l_norm_le_L:
+            X_l = [self.xi_1d[n][l[n]] for n in range(N)]
+            X_l = np.array(list(product(*X_l)))
+                        
+            for x in X_l:
+                j = np.where((x == self.xi_d).all(axis=1))[0][0]
+                Map[k] = {'l':l, 'X':x, 'f':j}
+                k += 1;
+                
+        return Map
+        
+    def sparse_surrogate(self, qoi, x, N, L):
+        
+        if L < N:
+            return 0.0
 
-        for k in range(self._number_of_samples):
-            sample_k = (self.samples[qoi][k]).values.reshape([self.N_qoi, 1])
-            var_f += (sample_k - mean_f)**2 * self.wi_d[k].prod()
+        surr = np.zeros(self.N_qoi)
 
-        return mean_f, var_f
+        for level in range(N, L+1):       
+            
+            Delta = np.zeros(self.N_qoi)
+            Map = self.Map[level]
+            
+            for k in Map.keys():
+    
+                q_k = self.samples2[qoi][Map[k]['f']]
+                s_k = q_k - self.sparse_surrogate(qoi, Map[k]['X'], N, level-1)
+     
+                l = Map[k]['l']
+                
+                idx = {}
+                for n in range(N):
+                    # indices of current collocation point xi_d[k] in 1d
+                    # collocation points
+                    idx[n] = (self.xi_1d[n][l[n]] == Map[k]['X'][n]).nonzero()[0][0]
+    
+                lagrange = []
+                for n in range(N):
+                    # values of Lagrange polynomials at x
+                    lagrange.append(lagrange_poly(x[n], self.xi_1d[n][l[n]], idx[n]))
+    
+                Delta += s_k*np.prod(lagrange)
+            surr += Delta
+        
+        return surr
 
     def surrogate(self, qoi, x):
         """Use the SC expansion as a surrogate.
@@ -427,7 +620,7 @@ def lagrange_poly(x, x_i, j):
 
     x_i : list or array of float
 
-    j : float
+    j : int
 
     Returns
     -------
