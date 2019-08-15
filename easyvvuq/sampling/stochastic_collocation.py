@@ -79,6 +79,30 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
         self.sparse = sparse
         self.quad_sparse = sparse
         self.growth = growth
+        self.params_distribution = params_distribution
+        
+        #L = level of (sparse) grid
+        L = self.quad_order
+        #N = number of uncertain parameters
+        N = len(params_distribution)
+
+        #for every dimension (parameter), create a hierachy of 1D 
+        #quadrature rules of increasing order
+        self.xi_1d = {}
+        self.wi_1d = {}
+
+        for n in range(N):
+            self.xi_1d[n] = {}
+            self.wi_1d[n] = {}
+
+        for n in range(N):
+            for i in range(1, quad_order+1):
+                xi_i, wi_i = cp.generate_quadrature(i, 
+                                                    params_distribution[n], 
+                                                    rule=self.quad_rule, 
+                                                    growth=self.growth)
+                self.xi_1d[n][i] = xi_i[0]
+                self.wi_1d[n][i] = wi_i
 
         if sparse == False:
             # the nodes of the collocation grid
@@ -89,44 +113,21 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
         #sparse grid = a linear combination of tensor products of 1D rules
         #of different order. Use chaospy to compute these 1D quadrature rules
         else:
-            #q = level of sparse grid
-            q = self.quad_order
-            #N = number of uncertain parameters
-            N = len(params_distribution)
 
-            #q >= N must hold
-            if q < N:
+            #L >= N must hold
+            if L < N:
                 print("*************************************************************")
                 print("Level of sparse grid is lower than the dimension N (# params)")
                 print("Increase level (quad_order) q such that q >= N")
                 print("*************************************************************")
                 import sys; sys.exit()
-
-            #for every dimension (parameter), create a hierachy of 1D 
-            #quadrature rules or increasing order
-            
-            self.xi_1d = {}
-            self.wi_1d = {}
-
-            for n in range(N):
-                self.xi_1d[n] = {}
-                self.wi_1d[n] = {}
-
-            for n in range(N):
-                for i in range(1, quad_order):
-                    xi_i, wi_i = cp.generate_quadrature(i, 
-                                                        params_distribution[n], 
-                                                        rule=self.quad_rule, 
-                                                        growth=self.growth)
-                    self.xi_1d[n][i] = xi_i[0]
-                    self.wi_1d[n][i] = wi_i
                 
             #create sparse grid of dimension N and level q using the 1d 
             #rules in self.xi_1d
-            self.xi_d = self.sparse_grid_q_N(q, N)
-            self.q = q
-            self.N = N
+            self.xi_d = self.sparse_grid(L, N)
 
+        self.L = L
+        self.N = N
         self._number_of_samples = self.xi_d.shape[0]
 
         # Fast forward to specified count, if possible
@@ -178,26 +179,26 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
     =======================
     """
 
-    def sparse_grid_q_N(self, q, N):
+    def sparse_grid(self, L, N):
         """
-        Compute an isotropic sparse grid H_q_N of N dimensions and level q
+        Compute an isotropic sparse grid H_L_N of N dimensions and level q
         """
-        #multi-index i, such that |i| <= q
-        i_norm_le_q = self.compute_sparse_multi_idx(q, N)
+        #multi-index l, such that |l| <= L
+        l_norm_le_L = self.compute_sparse_multi_idx(L, N)
             
-        H_q_N = []      
+        H_L_N = []      
         #loop over all multi indices i
-        for i in i_norm_le_q:
+        for i in l_norm_le_L:
             
             #compute the tensor product of nodes indexed by i
             X_i = [self.xi_1d[n][i[n]] for n in range(N)]
-            H_q_N.append(list(product(*X_i)))
+            H_L_N.append(list(product(*X_i)))
         
         #flatten the list of lists
-        H_q_N = np.array(list(chain(*H_q_N)))
+        H_L_N = np.array(list(chain(*H_L_N)))
         
         #return unique nodes
-        return np.unique(H_q_N, axis=0)
+        return np.unique(H_L_N, axis=0)
     
     def compute_sparse_multi_idx(self, q, N):
         """

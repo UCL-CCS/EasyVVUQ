@@ -62,6 +62,19 @@ class SCAnalysis(BaseAnalysisElement):
         self.output_type = OutputType.SUMMARY
         self.sampler = sampler
         self._number_of_samples = sampler._number_of_samples
+        self.sparse = sampler.sparse
+
+        #determine if quadrature rule is nested, default assumption is False
+        self.nested = False
+        rule = self.sampler.quadrature_rule
+        growth = self.sampler.growth
+        
+        #TODO: ARE THERE OTHERS WHICH ARE NESTED? genz_keister SHOULD BE,
+        #BUT SEEMS NOT IMPLEMENTED IN MY cp VERSION (3.0.5)
+        if rule == 'leja' or rule == 'guass_patterson':
+            self.nested = True
+        elif rule == 'c' or rule == 'clenshaw_curtis' and growth == True:
+            self.nested = True                
 
     def element_name(self):
         """Name for this element for logging purposes"""
@@ -94,24 +107,8 @@ class SCAnalysis(BaseAnalysisElement):
             raise RuntimeError(
                 "No data in data frame passed to analyse element")
 
-        results = {'statistical_moments': {},
-                   'sobol_indices': {k: {} for k in self.qoi_cols}}
-
-        if self.sampler.sparse == False:
-            self.analyse_tensor_grid(results, self.qoi_cols, data_frame)
-        else:
-            self.analyse_sparse_grid(results, self.qoi_cols, data_frame)
-
-        return results
-
-        
-    def analyse_tensor_grid(self, results, qoi_cols, data_frame):
-        """
-        Perform the post-processing analysis for a full tensor product grid
-        (sparse = False)
-        """
-        
-        # Chaospy computation of 1D weights
+        # Chaospy computation of 1D weights - USED IN SOBOL SUBROUTINES
+        #REMOVE LATER IN FAVOUR OF xi_1D, wi_1d
         xi = []
         wi = []
         for dist in self.sampler.vary.get_values():
@@ -123,295 +120,308 @@ class SCAnalysis(BaseAnalysisElement):
         self.wi = wi
 
         # Compute tensor product nodes and weights
-        xi_d, self.wi_d = cp.generate_quadrature(order=self.sampler.quad_order,
+        # REMOVE WHEN MOMENT SUBROUTINE USES SC WEIGHTS
+        _, self.wi_d = cp.generate_quadrature(order=self.sampler.quad_order,
                                                  domain=self.sampler.joint_dist,
                                                  rule=self.sampler.quad_rule)
-        self.xi_d = xi_d.T
-
-        # Extract output values for each quantity of interest from Dataframe
-        samples = {k: [] for k in qoi_cols}
-        for run_id in data_frame.run_id.unique():
-            for k in qoi_cols:
-                values = data_frame.loc[data_frame['run_id'] == run_id][k]
-                samples[k].append(values)
-
-        self.samples = samples
-
-        # number of uncertain parameters
-        self.d = self.xi_d.shape[1]
-
-        # size of one code sample
-        self.N_qoi = self.samples[qoi_cols[0]][0].size
-
-        # Compute descriptive statistics for each quantity of interest
-        for qoi_k in qoi_cols:
-            mean_k, var_k = self.get_moments(qoi_k)
-            std_k = var_k**0.5
-
-            # compute statistical moments
-            results['statistical_moments'][qoi_k] = {'mean': mean_k,
-                                                     'var': var_k,
-                                                     'std': std_k}
-
-            # compute all Sobol indices
-            results['sobol_indices'][qoi_k] = self.get_sobol_indices(qoi_k, 'all')
-
-        return results
     
-    def analyse_sparse_grid(self, results, qoi_cols, data_frame):
-        """
-        Perform the post-processing analysis for a sparse grid
-        (sparse = True)
-        """
-        #use this above too?
         self.xi_d = self.sampler.xi_d
         self.xi_1d = self.sampler.xi_1d
         self.wi_1d = self.sampler.wi_1d
 
-        self.L = self.sampler.q
+        #the maximum level (quad order) of the (sparse) grid         
+        self.L = self.sampler.L
+        
+        #the number of uncertain parameters
         self.N = self.sampler.N
         
+        #if L < L_min: quadratures and interpolations are zero
+        #For full tensor grid: there is only one level: L_min = L
+        if self.sparse == False:
+            self.L_min = self.L
+        #For sparse grid: multiple levels, L >= N must hold
+        else:            
+            self.L_min = self.N            
+        
+        #per level, map a unique index k to all (level multi indices, colloc points)
+        #combinations. Will differ for sparse or full tensor grids.
+        #All interpolation/quadrature subroutines loop over the entries in Map
         self.Map = {}
-        for level in range(self.N, self.L+1):
+        for level in range(self.L_min, self.L+1):
             self.Map[level] = self.create_map(self.N, level)
 
         # Extract output values for each quantity of interest from Dataframe
-        idx = 0
-        samples = {k: {} for k in qoi_cols}
-        
-        for run_id in data_frame.run_id.unique():
-            for k in qoi_cols:
-                values = data_frame.loc[data_frame['run_id'] == run_id][k]
-                samples[k][self.xi_d[idx].tobytes()] = values
-            idx += 1
-        self.samples = samples
-
-        self.N_qoi = samples[qoi_cols[0]][self.xi_d[0].tobytes()].size
-
-        # Extract output values for each quantity of interest from Dataframe
-        samples2 = {k: [] for k in qoi_cols}
+        qoi_cols = self.qoi_cols
+        samples = {k: [] for k in qoi_cols}
         for run_id in data_frame.run_id.unique():
             for k in qoi_cols:
                 values = data_frame.loc[data_frame['run_id'] == run_id][k].values
-                samples2[k].append(values)
-        self.samples2 = samples2
-        self.data_frame = data_frame
-        
-        self.test = []
-        
-        # Compute descriptive statistics for each quantity of interest
+                samples[k].append(values)
+        self.samples = samples
+
+        # size of one code sample
+        self.N_qoi = self.samples[qoi_cols[0]][0].size
+
+        results = {'statistical_moments': {},
+                   'sobol_indices': {k: {} for k in self.qoi_cols}}
+   
+     # Compute descriptive statistics for each quantity of interest
         for qoi_k in qoi_cols:
             mean_k, var_k = self.get_moments(qoi_k)
             std_k = var_k**0.5
-            
+
             # compute statistical moments
             results['statistical_moments'][qoi_k] = {'mean': mean_k,
                                                      'var': var_k,
                                                      'std': std_k}
-            # compute all Sobol indices
-            #results['sobol_indices'][qoi_k] = self.get_sobol_indices(qoi_k, 'all')            
-            
-    def compute_Q_diff(self, i, qoi, mean_f = []):
-    
-        """
-        =======================================================================
-        For every multi index i = (i1, i2, ..., id), Smolyak sums over 
-        tensor products difference quadrature rules:
-        (Q^1_{i1} - Q^1_{i1-1}) X ... X (Q^1_{id) - Q^1_{id-1})
-        Below this product is expanded into individual tensor products, each 
-        of which is then computed as:
-        Q^1_{k1} X ... X Q^1_{kd} = sum...sum w_{k1}*...*w{kd}*f(x_{k1},...,x_{kd}) 
-        =======================================================================
-        """
-        #expand the multi-index indices of the tensor product
-        #(Q^1_{i1} - Q^1_{i1-1}) X ... X (Q^1_{id) - Q^1_{id-1})
-        diff_idx = np.array(list(product(*[[k, -(k-1)] for k in i])))
-        
-        #Delta will be the sum of all expanded tensor products
-        #Q^1_{k1} X ... X Q^1_{kd} = sum...sum w_{k1}*...*w{kd}*f(x_{k1},...,x_{kd})
-        Delta = 0.0
-    
-        for diff in diff_idx:
-            #Q_0 = 0, so if present do not compute Q^1_{k1} X ... X Q^1_{kd} 
-            if not np.in1d(0, diff):
-                X_k = [self.xi_1d[n][np.abs(diff)[n]] for n in range(self.N)]
-                X_k = np.array(list(product(*X_k)))
-                f_k = np.array([self.samples[qoi][x.tobytes()] for x in X_k])
-                W_k = [self.wi_1d[n][np.abs(diff)[n]] for n in range(self.N)]
-                W_k = np.array(list(product(*W_k)))
-                W_k = np.prod(W_k, axis=1)
-                
-                #do some reshaping to align for multiplication
-                f_k = f_k.reshape([f_k.shape[0], self.N_qoi])
-                W_k = W_k.reshape([W_k.shape[0], 1])                
-                
-                if mean_f == []:
-                    Q_prod = np.sum(f_k*W_k, axis=0).T
-                else:
-                    Q_prod = np.sum((f_k - mean_f)**2, axis=0).T
-            else:
-                Q_prod = 0.0
-            
-            Delta += np.sign(np.prod(diff))*Q_prod
-            
-        return Delta
+#            # compute all Sobol indices
+#            results['sobol_indices'][qoi_k] = self.get_sobol_indices(qoi_k, 'all')
 
-    def get_moments(self, qoi):
-        """Compute the first two statistical moments.
+        return results
+    
+    def create_map(self, N, L):
+        """
+        Create a map from a unique integer k to each 
+        (level multi index l, collocation point X) combination. Also
+        compute the index of X (f) in the global (sparse) grid xi_d
+        
+        Parameters
+        ----------
+        - N (int) = number of parameters
+        - L (int) = max level of grid
+        
+        Returns
+        --------
+        - Map: a dict for level L containing k, l, X, and f
+        """
+
+        #unique index
+        k = 0
+        Map = {} 
+        
+        #full tensor product
+        if self.sparse == False:
+           
+            l = (np.ones(N)*L).astype('int')
+            
+            for x in self.xi_d:
+                Map[k] = {'l':l, 'X':x, 'f':k}
+                k += 1
+        #sparse grid
+        else:
+
+            #all sparse grid multi indices l with |l| <= L
+            l_norm_le_L = self.sampler.compute_sparse_multi_idx(L, N)
+            
+            #if nested grids are used, compute the sparse grid  of |l| <= L-1
+            #which constains all points that will also be present in current grid
+            if self.nested == True and L > N:
+                H_Lm1_N = self.sampler.sparse_grid(L-1, N)
+            
+            #loop over all multi indices
+            for l in l_norm_le_L:
+                
+                #colloc point of current level index l
+                X_l = [self.xi_1d[n][l[n]] for n in range(N)]
+                X_l = np.array(list(product(*X_l)))
+                
+                #if nested, remove points from X_l which are also in the previous sparse
+                #grid (|l| <= L-1)
+                if self.nested == True and L > N:
+                    for x in X_l:
+                        if list(x) in H_Lm1_N.tolist():
+                            X_l = np.delete(X_l, x, axis=0)
+                            print("Grid is nested. Not using point", x, "at level", L)
+    
+                #for each k, store level index l, collocation point x and index j of
+                #the code sample / collocation point in global grid xi_d                        
+                for x in X_l:
+                    j = np.where((x == self.xi_d).all(axis=1))[0][0]
+                    Map[k] = {'l':l, 'X':x, 'f':j}
+                    k += 1;
+
+        return Map
+    
+    def surrogate(self, qoi, x):
+        """
+        Use sc_expansion UQP as a surrogate
 
         Parameters
         ----------
-        qoi : str
-            column name of quantity of interest
-
+        - qoi (str): name of the qoi
+        
         Returns
         -------
-        float:
-            Mean of samples, using quad weights
-        float:
-            Variance of samples, using quad weights
+        the interpolated value of qoi at x (float, (N_qoi,))
+        
         """
         
-        if self.sampler.sparse == False:
-            mean_f = np.zeros([self.N_qoi, 1])
-            var_f = np.zeros([self.N_qoi, 1])
+        return self.sc_expansion(self.L, 'interpolate', self.samples[qoi], x=x)
     
-            for k in range(self._number_of_samples):
-                sample_k = (self.samples[qoi][k]).values.reshape([self.N_qoi, 1])
-                mean_f += sample_k * self.wi_d[k]#.prod()
-    
-            for k in range(self._number_of_samples):
-                sample_k = (self.samples[qoi][k]).values.reshape([self.N_qoi, 1])
-                var_f += (sample_k - mean_f)**2 * self.wi_d[k]#.prod()
-    
-            return mean_f, var_f
-        else:
+    def get_moments(self, qoi):
+        """
+        Use sc_expansion UQP as a quadrature method
+        
+        Parameters
+        ----------
+        - qoi (str): name of the qoi
+        
+        Returns
+        -------
+        - mean and variance of qoi (float (N_qoi,))
+        
+        """
+        
+        #compute mean
+        mean_f = self.sc_expansion(self.L, 'quadrature', self.samples[qoi])
+        
+        #compute variance
+        variance_samples = []
+        for sample in self.samples[qoi]:
+            variance_samples.append((sample - mean_f)**2)
             
-            i_norm_le_q = self.sampler.compute_sparse_multi_idx(self.L, self.N)
-    
-            #compute quadrature sum_i(Delta_i1 X ... X Delta__iN)
-            Delta = []
-            for i in i_norm_le_q:
-                Delta.append(self.compute_Q_diff(i, qoi))
-                
-            mean_f = np.sum(Delta, axis = 0)
+        var_f = self.sc_expansion(self.L, 'quadrature', variance_samples)
+        
+        return mean_f, var_f
+        
+    def sc_expansion(self, L, goal, samples, **args):
+        """
+        -----------------------------------------
+        This is the UQ Pattern for the SC method.
+        -----------------------------------------
+        
+        Performs interpolation and quadrature for both full and sparse grids.
+        
+        For a qoi q, it computes the following tensor product:
+        
+        q \approx \sum_{l\in\Lambda} \Delta_{l}[q](x)
+        
+        where Delta_{l} is the difference at x between surrogates / quadratues
+        of level L and L-1. See e.g.:
             
-            #compute quadrature sum_i(Delta_i1 X ... X Delta__iN)
-            Delta = []
-            for i in i_norm_le_q:
-                Delta.append(self.compute_Q_diff(i, qoi, mean_f))
-                
-            var_f = np.sum(Delta, axis = 0)
-                
-            return mean_f, var_f
+        Dimitrios Loukrezis et. al., "Assessing the Performance of Leja and 
+        Clenshaw-Curtis Collocation for Computational Electromagnetics with 
+        Random Input Data."
+        
+        Parameters
+        ----------
+        
+        - x (float (N,)): location in stochastic space at which to eval the surrogate
+        - L (int): max level of the surrogate
+        
+        Returns
+        -------
+        
+        surr (float, (N_qoi,)): the interpolated value of qoi at x if goal = 'interpolate'
+                                the expected value of qoi if goal = 'quadrature'        
+        """        
+        
+        #for L < L_min the surrogate is defined as zero
+        if L < self.L_min:
+            return 0.0
 
+        surr = np.zeros(self.N_qoi)
+
+        #loop over all levels
+        for level in range(self.L_min, L+1):       
+            
+            #contains the level multi-indices (l), colloc points x and samples
+            #indices f of the (sparse) grid
+            Map = self.Map[level]
+
+            Delta = np.zeros(self.N_qoi)
+            for k in Map.keys():
+    
+                #the current code samples
+                q_k = samples[Map[k]['f']]
+                
+                #the hierarchical surplus between the code output q_k and the
+                #previous surrogate of level L-1 evaluated at the same location.
+                #Recursively computed.
+                s_k = q_k - self.sc_expansion(level-1, goal, samples, x = Map[k]['X'])
+     
+                #the current level multi index (l_1,...,l_N)
+                l = Map[k]['l']
+                
+                idx = {}
+                # indices of current collocation point (Map[k]['X'][n]),
+                # in corresponding 1d colloc points (self.xi_1d[n][l[n]])
+                # These are the j of the 1D lagrange polynomials l_j(x), see 
+                # lagrange_poly subroutine
+                for n in range(self.N):
+                    idx[n] = (self.xi_1d[n][l[n]] == Map[k]['X'][n]).nonzero()[0][0]
+    
+                weight = []
+                for n in range(self.N):
+                    #interpolate
+                    if goal == 'interpolate':
+                        x = args['x']
+                        # add values of Lagrange polynomials at x
+                        weight.append(lagrange_poly(x[n], self.xi_1d[n][l[n]], idx[n]))
+                    #integrate
+                    elif goal == 'quadrature':
+                        #add quadrature weights
+                        weight.append(self.wi_1d[n][l[n]][idx[n]])
+                    
+                #Delta is the interpolation of the hierarchical surplus
+                Delta += s_k*np.prod(weight)
+
+            surr += Delta
+        
+        return surr
+    
+    def compute_weights(self, rule = "G"):
+        
+        test = {}
+        
+        params = self.sampler.params_distribution
+        
+        for n in range(self.N):
+            for l in range(self.L_min, self.L+1):
+                
+                #TODO: compute integral of lagrange polynomials                
+                xi_l, wi_l = cp.generate_quadrature(l, params[n], rule=rule)
+                
+    
     def get_sample_array(self, qoi):
         """
-        Returns an array of all samples of qoi
+        Parameters
+        ----------
+        - qoi (str): name of quantity of interest
+        
+        Returns
+        -------
+         - array of all samples of qoi
         """
         
         tmp = np.zeros([self._number_of_samples, self.N_qoi])
         
         for k in range(self._number_of_samples):
-            tmp[k, :] = (self.samples[qoi][k]).values
+            tmp[k, :] = (self.samples[qoi][k])
         
         return tmp
     
-    def create_map(self, N, L):
-        l_norm_le_L = self.sampler.compute_sparse_multi_idx(L, N)
-        
-        k = 0
-        Map = {}        
-        
-        for l in l_norm_le_L:
-            X_l = [self.xi_1d[n][l[n]] for n in range(N)]
-            X_l = np.array(list(product(*X_l)))
-                        
-            for x in X_l:
-                j = np.where((x == self.xi_d).all(axis=1))[0][0]
-                Map[k] = {'l':l, 'X':x, 'f':j}
-                k += 1;
-                
-        return Map
-        
-    def sparse_surrogate(self, qoi, x, N, L):
-        
-        if L < N:
-            return 0.0
-
-        surr = np.zeros(self.N_qoi)
-
-        for level in range(N, L+1):       
-            
-            Delta = np.zeros(self.N_qoi)
-            Map = self.Map[level]
-            
-            for k in Map.keys():
-    
-                q_k = self.samples2[qoi][Map[k]['f']]
-                s_k = q_k - self.sparse_surrogate(qoi, Map[k]['X'], N, level-1)
-     
-                l = Map[k]['l']
-                
-                idx = {}
-                for n in range(N):
-                    # indices of current collocation point xi_d[k] in 1d
-                    # collocation points
-                    idx[n] = (self.xi_1d[n][l[n]] == Map[k]['X'][n]).nonzero()[0][0]
-    
-                lagrange = []
-                for n in range(N):
-                    # values of Lagrange polynomials at x
-                    lagrange.append(lagrange_poly(x[n], self.xi_1d[n][l[n]], idx[n]))
-    
-                Delta += s_k*np.prod(lagrange)
-            surr += Delta
-        
-        return surr
-
-    def surrogate(self, qoi, x):
-        """Use the SC expansion as a surrogate.
-
-        Parameters
-        ----------
-        qoi : str
-            Column name of quantity of interest
-        x :
-
-
-        Returns
-        -------
-
+    def plot_grid(self):
         """
-
-        # interpolated QoI
-        f_int = np.zeros([self.N_qoi, 1])
-
-        # list with the 1d collocation points of all uncertain parameters
-        # [self.all_vars[param]['xi_1d'] for param in self.all_vars.keys()]
-        C = self.xi
-
-        # loop over all samples
-        for k in range(self._number_of_samples):
-
-            idx = {}
-            for i in range(self.d):
-                # indices of current collocation point xi_d[k] in 1d
-                # collocation points
-                idx[i] = (C[i] == self.xi_d[k][i]).nonzero()[0]
-
-            L = []
-            for i in range(self.d):
-                # values of Lagrange polynomials at x
-                L.append(lagrange_poly(x[i], C[i], idx[i]))
-
-            # current sample
-            qoi_k = self.samples[qoi][k].values.reshape([self.N_qoi, 1])  # .reshape(self.N_qoi)
-
-            # surrogate: samples interpolated via Lagrange polynomials
-            f_int += qoi_k * np.prod(L)
-
-        return f_int
+        If N = 2 or N = 3 plot the (sparse) grid
+        """
+        import matplotlib.pyplot as plt
+        
+        if self.N == 2:
+            fig = plt.figure()
+            ax = fig.add_subplot(111, xlabel=r'$x_1$', ylabel=r'$x_2$') 
+            ax.plot(self.xi_d[:,0], self.xi_d[:,1], 'ro')
+        elif self.N == 3:
+            from mpl_toolkits.mplot3d import Axes3D
+            fig = plt.figure()
+            ax = fig.add_subplot(111, projection='3d', xlabel=r'$x_1$', \
+                                 ylabel=r'$x_2$', zlabel=r'$x_3$') 
+            ax.scatter(self.xi_d[:,0], self.xi_d[:,1], self.xi_d[:,2])
+        else:
+            print('Will only plot for N = 2 or N = 3.')
+            
+        plt.tight_layout()
+        plt.show()
 
     # Start SC specific methods
 
@@ -481,7 +491,7 @@ class SCAnalysis(BaseAnalysisElement):
             for i_up in range(S_u_prime):
 
                 # collocation point to be evaluated
-                xi_s = np.zeros(self.d)
+                xi_s = np.zeros(self.N)
 
                 # add the xi of u (at the correct location k)
                 idx = 0
@@ -517,10 +527,10 @@ class SCAnalysis(BaseAnalysisElement):
         """
 
         # multi indices
-        U = list(range(self.d))
+        U = list(range(self.N))
 
         if typ == 'first_order':
-            P = list(powerset(U))[0:self.d + 1]
+            P = list(powerset(U))[0:self.N + 1]
         elif typ == 'all':
             # all indices u
             P = list(powerset(U))
@@ -586,9 +596,9 @@ class SCAnalysis(BaseAnalysisElement):
 
     # End SC specific methods
 
-
 def powerset(iterable):
-    """powerset([1,2,3]) --> () (1,) (2,) (3,) (1,2) (1,3) (2,3) (1,2,3)
+    """
+    powerset([1,2,3]) --> () (1,) (2,) (3,) (1,2) (1,3) (2,3) (1,2,3)
 
     Taken from: https://docs.python.org/3/library/itertools.html#recipes
 
@@ -605,22 +615,20 @@ def powerset(iterable):
     s = list(iterable)
     return chain.from_iterable(combinations(s, r) for r in range(len(s) + 1))
 
-
 def lagrange_poly(x, x_i, j):
-    """Lagrange polynomials used for interpolation
+    """
+    Lagrange polynomials used for interpolation
 
     l_j(x) = product(x - x_m / x_j - x_m) with 0 <= m <= k
                                                and m !=j
 
-    TODO: Complete this docstring
-
     Parameters
     ----------
-    x : float
+    x : (float), location at which to compute the polynomial
 
-    x_i : list or array of float
+    x_i : list or array of float, nodes of the Lagrange polynomials
 
-    j : int
+    j : int, index of node at which l_j(x_j) = 1
 
     Returns
     -------
