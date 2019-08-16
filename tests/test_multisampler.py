@@ -105,15 +105,7 @@ def test_worker(tmpdir):
     collater = uq.collate.AggregateSamples(average=False)
     my_campaign.set_collater(collater)
 
-    # Make a random sampler
-#    vary = {
-#        "angle": cp.Uniform(0.0, 1.0),
-#        "height": cp.Uniform(2.0, 10.0),
-#        "velocity": cp.Normal(10.0, 1.0),
-#        "mass": cp.Uniform(5.0, 1.0)
-#    }
-#    sampler1 = uq.sampling.RandomSampler(vary=vary)
-
+    # Set up samplers
     sweep1 = {
         "angle": [0.1, 0.2, 0.3],
         "height": [2.0, 10.0],
@@ -122,13 +114,18 @@ def test_worker(tmpdir):
     sampler1 = uq.sampling.BasicSweep(sweep=sweep1)
 
     sweep2 = {
-        "gravity": [9.8, 10.8],
-        "mass": [10, 17, 27]
+        "air_resistance": [0.2, 0.3, 0.4]
     }
     sampler2 = uq.sampling.BasicSweep(sweep=sweep2)
 
+    vary = {
+        "gravity": cp.Uniform(9.8, 1.0),
+        "mass": cp.Uniform(2.0, 10.0),
+    }
+    sampler3 = uq.sampling.RandomSampler(vary=vary)
+
     # Make a multisampler
-    multisampler = uq.sampling.MultiSampler(sampler1, sampler2)
+    multisampler = uq.sampling.MultiSampler(sampler1, sampler2, sampler3)
 
     # Set the campaign to use this sampler
     my_campaign.set_sampler(multisampler)
