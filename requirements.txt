@@ -1,7 +1,7 @@
 numpy
 pandas>=0.24
 scipy
-chaospy=3.0.4
+chaospy==3.0.4
 SALib
 pytest
 pytest-pep8
