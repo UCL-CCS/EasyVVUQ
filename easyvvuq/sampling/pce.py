@@ -95,7 +95,7 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
 
         # Nodes and weights for the integration
         self._nodes, _ = cp.generate_quadrature(order=self.quad_order,
-                                                domain=self.distribution,
+                                                dist=self.distribution,
                                                 rule=quadrature_rule,
                                                 sparse=sparse)
 

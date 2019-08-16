@@ -112,7 +112,7 @@ class SCAnalysis(BaseAnalysisElement):
 
         # Compute tensor product nodes and weights
         xi_d, self.wi_d = cp.generate_quadrature(order=self.sampler.quad_order,
-                                                 domain=self.sampler.joint_dist,
+                                                 dist=self.sampler.joint_dist,
                                                  rule=self.sampler.quad_rule)
         self.xi_d = xi_d.T
 
