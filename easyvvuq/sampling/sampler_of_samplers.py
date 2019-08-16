@@ -78,4 +78,4 @@ class MultiSampler(BaseSamplingElement, sampler_name="multisampler"):
         return True
 
     def get_restart_dict(self):
-        return {'serialized_list_of_samplers':self.serialized_list_of_samplers}
+        return {'serialized_list_of_samplers': self.serialized_list_of_samplers}

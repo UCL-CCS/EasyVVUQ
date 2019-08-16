@@ -132,7 +132,7 @@ def test_worker(tmpdir):
 
     # Test reloading
     my_campaign.save_state(tmpdir + "test_multisampler.json")
-    reloaded_campaign = uq.Campaign(state_file=tmpdir+"test_multisampler.json", work_dir=tmpdir)
+    reloaded_campaign = uq.Campaign(state_file=tmpdir + "test_multisampler.json", work_dir=tmpdir)
 
     # Draw all samples
     my_campaign.draw_samples()
