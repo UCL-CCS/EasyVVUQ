@@ -138,8 +138,6 @@ def test_worker(tmpdir):
     pprint(my_campaign.list_runs())
     print("---")
 
-    sys.exit(0)
-
     # User defined function
     def encode_and_execute_cannonsim(run_id, run_data):
         enc_args = [
