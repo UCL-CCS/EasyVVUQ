@@ -1,4 +1,6 @@
 from .base import BaseSamplingElement
+import itertools
+import sys
 
 __copyright__ = """
 
@@ -25,29 +27,51 @@ __license__ = "LGPL"
 
 class MultiSampler(BaseSamplingElement, sampler_name="multisampler"):
 
-    def __init__(self, *samplers):
+    def __init__(self, *samplers, count=0):
         """
             Expects one or more samplers
         """
         self.samplers = samplers
 
         # Multisampler is finite only if all samplers in it are finite
-        self.is_finite = True
+        self._is_finite_bool = True
         for sampler in self.samplers:
             if sampler.is_finite() == False:
-                self.is_finite = False
+                self._is_finite_bool = False
                 break
+
+        if self._is_finite_bool == False:
+            sys.exit("Multisampler must be composed of finite samplers")
+
+        # Combine all the iterables/generators into one
+        self.multi_iterator = itertools.product(*self.samplers)
+
+        print(self.multi_iterator)
+
+        self.count = 0
+#        for i in range(count):
+#            try:
+#                self.__next__()
+#            except StopIteration:
+#                logger.warning("Multisampler constructed, but has no samples left to draw.")
 
     def element_version(self):
         return "0.1"
 
     def is_finite(self):
-        return self.is_finite
+        return self._is_finite_bool
 
     def __next__(self):
+        # Will raise StopIteration when there are none left
+        multisampler_run = self.multi_iterator.__next__()
+
+        print("ES", multisampler_run)
+
         run_dict = {}
-        for param_name, dist in self.vary.get_items():
-            run_dict[param_name] = dist.sample(1)[0]
+#        for var_name, value in multisampler_run:
+#            run_dict[var_name] = value
+
+        self.count += 1
         return run_dict
 
     def is_restartable(self):

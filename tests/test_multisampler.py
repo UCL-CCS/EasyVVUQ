@@ -106,29 +106,42 @@ def test_worker(tmpdir):
     my_campaign.set_collater(collater)
 
     # Make a random sampler
-    vary = {
-        "angle": cp.Uniform(0.0, 1.0),
-        "height": cp.Uniform(2.0, 10.0),
-        "velocity": cp.Normal(10.0, 1.0),
-        "mass": cp.Uniform(5.0, 1.0)
+#    vary = {
+#        "angle": cp.Uniform(0.0, 1.0),
+#        "height": cp.Uniform(2.0, 10.0),
+#        "velocity": cp.Normal(10.0, 1.0),
+#        "mass": cp.Uniform(5.0, 1.0)
+#    }
+#    sampler1 = uq.sampling.RandomSampler(vary=vary)
+
+    sweep1 = {
+        "angle": [0.1, 0.2, 0.3],
+        "height": [2.0, 10.0],
+        "velocity": [10.0, 10.1, 10.2]
     }
-    sampler1 = uq.sampling.RandomSampler(vary=vary)
+    sampler1 = uq.sampling.BasicSweep(sweep=sweep1)
+
+    sweep2 = {
+        "gravity": [9.8, 10.8],
+        "mass": [10, 17, 27]
+    }
+    sampler2 = uq.sampling.BasicSweep(sweep=sweep2)
 
     # Make a multisampler
-    multisampler = uq.sampling.MultiSampler(sampler1)
+    multisampler = uq.sampling.MultiSampler(sampler1, sampler2)
 
     # Set the campaign to use this sampler
     my_campaign.set_sampler(multisampler)
 
-    sys.exit(0)
-
-    # Draw 5 samples
-    my_campaign.draw_samples(num_samples=5)
+    # Draw all samples
+    my_campaign.draw_samples()
 
     # Print the list of runs now in the campaign db
     print("List of runs added:")
     pprint(my_campaign.list_runs())
     print("---")
+
+    sys.exit(0)
 
     # User defined function
     def encode_and_execute_cannonsim(run_id, run_data):
