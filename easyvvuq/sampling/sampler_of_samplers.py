@@ -44,7 +44,7 @@ class MultiSampler(BaseSamplingElement, sampler_name="multisampler"):
 
         # Multisampler is finite only if all samplers in it are finite
         for sampler in self.samplers:
-            if sampler.is_finite() == False:
+            if sampler.is_finite() is False:
                 sys.exit("Multisampler must be composed of finite samplers")
 
         # Combine all the iterables/generators into one
