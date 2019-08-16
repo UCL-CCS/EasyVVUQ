@@ -27,11 +27,20 @@ __license__ = "LGPL"
 
 class MultiSampler(BaseSamplingElement, sampler_name="multisampler"):
 
-    def __init__(self, *samplers, count=0):
+    def __init__(self, *samplers, count=0, serialized_list_of_samplers=None):
         """
             Expects one or more samplers
         """
-        self.samplers = samplers
+
+        # If no serialized samplers list passed, generate one. Else deserialize the passed samplers.
+        if serialized_list_of_samplers is None:
+            self.samplers = samplers
+            self.serialized_list_of_samplers = [sampler.serialize() for sampler in self.samplers]
+        else:
+            self.serialized_list_of_samplers = serialized_list_of_samplers
+            self.samplers = []
+            for serialized_sampler in self.serialized_list_of_samplers:
+                self.samplers.append(BaseSamplingElement.deserialize(serialized_sampler))
 
         # Multisampler is finite only if all samplers in it are finite
         for sampler in self.samplers:
@@ -66,7 +75,7 @@ class MultiSampler(BaseSamplingElement, sampler_name="multisampler"):
         return run_dict
 
     def is_restartable(self):
-        return False
+        return True
 
     def get_restart_dict(self):
-        return None
+        return {'serialized_list_of_samplers':self.serialized_list_of_samplers}

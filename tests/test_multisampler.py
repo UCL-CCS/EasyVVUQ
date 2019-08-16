@@ -130,6 +130,10 @@ def test_worker(tmpdir):
     # Set the campaign to use this sampler
     my_campaign.set_sampler(multisampler)
 
+    # Test reloading
+    my_campaign.save_state(tmpdir + "test_multisampler.json")
+    reloaded_campaign = uq.Campaign(state_file=tmpdir+"test_multisampler.json", work_dir=tmpdir)
+
     # Draw all samples
     my_campaign.draw_samples()
 
@@ -138,21 +142,10 @@ def test_worker(tmpdir):
     pprint(my_campaign.list_runs())
     print("---")
 
-    # User defined function
-    def encode_and_execute_cannonsim(run_id, run_data):
-        enc_args = [
-            my_campaign.db_type,
-            my_campaign.db_location,
-            "cannon",
-            "cannonsim",
-            run_id
-        ]
-        encoder_path = os.path.realpath(os.path.expanduser("easyvvuq/tools/external_encoder.py"))
-        subprocess.run(['python3', encoder_path] + enc_args)
-        subprocess.run([CANNONSIM_PATH, "in.cannon", "output.csv"], cwd=run_data['run_dir'])
-
-    # Encode and execute. Note to call function for all runs with status NEW (and not ENCODED)
-    my_campaign.call_for_each_run(encode_and_execute_cannonsim, status=uq.constants.Status.NEW)
+    # Encode and execute.
+    my_campaign.populate_runs_dir()
+    my_campaign.apply_for_each_run_dir(
+        uq.actions.ExecuteLocal("tests/cannonsim/bin/cannonsim in.cannon output.csv"))
 
     print("Runs list after encoding and execution:")
     pprint(my_campaign.list_runs())
