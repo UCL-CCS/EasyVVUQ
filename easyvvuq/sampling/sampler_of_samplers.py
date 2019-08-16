@@ -46,14 +46,12 @@ class MultiSampler(BaseSamplingElement, sampler_name="multisampler"):
         # Combine all the iterables/generators into one
         self.multi_iterator = itertools.product(*self.samplers)
 
-        print(self.multi_iterator)
-
         self.count = 0
-#        for i in range(count):
-#            try:
-#                self.__next__()
-#            except StopIteration:
-#                logger.warning("Multisampler constructed, but has no samples left to draw.")
+        for i in range(count):
+            try:
+                self.__next__()
+            except StopIteration:
+                logger.warning("Multisampler constructed, but has no samples left to draw.")
 
     def element_version(self):
         return "0.1"
@@ -65,11 +63,9 @@ class MultiSampler(BaseSamplingElement, sampler_name="multisampler"):
         # Will raise StopIteration when there are none left
         multisampler_run = self.multi_iterator.__next__()
 
-        print("ES", multisampler_run)
-
         run_dict = {}
-#        for var_name, value in multisampler_run:
-#            run_dict[var_name] = value
+        for contribution in multisampler_run:
+            run_dict = {**run_dict, **contribution}
 
         self.count += 1
         return run_dict
