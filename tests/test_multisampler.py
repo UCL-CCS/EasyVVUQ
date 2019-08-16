@@ -122,7 +122,7 @@ def test_worker(tmpdir):
         "gravity": cp.Uniform(9.8, 1.0),
         "mass": cp.Uniform(2.0, 10.0),
     }
-    sampler3 = uq.sampling.RandomSampler(vary=vary)
+    sampler3 = uq.sampling.RandomSampler(vary=vary, max_num=5)
 
     # Make a multisampler
     multisampler = uq.sampling.MultiSampler(sampler1, sampler2, sampler3)
