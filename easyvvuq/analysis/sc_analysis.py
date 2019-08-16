@@ -71,10 +71,11 @@ class SCAnalysis(BaseAnalysisElement):
         
         #TODO: ARE THERE OTHERS WHICH ARE NESTED? genz_keister SHOULD BE,
         #BUT SEEMS NOT IMPLEMENTED IN MY cp VERSION (3.0.5)
-        if rule == 'leja' or rule == 'guass_patterson':
-            self.nested = True
-        elif rule == 'c' or rule == 'clenshaw_curtis' and growth == True:
-            self.nested = True                
+        if self.sparse == True:
+            if rule == 'guass_patterson':
+                self.nested = True
+            elif rule == 'C' or rule == 'c' or rule == 'clenshaw_curtis' and growth == True:
+                self.nested = True                
 
     def element_name(self):
         """Name for this element for logging purposes"""
@@ -107,28 +108,6 @@ class SCAnalysis(BaseAnalysisElement):
             raise RuntimeError(
                 "No data in data frame passed to analyse element")
 
-        # Chaospy computation of 1D weights - USED IN SOBOL SUBROUTINES
-        #REMOVE LATER IN FAVOUR OF xi_1D, wi_1d
-        xi = []
-        wi = []
-        for dist in self.sampler.vary.get_values():
-            xi_i, wi_i = cp.generate_quadrature(
-                self.sampler.quad_order, dist, rule=self.sampler.quad_rule)
-            xi.append(xi_i.flatten())
-            wi.append(wi_i.flatten())
-        self.xi = xi
-        self.wi = wi
-
-        # Compute tensor product nodes and weights
-        # REMOVE WHEN MOMENT SUBROUTINE USES SC WEIGHTS
-        _, self.wi_d = cp.generate_quadrature(order=self.sampler.quad_order,
-                                                 domain=self.sampler.joint_dist,
-                                                 rule=self.sampler.quad_rule)
-    
-        self.xi_d = self.sampler.xi_d
-        self.xi_1d = self.sampler.xi_1d
-        self.wi_1d = self.sampler.wi_1d
-
         #the maximum level (quad order) of the (sparse) grid         
         self.L = self.sampler.L
         
@@ -141,14 +120,35 @@ class SCAnalysis(BaseAnalysisElement):
             self.L_min = self.L
         #For sparse grid: multiple levels, L >= N must hold
         else:            
-            self.L_min = self.N            
+            self.L_min = self.N    
+
+        # Chaospy computation of 1D weights - USED IN SOBOL SUBROUTINES
+        #REMOVE LATER IN FAVOUR OF xi_1D, wi_1d
+        xi = []
+        wi = []
+        for dist in self.sampler.vary.get_values():
+            xi_i, wi_i = cp.generate_quadrature(
+                self.sampler.quad_order, dist, rule=self.sampler.quad_rule)
+            xi.append(xi_i.flatten())
+            wi.append(wi_i.flatten())
+        self.xi = xi
+        self.wi = wi
+
+        self.xi_d = self.sampler.xi_d
+        self.xi_1d = self.sampler.xi_1d
+        self.wi_1d = self.compute_SC_weights(rule=self.sampler.quad_rule)
         
         #per level, map a unique index k to all (level multi indices, colloc points)
         #combinations. Will differ for sparse or full tensor grids.
         #All interpolation/quadrature subroutines loop over the entries in Map
         self.Map = {}
+        self.surr_lm1 = {}
+        
         for level in range(self.L_min, self.L+1):
             self.Map[level] = self.create_map(self.N, level)
+
+        self.clear_surr_lm1('interpolate')
+        self.clear_surr_lm1('quadrature')
 
         # Extract output values for each quantity of interest from Dataframe
         qoi_cols = self.qoi_cols
@@ -199,6 +199,8 @@ class SCAnalysis(BaseAnalysisElement):
         k = 0
         Map = {} 
         
+        print('Creating multi-index map for level', L, '...')
+        
         #full tensor product
         if self.sparse == False:
            
@@ -231,7 +233,8 @@ class SCAnalysis(BaseAnalysisElement):
                     for x in X_l:
                         if list(x) in H_Lm1_N.tolist():
                             X_l = np.delete(X_l, x, axis=0)
-                            print("Grid is nested. Not using point", x, "at level", L)
+                            print("Grid is nested. Not using point", \
+                                  ["%.4f" %xx for xx in x], "at level", L)
     
                 #for each k, store level index l, collocation point x and index j of
                 #the code sample / collocation point in global grid xi_d                        
@@ -239,6 +242,8 @@ class SCAnalysis(BaseAnalysisElement):
                     j = np.where((x == self.xi_d).all(axis=1))[0][0]
                     Map[k] = {'l':l, 'X':x, 'f':j}
                     k += 1;
+                    
+        print('done.')
 
         return Map
     
@@ -271,16 +276,19 @@ class SCAnalysis(BaseAnalysisElement):
         - mean and variance of qoi (float (N_qoi,))
         
         """
-        
+        goal = 'quadrature'
         #compute mean
-        mean_f = self.sc_expansion(self.L, 'quadrature', self.samples[qoi])
+        mean_f = self.sc_expansion(self.L, goal, self.samples[qoi])
+        
+        #clear the quadrature results in surr_lm1
+        self.clear_surr_lm1(goal)
         
         #compute variance
         variance_samples = []
         for sample in self.samples[qoi]:
             variance_samples.append((sample - mean_f)**2)
             
-        var_f = self.sc_expansion(self.L, 'quadrature', variance_samples)
+        var_f = self.sc_expansion(self.L, goal, variance_samples)
         
         return mean_f, var_f
         
@@ -290,7 +298,7 @@ class SCAnalysis(BaseAnalysisElement):
         This is the UQ Pattern for the SC method.
         -----------------------------------------
         
-        Performs interpolation and quadrature for both full and sparse grids.
+        Can perform interpolation and quadrature for both full and sparse grids.
         
         For a qoi q, it computes the following tensor product:
         
@@ -335,11 +343,19 @@ class SCAnalysis(BaseAnalysisElement):
                 #the current code samples
                 q_k = samples[Map[k]['f']]
                 
-                #the hierarchical surplus between the code output q_k and the
+                #the hierarchical surplus (s_k) between the code output q_k and the
                 #previous surrogate of level L-1 evaluated at the same location.
                 #Recursively computed.
-                s_k = q_k - self.sc_expansion(level-1, goal, samples, x = Map[k]['X'])
-     
+                
+                if k in self.surr_lm1[goal][level]:
+                    #print('surrogate already computed')
+                    surr_lm1 = self.surr_lm1[goal][level][k]
+                else:
+                    surr_lm1 = self.sc_expansion(level-1, goal, samples, x = Map[k]['X'])
+                    self.surr_lm1[goal][level][k] = surr_lm1
+
+                s_k = q_k - surr_lm1
+                
                 #the current level multi index (l_1,...,l_N)
                 l = Map[k]['l']
                 
@@ -370,18 +386,85 @@ class SCAnalysis(BaseAnalysisElement):
         
         return surr
     
-    def compute_weights(self, rule = "G"):
+    def clear_surr_lm1(self, ID):
+        """
+        Clears the interpolation or quadrature results in surr_lm1[ID].
         
-        test = {}
+        surr_lm1 is a dictionary used to store surrogate results at 
+        previous level (l-1). Used to avoid recomputing the surrogate
+        in the recursive sc_expansion subroutine.
         
-        params = self.sampler.params_distribution
+        surr_lm1['interpolation'][l][k] stores the interpolation results
+        of level l-1 at collocation point X_k 
         
-        for n in range(self.N):
-            for l in range(self.L_min, self.L+1):
-                
-                #TODO: compute integral of lagrange polynomials                
-                xi_l, wi_l = cp.generate_quadrature(l, params[n], rule=rule)
-                
+        Parameters
+        ----------
+        - ID (str): either 'interpolate' or 'quadrature'
+        
+        """
+        self.surr_lm1[ID] = {}
+        for level in range(self.L_min, self.L+1):
+            self.surr_lm1[ID][level] = {}
+    
+    def compute_SC_weights(self, rule):
+        """
+        Computes the 1D quadrature weights w_j of the SC expansion:
+            
+            w_j = int L_j(x)p(x) dx                             (1)
+        
+        Here L_j is a Lagrange polynomial of the SC expansion.
+        
+        Parameters
+        ----------
+        - rule ("str"): chaospy quadrature rule used to compute (1), 
+                        
+        
+        Returns
+        -------
+        - wi_1d (dict): wi_1d[n][l] gives an array
+          of quadrature weigths for the n-th parameter at level l.
+          
+          IMPORTANT:
+          If rule is the same as the rule used to compute the SC 
+          collocation points, these weights will equal the weights
+          computed by chaospy, since L_j(x_k) = 1 when j=k and 0 
+          for the rest. This is the default setting.       
+        """
+        
+        #no need to recompute weights
+        if rule == self.sampler.quadrature_rule:
+            return self.sampler.wi_1d
+        #recompute weights - generally not used
+        else:
+            wi_1d = {}
+            
+            params = self.sampler.params_distribution
+            
+            for n in range(self.N):
+                #1d weights for n-th parameter
+                wi_1d[n] = {}
+                #loop over all level of collocation method
+                for level in range(1, self.L+1):
+                    #current SC nodes over dimension n and level 
+                    xi_1d = self.xi_1d[n][level]
+                    wi_1d[n][level] = np.zeros(xi_1d.size)
+                    
+                    #generate a quadrature rule to compute the SC weights
+                    xi_quad, wi_quad = cp.generate_quadrature(level, params[n], rule=rule)
+                    xi_quad = xi_quad[0]
+                    
+                    #compute integral of the lagrange polynomial through xi_1d, weighted
+                    #by the input distributions: 
+                    #w_j = int L_j(xi) p(xi) dxi j = 1,..,xi_1d.size
+                    for j in range(xi_1d.size):
+                        #values of L_i(xi_quad)
+                        lagrange_quad = np.zeros(xi_quad.size)
+                        for i in range(xi_quad.size):
+                            lagrange_quad[i] = lagrange_poly(xi_quad[i], xi_1d, j)
+                        #quadrature
+                        wi_1d[n][level][j] = np.sum(lagrange_quad*wi_quad)
+                        
+            return wi_1d
     
     def get_sample_array(self, qoi):
         """

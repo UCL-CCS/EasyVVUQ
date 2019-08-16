@@ -32,7 +32,7 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
 
     def __init__(self,
                  vary=None,
-                 quad_order=4,
+                 polynomial_order=4,
                  quadrature_rule="G",
                  count=0,
                  growth=False,
@@ -74,7 +74,7 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
 
         # The quadrature information: order, rule and sparsity
         #self.quad_order = polynomial_order
-        self.quad_order = quad_order
+        self.quad_order = polynomial_order
         self.quad_rule = quadrature_rule
         self.sparse = sparse
         self.quad_sparse = sparse
@@ -96,11 +96,12 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
             self.wi_1d[n] = {}
 
         for n in range(N):
-            for i in range(1, quad_order+1):
+            for i in range(1, self.quad_order+1):
                 xi_i, wi_i = cp.generate_quadrature(i, 
                                                     params_distribution[n], 
                                                     rule=self.quad_rule, 
-                                                    growth=self.growth)
+                                                    growth=self.growth,
+                                                    normalize=True)
                 self.xi_1d[n][i] = xi_i[0]
                 self.wi_1d[n][i] = wi_i
 
