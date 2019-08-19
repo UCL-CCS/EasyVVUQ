@@ -2,6 +2,7 @@ import easyvvuq as uq
 import chaospy as cp
 import os
 import pytest
+from easyvvuq.constants import default_campaign_prefix, Status
 from pprint import pprint
 import subprocess
 
@@ -132,6 +133,7 @@ def test_worker(tmpdir):
         enc_args = [
             my_campaign.db_type,
             my_campaign.db_location,
+            'FALSE',
             "cannon",
             "cannonsim",
             run_id
@@ -140,8 +142,20 @@ def test_worker(tmpdir):
         subprocess.run(['python3', encoder_path] + enc_args)
         subprocess.run([CANNONSIM_PATH, "in.cannon", "output.csv"], cwd=run_data['run_dir'])
 
+        my_campaign.campaign_db.set_run_statuses([run_id], Status.ENCODED) # see note further down
+
     # Encode and execute. Note to call function for all runs with status NEW (and not ENCODED)
     my_campaign.call_for_each_run(encode_and_execute_cannonsim, status=uq.constants.Status.NEW)
+
+    ####
+    # Important note: In this example the execution is done with subprocess which is blocking.
+    # However, in practice this will be some sort of middleware (e.g. PJM) which is generally
+    # non-blocking. In such a case it is the job of the middleware section to keep track of
+    # which runs have been encoded, and updating the database (all at the end if need be) to
+    # indicate this to EasyVVUQ _before_ trying to run the collation/analysis section. If
+    # EasyVVUQ has not been informed that runs have been encoded, it will most likely just tell
+    # you that 'nothing has been collated' or something to that effect.
+    ####
 
     print("Runs list after encoding and execution:")
     pprint(my_campaign.list_runs())
