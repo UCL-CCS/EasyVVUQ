@@ -142,7 +142,7 @@ def test_worker(tmpdir):
         subprocess.run(['python3', encoder_path] + enc_args)
         subprocess.run([CANNONSIM_PATH, "in.cannon", "output.csv"], cwd=run_data['run_dir'])
 
-        my_campaign.campaign_db.set_run_statuses([run_id], Status.ENCODED) # see note further down
+        my_campaign.campaign_db.set_run_statuses([run_id], Status.ENCODED)  # see note further down
 
     # Encode and execute. Note to call function for all runs with status NEW (and not ENCODED)
     my_campaign.call_for_each_run(encode_and_execute_cannonsim, status=uq.constants.Status.NEW)

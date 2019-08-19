@@ -27,7 +27,7 @@ if __name__ == "__main__":
     if len(sys.argv) != 7:
         sys.exit(
             (f"Usage: python3 external_encoder.py db_type db_location "
-              "write_to_db{'TRUE' or 'FALSE'} campaign_name app_name comma_separated_run_id_list")
+             "write_to_db{'TRUE' or 'FALSE'} campaign_name app_name comma_separated_run_id_list")
         )
 
     db_type = sys.argv[1]
