@@ -32,7 +32,8 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
                  count=0,
                  polynomial_order=4,
                  quadrature_rule="G",
-                 sparse=False):
+                 sparse=False,
+                 growth=None):
         """
         Create the sampler for the Polynomial Chaos Expansion method using
         pseudo-spectral projection.
@@ -55,6 +56,9 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
             If True use Smolyak sparse grid instead of normal tensor product grid,
             default is False.
 
+        growth (bool, None), optional
+            If True quadrature point became nested for sparse grids,
+            default value is the same as ``sparse`` if omitted, otherwise None.
         """
 
         if vary is None:
@@ -78,6 +82,10 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
         self.polynomial_order = polynomial_order
         self.quadrature_rule = quadrature_rule
         self.sparse = sparse
+        if sparse:
+            self.quad_growth = True
+        else:
+            self.quad_growth = growth
 
         # List of the probability distributions of uncertain parameters
         params_distribution = list(vary.values())
@@ -97,7 +105,8 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
         self._nodes, _ = cp.generate_quadrature(order=self.quad_order,
                                                 dist=self.distribution,
                                                 rule=quadrature_rule,
-                                                sparse=sparse)
+                                                sparse=sparse,
+                                                growth=self.quad_growth)
 
         # Number of samples
         self._number_of_samples = len(self._nodes[0])
