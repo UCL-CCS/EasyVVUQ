@@ -123,7 +123,8 @@ class QMCAnalysis(BaseAnalysisElement):
         return results
 
     # Adapted from SALib
-    def _separate_output_values(self, evaluations, n_uncertain_params, n_samples):
+    @staticmethod
+    def _separate_output_values(evaluations, n_uncertain_params, n_samples):
         evaluations = np.array(evaluations)
 
         shape = (n_samples, n_uncertain_params) + evaluations[0].shape
@@ -138,10 +139,12 @@ class QMCAnalysis(BaseAnalysisElement):
 
         return A, B, AB
 
-    def _first_order(self, A, AB, B):
+    @staticmethod
+    def _first_order(A, AB, B):
         V = np.var(np.r_[A, B], axis=0)
         return np.mean(B * (AB - A), axis=0) / (V + (V == 0)) * (V != 0)
 
-    def _total_order(slef, A, AB, B):
+    @staticmethod
+    def _total_order(A, AB, B):
         V = np.var(np.r_[A, B], axis=0)
         return 0.5 * np.mean((A - AB) ** 2, axis=0) / (V + (V == 0)) * (V != 0)
