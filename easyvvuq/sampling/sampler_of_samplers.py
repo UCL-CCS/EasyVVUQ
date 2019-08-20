@@ -1,6 +1,6 @@
 from .base import BaseSamplingElement
+import logging
 import itertools
-import sys
 
 __copyright__ = """
 
@@ -24,6 +24,8 @@ __copyright__ = """
 """
 __license__ = "LGPL"
 
+logger = logging.getLogger(__name__)
+
 
 class MultiSampler(BaseSamplingElement, sampler_name="multisampler"):
 
@@ -45,7 +47,9 @@ class MultiSampler(BaseSamplingElement, sampler_name="multisampler"):
         # Multisampler is finite only if all samplers in it are finite
         for sampler in self.samplers:
             if sampler.is_finite() is False:
-                sys.exit("Multisampler must be composed of finite samplers")
+                msg = "Multisampler must be composed of finite samplers"
+                logger.critical(msg)
+                raise RuntimeError(msg)
 
         # Combine all the iterables/generators into one
         self.multi_iterator = itertools.product(*self.samplers)
