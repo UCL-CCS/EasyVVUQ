@@ -24,3 +24,5 @@ Once created, this sampler can be added to the campaign object and used like any
 
     my_campaign.set_sampler(my_multisampler)
     my_campaign.draw_samples()
+
+
