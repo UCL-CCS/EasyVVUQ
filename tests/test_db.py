@@ -32,3 +32,10 @@ def test_get_and_set_status(campaign):
     campaign.set_run_statuses(['Run_1'], Status.ENCODED)
     assert(campaign.get_run_status('Run_1') == Status.ENCODED)
 
+
+def test_too_many_runs_bug(campaign):
+    runs = [RunInfo('run', 'test', '.', 1, {'a' : 1}, 1, 1) for _ in range(2000)]
+    run_names = ['Run_{}'.format(i) for i in range(1, 2001)]
+    campaign.add_runs(runs)
+    
+
