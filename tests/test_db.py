@@ -4,6 +4,7 @@ import easyvvuq
 from easyvvuq.constants import default_campaign_prefix
 from easyvvuq.db.sql import CampaignDB
 from easyvvuq.data_structs import CampaignInfo, RunInfo
+from easyvvuq.constants import Status
 
 
 @pytest.fixture
@@ -22,9 +23,12 @@ def test_db_file_created(campaign):
     assert(os.path.isfile('{}/test.sqlite'.format(campaign.tmp_path)))
 
 
-def test_add_runs(campaign):
+def test_get_and_set_status(campaign):
     run1 = RunInfo('run1', 'test', '.', 1, {'a' : 1}, 1, 1)
     run2 = RunInfo('run2', 'test', '.', 1, {'a' : 1}, 1, 1)
     campaign.add_runs([run1, run2])
-    campaign.get_run_status('run1', 'test', 1)
-    campaign.get_run_status('run2', 'test', 1)
+    assert(campaign.get_run_status('Run_1') == Status.NEW)
+    assert(campaign.get_run_status('Run_2') == Status.NEW)
+    campaign.set_run_statuses(['Run_1'], Status.ENCODED)
+    assert(campaign.get_run_status('Run_1') == Status.ENCODED)
+

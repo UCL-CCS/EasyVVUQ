@@ -479,7 +479,7 @@ class CampaignDB(BaseCampaignDB):
         if campaign:
             filter_options['campaign'] = campaign
         if sampler:
-            filter_options['sample'] = sampler
+            filter_options['sampler'] = sampler
 
         selected = self.session.query(RunTable).filter_by(**filter_options)
 
