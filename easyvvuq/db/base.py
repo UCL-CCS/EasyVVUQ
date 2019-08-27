@@ -86,7 +86,7 @@ class BaseCampaignDB:
 
         Parameters
         ----------
-        sampler_element: BaseSamplingElement
+        sampler: BaseSamplingElement
 
         Returns
         -------
@@ -381,13 +381,13 @@ class BaseCampaignDB:
 
         raise NotImplementedError
 
-    def set_run_statuses(self, run_ID_list, status):
+    def set_run_statuses(self, run_id_list, status):
         """
         Set the specified 'status' (enum) for all runs in the list run_ID_list
 
         Parameters
         ----------
-        run_ID_list: list of ints
+        run_id_list: list of ints
             A list of run ids
         status: enum(Status)
             The new status all listed runs should now have
