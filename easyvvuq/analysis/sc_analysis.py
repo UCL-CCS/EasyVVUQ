@@ -699,8 +699,11 @@ class SCAnalysis(BaseAnalysisElement):
             
             for l in self.l_norm:
                 
+                #expand the multi-index indices of the tensor product
+                #(Q^1_{i1} - Q^1_{i1-1}) X ... X (Q^1_{id) - Q^1_{id-1})
                 diff_idx = np.array(list(product(*[[k, -(k-1)] for k in l])))
     
+                #perform analysis on each Q^1_l1 X ... X Q^1_l_N tensor prod
                 for diff in diff_idx:
                     
                     if not np.min(np.abs(diff)) < self.L_min:
