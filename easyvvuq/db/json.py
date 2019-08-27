@@ -11,6 +11,7 @@ from easyvvuq.encoders.base import BaseEncoder
 from easyvvuq.decoders.base import BaseDecoder
 from easyvvuq.collate.base import BaseCollationElement
 from easyvvuq import constants
+from easyvvuq import ParamsSpecification
 
 __copyright__ = """
 
@@ -51,7 +52,8 @@ class CampaignDB(BaseCampaignDB):
         if new_campaign:
 
             self._campaign_info = info.to_dict()
-            self._next_run = 0
+            self._next_run = 1
+            self._next_ensemble = 1
 
             if location is None:
                 message = f"No location given for JSON db location"
@@ -61,7 +63,6 @@ class CampaignDB(BaseCampaignDB):
             self._collation_csv = location + ".COLLATION"
         else:
             self._load_campaign(location, name)
-            self._next_run = len(self._runs)
 
         self.location = location
 
@@ -86,18 +87,26 @@ class CampaignDB(BaseCampaignDB):
         self._runs = input_info.get('runs', {})
         self._sample = input_info.get('sample', {})
         self._collation_csv = input_info.get('collation_csv', {})
+        self._next_run = input_info['next_run']
+        self._next_ensemble = input_info['next_ensemble']
+
+        self._app['params'] = ParamsSpecification.deserialize(self._app['params'])
 
         # Convert run statuses to enums
         for run_id in self._runs:
             self._runs[run_id]['status'] = constants.Status(self._runs[run_id]['status'])
 
     def _save(self):
+        serialized_app = self._app.copy()
+        serialized_app['params'] = serialized_app['params'].serialize()
         out_dict = {
             'campaign': self._campaign_info,
-            'app': self._app,
+            'app': serialized_app,
             'runs': self._runs,
             'sample': self._sample,
-            'collation_csv': self._collation_csv
+            'collation_csv': self._collation_csv,
+            'next_run': self._next_run,
+            'next_ensemble': self._next_ensemble
         }
 
         with open(self.location, "w") as outfile:
@@ -158,7 +167,7 @@ class CampaignDB(BaseCampaignDB):
 
         Parameters
         ----------
-        sampler_element: BaseSamplingElement
+        sampler: BaseSamplingElement
 
         Returns
         -------
@@ -316,31 +325,39 @@ class CampaignDB(BaseCampaignDB):
         collater = BaseCollationElement.deserialize(self._campaign_info['collater'])
         return collater
 
-    def add_run(self, run_info=None, prefix='Run_'):
+    def add_runs(self, run_info_list=None, run_prefix='Run_', ensemble_prefix='Ensemble_'):
         """
-        Add run to the `runs` table in the database.
+        Add runs to the `runs` table in the database.
 
         Parameters
         ----------
-        run_info: RunInfo
-            Contains relevant run fields: params, status (where in the
+        run_info_list: List of RunInfo objects
+            Each RunInfo contains relevant run fields: params, status (where in the
             EasyVVUQ workflow is this RunTable), campaign (id number),
             sample, app
-        prefix: str
+        run_prefix: str
             Prefix for run id
+        ensemble_prefix: str
+            Prefix for ensemble id
 
         Returns
         -------
 
         """
 
-        name = f"{prefix}{self._next_run}"
+        for run_info in run_info_list:
+            name = f"{run_prefix}{self._next_run}"
+            ensemble = f"{ensemble_prefix}{self._next_ensemble}"
 
-        this_run = run_info.to_dict()
-        this_run['run_name'] = name
+            this_run = run_info.to_dict()
+            this_run['run_name'] = name
+            this_run['ensemble_name'] = ensemble
+            this_run['run_dir'] = os.path.join(self._campaign_info['runs_dir'], name)
 
-        self._runs[name] = this_run
-        self._next_run += 1
+            self._runs[name] = this_run
+            self._next_run += 1
+        self._next_ensemble += 1
+
         self._save()
 
     def run(self, run_name, campaign=None, sampler=None):
@@ -535,7 +552,58 @@ class CampaignDB(BaseCampaignDB):
 
         logger.warning("JSON database only allows for one campaign. "
                        "Campaign ID is always 1.")
+
         return 1
+
+    def get_sampler_id(self, campaign_id):
+        """
+        Return the (database) id corresponding to the sampler currently set
+        for the campaign with id 'campaign_id'
+
+        Parameters
+        ----------
+        campaign_id: int
+            ID of the campaign.
+
+        Returns
+        -------
+        int:
+            The id of the sampler set for the specified campaign
+        """
+
+        logger.warning("JSON database only allows for one sampler. "
+                       "Sampler ID is always 1.")
+
+        return 1
+
+    def set_sampler(self, campaign_id, sampler_id):
+        """
+        Set specified campaign to be using specified sampler
+
+        Parameters
+        ----------
+        campaign_id: int
+            ID of the campaign.
+        sampler_id: int
+            ID of the sampler.
+
+        Returns
+        -------
+        """
+
+        if campaign_id != 1:
+            message = ('JSON/Python dict database does not support a '
+                       'campaign_id other than 1')
+            logger.critical(message)
+            raise RuntimeError(message)
+
+        if sampler_id != 1:
+            message = ('JSON/Python dict database does not support a '
+                       'sampler_id other than 1')
+            logger.critical(message)
+            raise RuntimeError(message)
+
+        # Do nothing, as JSON db sampler_id is already always set to 1
 
     def get_run_status(self, run_name, campaign=None, sampler=None):
         """
@@ -564,14 +632,14 @@ class CampaignDB(BaseCampaignDB):
 
         return constants.Status(self._runs[run_name]['status'])
 
-    def set_run_statuses(self, run_name_list, status, campaign=None, sampler=None):
+    def set_run_statuses(self, run_name_list, status):
         """
         Set the specified 'status' (enum) for all runs in the list run_ID_list
 
         Parameters
         ----------
-        run_ID_list: list of ints
-            A list of run ids
+        run_name_list: list of str
+            A list of run names run names (format is usually: prefix + int)
         status: enum(Status)
             The new status all listed runs should now have
 
@@ -579,11 +647,6 @@ class CampaignDB(BaseCampaignDB):
         -------
 
         """
-
-        if campaign is not None:
-            logger.warning("Only 1 campaign is possible in JSON db")
-        if sampler is not None:
-            logger.warning("Only 1 sampler is possible in JSON db")
 
         for run_name in run_name_list:
             self._runs[run_name]['status'] = status

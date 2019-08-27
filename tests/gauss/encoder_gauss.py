@@ -45,8 +45,7 @@ class GaussEncoder(BaseEncoder, encoder_name="gauss"):
             outfile.write(output_str)
 
     def get_restart_dict(self):
-        return {"target_filename": self.target_filename,
-                }
+        return {"target_filename": self.target_filename}
 
     def element_version(self):
         return "0.1"

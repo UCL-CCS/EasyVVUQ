@@ -21,13 +21,14 @@ setup(
     long_description=long_description,
     long_description_content_type='text/markdown',
 
-    url='http://ccs.chem.ucl.ac.uk',
+    url='https://readthedocs.org/projects/easyvvuq/',
 
     author='CCS',
 
-    install_requires=['numpy', 'pandas>=0.24', 'scipy', 
+    install_requires=['numpy', 'pandas>=0.24', 'scipy',
                       'pytest', 'SQLAlchemy', 'chaospy',
-                      'sqlalchemy-utils', 'matplotlib', 'jsonpickle'],
+                      'sqlalchemy-utils', 'matplotlib',
+                      'jsonpickle', 'cerberus', 'SALib'],
 
     packages=find_packages(),
 

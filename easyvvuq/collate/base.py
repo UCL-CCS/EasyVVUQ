@@ -1,3 +1,5 @@
+"""Provides base class for all collation elements.
+"""
 from easyvvuq.base_element import BaseElement
 import json
 import logging
@@ -80,7 +82,6 @@ class BaseCollationElement(BaseElement):
     @staticmethod
     def deserialize(serialized_collater):
         info = json.loads(serialized_collater)
-        print(info)
         if not info["restartable"]:
             msg = (f'Collater {info["element_name"]} is not restartable')
             logging.error(msg)

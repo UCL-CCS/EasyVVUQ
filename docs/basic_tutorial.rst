@@ -142,25 +142,25 @@ template input::
 
     params = {
         "sigma": {
-            "type": "real",
-            "min": "0.0",
-            "max": "100000.0",
-            "default": "0.25"
+            "type": "float",
+            "min": 0.0,
+            "max": 100000.0,
+            "default": 0.25
         },
         "mu": {
-            "type": "real",
-            "min": "0.0",
-            "max": "100000.0",
-            "default": "1"
+            "type": "float",
+            "min": 0.0,
+            "max": 100000.0,
+            "default": 1
         },
         "num_steps": {
-            "type": "int",
-            "min": "0",
-            "max": "100000",
-            "default": "10"
+            "type": "integer",
+            "min": 0,
+            "max": 100000,
+            "default": 10
         },
         "out_file": {
-            "type": "str",
+            "type": "string",
             "default": "output.csv"
         }
     }

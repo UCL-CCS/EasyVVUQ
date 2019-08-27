@@ -38,7 +38,10 @@ Table of contents
    installation
    concepts
    basic_tutorial
-
+   cooling_coffee_cup
+   multisampler_tutorial
+   restartable_campaign_tutorial
+   custom_encoder
 
 Indices and tables
 ==================

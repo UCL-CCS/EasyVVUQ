@@ -6,15 +6,13 @@ import numpy as np
 
 # author: Jalal Lakhlili
 
-# ... A test model: Coffee_Cup from Uncertainpy
+# ... A test model: Cooling Coffee_Cup from Uncertainpy
+# it is used by PCE and QMC tests
 
 
-def model(time, kappa, T_env):
+def model(time, T_0, kappa, T_env):
     # For the ODE integration
     from scipy.integrate import odeint
-
-    # Initial temperature
-    T_0 = 95
 
     # The equation describing the model
     def f(T, time, kappa, T_env):
@@ -34,11 +32,13 @@ with open(json_input, "r") as f:
 
 kappa = float(inputs['kappa'])
 t_env = float(inputs['t_env'])
+temp0 = float(inputs['T0'])
+
 t = np.linspace(0, 200, 150)
 
 output_filename = inputs['out_file']
 
-te = model(t, kappa, t_env)
+te = model(t, temp0, kappa, t_env)
 ti = -te
 # output csv file
 header = 'te, ti'

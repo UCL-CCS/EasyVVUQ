@@ -101,6 +101,8 @@ class RunInfo:
     ----------
     run_name : str
         Human readable name of the run.
+    ensemble_name: str
+        Human readable name of the ensemble this run belongs to.
     app : None or int
         ID of the associated application.
     params : None or dict
@@ -120,11 +122,21 @@ class RunInfo:
         ID of the associated application.
     run_name : str
         Human readable name of the run.
+    ensemble_name: str
+        Human readable name of the ensemble this run belongs to.
     status : enum(Status)
     """
 
-    def __init__(self, run_name='', app=None, params=None, sample=None,
-                 campaign=None, status=constants.Status.NEW):
+    def __init__(
+            self,
+            run_name=None,
+            ensemble_name=None,
+            run_dir=None,
+            app=None,
+            params=None,
+            sample=None,
+            campaign=None,
+            status=constants.Status.NEW):
 
         # TODO: Handle fixtures
 
@@ -136,6 +148,8 @@ class RunInfo:
         self.sample = sample
         self.app = app
         self.run_name = run_name
+        self.ensemble_name = ensemble_name
+        self.run_dir = run_dir
 
         if not params:
             message = f'No run configuration specified for run {run_name}'
@@ -165,6 +179,8 @@ class RunInfo:
 
             out_dict = {
                 'run_name': self.run_name,
+                'ensemble_name': self.ensemble_name,
+                'run_dir': self.run_dir,
                 'params': json.dumps(self.params),
                 'status': constants.Status(self.status),
                 'campaign': self.campaign,
@@ -176,6 +192,8 @@ class RunInfo:
 
             out_dict = {
                 'run_name': self.run_name,
+                'ensemble_name': self.ensemble_name,
+                'run_dir': self.run_dir,
                 'params': self.params,
                 'status': constants.Status(self.status),
                 'campaign': self.campaign,
@@ -193,7 +211,7 @@ class AppInfo:
     ----------
     name : str or None
         Human readable application name.
-    params : dict or None
+    paramsspec : ParamsSpecification or None
         Description of possible parameter values.
     fixtures : dict or None
         Description of files/assets for runs.
@@ -206,7 +224,7 @@ class AppInfo:
     ----------
     name : str or None
         Human readable application name.
-    params : dict or None
+    paramsspec : ParamsSpecification or None
         Description of possible parameter values.
     fixtures : dict or None
         Description of files/assets for runs.
@@ -219,7 +237,7 @@ class AppInfo:
     def __init__(
             self,
             name=None,
-            params=None,
+            paramsspec=None,
             fixtures=None,
             encoder=None,
             decoder=None):
@@ -227,7 +245,7 @@ class AppInfo:
         self.name = name
         self.input_encoder = encoder
         self.output_decoder = decoder
-        self.params = params
+        self.paramsspec = paramsspec
         self.fixtures = fixtures
 
     @property
@@ -262,14 +280,14 @@ class AppInfo:
         Parameters
         ----------
         flatten : bool
-            Should the return dictionary be single level (i.e. should `params`,
-            `collation` & `fixtures` variables be serialized).
+            Should the return dictionary be single level (i.e. should `paramsspec`
+            and `fixtures` variables be serialized).
 
         Returns
         -------
         dict
-            Dictionary representing the application- if flattened then `params`,
-            `collation` & `fixtures` are returned as a JSON format sting.
+            Dictionary representing the application- if flattened then `paramsspec`,
+            and `fixtures` are returned as a JSON format sting.
         """
 
         if self.fixtures is None:
@@ -281,15 +299,13 @@ class AppInfo:
 
             out_dict = self.to_dict()
 
-            for field in [
-                    'params', 'fixtures']:
-                out_dict[field] = json.dumps(out_dict[field])
-
+            out_dict['params'] = self.paramsspec.serialize()
+            out_dict['fixtures'] = json.dumps(out_dict['fixtures'])
         else:
 
             out_dict = {
                 'name': self.name,
-                'params': self.params,
+                'params': self.paramsspec,
                 'fixtures': fixtures,
                 'input_encoder': self.input_encoder.serialize(),
                 'output_decoder': self.output_decoder.serialize()

@@ -1,9 +1,10 @@
 import easyvvuq as uq
 import chaospy as cp
 import os
-import sys
 import pytest
+from easyvvuq.constants import default_campaign_prefix, Status
 from pprint import pprint
+import subprocess
 
 __copyright__ = """
 
@@ -35,56 +36,51 @@ if not os.path.exists("tests/cannonsim/bin/cannonsim"):
         "Skipping cannonsim test (cannonsim is not installed in tests/cannonsim/bin/)",
         allow_module_level=True)
 
+CANNONSIM_PATH = os.path.realpath(os.path.expanduser("tests/cannonsim/bin/cannonsim"))
 
-def test_cannonsim_csv(tmpdir):
+
+def test_worker(tmpdir):
 
     # Set up a fresh campaign called "cannon"
-    my_campaign = uq.Campaign(name='cannon', work_dir=tmpdir, db_type='json')
+    my_campaign = uq.Campaign(name='cannon', work_dir=tmpdir)
 
     # Define parameter space for the cannonsim app
     params = {
         "angle": {
-            "type": "real",
-            "min": "0.0",
-            "max": "6.28",
-            "default": "0.79",
-            "variable": "True"},
+            "type": "float",
+            "min": 0.0,
+            "max": 6.28,
+            "default": 0.79},
         "air_resistance": {
-            "type": "real",
-            "min": "0.0",
-            "max": "1.0",
-            "default": "0.2",
-            "variable": "True"},
+            "type": "float",
+            "min": 0.0,
+            "max": 1.0,
+            "default": 0.2},
         "height": {
-            "type": "real",
-            "min": "0.0",
-            "max": "1000.0",
-            "default": "1.0",
-            "variable": "True"},
+            "type": "float",
+            "min": 0.0,
+            "max": 1000.0,
+            "default": 1.0},
         "time_step": {
-            "type": "real",
-                    "min": "0.0001",
-                    "max": "1.0",
-                    "default": "0.01",
-                    "variable": "True"},
+            "type": "float",
+            "min": 0.0001,
+            "max": 1.0,
+            "default": 0.01},
         "gravity": {
-            "type": "real",
-            "min": "0.0",
-            "max": "1000.0",
-            "default": "9.8",
-            "variable": "True"},
+            "type": "float",
+            "min": 0.0,
+            "max": 1000.0,
+            "default": 9.8},
         "mass": {
-            "type": "real",
-            "min": "0.0001",
-            "max": "1000.0",
-            "default": "1.0",
-            "variable": "True"},
+            "type": "float",
+            "min": 0.0001,
+            "max": 1000.0,
+            "default": 1.0},
         "velocity": {
-            "type": "real",
-            "min": "0.0",
-            "max": "1000.0",
-            "default": "10.0",
-            "variable": "True"}}
+            "type": "float",
+            "min": 0.0,
+            "max": 1000.0,
+            "default": 10.0}}
 
     # Create an encoder and decoder for the cannonsim app
     encoder = uq.encoders.GenericEncoder(
@@ -94,9 +90,6 @@ def test_cannonsim_csv(tmpdir):
     decoder = uq.decoders.SimpleCSV(
         target_filename='output.csv', output_columns=[
             'Dist', 'lastvx', 'lastvy'], header=0)
-
-    print("Serialized encoder:", encoder.serialize())
-    print("Serialized decoder:", decoder.serialize())
 
     # Add the cannonsim app
     my_campaign.add_app(name="cannonsim",
@@ -135,64 +128,52 @@ def test_cannonsim_csv(tmpdir):
     pprint(my_campaign.list_runs())
     print("---")
 
-    # Encode all runs into a local directory
-    pprint(
-        f"Encoding all runs to campaign runs dir {my_campaign.get_campaign_runs_dir()}")
-    my_campaign.populate_runs_dir()
+    # User defined function
+    def encode_and_execute_cannonsim(run_id, run_data):
+        enc_args = [
+            my_campaign.db_type,
+            my_campaign.db_location,
+            'FALSE',
+            "cannon",
+            "cannonsim",
+            run_id
+        ]
+        encoder_path = os.path.realpath(os.path.expanduser("easyvvuq/tools/external_encoder.py"))
+        subprocess.run(['python3', encoder_path] + enc_args)
+        subprocess.run([CANNONSIM_PATH, "in.cannon", "output.csv"], cwd=run_data['run_dir'])
 
-    assert(len(my_campaign.get_campaign_runs_dir()) > 0)
-    assert(os.path.exists(my_campaign.get_campaign_runs_dir()))
-    assert(os.path.isdir(my_campaign.get_campaign_runs_dir()))
+        my_campaign.campaign_db.set_run_statuses([run_id], Status.ENCODED)  # see note further down
 
-    # Local execution
-    my_campaign.apply_for_each_run_dir(uq.actions.ExecuteLocal(
-        "tests/cannonsim/bin/cannonsim in.cannon output.csv"))
+    # Encode and execute. Note to call function for all runs with status NEW (and not ENCODED)
+    my_campaign.call_for_each_run(encode_and_execute_cannonsim, status=uq.constants.Status.NEW)
+
+    ####
+    # Important note: In this example the execution is done with subprocess which is blocking.
+    # However, in practice this will be some sort of middleware (e.g. PJM) which is generally
+    # non-blocking. In such a case it is the job of the middleware section to keep track of
+    # which runs have been encoded, and updating the database (all at the end if need be) to
+    # indicate this to EasyVVUQ _before_ trying to run the collation/analysis section. If
+    # EasyVVUQ has not been informed that runs have been encoded, it will most likely just tell
+    # you that 'nothing has been collated' or something to that effect.
+    ####
+
+    print("Runs list after encoding and execution:")
+    pprint(my_campaign.list_runs())
 
     # Collate all data into one pandas data frame
     my_campaign.collate()
     print("data:", my_campaign.get_collation_result())
 
-    # Save the state of the campaign
-    state_file = tmpdir + "cannonsim_state.json"
-    my_campaign.save_state(state_file)
-
-    my_campaign = None
-
-    # Load state in new campaign object
-    reloaded_campaign = uq.Campaign(state_file=state_file, work_dir=tmpdir)
-    reloaded_campaign.set_app("cannonsim")
-
-    # Draw 3 more samples, execute, and collate onto existing dataframe
-    print("Running 3 more samples...")
-    reloaded_campaign.draw_samples(num_samples=3)
-    print("List of runs added:")
-    pprint(reloaded_campaign.list_runs())
-    print("---")
-
-    reloaded_campaign.populate_runs_dir()
-    reloaded_campaign.apply_for_each_run_dir(uq.actions.ExecuteLocal(
-        "tests/cannonsim/bin/cannonsim in.cannon output.csv"))
-
-    print("Completed runs:")
-    pprint(reloaded_campaign.scan_completed())
-
-    print("All completed?", reloaded_campaign.all_complete())
-
-    reloaded_campaign.collate()
-    print("data:\n", reloaded_campaign.get_collation_result())
-
-    print(reloaded_campaign)
-
     # Create a BasicStats analysis element and apply it to the campaign
     stats = uq.analysis.BasicStats(qoi_cols=['Dist', 'lastvx', 'lastvy'])
-    reloaded_campaign.apply_analysis(stats)
-    print("stats:\n", reloaded_campaign.get_last_analysis())
+    my_campaign.apply_analysis(stats)
+    print("stats:\n", my_campaign.get_last_analysis())
 
     # Print the campaign log
-    pprint(reloaded_campaign._log)
+    pprint(my_campaign._log)
 
-    print("All completed?", reloaded_campaign.all_complete())
+    print("All completed?", my_campaign.all_complete())
 
 
 if __name__ == "__main__":
-    test_cannonsim_csv("/tmp/")
+    test_worker("/tmp/")

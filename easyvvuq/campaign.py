@@ -8,6 +8,7 @@ import logging
 import tempfile
 import json
 import easyvvuq
+from easyvvuq import ParamsSpecification
 from easyvvuq.constants import default_campaign_prefix, Status
 from easyvvuq.data_structs import RunInfo, CampaignInfo, AppInfo
 from easyvvuq.sampling import BaseSamplingElement
@@ -71,6 +72,11 @@ class Campaign:
     change_to_state : bool, optional, default=False
         Should we change to the directory containing any specified `state_file`
         in order to make relative paths work.
+    verify_all_runs: bool, optional, default=True
+        Check all new runs being added for unrecognised params (not defined for the currently set
+        app), values lying within defined physical range, type checking etc. This should normally
+        always be set to True, but in cases where the performance is too degraded, the checks can
+        be disabled by setting to False.
 
     Attributes
     ----------
@@ -116,10 +122,12 @@ class Campaign:
             db_location=None,
             work_dir="./",
             state_file=None,
-            change_to_state=False
+            change_to_state=False,
+            verify_all_runs=True
     ):
 
         self.work_dir = os.path.realpath(os.path.expanduser(work_dir))
+        self.verify_all_runs = verify_all_runs
 
         self.campaign_name = None
         self._campaign_dir = None
@@ -272,6 +280,7 @@ class Campaign:
         self.campaign_id = campaign_db.get_campaign_id(self.campaign_name)
 
         # Resurrect the sampler and collation elements
+        self._active_sampler_id = campaign_db.get_sampler_id(self.campaign_id)
         self._active_sampler = campaign_db.resurrect_sampler(self._active_sampler_id)
         self._active_collater = campaign_db.resurrect_collation(self.campaign_id)
 
@@ -292,7 +301,6 @@ class Campaign:
         output_json = {
             "db_location": self.db_location,
             "db_type": self.db_type,
-            "active_sampler_id": self._active_sampler_id,
             "active_app": self._active_app_name,
             "campaign_name": self.campaign_name,
             "campaign_dir": self._campaign_dir,
@@ -319,7 +327,6 @@ class Campaign:
 
         self.db_location = input_json["db_location"]
         self.db_type = input_json["db_type"]
-        self._active_sampler_id = input_json["active_sampler_id"]
         self._active_app_name = input_json["active_app"]
         self.campaign_name = input_json["campaign_name"]
         self._campaign_dir = input_json["campaign_dir"]
@@ -358,37 +365,12 @@ class Campaign:
         """
 
         # Verify input parameters dict
-
-        if not isinstance(params, dict):
-            msg = "params must be of type 'dict'"
-            logger.error(msg)
-            raise Exception(msg)
-
-        if not params:
-            msg = ("params must not be empty. At least one parameter "
-                   "should be specified.")
-            logger.error(msg)
-            raise Exception(msg)
-
-        # Check each param has a dict as a value, and that dict has a "default"
-        # defined
-        for param_key, param_def in params.items():
-            if not isinstance(param_def, dict):
-                msg = f"Entry for param '{param_key}' must be a dictionary"
-                logger.error(msg)
-                raise Exception(msg)
-            if "default" not in param_def:
-                msg = (
-                    f"Entry for param '{param_key}' must be a dictionary"
-                    f"defining a 'default' value for this parameter."
-                )
-                logger.error(msg)
-                raise Exception(msg)
+        paramsspec = ParamsSpecification(params, appname=name)
 
         # validate application input
         app = AppInfo(
             name=name,
-            params=params,
+            paramsspec=paramsspec,
             fixtures=fixtures,
             encoder=encoder,
             decoder=decoder
@@ -440,6 +422,7 @@ class Campaign:
 
         self._active_sampler = sampler
         self._active_sampler_id = self.campaign_db.add_sampler(sampler)
+        self.campaign_db.set_sampler(self.campaign_id, self._active_sampler_id)
 
     def set_collater(self, collater):
         """Set a collater for this campaign.
@@ -461,13 +444,13 @@ class Campaign:
         self.campaign_db.set_campaign_collater(collater, self.campaign_id)
         self._active_collater = collater
 
-    def add_run(self, new_run):
+    def add_runs(self, runs):
         """Add a new run to the queue.
 
         Parameters
         ----------
-        new_run : dict
-            Defines the value of each model parameter listed in
+        runs : list of dicts
+            Each dict defines the value of each model parameter listed in
             `self.params_info` for a run to be added to `self.runs`
 
         Returns
@@ -483,32 +466,26 @@ class Campaign:
 
         app_default_params = self._active_app["params"]
 
-        # Check if parameter names match those already known for this app
-        for param in new_run.keys():
-            if param not in app_default_params.keys():
-                allowed_params_str = ','.join(list(app_default_params.keys()))
-                reasoning = (
-                    f"dict passed to add_run() contains extra parameter, "
-                    f"{param}, which is not a known parameter name "
-                    f"of app {self._active_app['name']}.\n"
-                    f"The allowed param names for this app appear to be:\n"
-                    f"{allowed_params_str}")
+        run_info_list = []
+        for new_run in runs:
 
-                raise RuntimeError(reasoning)
+            if new_run is None:
+                msg = ("add_run() was passed new_run of type None. Bad sampler?")
+                logging.error(msg)
+                raise Exception(msg)
 
-        # If necessary parameter names are missing, fill them in from the
-        # default values in params_info
-        for param in app_default_params.keys():
-            if param not in new_run.keys():
-                default_val = app_default_params[param]["default"]
-                new_run[param] = default_val
+            # Verify and complete run with missing/default param values
+            new_run = app_default_params.process_run(new_run, verify=self.verify_all_runs)
 
-        # Add to run queue
-        run_info = RunInfo(app=self._active_app['id'],
-                           params=new_run,
-                           sample=self._active_sampler_id,
-                           campaign=self.campaign_id)
-        self.campaign_db.add_run(run_info)
+            # Add to run queue
+            run_info = RunInfo(app=self._active_app['id'],
+                               params=new_run,
+                               sample=self._active_sampler_id,
+                               campaign=self.campaign_id)
+
+            run_info_list.append(run_info)
+
+        self.campaign_db.add_runs(run_info_list)
 
     def add_default_run(self):
         """
@@ -517,7 +494,7 @@ class Campaign:
         """
 
         new_run = {}
-        self.add_run(new_run)
+        self.add_runs([new_run])
 
     def draw_samples(self, num_samples=0, replicas=1):
         """Draws `num_samples` sets of parameters from the currently set
@@ -562,8 +539,8 @@ class Campaign:
         num_added = 0
         for new_run in self._active_sampler:
 
-            for __ in range(replicas):
-                self.add_run(new_run)
+            list_of_runs = [new_run for i in range(replicas)]
+            self.add_runs(list_of_runs)
 
             num_added += 1
             if num_added == num_samples:
@@ -573,9 +550,8 @@ class Campaign:
         self.campaign_db.update_sampler(self._active_sampler_id, self._active_sampler)
 
         # Log application of this sampling element
-        self.log_element_application(
-            self._active_sampler, {
-                "num_added": num_added})
+        self.log_element_application(self._active_sampler,
+                                     {"num_added": num_added, "replicas": replicas})
 
     def list_runs(self, sampler=None, campaign=None, status=None):
         """Get list of runs in the CampaignDB.
@@ -626,38 +602,34 @@ class Campaign:
 
         """
 
+        # Get the encoder for this app. If none is set, only the directory structure
+        # will be created.
         active_encoder = self._active_app_encoder
-
         if active_encoder is None:
-            raise RuntimeError('Cannot populate runs without valid '
-                               'encoder in campaign')
+            logger.warning('No encoder set for this app. Creating directory structure only.')
+        else:
+            use_fixtures = active_encoder.fixture_support
+            fixtures = self._active_app['fixtures']
 
-        use_fixtures = active_encoder.fixture_support
+        run_ids = []
 
-        fixtures = self._active_app['fixtures']
-
-        runs_dir = self.campaign_db.runs_dir()
-
-        # Loop through all runs with status NEW
         for run_id, run_data in self.campaign_db.runs(status=Status.NEW):
 
-            # Make run directory
-            target_dir = os.path.join(runs_dir, run_id)
-            os.makedirs(target_dir)
+            # Make directory for this run's output
+            os.makedirs(run_data['run_dir'])
 
-            # TODO: Check that this isn't insanely inefficient (almost
-            #  certainly will be hammering the database for large run lists)
-            self.campaign_db.set_dir_for_run(run_id, target_dir)
+            # Encode run
+            if active_encoder is not None:
+                if use_fixtures:
+                    active_encoder.encode(params=run_data['params'],
+                                          fixtures=fixtures,
+                                          target_dir=run_data['run_dir'])
+                else:
+                    active_encoder.encode(params=run_data['params'],
+                                          target_dir=run_data['run_dir'])
 
-            if use_fixtures:
-                active_encoder.encode(params=run_data['params'],
-                                      fixtures=fixtures,
-                                      target_dir=target_dir)
-            else:
-                active_encoder.encode(params=run_data['params'],
-                                      target_dir=target_dir)
-
-            self.campaign_db.set_run_statuses([run_id], Status.ENCODED)
+            run_ids.append(run_id)
+        self.campaign_db.set_run_statuses(run_ids, Status.ENCODED)
 
     def get_campaign_runs_dir(self):
         """Get the runs directory from the CampaignDB.
@@ -669,6 +641,13 @@ class Campaign:
 
         """
         return self.campaign_db.runs_dir()
+
+    def call_for_each_run(self, fn, status=Status.ENCODED):
+
+        # Loop through all runs in this campaign with the specified status,
+        # and call the specified user function for each.
+        for run_id, run_data in self.campaign_db.runs(status=status):
+            fn(run_id, run_data)
 
     def apply_for_each_run_dir(self, action):
         """
@@ -685,16 +664,11 @@ class Campaign:
         -------
         """
 
-        runs_dir = self.campaign_db.runs_dir()
-
-        # Loop through all runs in this campaign with status ENCODED
+        # Loop through all runs in this campaign with status ENCODED, and
+        # run the specified action on each run's dir
         for run_id, run_data in self.campaign_db.runs(status=Status.ENCODED):
-
-            dir_name = os.path.join(runs_dir, run_id)
-            print("Applying " + action.__module__ + " to " + dir_name + "...")
-
-            # Run user-specified action on this directory
-            action.act_on_dir(dir_name)
+            logger.info("Applying " + action.__module__ + " to " + run_data['run_dir'])
+            action.act_on_dir(run_data['run_dir'])
 
     def collate(self):
         """Combine the output from all runs associated with the current app.
@@ -800,3 +774,18 @@ class Campaign:
             "info": further_info
         }
         self._log.append(log_entry)
+
+    def get_active_sampler(self):
+        """ Return the active sampler element in use by this campaign.
+
+        Parameters
+        ----------
+
+        Returns
+        -------
+        The sampler currently in use
+            easyvvuq.sampling.base.BaseSamplingElement
+
+        """
+
+        return self._active_sampler
