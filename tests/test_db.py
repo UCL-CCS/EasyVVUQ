@@ -1,9 +1,9 @@
 import pytest
 import os.path
-import easyvvuq
+import easyvvuq as uq
 from easyvvuq.constants import default_campaign_prefix
 from easyvvuq.db.sql import CampaignDB
-from easyvvuq.data_structs import CampaignInfo, RunInfo
+from easyvvuq.data_structs import CampaignInfo, RunInfo, AppInfo
 from easyvvuq.constants import Status
 
 
@@ -12,13 +12,42 @@ def campaign(tmp_path):
     info = CampaignInfo(
         name='test',
         campaign_dir_prefix=default_campaign_prefix,
-        easyvvuq_version=easyvvuq.__version__,
+        easyvvuq_version=uq.__version__,
         campaign_dir='.')
     campaign = CampaignDB(location='sqlite:///{}/test.sqlite'.format(tmp_path), new_campaign=True, name='test', info=info)
     campaign.tmp_path = tmp_path
     runs = [RunInfo('run', 'test', '.', 1, {'a' : 1}, 1, 1) for _ in range(1010)]
     run_names = ['Run_{}'.format(i) for i in range(1, 1011)]
     campaign.add_runs(runs)
+    app_info = AppInfo('test', uq.ParamsSpecification({
+        "temp_init": {
+            "type": "float",
+            "min": 0.0,
+            "max": 100.0,
+            "default": 95.0},
+        "kappa": {
+            "type": "float",
+            "min": 0.0,
+            "max": 0.1,
+            "default": 0.025},
+        "t_env": {
+            "type": "float",
+            "min": 0.0,
+            "max": 40.0,
+            "default": 15.0},
+        "out_file": {
+            "type": "string",
+            "default": "output.csv"}
+        }),
+        None,
+        uq.encoders.GenericEncoder(
+            template_fname='tests/cooling/cooling.template',
+            delimiter='$',
+            target_filename='cooling_in.json'),
+        uq.decoders.SimpleCSV(target_filename='output.csv',
+                                  output_columns=["te", "ti"],
+                                  header=0))
+    campaign.add_app(app_info)
     return campaign
 
 
@@ -36,3 +65,7 @@ def test_get_and_set_status(campaign):
 def test_get_num_runs(campaign):
     assert(campaign.get_num_runs() == 1010)
 
+
+def test_app(campaign):
+    app_dict = campaign.app('test')
+    assert(app_dict['name'] == 'test')
