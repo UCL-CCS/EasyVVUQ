@@ -95,15 +95,26 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
             self.xi_1d[n] = {}
             self.wi_1d[n] = {}
 
-        for n in range(N):
-            for i in range(1, self.quad_order+1):
-                xi_i, wi_i = cp.generate_quadrature(i, 
+        if sparse == True:
+            for n in range(N):
+                for i in range(1, self.quad_order+1):
+                    xi_i, wi_i = cp.generate_quadrature(i+1, 
+                                                        params_distribution[n], 
+                                                        rule=self.quad_rule, 
+                                                        growth=self.growth,
+                                                        normalize=True)
+    
+                    self.xi_1d[n][i] = xi_i[0]
+                    self.wi_1d[n][i] = wi_i
+        else:
+            for n in range(N):
+                xi_i, wi_i = cp.generate_quadrature(self.quad_order, 
                                                     params_distribution[n], 
                                                     rule=self.quad_rule, 
                                                     growth=self.growth,
-                                                    normalize=True)
-                self.xi_1d[n][i] = xi_i[0]
-                self.wi_1d[n][i] = wi_i
+                                                    normalize=True)                
+                self.xi_1d[n][self.quad_order] = xi_i[0]
+                self.wi_1d[n][self.quad_order] = wi_i
 
         if sparse == False:
             # the nodes of the collocation grid
@@ -119,13 +130,16 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
             if L < N:
                 print("*************************************************************")
                 print("Level of sparse grid is lower than the dimension N (# params)")
-                print("Increase level (quad_order) q such that q >= N")
+                print("Increase level (via polynomial_order) p such that p-1 >= N")
                 print("*************************************************************")
                 import sys; sys.exit()
+
+            #multi-index l, such that |l| <= L
+            l_norm_le_L = self.compute_sparse_multi_idx(L, N)
                 
             #create sparse grid of dimension N and level q using the 1d 
             #rules in self.xi_1d
-            self.xi_d = self.sparse_grid(L, N)
+            self.xi_d = self.generate_grid(L, N, l_norm_le_L)
 
         self.L = L
         self.N = N
@@ -180,20 +194,20 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
     =======================
     """
 
-    def sparse_grid(self, L, N):
-        """
-        Compute an isotropic sparse grid H_L_N of N dimensions and level q
-        """
-        #multi-index l, such that |l| <= L
-        l_norm_le_L = self.compute_sparse_multi_idx(L, N)
+    def generate_grid(self, L, N, l_norm, **kwargs):
             
+        if 'dimensions' in kwargs:
+            dimensions = kwargs['dimensions']
+        else:
+            dimensions = range(N)
+        
         H_L_N = []      
         #loop over all multi indices i
-        for i in l_norm_le_L:
+        for l in l_norm:
             
             #compute the tensor product of nodes indexed by i
-            X_i = [self.xi_1d[n][i[n]] for n in range(N)]
-            H_L_N.append(list(product(*X_i)))
+            X_l = [self.xi_1d[n][l[n]] for n in dimensions]
+            H_L_N.append(list(product(*X_l)))
         
         #flatten the list of lists
         H_L_N = np.array(list(chain(*H_L_N)))
@@ -206,6 +220,6 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
         computes all N dimensional multi-indices i = (i1,...,iN) such that
         |i| <= Q. Here |i| is the internal sum of i (i1+...+iN)
         """
-        P = np.array(list(product(range(1,q+1), repeat=N)))
+        P = np.array(list(product(range(1, q+1), repeat=N)))
         i_norm_le_q = P[np.where(np.sum(P, axis=1) <= q)[0]]
         return i_norm_le_q
