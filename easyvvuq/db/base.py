@@ -381,14 +381,14 @@ class BaseCampaignDB:
 
         raise NotImplementedError
 
-    def set_run_statuses(self, run_id_list, status):
+    def set_run_statuses(self, run_name_list, status):
         """
         Set the specified 'status' (enum) for all runs in the list run_ID_list
 
         Parameters
         ----------
-        run_id_list: list of ints
-            A list of run ids
+        run_name_list: list of str
+            A list of run names run names (format is usually: prefix + int)
         status: enum(Status)
             The new status all listed runs should now have
 

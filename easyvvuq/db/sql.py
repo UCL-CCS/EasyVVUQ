@@ -490,14 +490,14 @@ class CampaignDB(BaseCampaignDB):
 
         return constants.Status(selected.status)
 
-    def set_run_statuses(self, run_id_list, status):
+    def set_run_statuses(self, run_name_list, status):
         """
         Set the specified 'status' (enum) for all runs in the list run_ID_list
 
         Parameters
         ----------
-        run_id_list: list of ints
-            A list of run ids
+        run_name_list: list of str
+            A list of run names run names (format is usually: prefix + int)
         status: enum(Status)
             The new status all listed runs should now have
 
@@ -506,9 +506,9 @@ class CampaignDB(BaseCampaignDB):
 
         """
         max_entries = 900
-        for i in range(0, len(run_id_list), max_entries):
+        for i in range(0, len(run_name_list), max_entries):
             selected = self.session.query(RunTable).filter(
-                RunTable.run_name.in_(set(run_id_list[i:i + max_entries]))).all()
+                RunTable.run_name.in_(set(run_name_list[i:i + max_entries]))).all()
             for run in selected:
                 run.status = status
             self.session.commit()
