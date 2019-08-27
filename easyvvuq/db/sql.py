@@ -639,7 +639,7 @@ class CampaignDB(BaseCampaignDB):
             Path to campaign directory.
         """
 
-        self._get_campaign_info(campaign_name=campaign_name).campaign_dir
+        return self._get_campaign_info(campaign_name=campaign_name).campaign_dir
 
     def _select_runs(self, name=None, campaign=None, sampler=None, status=None, not_status=None):
         """
