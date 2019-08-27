@@ -16,6 +16,9 @@ def campaign(tmp_path):
         campaign_dir='.')
     campaign = CampaignDB(location='sqlite:///{}/test.sqlite'.format(tmp_path), new_campaign=True, name='test', info=info)
     campaign.tmp_path = tmp_path
+    runs = [RunInfo('run', 'test', '.', 1, {'a' : 1}, 1, 1) for _ in range(1010)]
+    run_names = ['Run_{}'.format(i) for i in range(1, 1011)]
+    campaign.add_runs(runs)
     return campaign
 
 
@@ -24,9 +27,12 @@ def test_db_file_created(campaign):
 
 
 def test_get_and_set_status(campaign):
-    runs = [RunInfo('run', 'test', '.', 1, {'a' : 1}, 1, 1) for _ in range(2000)]
-    run_names = ['Run_{}'.format(i) for i in range(1, 2001)]
-    campaign.add_runs(runs)
+    run_names = ['Run_{}'.format(i) for i in range(1, 1011)]
     assert(all([campaign.get_run_status(name) == Status.NEW for name in run_names]))
     campaign.set_run_statuses(run_names, Status.ENCODED)
     assert(all([campaign.get_run_status(name) == Status.ENCODED for name in run_names]))
+
+
+def test_get_num_runs(campaign):
+    assert(campaign.get_num_runs() == 1010)
+
