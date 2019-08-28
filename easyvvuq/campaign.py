@@ -774,3 +774,18 @@ class Campaign:
             "info": further_info
         }
         self._log.append(log_entry)
+
+    def get_active_sampler(self):
+        """ Return the active sampler element in use by this campaign.
+
+        Parameters
+        ----------
+
+        Returns
+        -------
+        The sampler currently in use
+            easyvvuq.sampling.base.BaseSamplingElement
+
+        """
+
+        return self._active_sampler

@@ -32,7 +32,8 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
                  count=0,
                  polynomial_order=4,
                  quadrature_rule="G",
-                 sparse=False):
+                 sparse=False,
+                 growth=None):
         """
         Create the sampler for the Polynomial Chaos Expansion method using
         pseudo-spectral projection.
@@ -52,9 +53,12 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
             The quadrature method, default is Gaussian "G".
 
         sparse : bool, optional
-            If True use Smolyak sparse grid instead of normal tensor product grid,
-            default is False.
+            If True, use Smolyak sparse grid instead of normal tensor product
+            grid. Default value is False.
 
+        growth (bool, None), optional
+            If True, quadrature point became nested for sparse grids.
+            Default value is the same as ``sparse`` if omitted, otherwise None.
         """
 
         if vary is None:
@@ -76,8 +80,6 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
 
         self.vary = Vary(vary)
         self.polynomial_order = polynomial_order
-        self.quadrature_rule = quadrature_rule
-        self.sparse = sparse
 
         # List of the probability distributions of uncertain parameters
         params_distribution = list(vary.values())
@@ -92,12 +94,17 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
         self.quad_order = polynomial_order + 1
         self.quad_rule = quadrature_rule
         self.quad_sparse = sparse
+        if sparse:
+            self.quad_growth = True
+        else:
+            self.quad_growth = growth
 
         # Nodes and weights for the integration
         self._nodes, _ = cp.generate_quadrature(order=self.quad_order,
-                                                domain=self.distribution,
+                                                dist=self.distribution,
                                                 rule=quadrature_rule,
-                                                sparse=sparse)
+                                                sparse=sparse,
+                                                growth=self.quad_growth)
 
         # Number of samples
         self._number_of_samples = len(self._nodes[0])
@@ -138,5 +145,6 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
         return {"vary": self.vary.serialize(),
                 "count": self.count,
                 "polynomial_order": self.polynomial_order,
-                "quadrature_rule": self.quadrature_rule,
-                "sparse": self.sparse}
+                "quadrature_rule": self.quad_rule,
+                "sparse": self.quad_sparse,
+                "growth": self.quad_growth}

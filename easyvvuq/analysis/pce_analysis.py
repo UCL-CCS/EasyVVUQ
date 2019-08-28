@@ -84,9 +84,10 @@ class PCEAnalysis(BaseAnalysisElement):
 
         # Compute nodes and weights
         nodes, weights = cp.generate_quadrature(order=self.sampler.quad_order,
-                                                domain=self.sampler.distribution,
+                                                dist=self.sampler.distribution,
                                                 rule=self.sampler.quad_rule,
-                                                sparse=self.sampler.quad_sparse)
+                                                sparse=self.sampler.quad_sparse,
+                                                growth=self.sampler.quad_growth)
 
         # Extract output values for each quantity of interest from Dataframe
         samples = {k: [] for k in qoi_cols}

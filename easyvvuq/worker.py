@@ -40,12 +40,14 @@ class Worker:
             db_type="sql",
             db_location=None,
             campaign_name=None,
-            app_name=None
+            app_name=None,
+            write_to_db=True
     ):
 
         self.campaign_name = campaign_name
         self.db_type = db_type
         self.db_location = db_location
+        self.write_to_db = write_to_db
 
         if self.db_type == 'sql':
             from .db.sql import CampaignDB
@@ -104,8 +106,9 @@ class Worker:
                     active_encoder.encode(params=run_data['params'],
                                           target_dir=target_dir)
 
-        # Update run statuses in db
-        self.campaign_db.set_run_statuses(run_id_list, Status.ENCODED)
+        # Update run statuses in db (if worker is authorized to write to DB)
+        if self.write_to_db:
+            self.campaign_db.set_run_statuses(run_id_list, Status.ENCODED)
 
     def call_for_each_run(self, fn, status=Status.ENCODED):
         """
