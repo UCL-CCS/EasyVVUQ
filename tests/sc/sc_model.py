@@ -114,6 +114,7 @@ output_filename = inputs['outfile']
 
 # run FEM solver at current value of Pe and f
 u = solve(Pe, f, nel=300)
+u[0] = 0.0
 
 # output csv file
 header = 'u'
