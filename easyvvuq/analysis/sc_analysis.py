@@ -111,7 +111,10 @@ class SCAnalysis(BaseAnalysisElement):
             self.L_min = 1
             self.l_norm = self.sampler.compute_sparse_multi_idx(self.L, self.N)            
 
+        #full tensor grid
         self.xi_d = self.sampler.xi_d
+        
+        #1d weights and points per level
         self.xi_1d = self.sampler.xi_1d
         self.wi_1d = self.compute_SC_weights(rule=self.sampler.quad_rule)
         

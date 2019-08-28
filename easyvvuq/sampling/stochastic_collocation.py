@@ -215,11 +215,11 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
         #return unique nodes
         return np.unique(H_L_N, axis=0)
     
-    def compute_sparse_multi_idx(self, q, N):
+    def compute_sparse_multi_idx(self, L, N):
         """
-        computes all N dimensional multi-indices i = (i1,...,iN) such that
-        |i| <= Q. Here |i| is the internal sum of i (i1+...+iN)
+        computes all N dimensional multi-indices l = (l1,...,lN) such that
+        |l| <= Q. Here |l| is the internal sum of i (l1+...+lN)
         """
-        P = np.array(list(product(range(1, q+1), repeat=N)))
-        i_norm_le_q = P[np.where(np.sum(P, axis=1) <= q)[0]]
-        return i_norm_le_q
+        P = np.array(list(product(range(1, L+1), repeat=N)))
+        l_norm_le_q = P[np.where(np.sum(P, axis=1) <= L)[0]]
+        return l_norm_le_q
