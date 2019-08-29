@@ -167,7 +167,7 @@ class CampaignDB(BaseCampaignDB):
 
         Parameters
         ----------
-        sampler_element: BaseSamplingElement
+        sampler: BaseSamplingElement
 
         Returns
         -------
@@ -632,14 +632,14 @@ class CampaignDB(BaseCampaignDB):
 
         return constants.Status(self._runs[run_name]['status'])
 
-    def set_run_statuses(self, run_name_list, status, campaign=None, sampler=None):
+    def set_run_statuses(self, run_name_list, status):
         """
         Set the specified 'status' (enum) for all runs in the list run_ID_list
 
         Parameters
         ----------
-        run_ID_list: list of ints
-            A list of run ids
+        run_name_list: list of str
+            A list of run names run names (format is usually: prefix + int)
         status: enum(Status)
             The new status all listed runs should now have
 
@@ -647,11 +647,6 @@ class CampaignDB(BaseCampaignDB):
         -------
 
         """
-
-        if campaign is not None:
-            logger.warning("Only 1 campaign is possible in JSON db")
-        if sampler is not None:
-            logger.warning("Only 1 sampler is possible in JSON db")
 
         for run_name in run_name_list:
             self._runs[run_name]['status'] = status
