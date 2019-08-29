@@ -547,7 +547,7 @@ class CampaignDB(BaseCampaignDB):
         else:
             campaign_info = query.filter_by(name=campaign_name).all()
 
-        if campaign_info.count() > 1:
+        if len(campaign_info) > 1:
             logger.warning(
                 'More than one campaign selected - using first one.')
         elif campaign_info.count() == 0:
