@@ -547,13 +547,14 @@ class CampaignDB(BaseCampaignDB):
         else:
             campaign_info = query.filter_by(name=campaign_name).all()
 
-        if len(campaign_info) > 1:
-            logger.warning(
-                'More than one campaign selected - using first one.')
-        elif campaign_info.count() == 0:
-            message = 'No campaign available.'
-            logger.critical(message)
-            raise RuntimeError(message)
+        if campaign_name is not None:
+            if len(campaign_info) > 1:
+                logger.warning(
+                    'More than one campaign selected - using first one.')
+            elif len(campaign_info) == 0:
+                message = 'No campaign available.'
+                logger.critical(message)
+                raise RuntimeError(message)
 
         return campaign_info.first()
 
