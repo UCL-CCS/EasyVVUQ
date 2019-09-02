@@ -9,4 +9,3 @@ SQLAlchemy
 sqlalchemy-utils
 jsonpickle
 cerberus
-matplotlib

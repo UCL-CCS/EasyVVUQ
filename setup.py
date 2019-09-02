@@ -27,8 +27,8 @@ setup(
 
     install_requires=['numpy', 'pandas>=0.24', 'scipy',
                       'pytest', 'SQLAlchemy', 'chaospy',
-                      'sqlalchemy-utils', 'matplotlib',
-                      'jsonpickle', 'cerberus', 'SALib'],
+                      'sqlalchemy-utils', 'jsonpickle',
+                      'cerberus', 'SALib'],
 
     packages=find_packages(),
 
