@@ -555,7 +555,8 @@ class CampaignDB(BaseCampaignDB):
                 message = 'No campaign available.'
                 logger.critical(message)
                 raise RuntimeError(message)
-
+            return campaign_info[0]
+        
         return campaign_info.first()
 
     def get_campaign_id(self, name):

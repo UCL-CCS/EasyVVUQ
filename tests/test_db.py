@@ -46,9 +46,9 @@ def campaign(tmp_path, app_info):
         name='test',
         campaign_dir_prefix=default_campaign_prefix,
         easyvvuq_version=uq.__version__,
-        campaign_dir='.')
+        campaign_dir=str(tmp_path))
     campaign = CampaignDB(location='sqlite:///{}/test.sqlite'.format(tmp_path), new_campaign=True, name='test', info=info)
-    campaign.tmp_path = tmp_path
+    campaign.tmp_path = str(tmp_path)
     runs = [RunInfo('run', 'test', '.', 1, {'a' : 1}, 1, 1) for _ in range(1010)]
     run_names = ['Run_{}'.format(i) for i in range(1, 1011)]
     campaign.add_runs(runs)
@@ -95,5 +95,5 @@ def test_get_campaign_id(campaign):
 
     
 def test_campaign_dir(campaign):
-    assert(campaign.campaign_dir('test') == default_campaign_prefix)
+    assert(campaign.campaign_dir('test') == campaign.tmp_path)
 
