@@ -97,7 +97,7 @@ class uniform_integer(Dist):
             Random samples with shape ``size``.
         """
 
-        return np.random.randint(self.lo, self.up, size)
+        return [int(i) for i in np.random.randint(self.lo, self.up, size)]
 
 
 # TODO: Convert this to a chaospy style distribution
