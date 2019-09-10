@@ -64,5 +64,6 @@ def restart(tmpdir):
     reloaded_campaign.populate_runs_dir()
     return reloaded_campaign
 
+
 def test_restart(restart):
     assert(restart.campaign_db is not None)
