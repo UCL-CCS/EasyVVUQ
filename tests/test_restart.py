@@ -1,11 +1,12 @@
 import pytest
 import easyvvuq as uq
+import chaospy as cp
 from gauss.decoder_gauss import GaussDecoder
 
 
 @pytest.fixture
-def test_restart(tmpdir):
-    my_campaign = uq.Campaign(name=campaign_name, work_dir=tmpdir, db_type='sql')
+def restart(tmpdir):
+    my_campaign = uq.Campaign(name='gauss', work_dir=tmpdir, db_type='sql')
     params = {
         "sigma": {
             "type": "float",
@@ -46,6 +47,9 @@ def test_restart(tmpdir):
     my_campaign.set_app('gauss')
     collater = uq.collate.AggregateSamples(average=False)
     my_campaign.set_collater(collater)
+    vary = {
+        "mu": cp.Uniform(1.0, 100.0),
+    }
     sampler = uq.sampling.RandomSampler(vary=vary)
     my_campaign.set_sampler(sampler)
     my_campaign.draw_samples(num_samples=2, replicas=2)
@@ -58,4 +62,7 @@ def test_restart(tmpdir):
     reloaded_campaign.set_app('gauss')
     reloaded_campaign.draw_samples(num_samples=2, replicas=2)
     reloaded_campaign.populate_runs_dir()
+    return reloaded_campaign
 
+def test_restart(restart):
+    assert(restart.campaign_db is not None)
