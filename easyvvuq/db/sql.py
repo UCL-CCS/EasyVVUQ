@@ -479,7 +479,7 @@ class CampaignDB(BaseCampaignDB):
         if campaign:
             filter_options['campaign'] = campaign
         if sampler:
-            filter_options['sample'] = sampler
+            filter_options['sampler'] = sampler
 
         selected = self.session.query(RunTable).filter_by(**filter_options)
 
@@ -555,6 +555,7 @@ class CampaignDB(BaseCampaignDB):
                 message = 'No campaign available.'
                 logger.critical(message)
                 raise RuntimeError(message)
+            return campaign_info[0]
 
         return campaign_info.first()
 
@@ -575,18 +576,18 @@ class CampaignDB(BaseCampaignDB):
 
         selected = self.session.query(
             CampaignTable.name.label(name),
-            CampaignTable.id).all()
+            CampaignTable.id).filter(CampaignTable.name == name).all()
         if len(selected) == 0:
             msg = f"No campaign with name {name} found in campaign database"
             logger.error(msg)
-            raise Exception(msg)
+            raise RuntimeError(msg)
         if len(selected) > 1:
             msg = (
                 f"More than one campaign with name {name} found in"
                 f"campaign database. Database state is compromised."
             )
             logger.error(msg)
-            raise Exception(msg)
+            raise RuntimeError(msg)
 
         # Return the database ID for the specified campaign
         return selected[0][1]
