@@ -60,10 +60,17 @@ def restart(tmpdir):
     my_campaign = None
     reloaded_campaign = uq.Campaign(state_file=state_file, work_dir=tmpdir)
     reloaded_campaign.set_app('gauss')
-    reloaded_campaign.draw_samples(num_samples=2, replicas=2)
-    reloaded_campaign.populate_runs_dir()
+    #reloaded_campaign.draw_samples(num_samples=2, replicas=2)
+    #reloaded_campaign.populate_runs_dir()
+    reloaded_campaign.params_ = params
     return reloaded_campaign
 
 
 def test_restart(restart):
     assert(restart.campaign_db is not None)
+
+
+def test_app(restart):
+    db = restart.campaign_db
+    assert(db.app('gauss')['name'] == 'gauss')
+    assert(db.app('gauss')['params'].params_dict['mu']['max'] == 100000.0)
