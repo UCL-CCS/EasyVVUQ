@@ -79,3 +79,16 @@ def test_runs(restart):
     assert(db.get_num_runs() == 4)
     restart.draw_samples(num_samples=2, replicas=2)
     assert(db.get_num_runs() == 8)
+
+
+def test_encoder(restart):
+    app = restart.campaign_db.app('gauss')
+    encoder = uq.encoders.GenericEncoder(template_fname='tests/gauss/gauss.template',
+                                         target_filename='gauss_in.json')
+    assert(app['input_encoder'] == encoder.serialize())
+
+
+def test_decoder(restart):
+    app = restart.campaign_db.app('gauss')
+    decoder = GaussDecoder(target_filename=restart.params_['out_file']['default'])
+    assert(app['output_decoder'] == decoder.serialize())
