@@ -100,7 +100,7 @@ int main(int argc, char **argv)
 		exit(1);
 	}
 
-	outfile << "# Dist,lastvx,lastvy\n";
+	outfile << "Dist,lastvx,lastvy\n";
 	outfile << out_dist << "," << out_vx << "," << out_vy << "\n";
 
 	outfile.close();
