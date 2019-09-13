@@ -68,7 +68,7 @@ class uniform_integer(Dist):
 
         return self.lo, self.up
 
-    def pdf(self):
+    def pdf(self, step=1e-07):
         """
         Probability density function.
         """
