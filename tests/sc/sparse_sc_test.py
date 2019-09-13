@@ -14,7 +14,7 @@ plt.close('all')
 # author: Wouter Edeling
 __license__ = "LGPL"
 
-#home directory of user
+# home directory of user
 home = os.path.expanduser('~')
 HOME = os.path.abspath(os.path.dirname(__file__))
 
@@ -40,9 +40,9 @@ params = {
 output_filename = params["out_file"]["default"]
 output_columns = ["u"]
 
-# Create an encoder, decoder and collation element 
+# Create an encoder, decoder and collation element
 encoder = uq.encoders.GenericEncoder(
-    template_fname = HOME + '/sc.template',
+    template_fname=HOME + '/sc.template',
     delimiter='$',
     target_filename='ade_in.json')
 decoder = uq.decoders.SimpleCSV(target_filename=output_filename,
@@ -73,8 +73,8 @@ SPARSE GRID PARAMETERS
   of 1D collocation points per level. Used to make e.g. clenshaw-curtis
   quadrature nested.
 """
-my_sampler = uq.sampling.SCSampler(vary=vary, polynomial_order = 4, 
-                                   quadrature_rule="C", sparse=True, 
+my_sampler = uq.sampling.SCSampler(vary=vary, polynomial_order=4,
+                                   quadrature_rule="C", sparse=True,
                                    growth=True)
 
 # Associate the sampler with the campaign
@@ -121,38 +121,38 @@ if analysis.element_name() == 'SC_Analysis':
 
     ax = fig.add_subplot(122, xlabel='x', ylabel='u',
                          title='Surrogate and code samples')
-    
+
     xi_mc = analysis.xi_d
-    n_mc = xi_mc.shape[0]    
+    n_mc = xi_mc.shape[0]
     code_samples = analysis.get_sample_array('u')
-    
+
     # evaluate the surrogate at these values
     print('Evaluating surrogate model', n_mc, 'times')
     for i in range(n_mc):
         ax.plot(x, analysis.surrogate('u', xi_mc[i]), 'g')
         ax.plot(x, code_samples[i], 'r+')
     print('done')
-    
+
     plt.tight_layout()
-    
+
     analysis.plot_grid()
     #
     #######################
     ## Plot Sobol indices #
     #######################
-    
+
     fig = plt.figure()
     ax = fig.add_subplot(
         111,
         xlabel='x',
         ylabel='Sobol indices',
         title='spatial dist. Sobol indices, Pe only important in viscous regions')
-    
+
     lbl = ['Pe', 'f', 'Pe-f interaction']
     idx = 0
-    
+
     if analysis.element_name() == 'SC_Analysis':
-        
+
         for S_i in results['sobol_indices']['u']:
             ax.plot(x, results['sobol_indices']['u'][S_i], label=lbl[idx])
             idx += 1
@@ -160,10 +160,10 @@ if analysis.element_name() == 'SC_Analysis':
         for S_i in results['sobol_indices']['u'][1]:
             ax.plot(x, results['sobol_indices']['u'][1][S_i], label=lbl[idx])
             idx += 1
-    
+
     leg = plt.legend(loc=0)
     leg.set_draggable(True)
-    
+
     plt.tight_layout()
 
 plt.show()
