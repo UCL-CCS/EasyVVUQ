@@ -101,8 +101,8 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
                     xi_i, wi_i = cp.generate_quadrature(i + 1,
                                                         params_distribution[n],
                                                         rule=self.quad_rule,
-                                                        growth=self.growth,
-                                                        normalize=True)
+                                                        growth=self.growth)
+#                                                        normalize=True)
 
                     self.xi_1d[n][i] = xi_i[0]
                     self.wi_1d[n][i] = wi_i
@@ -111,8 +111,8 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
                 xi_i, wi_i = cp.generate_quadrature(self.quad_order,
                                                     params_distribution[n],
                                                     rule=self.quad_rule,
-                                                    growth=self.growth,
-                                                    normalize=True)
+                                                    growth=self.growth)
+#                                                    normalize=True)
                 self.xi_1d[n][self.quad_order] = xi_i[0]
                 self.wi_1d[n][self.quad_order] = wi_i
 
