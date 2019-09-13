@@ -479,7 +479,7 @@ class CampaignDB(BaseCampaignDB):
         if campaign:
             filter_options['campaign'] = campaign
         if sampler:
-            filter_options['sample'] = sampler
+            filter_options['sampler'] = sampler
 
         selected = self.session.query(RunTable).filter_by(**filter_options)
 
@@ -547,13 +547,15 @@ class CampaignDB(BaseCampaignDB):
         else:
             campaign_info = query.filter_by(name=campaign_name).all()
 
-        if campaign_info.count() > 1:
-            logger.warning(
-                'More than one campaign selected - using first one.')
-        elif campaign_info.count() == 0:
-            message = 'No campaign available.'
-            logger.critical(message)
-            raise RuntimeError(message)
+        if campaign_name is not None:
+            if len(campaign_info) > 1:
+                logger.warning(
+                    'More than one campaign selected - using first one.')
+            elif len(campaign_info) == 0:
+                message = 'No campaign available.'
+                logger.critical(message)
+                raise RuntimeError(message)
+            return campaign_info[0]
 
         return campaign_info.first()
 
@@ -574,18 +576,18 @@ class CampaignDB(BaseCampaignDB):
 
         selected = self.session.query(
             CampaignTable.name.label(name),
-            CampaignTable.id).all()
+            CampaignTable.id).filter(CampaignTable.name == name).all()
         if len(selected) == 0:
             msg = f"No campaign with name {name} found in campaign database"
             logger.error(msg)
-            raise Exception(msg)
+            raise RuntimeError(msg)
         if len(selected) > 1:
             msg = (
                 f"More than one campaign with name {name} found in"
                 f"campaign database. Database state is compromised."
             )
             logger.error(msg)
-            raise Exception(msg)
+            raise RuntimeError(msg)
 
         # Return the database ID for the specified campaign
         return selected[0][1]
