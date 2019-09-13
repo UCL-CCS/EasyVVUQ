@@ -61,7 +61,6 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
         """
 
         self.vary = Vary(vary)
-        #self.polynomial_order = polynomial_order
         self.quadrature_rule = quadrature_rule
 
         # List of the probability distributions of uncertain parameters
@@ -73,8 +72,7 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
         self.joint_dist = cp.J(*params_distribution)
 
         # The quadrature information: order, rule and sparsity
-        #self.quad_order = polynomial_order
-        self.quad_order = polynomial_order
+        self.polynomial_order = polynomial_order
         self.quad_rule = quadrature_rule
         self.sparse = sparse
         self.quad_sparse = sparse
@@ -82,7 +80,7 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
         self.params_distribution = params_distribution
 
         # L = level of (sparse) grid
-        L = self.quad_order
+        L = self.polynomial_order
         # N = number of uncertain parameters
         N = len(params_distribution)
 
@@ -97,28 +95,26 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
 
         if sparse:
             for n in range(N):
-                for i in range(1, self.quad_order + 1):
+                for i in range(1, self.polynomial_order + 1):
                     xi_i, wi_i = cp.generate_quadrature(i + 1,
                                                         params_distribution[n],
                                                         rule=self.quad_rule,
                                                         growth=self.growth)
-#                                                        normalize=True)
 
                     self.xi_1d[n][i] = xi_i[0]
                     self.wi_1d[n][i] = wi_i
         else:
             for n in range(N):
-                xi_i, wi_i = cp.generate_quadrature(self.quad_order,
+                xi_i, wi_i = cp.generate_quadrature(self.polynomial_order,
                                                     params_distribution[n],
                                                     rule=self.quad_rule,
                                                     growth=self.growth)
-#                                                    normalize=True)
-                self.xi_1d[n][self.quad_order] = xi_i[0]
-                self.wi_1d[n][self.quad_order] = wi_i
+                self.xi_1d[n][self.polynomial_order] = xi_i[0]
+                self.wi_1d[n][self.polynomial_order] = wi_i
 
         if not sparse:
             # the nodes of the collocation grid
-            xi_d, _ = cp.generate_quadrature(self.quad_order,
+            xi_d, _ = cp.generate_quadrature(self.polynomial_order,
                                              self.joint_dist,
                                              rule=quadrature_rule)
             self.xi_d = xi_d.T
@@ -183,7 +179,7 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
     def get_restart_dict(self):
         return {
             "vary": self.vary.serialize(),
-            "quad_order": self.quad_order,
+            "polynomial_order": self.polynomial_order,
             "quadrature_rule": self.quadrature_rule,
             "count": self.count,
             "growth": self.growth,
