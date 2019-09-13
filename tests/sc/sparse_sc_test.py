@@ -136,9 +136,9 @@ if analysis.element_name() == 'SC_Analysis':
     plt.tight_layout()
 
     analysis.plot_grid()
-    #
+
     #######################
-    ## Plot Sobol indices #
+    # Plot Sobol indices #
     #######################
 
     fig = plt.figure()
