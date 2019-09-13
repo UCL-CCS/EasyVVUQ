@@ -87,7 +87,7 @@ class SimpleCSV(BaseDecoder, decoder_name="csv"):
 
         data = pd.read_csv(
             out_path,
-            names=self.output_columns,
+            usecols=self.output_columns,
             header=self.header)
 
         return data
