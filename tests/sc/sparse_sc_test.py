@@ -86,7 +86,7 @@ my_campaign.populate_runs_dir()
 
 #   Use this instead to run the samples using EasyVVUQ on the localhost
 my_campaign.apply_for_each_run_dir(uq.actions.ExecuteLocal(
-    "./sc_model.py ade_in.json"))
+    "./tests/sc/sc_model.py ade_in.json"))
 
 my_campaign.collate()
 
