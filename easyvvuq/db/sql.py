@@ -134,6 +134,10 @@ class CampaignDB(BaseCampaignDB):
                     next_ensemble=self._next_ensemble))
             self.session.commit()
         else:
+            version_check = self.session.query(
+                CampaignTable).filter(easyvvuq_version != info.easyvvuq_version).all()
+            if len(version_check) == 0:
+                raise RuntimeError("Database contains campaign created with an incompatible version of EasyVVUQ!")
             info = self.session.query(
                 CampaignTable).filter_by(name=name).first()
             if info is None:
