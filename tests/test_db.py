@@ -97,3 +97,22 @@ def test_get_campaign_id(campaign):
 
 def test_campaign_dir(campaign):
     assert(campaign.campaign_dir('test') == campaign.tmp_path)
+
+
+def test_version_check(campaign):
+    info = CampaignInfo(
+        name='test2',
+        campaign_dir_prefix=default_campaign_prefix,
+        easyvvuq_version="some.other.version",
+        campaign_dir=str(campaign.tmp_path))
+    with pytest.raises(RuntimeError):
+        campaign2 = CampaignDB(location='sqlite:///{}/test.sqlite'.format(campaign.tmp_path),
+                               new_campaign=True, name='test2', info=info)
+    info = CampaignInfo(
+        name='test3',
+        campaign_dir_prefix=default_campaign_prefix,
+        easyvvuq_version=uq.__version__,
+        campaign_dir=str(campaign.tmp_path))
+    campaign3 = CampaignDB(location='sqlite:///{}/test.sqlite'.format(campaign.tmp_path),
+                               new_campaign=True, name='test3', info=info)
+

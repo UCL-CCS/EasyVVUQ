@@ -122,7 +122,16 @@ class CampaignDB(BaseCampaignDB):
                            f'for campaign database {name}')
                 logging.critical(message)
                 raise RuntimeError(message)
+
             Base.metadata.create_all(self.engine)
+
+            is_db_empty = (self.session.query(CampaignTable).first() is None)
+
+            version_check = self.session.query(
+                CampaignTable).filter(CampaignTable.easyvvuq_version != info.easyvvuq_version).all()
+
+            if (not is_db_empty) and (len(version_check) != 0):
+                raise RuntimeError("Database contains campaign created with an incompatible version of EasyVVUQ!")
 
             self._next_run = 1
             self._next_ensemble = 1
@@ -134,10 +143,6 @@ class CampaignDB(BaseCampaignDB):
                     next_ensemble=self._next_ensemble))
             self.session.commit()
         else:
-            version_check = self.session.query(
-                CampaignTable).filter(easyvvuq_version != info.easyvvuq_version).all()
-            if len(version_check) == 0:
-                raise RuntimeError("Database contains campaign created with an incompatible version of EasyVVUQ!")
             info = self.session.query(
                 CampaignTable).filter_by(name=name).first()
             if info is None:
