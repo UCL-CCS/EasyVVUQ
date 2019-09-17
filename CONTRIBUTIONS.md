@@ -13,9 +13,15 @@ ORCiD's provided for specificity.
 *  Quasi Monte Carlo and Polynomial Chaos Expansion - Jalal Lakhlili
 *  Stochastic Collocation - Wouter Edeling
 
-## Testing 
+## Test design implementation
 
 *  Vytautas Jancauskas
+
+## Alpha Testers
+
+*  Robert C. Sinclair
+*  Onnie Luk
+*  James Suter
 
 ## Design Discussions
 
