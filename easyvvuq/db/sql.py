@@ -131,7 +131,8 @@ class CampaignDB(BaseCampaignDB):
                 CampaignTable).filter(CampaignTable.easyvvuq_version != info.easyvvuq_version).all()
 
             if (not is_db_empty) and (len(version_check) != 0):
-                raise RuntimeError("Database contains campaign created with an incompatible version of EasyVVUQ!")
+                raise RuntimeError('Database contains campaign created with an incompatible' +
+                                   ' version of EasyVVUQ!')
 
             self._next_run = 1
             self._next_ensemble = 1
