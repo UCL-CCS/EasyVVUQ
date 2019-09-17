@@ -1,7 +1,7 @@
 /**
- * Copyright 2018 Robin A. Richardson, David W. Wright 
+ * Copyright 2018 Robin A. Richardson, David W. Wright
  *
- * This file is part of EasyVVUQ 
+ * This file is part of EasyVVUQ
  *
  * EasyVVUQ is free software: you can redistribute it and/or modify
  * it under the terms of the Lesser GNU General Public License as published by
@@ -12,7 +12,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * Lesser GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the Lesser GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
@@ -71,7 +71,7 @@ int main(int argc, char **argv)
 
 	double g, m, v0, theta, h0, nu, dt;
 	std::string header, param, equals;
-	
+
 	// Check for correct header
 	infile >> header;
 	fail_if_not(header, "CANONSIM_INPUT_FILE:");
@@ -86,8 +86,6 @@ int main(int argc, char **argv)
 	infile >> param >> equals >> dt;    fail_if_not(equals, "="); fail_if_not(param, "time_step"); param="";
 
 	infile.close();
-
-	//std::cout << header << " " << param << " " << equals << " " << g << " " << m << " " << v0 << " " << theta << " " << h0 << " " << nu << " " << dt << "\n";
 
 	// Run sim
 	double out_dist, out_vx, out_vy;
