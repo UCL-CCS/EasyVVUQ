@@ -7,6 +7,7 @@ import json
 from easyvvuq import constants
 from easyvvuq.encoders import BaseEncoder
 from easyvvuq.decoders import BaseDecoder
+from easyvvuq.collate import BaseCollationElement
 
 __copyright__ = """
 
@@ -219,6 +220,8 @@ class AppInfo:
         Encoder element for application.
     decoder : :obj:`easyvvuq.decoders.base.BaseDecoder`
         Decoder element for application.
+    collater : :obj:`easyvvuq.collation.base.BaseCollationElement`
+        Collater element for application.
 
     Attributes
     ----------
@@ -232,6 +235,8 @@ class AppInfo:
         Encoder element for application.
     output_decoder : :obj:`easyvvuq.decoders.base.BaseDecoder`
         Decoder element for application.
+    collater : :obj:`easyvvuq.collation.base.BaseCollationElement`
+        Collater element for application.
     """
 
     def __init__(
@@ -240,11 +245,13 @@ class AppInfo:
             paramsspec=None,
             fixtures=None,
             encoder=None,
-            decoder=None):
+            decoder=None,
+            collater=None):
 
         self.name = name
         self.input_encoder = encoder
         self.output_decoder = decoder
+        self.collater = collater
         self.paramsspec = paramsspec
         self.fixtures = fixtures
 
@@ -273,6 +280,20 @@ class AppInfo:
             raise Exception(msg)
 
         self._output_decoder = decoder
+
+    @property
+    def collater(self):
+        return self._collater
+
+    @collater.setter
+    def collater(self, collater):
+        if not isinstance(collater, BaseCollationElement):
+            msg = "Provided 'collater' must be derived from type BaseCollationElement"
+            logging.error(msg)
+            raise Exception(msg)
+
+        self._collater = collater
+
 
     def to_dict(self, flatten=False):
         """Convert to a dictionary (optionally flatten to single level)
@@ -308,7 +329,8 @@ class AppInfo:
                 'params': self.paramsspec,
                 'fixtures': fixtures,
                 'input_encoder': self.input_encoder.serialize(),
-                'output_decoder': self.output_decoder.serialize()
+                'output_decoder': self.output_decoder.serialize(),
+                'collater': self.collater.serialize()
             }
 
         return out_dict

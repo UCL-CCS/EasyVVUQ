@@ -339,7 +339,7 @@ class Campaign:
             raise RuntimeError(message)
 
     def add_app(self, name=None, params=None, fixtures=None,
-                encoder=None, decoder=None,
+                encoder=None, decoder=None, collater=None,
                 set_active=True):
         """Add an application to the CampaignDB.
 
@@ -356,6 +356,8 @@ class Campaign:
         decoder : :obj:`easyvvuq.decoders.base.BaseDecoder`
             Decoder element to convert application run output into data for
             VVUQ analysis.
+        collater : obj:`easyvvuq.collate.base.BaseCollationElement`
+            Collation element for this app.
         set_active: bool
             Should the added app be set to be the currently active app?
 
@@ -373,7 +375,8 @@ class Campaign:
             paramsspec=paramsspec,
             fixtures=fixtures,
             encoder=encoder,
-            decoder=decoder
+            decoder=decoder,
+            collater=collater
         )
 
         self.campaign_db.add_app(app)
@@ -424,25 +427,25 @@ class Campaign:
         self._active_sampler_id = self.campaign_db.add_sampler(sampler)
         self.campaign_db.set_sampler(self.campaign_id, self._active_sampler_id)
 
-    def set_collater(self, collater):
-        """Set a collater for this campaign.
-
-        Parameters
-        ----------
-        collater : `easyvvuq.collate.base.BaseCollationElement`
-            Collation that will be used to create runs for the current campaign.
-
-        Returns
-        -------
-
-        """
-        if not isinstance(collater, BaseCollationElement):
-            msg = "set_collater() must be passed a collation element"
-            logging.error(msg)
-            raise Exception(msg)
-
-        self.campaign_db.set_campaign_collater(collater, self.campaign_id)
-        self._active_collater = collater
+#    def set_collater(self, collater):
+#        """Set a collater for this campaign.
+#
+#        Parameters
+#        ----------
+#        collater : `easyvvuq.collate.base.BaseCollationElement`
+#            Collation that will be used to create runs for the current campaign.
+#
+#        Returns
+#        -------
+#
+#        """
+#        if not isinstance(collater, BaseCollationElement):
+#            msg = "set_collater() must be passed a collation element"
+#            logging.error(msg)
+#            raise Exception(msg)
+#
+#        self.campaign_db.set_campaign_collater(collater, self.campaign_id)
+#        self._active_collater = collater
 
     def add_runs(self, runs):
         """Add a new run to the queue.
