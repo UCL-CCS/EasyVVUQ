@@ -16,3 +16,12 @@ ORCiD's provided for specificity.
 ## Testing 
 
 *  Vytautas Jancauskas
+
+## Design Discussions
+
+*  Derek Groen
+*  David Coster
+*  Daan Cromelin
+*  Bartosz Bosak
+*  Lourens Veen
+*  Jonathan Feinberg
