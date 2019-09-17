@@ -114,4 +114,4 @@ def test_version_check(campaign):
         easyvvuq_version=uq.__version__,
         campaign_dir=str(campaign.tmp_path))
     campaign3 = CampaignDB(location='sqlite:///{}/test.sqlite'.format(campaign.tmp_path),
-                               new_campaign=True, name='test3', info=info)
+                           new_campaign=True, name='test3', info=info)
