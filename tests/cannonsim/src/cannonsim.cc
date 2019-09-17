@@ -36,7 +36,6 @@ void launch(double g, double m, double v0, double theta, double h0, double nu, d
 		vy -= vy * nu * dt;
 		x += vx * dt;
 		y += vy * dt;
-		//std::cout << "pos: " << x << " " << y << " vel: " << vx << " " << vy << "\n";
 	}
 
 	out_dist = x;
