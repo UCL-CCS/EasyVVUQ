@@ -280,7 +280,7 @@ class Campaign:
         self.campaign_id = campaign_db.get_campaign_id(self.campaign_name)
 
         # Resurrect the sampler
-        sampler_id = campaign_db.get_sampler_id(self.campaign_id)
+        self._active_sampler_id = campaign_db.get_sampler_id(self.campaign_id)
         self._active_sampler = campaign_db.resurrect_sampler(self._active_sampler_id)
 
         self.set_app(self._active_app_name)
@@ -401,7 +401,7 @@ class Campaign:
         self._active_app_name = app_name
         self._active_app = self.campaign_db.app(name=app_name)
 
-        # Resurrect the app encoder and decoder elements
+        # Resurrect the app encoder, decoder and collation elements
         (self._active_app_encoder,
          self._active_app_decoder,
          self._active_app_collater) = self.campaign_db.resurrect_app(app_name)
