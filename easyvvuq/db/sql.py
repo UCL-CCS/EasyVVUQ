@@ -767,9 +767,10 @@ class CampaignDB(BaseCampaignDB):
 
         return self._get_campaign_info(campaign_name=campaign_name).runs_dir
 
-    def append_collation_dataframe(self, df):
+    def append_collation_dataframe(self, df, app_id):
         """
         Append the data in dataframe 'df' to that already collated in the database
+        for the specified app.
 
         Parameters
         ----------
@@ -780,11 +781,13 @@ class CampaignDB(BaseCampaignDB):
         -------
         """
 
-        df.to_sql("COLLATIONRESULT", self.engine, if_exists='append')
+        tablename = 'COLLATION_APP' + str(app_id)
+        df.to_sql(tablename, self.engine, if_exists='append')
 
-    def get_collation_dataframe(self):
+    def get_collation_dataframe(self, app_id):
         """
         Returns a dataframe containing the full collated results stored in this database
+        for the specified app.
         i.e. the total of what was added with the append_collation_dataframe() method.
 
         Parameters
@@ -796,6 +799,7 @@ class CampaignDB(BaseCampaignDB):
             The dataframe with all contents that were appended to this database
         """
 
-        query = "select * from COLLATIONRESULT"
+        tablename = 'COLLATION_APP' + str(app_id)
+        query = "select * from " + tablename
         df = pd.read_sql_query(query, self.engine)
         return df

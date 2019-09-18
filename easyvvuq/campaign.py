@@ -664,7 +664,7 @@ class Campaign:
         """
 
         # Apply collation element
-        num_collated = self._active_app_collater.collate(self)
+        num_collated = self._active_app_collater.collate(self, self._active_app['id'])
 
         if num_collated < 1:
             logger.warning("No data collected during collation.")
@@ -685,7 +685,7 @@ class Campaign:
             pandas dataframe
 
         """
-        return self._active_app_collater.get_collated_dataframe()
+        return self._active_app_collater.get_collated_dataframe(self._active_app['id'])
 
     def apply_analysis(self, analysis):
         """Run the `analysis` element on the output of the last run collation.
@@ -772,3 +772,6 @@ class Campaign:
         """
 
         return self._active_sampler
+
+    def get_active_app(self):
+        return self._active_app

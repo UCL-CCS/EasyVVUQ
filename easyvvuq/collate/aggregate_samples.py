@@ -43,7 +43,7 @@ class AggregateSamples(BaseCollationElement, collater_name="aggregate_samples"):
 
         self.average = average
 
-    def collate(self, campaign):
+    def collate(self, campaign, app_id):
         """
         Collected the decoded run results for all completed runs with ENCODED status
 
@@ -93,16 +93,16 @@ class AggregateSamples(BaseCollationElement, collater_name="aggregate_samples"):
 
                 processed_run_IDs.append(run_id)
 
-        self.append_data(new_data)
+        self.append_data(new_data, app_id)
         campaign.campaign_db.set_run_statuses(processed_run_IDs, constants.Status.COLLATED)
 
         return len(processed_run_IDs)
 
-    def append_data(self, new_data):
-        self.campaign.campaign_db.append_collation_dataframe(new_data)
+    def append_data(self, new_data, app_id):
+        self.campaign.campaign_db.append_collation_dataframe(new_data, app_id)
 
-    def get_collated_dataframe(self):
-        return self.campaign.campaign_db.get_collation_dataframe()
+    def get_collated_dataframe(self, app_id):
+        return self.campaign.campaign_db.get_collation_dataframe(app_id)
 
     def element_version(self):
         return "0.1"
