@@ -158,7 +158,7 @@ class CampaignDB(BaseCampaignDB):
             raise RuntimeError(message)
 
         self._app = app_info.to_dict()
-        self._app['id'] = 0
+        self._app['id'] = 1
         self._save()
 
     def add_sampler(self, sampler):
@@ -598,7 +598,7 @@ class CampaignDB(BaseCampaignDB):
             self._runs[run_name]['status'] = status
         self._save()
 
-    def append_collation_dataframe(self, df):
+    def append_collation_dataframe(self, df, app_id):
         """
         Append the data in dataframe 'df' to that already collated in the database
 
@@ -611,12 +611,18 @@ class CampaignDB(BaseCampaignDB):
         -------
         """
 
+        if app_id != 1:
+            message = ('JSON/Python dict database does not support an '
+                       'app_id other than 1')
+            logger.critical(message)
+            raise RuntimeError(message)
+
         if os.path.exists(self._collation_csv):
             df.to_csv(self._collation_csv, mode='a', header=False)
         else:
             df.to_csv(self._collation_csv, mode='w', header=True)
 
-    def get_collation_dataframe(self):
+    def get_collation_dataframe(self, app_id):
         """
         Returns a dataframe containing the full collated results stored in this database
         i.e. the total of what was added with the append_collation_dataframe() method.
@@ -629,6 +635,12 @@ class CampaignDB(BaseCampaignDB):
         df: pandas dataframe
             The dataframe with all contents that were appended to this database
         """
+
+        if app_id != 1:
+            message = ('JSON/Python dict database does not support an '
+                       'app_id other than 1')
+            logger.critical(message)
+            raise RuntimeError(message)
 
         df = pd.read_csv(self._collation_csv)
         return df
