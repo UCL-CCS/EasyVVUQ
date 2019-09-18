@@ -299,7 +299,6 @@ class AppInfo:
 
         self._collater = collater
 
-
     def to_dict(self, flatten=False):
         """Convert to a dictionary (optionally flatten to single level)
 

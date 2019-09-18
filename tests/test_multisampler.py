@@ -103,7 +103,6 @@ def test_worker(tmpdir):
     # has been added)
     my_campaign.set_app("cannonsim")
 
-
     # Set up samplers
     sweep1 = {
         "angle": [0.1, 0.2, 0.3],
