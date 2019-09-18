@@ -106,7 +106,7 @@ class Campaign:
         The current Encoder object being used, from the currently set app
     _active_app_decoder: easyvvuq.decoders.BaseDecoder
         The current Decoder object being used, from the currently set app
-    _active_collater: easyvvuq.collate.BaseCollationElement
+    _active_app_collater: easyvvuq.collate.BaseCollationElement
         The current Collater object assigned to this campaign
     _active_sampler: easyvvuq.sampling.BaseSamplingElement
         The currently set Sampler object
@@ -144,8 +144,8 @@ class Campaign:
         self._active_app_name = None
         self._active_app_encoder = None
         self._active_app_decoder = None
+        self._active_app_collater = None
 
-        self._active_collater = None
         self._active_sampler = None
         self._active_sampler_id = None
 
@@ -282,7 +282,7 @@ class Campaign:
         # Resurrect the sampler and collation elements
         self._active_sampler_id = campaign_db.get_sampler_id(self.campaign_id)
         self._active_sampler = campaign_db.resurrect_sampler(self._active_sampler_id)
-        self._active_collater = campaign_db.resurrect_collation(self.campaign_id)
+        self._active_app_collater = campaign_db.resurrect_collation(self.campaign_id)
 
         self.set_app(self._active_app_name)
 
@@ -404,7 +404,8 @@ class Campaign:
 
         # Resurrect the app encoder and decoder elements
         (self._active_app_encoder,
-         self._active_app_decoder) = self.campaign_db.resurrect_app(app_name)
+         self._active_app_decoder,
+         self._active_app_collater) = self.campaign_db.resurrect_app(app_name)
 
     def set_sampler(self, sampler):
         """Set active sampler.
@@ -676,7 +677,7 @@ class Campaign:
     def collate(self):
         """Combine the output from all runs associated with the current app.
 
-        Uses the collation element held in `self._active_collater`.
+        Uses the collation element held in `self._active_app_collater`.
 
         Returns
         -------
@@ -684,14 +685,14 @@ class Campaign:
         """
 
         # Apply collation element
-        num_collated = self._active_collater.collate(self)
+        num_collated = self._active_app_collater.collate(self)
 
         if num_collated < 1:
             logger.warning("No data collected during collation.")
 
         # Log application of this collation element
         info = {'num_collated': num_collated}
-        self.log_element_application(self._active_collater, info)
+        self.log_element_application(self._active_app_collater, info)
 
     def get_collation_result(self):
         """
@@ -705,7 +706,7 @@ class Campaign:
             pandas dataframe
 
         """
-        return self._active_collater.get_collated_dataframe()
+        return self._active_app_collater.get_collated_dataframe()
 
     def apply_analysis(self, analysis):
         """Run the `analysis` element on the output of the last run collation.
