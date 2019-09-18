@@ -36,7 +36,9 @@ def app_info():
         uq.decoders.SimpleCSV(
             target_filename='output.csv',
             output_columns=["te", "ti"],
-            header=0))
+            header=0),
+        uq.collate.AggregateSamples(average=False))
+
     return app_info
 
 
