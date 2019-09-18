@@ -287,6 +287,11 @@ class AppInfo:
 
     @collater.setter
     def collater(self, collater):
+        if collater is None:
+            msg = "A 'collater' must be provided for this App (cannot be None)."
+            logging.error(msg)
+            raise Exception(msg)
+
         if not isinstance(collater, BaseCollationElement):
             msg = "Provided 'collater' must be derived from type BaseCollationElement"
             logging.error(msg)

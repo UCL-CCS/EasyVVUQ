@@ -279,8 +279,8 @@ class Campaign:
         campaign_db = self.campaign_db
         self.campaign_id = campaign_db.get_campaign_id(self.campaign_name)
 
-        # Resurrect the sampler and collation elements
-        self._active_sampler_id = campaign_db.get_sampler_id(self.campaign_id)
+        # Resurrect the sampler
+        sampler_id = campaign_db.get_sampler_id(self.campaign_id)
         self._active_sampler = campaign_db.resurrect_sampler(self._active_sampler_id)
 
         self.set_app(self._active_app_name)
