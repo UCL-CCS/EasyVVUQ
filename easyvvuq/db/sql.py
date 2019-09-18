@@ -292,51 +292,6 @@ class CampaignDB(BaseCampaignDB):
         sampler = BaseSamplingElement.deserialize(serialized_sampler)
         return sampler
 
-#    def set_campaign_collater(self, collater, campaign_id):
-#        """
-#        Store the state of the given collater object in the collation slot
-#        for the campaign with id 'campaign_id'
-#
-#        Parameters
-#        ----------
-#        collater: BaseCollationElement
-#            The collater object to serialize
-#        campaign_id: int
-#            The id of the campaign this collater should be assigned to
-#
-#        Returns
-#        -------
-#
-#        """
-#
-#        selected = self.session.query(CampaignTable).get(campaign_id)
-#        selected.collater = collater.serialize()
-#        self.session.commit()
-
-#    def resurrect_collation(self, campaign_id):
-#        """
-#        Return the collater object corresponding to the campaign with id 'campaign_id'
-#        in the database. It is deserialized from the state stored in the database.
-#
-#        Parameters
-#        ----------
-#        campaign_id: int
-#            The id of the collater to resurrect
-#
-#        Returns
-#        -------
-#        BaseCollationElement
-#            The 'live' collater object, deserialized from the state in the db
-#
-#        """
-#
-#        serialized_collater = self.session.query(CampaignTable).get(campaign_id).collater
-#        if serialized_collater is None:
-#            print("Loaded campaign does not have a collation element currently set")
-#            return None
-#        collater = BaseCollationElement.deserialize(serialized_collater)
-#        return collater
-
     def resurrect_app(self, app_name):
         """
         Return the 'live' encoder, decoder and collation objects corresponding to the app with

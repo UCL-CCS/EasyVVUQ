@@ -427,26 +427,6 @@ class Campaign:
         self._active_sampler_id = self.campaign_db.add_sampler(sampler)
         self.campaign_db.set_sampler(self.campaign_id, self._active_sampler_id)
 
-#    def set_collater(self, collater):
-#        """Set a collater for this campaign.
-#
-#        Parameters
-#        ----------
-#        collater : `easyvvuq.collate.base.BaseCollationElement`
-#            Collation that will be used to create runs for the current campaign.
-#
-#        Returns
-#        -------
-#
-#        """
-#        if not isinstance(collater, BaseCollationElement):
-#            msg = "set_collater() must be passed a collation element"
-#            logging.error(msg)
-#            raise Exception(msg)
-#
-#        self.campaign_db.set_campaign_collater(collater, self.campaign_id)
-#        self._active_collater = collater
-
     def add_runs(self, runs):
         """Add a new run to the queue.
 

@@ -271,61 +271,6 @@ class CampaignDB(BaseCampaignDB):
         collater = BaseCollationElement.deserialize(self._app['collater'])
         return encoder, decoder, collater
 
-#    def set_campaign_collater(self, collater, campaign_id):
-#        """
-#        Store the state of the given collater object in the collation slot
-#        for the campaign with id 'campaign_id'
-#
-#        Parameters
-#        ----------
-#        collater: BaseCollationElement
-#            The collater object to serialize
-#        campaign_id: int
-#            The id of the campaign this collater should be assigned to
-#
-#        Returns
-#        -------
-#
-#        """
-#
-#        if campaign_id != 1:
-#            message = ('JSON/Python dict database does not support a '
-#                       'campaign_id other than 1')
-#            logger.critical(message)
-#            raise RuntimeError(message)
-#
-#        self._campaign_info['collater'] = collater.serialize()
-#
-#    def resurrect_collation(self, campaign_id):
-#        """
-#        Return the collater object corresponding to the campaign with id 'campaign_id'
-#        in the database. It is deserialized from the state stored in the database.
-#
-#        Parameters
-#        ----------
-#        campaign_id: int
-#            The id of the collater to resurrect
-#
-#        Returns
-#        -------
-#        BaseCollationElement
-#            The 'live' collater object, deserialized from the state in the db
-#
-#        """
-#
-#        if campaign_id != 1:
-#            message = ('JSON/Python dict database does not support a '
-#                       'campaign_id other than 1')
-#            logger.critical(message)
-#            raise RuntimeError(message)
-#
-#        if self._campaign_info['collater'] is None:
-#            print("Loaded campaign does not have a collation element currently set")
-#            return None
-#
-#        collater = BaseCollationElement.deserialize(self._campaign_info['collater'])
-#        return collater
-
     def add_runs(self, run_info_list=None, run_prefix='Run_', ensemble_prefix='Ensemble_'):
         """
         Add runs to the `runs` table in the database.

@@ -133,44 +133,6 @@ class BaseCampaignDB:
 
         raise NotImplementedError
 
-    def set_campaign_collater(self, collater, campaign_id):
-        """
-        Store the state of the given collater object in the collation slot
-        for the campaign with id 'campaign_id'
-
-        Parameters
-        ----------
-        collater: BaseCollationElement
-            The collater object to serialize
-        campaign_id: int
-            The id of the campaign this collater should be assigned to
-
-        Returns
-        -------
-
-        """
-
-        raise NotImplementedError
-
-    def resurrect_collation(self, campaign_id):
-        """
-        Return the collater object corresponding to the campaign with id 'campaign_id'
-        in the database. It is deserialized from the state stored in the database.
-
-        Parameters
-        ----------
-        campaign_id: int
-            The id of the collater to resurrect
-
-        Returns
-        -------
-        BaseCollationElement
-            The 'live' collater object, deserialized from the state in the db
-
-        """
-
-        raise NotImplementedError
-
     def resurrect_app(self, app_name):
         """
         Return the 'live' encoder and decoder objects corresponding to the app with
@@ -184,7 +146,7 @@ class BaseCampaignDB:
 
         Returns
         -------
-        BaseEncoder, BaseDecoder
+        BaseEncoder, BaseDecoder, BaseCollationElement
             The 'live' encoder and decoder objects associated with this app
 
         """
