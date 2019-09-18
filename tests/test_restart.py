@@ -39,14 +39,14 @@ def restart(tmpdir):
     encoder = uq.encoders.GenericEncoder(template_fname='tests/gauss/gauss.template',
                                          target_filename='gauss_in.json')
     decoder = GaussDecoder(target_filename=params['out_file']['default'])
+    collater = uq.collate.AggregateSamples(average=False)
     my_campaign.add_app(name='gauss',
                         params=params,
                         encoder=encoder,
                         decoder=decoder,
+                        collater=collater,
                         fixtures=None)
     my_campaign.set_app('gauss')
-    collater = uq.collate.AggregateSamples(average=False)
-    my_campaign.set_collater(collater)
     vary = {
         "mu": cp.Uniform(1.0, 100.0),
     }
