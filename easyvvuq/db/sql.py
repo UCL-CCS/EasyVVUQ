@@ -612,7 +612,14 @@ class CampaignDB(BaseCampaignDB):
 
         return self._get_campaign_info(campaign_name=campaign_name).campaign_dir
 
-    def _select_runs(self, name=None, campaign=None, sampler=None, status=None, not_status=None, app_id=None):
+    def _select_runs(
+            self,
+            name=None,
+            campaign=None,
+            sampler=None,
+            status=None,
+            not_status=None,
+            app_id=None):
         """
         Select all runs in the database which match the input criteria.
 

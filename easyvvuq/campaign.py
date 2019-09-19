@@ -595,7 +595,8 @@ class Campaign:
 
         run_ids = []
 
-        for run_id, run_data in self.campaign_db.runs(status=Status.NEW, app_id=self._active_app['id']):
+        for run_id, run_data in self.campaign_db.runs(
+                status=Status.NEW, app_id=self._active_app['id']):
 
             # Make directory for this run's output
             os.makedirs(run_data['run_dir'])

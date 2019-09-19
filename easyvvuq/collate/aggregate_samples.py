@@ -69,7 +69,8 @@ class AggregateSamples(BaseCollationElement, collater_name="aggregate_samples"):
 
         # Loop through all runs with status ENCODED (and therefore not yet COLLATED)
         processed_run_IDs = []
-        for run_id, run_info in campaign.campaign_db.runs(status=constants.Status.ENCODED, app_id=app_id):
+        for run_id, run_info in campaign.campaign_db.runs(
+                status=constants.Status.ENCODED, app_id=app_id):
 
             # Use decoder to check if run has completed (in general application-specific)
             if decoder.sim_complete(run_info=run_info):

@@ -38,6 +38,7 @@ if not os.path.exists("tests/cannonsim/bin/cannonsim"):
 
 CANNONSIM_PATH = os.path.realpath(os.path.expanduser("tests/cannonsim/bin/cannonsim"))
 
+
 def setup_cannonsim_app():
     params = {
         "angle": {
@@ -138,6 +139,7 @@ def setup_cooling_app():
 
     return params, encoder, decoder, collater, cooling_sampler, cooling_action, cooling_stats
 
+
 def test_multiapp(tmpdir):
 
     my_campaign = uq.Campaign(name='multiapp', work_dir=tmpdir)
@@ -175,7 +177,6 @@ def test_multiapp(tmpdir):
     print("List of runs added:")
     pprint(my_campaign.list_runs())
     print("---")
-
 
     # Populate the runs dirs for runs belonging to the cannonsim app
     my_campaign.set_app("cannonsim")
