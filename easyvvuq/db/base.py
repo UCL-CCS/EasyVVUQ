@@ -361,7 +361,7 @@ class BaseCampaignDB:
 
         raise NotImplementedError
 
-    def append_collation_dataframe(self, df):
+    def append_collation_dataframe(self, df, app_id):
         """
         Append the data in dataframe 'df' to that already collated in the database
 
@@ -369,6 +369,9 @@ class BaseCampaignDB:
         ----------
         df: pandas dataframe
             The dataframe whose contents need to be appended to the collation store
+        app_id: int
+            The id of this app in the sql database. Used to determine which collation
+            table is appended to.
 
         Returns
         -------
@@ -376,18 +379,22 @@ class BaseCampaignDB:
 
         raise NotImplementedError
 
-    def get_collation_dataframe(self):
+    def get_collation_dataframe(self, app_id):
         """
         Returns a dataframe containing the full collated results stored in this database
         i.e. the total of what was added with the append_collation_dataframe() method.
 
         Parameters
         ----------
+        app_id: int
+            The id of this app in the sql database. Used to determine which collation
+            table is returned.
 
         Returns
         -------
         df: pandas dataframe
-            The dataframe with all contents that were appended to this database
+            The dataframe with all contents that were appended to the table corresponding
+            to this app_id.
         """
 
         raise NotImplementedError
