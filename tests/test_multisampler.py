@@ -39,7 +39,7 @@ if not os.path.exists("tests/cannonsim/bin/cannonsim"):
 CANNONSIM_PATH = os.path.realpath(os.path.expanduser("tests/cannonsim/bin/cannonsim"))
 
 
-def test_worker(tmpdir):
+def test_multisampler(tmpdir):
 
     # Set up a fresh campaign called "cannon"
     my_campaign = uq.Campaign(name='cannon', work_dir=tmpdir)
@@ -164,4 +164,4 @@ def test_worker(tmpdir):
 
 
 if __name__ == "__main__":
-    test_worker("/tmp/")
+    test_multisampler("/tmp/")
