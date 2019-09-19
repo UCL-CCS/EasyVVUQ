@@ -57,10 +57,10 @@ def test_worker(tmpdir):
             "max": 1.0,
             "default": 0.2},
         "height": {
-            "type": "float",
-            "min": 0.0,
-            "max": 1000.0,
-            "default": 1.0},
+            "type": "integer",
+            "min": 0,
+            "max": 1000,
+            "default": 1},
         "time_step": {
             "type": "float",
             "min": 0.0001,
@@ -106,7 +106,7 @@ def test_worker(tmpdir):
     # Make a random sampler
     vary = {
         "angle": cp.Uniform(0.0, 1.0),
-        "height": cp.Uniform(2.0, 10.0),
+        "height": uq.distributions.uniform_integer(0, 100),
         "velocity": cp.Normal(10.0, 1.0),
         "mass": cp.Uniform(5.0, 1.0)
     }
