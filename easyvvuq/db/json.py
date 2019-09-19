@@ -390,7 +390,7 @@ class CampaignDB(BaseCampaignDB):
 
         return self._campaign_info['campaign_dir']
 
-    def runs(self, campaign=None, sampler=None, status=None, not_status=None):
+    def runs(self, campaign=None, sampler=None, status=None, not_status=None, app_id=1):
         """
         A generator to return all run information for selected `campaign` and `sampler`.
 
@@ -417,6 +417,12 @@ class CampaignDB(BaseCampaignDB):
                        f'single campaign and sampler workflows - ignoring'
                        f'campaign - {campaign}/ sampler {sampler}')
             logger.warning(message)
+
+        if app_id != 1:
+            message = ('JSON/Python dict database does not support an '
+                       'app_id other than 1')
+            logger.critical(message)
+            raise RuntimeError(message)
 
         for run_id, run_info in self._runs.items():
             if (status is None or run_info['status'] ==
