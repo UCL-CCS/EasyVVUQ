@@ -145,7 +145,8 @@ def test_multiapp(tmpdir):
     my_campaign = uq.Campaign(name='multiapp', work_dir=tmpdir)
 
     # Add the cannonsim app to the campaign
-    params, encoder, decoder, collater, cannon_sampler, cannon_action, cannon_stats = setup_cannonsim_app()
+    (params, encoder, decoder, collater,
+    cannon_sampler, cannon_action, cannon_stats) = setup_cannonsim_app()
     my_campaign.add_app(name="cannonsim",
                         params=params,
                         encoder=encoder,
@@ -156,7 +157,8 @@ def test_multiapp(tmpdir):
     my_campaign.set_sampler(cannon_sampler)
 
     # Add the cooling app to the campaign
-    params, encoder, decoder, collater, cooling_sampler, cooling_action, cooling_stats = setup_cooling_app()
+    (params, encoder, decoder, collater, cooling_sampler,
+    cooling_action, cooling_stats) = setup_cooling_app()
     my_campaign.add_app(name="cooling",
                         params=params,
                         encoder=encoder,
