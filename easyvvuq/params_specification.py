@@ -4,6 +4,7 @@
 import logging
 import cerberus
 import json
+import numpy
 
 __copyright__ = """
 
@@ -33,6 +34,9 @@ logger = logging.getLogger(__name__)
 class EasyVVUQValidator(cerberus.Validator):
     def __init__(self, *args, **kwargs):
         super(EasyVVUQValidator, self).__init__(*args, **kwargs)
+
+        integer_type = cerberus.TypeDefinition('integer', (int,numpy.int64), ())
+        cerberus.Validator.types_mapping['integer'] = integer_type
 
     def _validate_type_fixture(self, value):
         # Fixtures type not validated at present
