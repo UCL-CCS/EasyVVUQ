@@ -8,6 +8,7 @@ from easyvvuq import constants
 from easyvvuq.encoders import BaseEncoder
 from easyvvuq.decoders import BaseDecoder
 from easyvvuq.collate import BaseCollationElement
+import numpy
 
 __copyright__ = """
 
@@ -176,13 +177,17 @@ class RunInfo:
             returned as a JSON format sting.
         """
 
+        def convert_nonserializable(obj):
+            if isinstance(obj, numpy.int64): return int(obj)
+            raise TypeError('Unknown type:', type(obj))
+
         if flatten:
 
             out_dict = {
                 'run_name': self.run_name,
                 'ensemble_name': self.ensemble_name,
                 'run_dir': self.run_dir,
-                'params': json.dumps(self.params),
+                'params': json.dumps(self.params, default=convert_nonserializable),
                 'status': constants.Status(self.status),
                 'campaign': self.campaign,
                 'sample': self.sample,
