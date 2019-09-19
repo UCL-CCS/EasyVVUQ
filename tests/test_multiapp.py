@@ -176,18 +176,44 @@ def test_multiapp(tmpdir):
     pprint(my_campaign.list_runs())
     print("---")
 
+
+    # Populate the runs dirs for runs belonging to the cannonsim app
+    my_campaign.set_app("cannonsim")
     my_campaign.populate_runs_dir()
 
-    sys.exit(0)
+    # Populate the runs dirs for runs belonging to the cooling app
+    my_campaign.set_app("cooling")
+    my_campaign.populate_runs_dir()
 
-    my_campaign.apply_for_each_run_dir(
-        uq.actions.ExecuteLocal("tests/cannonsim/bin/cannonsim in.cannon output.csv"))
+    # Execute all the cannon runs
+    my_campaign.set_app("cannonsim")
+    my_campaign.apply_for_each_run_dir(cannon_action)
+
+    # Execute all the cooling runs
+    my_campaign.set_app("cooling")
+    my_campaign.apply_for_each_run_dir(cooling_action)
 
     print("Runs list after encoding and execution:")
     pprint(my_campaign.list_runs())
 
+    # Collate cannon results
+    my_campaign.set_app("cannonsim")
     my_campaign.collate()
-    print("data:", my_campaign.get_collation_result())
+
+    # Collate cooling results
+    my_campaign.set_app("cooling")
+    my_campaign.collate()
+
+    print("Runs list after collation:")
+    pprint(my_campaign.list_runs())
+
+    my_campaign.set_app("cannonsim")
+    print("cannonsim data:", my_campaign.get_collation_result())
+
+    my_campaign.set_app("cooling")
+    print("cooling data:", my_campaign.get_collation_result())
+
+    sys.exit(0)
 
     my_campaign.apply_analysis(stats)
     print("stats:\n", my_campaign.get_last_analysis())

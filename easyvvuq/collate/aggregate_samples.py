@@ -58,7 +58,6 @@ class AggregateSamples(BaseCollationElement, collater_name="aggregate_samples"):
         `int`:
             The number of new data rows added during collation
         """
-        self.campaign = campaign
 
         decoder = campaign._active_app_decoder
 
@@ -70,7 +69,7 @@ class AggregateSamples(BaseCollationElement, collater_name="aggregate_samples"):
 
         # Loop through all runs with status ENCODED (and therefore not yet COLLATED)
         processed_run_IDs = []
-        for run_id, run_info in campaign.campaign_db.runs(status=constants.Status.ENCODED):
+        for run_id, run_info in campaign.campaign_db.runs(status=constants.Status.ENCODED, app_id=app_id):
 
             # Use decoder to check if run has completed (in general application-specific)
             if decoder.sim_complete(run_info=run_info):
@@ -93,16 +92,16 @@ class AggregateSamples(BaseCollationElement, collater_name="aggregate_samples"):
 
                 processed_run_IDs.append(run_id)
 
-        self.append_data(new_data, app_id)
+        self.append_data(campaign, new_data, app_id)
         campaign.campaign_db.set_run_statuses(processed_run_IDs, constants.Status.COLLATED)
 
         return len(processed_run_IDs)
 
-    def append_data(self, new_data, app_id):
-        self.campaign.campaign_db.append_collation_dataframe(new_data, app_id)
+    def append_data(self, campaign, new_data, app_id):
+        campaign.campaign_db.append_collation_dataframe(new_data, app_id)
 
-    def get_collated_dataframe(self, app_id):
-        return self.campaign.campaign_db.get_collation_dataframe(app_id)
+    def get_collated_dataframe(self, campaign, app_id):
+        return campaign.campaign_db.get_collation_dataframe(app_id)
 
     def element_version(self):
         return "0.1"
