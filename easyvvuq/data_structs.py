@@ -178,7 +178,8 @@ class RunInfo:
         """
 
         def convert_nonserializable(obj):
-            if isinstance(obj, numpy.int64): return int(obj)
+            if isinstance(obj, numpy.int64):
+                return int(obj)
             raise TypeError('Unknown type:', type(obj))
 
         if flatten:

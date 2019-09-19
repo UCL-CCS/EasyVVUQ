@@ -36,12 +36,13 @@ class EasyVVUQValidator(cerberus.Validator):
         super(EasyVVUQValidator, self).__init__(*args, **kwargs)
 
         # Add numpy.int64 as an acceptable 'integer' type
-        integer_type = cerberus.TypeDefinition('integer', (int,numpy.int64), ())
+        integer_type = cerberus.TypeDefinition('integer', (int, numpy.int64), ())
         cerberus.Validator.types_mapping['integer'] = integer_type
 
         # Add 'fixture' type (for now, it's expected just to be a string)
         fixture_type = cerberus.TypeDefinition('fixture', (str), ())
         cerberus.Validator.types_mapping['fixture'] = fixture_type
+
 
 class ParamsSpecification:
 
