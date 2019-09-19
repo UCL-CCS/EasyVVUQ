@@ -213,10 +213,15 @@ def test_multiapp(tmpdir):
     my_campaign.set_app("cooling")
     print("cooling data:", my_campaign.get_collation_result())
 
-    sys.exit(0)
+    # Apply analysis for cannon app
+    my_campaign.set_app("cannonsim")
+    my_campaign.apply_analysis(cannon_stats)
+    print("cannon stats:\n", my_campaign.get_last_analysis())
 
-    my_campaign.apply_analysis(stats)
-    print("stats:\n", my_campaign.get_last_analysis())
+    # Apply analysis for cooling app
+    my_campaign.set_app("cooling")
+    my_campaign.apply_analysis(cooling_stats)
+    print("cooling stats:\n", my_campaign.get_last_analysis())
 
     # Print the campaign log
     pprint(my_campaign._log)
