@@ -595,7 +595,7 @@ class Campaign:
 
         run_ids = []
 
-        for run_id, run_data in self.campaign_db.runs(status=Status.NEW):
+        for run_id, run_data in self.campaign_db.runs(status=Status.NEW, app_id=self._active_app['id']):
 
             # Make directory for this run's output
             os.makedirs(run_data['run_dir'])
@@ -628,10 +628,10 @@ class Campaign:
 
         # Loop through all runs in this campaign with the specified status,
         # and call the specified user function for each.
-        for run_id, run_data in self.campaign_db.runs(status=status):
+        for run_id, run_data in self.campaign_db.runs(status=status, app_id=self._active_app['id']):
             fn(run_id, run_data)
 
-    def apply_for_each_run_dir(self, action):
+    def apply_for_each_run_dir(self, action, status=Status.ENCODED):
         """
         For each run in this Campaign's run list, apply the specified action
         (an object of type Action)
@@ -648,7 +648,7 @@ class Campaign:
 
         # Loop through all runs in this campaign with status ENCODED, and
         # run the specified action on each run's dir
-        for run_id, run_data in self.campaign_db.runs(status=Status.ENCODED):
+        for run_id, run_data in self.campaign_db.runs(status=status, app_id=self._active_app['id']):
             logger.info("Applying " + action.__module__ + " to " + run_data['run_dir'])
             action.act_on_dir(run_data['run_dir'])
 

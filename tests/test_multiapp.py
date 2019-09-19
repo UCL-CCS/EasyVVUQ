@@ -176,10 +176,10 @@ def test_multiapp(tmpdir):
     pprint(my_campaign.list_runs())
     print("---")
 
+    my_campaign.populate_runs_dir()
+
     sys.exit(0)
 
-    # Encode and execute.
-    my_campaign.populate_runs_dir()
     my_campaign.apply_for_each_run_dir(
         uq.actions.ExecuteLocal("tests/cannonsim/bin/cannonsim in.cannon output.csv"))
 

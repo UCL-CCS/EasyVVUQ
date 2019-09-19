@@ -612,7 +612,7 @@ class CampaignDB(BaseCampaignDB):
 
         return self._get_campaign_info(campaign_name=campaign_name).campaign_dir
 
-    def _select_runs(self, name=None, campaign=None, sampler=None, status=None, not_status=None):
+    def _select_runs(self, name=None, campaign=None, sampler=None, status=None, not_status=None, app_id=None):
         """
         Select all runs in the database which match the input criteria.
 
@@ -643,6 +643,8 @@ class CampaignDB(BaseCampaignDB):
             filter_options['sampler'] = sampler
         if status:
             filter_options['status'] = status
+        if app_id:
+            filter_options['app'] = app_id
 
         # Note that for some databases this can be sped up with a yield_per(), but not all
         selected = self.session.query(RunTable).filter_by(
@@ -650,7 +652,7 @@ class CampaignDB(BaseCampaignDB):
 
         return selected
 
-    def run(self, name, campaign=None, sampler=None, status=None, not_status=None):
+    def run(self, name, campaign=None, sampler=None, status=None, not_status=None, app_id=None):
         """
         Get the information for a specified run.
 
@@ -679,7 +681,8 @@ class CampaignDB(BaseCampaignDB):
             campaign=campaign,
             sampler=sampler,
             status=status,
-            not_status=not_status)
+            not_status=not_status,
+            app_id=app_id)
 
         if selected.count() != 1:
             logging.warning('Multiple runs selected - using the first')
@@ -688,7 +691,7 @@ class CampaignDB(BaseCampaignDB):
 
         return self._run_to_dict(selected)
 
-    def runs(self, campaign=None, sampler=None, status=None, not_status=None):
+    def runs(self, campaign=None, sampler=None, status=None, not_status=None, app_id=None):
         """
         A generator to return all run information for selected `campaign` and `sampler`.
 
@@ -715,7 +718,8 @@ class CampaignDB(BaseCampaignDB):
             campaign=campaign,
             sampler=sampler,
             status=status,
-            not_status=not_status)
+            not_status=not_status,
+            app_id=app_id)
 
         for r in selected:
             yield r.run_name, self._run_to_dict(r)
