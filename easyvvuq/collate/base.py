@@ -67,7 +67,7 @@ class BaseCollationElement(BaseElement):
         # Register new collater
         AVAILABLE_COLLATERS[collater_name] = cls
 
-    def get_collated_dataframe(self, app_id):
+    def get_collated_dataframe(self, campaign, app_id):
         """
         Returns collated data as a pandas dataframe
         """
