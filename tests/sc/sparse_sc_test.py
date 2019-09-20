@@ -49,16 +49,14 @@ if __name__ == '__main__':
     decoder = uq.decoders.SimpleCSV(target_filename=output_filename,
                                     output_columns=output_columns,
                                     header=0)
-
-    # Create a collation element for this campaign
     collater = uq.collate.AggregateSamples(average=False)
-    my_campaign.set_collater(collater)
 
     # Add the SC app (automatically set as current app)
     my_campaign.add_app(name="sc",
                         params=params,
                         encoder=encoder,
-                        decoder=decoder)
+                        decoder=decoder,
+                        collater=collater)
 
     # Create the sampler
     vary = {

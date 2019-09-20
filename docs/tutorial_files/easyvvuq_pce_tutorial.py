@@ -1,3 +1,4 @@
+import os
 import easyvvuq as uq
 import chaospy as cp
 
@@ -12,7 +13,7 @@ params = {
     "out_file": {"type": "string", "default": "output.csv"}
 }
 
-# Create an encoder and decoder for PCE test app
+# Create an encoder, decoder and collater for PCE test app
 encoder = uq.encoders.GenericEncoder(
     template_fname='cooling.template',
     delimiter='$',
@@ -22,16 +23,14 @@ decoder = uq.decoders.SimpleCSV(target_filename="output.csv",
                                 output_columns=["te", "ti"],
                                 header=0)
 
+collater = uq.collate.AggregateSamples(average=False)
+
 # Add the app (automatically set as current app)
 my_campaign.add_app(name="cooling",
                     params=params,
                     encoder=encoder,
-                    decoder=decoder
-                    )
-
-# Create a collation element for this campaign
-collater = uq.collate.AggregateSamples(average=False)
-my_campaign.set_collater(collater)
+                    decoder=decoder,
+                    collater=collater)
 
 # Create the sampler
 vary = {
@@ -48,9 +47,10 @@ my_campaign.set_sampler(my_sampler)
 my_campaign.draw_samples()
 
 my_campaign.populate_runs_dir()
-my_campaign.apply_for_each_run_dir(uq.actions.ExecuteLocal(
-    "python3 cooling_model.py cooling_in.json"))
 
+cwd = os.getcwd()
+cmd = f"{cwd}/cooling_model.py cooling_in.json"
+my_campaign.apply_for_each_run_dir(uq.actions.ExecuteLocal(cmd, interpret='python3'))
 my_campaign.collate()
 
 # Post-processing analysis

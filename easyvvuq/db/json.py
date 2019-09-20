@@ -158,7 +158,7 @@ class CampaignDB(BaseCampaignDB):
             raise RuntimeError(message)
 
         self._app = app_info.to_dict()
-        self._app['id'] = 0
+        self._app['id'] = 1
         self._save()
 
     def add_sampler(self, sampler):
@@ -250,8 +250,8 @@ class CampaignDB(BaseCampaignDB):
 
         Returns
         -------
-        BaseEncoder, BaseDecoder
-            The 'live' encoder and decoder objects associated with this app
+        BaseEncoder, BaseDecoder, BaseCollationElement
+            The 'live' encoder, decoder and collation objects associated with this app
 
         """
 
@@ -268,62 +268,8 @@ class CampaignDB(BaseCampaignDB):
 
         encoder = BaseEncoder.deserialize(self._app['input_encoder'])
         decoder = BaseDecoder.deserialize(self._app['output_decoder'])
-        return encoder, decoder
-
-    def set_campaign_collater(self, collater, campaign_id):
-        """
-        Store the state of the given collater object in the collation slot
-        for the campaign with id 'campaign_id'
-
-        Parameters
-        ----------
-        collater: BaseCollationElement
-            The collater object to serialize
-        campaign_id: int
-            The id of the campaign this collater should be assigned to
-
-        Returns
-        -------
-
-        """
-
-        if campaign_id != 1:
-            message = ('JSON/Python dict database does not support a '
-                       'campaign_id other than 1')
-            logger.critical(message)
-            raise RuntimeError(message)
-
-        self._campaign_info['collater'] = collater.serialize()
-
-    def resurrect_collation(self, campaign_id):
-        """
-        Return the collater object corresponding to the campaign with id 'campaign_id'
-        in the database. It is deserialized from the state stored in the database.
-
-        Parameters
-        ----------
-        campaign_id: int
-            The id of the collater to resurrect
-
-        Returns
-        -------
-        BaseCollationElement
-            The 'live' collater object, deserialized from the state in the db
-
-        """
-
-        if campaign_id != 1:
-            message = ('JSON/Python dict database does not support a '
-                       'campaign_id other than 1')
-            logger.critical(message)
-            raise RuntimeError(message)
-
-        if self._campaign_info['collater'] is None:
-            print("Loaded campaign does not have a collation element currently set")
-            return None
-
-        collater = BaseCollationElement.deserialize(self._campaign_info['collater'])
-        return collater
+        collater = BaseCollationElement.deserialize(self._app['collater'])
+        return encoder, decoder, collater
 
     def add_runs(self, run_info_list=None, run_prefix='Run_', ensemble_prefix='Ensemble_'):
         """
@@ -444,7 +390,7 @@ class CampaignDB(BaseCampaignDB):
 
         return self._campaign_info['campaign_dir']
 
-    def runs(self, campaign=None, sampler=None, status=None, not_status=None):
+    def runs(self, campaign=None, sampler=None, status=None, not_status=None, app_id=1):
         """
         A generator to return all run information for selected `campaign` and `sampler`.
 
@@ -471,6 +417,12 @@ class CampaignDB(BaseCampaignDB):
                        f'single campaign and sampler workflows - ignoring'
                        f'campaign - {campaign}/ sampler {sampler}')
             logger.warning(message)
+
+        if app_id != 1:
+            message = ('JSON/Python dict database does not support an '
+                       'app_id other than 1')
+            logger.critical(message)
+            raise RuntimeError(message)
 
         for run_id, run_info in self._runs.items():
             if (status is None or run_info['status'] ==
@@ -652,7 +604,7 @@ class CampaignDB(BaseCampaignDB):
             self._runs[run_name]['status'] = status
         self._save()
 
-    def append_collation_dataframe(self, df):
+    def append_collation_dataframe(self, df, app_id):
         """
         Append the data in dataframe 'df' to that already collated in the database
 
@@ -660,29 +612,47 @@ class CampaignDB(BaseCampaignDB):
         ----------
         df: pandas dataframe
             The dataframe whose contents need to be appended to the collation store
+        app_id: int
+            The id of the app in the sql database. Used to determine which collation
+            table is appended to.
 
         Returns
         -------
         """
+
+        if app_id != 1:
+            message = ('JSON/Python dict database does not support an '
+                       'app_id other than 1')
+            logger.critical(message)
+            raise RuntimeError(message)
 
         if os.path.exists(self._collation_csv):
             df.to_csv(self._collation_csv, mode='a', header=False)
         else:
             df.to_csv(self._collation_csv, mode='w', header=True)
 
-    def get_collation_dataframe(self):
+    def get_collation_dataframe(self, app_id):
         """
         Returns a dataframe containing the full collated results stored in this database
         i.e. the total of what was added with the append_collation_dataframe() method.
 
         Parameters
         ----------
+        app_id: int
+            The id of the app in the sql database. Used to determine which collation
+            table is appended to.
 
         Returns
         -------
         df: pandas dataframe
             The dataframe with all contents that were appended to this database
         """
+
+        if app_id != 1:
+            message = ('JSON/Python dict database does not support an '
+                       'app_id other than 1')
+            logger.critical(message)
+            raise RuntimeError(message)
 
         df = pd.read_csv(self._collation_csv)
         return df

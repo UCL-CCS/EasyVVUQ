@@ -12,7 +12,6 @@ from easyvvuq import ParamsSpecification
 from easyvvuq.constants import default_campaign_prefix, Status
 from easyvvuq.data_structs import RunInfo, CampaignInfo, AppInfo
 from easyvvuq.sampling import BaseSamplingElement
-from easyvvuq.collate import BaseCollationElement
 
 __copyright__ = """
 
@@ -106,7 +105,7 @@ class Campaign:
         The current Encoder object being used, from the currently set app
     _active_app_decoder: easyvvuq.decoders.BaseDecoder
         The current Decoder object being used, from the currently set app
-    _active_collater: easyvvuq.collate.BaseCollationElement
+    _active_app_collater: easyvvuq.collate.BaseCollationElement
         The current Collater object assigned to this campaign
     _active_sampler: easyvvuq.sampling.BaseSamplingElement
         The currently set Sampler object
@@ -144,8 +143,8 @@ class Campaign:
         self._active_app_name = None
         self._active_app_encoder = None
         self._active_app_decoder = None
+        self._active_app_collater = None
 
-        self._active_collater = None
         self._active_sampler = None
         self._active_sampler_id = None
 
@@ -279,10 +278,9 @@ class Campaign:
         campaign_db = self.campaign_db
         self.campaign_id = campaign_db.get_campaign_id(self.campaign_name)
 
-        # Resurrect the sampler and collation elements
+        # Resurrect the sampler
         self._active_sampler_id = campaign_db.get_sampler_id(self.campaign_id)
         self._active_sampler = campaign_db.resurrect_sampler(self._active_sampler_id)
-        self._active_collater = campaign_db.resurrect_collation(self.campaign_id)
 
         self.set_app(self._active_app_name)
 
@@ -339,7 +337,7 @@ class Campaign:
             raise RuntimeError(message)
 
     def add_app(self, name=None, params=None, fixtures=None,
-                encoder=None, decoder=None,
+                encoder=None, decoder=None, collater=None,
                 set_active=True):
         """Add an application to the CampaignDB.
 
@@ -356,6 +354,8 @@ class Campaign:
         decoder : :obj:`easyvvuq.decoders.base.BaseDecoder`
             Decoder element to convert application run output into data for
             VVUQ analysis.
+        collater : obj:`easyvvuq.collate.base.BaseCollationElement`
+            Collation element for this app.
         set_active: bool
             Should the added app be set to be the currently active app?
 
@@ -373,7 +373,8 @@ class Campaign:
             paramsspec=paramsspec,
             fixtures=fixtures,
             encoder=encoder,
-            decoder=decoder
+            decoder=decoder,
+            collater=collater
         )
 
         self.campaign_db.add_app(app)
@@ -399,9 +400,10 @@ class Campaign:
         self._active_app_name = app_name
         self._active_app = self.campaign_db.app(name=app_name)
 
-        # Resurrect the app encoder and decoder elements
+        # Resurrect the app encoder, decoder and collation elements
         (self._active_app_encoder,
-         self._active_app_decoder) = self.campaign_db.resurrect_app(app_name)
+         self._active_app_decoder,
+         self._active_app_collater) = self.campaign_db.resurrect_app(app_name)
 
     def set_sampler(self, sampler):
         """Set active sampler.
@@ -423,26 +425,6 @@ class Campaign:
         self._active_sampler = sampler
         self._active_sampler_id = self.campaign_db.add_sampler(sampler)
         self.campaign_db.set_sampler(self.campaign_id, self._active_sampler_id)
-
-    def set_collater(self, collater):
-        """Set a collater for this campaign.
-
-        Parameters
-        ----------
-        collater : `easyvvuq.collate.base.BaseCollationElement`
-            Collation that will be used to create runs for the current campaign.
-
-        Returns
-        -------
-
-        """
-        if not isinstance(collater, BaseCollationElement):
-            msg = "set_collater() must be passed a collation element"
-            logging.error(msg)
-            raise Exception(msg)
-
-        self.campaign_db.set_campaign_collater(collater, self.campaign_id)
-        self._active_collater = collater
 
     def add_runs(self, runs):
         """Add a new run to the queue.
@@ -613,7 +595,8 @@ class Campaign:
 
         run_ids = []
 
-        for run_id, run_data in self.campaign_db.runs(status=Status.NEW):
+        for run_id, run_data in self.campaign_db.runs(
+                status=Status.NEW, app_id=self._active_app['id']):
 
             # Make directory for this run's output
             os.makedirs(run_data['run_dir'])
@@ -646,10 +629,10 @@ class Campaign:
 
         # Loop through all runs in this campaign with the specified status,
         # and call the specified user function for each.
-        for run_id, run_data in self.campaign_db.runs(status=status):
+        for run_id, run_data in self.campaign_db.runs(status=status, app_id=self._active_app['id']):
             fn(run_id, run_data)
 
-    def apply_for_each_run_dir(self, action):
+    def apply_for_each_run_dir(self, action, status=Status.ENCODED):
         """
         For each run in this Campaign's run list, apply the specified action
         (an object of type Action)
@@ -666,14 +649,14 @@ class Campaign:
 
         # Loop through all runs in this campaign with status ENCODED, and
         # run the specified action on each run's dir
-        for run_id, run_data in self.campaign_db.runs(status=Status.ENCODED):
+        for run_id, run_data in self.campaign_db.runs(status=status, app_id=self._active_app['id']):
             logger.info("Applying " + action.__module__ + " to " + run_data['run_dir'])
             action.act_on_dir(run_data['run_dir'])
 
     def collate(self):
         """Combine the output from all runs associated with the current app.
 
-        Uses the collation element held in `self._active_collater`.
+        Uses the collation element held in `self._active_app_collater`.
 
         Returns
         -------
@@ -681,14 +664,14 @@ class Campaign:
         """
 
         # Apply collation element
-        num_collated = self._active_collater.collate(self)
+        num_collated = self._active_app_collater.collate(self, self._active_app['id'])
 
         if num_collated < 1:
             logger.warning("No data collected during collation.")
 
         # Log application of this collation element
         info = {'num_collated': num_collated}
-        self.log_element_application(self._active_collater, info)
+        self.log_element_application(self._active_app_collater, info)
 
     def get_collation_result(self):
         """
@@ -702,7 +685,7 @@ class Campaign:
             pandas dataframe
 
         """
-        return self._active_collater.get_collated_dataframe()
+        return self._active_app_collater.get_collated_dataframe(self, self._active_app['id'])
 
     def apply_analysis(self, analysis):
         """Run the `analysis` element on the output of the last run collation.
@@ -789,3 +772,6 @@ class Campaign:
         """
 
         return self._active_sampler
+
+    def get_active_app(self):
+        return self._active_app

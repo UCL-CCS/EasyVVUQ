@@ -67,10 +67,14 @@ In this example the GenericEncoder and SimpleCSV, both included in the core Easy
         template_fname='tests/cooling/cooling.template',
         delimiter='$',
         target_filename='cooling_in.json')
-    
+
     decoder = uq.decoders.SimpleCSV(target_filename="output.csv",
                                 output_columns=["te", "ti"],
                                 header=0)
+
+In this workflow all application runs will be analyzed as individual datapoint, so we set the collator to AggregateSamples without averaging. This element simply extracts information using the assigned decoder and adds it to a summary dataframe. ::
+
+    collater = uq.collate.AggregateSamples(average=False)
 
 GenericEncoder performs simple text substitution into a supplied template, using a specified delimiter to identify where parameters should be placed.
 The template is shown below (\$ is used as the delimiter).
@@ -84,21 +88,14 @@ In such cases, users may write their own encoders by extending the BaseEncoder c
        "out_file":"$out_file"
     }
 
-As can be inferred from its name SimpleCSV reads CVS files produced by the cooling model code. Again many applications output results in different formats, potentially requiring bespoke Decoders. Having created an encoder, decoder and parameter space definition for our `cooling' app, we can add it to our campaign. ::
+As can be inferred from its name SimpleCSV reads CVS files produced by the cooling model code. Again many applications output results in different formats, potentially requiring bespoke Decoders. Having created an encoder, decoder and parameter space definition for our `cooling` app, we can add it to our campaign. ::
 
     # Add the app (automatically set as current app)
     my_campaign.add_app(name="cooling",
                         params=params,
                         encoder=encoder,
-                        decoder=decoder)
-
-Set a Collater
---------------
-
-In this workflow all application runs will be analyzed as individual datapoint, so we set the collator to AggregateSamples without averaging. This element simply extracts information using the assigned decoder and adds it to a summary dataframe. ::
-
-    collater = uq.collate.AggregateSamples(average=False)
-    my_campaign.set_collater(collater)
+                        decoder=decoder,
+                        collater=collater)
 
 The Sampler
 -----------
