@@ -612,6 +612,9 @@ class CampaignDB(BaseCampaignDB):
         ----------
         df: pandas dataframe
             The dataframe whose contents need to be appended to the collation store
+        app_id: int
+            The id of the app in the sql database. Used to determine which collation
+            table is appended to.
 
         Returns
         -------
@@ -635,6 +638,9 @@ class CampaignDB(BaseCampaignDB):
 
         Parameters
         ----------
+        app_id: int
+            The id of the app in the sql database. Used to determine which collation
+            table is appended to.
 
         Returns
         -------
