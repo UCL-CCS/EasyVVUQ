@@ -23,11 +23,13 @@ ORCiD's provided for specificity.
 *  Onnie Luk
 *  James Suter
 
-## Design Discussions
+## General design discussions
 
-*  Derek Groen
+*  Bartosz Bosak
 *  David Coster
 *  Daan Cromelin
-*  Bartosz Bosak
-*  Lourens Veen
 *  Jonathan Feinberg
+*  Derek Groen
+*  Tomasz Piontek
+*  Udo von Toussaint
+*  Lourens Veen
