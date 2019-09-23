@@ -144,7 +144,8 @@ class SCAnalysis(BaseAnalysisElement):
         self.N_qoi = self.samples[qoi_cols[0]][0].size
 
         results = {'statistical_moments': {},
-                   'sobol_indices': {k: {} for k in self.qoi_cols}}
+                   'sobols_first': {k: {} for k in self.qoi_cols},
+                   'sobols': {k: {} for k in self.qoi_cols}}
 
         # Compute descriptive statistics for each quantity of interest
         for qoi_k in qoi_cols:
@@ -156,7 +157,13 @@ class SCAnalysis(BaseAnalysisElement):
                                                      'var': var_k,
                                                      'std': std_k}
             # compute all Sobol indices
-            results['sobol_indices'][qoi_k] = self.get_sobol_indices(qoi_k, 'all')
+            results['sobols'][qoi_k] = self.get_sobol_indices(qoi_k, 'all')
+            
+            idx = 0
+            for param_name in self.sampler.vary.get_keys():
+                results['sobols_first'][qoi_k][param_name] = \
+                results['sobols'][qoi_k][(idx,)]
+                idx += 1            
 
         return results
 
@@ -668,7 +675,6 @@ class SCAnalysis(BaseAnalysisElement):
         Returns
         -------
         Either the first order or all Sobol indices of qoi
-
         """
 
         print('Computing', typ, 'Sobol indices')
