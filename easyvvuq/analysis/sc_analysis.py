@@ -105,7 +105,8 @@ class SCAnalysis(BaseAnalysisElement):
         # For full tensor grid: there is only one level: L_min = L
         if not self.sparse:
             self.L_min = self.L
-            self.l_norm = np.array([[self.L, self.L]])
+            #Here l_norm is just [L, L, ...., L]
+            self.l_norm = np.array([np.ones(self.N).astype('int')*self.L])
         # For sparse grid: multiple levels, L >= N must hold
         else:
             self.L_min = 1

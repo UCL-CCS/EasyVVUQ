@@ -7,7 +7,6 @@ import chaospy as cp
 import numpy as np
 import easyvvuq as uq
 import os
-import fabsim3_cmd_api as fab
 
 
 import matplotlib.pyplot as plt
@@ -74,7 +73,7 @@ SPARSE GRID PARAMETERS
   quadrature nested.
 """
 my_sampler = uq.sampling.SCSampler(vary=vary, polynomial_order=4,
-                                   quadrature_rule="Leja", sparse=True,
+                                   quadrature_rule="C", sparse=True,
                                    growth=True)
 
 # Associate the sampler with the campaign
