@@ -13,6 +13,8 @@ from easyvvuq.constants import default_campaign_prefix, Status
 from easyvvuq.data_structs import RunInfo, CampaignInfo, AppInfo
 from easyvvuq.sampling import BaseSamplingElement
 
+import dask.bag as db
+
 __copyright__ = """
 
     Copyright 2018 Robin A. Richardson, David W. Wright
@@ -649,9 +651,13 @@ class Campaign:
 
         # Loop through all runs in this campaign with status ENCODED, and
         # run the specified action on each run's dir
-        for run_id, run_data in self.campaign_db.runs(status=status, app_id=self._active_app['id']):
-            logger.info("Applying " + action.__module__ + " to " + run_data['run_dir'])
-            action.act_on_dir(run_data['run_dir'])
+        #for run_id, run_data in self.campaign_db.runs(status=status, app_id=self._active_app['id']):
+        #    logger.info("Applying " + action.__module__ + " to " + run_data['run_dir'])
+        #    action.act_on_dir(run_data['run_dir'])
+        run_dirs = [run_data['run_dir'] for run_id, run_data in
+                    self.campaign_db.runs(status=status, app_id=self._active_app['id'])]
+        b = db.from_sequence(run_dirs)
+        b.map(action.act_on_dir).compute()
 
     def collate(self):
         """Combine the output from all runs associated with the current app.
