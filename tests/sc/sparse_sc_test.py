@@ -83,7 +83,7 @@ my_campaign.set_sampler(my_sampler)
 my_campaign.draw_samples()
 my_campaign.populate_runs_dir()
 
-##   Use this instead to run the samples using EasyVVUQ on the localhost
+# Use this instead to run the samples using EasyVVUQ on the localhost
 my_campaign.apply_for_each_run_dir(uq.actions.ExecuteLocal(
     "sc_model.py ade_in.json"))
 

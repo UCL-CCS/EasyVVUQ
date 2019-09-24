@@ -105,8 +105,8 @@ class SCAnalysis(BaseAnalysisElement):
         # For full tensor grid: there is only one level: L_min = L
         if not self.sparse:
             self.L_min = self.L
-            #Here l_norm is just [L, L, ...., L]
-            self.l_norm = np.array([np.ones(self.N).astype('int')*self.L])
+            # Here l_norm is just [L, L, ...., L]
+            self.l_norm = np.array([np.ones(self.N).astype('int') * self.L])
         # For sparse grid: multiple levels, L >= N must hold
         else:
             self.L_min = 1
@@ -159,12 +159,12 @@ class SCAnalysis(BaseAnalysisElement):
                                                      'std': std_k}
             # compute all Sobol indices
             results['sobols'][qoi_k] = self.get_sobol_indices(qoi_k, 'all')
-            
+
             idx = 0
             for param_name in self.sampler.vary.get_keys():
                 results['sobols_first'][qoi_k][param_name] = \
-                results['sobols'][qoi_k][(idx,)]
-                idx += 1            
+                    results['sobols'][qoi_k][(idx,)]
+                idx += 1
 
         return results
 

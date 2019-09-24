@@ -1,29 +1,30 @@
-#for the Sobol g function, the exact (1st-order)
-#Sobol indices are known analytically
+# for the Sobol g function, the exact (1st-order)
+# Sobol indices are known analytically
+import matplotlib.pyplot as plt
+import os
+import easyvvuq as uq
+import numpy as np
+import chaospy as cp
+
+
 def print_exact_sobols():
     V_i = np.zeros(d)
-    
+
     for i in range(d):
-        V_i[i] = 1.0/(3.0*(1 + a[i])**2)
-        
+        V_i[i] = 1.0 / (3.0 * (1 + a[i])**2)
+
     V = np.prod(1 + V_i) - 1
-    
+
     print('----------------------')
-    print('Exact 1st-order Sobol indices: ', V_i/V)
+    print('Exact 1st-order Sobol indices: ', V_i / V)
 
 
-import chaospy as cp
-import numpy as np
-import easyvvuq as uq
-import os
-
-import matplotlib.pyplot as plt
 plt.close('all')
 
-#number of unknown variables
+# number of unknown variables
 d = 5
 
-#parameters required by test function
+# parameters required by test function
 a = [0.0, 1.0, 2.0, 4.0, 8.0]
 
 # author: Wouter Edeling
@@ -62,7 +63,7 @@ params = {
         "type": "float",
         "min": 0.0,
         "max": 1.0,
-        "default": 0.5},     
+        "default": 0.5},
     "out_file": {
         "type": "string",
         "default": "output.csv"}}
@@ -114,7 +115,7 @@ my_campaign.set_sampler(my_sampler)
 my_campaign.draw_samples()
 my_campaign.populate_runs_dir()
 
-##   Use this instead to run the samples using EasyVVUQ on the localhost
+# Use this instead to run the samples using EasyVVUQ on the localhost
 my_campaign.apply_for_each_run_dir(uq.actions.ExecuteLocal(
     "sobol_model.py sobol_in.json"))
 
