@@ -50,7 +50,6 @@ class MultiEncoder(BaseEncoder, encoder_name="multiencoder"):
         for encoder in self.encoders:
             encoder.encode(params=params, fixtures=fixtures, target_dir=target_dir)
 
-
     def element_version(self):
         return "0.1"
 
