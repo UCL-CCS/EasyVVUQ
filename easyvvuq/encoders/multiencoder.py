@@ -26,7 +26,7 @@ __license__ = "LGPL"
 logger = logging.getLogger(__name__)
 
 
-class MultiEncoder(BaseSamplingElement, sampler_name="multisampler"):
+class MultiEncoder(BaseEncoder, encoder_name="multiencoder"):
 
     def __init__(self, *encoders, serialized_list_of_encoders=None):
         """
@@ -48,7 +48,8 @@ class MultiEncoder(BaseSamplingElement, sampler_name="multisampler"):
             Applies all encoders in the list of encoders.
         """
         for encoder in self.encoders:
-            encoder.encode(params, fixtures, target_dir)
+            encoder.encode(params=params, fixtures=fixtures, target_dir=target_dir)
+
 
     def element_version(self):
         return "0.1"
