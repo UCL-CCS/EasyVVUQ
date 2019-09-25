@@ -3,7 +3,7 @@
 Combining multiple encoders using MultiEncoder
 ==============================================
 
-While a user is always free to write their own, custom encoder (as discussed in the :doc:` Custom Encoder tutorial <custom\_encoder>`
+While a user is always free to write their own, custom encoder (as discussed in the :doc:`Custom Encoder tutorial <custom\_encoder>`
 it is generally easier to use existing encoders whenever possible. In some cases a single encoder may not be sufficient, but combining
 multiple encoders together can achieve the desired effect.
 
