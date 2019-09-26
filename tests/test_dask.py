@@ -41,10 +41,6 @@ if not os.path.exists("tests/cannonsim/bin/cannonsim"):
 cannonsim_path = os.path.realpath(os.path.expanduser("tests/cannonsim/bin/cannonsim"))
 
 
-def execute_cannonsim(path, params):
-    os.system(f"cd {path} && {cannonsim_path} in.cannon output.csv")
-
-
 logging.basicConfig(level=logging.CRITICAL)
 
 
