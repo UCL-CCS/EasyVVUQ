@@ -7,6 +7,8 @@ import logging
 from pprint import pformat, pprint
 from gauss.encoder_gauss import GaussEncoder
 from gauss.decoder_gauss import GaussDecoder
+from dask import client
+from dask_jobqueue import SLURMCluster
 
 __copyright__ = """
 
@@ -111,7 +113,8 @@ def test_cannonsim(tmpdir):
     sampler = uq.sampling.RandomSampler(vary=vary)
     campaign.set_sampler(sampler)
     campaign.draw_samples(num_samples=500, replicas=1)
-    campaign.populate_runs_dir()
+    populate = delayed(campaign.populate_runs_dir())
+    populate.compute(client)
     campaign.apply_for_each_run_dir(actions)
     campaign.collate()
     campaign.apply_analysis(stats)

@@ -581,10 +581,6 @@ class Campaign:
         create input files for it in each run directory, usually with varying
         input (scientific) parameters.
 
-        Parameters
-        ----------
-        client - dask jobqueue client
-
         Returns
         -------
 
