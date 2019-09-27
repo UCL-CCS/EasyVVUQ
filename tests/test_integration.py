@@ -66,15 +66,15 @@ def campaign():
         my_campaign = uq.Campaign(name=campaign_name, work_dir=work_dir, db_type=db_type)
         logging.debug("Serialized encoder:", encoder.serialize())
         logging.debug("Serialized decoder:", decoder.serialize())
+        logging.debug("Serialized collation:", collater.serialize())
         # Add the cannonsim app
         my_campaign.add_app(name=app_name,
                             params=params,
                             encoder=encoder,
                             decoder=decoder,
+                            collater=collater,
                             fixtures=fixtures)
         my_campaign.set_app(app_name)
-        my_campaign.set_collater(collater)
-        logging.debug("Serialized collation:", collater.serialize())
         logging.debug("Serialized sampler:", sampler.serialize())
         # Set the campaign to use this sampler
         my_campaign.set_sampler(sampler)

@@ -52,7 +52,6 @@ if 'biasfile' in inputs:
 else:
     bias = 0
 
-
 if num_steps <= 0:
     sys.exit("num_steps should be > 0")
 
@@ -63,4 +62,4 @@ numbers_out = np.array(list(enumerate(numbers)))
 header = 'Step,Value'
 
 fmt = '%i,%f'
-np.savetxt(output_filename, numbers_out, fmt=fmt, header=header)
+np.savetxt(output_filename, numbers_out, fmt=fmt, header=header, comments='')

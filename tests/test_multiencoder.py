@@ -39,7 +39,7 @@ if not os.path.exists("tests/cannonsim/bin/cannonsim"):
 CANNONSIM_PATH = os.path.realpath(os.path.expanduser("tests/cannonsim/bin/cannonsim"))
 
 
-def test_multisampler(tmpdir):
+def test_multiencoder(tmpdir):
 
     # Set up a fresh campaign called "cannon"
     my_campaign = uq.Campaign(name='cannon', work_dir=tmpdir)
@@ -82,11 +82,20 @@ def test_multisampler(tmpdir):
             "max": 1000.0,
             "default": 10.0}}
 
-    # Create an encoder, decoder and collater for the cannonsim app
-    encoder = uq.encoders.GenericEncoder(
+    # Create two encoders
+    encoder1 = uq.encoders.GenericEncoder(
         template_fname='tests/cannonsim/test_input/cannonsim.template',
         delimiter='#',
         target_filename='in.cannon')
+    encoder2 = uq.encoders.GenericEncoder(
+        template_fname='tests/cannonsim/test_input/cannonsim.template',
+        delimiter='#',
+        target_filename='in.cannon.2')
+
+    # Combine both encoders into a single encoder
+    multiencoder = uq.encoders.MultiEncoder(encoder1, encoder2)
+
+    # Create decoder and collater for the cannonsim app
     decoder = uq.decoders.SimpleCSV(
         target_filename='output.csv', output_columns=[
             'Dist', 'lastvx', 'lastvy'], header=0)
@@ -95,7 +104,7 @@ def test_multisampler(tmpdir):
     # Add the cannonsim app
     my_campaign.add_app(name="cannonsim",
                         params=params,
-                        encoder=encoder,
+                        encoder=multiencoder,
                         decoder=decoder,
                         collater=collater)
 
@@ -103,34 +112,20 @@ def test_multisampler(tmpdir):
     # has been added)
     my_campaign.set_app("cannonsim")
 
-    # Set up samplers
+    # Set up sampler
     sweep1 = {
         "angle": [0.1, 0.2, 0.3],
         "height": [2.0, 10.0],
         "velocity": [10.0, 10.1, 10.2]
     }
-    sampler1 = uq.sampling.BasicSweep(sweep=sweep1)
-
-    sweep2 = {
-        "air_resistance": [0.2, 0.3, 0.4]
-    }
-    sampler2 = uq.sampling.BasicSweep(sweep=sweep2)
-
-    vary = {
-        "gravity": cp.Uniform(9.8, 1.0),
-        "mass": cp.Uniform(2.0, 10.0),
-    }
-    sampler3 = uq.sampling.RandomSampler(vary=vary, max_num=5)
-
-    # Make a multisampler
-    multisampler = uq.sampling.MultiSampler(sampler1, sampler2, sampler3)
+    sampler = uq.sampling.BasicSweep(sweep=sweep1)
 
     # Set the campaign to use this sampler
-    my_campaign.set_sampler(multisampler)
+    my_campaign.set_sampler(sampler)
 
     # Test reloading
-    my_campaign.save_state(tmpdir + "test_multisampler.json")
-    reloaded_campaign = uq.Campaign(state_file=tmpdir + "test_multisampler.json", work_dir=tmpdir)
+    my_campaign.save_state(tmpdir + "test_multiencoder.json")
+    reloaded_campaign = uq.Campaign(state_file=tmpdir + "test_multiencoder.json", work_dir=tmpdir)
 
     # Draw all samples
     my_campaign.draw_samples()
@@ -164,4 +159,4 @@ def test_multisampler(tmpdir):
 
 
 if __name__ == "__main__":
-    test_multisampler("/tmp/")
+    test_multiencoder("/tmp/")

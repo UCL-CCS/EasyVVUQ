@@ -42,9 +42,9 @@ class BaseCollationElement(BaseElement):
 
     """
 
-    def collate(self, campaign):
+    def collate(self, campaign, app_id):
         """
-        Collates the campaign's decoded run output.
+        Collates the campaign's decoded run output for the specified app.
         Must be implemented by all collation subclasses.
         """
         raise NotImplementedError
@@ -67,7 +67,7 @@ class BaseCollationElement(BaseElement):
         # Register new collater
         AVAILABLE_COLLATERS[collater_name] = cls
 
-    def get_collated_dataframe(self):
+    def get_collated_dataframe(self, campaign, app_id):
         """
         Returns collated data as a pandas dataframe
         """

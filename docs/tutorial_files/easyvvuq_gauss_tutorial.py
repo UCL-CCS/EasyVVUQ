@@ -44,6 +44,7 @@ params = {
 
 # 3. Wrap Application
 #    - Define a new application (we'll call it 'gauss'), and the encoding/decoding elements it needs
+#    - Also requires a collation element - his will be responsible for aggregating the results
 encoder = uq.encoders.GenericEncoder(template_fname=template,
                                      target_filename=input_filename)
 
@@ -52,18 +53,16 @@ decoder = uq.decoders.SimpleCSV(
             output_columns=['Step', 'Value'],
             header=0)
 
+collater = uq.collate.AggregateSamples(average=True)
+
 my_campaign.add_app(name="gauss",
                     params=params,
                     encoder=encoder,
-                    decoder=decoder
+                    decoder=decoder,
+                    collater=collater
                     )
 
-# 4. Set a collation element
-#    - This will be responsible for aggregating the results
-collater = uq.collate.AggregateSamples(average=True)
-my_campaign.set_collater(collater)
-
-# 5. Specify Sampler
+# 4. Specify Sampler
 #    -  vary the `mu` parameter only
 vary = {
     "mu": cp.Uniform(1.0, 100.0),
@@ -73,22 +72,24 @@ my_sampler = uq.sampling.RandomSampler(vary=vary)
 
 my_campaign.set_sampler(my_sampler)
 
-# 6. Get run parameters
+# 5. Get run parameters
 my_campaign.draw_samples(num_samples=3,
                          replicas=5)
 
-# 7. Create run input directories
+# 6. Create run input directories
 my_campaign.populate_runs_dir()
 
-# 8. Run Application
+print(my_campaign)
+
+# 7. Run Application
 #    - gauss is executed for each sample
 my_campaign.apply_for_each_run_dir(uq.actions.ExecuteLocal(cmd,
                                                            interpret='python3'))
 
-# 9. Collate output
+# 8. Collate output
 my_campaign.collate()
 
-# 10. Run Analysis
+# 9. Run Analysis
 #     - Calculate bootstrap statistics for collated data
 stats = uq.analysis.EnsembleBoot(groupby=["mu"], qoi_cols=["Value"])
 my_campaign.apply_analysis(stats)

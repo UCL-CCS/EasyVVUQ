@@ -61,7 +61,6 @@ class CampaignTable(Base):
     campaign_dir_prefix = Column(String)
     campaign_dir = Column(String)
     runs_dir = Column(String)
-    collater = Column(String)
     sampler = Column(Integer, ForeignKey('sample.id'))
 
 
@@ -73,6 +72,7 @@ class AppTable(Base):
     name = Column(String)
     input_encoder = Column(String)
     output_decoder = Column(String)
+    collater = Column(String)
     params = Column(String)
     fixtures = Column(String)
 
@@ -122,7 +122,17 @@ class CampaignDB(BaseCampaignDB):
                            f'for campaign database {name}')
                 logging.critical(message)
                 raise RuntimeError(message)
+
             Base.metadata.create_all(self.engine)
+
+            is_db_empty = (self.session.query(CampaignTable).first() is None)
+
+            version_check = self.session.query(
+                CampaignTable).filter(CampaignTable.easyvvuq_version != info.easyvvuq_version).all()
+
+            if (not is_db_empty) and (len(version_check) != 0):
+                raise RuntimeError('Database contains campaign created with an incompatible' +
+                                   ' version of EasyVVUQ!')
 
             self._next_run = 1
             self._next_ensemble = 1
@@ -183,6 +193,7 @@ class CampaignDB(BaseCampaignDB):
             'name': selected_app.name,
             'input_encoder': selected_app.input_encoder,
             'output_decoder': selected_app.output_decoder,
+            'collater': selected_app.collater,
             'params': ParamsSpecification.deserialize(selected_app.params),
             'fixtures': json.loads(selected_app.fixtures)
         }
@@ -217,7 +228,6 @@ class CampaignDB(BaseCampaignDB):
         app_dict = app_info.to_dict(flatten=True)
 
         db_entry = AppTable(**app_dict)
-
         self.session.add(db_entry)
         self.session.commit()
 
@@ -282,56 +292,11 @@ class CampaignDB(BaseCampaignDB):
         sampler = BaseSamplingElement.deserialize(serialized_sampler)
         return sampler
 
-    def set_campaign_collater(self, collater, campaign_id):
-        """
-        Store the state of the given collater object in the collation slot
-        for the campaign with id 'campaign_id'
-
-        Parameters
-        ----------
-        collater: BaseCollationElement
-            The collater object to serialize
-        campaign_id: int
-            The id of the campaign this collater should be assigned to
-
-        Returns
-        -------
-
-        """
-
-        selected = self.session.query(CampaignTable).get(campaign_id)
-        selected.collater = collater.serialize()
-        self.session.commit()
-
-    def resurrect_collation(self, campaign_id):
-        """
-        Return the collater object corresponding to the campaign with id 'campaign_id'
-        in the database. It is deserialized from the state stored in the database.
-
-        Parameters
-        ----------
-        campaign_id: int
-            The id of the collater to resurrect
-
-        Returns
-        -------
-        BaseCollationElement
-            The 'live' collater object, deserialized from the state in the db
-
-        """
-
-        serialized_collater = self.session.query(CampaignTable).get(campaign_id).collater
-        if serialized_collater is None:
-            print("Loaded campaign does not have a collation element currently set")
-            return None
-        collater = BaseCollationElement.deserialize(serialized_collater)
-        return collater
-
     def resurrect_app(self, app_name):
         """
-        Return the 'live' encoder and decoder objects corresponding to the app with
-        name 'app_name' in the database. They are deserialized from the states
-        previously stored in the database.
+        Return the 'live' encoder, decoder and collation objects corresponding to the app with
+        name 'app_name' in the database. They are deserialized from the states previously
+        stored in the database.
 
         Parameters
         ----------
@@ -340,15 +305,17 @@ class CampaignDB(BaseCampaignDB):
 
         Returns
         -------
-        BaseEncoder, BaseDecoder
+        BaseEncoder, BaseDecoder, BaseCollationElement
             The 'live' encoder and decoder objects associated with this app
 
         """
 
         app_info = self.app(app_name)
+
         encoder = BaseEncoder.deserialize(app_info['input_encoder'])
         decoder = BaseDecoder.deserialize(app_info['output_decoder'])
-        return encoder, decoder
+        collater = BaseCollationElement.deserialize(app_info['collater'])
+        return encoder, decoder, collater
 
     def add_runs(self, run_info_list=None, run_prefix='Run_', ensemble_prefix='Ensemble_'):
         """
@@ -645,7 +612,14 @@ class CampaignDB(BaseCampaignDB):
 
         return self._get_campaign_info(campaign_name=campaign_name).campaign_dir
 
-    def _select_runs(self, name=None, campaign=None, sampler=None, status=None, not_status=None):
+    def _select_runs(
+            self,
+            name=None,
+            campaign=None,
+            sampler=None,
+            status=None,
+            not_status=None,
+            app_id=None):
         """
         Select all runs in the database which match the input criteria.
 
@@ -676,6 +650,8 @@ class CampaignDB(BaseCampaignDB):
             filter_options['sampler'] = sampler
         if status:
             filter_options['status'] = status
+        if app_id:
+            filter_options['app'] = app_id
 
         # Note that for some databases this can be sped up with a yield_per(), but not all
         selected = self.session.query(RunTable).filter_by(
@@ -683,7 +659,7 @@ class CampaignDB(BaseCampaignDB):
 
         return selected
 
-    def run(self, name, campaign=None, sampler=None, status=None, not_status=None):
+    def run(self, name, campaign=None, sampler=None, status=None, not_status=None, app_id=None):
         """
         Get the information for a specified run.
 
@@ -712,7 +688,8 @@ class CampaignDB(BaseCampaignDB):
             campaign=campaign,
             sampler=sampler,
             status=status,
-            not_status=not_status)
+            not_status=not_status,
+            app_id=app_id)
 
         if selected.count() != 1:
             logging.warning('Multiple runs selected - using the first')
@@ -721,7 +698,7 @@ class CampaignDB(BaseCampaignDB):
 
         return self._run_to_dict(selected)
 
-    def runs(self, campaign=None, sampler=None, status=None, not_status=None):
+    def runs(self, campaign=None, sampler=None, status=None, not_status=None, app_id=None):
         """
         A generator to return all run information for selected `campaign` and `sampler`.
 
@@ -748,7 +725,8 @@ class CampaignDB(BaseCampaignDB):
             campaign=campaign,
             sampler=sampler,
             status=status,
-            not_status=not_status)
+            not_status=not_status,
+            app_id=app_id)
 
         for r in selected:
             yield r.run_name, self._run_to_dict(r)
@@ -800,28 +778,37 @@ class CampaignDB(BaseCampaignDB):
 
         return self._get_campaign_info(campaign_name=campaign_name).runs_dir
 
-    def append_collation_dataframe(self, df):
+    def append_collation_dataframe(self, df, app_id):
         """
         Append the data in dataframe 'df' to that already collated in the database
+        for the specified app.
 
         Parameters
         ----------
         df: pandas dataframe
             The dataframe whose contents need to be appended to the collation store
+        app_id: int
+            The id of the app in the sql database. Used to determine which collation
+            table is appended to.
 
         Returns
         -------
         """
 
-        df.to_sql("COLLATIONRESULT", self.engine, if_exists='append')
+        tablename = 'COLLATION_APP' + str(app_id)
+        df.to_sql(tablename, self.engine, if_exists='append')
 
-    def get_collation_dataframe(self):
+    def get_collation_dataframe(self, app_id):
         """
         Returns a dataframe containing the full collated results stored in this database
+        for the specified app.
         i.e. the total of what was added with the append_collation_dataframe() method.
 
         Parameters
         ----------
+        app_id: int
+            The id of the app in the sql database. Used to determine which collation
+            table is appended to.
 
         Returns
         -------
@@ -829,6 +816,7 @@ class CampaignDB(BaseCampaignDB):
             The dataframe with all contents that were appended to this database
         """
 
-        query = "select * from COLLATIONRESULT"
+        tablename = 'COLLATION_APP' + str(app_id)
+        query = "select * from " + tablename
         df = pd.read_sql_query(query, self.engine)
         return df

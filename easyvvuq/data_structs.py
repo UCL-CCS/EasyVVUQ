@@ -7,6 +7,8 @@ import json
 from easyvvuq import constants
 from easyvvuq.encoders import BaseEncoder
 from easyvvuq.decoders import BaseDecoder
+from easyvvuq.collate import BaseCollationElement
+import numpy
 
 __copyright__ = """
 
@@ -175,13 +177,18 @@ class RunInfo:
             returned as a JSON format sting.
         """
 
+        def convert_nonserializable(obj):
+            if isinstance(obj, numpy.int64):
+                return int(obj)
+            raise TypeError('Unknown type:', type(obj))
+
         if flatten:
 
             out_dict = {
                 'run_name': self.run_name,
                 'ensemble_name': self.ensemble_name,
                 'run_dir': self.run_dir,
-                'params': json.dumps(self.params),
+                'params': json.dumps(self.params, default=convert_nonserializable),
                 'status': constants.Status(self.status),
                 'campaign': self.campaign,
                 'sample': self.sample,
@@ -219,6 +226,8 @@ class AppInfo:
         Encoder element for application.
     decoder : :obj:`easyvvuq.decoders.base.BaseDecoder`
         Decoder element for application.
+    collater : :obj:`easyvvuq.collation.base.BaseCollationElement`
+        Collater element for application.
 
     Attributes
     ----------
@@ -232,6 +241,8 @@ class AppInfo:
         Encoder element for application.
     output_decoder : :obj:`easyvvuq.decoders.base.BaseDecoder`
         Decoder element for application.
+    collater : :obj:`easyvvuq.collation.base.BaseCollationElement`
+        Collater element for application.
     """
 
     def __init__(
@@ -240,11 +251,13 @@ class AppInfo:
             paramsspec=None,
             fixtures=None,
             encoder=None,
-            decoder=None):
+            decoder=None,
+            collater=None):
 
         self.name = name
         self.input_encoder = encoder
         self.output_decoder = decoder
+        self.collater = collater
         self.paramsspec = paramsspec
         self.fixtures = fixtures
 
@@ -273,6 +286,24 @@ class AppInfo:
             raise Exception(msg)
 
         self._output_decoder = decoder
+
+    @property
+    def collater(self):
+        return self._collater
+
+    @collater.setter
+    def collater(self, collater):
+        if collater is None:
+            msg = "A 'collater' must be provided for this App (cannot be None)."
+            logging.error(msg)
+            raise Exception(msg)
+
+        if not isinstance(collater, BaseCollationElement):
+            msg = "Provided 'collater' must be derived from type BaseCollationElement"
+            logging.error(msg)
+            raise Exception(msg)
+
+        self._collater = collater
 
     def to_dict(self, flatten=False):
         """Convert to a dictionary (optionally flatten to single level)
@@ -308,7 +339,8 @@ class AppInfo:
                 'params': self.paramsspec,
                 'fixtures': fixtures,
                 'input_encoder': self.input_encoder.serialize(),
-                'output_decoder': self.output_decoder.serialize()
+                'output_decoder': self.output_decoder.serialize(),
+                'collater': self.collater.serialize()
             }
 
         return out_dict
@@ -379,7 +411,6 @@ class CampaignInfo:
             check_local_dir(runs_dir, 'runs')
 
         self.runs_dir = runs_dir
-        self.collater = None
 
     @property
     def easyvvuq_version(self):
@@ -409,8 +440,7 @@ class CampaignInfo:
             'campaign_dir': self.campaign_dir,
             'campaign_dir_prefix': self.campaign_dir_prefix,
             'runs_dir': self.runs_dir,
-            'easyvvuq_version': self.easyvvuq_version,
-            'collater': self.collater
+            'easyvvuq_version': self.easyvvuq_version
         }
 
         return out_dict

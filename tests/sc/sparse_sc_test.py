@@ -6,9 +6,10 @@ FOR THE STOCHASTIC COLLOCATION METHOD
 import chaospy as cp
 import numpy as np
 import easyvvuq as uq
-import matplotlib.pyplot as plt
 import os
 
+
+import matplotlib.pyplot as plt
 plt.close('all')
 
 # author: Wouter Edeling
@@ -48,21 +49,19 @@ encoder = uq.encoders.GenericEncoder(
 decoder = uq.decoders.SimpleCSV(target_filename=output_filename,
                                 output_columns=output_columns,
                                 header=0)
-
-# Create a collation element for this campaign
 collater = uq.collate.AggregateSamples(average=False)
-my_campaign.set_collater(collater)
 
 # Add the SC app (automatically set as current app)
 my_campaign.add_app(name="sc",
                     params=params,
                     encoder=encoder,
-                    decoder=decoder)
+                    decoder=decoder,
+                    collater=collater)
 
 # Create the sampler
 vary = {
     "Pe": cp.Uniform(100.0, 200.0),
-    "f": cp.Uniform(0.9, 1.1)
+    "f": cp.Normal(1.0, 0.01)
 }
 
 """
@@ -84,9 +83,9 @@ my_campaign.set_sampler(my_sampler)
 my_campaign.draw_samples()
 my_campaign.populate_runs_dir()
 
-#   Use this instead to run the samples using EasyVVUQ on the localhost
+# Use this instead to run the samples using EasyVVUQ on the localhost
 my_campaign.apply_for_each_run_dir(uq.actions.ExecuteLocal(
-    "./tests/sc/sc_model.py ade_in.json"))
+    "tests/sc/sc_model.py ade_in.json"))
 
 my_campaign.collate()
 
@@ -153,12 +152,12 @@ if analysis.element_name() == 'SC_Analysis':
 
     if analysis.element_name() == 'SC_Analysis':
 
-        for S_i in results['sobol_indices']['u']:
-            ax.plot(x, results['sobol_indices']['u'][S_i], label=lbl[idx])
+        for S_i in results['sobols']['u']:
+            ax.plot(x, results['sobols']['u'][S_i], label=lbl[idx])
             idx += 1
     else:
-        for S_i in results['sobol_indices']['u'][1]:
-            ax.plot(x, results['sobol_indices']['u'][1][S_i], label=lbl[idx])
+        for S_i in results['sobols']['u'][1]:
+            ax.plot(x, results['sobols']['u'][1][S_i], label=lbl[idx])
             idx += 1
 
     leg = plt.legend(loc=0)

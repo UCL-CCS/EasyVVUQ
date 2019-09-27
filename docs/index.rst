@@ -42,6 +42,7 @@ Table of contents
    multisampler_tutorial
    restartable_campaign_tutorial
    custom_encoder
+   multiencoder_tutorial
 
 Indices and tables
 ==================
