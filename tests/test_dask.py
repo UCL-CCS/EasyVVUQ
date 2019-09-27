@@ -115,6 +115,3 @@ def test_cannonsim(tmpdir):
     campaign.apply_for_each_run_dir(actions)
     campaign.collate()
     campaign.apply_analysis(stats)
-
-
-
