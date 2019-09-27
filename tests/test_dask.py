@@ -110,7 +110,7 @@ def test_cannonsim(tmpdir):
     }
     sampler = uq.sampling.RandomSampler(vary=vary)
     campaign.set_sampler(sampler)
-    campaign.draw_samples(num_samples=5, replicas=5)
+    campaign.draw_samples(num_samples=500, replicas=1)
     campaign.populate_runs_dir()
     campaign.apply_for_each_run_dir(actions)
     campaign.collate()
