@@ -3,11 +3,10 @@ import chaospy as cp
 import os
 import sys
 import pytest
-import logging
 from pprint import pformat, pprint
 from gauss.encoder_gauss import GaussEncoder
 from gauss.decoder_gauss import GaussDecoder
-from dask import client
+from distributed import Client
 from dask_jobqueue import SLURMCluster
 
 __copyright__ = """
@@ -33,21 +32,8 @@ __copyright__ = """
 __license__ = "LGPL"
 
 
-# If cannonsim has not been built (to do so, run the Makefile in tests/cannonsim/src/)
-# then skip this test
-if not os.path.exists("tests/cannonsim/bin/cannonsim"):
-    pytest.skip(
-        "Skipping cannonsim test (cannonsim is not installed in tests/cannonsim/bin/)",
-        allow_module_level=True)
-
-cannonsim_path = os.path.realpath(os.path.expanduser("tests/cannonsim/bin/cannonsim"))
-
-
-logging.basicConfig(level=logging.CRITICAL)
-
-
-def test_cannonsim(tmpdir):
-    campaign = uq.CampaignDask(name='cannonsim', work_dir=tmpdir, db_type='sql')
+def dask_execute():
+    campaign = uq.CampaignDask(name='cannonsim', work_dir='.', db_type='sql')
     # Define parameter space for the cannonsim app
     params = {
         "angle": {
@@ -96,7 +82,7 @@ def test_cannonsim(tmpdir):
             'Dist', 'lastvx', 'lastvy'], header=0)
     # Create a collation element for this campaign
     collater = uq.collate.AggregateSamples(average=False)
-    actions = uq.actions.ExecuteLocal("tests/cannonsim/bin/cannonsim in.cannon output.csv")
+    actions = uq.actions.ExecuteLocal("cannonsim in.cannon output.csv")
     campaign.add_app(name='cannonsim',
                      params=params,
                      encoder=encoder,
@@ -112,9 +98,15 @@ def test_cannonsim(tmpdir):
     }
     sampler = uq.sampling.RandomSampler(vary=vary)
     campaign.set_sampler(sampler)
-    campaign.draw_samples(num_samples=500, replicas=1)
+    campaign.draw_samples(num_samples=56, replicas=1)
+    cluster = SLURMCluster(queue='mpp2', cores=28, processes=28, host='lxlogin7.lrz.de')
+    cluster.scale(jobs=2)
     populate = delayed(campaign.populate_runs_dir())
     populate.compute(client)
     campaign.apply_for_each_run_dir(actions, client)
     campaign.collate()
     campaign.apply_analysis(stats)
+
+
+if __name__ == '__main__':
+    dask_execute()
