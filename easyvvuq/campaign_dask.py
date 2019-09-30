@@ -1,7 +1,7 @@
 from easyvvuq import Campaign
 from dask import delayed
 import dask.bag
-from fabric import Connection
+
 
 class CampaignDask(Campaign):
     def apply_for_each_run_dir(self, client):
@@ -11,12 +11,16 @@ class CampaignDask(Campaign):
         bag = dask.bag.from_sequence(run_dirs)
         bag.map(action.act_on_dir).compute(client)
 
-    def populate_runs_dir(self):
+    def populate_runs_dir(self, connection):
         """Populate run directories based on runs in the CampaignDB.
 
         This calls the encoder element defined for the current application to
         create input files for it in each run directory, usually with varying
         input (scientific) parameters.
+
+        Parameters
+        ----------
+        connection -- a Fabric connection
 
         Returns
         -------
