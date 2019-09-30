@@ -47,7 +47,7 @@ logging.basicConfig(level=logging.CRITICAL)
 
 
 def test_cannonsim(tmpdir):
-    campaign = uq.Campaign(name='cannonsim', work_dir=tmpdir, db_type='sql')
+    campaign = uq.CampaignDask(name='cannonsim', work_dir=tmpdir, db_type='sql')
     # Define parameter space for the cannonsim app
     params = {
         "angle": {
@@ -115,6 +115,6 @@ def test_cannonsim(tmpdir):
     campaign.draw_samples(num_samples=500, replicas=1)
     populate = delayed(campaign.populate_runs_dir())
     populate.compute(client)
-    campaign.apply_for_each_run_dir(actions)
+    campaign.apply_for_each_run_dir(actions, client)
     campaign.collate()
     campaign.apply_analysis(stats)
