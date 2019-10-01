@@ -8,6 +8,7 @@ from gauss.encoder_gauss import GaussEncoder
 from gauss.decoder_gauss import GaussDecoder
 from distributed import Client
 from dask_jobqueue import SLURMCluster
+import subprocess
 
 __copyright__ = """
 
@@ -99,13 +100,14 @@ def dask_execute():
     sampler = uq.sampling.RandomSampler(vary=vary)
     campaign.set_sampler(sampler)
     campaign.draw_samples(num_samples=56, replicas=1)
-    cluster = SLURMCluster(queue='mpp2', cores=28, processes=28, host='lxlogin7.lrz.de')
+    cluster = SLURMCluster(queue='mpp2', cores=28, processes=28, host='lxlogin7.lrz.de', memory='64 GB')
     cluster.scale(jobs=2)
-    populate = delayed(campaign.populate_runs_dir())
-    populate.compute(client)
+    campaign.populate_runs_dir()
+    subprocess.run(['scp', '-r', campaign.campaign_dir, 'lxlo
+gin7.lrz.de:/home/hpc/pn69ju/di73kuj2/cannonsim/{}'.format(campaign._campaign_dir)])
     campaign.apply_for_each_run_dir(actions, client)
-    campaign.collate()
-    campaign.apply_analysis(stats)
+    #campaign.collate()
+    #campaign.apply_analysis(stats)
 
 
 if __name__ == '__main__':

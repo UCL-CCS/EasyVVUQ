@@ -30,37 +30,7 @@ __license__ = "LGPL"
 logger = logging.Logger(__name__)
 
 
-class SimpleCSV(BaseDecoder, decoder_name="csv"):
-
-    def __init__(self, target_filename=None, output_columns=None, header=0):
-
-        if target_filename is None:
-            msg = (
-                f"target_filename must be set for SimpleCSV. This should be"
-                f"the name of the output file this decoder acts on."
-            )
-            logging.error(msg)
-            raise Exception(msg)
-
-        if output_columns is None:
-            msg = (
-                f"output_columns must be specified for SimpleCSV. This should"
-                f"be the names of the output columns this decoder extracts"
-                f"from the target csv file."
-            )
-            logging.error(msg)
-            raise Exception(msg)
-
-        if len(output_columns) == 0:
-            msg = "output_columns cannot be empty."
-            logger.error(msg)
-            raise Exception(msg)
-
-        self.target_filename = target_filename
-        self.output_columns = output_columns
-        self.header = header
-
-        self.output_type = OutputType('sample')
+class SimpleCSVDask(SimpleCSV, decoder_name="csv_dask"):
 
     @staticmethod
     def _get_output_path(run_info=None, outfile=None):
@@ -92,10 +62,4 @@ class SimpleCSV(BaseDecoder, decoder_name="csv"):
 
         return data
 
-    def get_restart_dict(self):
-        return {"target_filename": self.target_filename,
-                "output_columns": self.output_columns,
-                "header": self.header}
 
-    def element_version(self):
-        return "0.1"

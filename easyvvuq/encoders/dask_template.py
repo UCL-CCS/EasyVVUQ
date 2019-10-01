@@ -32,7 +32,7 @@ def get_custom_template(template_txt, custom_delimiter='$'):
     return CustomTemplate(template_txt)
 
 
-class GenericEncoder(BaseEncoder, encoder_name="generic_template"):
+class GenericEncoderDask(GenericEncoder, encoder_name="generic_template_dask"):
     """GenericEncoder for substituting values into application template input.
 
     Parameters
@@ -100,19 +100,3 @@ class GenericEncoder(BaseEncoder, encoder_name="generic_template"):
         target_file_path = os.path.join(target_dir, self.target_filename)
         with open(target_file_path, 'w') as fp:
             fp.write(app_input_txt)
-
-    def _log_substitution_failure(self, exception):
-        reasoning = (f"\nFailed substituting into template "
-                     f"{self.template_fname}.\n"
-                     f"KeyError: {str(exception)}.\n")
-        logging.error(reasoning)
-
-        raise KeyError(reasoning)
-
-    def get_restart_dict(self):
-        return {"delimiter": self.encoder_delimiter,
-                "target_filename": self.target_filename,
-                "template_fname": self.template_fname}
-
-    def element_version(self):
-        return "0.1"
