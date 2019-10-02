@@ -102,7 +102,7 @@ def dask_execute():
     campaign.draw_samples(num_samples=56, replicas=1)
     cluster = SLURMCluster(job_extra=['--cluster=mpp2'], queue='mpp2_batch', cores=28, processes=28, memory='32 GB')
     print(cluster.job_script())
-    cluster.scale(2)
+    cluster.scale(4)
     client = Client(cluster)
     campaign.populate_runs_dir()
     campaign.apply_for_each_run_dir(actions, client)
