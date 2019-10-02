@@ -6,7 +6,7 @@ import pytest
 from pprint import pformat, pprint
 from gauss.encoder_gauss import GaussEncoder
 from gauss.decoder_gauss import GaussDecoder
-from distributed import Client
+from dask.distributed import Client
 from dask_jobqueue import SLURMCluster
 import subprocess
 
@@ -83,7 +83,7 @@ def dask_execute():
             'Dist', 'lastvx', 'lastvy'], header=0)
     # Create a collation element for this campaign
     collater = uq.collate.AggregateSamples(average=False)
-    actions = uq.actions.ExecuteLocal("cannonsim in.cannon output.csv")
+    actions = uq.actions.ExecuteLocal("/home/hpc/pn69ju/di73kuj2/cannonsim/bin/cannonsim in.cannon output.csv")
     campaign.add_app(name='cannonsim',
                      params=params,
                      encoder=encoder,
@@ -100,14 +100,14 @@ def dask_execute():
     sampler = uq.sampling.RandomSampler(vary=vary)
     campaign.set_sampler(sampler)
     campaign.draw_samples(num_samples=56, replicas=1)
-    cluster = SLURMCluster(queue='mpp2', cores=28, processes=28, host='lxlogin7.lrz.de', memory='64 GB')
-    cluster.scale(jobs=2)
+    cluster = SLURMCluster(job_extra=['--cluster=mpp2'], queue='mpp2_batch', cores=28, processes=28, memory='32 GB')
+    print(cluster.job_script())
+    cluster.scale(2)
+    client = Client(cluster)
     campaign.populate_runs_dir()
-    subprocess.run(['scp', '-r', campaign.campaign_dir, 'lxlo
-gin7.lrz.de:/home/hpc/pn69ju/di73kuj2/cannonsim/{}'.format(campaign._campaign_dir)])
     campaign.apply_for_each_run_dir(actions, client)
-    #campaign.collate()
-    #campaign.apply_analysis(stats)
+    campaign.collate()
+    campaign.apply_analysis(stats)
 
 
 if __name__ == '__main__':
