@@ -11,141 +11,60 @@ are the same as in the previous tutorial. We only outline the parts that will
 be different from when you ran it on your laptop. Luckily there aren't that
 many differences.
 
-EasyVVUQ Script Overview
-------------------------
-We illustrate the intended workflow using the following basic example script, a python implementation of the cooling coffee cup model used in the \textit{uncertainpy} documentation (code for which is in the tests/cooling/ subdirectory of the EasyVVUQ distribution directory). The code takes a small key/value pair input and outputs a comma separated value CSV) file.
-
-The input files for this tutorial are the *cooling_model* application (:download:`cooling_model.py <tutorial_files/cooling_model.py>`),
-an input template (:download:`cooling.template <tutorial_files/cooling.template>`) and the EasyVVUQ workflow
-script (:download:`easyvvuq_pce_tutorial.py <tutorial_files/easyvvuq_pce_tutorial.py>`).
-
-To run the script execute the following command ::
-
-    python3 easyvvuq_pce_tutorial.py
 
 Import necessary libraries
 --------------------------
 
-For this example we import both easyvvuq and chaospy (for the distributions). EasyVVUQ will be referred to as 'uq' in the code. ::
+In addition we need to import the relavant Dask classes that will let us
+set-up our cluster. ::
 
-    import easyvvuq as uq
-    import chaospy as cp
+    from dask.distributed import Client
+    from dask_jobqueue import SLURMCluster
 
 Create a new Campaign
 ---------------------
 
-As in the :doc:`Basic Tutorial <basic\_tutorial>`, we start by creating an EasyVVUQ Campaign. Here we call it 'coffee_pce'. ::
+As in the :doc:`Basic Tutorial <basic\_tutorial>`, we start by creating the
+campaign, the only difference is that we instantiate the CampaignDask class
+instead of Campaign ::
 
-    my_campaign = uq.Campaign(name='coffee_pce')
+    my_campaign = uq.CampaignDask(name='coffee_pce')
 
-Parameter space definition
---------------------------
+Initialize Cluster
+------------------
 
-The parameter space is defined using a dictionary. Each entry in the dictionary follows the format: ::
+In order to run the jobs that correspond to each sample drawn on a cluster we
+need to provide some information about. This assumes that you are executing
+this code on a login node of a computing cluster. It also assumes that we are
+using a SLURM cluster, but other options are possible and describe in the
+dask_jobqueue documentation.
 
-    "parameter_name": {"type" : "<value>", "min": <value>, "max": <value>, "default": <value>}
+Here we ask ::
 
-With a defined type, minimum and maximum value and default. If the parameter is not selected to vary in the Sampler (see below) then the default value is used for every run. In this example, our full parameter space looks like the following: ::
+    cluster = SLURMCluster(job_extra=['--cluster=mpp2'], queue='mpp2_batch', 
+                           cores=28, memory='1 GB')
 
-    params = {
-        "temp_init": {"type": "float", "min": 0.0, "max": 100.0, "default": 95.0},
-        "kappa": {"type": "float", "min": 0.0, "max": 0.1, "default": 0.025},
-        "t_env": {"type": "float", "min": 0.0, "max": 40.0, "default": 15.0},
-        "out_file": {"type": "string", "default": "output.csv"}
-    }
+We then ask to allocate a single nodes. ::
 
-App Creation
-------------
-In this example the GenericEncoder and SimpleCSV, both included in the core EasyVVUQ library, were used as the encoder/decoder pair for this application. ::
+    cluster.scale(1)
 
-    encoder = uq.encoders.GenericEncoder(
-        template_fname='tests/cooling/cooling.template',
-        delimiter='$',
-        target_filename='cooling_in.json')
+Then we create a Dask client associated with this cluster. ::
 
-    decoder = uq.decoders.SimpleCSV(target_filename="output.csv",
-                                output_columns=["te", "ti"],
-                                header=0)
+    client = Client(cluster)
 
-In this workflow all application runs will be analyzed as individual datapoint, so we set the collator to AggregateSamples without averaging. This element simply extracts information using the assigned decoder and adds it to a summary dataframe. ::
-
-    collater = uq.collate.AggregateSamples(average=False)
-
-GenericEncoder performs simple text substitution into a supplied template, using a specified delimiter to identify where parameters should be placed.
-The template is shown below (\$ is used as the delimiter).
-The template substitution approach is likely to suit most simple applications but in practice many large applications have more complex requirements, for example the multiple input files or the creation of a directory hierarchy.
-In such cases, users may write their own encoders by extending the BaseEncoder class. ::
-
-    {
-       "T0":"$temp_init",
-       "kappa":"$kappa",
-       "t_env":"$t_env",
-       "out_file":"$out_file"
-    }
-
-As can be inferred from its name SimpleCSV reads CVS files produced by the cooling model code. Again many applications output results in different formats, potentially requiring bespoke Decoders. Having created an encoder, decoder and parameter space definition for our `cooling` app, we can add it to our campaign. ::
-
-    # Add the app (automatically set as current app)
-    my_campaign.add_app(name="cooling",
-                        params=params,
-                        encoder=encoder,
-                        decoder=decoder,
-                        collater=collater)
-
-The Sampler
------------
-The user specified which parameters will vary and their corresponding distributions. In this case the kappa and t\_env parameters are varied, both according to a uniform distribution: ::
-
-    vary = {
-        "kappa": cp.Uniform(0.025, 0.075),
-        "t_env": cp.Uniform(15, 25)
-    }
-
-To perform a polynomial chaos expansion we will create a PCESampler, informing it which parameters to vary, and what polynomial rder to use for the PCE. ::
-
-    my_sampler = uq.sampling.PCESampler(vary=vary, polynomial_order=3)
-
-Finally we set the campaign to use this sampler. ::
-
-    my_campaign.set_sampler(my_sampler)
-
-Calling the campaign's draw\_samples() method will cause the specified number of samples to be added as runs to the campaign database, awaiting encoding and execution. If no arguments are passed to draw\_samples() then all samples will be drawn, unless the sampler is not finite. In this case PCESampler is finite (produces a finite number of samples) and we elect to draw all of them at once: ::
-
-    my_campaign.draw_samples()
 
 Execute Runs
 ------------
-my\_campaign.populate\_runs\_dir() will create a directory hierarchy containing the encoded input files for every run that has not yet been completed. Finally, in this example, a shell command is executed in each directory to execute the simple test code. In practice (in a real HPC workflow) this stage would be best handled using, for example, a pilot job manager. ::
+my\_campaign.populate\_runs\_dir() will create a directory hierarchy
+containing the encoded input files for every run that has not yet been
+completed. Finally, in this example, a shell command is executed in each
+directory to execute the simple test code. In practice (in a real HPC
+workflow) this stage would be best handled using, for example, a pilot job
+manager. ::
 
     my_campaign.populate_runs_dir()
-    my_campaign.apply_for_each_run_dir(uq.actions.ExecuteLocal("python3 cooling_model.py cooling_in.json"))
+    my_campaign.apply_for_each_run_dir(uq.actions.ExecuteLocal("python3
+    cooling_model.py cooling_in.json"), client)
 
-Collation and analysis
-----------------------
-Calling my\_campaign.collate() at any stage causes the campaign to aggregate decoded simulation output for all runs which have not yet been collated. ::
-
-    my_campaign.collate()
-
-This collated data is stored in the campaign database. An analysis element, here PCEAnalysis, can then be applied to the campaign's collation result. ::
-
-    my_analysis = uq.analysis.PCEAnalysis(sampler=my_sampler, qoi_cols=["te", "ti"])
-    my_campaign.apply_analysis(my_analysis)
-
-The output of this is dependent on the type of analysis element. ::
-
-    # Get Descriptive Statistics
-    results = my_campaign.get_last_analysis()
-    stats = results['statistical_moments']['te']
-    per = results['percentiles']['te']
-    sobols = results['sobols_first']['te']
-
-I don't want to use Polynomial Chaos
-------------------------------------
-If you wish to use something other than PCE, it is simply a matter of changing the sampling and analysis element used. For example, to use a Stochastic Collocation approach, replace the sampler line with: ::
-
-    my_sampler = uq.sampling.SCSampler(vary=vary, polynomial_order=3)
-
-And the analysis can be done with: ::
-
-    my_analysis = uq.analysis.SCAnalysis(sampler=my_sampler, qoi_cols=["te", "ti"])
-    my_campaign.apply_analysis(my_analysis)
+At this stage the computation will block until the requested resources are
+allocated and all the comptutations are completed.

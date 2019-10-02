@@ -100,7 +100,7 @@ def dask_execute():
     sampler = uq.sampling.RandomSampler(vary=vary)
     campaign.set_sampler(sampler)
     campaign.draw_samples(num_samples=56, replicas=1)
-    cluster = SLURMCluster(job_extra=['--cluster=mpp2'], queue='mpp2_batch', cores=28, processes=28, memory='32 GB')
+    cluster = SLURMCluster(job_extra=['--cluster=mpp2'], queue='mpp2_batch', cores=56, processes=56, memory='64 GB')
     print(cluster.job_script())
     cluster.scale(4)
     client = Client(cluster)
