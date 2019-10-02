@@ -48,6 +48,11 @@ We then ask to allocate a single nodes. ::
 
     cluster.scale(1)
 
+At this stage you can print the batch file that will be used to submit the
+worker processes. ::
+
+    print(cluster.job_script())
+
 Then we create a Dask client associated with this cluster. ::
 
     client = Client(cluster)
@@ -55,12 +60,10 @@ Then we create a Dask client associated with this cluster. ::
 
 Execute Runs
 ------------
-my\_campaign.populate\_runs\_dir() will create a directory hierarchy
-containing the encoded input files for every run that has not yet been
-completed. Finally, in this example, a shell command is executed in each
-directory to execute the simple test code. In practice (in a real HPC
-workflow) this stage would be best handled using, for example, a pilot job
-manager. ::
+
+The only difference here is that you will need to supply the client argument
+to the call to apply_for_each_run_dir. The remainder is exactly the same as
+before and will work as before. ::
 
     my_campaign.populate_runs_dir()
     my_campaign.apply_for_each_run_dir(uq.actions.ExecuteLocal("python3

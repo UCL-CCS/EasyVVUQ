@@ -50,6 +50,7 @@ if __name__ == '__main__':
     cluster = SLURMCluster(job_extra=['--cluster=mpp2'], queue='mpp2_batch', 
                            cores=28, memory='1 GB')
     cluster.scale(1)
+    print(cluster.job_script())
     client = Client(cluster)
 
     my_campaign.populate_runs_dir()
