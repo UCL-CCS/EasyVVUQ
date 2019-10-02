@@ -108,7 +108,7 @@ def dask_execute():
     campaign.apply_for_each_run_dir(actions, client)
     campaign.collate()
     campaign.apply_analysis(stats)
-
+    print(campaign.get_last_analysis())
 
 if __name__ == '__main__':
     dask_execute()

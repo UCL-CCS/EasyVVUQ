@@ -38,6 +38,7 @@ Table of contents
    installation
    concepts
    basic_tutorial
+   dask_tutorial
    cooling_coffee_cup
    multisampler_tutorial
    restartable_campaign_tutorial
