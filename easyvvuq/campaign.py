@@ -646,7 +646,7 @@ class Campaign:
         Returns
         -------
         """
-        
+
         # Loop through all runs in this campaign with status ENCODED, and
         # run the specified action on each run's dir
         for run_id, run_data in self.campaign_db.runs(status=status, app_id=self._active_app['id']):
