@@ -1,5 +1,4 @@
 from easyvvuq import Campaign
-from dask import delayed
 import dask.bag
 from easyvvuq.constants import Status
 

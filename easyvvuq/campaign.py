@@ -13,8 +13,6 @@ from easyvvuq.constants import default_campaign_prefix, Status
 from easyvvuq.data_structs import RunInfo, CampaignInfo, AppInfo
 from easyvvuq.sampling import BaseSamplingElement
 
-import dask.bag as db
-
 __copyright__ = """
 
     Copyright 2018 Robin A. Richardson, David W. Wright
