@@ -82,18 +82,26 @@ def test_multiencoder(tmpdir):
             "max": 1000.0,
             "default": 10.0}}
 
-    # Create two encoders
-    encoder1 = uq.encoders.GenericEncoder(
-        template_fname='tests/cannonsim/test_input/cannonsim.template',
-        delimiter='#',
-        target_filename='in.cannon')
-    encoder2 = uq.encoders.GenericEncoder(
-        template_fname='tests/cannonsim/test_input/cannonsim.template',
-        delimiter='#',
-        target_filename='in.cannon.2')
+    # Specify a complicated directory hierarchy to test the DirectoryBuilder encoder
+    directory_tree = {'dir1' : {'dir2' : {'dir3' : None, 'dir4' : None}}, 'dir5' : {'dir6' : None}}
 
-    # Combine both encoders into a single encoder
-    multiencoder = uq.encoders.MultiEncoder(encoder1, encoder2)
+    # Create a multiencoder combining a directory build, and two template encodes
+    multiencoder = uq.encoders.MultiEncoder(
+
+        uq.encoders.DirectoryBuilder(tree=directory_tree),
+
+        uq.encoders.GenericEncoder(
+            template_fname='tests/cannonsim/test_input/cannonsim.template',
+            delimiter='#',
+            target_filename='dir1/dir2/dir3/in.cannon'
+        ),
+
+        uq.encoders.GenericEncoder(
+            template_fname='tests/cannonsim/test_input/cannonsim.template',
+            delimiter='#',
+            target_filename='dir5/dir6/in.cannon.2'
+        )
+    )
 
     # Create decoder and collater for the cannonsim app
     decoder = uq.decoders.SimpleCSV(
@@ -138,7 +146,7 @@ def test_multiencoder(tmpdir):
     # Encode and execute.
     my_campaign.populate_runs_dir()
     my_campaign.apply_for_each_run_dir(
-        uq.actions.ExecuteLocal("tests/cannonsim/bin/cannonsim in.cannon output.csv"))
+        uq.actions.ExecuteLocal("tests/cannonsim/bin/cannonsim dir5/dir6/in.cannon.2 output.csv"))
 
     print("Runs list after encoding and execution:")
     pprint(my_campaign.list_runs())
