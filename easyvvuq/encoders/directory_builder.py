@@ -61,11 +61,14 @@ class DirectoryBuilder(BaseEncoder, encoder_name="directory_builder"):
         if not target_dir:
             raise RuntimeError('No target directory specified to encoder')
 
+        self.create_dir_tree(self.tree, target_dir)
+
+    def create_dir_tree(self, dirtree, root):
         # A beautiful Vytas creation
-        if self.tree is not None:
-            for directory in self.tree.keys():
+        if dirtree is not None:
+            for directory in dirtree.keys():
                 os.mkdir(os.path.join(root, directory))
-                create(dirtree[directory], os.path.join(root, directory))
+                self.create_dir_tree(dirtree[directory], os.path.join(root, directory))
 
     def get_restart_dict(self):
         return {"tree": self.tree}

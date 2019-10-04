@@ -1,6 +1,7 @@
 from .base import BaseEncoder
 from .generic_template import GenericEncoder
 from .multiencoder import MultiEncoder
+from .directory_builder import DirectoryBuilder
 
 __copyright__ = """
 
