@@ -83,7 +83,7 @@ def test_multiencoder(tmpdir):
             "default": 10.0}}
 
     # Specify a complicated directory hierarchy to test the DirectoryBuilder encoder
-    directory_tree = {'dir1' : {'dir2' : {'dir3' : None, 'dir4' : None}}, 'dir5' : {'dir6' : None}}
+    directory_tree = {'dir1': {'dir2': {'dir3': None, 'dir4': None}}, 'dir5': {'dir6': None}}
 
     # Create a multiencoder combining a directory build, and two template encodes
     multiencoder = uq.encoders.MultiEncoder(

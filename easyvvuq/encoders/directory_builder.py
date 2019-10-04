@@ -24,6 +24,7 @@ __copyright__ = """
 """
 __license__ = "LGPL"
 
+
 class DirectoryBuilder(BaseEncoder, encoder_name="directory_builder"):
     """DirectoryBuilder builds the specified directory structure for a Run.
 
