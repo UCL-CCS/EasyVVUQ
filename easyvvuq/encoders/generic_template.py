@@ -78,7 +78,7 @@ class GenericEncoder(BaseEncoder, encoder_name="generic_template"):
             raise RuntimeError('No target directory specified to encoder')
 
         str_params = {}
-        for key, value in local_params.items():
+        for key, value in params.items():
             str_params[key] = str(value)
 
         try:
