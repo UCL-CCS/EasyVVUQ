@@ -50,8 +50,6 @@ class GenericEncoder(BaseEncoder, encoder_name="generic_template"):
         self.target_filename = target_filename
         self.template_fname = template_fname
 
-        self.fixture_support = True
-
         # Check that user has specified the file to use as template
         if template_fname is None:
             msg = ("GenericEncoder must be given 'template_fname' - the "
@@ -64,7 +62,7 @@ class GenericEncoder(BaseEncoder, encoder_name="generic_template"):
             self.template = get_custom_template(
                 template_txt, custom_delimiter=self.encoder_delimiter)
 
-    def encode(self, params={}, target_dir='', fixtures=None):
+    def encode(self, params={}, target_dir=''):
         """Substitutes `params` into a template application input, saves in
         `target_dir`
 
@@ -74,15 +72,7 @@ class GenericEncoder(BaseEncoder, encoder_name="generic_template"):
             Parameter information in dictionary.
         target_dir    : str
             Path to directory where application input will be written.
-        fixtures      : dict
-            Information of files/assets for fixture type parameters.
         """
-
-        if fixtures is not None:
-            local_params = self.substitute_fixtures_params(params, fixtures,
-                                                           target_dir)
-        else:
-            local_params = params
 
         if not target_dir:
             raise RuntimeError('No target directory specified to encoder')

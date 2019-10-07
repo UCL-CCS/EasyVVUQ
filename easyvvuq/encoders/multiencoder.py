@@ -43,12 +43,12 @@ class MultiEncoder(BaseEncoder, encoder_name="multiencoder"):
             for serialized_encoder in self.serialized_list_of_encoders:
                 self.encoders.append(BaseEncoder.deserialize(serialized_encoder))
 
-    def encode(self, params=None, fixtures=None, target_dir=''):
+    def encode(self, params=None, target_dir=''):
         """
             Applies all encoders in the list of encoders.
         """
         for encoder in self.encoders:
-            encoder.encode(params=params, fixtures=fixtures, target_dir=target_dir)
+            encoder.encode(params=params, target_dir=target_dir)
 
     def element_version(self):
         return "0.1"

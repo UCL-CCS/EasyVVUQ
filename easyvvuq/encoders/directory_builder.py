@@ -46,7 +46,7 @@ class DirectoryBuilder(BaseEncoder, encoder_name="directory_builder"):
     def __init__(self, tree):
         self.tree = tree
 
-    def encode(self, params={}, target_dir='', fixtures=None):
+    def encode(self, params={}, target_dir=''):
         """Builds the directory structure specified in self.tree into the `target_dir` directory
 
         Parameters
@@ -55,8 +55,6 @@ class DirectoryBuilder(BaseEncoder, encoder_name="directory_builder"):
             Parameter information in dictionary.
         target_dir    : str
             Path to directory where application input will be written.
-        fixtures      : dict
-            Currently not handled.
         """
 
         if not target_dir:
