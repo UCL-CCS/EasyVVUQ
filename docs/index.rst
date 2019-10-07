@@ -38,8 +38,8 @@ Table of contents
    installation
    concepts
    basic_tutorial
-   dask_tutorial
    cooling_coffee_cup
+   dask_tutorial
    multisampler_tutorial
    restartable_campaign_tutorial
    custom_encoder
