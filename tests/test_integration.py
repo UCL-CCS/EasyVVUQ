@@ -62,7 +62,7 @@ def campaign_test():
 def campaign():
     def _campaign(work_dir, campaign_name, app_name, params, encoder, decoder, sampler,
                   collater, actions, stats, vary, num_samples=0, replicas=1, db_type='sql',
-                  call_fn=None, fixtures=None):
+                  call_fn=None):
         my_campaign = uq.Campaign(name=campaign_name, work_dir=work_dir, db_type=db_type)
         logging.debug("Serialized encoder:", encoder.serialize())
         logging.debug("Serialized decoder:", decoder.serialize())
@@ -72,8 +72,7 @@ def campaign():
                             params=params,
                             encoder=encoder,
                             decoder=decoder,
-                            collater=collater,
-                            fixtures=fixtures)
+                            collater=collater)
         my_campaign.set_app(app_name)
         logging.debug("Serialized sampler:", sampler.serialize())
         # Set the campaign to use this sampler
@@ -253,6 +252,9 @@ def test_gauss(tmpdir, campaign):
     }
     encoder = uq.encoders.GenericEncoder(template_fname='tests/gauss/gauss.template',
                                          target_filename='gauss_in.json')
+    fixtures_encoder = uq.encoders.ApplyFixtures(fixtures=fixtures)
+    encoder_with_fixtures = uq.encoders.MultiEncoder(encoder, fixtures_encoder)
+
     decoder = GaussDecoder(target_filename=params['out_file']['default'])
     collater = uq.collate.AggregateSamples(average=False)
     actions = uq.actions.ExecuteLocal("tests/gauss/gauss_json.py gauss_in.json")
@@ -266,10 +268,10 @@ def test_gauss(tmpdir, campaign):
     encoder = GaussEncoder(target_filename='gauss_in.json')
     campaign(tmpdir, 'gauss', 'gauss', params, encoder, decoder, sampler,
              collater, actions, stats, vary, 2, 2)
-    campaign(tmpdir, 'gauss', 'gauss', params, encoder, decoder, sampler,
-             collater, actions, stats, vary, 2, 2, fixtures=fixtures)
-    campaign(tmpdir, 'gauss', 'gauss', params, encoder, decoder, sampler,
-             collater, actions, stats, vary, 2, 2, db_type='json', fixtures=fixtures)
+    campaign(tmpdir, 'gauss', 'gauss', params, encoder_with_fixtures, decoder, sampler,
+             collater, actions, stats, vary, 2, 2)
+    campaign(tmpdir, 'gauss', 'gauss', params, encoder_with_fixtures, decoder, sampler,
+             collater, actions, stats, vary, 2, 2, db_type='json')
 
 
 def test_pce(tmpdir, campaign):
