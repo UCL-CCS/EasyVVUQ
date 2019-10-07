@@ -74,7 +74,6 @@ class AppTable(Base):
     output_decoder = Column(String)
     collater = Column(String)
     params = Column(String)
-    fixtures = Column(String)
 
 
 class RunTable(Base):
@@ -194,8 +193,7 @@ class CampaignDB(BaseCampaignDB):
             'input_encoder': selected_app.input_encoder,
             'output_decoder': selected_app.output_decoder,
             'collater': selected_app.collater,
-            'params': ParamsSpecification.deserialize(selected_app.params),
-            'fixtures': json.loads(selected_app.fixtures)
+            'params': ParamsSpecification.deserialize(selected_app.params)
         }
 
         return app_dict
