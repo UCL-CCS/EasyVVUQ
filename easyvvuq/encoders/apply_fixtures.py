@@ -1,7 +1,6 @@
 import os
 import shutil
 from .base import BaseEncoder
-import logging
 
 __copyright__ = """
 
@@ -43,9 +42,8 @@ class ApplyFixtures(BaseEncoder, encoder_name="apply_fixtures"):
     def encode(self, params={}, target_dir=''):
 
         if self.fixtures is not None:
-            local_params = self.substitute_fixtures_params(params, self.fixtures, target_dir)
-        else:
-            local_params = params
+            # TODO: Check if this should be altering the params block
+            self.substitute_fixtures_params(params, self.fixtures, target_dir)
 
     def substitute_fixtures_params(self, params, fixtures, target_dir, path_depth=0):
 
