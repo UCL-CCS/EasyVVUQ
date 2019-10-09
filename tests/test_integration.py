@@ -67,6 +67,7 @@ def campaign():
         logging.debug("Serialized encoder:", encoder.serialize())
         logging.debug("Serialized decoder:", decoder.serialize())
         logging.debug("Serialized collation:", collater.serialize())
+
         # Add the cannonsim app
         my_campaign.add_app(name=app_name,
                             params=params,

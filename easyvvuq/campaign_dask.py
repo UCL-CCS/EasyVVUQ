@@ -7,6 +7,7 @@ class CampaignDask(Campaign):
     """ This extends the standard Campaign to enable execution on clusters using
     the Dask JobQueue functionality.
     """
+
     def apply_for_each_run_dir(self, action, client, status=Status.ENCODED):
         """
         For each run in this Campaign's run list, apply the specified action
