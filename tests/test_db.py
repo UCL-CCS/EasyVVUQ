@@ -28,7 +28,6 @@ def app_info():
         "out_file": {
             "type": "string",
             "default": "output.csv"}}),
-        None,
         uq.encoders.GenericEncoder(
             template_fname='tests/cooling/cooling.template',
             delimiter='$',
