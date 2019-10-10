@@ -57,8 +57,7 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
             grid. Default value is False.
 
         growth (bool, None), optional
-            If True, quadrature point became nested for sparse grids.
-            Default value is the same as ``sparse`` if omitted, otherwise None.
+            If True, quadrature point became nested.
         """
 
         if vary is None:
@@ -94,10 +93,12 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
         self.quad_order = polynomial_order + 1
         self.quad_rule = quadrature_rule
         self.quad_sparse = sparse
-        if sparse:
+
+        # Clenshaw-Curtis should be nested if sparse (#139 chaospy issue)
+        self.quad_growth = growth
+        cc = ['c', 'C', 'clenshaw_curtis', 'Clenshaw_Curtis']
+        if sparse and quadrature_rule in cc:
             self.quad_growth = True
-        else:
-            self.quad_growth = growth
 
         # Nodes and weights for the integration
         self._nodes, _ = cp.generate_quadrature(order=self.quad_order,
