@@ -88,4 +88,4 @@ before and will work as before. ::
     cooling_model.py cooling_in.json"), client)
 
 At this stage the computation will block until the requested resources are
-allocated and all the comptutations are completed.
+allocated and all the computations are completed.
