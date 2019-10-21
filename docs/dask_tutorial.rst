@@ -89,3 +89,23 @@ before and will work as before. ::
 
 At this stage the computation will block until the requested resources are
 allocated and all the computations are completed.
+
+
+Notes and Workarounds
+---------------------
+
+Note that Dask JobQueue will want to establish a TCP connection
+between the compute and login nodes. It is possible that the admins on
+your system don't allow this. The reasons for this are unclear but we
+suspect they are mad with power. If that is the case, there is a quick
+workaround. You should try running your script in interactive mode and
+see if that solves the problem. For example on SLURM it could be
+something like this: ::
+
+    salloc --partition=mpp2_inter
+
+And then, after you get in to the interactive mode prompt execute the
+script normally, e.g. ::
+
+    python tutorial_files/easyvvuq_dask_tutorial.py
+
