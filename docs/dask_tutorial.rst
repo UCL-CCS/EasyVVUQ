@@ -84,8 +84,7 @@ to the call to apply_for_each_run_dir. The remainder is exactly the same as
 before and will work as before. ::
 
     my_campaign.populate_runs_dir()
-    my_campaign.apply_for_each_run_dir(uq.actions.ExecuteLocal("python3
-    cooling_model.py cooling_in.json"), client)
+    my_campaign.apply_for_each_run_dir(uq.actions.ExecuteLocal("python3 cooling_model.py cooling_in.json"), client)
 
 At this stage the computation will block until the requested resources are
 allocated and all the computations are completed.
@@ -109,3 +108,4 @@ script normally, e.g. ::
 
     python tutorial_files/easyvvuq_dask_tutorial.py
 
+B
