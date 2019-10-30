@@ -196,7 +196,11 @@ class Campaign:
         """
 
         # Create temp dir for campaign
-        campaign_dir = tempfile.mkdtemp(prefix=default_campaign_prefix, dir=work_dir)
+        campaign_prefix = default_campaign_prefix
+        if name is not None:
+            campaign_prefix = name
+
+        campaign_dir = tempfile.mkdtemp(prefix=campaign_prefix, dir=work_dir)
 
         self._campaign_dir = os.path.relpath(campaign_dir, start=work_dir)
 
