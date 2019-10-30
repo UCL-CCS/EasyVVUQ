@@ -1,6 +1,5 @@
 import numpy as np
 import csv
-from chaospy import Dist
 
 __copyright__ = """
 
