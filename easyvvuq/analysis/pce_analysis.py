@@ -94,7 +94,7 @@ class PCEAnalysis(BaseAnalysisElement):
         for run_id in data_frame.run_id.unique():
             for k in qoi_cols:
                 values = data_frame.loc[data_frame['run_id'] == run_id][k]
-                samples[k].append(values)
+                samples[k].append(values.values)
 
         # Compute descriptive statistics for each quantity of interest
         for k in qoi_cols:
