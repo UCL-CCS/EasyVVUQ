@@ -30,7 +30,7 @@ For example::
 
   attr1,attr2,attr3
 
- is correct, while::
+is correct, while::
 
    attr1, attr2, attr3
 
