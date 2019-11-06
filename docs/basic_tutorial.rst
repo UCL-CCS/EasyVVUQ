@@ -16,6 +16,27 @@ script (:download:`easyvvuq_gauss_tutorial.py <tutorial_files/easyvvuq_gauss_tut
 In preparation for this tutorial download the files and place them in
 an empty directory, then change into this directory.
 
+Important Note About the CSV File Format
+---------------------------------
+
+Please note that when creating CSV files to be used with EasyVVUQ
+and in the examples below, special care needs to be taken to respect
+RFC 4180. One common issue is that people leave spaces around
+attribute names in the first row of the text file. These spaces are
+not trimmed and become part of the attribute name which causes
+confusion later.
+
+For example::
+
+  attr1,attr2,attr3
+
+ is correct, while::
+
+   attr1, attr2, attr3
+
+Is wrong (unless your attribute names are meant to have a space at the
+start).
+
 Gauss Application
 -----------------
 
