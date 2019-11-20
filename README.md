@@ -43,16 +43,18 @@ First clone the repository to your computer:
 git clone https://github.com/UCL-CCS/EasyVVUQ.git
 ```
 
+Note: As above, you need to be sure you are installing for Python 3 - if necessary replace `pip` with `pip3` and `python` with `python3` in the commands below.
+
 We are trying to keep dependencies at a minimum but a few are inevitable, to install them use:
 ```
 cd EasyVVUQ/
 
-pip3 install -r requirements.txt
+pip install -r requirements.txt
 ```
 
 Then the library can be installed using:
 ```buildoutcfg
-python3 setup.py install
+python setup.py install
 ```
 
 To complete the tests you need to compile (requires `g++`) the `cannonsim` code:
