@@ -74,7 +74,7 @@ my_campaign.set_sampler(my_sampler)
 
 # 5. Get run parameters
 my_campaign.draw_samples(num_samples=3,
-                         replicas=5)
+                         replicas=1)
 
 # 6. Create run input directories
 my_campaign.populate_runs_dir()
