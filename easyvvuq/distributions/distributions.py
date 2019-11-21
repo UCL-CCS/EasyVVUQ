@@ -79,4 +79,3 @@ def custom_histogram(filename):
 
     while True:
         yield np.random.choice(values, p=probabilities)
-
