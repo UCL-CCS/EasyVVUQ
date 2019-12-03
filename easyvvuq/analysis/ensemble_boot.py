@@ -54,7 +54,6 @@ def confidence_interval(dist, value, alpha, pivotal=False):
           Lowest value of the confidence interval
 
     """
-
     if pivotal:
 
         low = 2 * value - np.percentile(dist, 100 * (1 - alpha / 2.))
@@ -102,21 +101,18 @@ def bootstrap(data, stat_func=None, alpha=0.05,
     float:
           Lowest value of the confidence interval
     """
-
     stat = data.apply(stat_func)
-
+        
     if sample_size is None:
         sample_size = len(data)
 
-    dist = []
+    #dist = []
 
-    for l in range(n_samples):
+    sample = data.sample(sample_size)
 
-        sample = data.sample(sample_size)
+    #dist.append(sample.apply(stat_func))
 
-        dist.append(sample.apply(stat_func))
-
-    return confidence_interval(dist, stat, alpha, pivotal=pivotal)
+    return confidence_interval(sample, stat, alpha, pivotal=pivotal)
 
 
 def ensemble_bootstrap(data, groupby=[], qoi_cols=[],
@@ -156,7 +152,6 @@ def ensemble_bootstrap(data, groupby=[], qoi_cols=[],
         Description of input data using bootstrap statistic and high/low
         confidence intervals.
     """
-
     agg_funcs = {}
 
     if not qoi_cols:
@@ -177,8 +172,11 @@ def ensemble_bootstrap(data, groupby=[], qoi_cols=[],
 
     grouped_data = data.groupby(groupby)
 
+    size = grouped_data.size()
+
     # Apply bootstrapping to all value columns selected
     # Note results come a tuple per cell
+    
     results = grouped_data.agg(agg_funcs)
 
     outputs = [stat_name, 'high', 'low']
