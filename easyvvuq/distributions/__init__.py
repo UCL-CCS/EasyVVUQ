@@ -1,5 +1,3 @@
-from .distributions import uniform_integer
-
 __copyright__ = """
 
     Copyright 2018 Robin A. Richardson, David W. Wright
