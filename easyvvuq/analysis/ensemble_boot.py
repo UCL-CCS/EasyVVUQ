@@ -102,7 +102,7 @@ def bootstrap(data, stat_func=None, alpha=0.05,
           Lowest value of the confidence interval
     """
     stat = data.apply(stat_func)
-        
+
     if sample_size is None:
         sample_size = len(data)
 
@@ -112,7 +112,7 @@ def bootstrap(data, stat_func=None, alpha=0.05,
 
     #dist.append(sample.apply(stat_func))
 
-    return confidence_interval(sample, stat, alpha, pivotal=pivotal)
+    return confidence_interval(sample.apply(stat_func), stat, alpha, pivotal=pivotal)
 
 
 def ensemble_bootstrap(data, groupby=[], qoi_cols=[],
@@ -176,7 +176,7 @@ def ensemble_bootstrap(data, groupby=[], qoi_cols=[],
 
     # Apply bootstrapping to all value columns selected
     # Note results come a tuple per cell
-    
+
     results = grouped_data.agg(agg_funcs)
 
     outputs = [stat_name, 'high', 'low']
