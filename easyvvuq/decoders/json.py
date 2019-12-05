@@ -45,7 +45,7 @@ class JSONDecoder(BaseDecoder, decoder_name="json"):
 
         if output_columns is None:
             msg = (
-                f"output_columns must be specified for SimpleCSV. This should"
+                f"output_columns must be specified for JSONDecoder. This should"
                 f"be the names of the output columns this decoder extracts"
                 f"from the target csv file."
             )
