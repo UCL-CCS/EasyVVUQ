@@ -92,7 +92,13 @@ class JSONDecoder(BaseDecoder, decoder_name="json"):
         with open(out_path) as fd:
             raw_data = json.load(fd)
 
-        data = dict([(col[-1], get_value(raw_data, col)) for col in self.output_columns])
+        data = []
+        for col in self.output_columns:
+            if isinstance(col, str):
+                data.append((col, raw_data[col]))
+            elif type(col) is list:
+                data.append((col[-1], get_value(raw_data, col)))
+        data = dict(data)
 
         return data
 
