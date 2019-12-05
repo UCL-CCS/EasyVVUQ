@@ -4,6 +4,7 @@ import pandas as pd
 from easyvvuq import OutputType
 from .base import BaseDecoder
 import json
+import numpy as np
 
 __copyright__ = """
 
@@ -37,7 +38,7 @@ class JSONDecoder(BaseDecoder, decoder_name="json"):
 
         if target_filename is None:
             msg = (
-                f"target_filename must be set for SimpleCSV. This should be"
+                f"target_filename must be set for JSONDecoder. This should be"
                 f"the name of the output file this decoder acts on."
             )
             logging.error(msg)
@@ -46,8 +47,10 @@ class JSONDecoder(BaseDecoder, decoder_name="json"):
         if output_columns is None:
             msg = (
                 f"output_columns must be specified for JSONDecoder. This should"
-                f"be the names of the output columns this decoder extracts"
-                f"from the target csv file."
+                f"be the names of the output fields this decoder extracts"
+                f"from the target json file. For nested values use arrays"
+                f"e.g. ['root', 'node', 'field'] where field is the leaf"
+                f"that contains the value you need."
             )
             logging.error(msg)
             raise Exception(msg)
@@ -87,6 +90,12 @@ class JSONDecoder(BaseDecoder, decoder_name="json"):
                 data = data[node]
             return data
 
+        def to_np_if_list(x):
+            if isinstance(x, list):
+                return np.array(x)
+            else:
+                return x
+
         out_path = self._get_output_path(run_info, self.target_filename)
 
         with open(out_path) as fd:
@@ -95,9 +104,9 @@ class JSONDecoder(BaseDecoder, decoder_name="json"):
         data = []
         for col in self.output_columns:
             if isinstance(col, str):
-                data.append((col, raw_data[col]))
+                data.append((col, to_np_if_list(raw_data[col])))
             elif type(col) is list:
-                data.append((col[-1], get_value(raw_data, col)))
+                data.append((col[-1], to_np_if_list(get_value(raw_data, col))))
         data = dict(data)
 
         return data
