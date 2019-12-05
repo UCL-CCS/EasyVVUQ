@@ -92,7 +92,7 @@ class JSONDecoder(BaseDecoder, decoder_name="json"):
 
         def to_np_if_list(x):
             if isinstance(x, list):
-                return np.array(x)
+                return [np.array(x)]
             else:
                 return x
 
