@@ -7,9 +7,10 @@ def test_jsondecoder_basic():
     decoder = JSONDecoder(os.path.join('jsondecoder', 'fredrik.json'), ['cfrac', 'we', 'v'])
     run_info = {'run_dir' : 'tests'}
     data = decoder.parse_sim_output(run_info)
-    assert(data['cfrac'] ==  0.24000000131541285)
+    assert(data['cfrac'] == 0.24000000131541285)
     assert(data['we'] == -0.4910355508327484)
-    assert(all(data['v'] ==  np.array([
+    assert(all(data['v'] ==
+    np.array([
         0.014841768890619278,
         0.014779693447053432,
         0.014733896590769291,
