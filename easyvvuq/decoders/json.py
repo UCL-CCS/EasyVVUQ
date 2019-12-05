@@ -82,13 +82,17 @@ class JSONDecoder(BaseDecoder, decoder_name="json"):
             return True
 
     def parse_sim_output(self, run_info={}):
+        def get_value(data, path):
+            for node in path:
+                data = data[node]
+            return data
 
         out_path = self._get_output_path(run_info, self.target_filename)
 
         with open(out_path) as fd:
             raw_data = json.load(fd)
 
-        data = dict([(col, raw_data[col]) for col in self.output_columns])
+        data = dict([(col[-1], get_value(raw_data, col)) for col in self.output_columns])
 
         return data
 
