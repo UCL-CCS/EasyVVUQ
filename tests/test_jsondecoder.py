@@ -145,4 +145,3 @@ def test_json_nested():
     assert((data['root1.node1.leaf1'] == np.array([0.33])).all())
     assert((data['root1.leaf2'] == np.array([0.32])).all())
     assert((data['leaf3'][0] == np.array([0.2, 0.3])).all())
-
