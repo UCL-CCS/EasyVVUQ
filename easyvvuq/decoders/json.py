@@ -107,7 +107,7 @@ class JSONDecoder(BaseDecoder, decoder_name="json"):
                 data.append((col, to_np_if_list(raw_data[col])))
             elif type(col) is list:
                 data.append((col[-1], to_np_if_list(get_value(raw_data, col))))
-        data = dict(data)
+        data = pd.DataFrame(dict(data))
 
         return data
 
