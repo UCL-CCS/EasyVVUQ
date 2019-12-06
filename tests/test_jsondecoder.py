@@ -9,7 +9,6 @@ def test_jsondecoder_basic():
     data = decoder.parse_sim_output(run_info)
     assert((data['cfrac'] == np.array([0.24000000131541285])).all())
     assert((data['we'] == np.array([-0.4910355508327484])).all())
-    print(np.array(data['v'][0]))
     assert((data['v'][0] == np.array([0.014841768890619278,
                                       0.014779693447053432,
                                       0.014733896590769291,
@@ -139,4 +138,11 @@ def test_jsondecoder_basic():
 
 
 def test_json_nested():
-    pass
+    decoder = JSONDecoder(os.path.join('jsondecoder', 'nested.json'),
+                          [['root1', 'node1', 'leaf1'], ['root1', 'leaf2'], 'leaf3'])
+    run_info = {'run_dir': 'tests'}
+    data = decoder.parse_sim_output(run_info)
+    assert((data['root1.node1.leaf1'] == np.array([0.33])).all())
+    assert((data['root1.leaf2'] == np.array([0.32])).all())
+    assert((data['leaf3'][0] == np.array([0.2, 0.3])).all())
+
