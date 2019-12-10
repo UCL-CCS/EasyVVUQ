@@ -795,6 +795,11 @@ class CampaignDB(BaseCampaignDB):
         -------
         """
 
+        if df.size == 0:
+            logging.warning(
+                f"Attempt to append empty dataframe to SQL collation table for app_id {app_id}.")
+            return
+
         tablename = 'COLLATION_APP' + str(app_id)
         df.to_sql(tablename, self.engine, if_exists='append')
 

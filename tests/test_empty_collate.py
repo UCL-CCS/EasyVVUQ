@@ -120,11 +120,6 @@ def test_empty_collate(tmpdir):
     # Draw all samples
     my_campaign.draw_samples()
 
-    # Print the list of runs now in the campaign db
-    print("List of runs added:")
-    pprint(my_campaign.list_runs())
-    print("---")
-
     # Encode
     my_campaign.populate_runs_dir()
 
@@ -136,9 +131,6 @@ def test_empty_collate(tmpdir):
     # Execute
     my_campaign.apply_for_each_run_dir(
         uq.actions.ExecuteLocal("tests/cannonsim/bin/cannonsim in.cannon output.csv"))
-
-    print("Runs list after encoding and execution:")
-    pprint(my_campaign.list_runs())
 
     # Attempt to collate() again, now that the runs have been executed. If Issue 163 is not
     # fixed then an error will occur here.
