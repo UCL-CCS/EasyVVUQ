@@ -6,6 +6,7 @@ import versioneer
 import subprocess
 import os
 
+
 class BuildCannonsimCommand(distutils.cmd.Command):
     description = 'build cannonsim'
     user_options = []
