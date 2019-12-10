@@ -52,10 +52,7 @@ setup(
 
     author='CCS',
 
-    install_requires=['numpy', 'pandas>=0.24', 'scipy',
-                      'pytest', 'SQLAlchemy', 'chaospy',
-                      'sqlalchemy-utils', 'jsonpickle',
-                      'cerberus', 'SALib'],
+    install_requires=open("requirements.txt", "r").readlines(),
 
     packages=find_packages(),
 
