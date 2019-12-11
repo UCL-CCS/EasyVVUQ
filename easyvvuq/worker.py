@@ -83,9 +83,6 @@ class Worker:
         active_encoder = self._active_app_encoder
         if active_encoder is None:
             logger.warning('No encoder set for this app. Creating directory structure only.')
-        else:
-            use_fixtures = active_encoder.fixture_support
-            fixtures = self._active_app['fixtures']
 
         # Loop through all runs in the run_id_list
         runs_dir = self.campaign_db.runs_dir()
@@ -99,13 +96,8 @@ class Worker:
             self.campaign_db.set_dir_for_run(run_id, target_dir)
 
             if active_encoder is not None:
-                if use_fixtures:
-                    active_encoder.encode(params=run_data['params'],
-                                          fixtures=fixtures,
-                                          target_dir=target_dir)
-                else:
-                    active_encoder.encode(params=run_data['params'],
-                                          target_dir=target_dir)
+                active_encoder.encode(params=run_data['params'],
+                                      target_dir=target_dir)
 
         # Update run statuses in db (if worker is authorized to write to DB)
         if self.write_to_db:

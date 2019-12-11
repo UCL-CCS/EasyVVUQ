@@ -340,7 +340,7 @@ class Campaign:
             logger.critical(message)
             raise RuntimeError(message)
 
-    def add_app(self, name=None, params=None, fixtures=None,
+    def add_app(self, name=None, params=None,
                 encoder=None, decoder=None, collater=None,
                 set_active=True):
         """Add an application to the CampaignDB.
@@ -351,8 +351,6 @@ class Campaign:
             Name of the application.
         params : dict
             Description of the parameters to associate with the application.
-        fixtures : dict
-            Description of files/assets.
         encoder : :obj:`easyvvuq.encoders.base.BaseEncoder`
             Encoder element to convert parameters into application run inputs.
         decoder : :obj:`easyvvuq.decoders.base.BaseDecoder`
@@ -375,7 +373,6 @@ class Campaign:
         app = AppInfo(
             name=name,
             paramsspec=paramsspec,
-            fixtures=fixtures,
             encoder=encoder,
             decoder=decoder,
             collater=collater
@@ -593,9 +590,6 @@ class Campaign:
         active_encoder = self._active_app_encoder
         if active_encoder is None:
             logger.warning('No encoder set for this app. Creating directory structure only.')
-        else:
-            use_fixtures = active_encoder.fixture_support
-            fixtures = self._active_app['fixtures']
 
         run_ids = []
 
@@ -607,13 +601,8 @@ class Campaign:
 
             # Encode run
             if active_encoder is not None:
-                if use_fixtures:
-                    active_encoder.encode(params=run_data['params'],
-                                          fixtures=fixtures,
-                                          target_dir=run_data['run_dir'])
-                else:
-                    active_encoder.encode(params=run_data['params'],
-                                          target_dir=run_data['run_dir'])
+                active_encoder.encode(params=run_data['params'],
+                                      target_dir=run_data['run_dir'])
 
             run_ids.append(run_id)
         self.campaign_db.set_run_statuses(run_ids, Status.ENCODED)

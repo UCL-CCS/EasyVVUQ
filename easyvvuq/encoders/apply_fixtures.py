@@ -1,5 +1,6 @@
 import os
 import shutil
+from .base import BaseEncoder
 
 __copyright__ = """
 
@@ -22,6 +23,57 @@ __copyright__ = """
 
 """
 __license__ = "LGPL"
+
+
+class ApplyFixtures(BaseEncoder, encoder_name="apply_fixtures"):
+    """ An encoder to copy/transfer files (as specified by 'fixtures' params)
+
+    Parameters
+    ----------
+
+    Attributes
+    ----------
+
+    """
+
+    def __init__(self, fixtures=None):
+        self.fixtures = fixtures
+
+    def encode(self, params={}, target_dir=''):
+
+        if self.fixtures is not None:
+            # TODO: Check if this should be altering the params block
+            self.substitute_fixtures_params(params, self.fixtures, target_dir)
+
+    def substitute_fixtures_params(self, params, fixtures, target_dir, path_depth=0):
+
+        fixed_params = dict(params)
+
+        for key, current_fixture in fixtures.items():
+
+            if current_fixture['type'] == 'dir':
+                is_dir = True
+            else:
+                is_dir = False
+
+            fix = Fixture(
+                current_fixture['path'],
+                is_dir=is_dir,
+                common=current_fixture['common'],
+                exists_local=current_fixture['exists_local'],
+                target_name=current_fixture['target'],
+                group=current_fixture['group'])
+
+            fixed_params[key] = fix.fixture_path(depth_in_run=path_depth)
+            fix.copy_to_target(target_dir=target_dir)
+
+        return fixed_params
+
+    def get_restart_dict(self):
+        return {"fixtures": self.fixtures}
+
+    def element_version(self):
+        return "0.1"
 
 
 class Fixture(object):
