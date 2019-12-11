@@ -710,7 +710,8 @@ class Campaign:
             pandas dataframe
 
         """
-        collated_dataframe = self._active_app_collater.get_collated_dataframe(self, self._active_app['id'])
+        collated_dataframe = (
+            self._active_app_collater.get_collated_dataframe(self, self._active_app['id']))
 
         if self._collated_dataframe_format == 'one_row_per_rep':
             pass
@@ -733,7 +734,7 @@ class Campaign:
 
             # merge sim_description with output in one column
             collated_dataframe = sim_description.merge(output_stack,
-                                    left_index=True, right_index=True)
+                                                       left_index=True, right_index=True)
 
         return collated_dataframe
 
