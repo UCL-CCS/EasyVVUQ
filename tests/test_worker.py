@@ -166,6 +166,10 @@ def test_worker(tmpdir):
     my_campaign.apply_analysis(stats)
     print("stats:\n", my_campaign.get_last_analysis())
 
+    bootstrap = uq.analysis.EnsembleBoot(groupby=['Dist'], qoi_cols=['lastv'])
+    with pytest.raises(RuntimeError, match=r".* lastv"):
+        my_campaign.apply_analysis(bootstrap)
+
     # Print the campaign log
     pprint(my_campaign._log)
 
