@@ -7,6 +7,9 @@ import pandas as pd
 from sqlalchemy import create_engine, Column, Integer, String, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy import MetaData
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy import text
 from .base import BaseCampaignDB
 from easyvvuq import constants
 from easyvvuq.sampling.base import BaseSamplingElement
@@ -820,6 +823,17 @@ class CampaignDB(BaseCampaignDB):
         """
 
         tablename = 'COLLATION_APP' + str(app_id)
-        query = "select * from " + tablename
-        df = pd.read_sql_query(query, self.engine)
-        return df
+        if tablename in self.engine.table_names():
+            query = "select * from " + tablename
+            df = pd.read_sql_query(query, self.engine)
+            return df
+        else:
+            return None
+
+    def clear_collation(self, app_id):
+        tablename = 'COLLATION_APP' + str(app_id)
+
+        if tablename in self.engine.table_names():
+            sqlcmd = text(f'DROP TABLE {tablename};')
+            self.engine.execute(sqlcmd)
+
