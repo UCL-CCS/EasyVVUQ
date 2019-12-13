@@ -123,5 +123,6 @@ def test_cannonsim(tmpdir):
     n_vars = len(output_cols)
     assert len(results) == n_runs * n_vars
 
+
 if __name__ == "__main__":
     test_cannonsim('/tmp/')
