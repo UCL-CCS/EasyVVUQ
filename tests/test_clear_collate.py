@@ -139,5 +139,6 @@ def test_clear_collate(tmpdir):
 
     pprint(my_campaign._log)
 
+
 if __name__ == "__main__":
     test_clear_collate("/tmp/")

@@ -836,4 +836,3 @@ class CampaignDB(BaseCampaignDB):
         if tablename in self.engine.table_names():
             sqlcmd = text(f'DROP TABLE {tablename};')
             self.engine.execute(sqlcmd)
-
