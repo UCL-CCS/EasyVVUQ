@@ -68,13 +68,13 @@ class AggregateByVariables(AggregateSamples, collater_name="aggregate_by_variabl
                 params = run_info['params']
 
                 # make a row for every sim_output value
-                for i,output_val in enumerate(sim_output.columns.tolist()):
+                for i, output_val in enumerate(sim_output.columns.tolist()):
                     for param, value in params.items():
-                        run_data.loc[i,param] = value
-                    run_data.loc[i,'Variable'] = output_val
-                    run_data.loc[i,'Value']    = sim_output.loc[0,output_val]
-                    run_data.loc[i,'run_id'] = run_id
-                    run_data.loc[i,'ensemble_id'] = run_info['ensemble_name']
+                        run_data.loc[i, param] = value
+                    run_data.loc[i, 'Variable'] = output_val
+                    run_data.loc[i, 'Value'] = sim_output.loc[0, output_val]
+                    run_data.loc[i, 'run_id'] = run_id
+                    run_data.loc[i, 'ensemble_id'] = run_info['ensemble_name']
 
                 new_data = new_data.append(run_data, ignore_index=True)
 
