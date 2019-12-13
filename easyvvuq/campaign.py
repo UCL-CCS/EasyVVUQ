@@ -680,6 +680,9 @@ class Campaign:
         """
         return self._active_app_collater.get_collated_dataframe(self, self._active_app['id'])
 
+    def clear_collation(self):
+        self.campaign_db.clear_collation(self._active_app['id'])
+
     def apply_analysis(self, analysis):
         """Run the `analysis` element on the output of the last run collation.
 

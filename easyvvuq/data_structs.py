@@ -140,8 +140,6 @@ class RunInfo:
             campaign=None,
             status=constants.Status.NEW):
 
-        # TODO: Handle fixtures
-
         check_reference(campaign, run_name, ref_type='campaign')
         check_reference(sample, run_name, ref_type='sampler')
         check_reference(app, run_name, ref_type='app')
@@ -220,8 +218,6 @@ class AppInfo:
         Human readable application name.
     paramsspec : ParamsSpecification or None
         Description of possible parameter values.
-    fixtures : dict or None
-        Description of files/assets for runs.
     encoder : :obj:`easyvvuq.encoders.base.BaseEncoder`
         Encoder element for application.
     decoder : :obj:`easyvvuq.decoders.base.BaseDecoder`
@@ -235,8 +231,6 @@ class AppInfo:
         Human readable application name.
     paramsspec : ParamsSpecification or None
         Description of possible parameter values.
-    fixtures : dict or None
-        Description of files/assets for runs.
     input_encoder : :obj:`easyvvuq.encoders.base.BaseEncoder`
         Encoder element for application.
     output_decoder : :obj:`easyvvuq.decoders.base.BaseDecoder`
@@ -249,7 +243,6 @@ class AppInfo:
             self,
             name=None,
             paramsspec=None,
-            fixtures=None,
             encoder=None,
             decoder=None,
             collater=None):
@@ -259,7 +252,6 @@ class AppInfo:
         self.output_decoder = decoder
         self.collater = collater
         self.paramsspec = paramsspec
-        self.fixtures = fixtures
 
     @property
     def input_encoder(self):
@@ -312,32 +304,25 @@ class AppInfo:
         ----------
         flatten : bool
             Should the return dictionary be single level (i.e. should `paramsspec`
-            and `fixtures` variables be serialized).
+            be serialized).
 
         Returns
         -------
         dict
-            Dictionary representing the application- if flattened then `paramsspec`,
-            and `fixtures` are returned as a JSON format sting.
+            Dictionary representing the application- if flattened then `paramsspec`
+            is returned as a JSON format sting.
         """
-
-        if self.fixtures is None:
-            fixtures = {}
-        else:
-            fixtures = self.fixtures
 
         if flatten:
 
             out_dict = self.to_dict()
 
             out_dict['params'] = self.paramsspec.serialize()
-            out_dict['fixtures'] = json.dumps(out_dict['fixtures'])
         else:
 
             out_dict = {
                 'name': self.name,
                 'params': self.paramsspec,
-                'fixtures': fixtures,
                 'input_encoder': self.input_encoder.serialize(),
                 'output_decoder': self.output_decoder.serialize(),
                 'collater': self.collater.serialize()

@@ -24,9 +24,9 @@ The input files for this tutorial are the *cooling_model* application (:download
 an input template (:download:`cooling.template <tutorial_files/cooling.template>`) and the EasyVVUQ workflow
 script (:download:`easyvvuq_pce_tutorial.py <tutorial_files/easyvvuq_pce_tutorial.py>`).
 
-To run the script execute the following command ::
+To run the script execute the following command
 
-    python3 easyvvuq_pce_tutorial.py
+``python3 easyvvuq_pce_tutorial.py``
 
 Import necessary libraries
 --------------------------
@@ -46,9 +46,9 @@ As in the :doc:`Basic Tutorial <basic\_tutorial>`, we start by creating an EasyV
 Parameter space definition
 --------------------------
 
-The parameter space is defined using a dictionary. Each entry in the dictionary follows the format: ::
+The parameter space is defined using a dictionary. Each entry in the dictionary follows the format:
 
-    "parameter_name": {"type" : "<value>", "min": <value>, "max": <value>, "default": <value>}
+``"parameter_name": {"type" : "<value>", "min": <value>, "max": <value>, "default": <value>}``
 
 With a defined type, minimum and maximum value and default. If the parameter is not selected to vary in the Sampler (see below) then the default value is used for every run. In this example, our full parameter space looks like the following: ::
 
@@ -64,7 +64,7 @@ App Creation
 In this example the GenericEncoder and SimpleCSV, both included in the core EasyVVUQ library, were used as the encoder/decoder pair for this application. ::
 
     encoder = uq.encoders.GenericEncoder(
-        template_fname='tests/cooling/cooling.template',
+        template_fname='tutorial_files/cooling.template',
         delimiter='$',
         target_filename='cooling_in.json')
 
@@ -122,8 +122,9 @@ Execute Runs
 ------------
 my\_campaign.populate\_runs\_dir() will create a directory hierarchy containing the encoded input files for every run that has not yet been completed. Finally, in this example, a shell command is executed in each directory to execute the simple test code. In practice (in a real HPC workflow) this stage would be best handled using, for example, a pilot job manager. ::
 
+    import os
     my_campaign.populate_runs_dir()
-    my_campaign.apply_for_each_run_dir(uq.actions.ExecuteLocal("python3 cooling_model.py cooling_in.json"))
+    my_campaign.apply_for_each_run_dir(uq.actions.ExecuteLocal("{} cooling_in.json".format(os.path.abspath('tutorial_files/cooling_model.py')), interpret="python3"))
 
 Collation and analysis
 ----------------------
