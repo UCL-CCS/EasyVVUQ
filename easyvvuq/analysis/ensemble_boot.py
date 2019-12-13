@@ -167,6 +167,8 @@ def ensemble_bootstrap(data, groupby=[], qoi_cols=[],
         stat_func = np.mean
 
     for col in qoi_cols:
+        if col not in data:
+            raise RuntimeError("No such attribute: {}".format(col))
         agg_funcs[col] = lambda x: bootstrap(
             x,
             stat_func=stat_func,
