@@ -107,8 +107,6 @@ class Campaign:
         The current Decoder object being used, from the currently set app
     _active_app_collater: easyvvuq.collate.BaseCollationElement
         The current Collater object assigned to this campaign
-    _collated_dataframe_format: str
-        Is the dataframe output is 'one_row_per_rep' or 'one_row_per_var'
     _active_sampler: easyvvuq.sampling.BaseSamplingElement
         The currently set Sampler object
     _active_sampler_id: int
@@ -146,7 +144,6 @@ class Campaign:
         self._active_app_encoder = None
         self._active_app_decoder = None
         self._active_app_collater = None
-        self._collated_dataframe_format = 'one_row_per_rep'
 
         self._active_sampler = None
         self._active_sampler_id = None
@@ -343,7 +340,7 @@ class Campaign:
             logger.critical(message)
             raise RuntimeError(message)
 
-    def add_app(self, name=None, params=None, fixtures=None,
+    def add_app(self, name=None, params=None,
                 encoder=None, decoder=None, collater=None,
                 set_active=True):
         """Add an application to the CampaignDB.
@@ -354,8 +351,6 @@ class Campaign:
             Name of the application.
         params : dict
             Description of the parameters to associate with the application.
-        fixtures : dict
-            Description of files/assets.
         encoder : :obj:`easyvvuq.encoders.base.BaseEncoder`
             Encoder element to convert parameters into application run inputs.
         decoder : :obj:`easyvvuq.decoders.base.BaseDecoder`
@@ -378,7 +373,6 @@ class Campaign:
         app = AppInfo(
             name=name,
             paramsspec=paramsspec,
-            fixtures=fixtures,
             encoder=encoder,
             decoder=decoder,
             collater=collater
@@ -596,9 +590,6 @@ class Campaign:
         active_encoder = self._active_app_encoder
         if active_encoder is None:
             logger.warning('No encoder set for this app. Creating directory structure only.')
-        else:
-            use_fixtures = active_encoder.fixture_support
-            fixtures = self._active_app['fixtures']
 
         run_ids = []
 
@@ -610,13 +601,8 @@ class Campaign:
 
             # Encode run
             if active_encoder is not None:
-                if use_fixtures:
-                    active_encoder.encode(params=run_data['params'],
-                                          fixtures=fixtures,
-                                          target_dir=run_data['run_dir'])
-                else:
-                    active_encoder.encode(params=run_data['params'],
-                                          target_dir=run_data['run_dir'])
+                active_encoder.encode(params=run_data['params'],
+                                      target_dir=run_data['run_dir'])
 
             run_ids.append(run_id)
         self.campaign_db.set_run_statuses(run_ids, Status.ENCODED)
@@ -680,23 +666,6 @@ class Campaign:
         info = {'num_collated': num_collated}
         self.log_element_application(self._active_app_collater, info)
 
-    def set_collated_dataframe_format(self, style):
-        """
-        Set the format of the results dataframe
-
-        Parameters
-        ----------
-        style : str
-            Controls how the collated results dataframe is organised
-            default 'one_row_per_rep'
-
-        Returns
-        -------
-        """
-        if style not in ['one_row_per_rep', 'one_row_per_var']:
-            raise Exception(style, 'is not a recognised dataframe output format')
-        self._collated_dataframe_format = style
-
     def get_collation_result(self):
         """
         Return dataframe containing all collated results
@@ -709,33 +678,7 @@ class Campaign:
             pandas dataframe
 
         """
-        collated_dataframe = (
-            self._active_app_collater.get_collated_dataframe(self, self._active_app['id']))
-
-        if self._collated_dataframe_format == 'one_row_per_rep':
-            pass
-
-        elif self._collated_dataframe_format == 'one_row_per_var':
-            # decoder may not have variable output_columns, does the database know?
-            output_columns = self._active_app_decoder.output_columns
-
-            # put output values into one column
-            output_stack = collated_dataframe[output_columns].stack()
-            output_stack.name = "Value"
-            # reset indicies and columns
-            output_stack = output_stack.reset_index(level=1)
-            output_stack.rename(columns={'level_1': 'Variable'}, inplace=True)
-
-            # Columns of dataframe that hold information about simulation but not output
-            sim_description_cols = [item for item in list(collated_dataframe.columns)
-                                    if item not in output_columns]
-            sim_description = collated_dataframe[sim_description_cols]
-
-            # merge sim_description with output in one column
-            collated_dataframe = sim_description.merge(output_stack,
-                                                       left_index=True, right_index=True)
-
-        return collated_dataframe
+        return self._active_app_collater.get_collated_dataframe(self, self._active_app['id'])
 
     def apply_analysis(self, analysis):
         """Run the `analysis` element on the output of the last run collation.
