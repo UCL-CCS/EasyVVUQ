@@ -34,7 +34,7 @@ class BuildNotebooks(distutils.cmd.Command):
 
     def run(self):
         self.announce('Building tutorial as Jupyter notebooks')
-        tutorials = ['cooling_coffee_cup.rst']
+        tutorials = ['basic_tutorial.rst', 'cooling_coffee_cup.rst']
         for tutorial in tutorials:
             subprocess.check_call(['rst2ipynb', tutorial, '-o', os.path.splitext(tutorial)[0] + '.ipynb'], cwd=os.path.abspath('./docs'))
 
