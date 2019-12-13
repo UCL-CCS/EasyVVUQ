@@ -85,8 +85,8 @@ class QMCAnalysis(BaseAnalysisElement):
         samples = {k: [] for k in qoi_cols}
         for run_id in data_frame.run_id.unique():
             for k in qoi_cols:
-                values = data_frame.loc[data_frame['run_id'] == run_id][k]
-                samples[k].append(values)
+                data = data_frame.loc[data_frame['run_id'] == run_id][k]
+                samples[k].append(data.values)
 
         # Compute descriptive statistics for each quantity of interest
         for k in qoi_cols:

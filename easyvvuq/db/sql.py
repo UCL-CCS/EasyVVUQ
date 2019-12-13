@@ -7,6 +7,9 @@ import pandas as pd
 from sqlalchemy import create_engine, Column, Integer, String, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy import MetaData
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy import text
 from .base import BaseCampaignDB
 from easyvvuq import constants
 from easyvvuq.sampling.base import BaseSamplingElement
@@ -74,7 +77,6 @@ class AppTable(Base):
     output_decoder = Column(String)
     collater = Column(String)
     params = Column(String)
-    fixtures = Column(String)
 
 
 class RunTable(Base):
@@ -194,8 +196,7 @@ class CampaignDB(BaseCampaignDB):
             'input_encoder': selected_app.input_encoder,
             'output_decoder': selected_app.output_decoder,
             'collater': selected_app.collater,
-            'params': ParamsSpecification.deserialize(selected_app.params),
-            'fixtures': json.loads(selected_app.fixtures)
+            'params': ParamsSpecification.deserialize(selected_app.params)
         }
 
         return app_dict
@@ -795,6 +796,11 @@ class CampaignDB(BaseCampaignDB):
         -------
         """
 
+        if df.size == 0:
+            logging.warning(
+                f"Attempt to append empty dataframe to SQL collation table for app_id {app_id}.")
+            return
+
         tablename = 'COLLATION_APP' + str(app_id)
         df.to_sql(tablename, self.engine, if_exists='append')
 
@@ -817,6 +823,16 @@ class CampaignDB(BaseCampaignDB):
         """
 
         tablename = 'COLLATION_APP' + str(app_id)
-        query = "select * from " + tablename
-        df = pd.read_sql_query(query, self.engine)
-        return df
+        if tablename in self.engine.table_names():
+            query = "select * from " + tablename
+            df = pd.read_sql_query(query, self.engine)
+            return df
+        else:
+            return None
+
+    def clear_collation(self, app_id):
+        tablename = 'COLLATION_APP' + str(app_id)
+
+        if tablename in self.engine.table_names():
+            sqlcmd = text(f'DROP TABLE {tablename};')
+            self.engine.execute(sqlcmd)

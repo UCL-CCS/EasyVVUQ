@@ -196,7 +196,11 @@ class Campaign:
         """
 
         # Create temp dir for campaign
-        campaign_dir = tempfile.mkdtemp(prefix=default_campaign_prefix, dir=work_dir)
+        campaign_prefix = default_campaign_prefix
+        if name is not None:
+            campaign_prefix = name
+
+        campaign_dir = tempfile.mkdtemp(prefix=campaign_prefix, dir=work_dir)
 
         self._campaign_dir = os.path.relpath(campaign_dir, start=work_dir)
 
@@ -336,7 +340,7 @@ class Campaign:
             logger.critical(message)
             raise RuntimeError(message)
 
-    def add_app(self, name=None, params=None, fixtures=None,
+    def add_app(self, name=None, params=None,
                 encoder=None, decoder=None, collater=None,
                 set_active=True):
         """Add an application to the CampaignDB.
@@ -347,8 +351,6 @@ class Campaign:
             Name of the application.
         params : dict
             Description of the parameters to associate with the application.
-        fixtures : dict
-            Description of files/assets.
         encoder : :obj:`easyvvuq.encoders.base.BaseEncoder`
             Encoder element to convert parameters into application run inputs.
         decoder : :obj:`easyvvuq.decoders.base.BaseDecoder`
@@ -371,7 +373,6 @@ class Campaign:
         app = AppInfo(
             name=name,
             paramsspec=paramsspec,
-            fixtures=fixtures,
             encoder=encoder,
             decoder=decoder,
             collater=collater
@@ -589,9 +590,6 @@ class Campaign:
         active_encoder = self._active_app_encoder
         if active_encoder is None:
             logger.warning('No encoder set for this app. Creating directory structure only.')
-        else:
-            use_fixtures = active_encoder.fixture_support
-            fixtures = self._active_app['fixtures']
 
         run_ids = []
 
@@ -603,13 +601,8 @@ class Campaign:
 
             # Encode run
             if active_encoder is not None:
-                if use_fixtures:
-                    active_encoder.encode(params=run_data['params'],
-                                          fixtures=fixtures,
-                                          target_dir=run_data['run_dir'])
-                else:
-                    active_encoder.encode(params=run_data['params'],
-                                          target_dir=run_data['run_dir'])
+                active_encoder.encode(params=run_data['params'],
+                                      target_dir=run_data['run_dir'])
 
             run_ids.append(run_id)
         self.campaign_db.set_run_statuses(run_ids, Status.ENCODED)
@@ -686,6 +679,9 @@ class Campaign:
 
         """
         return self._active_app_collater.get_collated_dataframe(self, self._active_app['id'])
+
+    def clear_collation(self):
+        self.campaign_db.clear_collation(self._active_app['id'])
 
     def apply_analysis(self, analysis):
         """Run the `analysis` element on the output of the last run collation.

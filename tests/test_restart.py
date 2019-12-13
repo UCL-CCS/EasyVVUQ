@@ -44,8 +44,7 @@ def restart(tmpdir):
                         params=params,
                         encoder=encoder,
                         decoder=decoder,
-                        collater=collater,
-                        fixtures=None)
+                        collater=collater)
     my_campaign.set_app('gauss')
     vary = {
         "mu": cp.Uniform(1.0, 100.0),

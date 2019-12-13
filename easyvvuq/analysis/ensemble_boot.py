@@ -112,9 +112,9 @@ def bootstrap(data, stat_func=None, alpha=0.05,
 
     for l in range(n_samples):
 
-        sample = data.sample(sample_size)
+        sample = data.sample(sample_size, replace=True)
 
-        dist.append(sample.apply(stat_func))
+        dist.append(stat_func(sample))
 
     return confidence_interval(dist, stat, alpha, pivotal=pivotal)
 
@@ -167,6 +167,8 @@ def ensemble_bootstrap(data, groupby=[], qoi_cols=[],
         stat_func = np.mean
 
     for col in qoi_cols:
+        if col not in data:
+            raise RuntimeError("No such attribute: {}".format(col))
         agg_funcs[col] = lambda x: bootstrap(
             x,
             stat_func=stat_func,

@@ -16,6 +16,27 @@ script (:download:`easyvvuq_gauss_tutorial.py <tutorial_files/easyvvuq_gauss_tut
 In preparation for this tutorial download the files and place them in
 an empty directory, then change into this directory.
 
+Important Note About the CSV File Format
+---------------------------------
+
+Please note that when creating CSV files to be used with EasyVVUQ
+and in the examples below, special care needs to be taken to respect
+RFC 4180. One common issue is that people leave spaces around
+attribute names in the first row of the text file. These spaces are
+not trimmed and become part of the attribute name which causes
+confusion later.
+
+For example::
+
+  attr1,attr2,attr3
+
+is correct, while::
+
+   attr1, attr2, attr3
+
+Is wrong (unless your attribute names are meant to have a space at the
+start).
+
 Gauss Application
 -----------------
 
@@ -95,13 +116,14 @@ This section contains no EasyVVUQ functionality.
 It sets up variables to store the command used to run the *gauss* application,
 the names of the input and output filenames and the template used to generate
 the specific input for each run. ::
-
+  
+    import os
     cwd = os.getcwd()
     input_filename = "gauss_in.json"
-    cmd = f"{cwd}/gauss.py {input_filename}"
+    cmd = f"{cwd}/tutorial_files/gauss.py {input_filename}"
     out_file = "output.csv"
     # Template input to substitute values into for each run
-    template = f"{cwd}/gauss.template"
+    template = f"{cwd}/tutorial_files/gauss.template"
 
 Section 1: Campaign Creation
 -----------------------------------
@@ -114,6 +136,7 @@ how these should be sampled and the runs used to perform the sampling.
 Consequently, the first step of an EasyVVUQ workflow is to create a
 *Campaign*, specifying a name and working directory::
 
+    import easyvvuq as uq
     my_campaign = uq.Campaign(name='gauss', work_dir=".")
 
 The reason for having a name is that in some cases it may be necessary to
@@ -241,6 +264,8 @@ The distributions are specified as `Chaospy <https://chaospy.readthedocs.io/>`_
 distributions.
 In this example we simply pick 'mu' values from a uniform distribution between
 1 and 100::
+
+    import chaospy as cp
 
     vary = {
         "mu": cp.Uniform(1.0, 100.0),

@@ -1,8 +1,8 @@
 import easyvvuq as uq
 import chaospy as cp
 import os
+import sys
 import pytest
-from easyvvuq.constants import default_campaign_prefix, Status
 from pprint import pprint
 import subprocess
 
@@ -39,7 +39,7 @@ if not os.path.exists("tests/cannonsim/bin/cannonsim"):
 CANNONSIM_PATH = os.path.realpath(os.path.expanduser("tests/cannonsim/bin/cannonsim"))
 
 
-def test_worker(tmpdir):
+def test_clear_collate(tmpdir):
 
     # Set up a fresh campaign called "cannon"
     my_campaign = uq.Campaign(name='cannon', work_dir=tmpdir)
@@ -57,10 +57,10 @@ def test_worker(tmpdir):
             "max": 1.0,
             "default": 0.2},
         "height": {
-            "type": "integer",
-            "min": 0,
-            "max": 1000,
-            "default": 1},
+            "type": "float",
+            "min": 0.0,
+            "max": 1000.0,
+            "default": 1.0},
         "time_step": {
             "type": "float",
             "min": 0.0001,
@@ -103,78 +103,42 @@ def test_worker(tmpdir):
     # has been added)
     my_campaign.set_app("cannonsim")
 
-    # Make a random sampler
+    # Set up samplers
     vary = {
-        "angle": cp.Uniform(0.0, 1.0),
-        "height": cp.DiscreteUniform(0, 100),
-        "velocity": cp.Normal(10.0, 1.0),
-        "mass": cp.Uniform(5.0, 1.0)
+        "gravity": cp.Uniform(9.8, 1.0),
+        "mass": cp.Uniform(2.0, 10.0),
     }
-    sampler1 = uq.sampling.RandomSampler(vary=vary)
-
-    print("Serialized sampler:", sampler1.serialize())
+    sampler = uq.sampling.RandomSampler(vary=vary, max_num=5)
 
     # Set the campaign to use this sampler
-    my_campaign.set_sampler(sampler1)
+    my_campaign.set_sampler(sampler)
 
-    # Draw 5 samples
-    my_campaign.draw_samples(num_samples=5)
+    # Test reloading
+    my_campaign.save_state(tmpdir + "test_multisampler.json")
+    reloaded_campaign = uq.Campaign(state_file=tmpdir + "test_multisampler.json", work_dir=tmpdir)
 
-    # Print the list of runs now in the campaign db
-    print("List of runs added:")
-    pprint(my_campaign.list_runs())
-    print("---")
+    # Draw all samples
+    my_campaign.draw_samples()
 
-    # User defined function
-    def encode_and_execute_cannonsim(run_id, run_data):
-        enc_args = [
-            my_campaign.db_type,
-            my_campaign.db_location,
-            'FALSE',
-            "cannon",
-            "cannonsim",
-            run_id
-        ]
-        encoder_path = os.path.realpath(os.path.expanduser("easyvvuq/tools/external_encoder.py"))
-        subprocess.run(['python3', encoder_path] + enc_args)
-        subprocess.run([CANNONSIM_PATH, "in.cannon", "output.csv"], cwd=run_data['run_dir'])
+    # Encode
+    my_campaign.populate_runs_dir()
 
-        my_campaign.campaign_db.set_run_statuses([run_id], Status.ENCODED)  # see note further down
+    # Execute
+    my_campaign.apply_for_each_run_dir(
+        uq.actions.ExecuteLocal("tests/cannonsim/bin/cannonsim in.cannon output.csv"))
 
-    # Encode and execute. Note to call function for all runs with status NEW (and not ENCODED)
-    my_campaign.call_for_each_run(encode_and_execute_cannonsim, status=uq.constants.Status.NEW)
-
-    ####
-    # Important note: In this example the execution is done with subprocess which is blocking.
-    # However, in practice this will be some sort of middleware (e.g. PJM) which is generally
-    # non-blocking. In such a case it is the job of the middleware section to keep track of
-    # which runs have been encoded, and updating the database (all at the end if need be) to
-    # indicate this to EasyVVUQ _before_ trying to run the collation/analysis section. If
-    # EasyVVUQ has not been informed that runs have been encoded, it will most likely just tell
-    # you that 'nothing has been collated' or something to that effect.
-    ####
-
-    print("Runs list after encoding and execution:")
-    pprint(my_campaign.list_runs())
-
-    # Collate all data into one pandas data frame
+    # Collate results
     my_campaign.collate()
     print("data:", my_campaign.get_collation_result())
 
-    # Create a BasicStats analysis element and apply it to the campaign
-    stats = uq.analysis.BasicStats(qoi_cols=['Dist', 'lastvx', 'lastvy'])
-    my_campaign.apply_analysis(stats)
-    print("stats:\n", my_campaign.get_last_analysis())
+    # Clear collation and print results again
+    my_campaign.clear_collation()
+    print("data:", my_campaign.get_collation_result())
 
-    bootstrap = uq.analysis.EnsembleBoot(groupby=['Dist'], qoi_cols=['lastv'])
-    with pytest.raises(RuntimeError, match=r".* lastv"):
-        my_campaign.apply_analysis(bootstrap)
+    assert(my_campaign.get_collation_result() is None)
 
-    # Print the campaign log
     pprint(my_campaign._log)
-
-    print("All completed?", my_campaign.all_complete())
 
 
 if __name__ == "__main__":
-    test_worker("/tmp/")
+    test_clear_collate("/tmp/")

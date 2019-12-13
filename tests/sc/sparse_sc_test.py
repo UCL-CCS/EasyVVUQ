@@ -103,66 +103,70 @@ results = my_campaign.get_last_analysis()
 mu = results['statistical_moments']['u']['mean']
 std = results['statistical_moments']['u']['std']
 
-x = np.linspace(0, 1, 301)
+print("mu", mu, ", std", std)
 
-fig = plt.figure(figsize=[10, 5])
-ax = fig.add_subplot(121, xlabel='x', ylabel='u',
-                     title=r'code mean +/- standard deviation')
-ax.plot(x, mu, 'b', label='mean')
-ax.plot(x, mu + std, '--r', label='std-dev')
-ax.plot(x, mu - std, '--r')
+if __name__ == '__main__':
 
-#####################################
-# Plot the random surrogate samples #
-#####################################
+    x = np.linspace(0, 1, 301)
 
-if analysis.element_name() == 'SC_Analysis':
+    fig = plt.figure(figsize=[10, 5])
+    ax = fig.add_subplot(121, xlabel='x', ylabel='u',
+                         title=r'code mean +/- standard deviation')
+    ax.plot(x, mu, 'b', label='mean')
+    ax.plot(x, mu + std, '--r', label='std-dev')
+    ax.plot(x, mu - std, '--r')
 
-    ax = fig.add_subplot(122, xlabel='x', ylabel='u',
-                         title='Surrogate and code samples')
-
-    xi_mc = analysis.xi_d
-    n_mc = xi_mc.shape[0]
-    code_samples = analysis.get_sample_array('u')
-
-    # evaluate the surrogate at these values
-    print('Evaluating surrogate model', n_mc, 'times')
-    for i in range(n_mc):
-        ax.plot(x, analysis.surrogate('u', xi_mc[i]), 'g')
-        ax.plot(x, code_samples[i], 'r+')
-    print('done')
-
-    plt.tight_layout()
-
-    analysis.plot_grid()
-
-    #######################
-    # Plot Sobol indices #
-    #######################
-
-    fig = plt.figure()
-    ax = fig.add_subplot(
-        111,
-        xlabel='x',
-        ylabel='Sobol indices',
-        title='spatial dist. Sobol indices, Pe only important in viscous regions')
-
-    lbl = ['Pe', 'f', 'Pe-f interaction']
-    idx = 0
+    #####################################
+    # Plot the random surrogate samples #
+    #####################################
 
     if analysis.element_name() == 'SC_Analysis':
 
-        for S_i in results['sobols']['u']:
-            ax.plot(x, results['sobols']['u'][S_i], label=lbl[idx])
-            idx += 1
-    else:
-        for S_i in results['sobols']['u'][1]:
-            ax.plot(x, results['sobols']['u'][1][S_i], label=lbl[idx])
-            idx += 1
+        ax = fig.add_subplot(122, xlabel='x', ylabel='u',
+                             title='Surrogate and code samples')
 
-    leg = plt.legend(loc=0)
-    leg.set_draggable(True)
+        xi_mc = analysis.xi_d
+        n_mc = xi_mc.shape[0]
+        code_samples = analysis.get_sample_array('u')
 
-    plt.tight_layout()
+        # evaluate the surrogate at these values
+        print('Evaluating surrogate model', n_mc, 'times')
+        for i in range(n_mc):
+            ax.plot(x, analysis.surrogate('u', xi_mc[i]), 'g')
+            ax.plot(x, code_samples[i], 'r+')
+        print('done')
 
-plt.show()
+        plt.tight_layout()
+
+        analysis.plot_grid()
+
+        #######################
+        # Plot Sobol indices #
+        #######################
+
+        fig = plt.figure()
+        ax = fig.add_subplot(
+            111,
+            xlabel='x',
+            ylabel='Sobol indices',
+            title='spatial dist. Sobol indices, Pe only important in viscous regions')
+
+        lbl = ['Pe', 'f', 'Pe-f interaction']
+        idx = 0
+
+        if analysis.element_name() == 'SC_Analysis':
+
+            for S_i in results['sobols']['u']:
+                ax.plot(x, results['sobols']['u'][S_i], label=lbl[idx])
+                idx += 1
+        else:
+            for S_i in results['sobols']['u'][1]:
+                ax.plot(x, results['sobols']['u'][1][S_i], label=lbl[idx])
+                idx += 1
+
+        leg = plt.legend(loc=0)
+        leg.set_draggable(True)
+
+        plt.tight_layout()
+
+    plt.show()

@@ -74,6 +74,7 @@ class PCEAnalysis(BaseAnalysisElement):
         results = {'statistical_moments': {},
                    'percentiles': {},
                    'sobols_first': {k: {} for k in qoi_cols},
+                   'sobols_second': {k: {} for k in qoi_cols},
                    'sobols_total': {k: {} for k in qoi_cols},
                    'correlation_matrices': {},
                    'output_distributions': {},
@@ -93,8 +94,8 @@ class PCEAnalysis(BaseAnalysisElement):
         samples = {k: [] for k in qoi_cols}
         for run_id in data_frame.run_id.unique():
             for k in qoi_cols:
-                values = data_frame.loc[data_frame['run_id'] == run_id][k]
-                samples[k].append(values)
+                data = data_frame.loc[data_frame['run_id'] == run_id][k]
+                samples[k].append(data.values)
 
         # Compute descriptive statistics for each quantity of interest
         for k in qoi_cols:
@@ -116,15 +117,19 @@ class PCEAnalysis(BaseAnalysisElement):
 
             # Sensitivity Analysis: First and Total Sobol indices
             sobols_first_narr = cp.Sens_m(fit, self.sampler.distribution)
+            sobols_second_narr = cp.Sens_m2(fit, self.sampler.distribution)
             sobols_total_narr = cp.Sens_t(fit, self.sampler.distribution)
             sobols_first_dict = {}
+            sobols_second_dict = {}
             sobols_total_dict = {}
             i_par = 0
             for param_name in self.sampler.vary.get_keys():
                 sobols_first_dict[param_name] = sobols_first_narr[i_par]
+                sobols_second_dict[param_name] = sobols_second_narr[i_par]
                 sobols_total_dict[param_name] = sobols_total_narr[i_par]
                 i_par += 1
             results['sobols_first'][k] = sobols_first_dict
+            results['sobols_second'][k] = sobols_second_dict
             results['sobols_total'][k] = sobols_total_dict
 
             # Correlation matrix
