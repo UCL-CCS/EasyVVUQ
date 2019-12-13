@@ -105,8 +105,6 @@ class SCAnalysis(BaseAnalysisElement):
         # For full tensor grid: there is only one level: L_min = L
         if not self.sparse:
             self.L_min = self.L
-            # Here l_norm is just [L, L, ...., L]
-            #self.l_norm = np.array([np.ones(self.N).astype('int') * self.L])
             self.l_norm = np.array([self.sampler.polynomial_order])
             self.l_norm_min = self.l_norm
         # For sparse grid: multiple levels, L >= N must hold
@@ -299,9 +297,9 @@ class SCAnalysis(BaseAnalysisElement):
         # each diff contains the level indices of to a single
         # Q^1_{k1} X ... X Q^1_{kN} product
         for diff in diff_idx:
-            # Q_0 = 0, so if present do not compute Q^1_{k1} X ... X Q^1_{kd}
-            # if not np.min(np.abs(diff)) < self.L_min:
-            if not (np.abs(diff) - self.l_norm_min).any():
+            #if any Q^1_{ki} is below the minimim level, Q^1_{ki} is defined
+            #as zero: do not compute this Q^1_{k1} X ... X Q^1_{kN} product
+            if not (np.abs(diff) < self.l_norm_min).any():
 
                 # compute the tensor product of parameter and weight values
                 X_k = []
@@ -719,8 +717,9 @@ class SCAnalysis(BaseAnalysisElement):
                 # perform analysis on each Q^1_l1 X ... X Q^1_l_N tensor prod
                 for diff in diff_idx:
 
-                    # if not np.min(np.abs(diff)) < self.L_min:
-                    if not (np.abs(diff) - self.l_norm_min).any():
+                    #if any Q^1_li is below the minimim level, Q^1_li is defined
+                    #as zero: do not compute this Q^1_l1 X ... X Q^1_l_N tensor prod
+                    if not (np.abs(diff) < self.l_norm_min).any():
 
                         # mariginal integral h, integrate over dimensions u'
                         h, wi_d_u = self.compute_marginal(qoi, u, u_prime, diff)

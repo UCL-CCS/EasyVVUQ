@@ -87,7 +87,6 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
         self.params_distribution = params_distribution
 
         # L = level of (sparse) grid
-        # L = self.polynomial_order
         L = np.max(self.polynomial_order)
 
         # for every dimension (parameter), create a hierachy of 1D
@@ -115,15 +114,24 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
                                                     params_distribution[n],
                                                     rule=self.quad_rule,
                                                     growth=self.growth)
+                
                 self.xi_1d[n][self.polynomial_order[n]] = xi_i[0]
                 self.wi_1d[n][self.polynomial_order[n]] = wi_i
 
         if not sparse:
-            # the nodes of the collocation grid
-            xi_d, _ = cp.generate_quadrature(self.polynomial_order,
-                                             self.joint_dist,
-                                             rule=quadrature_rule)
-            self.xi_d = xi_d.T
+            # Generate collocation grid via chaospy
+            #NOTE: different poly orders per dimension does not work for all
+            #      guadarture rules - use self.generate_grid subroutine instead
+            # # the nodes of the collocation grid
+            # xi_d, _ = cp.generate_quadrature(self.polynomial_order,
+            #                                  self.joint_dist,
+            #                                  rule=quadrature_rule)
+            # self.xi_d = xi_d.T
+            
+            #generate collocation grid locally
+            l_norm = np.array([self.polynomial_order])
+            self.xi_d = self.generate_grid(L, N, l_norm)
+            
         # sparse grid = a linear combination of tensor products of 1D rules
         # of different order. Use chaospy to compute these 1D quadrature rules
         else:
@@ -192,9 +200,9 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
             "sparse": self.sparse}
 
     """
-    =======================
-    SPARSE GRID SUBROUTINES
-    =======================
+    =========================
+    (SPARSE) GRID SUBROUTINES
+    =========================
     """
 
     def generate_grid(self, L, N, l_norm, **kwargs):
