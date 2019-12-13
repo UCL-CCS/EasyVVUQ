@@ -39,7 +39,7 @@ if not os.path.exists("tests/cannonsim/bin/cannonsim"):
 CANNONSIM_PATH = os.path.realpath(os.path.expanduser("tests/cannonsim/bin/cannonsim"))
 
 
-def test_empty_collate(tmpdir):
+def test_clear_collate(tmpdir):
 
     # Set up a fresh campaign called "cannon"
     my_campaign = uq.Campaign(name='cannon', work_dir=tmpdir)
@@ -123,22 +123,22 @@ def test_empty_collate(tmpdir):
     # Encode
     my_campaign.populate_runs_dir()
 
-    # Do an early collation, before anything has been executed. This means the collation element
-    # may attempt to add an empty dataframe to the database (which will cause issues upon subsequent
-    # collates due to an empty set of columns (Issue 163).
-    my_campaign.collate()
-
     # Execute
     my_campaign.apply_for_each_run_dir(
         uq.actions.ExecuteLocal("tests/cannonsim/bin/cannonsim in.cannon output.csv"))
 
-    # Attempt to collate() again, now that the runs have been executed. If Issue 163 is not
-    # fixed then an error will occur here.
+    # Collate results
     my_campaign.collate()
     print("data:", my_campaign.get_collation_result())
+
+    # Clear collation and print results again
+    my_campaign.clear_collation()
+    print("data:", my_campaign.get_collation_result())
+
+    assert(my_campaign.get_collation_result() is None)
 
     pprint(my_campaign._log)
 
 
 if __name__ == "__main__":
-    test_empty_collate("/tmp/")
+    test_clear_collate("/tmp/")
