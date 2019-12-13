@@ -106,11 +106,14 @@ class SCAnalysis(BaseAnalysisElement):
         if not self.sparse:
             self.L_min = self.L
             # Here l_norm is just [L, L, ...., L]
-            self.l_norm = np.array([np.ones(self.N).astype('int') * self.L])
+            #self.l_norm = np.array([np.ones(self.N).astype('int') * self.L])
+            self.l_norm = np.array([self.sampler.polynomial_order])
+            self.l_norm_min = self.l_norm
         # For sparse grid: multiple levels, L >= N must hold
         else:
             self.L_min = 1
             self.l_norm = self.sampler.compute_sparse_multi_idx(self.L, self.N)
+            self.l_norm_min = np.ones(self.N, dtype=int)
 
         # full tensor grid
         self.xi_d = self.sampler.xi_d
@@ -193,8 +196,9 @@ class SCAnalysis(BaseAnalysisElement):
         # full tensor product
         if not self.sparse:
 
-            l = (np.ones(N) * L).astype('int')
-
+            # l = (np.ones(N) * L).astype('int')
+            l = (self.sampler.polynomial_order)
+            
             for x in self.xi_d:
                 Map[k] = {'l': l, 'X': x, 'f': k}
                 k += 1
@@ -296,7 +300,8 @@ class SCAnalysis(BaseAnalysisElement):
         # Q^1_{k1} X ... X Q^1_{kN} product
         for diff in diff_idx:
             # Q_0 = 0, so if present do not compute Q^1_{k1} X ... X Q^1_{kd}
-            if not np.min(np.abs(diff)) < self.L_min:
+            # if not np.min(np.abs(diff)) < self.L_min:
+            if not (np.abs(diff) - self.l_norm_min).any():
 
                 # compute the tensor product of parameter and weight values
                 X_k = []
@@ -309,7 +314,7 @@ class SCAnalysis(BaseAnalysisElement):
                 W_k = np.array(list(product(*W_k)))
                 W_k = np.prod(W_k, axis=1)
                 W_k = W_k.reshape([W_k.shape[0], 1])
-
+                
                 # find corresponding code values
                 f_k = []
                 for x in X_k:
@@ -714,7 +719,8 @@ class SCAnalysis(BaseAnalysisElement):
                 # perform analysis on each Q^1_l1 X ... X Q^1_l_N tensor prod
                 for diff in diff_idx:
 
-                    if not np.min(np.abs(diff)) < self.L_min:
+                    # if not np.min(np.abs(diff)) < self.L_min:
+                    if not (np.abs(diff) - self.l_norm_min).any():
 
                         # mariginal integral h, integrate over dimensions u'
                         h, wi_d_u = self.compute_marginal(qoi, u, u_prime, diff)

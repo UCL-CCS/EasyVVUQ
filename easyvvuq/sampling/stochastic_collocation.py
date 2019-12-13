@@ -65,6 +65,8 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
 
         # List of the probability distributions of uncertain parameters
         params_distribution = list(self.vary.get_values())
+        # N = number of uncertain parameters
+        N = len(params_distribution)
 
         print("param dist", params_distribution)
 
@@ -72,7 +74,12 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
         self.joint_dist = cp.J(*params_distribution)
 
         # The quadrature information: order, rule and sparsity
-        self.polynomial_order = polynomial_order
+        if type(polynomial_order) == int:
+            print('Received integer polynomial order, assuming isotropic grid')
+            self.polynomial_order = [polynomial_order for i in range(N)]
+        else:
+            self.polynomial_order = polynomial_order
+            
         self.quad_rule = quadrature_rule
         self.sparse = sparse
         self.quad_sparse = sparse
@@ -80,9 +87,8 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
         self.params_distribution = params_distribution
 
         # L = level of (sparse) grid
-        L = self.polynomial_order
-        # N = number of uncertain parameters
-        N = len(params_distribution)
+        # L = self.polynomial_order
+        L = np.max(self.polynomial_order)
 
         # for every dimension (parameter), create a hierachy of 1D
         # quadrature rules of increasing order
@@ -95,7 +101,7 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
 
         if sparse:
             for n in range(N):
-                for i in range(1, self.polynomial_order + 1):
+                for i in range(1, L + 1):
                     xi_i, wi_i = cp.generate_quadrature(i + 1,
                                                         params_distribution[n],
                                                         rule=self.quad_rule,
@@ -105,12 +111,12 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
                     self.wi_1d[n][i] = wi_i
         else:
             for n in range(N):
-                xi_i, wi_i = cp.generate_quadrature(self.polynomial_order,
+                xi_i, wi_i = cp.generate_quadrature(self.polynomial_order[n],
                                                     params_distribution[n],
                                                     rule=self.quad_rule,
                                                     growth=self.growth)
-                self.xi_1d[n][self.polynomial_order] = xi_i[0]
-                self.wi_1d[n][self.polynomial_order] = wi_i
+                self.xi_1d[n][self.polynomial_order[n]] = xi_i[0]
+                self.wi_1d[n][self.polynomial_order[n]] = wi_i
 
         if not sparse:
             # the nodes of the collocation grid
