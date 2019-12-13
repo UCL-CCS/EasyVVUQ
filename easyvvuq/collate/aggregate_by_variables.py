@@ -1,7 +1,7 @@
 """Provides an element for aggregation of results from all complete runs.
 """
 
-from .base import BaseCollationElement
+from .aggregate_samples import AggregateSamples
 from easyvvuq import OutputType, constants
 import pandas as pd
 
@@ -28,7 +28,7 @@ __copyright__ = """
 __license__ = "LGPL"
 
 
-class AggregateByVariables(BaseCollationElement, collater_name="aggregate_by_variables"):
+class AggregateByVariables(AggregateSamples, collater_name="aggregate_by_variables"):
 
     def collate(self, campaign, app_id):
         """
@@ -61,44 +61,32 @@ class AggregateByVariables(BaseCollationElement, collater_name="aggregate_by_var
 
             # Use decoder to check if run has completed (in general application-specific)
             if decoder.sim_complete(run_info=run_info):
-                run_data = decoder.parse_sim_output(run_info=run_info)
+                sim_output = decoder.parse_sim_output(run_info=run_info)
 
-                output_frame = pd.DataFrame()
+                run_data = pd.DataFrame()
 
                 params = run_info['params']
-                column_list = list(params.keys()) + run_data.columns.tolist()
 
-                for i,output_val in enumerate(run_data.columns.tolist()):
-                    output_frame['run_id'] = run_id
-                    output_frame['ensemble_id'] = run_info['ensemble_name']
+                # make a row for every sim_output value
+                for i,output_val in enumerate(sim_output.columns.tolist()):
+                    run_data.loc[i,'run_id'] = run_id
+                    run_data.loc[i,'ensemble_id'] = run_info['ensemble_name']
                     for param, value in params.items():
-                        output_frame.loc[i,param] = value
-                    output_frame.loc[i,'Variable'] = output_val
-                    output_frame.loc[i,'Value']    = run_data.loc[0,output_val]
+                        run_data.loc[i,param] = value
+                    run_data.loc[i,'Variable'] = output_val
+                    run_data.loc[i,'Value']    = sim_output.loc[0,output_val]
 
-                new_data = new_data.append(output_frame, ignore_index=True)
+                new_data = new_data.append(run_data, ignore_index=True)
 
                 processed_run_IDs.append(run_id)
-
-        # Reorder columns
-        output_frame = run_data[column_list]
 
         self.append_data(campaign, new_data, app_id)
         campaign.campaign_db.set_run_statuses(processed_run_IDs, constants.Status.COLLATED)
 
         return len(processed_run_IDs)
 
-    def append_data(self, campaign, new_data, app_id):
-        campaign.campaign_db.append_collation_dataframe(new_data, app_id)
-
-    def get_collated_dataframe(self, campaign, app_id):
-        return campaign.campaign_db.get_collation_dataframe(app_id)
-
     def element_version(self):
         return "0.1"
-
-    def is_restartable(self):
-        return True
 
     def get_restart_dict(self):
         """Return dict required for restart from serlialized form.
