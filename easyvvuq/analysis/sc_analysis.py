@@ -196,7 +196,7 @@ class SCAnalysis(BaseAnalysisElement):
 
             # l = (np.ones(N) * L).astype('int')
             l = (self.sampler.polynomial_order)
-            
+
             for x in self.xi_d:
                 Map[k] = {'l': l, 'X': x, 'f': k}
                 k += 1
@@ -312,7 +312,7 @@ class SCAnalysis(BaseAnalysisElement):
                 W_k = np.array(list(product(*W_k)))
                 W_k = np.prod(W_k, axis=1)
                 W_k = W_k.reshape([W_k.shape[0], 1])
-                
+
                 # find corresponding code values
                 f_k = []
                 for x in X_k:

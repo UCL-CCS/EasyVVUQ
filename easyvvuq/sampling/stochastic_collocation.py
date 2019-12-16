@@ -79,7 +79,7 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
             self.polynomial_order = [polynomial_order for i in range(N)]
         else:
             self.polynomial_order = polynomial_order
-            
+
         self.quad_rule = quadrature_rule
         self.sparse = sparse
         self.quad_sparse = sparse
@@ -114,7 +114,7 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
                                                     params_distribution[n],
                                                     rule=self.quad_rule,
                                                     growth=self.growth)
-                
+
                 self.xi_1d[n][self.polynomial_order[n]] = xi_i[0]
                 self.wi_1d[n][self.polynomial_order[n]] = wi_i
 
@@ -127,11 +127,11 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
             #                                  self.joint_dist,
             #                                  rule=quadrature_rule)
             # self.xi_d = xi_d.T
-            
+
             #generate collocation grid locally
             l_norm = np.array([self.polynomial_order])
             self.xi_d = self.generate_grid(L, N, l_norm)
-            
+
         # sparse grid = a linear combination of tensor products of 1D rules
         # of different order. Use chaospy to compute these 1D quadrature rules
         else:
