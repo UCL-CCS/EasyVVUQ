@@ -4,13 +4,13 @@ A Cooling Coffee Cup - Using Dask Jobqueue to Run on Clusters
 =============================================================
 
 In this tutorial we expand the previous :doc:`example
-<cooling\_coffee\_cup>` and move on to supercomputing clusters. In
-order to run it you need access to one. And if you have access to one
-you most likely don't need explaining what they are or how they fit in
-the work you do. So we will skip that part. We will also skip the
-parts that are the same as in the previous tutorial. We only outline
-the parts that will be different from when you ran it on your
-laptop. Luckily there aren't that many differences.
+<cooling\_coffee\_cup>` and move our computations to computing
+clusters. In order to run it you will need access to one. And if you
+have access to one you most likely don't need explaining what they are
+or how they fit in the work you do. So we will skip that part. We will
+also skip the parts that are the same as in the previous tutorial. We
+only outline the parts that will be different from when you ran it on
+your laptop. Luckily there aren't that many differences.
 
 
 Import necessary libraries
@@ -36,30 +36,29 @@ instead of Campaign ::
 Initialize Cluster
 ------------------
 
-In order to run the jobs that correspond to each sample drawn on a cluster we
-need to provide some information about it. This assumes that you are executing
-this code on a login node of a computing cluster. It also assumes that we are
-using a SLURM cluster, but other options are possible and describe in the
-dask_jobqueue documentation.
+Provided that you have access to a computing cluster you can now run
+your UQ workflow on it. You will need to know some technical details
+about the compute nodes of your cluster. Most importantly you need to
+know how many CPU cores does this node have and how much RAM. This
+information is used to figure out the amount of resources we will
+need, namely, how many nodes to reserve.
 
-Here we describe a single node of our cluster. Please note that you
-don't need to specify the resources you need for your run. You will do
-that later. Here you describe resources for a single "job" which will
-usually have to fit inside one node. Unless the resources the job
-needs are fewer than the node provides. ::
+Here we describe a single node of an example cluster. Please note that
+you don't need to specify the resources you need for your run as
+such. Only the resources available on a single node. Unless the
+resources the job needs are fewer than the node provides. For example,
+if the node has 48 cores and 64 gigabytes of memory ::
 
-    cluster = SLURMCluster(job_extra=['--cluster=mpp2'],
-                           queue='mpp2_batch', 
-                           cores=28, memory='1 GB')
+    cluster = SLURMCluster(job_extra=['--cluster=mycluster'],
+                           queue='myqueue', 
+                           cores=48, memory='64 GB')
 
-You can then ask for however many nodes you need. The Dask scheduler
-will take care of load balancing for you. Lets ask for 2 nodes. ::
+Now you can allocate the resources needed for your UQ run using the
+``scale`` method. For full documentation refer to the `API
+<https://jobqueue.dask.org/en/latest/api.html>`_. To ask for 96 cores,
+for example, we can use ::
 
-    cluster.scale(2)
-
-Alternatively you can also use scale to specify the number of CPU
-cores, amount of memory etc. The needed number of nodes will be
-requested from the cluster.
+     cluster.scale(96)
 
 At this stage you can print the batch file that will be used to submit the
 worker processes. ::
@@ -70,10 +69,10 @@ Then we create a Dask client associated with this cluster. ::
 
     client = Client(cluster)
 
-Please note that after this point the jobs are already submitted to the
-cluster. However, unless you specify something for this Dask client to
-compute the jobs will terminate in 60 seconds by default. This time
-can be extended if need be.
+Please note that after this point the jobs will be submitted to the
+batch scheduler. They will take some time to actually start
+executing. The code in the following section will block until the job
+starts.
 
 
 Execute Runs
@@ -81,7 +80,7 @@ Execute Runs
 
 The only difference here is that you will need to supply the client argument
 to the call to apply_for_each_run_dir. The remainder is exactly the same as
-before and will work as before. ::
+before. ::
 
     my_campaign.populate_runs_dir()
     my_campaign.apply_for_each_run_dir(uq.actions.ExecuteLocal("python3 cooling_model.py cooling_in.json"), client)
@@ -98,14 +97,17 @@ between the compute and login nodes. It is possible that the admins on
 your system don't allow this. The reasons for this are unclear but we
 suspect they are mad with power. If that is the case, there is a quick
 workaround. You should try running your script in interactive mode and
-see if that solves the problem. For example on SLURM it could be
+see if that solves the problem. For example, on SLURM it could be
 something like this: ::
 
-    salloc --partition=mpp2_inter
+    salloc --partition=interactivequeue
 
-And then, after you get in to the interactive mode prompt execute the
-script normally, e.g. ::
+The system will then try to allocate resources for you to run the
+interactive job and this might take a couple of moments. After that an
+interactive mode prompt will appear. Commands that you execute there
+will be run on compute nodes. You would then execute the script
+normally, e.g. :: 
 
     python tutorial_files/easyvvuq_dask_tutorial.py
 
-B
+
