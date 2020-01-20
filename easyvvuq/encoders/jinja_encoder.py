@@ -27,12 +27,6 @@ __copyright__ = """
 __license__ = "LGPL"
 
 
-#def get_custom_template(template_txt, custom_delimiter='$'):
-#    class CustomTemplate(Template):
-#        delimiter = custom_delimiter
-#    return CustomTemplate(template_txt)
-
-
 class JinjaEncoder(BaseEncoder, encoder_name="jinja_template"):
     """JinjaEncoder for substituting values into application template input.
     Uses the jinja2 template system, which supports more complex expressions than
