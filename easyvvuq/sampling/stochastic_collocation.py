@@ -66,7 +66,7 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
         # List of the probability distributions of uncertain parameters
         params_distribution = list(self.vary.get_values())
 
-        print("param dist", params_distribution)
+        logging.debug("param dist {}".format(params_distribution))
 
         # Multivariate distribution
         self.joint_dist = cp.J(*params_distribution)
