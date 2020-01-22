@@ -124,12 +124,8 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
 
             # L >= N must hold
             if L < N:
-                print("*************************************************************")
-                print("Level of sparse grid is lower than the dimension N (# params)")
-                print("Increase level (via polynomial_order) p such that p-1 >= N")
-                print("*************************************************************")
-                import sys
-                sys.exit()
+                raise ValueError(("Sparse grid level is lower than the number of params. "
+                                  "Increase level (via polynomial_order) p such that p-1 >= N"))
 
             # multi-index l, such that |l| <= L
             l_norm_le_L = self.compute_sparse_multi_idx(L, N)
