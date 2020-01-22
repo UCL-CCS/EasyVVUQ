@@ -35,7 +35,7 @@ def test_jinjaencoder(tmpdir):
     """
 
     params = {
-        "Nc_0": {
+        "Nc_0": {  # concentration of cloud condensation nuclei
             "type": "float",
             "min": 0.1e6,
             "max": 1000e6,
@@ -47,13 +47,13 @@ def test_jinjaencoder(tmpdir):
             "max": 4.0,
             "default": 2.5,
         },
-        "cn": {  # Subfilterscale parameter
+        "cn": {  # subfilterscale parameter
             "type": "float",
             "min": 0.5,
             "max": 1.0,
             "default": 0.76,
         },
-        "Rigc": {  # Critical Richardson number
+        "Rigc": {  # critical Richardson number
             "type": "float",
             "min": 0.1,
             "max": 1.0,
@@ -65,43 +65,43 @@ def test_jinjaencoder(tmpdir):
             "max": 1.0,
             "default": 1.0 / 3,
         },
-        "z0": {            # surface roughness
+        "z0": {  # surface roughness
             "type": "float",
             "min": 1e-4,
             "max": 1.0,
             "default": 1.6e-4,
         },
         "l_sb": {  # flag for microphysics scheme: false - KK00 Khairoutdinov and Kogan, 2000
-            "type": "integer",          # true - SB   Seifert and Beheng, 2001, 2006, Default
+            "type": "integer",    # true - SB   Seifert and Beheng, 2001, 2006, Default
             "min": 0,
             "max": 1,
             "default": 1
         },
-        "Nh": {
-            "type": "integer",   # number of grid points in the horizontal directions - itot, jtot
+        "Nh": {  # number of grid points in the horizontal directions - itot, jtot
+            "type": "integer",
             "min": 3,
             "max": 1024,
             "default": 10
         },
-        "extent": {          # Horizontal domain size in x, y  - xsize, ysize. unit: m
+        "extent": {  # norizontal domain size in x, y  - xsize, ysize. unit: m
             "type": "float",
             "min": 1,
             "max": 1000000,
             "default": 1000,
         },
-        "seed": {
-            "type": "integer",   # random seed
+        "seed": {  # random seed
+            "type": "integer",
             "min": 1,
             "max": 1000000,
             "default": 43
         },
-        "nprocx": {
+        "nprocx": {  # number of MPI tasks in x
             "type": "integer",
             "min": 1,
             "max": 1000,
             "default": 1
         },
-        "nprocy": {
+        "nprocy": {  # number of MPI tasks in y
             "type": "integer",
             "min": 1,
             "max": 1000,
@@ -123,36 +123,25 @@ def test_jinjaencoder(tmpdir):
     }
 
     output_columns = ['cfrac', 'lwp', 'rwp', 'zb', 'zi', 'prec', 'wq', 'wtheta', 'we', 'walltime']
-
     my_sampler = uq.sampling.SCSampler(vary=vary, polynomial_order=2,
                                        quadrature_rule="C")
-
     my_campaign = uq.Campaign(name='dales', work_dir=tmpdir)
-
     encoder = JinjaEncoder(template_fname='tests/jinjaencoder/namoptions.template',
                            target_filename='namoptions.001')
-
     decoder = uq.decoders.SimpleCSV(
         target_filename='results.csv',
         output_columns=output_columns,
         header=0)
-
     collater = uq.collate.AggregateSamples(average=False)
-
     my_campaign.add_app(name="dales",
                         params=params,
                         encoder=encoder,
                         decoder=decoder,
                         collater=collater)
-
     my_campaign.verify_all_runs = False  # to prevent errors on integer quantities
-
     my_campaign.set_sampler(my_sampler)
-
     my_campaign.draw_samples()
-
     my_campaign.populate_runs_dir()
-
 
 if __name__ == "__main__":
     test_jinjaencoder("/tmp/")
