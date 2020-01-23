@@ -10,13 +10,16 @@ class LHCSampler(BaseSamplingElement, sampler_name='lhc_sampler'):
         """
         self.vary = vary
         self.samples = np.array([vary[param][0] + row * (vary[param][1] - vary[param][0])
-                                     for row, param in
-                                     zip(cp.create_latin_hypercube_samples(order=order, dim=len(vary.keys())), vary)])
+                                 for row, param in
+                                 zip(cp.create_latin_hypercube_samples(
+                                     order=order, dim=len(vary.keys())), vary)])
         self.order = order
         self.dim = len(vary)
+
         def sample_generator():
             for sample in zip(*self.samples):
-                yield {key : value for key, value in zip(vary.keys(), sample)}
+                yield {key: value for key, value in zip(vary.keys(), sample)}
+
         self.sample_generator = sample_generator()
 
     def element_version(self):
@@ -39,13 +42,16 @@ class HaltonSampler(BaseSamplingElement, sampler_name='halton_sampler'):
         """
         self.vary = vary
         self.samples = np.array([vary[param][0] + row * (vary[param][1] - vary[param][0])
-                                     for row, param in
-                                     zip(cp.distributions.sampler.sequences.halton.create_halton_samples(order=order, dim=len(vary.keys())), vary)])
+                                 for row, param in
+                                 zip(cp.distributions.sampler.sequences.halton.create_halton_samples(
+                                     order=order, dim=len(vary.keys())), vary)])
         self.order = order
         self.dim = len(vary)
+
         def sample_generator():
             for sample in zip(*self.samples):
-                yield {key : value for key, value in zip(vary.keys(), sample)}
+                yield {key: value for key, value in zip(vary.keys(), sample)}
+
         self.sample_generator = sample_generator()
 
     def element_version(self):
