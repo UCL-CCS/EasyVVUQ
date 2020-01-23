@@ -41,10 +41,11 @@ class HaltonSampler(BaseSamplingElement, sampler_name='halton_sampler'):
             Expects dict of var names, and their ranges
         """
         self.vary = vary
-        self.samples = np.array([vary[param][0] + row * (vary[param][1] - vary[param][0])
-                                 for row, param in
-                                 zip(cp.distributions.sampler.sequences.halton.create_halton_samples(
-                                     order=order, dim=len(vary.keys())), vary)])
+        self.samples =\
+          np.array([vary[param][0] + row * (vary[param][1] - vary[param][0])
+                    for row, param in
+                    zip(cp.distributions.sampler.sequences.halton.create_halton_samples(
+                        order=order, dim=len(vary.keys())), vary)])
         self.order = order
         self.dim = len(vary)
 
