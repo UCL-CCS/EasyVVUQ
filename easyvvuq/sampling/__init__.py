@@ -5,6 +5,7 @@ from .pce import PCESampler
 from .qmc import QMCSampler
 from .sweep import BasicSweep
 from .sampler_of_samplers import MultiSampler
+from .quasirandom import LHCSampler
 
 __copyright__ = """
 

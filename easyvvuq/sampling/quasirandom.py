@@ -1,14 +1,16 @@
 from .base import BaseSamplingElement
+import numpy as np
+import chaospy as cp
 
 class LHCSampler(BaseSamplingElement, sampler_name='lhc_sampler'):
     def __init__(self, vary=None, order=1):
         """
             Expects dict of var names, and their ranges
         """
-        self.vary = Vary(vary)
+        self.vary = vary
         self.samples = np.array([vary[param][0] + row * (vary[param][1] - vary[param][0])
                                      for row, param in
-                                     zip(cp.create_latin_hypercube_samples(order=order, dim=dim), vary)])
+                                     zip(cp.create_latin_hypercube_samples(order=order, dim=len(vary.keys())), vary)])
         self.order = order
         self.dim = len(vary)
         def sample_generator():
@@ -27,4 +29,5 @@ class LHCSampler(BaseSamplingElement, sampler_name='lhc_sampler'):
 
     def is_restartable(self):
         return False
+
 
