@@ -56,6 +56,7 @@ def test_anisotropic_order(work_dir):
         "f": cp.Uniform(0.95, 1.05)
     }
     
+    #different orders for the 2 parameters
     my_sampler = uq.sampling.SCSampler(vary=vary, polynomial_order=[2,5],
                                        quadrature_rule="G")
 
