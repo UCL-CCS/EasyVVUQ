@@ -42,10 +42,10 @@ class HaltonSampler(BaseSamplingElement, sampler_name='halton_sampler'):
         """
         self.vary = vary
         self.samples =\
-          np.array([vary[param][0] + row * (vary[param][1] - vary[param][0])
-                    for row, param in
-                    zip(cp.distributions.sampler.sequences.halton.create_halton_samples(
-                        order=order, dim=len(vary.keys())), vary)])
+            np.array([vary[param][0] + row * (vary[param][1] - vary[param][0])
+                      for row, param in
+                      zip(cp.distributions.sampler.sequences.halton.create_halton_samples(
+                          order=order, dim=len(vary.keys())), vary)])
         self.order = order
         self.dim = len(vary)
 
