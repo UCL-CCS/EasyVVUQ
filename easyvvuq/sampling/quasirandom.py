@@ -2,6 +2,7 @@ from .base import BaseSamplingElement
 import numpy as np
 import chaospy as cp
 
+
 class LHCSampler(BaseSamplingElement, sampler_name='lhc_sampler'):
     def __init__(self, vary=None, order=1):
         """
