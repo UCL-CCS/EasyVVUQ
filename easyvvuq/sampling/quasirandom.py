@@ -17,7 +17,6 @@ class LHCSampler(RandomSampler, sampler_name='lhc_sampler'):
         return run_dict
 
 
-
 class HaltonSampler(RandomSampler, sampler_name='halton_sampler'):
     def __next__(self):
         if self.is_finite():
@@ -30,4 +29,3 @@ class HaltonSampler(RandomSampler, sampler_name='halton_sampler'):
 
         self.count += 1
         return run_dict
-
