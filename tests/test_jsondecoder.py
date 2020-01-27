@@ -137,6 +137,15 @@ def test_jsondecoder_basic():
                                       0.0009733123588375747])).all())
 
 
+def test_jsondecoder_scalars_only():
+    # like test_jsondecoder_basics, but with only scalar quantities
+    decoder = JSONDecoder(os.path.join('jsondecoder', 'fredrik.json'), ['cfrac', 'we'])
+    run_info = {'run_dir': 'tests'}
+    data = decoder.parse_sim_output(run_info)
+    assert((data['cfrac'] == np.array([0.24000000131541285])).all())
+    assert((data['we'] == np.array([-0.4910355508327484])).all())
+
+
 def test_json_nested():
     decoder = JSONDecoder(os.path.join('jsondecoder', 'nested.json'),
                           [['root1', 'node1', 'leaf1'], ['root1', 'leaf2'], 'leaf3'])
