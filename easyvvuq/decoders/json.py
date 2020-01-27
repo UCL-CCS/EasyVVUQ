@@ -94,7 +94,7 @@ class JSONDecoder(BaseDecoder, decoder_name="json"):
             if isinstance(x, list):
                 return [np.array(x)]
             else:
-                return x
+                return [x]
 
         out_path = self._get_output_path(run_info, self.target_filename)
 
