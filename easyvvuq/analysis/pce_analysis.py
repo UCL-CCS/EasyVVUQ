@@ -28,7 +28,6 @@ class PCEAnalysis(BaseAnalysisElement):
         if sampler is None:
             msg = 'PCE analysis requires a paired sampler to be passed'
             raise RuntimeError(msg)
-        # TODO: Check that this is a viable PCE sampler?
 
         if qoi_cols is None:
             raise RuntimeError("Analysis element requires a list of "
@@ -44,7 +43,7 @@ class PCEAnalysis(BaseAnalysisElement):
 
     def element_version(self):
         """Version of this element for logging purposes"""
-        return "0.3"
+        return "0.4"
 
     def analyse(self, data_frame=None):
         """Perform PCE analysis on input `data_frame`.
@@ -83,12 +82,20 @@ class PCEAnalysis(BaseAnalysisElement):
         # Get the Polynomial
         P = self.sampler.P
 
-        # Compute nodes and weights
-        nodes, weights = cp.generate_quadrature(order=self.sampler.quad_order,
-                                                dist=self.sampler.distribution,
-                                                rule=self.sampler.quad_rule,
-                                                sparse=self.sampler.quad_sparse,
-                                                growth=self.sampler.quad_growth)
+        # Get the PCE variante to use (Regression or Projection)
+        regression = self.sampler.regression
+
+        # Compute nodes (and weights)
+        if regression:
+            nodes = cp.generate_samples(order=self.sampler._number_of_samples,
+                                        domain=self.sampler.distribution,
+                                        rule=self.sampler.rule)
+        else:
+            nodes, weights = cp.generate_quadrature(order=self.sampler.quad_order,
+                                                    dist=self.sampler.distribution,
+                                                    rule=self.sampler.rule,
+                                                    sparse=self.sampler.quad_sparse,
+                                                    growth=self.sampler.quad_growth)
 
         # Extract output values for each quantity of interest from Dataframe
         samples = {k: [] for k in qoi_cols}
@@ -100,7 +107,10 @@ class PCEAnalysis(BaseAnalysisElement):
         # Compute descriptive statistics for each quantity of interest
         for k in qoi_cols:
             # Approximation solver
-            fit = cp.fit_quadrature(P, nodes, weights, samples[k])
+            if regression:
+                fit = cp.fit_regression(P, nodes, samples[k], "T")
+            else:
+                fit = cp.fit_quadrature(P, nodes, weights, samples[k])
 
             # Statistical moments
             mean = cp.E(fit, self.sampler.distribution)

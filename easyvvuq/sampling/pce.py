@@ -1,5 +1,6 @@
 import logging
 import chaospy as cp
+import scipy.special as sp
 from .base import BaseSamplingElement, Vary
 
 __author__ = "Jalal Lakhlili"
@@ -31,9 +32,10 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
                  vary=None,
                  count=0,
                  polynomial_order=4,
-                 quadrature_rule="G",
+                 regression=False,
+                 rule="G",
                  sparse=False,
-                 growth=None):
+                 growth=False):
         """
         Create the sampler for the Polynomial Chaos Expansion method using
         pseudo-spectral projection.
@@ -49,8 +51,15 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
         polynomial_order : int, optional
             The polynomial order, default is 4.
 
-        quadrature_rule : char, optional
-            The quadrature method, default is Gaussian "G".
+        regression : bool, optional
+            If True, regression variante (point collecation) will be used,
+            otherwise projection variante (pseud-spectral) will be used.
+            Default value is False.
+
+        rule : char, optional
+            The quadrature method, in case of projection (default is Gaussian "G").
+            The sequence sampler in case of regression (default is Hammersley "M")
+
 
         sparse : bool, optional
             If True, use Smolyak sparse grid instead of normal tensor product
@@ -89,10 +98,10 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
         # The orthogonal polynomials corresponding to the joint distribution
         self.P = cp.orth_ttr(polynomial_order, self.distribution)
 
-        # The quadrature information: order, rule and sparsity
+        # The quadrature information
         self.quad_order = polynomial_order + 1
-        self.quad_rule = quadrature_rule
         self.quad_sparse = sparse
+        self.rule = rule
 
         # Clenshaw-Curtis should be nested if sparse (#139 chaospy issue)
         self.quad_growth = growth
@@ -100,15 +109,33 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
         if sparse and quadrature_rule in cc:
             self.quad_growth = True
 
-        # Nodes and weights for the integration
-        self._nodes, _ = cp.generate_quadrature(order=self.quad_order,
-                                                dist=self.distribution,
-                                                rule=quadrature_rule,
-                                                sparse=sparse,
-                                                growth=self.quad_growth)
+        # To determinate the PCE vrainte to use
+        self.regression = regression
 
-        # Number of samples
-        self._number_of_samples = len(self._nodes[0])
+        # Regression variante (Point collocation method)
+        if regression:
+            # Change the default rule
+            if rule == "G":
+                self.rule = "M"
+
+            # Number of samples
+            Np = sp.binom(polynomial_order + len(vary), polynomial_order)
+            self._number_of_samples = 2 * int(Np + 1)
+
+            self._nodes = cp.generate_samples(order=self._number_of_samples,
+                                              domain=self.distribution,
+                                              rule=self.rule)
+
+        # Projection variante (Pseudo-spectral method)
+        else:
+            # Nodes and weights for the integration
+            self._nodes, _ = cp.generate_quadrature(order=self.quad_order,
+                                                    dist=self.distribution,
+                                                    rule=self.rule,
+                                                    sparse=sparse,
+                                                    growth=self.quad_growth)
+            # Number of samples
+            self._number_of_samples = len(self._nodes[0])
 
         # Fast forward to specified count, if possible
         self.count = 0
@@ -122,7 +149,7 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
                 self.__next__()
 
     def element_version(self):
-        return "0.3"
+        return "0.4"
 
     def is_finite(self):
         return True
@@ -146,6 +173,7 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
         return {"vary": self.vary.serialize(),
                 "count": self.count,
                 "polynomial_order": self.polynomial_order,
-                "quadrature_rule": self.quad_rule,
+                "regression": self.regression,
+                "rule": self.rule,
                 "sparse": self.quad_sparse,
                 "growth": self.quad_growth}
