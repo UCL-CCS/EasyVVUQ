@@ -5,7 +5,7 @@ from sklearn.gaussian_process import GaussianProcessRegressor
 
 class GaussianProcessSurrogate(BaseAnalysisElement):
 
-    def __init__(self, attr_cols, target_cols:
+    def __init__(self, attr_cols, target_cols):
         """Element to calculate basic stats for `qoi_cols` values.
 
         This results in values for: count, mean, std, min, max and 25%, 50% &
@@ -49,8 +49,10 @@ class GaussianProcessSurrogate(BaseAnalysisElement):
         :obj:`pandas.DataFrame`
             Basic statistic for selected columns and groupings of data.
         """
-        x = data_frame[self.attr_cols].values.transpose()
-        y = data_frame[self.target_cols].values.transpose()
+        x = data_frame[self.attr_cols].values
+        y = data_frame[self.target_cols].values
+        print(x.shape)
+        print(y.shape)
 
         gp = GaussianProcessRegressor()
         gp.fit(x, y)

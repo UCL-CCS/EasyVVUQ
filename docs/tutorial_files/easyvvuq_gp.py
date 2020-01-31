@@ -43,7 +43,7 @@ my_sampler = uq.sampling.quasirandom.LHCSampler(vary)
 my_campaign.set_sampler(my_sampler)
 
 # Will draw all (of the finite set of samples)
-my_campaign.draw_samples(250)
+my_campaign.draw_samples(1)
 
 my_campaign.populate_runs_dir()
 
@@ -51,9 +51,13 @@ cwd = os.getcwd()
 cmd = f"{cwd}/cooling_model.py cooling_in.json"
 my_campaign.apply_for_each_run_dir(uq.actions.ExecuteLocal(cmd, interpret='python3'))
 my_campaign.collate()
-print(my_campaign.get_collation_result())
 
+df = my_campaign.get_collation_result()
 
+analysis = uq.analysis.GaussianProcessSurrogate(['kappa', 't_env'], ['te'])
+my_campaign.apply_analysis(analysis)
+
+print(my_campaign.get_last_analysis())
 
 # Post-processing analysis
 #my_analysis = uq.analysis.PCEAnalysis(sampler=my_sampler,
