@@ -1,6 +1,8 @@
 import os
 import easyvvuq as uq
 import chaospy as cp
+import matplotlib.pyplot as plt
+import numpy as np
 
 # Set up a fresh campaign called "coffee_pce"
 my_campaign = uq.Campaign(name='coffee_pce')
@@ -54,10 +56,22 @@ my_campaign.collate()
 
 df = my_campaign.get_collation_result()
 
-analysis = uq.analysis.GaussianProcessSurrogate(['kappa', 't_env'], ['te'])
+analysis = uq.analysis.GaussianProcessSurrogate(['kappa', 't_env', 'temp_init', 'ti'], ['te'])
 my_campaign.apply_analysis(analysis)
 
-print(my_campaign.get_last_analysis())
+gp = my_campaign.get_last_analysis()
+
+x = df[['kappa', 't_env', 'temp_init', 'ti']].values
+y = df[['te']].values
+prediction_y = gp.predict(x)
+
+plt.plot(y, '.')
+plt.plot(prediction_y, '+')
+plt.show()
+
+#print(gp.predict(np.array([[0.059053, 20.34402, 95.0, -74.714927]])))
+
+#matplotlib.plot(
 
 # Post-processing analysis
 #my_analysis = uq.analysis.PCEAnalysis(sampler=my_sampler,

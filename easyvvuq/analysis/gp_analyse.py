@@ -51,8 +51,6 @@ class GaussianProcessSurrogate(BaseAnalysisElement):
         """
         x = data_frame[self.attr_cols].values
         y = data_frame[self.target_cols].values
-        print(x.shape)
-        print(y.shape)
 
         gp = GaussianProcessRegressor()
         gp.fit(x, y)
