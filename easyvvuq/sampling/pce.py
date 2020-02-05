@@ -1,6 +1,5 @@
 import logging
 import chaospy as cp
-import scipy.special as sp
 from .base import BaseSamplingElement, Vary
 
 __author__ = "Jalal Lakhlili"
@@ -118,10 +117,8 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
             if rule == "G":
                 self.rule = "M"
 
-            # Number of samples
-            Np = sp.binom(polynomial_order + len(vary), polynomial_order)
-            self._number_of_samples = 2 * int(Np + 1)
-
+            # Generates samples
+            self._number_of_samples = 2 * len(self.P)
             self._nodes = cp.generate_samples(order=self._number_of_samples,
                                               domain=self.distribution,
                                               rule=self.rule)
