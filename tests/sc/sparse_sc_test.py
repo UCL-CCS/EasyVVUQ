@@ -113,8 +113,8 @@ if __name__ == '__main__':
     ax = fig.add_subplot(121, xlabel='x', ylabel='u',
                          title=r'code mean +/- standard deviation')
     ax.plot(x, mu, 'b', label='mean')
-    ax.plot(x, mu + 3*std, '--r', label='std-dev')
-    ax.plot(x, mu - 3*std, '--r')
+    ax.plot(x, mu + 3 * std, '--r', label='std-dev')
+    ax.plot(x, mu - 3 * std, '--r')
 
     #####################################
     # Plot the random surrogate samples #
