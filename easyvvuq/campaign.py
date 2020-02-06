@@ -526,7 +526,8 @@ class Campaign:
             self.add_runs(list_of_runs)
 
             num_added += 1
-            if num_added >= num_samples:
+            
+            if num_samples != 0 and num_added >= num_samples:
                 break
 
         # Write sampler's new state to database
