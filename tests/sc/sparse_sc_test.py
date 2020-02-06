@@ -61,7 +61,7 @@ my_campaign.add_app(name="sc",
 # Create the sampler
 vary = {
     "Pe": cp.Uniform(100.0, 200.0),
-    "f": cp.Normal(1.0, 0.01)
+    "f": cp.Uniform(0.9, 1.0)
 }
 
 """
@@ -72,7 +72,7 @@ SPARSE GRID PARAMETERS
   of 1D collocation points per level. Used to make e.g. clenshaw-curtis
   quadrature nested.
 """
-my_sampler = uq.sampling.SCSampler(vary=vary, polynomial_order=4,
+my_sampler = uq.sampling.SCSampler(vary=vary, polynomial_order=3,
                                    quadrature_rule="C", sparse=True,
                                    growth=True)
 
@@ -80,7 +80,7 @@ my_sampler = uq.sampling.SCSampler(vary=vary, polynomial_order=4,
 my_campaign.set_sampler(my_sampler)
 
 # Will draw all (of the finite set of samples)
-my_campaign.draw_samples()
+my_campaign.draw_samples(num_samples=my_sampler._number_of_samples)
 my_campaign.populate_runs_dir()
 
 # Use this instead to run the samples using EasyVVUQ on the localhost
@@ -113,8 +113,8 @@ if __name__ == '__main__':
     ax = fig.add_subplot(121, xlabel='x', ylabel='u',
                          title=r'code mean +/- standard deviation')
     ax.plot(x, mu, 'b', label='mean')
-    ax.plot(x, mu + std, '--r', label='std-dev')
-    ax.plot(x, mu - std, '--r')
+    ax.plot(x, mu + 3 * std, '--r', label='std-dev')
+    ax.plot(x, mu - 3 * std, '--r')
 
     #####################################
     # Plot the random surrogate samples #
