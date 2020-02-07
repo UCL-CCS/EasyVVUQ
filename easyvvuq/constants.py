@@ -55,3 +55,4 @@ class Status(IntEnum):
     NEW = 1
     ENCODED = 2
     COLLATED = 3
+    IGNORED = 4
