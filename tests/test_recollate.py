@@ -109,8 +109,6 @@ def test_recollate(tmpdir):
                         collater=collater)
     my_campaign.set_app("cannon")
 
-    print(my_campaign)
-
     my_campaign.set_sampler(sampler)
     my_campaign.draw_samples()
     my_campaign.populate_runs_dir()
@@ -119,16 +117,18 @@ def test_recollate(tmpdir):
     my_campaign.apply_for_each_run_dir(actions)
     my_campaign.collate()
 
-    print("Before:\n", my_campaign.get_collation_result())
-    
+    # Set some runs to be IGNORED, then recollate all
     my_campaign.ignore_runs(ignore_list)
     my_campaign.recollate()
 
-    print("After:\n", my_campaign.get_collation_result())
+    # Check that the right number of rows are in the collation dataframe 
+    assert(len(my_campaign.get_collation_result().index) == num_samples - len(ignore_list))
+
+    # Rerun some runs
+    my_campaign.rerun(['Run_2', 'Run_3', 'Run_4'])
+    my_campaign.apply_for_each_run_dir(actions)
 
     pprint(my_campaign._log)
-
-    assert(len(my_campaign.get_collation_result().index) == num_samples - len(ignore_list))
 
 if __name__ == "__main__":
     test_recollate('/tmp/')

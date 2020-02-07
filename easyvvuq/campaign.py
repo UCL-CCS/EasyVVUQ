@@ -786,5 +786,8 @@ class Campaign:
     def ignore_runs(self, list_of_run_IDs):
         self.campaign_db.set_run_statuses(list_of_run_IDs, Status.IGNORED)
 
+    def rerun(self, list_of_run_IDs):
+        self.campaign_db.set_run_statuses(list_of_run_IDs, Status.ENCODED)
+
     def get_active_app(self):
         return self._active_app
