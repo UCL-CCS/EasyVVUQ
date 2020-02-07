@@ -337,17 +337,11 @@ class SCAnalysis(BaseAnalysisElement):
         - mean and variance of qoi (float (N_qoi,))
 
         """
-
         # compute mean
         mean_f = self.quadrature(qoi)
-
         # compute variance
-        variance_samples = []
-        for sample in self.samples[qoi]:
-            variance_samples.append((sample - mean_f)**2)
-
+        variance_samples = [(sample - mean_f)**2 for sample in self.samples[qoi]]
         var_f = self.quadrature(qoi, samples=variance_samples)
-
         return mean_f, var_f
 
     def sc_expansion(self, L, samples, **kwargs):
