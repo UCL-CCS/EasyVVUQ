@@ -667,6 +667,22 @@ class Campaign:
         info = {'num_collated': num_collated}
         self.log_element_application(self._active_app_collater, info)
 
+    def clear_collation(self):
+        self.campaign_db.clear_collation(self._active_app['id'])
+
+    def recollate(self):
+        """Clears the current collation table, changes all COLLATED status runs back to ENCODED, then runs collate() again
+
+        Returns
+        -------
+
+        """
+
+        self.clear_collation()
+        collated_run_ids = list(self.campaign_db.run_ids(status=Status.COLLATED))
+        self.campaign_db.set_run_statuses(collated_run_ids, Status.ENCODED)
+        self.collate()
+
     def get_collation_result(self):
         """
         Return dataframe containing all collated results
@@ -680,9 +696,6 @@ class Campaign:
 
         """
         return self._active_app_collater.get_collated_dataframe(self, self._active_app['id'])
-
-    def clear_collation(self):
-        self.campaign_db.clear_collation(self._active_app['id'])
 
     def apply_analysis(self, analysis):
         """Run the `analysis` element on the output of the last run collation.
