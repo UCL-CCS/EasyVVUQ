@@ -579,27 +579,20 @@ class SCAnalysis(BaseAnalysisElement):
         """
 
         # tensor products with dimension of u
-        xi_u = {}
-        wi_u = {}
-        for key in u:
-            xi_u[key] = xi[key]
-            wi_u[key] = wi[key]
+        xi_u = [xi[key] for key in u]
+        wi_u = [wi[key] for key in u]
 
-        xi_d_u = np.array(list(product(*xi_u.values())))
-        wi_d_u = np.array(list(product(*wi_u.values())))
+        xi_d_u = np.array(list(product(*xi_u)))
+        wi_d_u = np.array(list(product(*wi_u)))
 
         # tensor products with dimension of u' (complement of u)
-        xi_u_prime = {}
-        wi_u_prime = {}
-        for key in u_prime:
-            xi_u_prime[key] = xi[key]
-            wi_u_prime[key] = wi[key]
+        xi_u_prime = [xi[key] for key in u_prime]
+        wi_u_prime = [wi[key] for key in u_prime]
 
-        xi_d_u_prime = np.array(list(product(*xi_u_prime.values())))
-        wi_d_u_prime = np.array(list(product(*wi_u_prime.values())))
+        xi_d_u_prime = np.array(list(product(*xi_u_prime)))
+        wi_d_u_prime = np.array(list(product(*wi_u_prime)))
 
-        return {'xi_d_u': xi_d_u, 'wi_d_u': wi_d_u,
-                'xi_d_u_prime': xi_d_u_prime, 'wi_d_u_prime': wi_d_u_prime}
+        return xi_d_u, wi_d_u, xi_d_u_prime, wi_d_u_prime
 
     def compute_marginal(self, qoi, u, u_prime, diff):
         """
@@ -624,11 +617,8 @@ class SCAnalysis(BaseAnalysisElement):
         wi = [self.wi_1d[n][np.abs(diff)[n]] for n in range(self.N)]
 
         # compute tensor products and weights in dimension u and u'
-        tmp = self.compute_tensor_prod_u(xi, wi, u, u_prime)
-        xi_d_u = tmp['xi_d_u']
-        wi_d_u = tmp['wi_d_u']
-        xi_d_u_prime = tmp['xi_d_u_prime']
-        wi_d_u_prime = tmp['wi_d_u_prime']
+        xi_d_u, wi_d_u, xi_d_u_prime, wi_d_u_prime = self.compute_tensor_prod_u(xi, wi, u, u_prime)
+
 
         S_u = xi_d_u.shape[0]
         S_u_prime = xi_d_u_prime.shape[0]
