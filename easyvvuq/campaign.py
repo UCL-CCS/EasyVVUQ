@@ -671,7 +671,8 @@ class Campaign:
         self.campaign_db.clear_collation(self._active_app['id'])
 
     def recollate(self):
-        """Clears the current collation table, changes all COLLATED status runs back to ENCODED, then runs collate() again
+        """Clears the current collation table, changes all COLLATED status runs
+           back to ENCODED, then runs collate() again
 
         Returns
         -------
@@ -829,6 +830,7 @@ class Campaign:
 
     def get_active_app(self):
         """
-        Returns a dict of information regarding the application that is currently set for this campaign.
+        Returns a dict of information regarding the application that is currently
+        set for this campaign.
         """
         return self._active_app
