@@ -792,7 +792,7 @@ class Campaign:
         ----------
         list_of_run_IDs: list
             The list of run IDs for the runs that should be set to status IGNORED
-        
+
 
         Returns
         -------
@@ -811,7 +811,7 @@ class Campaign:
         ----------
         list_of_run_IDs: list
             The list of run IDs for the runs that should be set to status ENCODED
-        
+
 
         Returns
         -------
@@ -823,7 +823,7 @@ class Campaign:
             if status == Status.NEW:
                 msg = (f"Cannot rerun {run_ID} as it has status NEW, and must"
                        f"be encoded before execution.")
-                raise RuntimeError(msg)       
+                raise RuntimeError(msg)
 
         self.campaign_db.set_run_statuses(list_of_run_IDs, Status.ENCODED)
 

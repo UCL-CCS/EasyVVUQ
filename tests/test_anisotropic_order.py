@@ -57,7 +57,7 @@ def test_anisotropic_order(tmpdir):
         "f": cp.Uniform(0.95, 1.05)
     }
 
-    #different orders for the 2 parameters
+    # different orders for the 2 parameters
     my_sampler = uq.sampling.SCSampler(vary=vary, polynomial_order=[2, 5],
                                        quadrature_rule="G")
 
@@ -111,7 +111,7 @@ if __name__ == "__main__":
     ax = fig.add_subplot(122, xlabel='location x', ylabel='velocity u',
                          title='Surrogate samples')
 
-    #generate n_mc samples from the input distributions
+    # generate n_mc samples from the input distributions
     n_mc = 20
     xi_mc = np.zeros([20, 2])
     idx = 0

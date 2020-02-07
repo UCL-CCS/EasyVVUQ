@@ -105,7 +105,7 @@ class JSONDecoder(BaseDecoder, decoder_name="json"):
         for col in self.output_columns:
             if isinstance(col, str):
                 data.append((col, to_np_if_list(raw_data[col])))
-            elif type(col) is list:
+            elif isinstance(col, list):
                 data.append(('.'.join(col), to_np_if_list(get_value(raw_data, col))))
         data = pd.DataFrame(dict(data))
 

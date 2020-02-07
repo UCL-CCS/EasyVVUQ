@@ -93,7 +93,7 @@ def test_recollate(tmpdir):
     decoder = uq.decoders.SimpleCSV(
         target_filename='output.csv', output_columns=output_cols, header=0)
     collater = uq.collate.AggregateSamples(average=False)
-    
+
     # Set up samplers
     vary = {
         "gravity": cp.Uniform(9.8, 1.0),
@@ -121,7 +121,7 @@ def test_recollate(tmpdir):
     my_campaign.ignore_runs(ignore_list)
     my_campaign.recollate()
 
-    # Check that the right number of rows are in the collation dataframe 
+    # Check that the right number of rows are in the collation dataframe
     assert(len(my_campaign.get_collation_result().index) == num_samples - len(ignore_list))
 
     # Rerun some runs
@@ -129,6 +129,7 @@ def test_recollate(tmpdir):
     my_campaign.apply_for_each_run_dir(actions)
 
     pprint(my_campaign._log)
+
 
 if __name__ == "__main__":
     test_recollate('/tmp/')

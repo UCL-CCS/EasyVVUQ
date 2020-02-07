@@ -764,7 +764,6 @@ class CampaignDB(BaseCampaignDB):
         for r in selected:
             yield r.run_name
 
-
     def get_num_runs(self, campaign=None, sampler=None, status=None, not_status=None):
         """
         Returns the number of runs matching the filtering criteria.

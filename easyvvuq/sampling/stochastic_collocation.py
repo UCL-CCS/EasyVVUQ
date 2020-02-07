@@ -74,7 +74,7 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
         self.joint_dist = cp.J(*params_distribution)
 
         # The quadrature information: order, rule and sparsity
-        if type(polynomial_order) == int:
+        if isinstance(polynomial_order, int):
             print('Received integer polynomial order, assuming isotropic grid')
             self.polynomial_order = [polynomial_order for i in range(N)]
         else:
@@ -120,7 +120,7 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
 
         if not sparse:
             # Generate collocation grid via chaospy
-            #NOTE: different poly orders per dimension does not work for all
+            # NOTE: different poly orders per dimension does not work for all
             #      guadarture rules - use self.generate_grid subroutine instead
             # # the nodes of the collocation grid
             # xi_d, _ = cp.generate_quadrature(self.polynomial_order,
@@ -128,7 +128,7 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
             #                                  rule=quadrature_rule)
             # self.xi_d = xi_d.T
 
-            #generate collocation grid locally
+            # generate collocation grid locally
             l_norm = np.array([self.polynomial_order])
             self.xi_d = self.generate_grid(L, N, l_norm)
 
