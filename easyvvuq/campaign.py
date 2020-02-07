@@ -784,9 +784,39 @@ class Campaign:
         return self._active_sampler
 
     def ignore_runs(self, list_of_run_IDs):
+        """ Flags the specified runs to be IGNORED in future collation. Note that
+        this does NOT remove previously collated results from the collation table.
+        For that you must refresh the collation by running recollate().
+
+        Parameters
+        ----------
+        list_of_run_IDs: list
+            The list of run IDs for the runs that should be set to status IGNORED
+        
+
+        Returns
+        -------
+
+        """
         self.campaign_db.set_run_statuses(list_of_run_IDs, Status.IGNORED)
 
     def rerun(self, list_of_run_IDs):
+        """ Sets the status of the specified runs to ENCODED, so that their results
+        may be recollated later (presumably after extending, rerunning or otherwise
+        modifying the data in the relevant run folder). Note that this method will
+        NOT perform any execution - it simply flags the run in EasyVVUQ as being
+        uncollated. Actual execution is (as usual) the job of the user or middleware.
+
+        Parameters
+        ----------
+        list_of_run_IDs: list
+            The list of run IDs for the runs that should be set to status ENCODED
+        
+
+        Returns
+        -------
+
+        """
 
         for run_ID in list_of_run_IDs:
             status = self.campaign_db.get_run_status(run_ID)
@@ -798,4 +828,7 @@ class Campaign:
         self.campaign_db.set_run_statuses(list_of_run_IDs, Status.ENCODED)
 
     def get_active_app(self):
+        """
+        Returns a dict of information regarding the application that is currently set for this campaign.
+        """
         return self._active_app
