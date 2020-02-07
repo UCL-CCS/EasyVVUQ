@@ -41,7 +41,11 @@ cannonsim_path = os.path.realpath(os.path.expanduser("tests/cannonsim/bin/cannon
 logging.basicConfig(level=logging.CRITICAL)
 
 
-def test_run_extension(tmpdir):
+def test_recollate(tmpdir):
+
+    num_samples = 10
+    ignore_list = ['Run_1', 'Run_5', 'Run_10']
+
     # Define parameter space for the cannonsim app
     params = {
         "angle": {
@@ -95,15 +99,17 @@ def test_run_extension(tmpdir):
         "gravity": cp.Uniform(9.8, 1.0),
         "mass": cp.Uniform(2.0, 10.0),
     }
-    sampler = uq.sampling.RandomSampler(vary=vary, max_num=10)
+    sampler = uq.sampling.RandomSampler(vary=vary, max_num=num_samples)
 
-    my_campaign = uq.Campaign(name='ignore', work_dir=tmpdir)
+    my_campaign = uq.Campaign(name='test', work_dir=tmpdir)
     my_campaign.add_app(name="cannon",
                         params=params,
                         encoder=encoder,
                         decoder=decoder,
                         collater=collater)
     my_campaign.set_app("cannon")
+
+    print(my_campaign)
 
     my_campaign.set_sampler(sampler)
     my_campaign.draw_samples()
@@ -115,13 +121,14 @@ def test_run_extension(tmpdir):
 
     print("Before:\n", my_campaign.get_collation_result())
     
-    my_campaign.ignore_runs(['Run_1', 'Run_5', 'Run_10'])
-    #my_campaign.recollate()
+    my_campaign.ignore_runs(ignore_list)
+    my_campaign.recollate()
 
     print("After:\n", my_campaign.get_collation_result())
 
-    pprint(my_campaign.list_runs())
+    pprint(my_campaign._log)
 
+    assert(len(my_campaign.get_collation_result().index) == num_samples - len(ignore_list))
 
 if __name__ == "__main__":
-    test_run_extension('/tmp/')
+    test_recollate('/tmp/')
