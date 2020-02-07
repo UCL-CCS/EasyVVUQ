@@ -61,11 +61,6 @@ Then the library can be installed using:
 python setup.py install
 ```
 
-To complete the tests you need to compile (requires `g++`) the `cannonsim` code:
-```
-make -C tests/cannonsim/src/ 
-```
-
 ## Getting Started
 
 Documentation, including a basic tutorial, is avalable [here](https://easyvvuq.readthedocs.io).
