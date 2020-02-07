@@ -619,7 +619,6 @@ class SCAnalysis(BaseAnalysisElement):
         # compute tensor products and weights in dimension u and u'
         xi_d_u, wi_d_u, xi_d_u_prime, wi_d_u_prime = self.compute_tensor_prod_u(xi, wi, u, u_prime)
 
-
         S_u = xi_d_u.shape[0]
         S_u_prime = xi_d_u_prime.shape[0]
 
