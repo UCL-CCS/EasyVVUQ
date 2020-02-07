@@ -787,6 +787,14 @@ class Campaign:
         self.campaign_db.set_run_statuses(list_of_run_IDs, Status.IGNORED)
 
     def rerun(self, list_of_run_IDs):
+
+        for run_ID in list_of_run_IDs:
+            status = self.campaign_db.get_run_status(run_ID)
+            if status == Status.NEW:
+                msg = (f"Cannot rerun {run_ID} as it has status NEW, and must"
+                       f"be encoded before execution.")
+                raise RuntimeError(msg)       
+
         self.campaign_db.set_run_statuses(list_of_run_IDs, Status.ENCODED)
 
     def get_active_app(self):
