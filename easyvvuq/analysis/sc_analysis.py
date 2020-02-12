@@ -222,7 +222,7 @@ class SCAnalysis(BaseAnalysisElement):
 
         return Map
 
-    def surrogate(self, qoi, x, **kwargs):
+    def surrogate(self, qoi, x, L=None):
         """
         Use sc_expansion UQP as a surrogate
 
@@ -236,14 +236,12 @@ class SCAnalysis(BaseAnalysisElement):
 
         """
 
-        if 'L' in kwargs:
-            L = kwargs['L']
-        else:
+        if L is None:
             L = self.L
 
         return self.sc_expansion(L, self.samples[qoi], x=x)
 
-    def quadrature(self, qoi, **kwargs):
+    def quadrature(self, qoi, samples=None):
         """
         Computes a (Smolyak) quadrature
 
@@ -255,10 +253,7 @@ class SCAnalysis(BaseAnalysisElement):
           by setting samples = self.samples. To compute the variance,
           set samples = (self.samples - mean)**2
         """
-
-        if 'samples' in kwargs:
-            samples = kwargs['samples']
-        else:
+        if samples is None:
             samples = self.samples[qoi]
 
         Delta = np.zeros([self.l_norm.shape[0], self.N_qoi])
@@ -274,7 +269,7 @@ class SCAnalysis(BaseAnalysisElement):
 
         return quadrature_approx
 
-    def compute_Q_diff(self, l, samples, **kwargs):
+    def compute_Q_diff(self, l, samples):
         """
         =======================================================================
         For every multi index l = (l1, l2, ..., ld), Smolyak sums over
