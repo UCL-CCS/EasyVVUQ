@@ -770,5 +770,6 @@ def lagrange_poly(x, x_i, j):
     float
         l_j(x) calculated as shown above.
     """
-    return np.prod([(x - x_i_m) / (x_i[j] - x_i_m)
-                    for m, x_i_m in enumerate(x_i) if m != j])
+    x_i_ = np.delete(x_i, j)
+    return np.prod((x - x_i_) / (x_i[j] - x_i_))
+
