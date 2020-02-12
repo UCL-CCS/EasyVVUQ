@@ -255,19 +255,11 @@ class SCAnalysis(BaseAnalysisElement):
         """
         if samples is None:
             samples = self.samples[qoi]
+        # compute the Delta Q :=
+        # (Q^1_l_1 - Q^1_{l_1 - 1}) X ... X (Q^1_{l_N} - Q^1_{L_N - 1})
+        # tensor product
+        return np.array([self.compute_Q_diff(l, samples) for l in self.l_norm]).sum(axis=0)
 
-        Delta = np.zeros([self.l_norm.shape[0], self.N_qoi])
-        idx = 0
-        for l in self.l_norm:
-            # compute the Delta Q :=
-            # (Q^1_l_1 - Q^1_{l_1 - 1}) X ... X (Q^1_{l_N} - Q^1_{L_N - 1})
-            # tensor product
-            Delta[idx, :] = self.compute_Q_diff(l, samples)
-            idx += 1
-
-        quadrature_approx = np.sum(Delta, axis=0)
-
-        return quadrature_approx
 
     def compute_Q_diff(self, l, samples):
         """
@@ -718,16 +710,7 @@ class SCAnalysis(BaseAnalysisElement):
             # compute Sobol index, only include points where D > 0
             # sobol[u] = D_u[u][idx_gt0]/D[idx_gt0]
             sobol[u] = D_u[u] / D
-
-        sort = []
-        for u in P[1:]:
-
-            sort.append(sobol[u])
-
-        print('done')
         return sobol
-
-    # End SC specific methods
 
 
 def powerset(iterable):
@@ -772,4 +755,3 @@ def lagrange_poly(x, x_i, j):
     """
     x_i_ = np.delete(x_i, j)
     return np.prod((x - x_i_) / (x_i[j] - x_i_))
-
