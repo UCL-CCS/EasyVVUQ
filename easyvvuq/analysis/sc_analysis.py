@@ -770,15 +770,5 @@ def lagrange_poly(x, x_i, j):
     float
         l_j(x) calculated as shown above.
     """
-
-    l_j = 1.0
-
-    for m in range(len(x_i)):
-
-        if m != j:
-            denom = x_i[j] - x_i[m]
-            nom = x - x_i[m]
-
-            l_j *= nom / denom
-
-    return l_j
+    return np.prod([(x - x_i_m) / (x_i[j] - x_i_m)
+                    for m, x_i_m in enumerate(x_i) if m != j])
