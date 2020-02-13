@@ -501,13 +501,7 @@ class SCAnalysis(BaseAnalysisElement):
         -------
          - array of all samples of qoi
         """
-
-        tmp = np.zeros([self._number_of_samples, self.N_qoi])
-
-        for k in range(self._number_of_samples):
-            tmp[k, :] = (self.samples[qoi][k])
-
-        return tmp
+        return np.array([self.samples[qoi][k] for k in range(self._number_of_samples)])
 
     def plot_grid(self):
         """
@@ -665,7 +659,7 @@ class SCAnalysis(BaseAnalysisElement):
                         for i_u in range(wi_d_u.shape[0]):
                             D_u[u] += np.sign(np.prod(diff)) * h[i_u]**2 * wi_d_u[i_u].prod()
 
-                D_u[u] = D_u[u].flatten()
+                #D_u[u] = D_u[u].flatten()
 
             # all subsets of u
             W = list(powerset(u))[0:-1]
