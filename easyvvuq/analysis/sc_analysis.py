@@ -592,14 +592,11 @@ class SCAnalysis(BaseAnalysisElement):
         # compute tensor products and weights in dimension u and u'
         xi_d_u, wi_d_u, xi_d_u_prime, wi_d_u_prime = self.compute_tensor_prod_u(xi, wi, u, u_prime)
 
-        S_u = xi_d_u.shape[0]
-        S_u_prime = xi_d_u_prime.shape[0]
-
         # marginals h = f*w' integrated over u', so cardinality is that of u
         h = {}
-        for i_u in range(S_u):
+        for i_u, xi_d_u_ in enumerate(xi_d_u):
             h[i_u] = 0.
-            for i_up in range(S_u_prime):
+            for i_up, xi_d_u_prime_ in enumerate(xi_d_u_prime):
 
                 # collocation point to be evaluated
                 xi_s = np.zeros(self.N)
@@ -607,13 +604,13 @@ class SCAnalysis(BaseAnalysisElement):
                 # add the xi of u (at the correct location k)
                 idx = 0
                 for k in u:
-                    xi_s[k] = xi_d_u[i_u][idx]
+                    xi_s[k] = xi_d_u_[idx]
                     idx += 1
 
                 # add the xi of u' (at the correct location k)
                 idx = 0
                 for k in u_prime:
-                    xi_s[k] = xi_d_u_prime[i_up][idx]
+                    xi_s[k] = xi_d_u_prime_[idx]
                     idx += 1
 
                 # find the index of the corresponding code sample
