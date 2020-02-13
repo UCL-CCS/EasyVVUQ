@@ -34,4 +34,4 @@ def test_compute_marginal():
         h, wi_d_u = analysis.compute_marginal(datum['qoi'], datum['u'], datum['u_prime'], datum['diff'])
         for key in h:
             assert((h[key] == datum['h'][key]).all())
-            assert((wi_d_u == datum['wi_d_u']).all())
+        assert((wi_d_u == datum['wi_d_u']).all())

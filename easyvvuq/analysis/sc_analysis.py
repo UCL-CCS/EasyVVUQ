@@ -590,37 +590,21 @@ class SCAnalysis(BaseAnalysisElement):
         wi = [self.wi_1d[n][np.abs(diff)[n]] for n in range(self.N)]
 
         # compute tensor products and weights in dimension u and u'
-        xi_d_u, wi_d_u, xi_d_u_prime, wi_d_u_prime = self.compute_tensor_prod_u(xi, wi, u, u_prime)
+        xi_d_u, wi_d_u, xi_d_u_prime, wi_d_u_prime =\
+          self.compute_tensor_prod_u(xi, wi, u, u_prime)
 
+        idxs = np.argsort(np.concatenate((u, u_prime)))
         # marginals h = f*w' integrated over u', so cardinality is that of u
         h = {}
         for i_u, xi_d_u_ in enumerate(xi_d_u):
             h[i_u] = 0.
             for i_up, xi_d_u_prime_ in enumerate(xi_d_u_prime):
-
-                # collocation point to be evaluated
-                xi_s = np.zeros(self.N)
-
-                # add the xi of u (at the correct location k)
-                idx = 0
-                for k in u:
-                    xi_s[k] = xi_d_u_[idx]
-                    idx += 1
-
-                # add the xi of u' (at the correct location k)
-                idx = 0
-                for k in u_prime:
-                    xi_s[k] = xi_d_u_prime_[idx]
-                    idx += 1
-
+                xi_s = np.concatenate((xi_d_u_, xi_d_u_prime_))[idxs]
                 # find the index of the corresponding code sample
-                tmp = np.prod(self.xi_d == xi_s, axis=1)
-                idx = np.where(tmp == 1)[0][0]
-
+                idx = np.where(np.prod(self.xi_d == xi_s, axis=1))[0][0]
                 # perform quadrature
                 q_k = self.samples[qoi][idx].flatten()
                 h[i_u] += q_k * wi_d_u_prime[i_up].prod()
-
         # return marginal and the weights of dimensions u
         return h, wi_d_u
 
