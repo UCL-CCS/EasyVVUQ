@@ -33,8 +33,8 @@ def test_compute_marginal():
     analysis = pickle.load(open('tests/sc/compute_marginal/analysis.p', 'rb'))
     for datum in data:
         h, wi_d_u = analysis.compute_marginal(datum['qoi'], datum['u'], datum['u_prime'], datum['diff'])
-        for key in h:
-            assert((h[key] == datum['h'][key]).all())
+        for index, row in enumerate(h):
+            assert((row == datum['h'][index]).all())
         assert((wi_d_u == datum['wi_d_u']).all())
 
 

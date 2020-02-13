@@ -595,15 +595,14 @@ class SCAnalysis(BaseAnalysisElement):
 
         idxs = np.argsort(np.concatenate((u, u_prime)))
         # marginals h = f*w' integrated over u', so cardinality is that of u
-        h = {}
+        h = [0.0] * xi_d_u.shape[0]
         for i_u, xi_d_u_ in enumerate(xi_d_u):
-            h[i_u] = 0.
             for i_up, xi_d_u_prime_ in enumerate(xi_d_u_prime):
                 xi_s = np.concatenate((xi_d_u_, xi_d_u_prime_))[idxs]
                 # find the index of the corresponding code sample
                 idx = np.where(np.prod(self.xi_d == xi_s, axis=1))[0][0]
                 # perform quadrature
-                q_k = self.samples[qoi][idx].flatten()
+                q_k = self.samples[qoi][idx]
                 h[i_u] += q_k * wi_d_u_prime[i_up].prod()
         # return marginal and the weights of dimensions u
         return h, wi_d_u
@@ -623,11 +622,8 @@ class SCAnalysis(BaseAnalysisElement):
         -------
         Either the first order or all Sobol indices of qoi
         """
-
-        print('Computing', typ, 'Sobol indices')
-
         # multi indices
-        U = list(range(self.N))
+        U = np.arange(self.N)
 
         if typ == 'first_order':
             P = list(powerset(U))[0:self.N + 1]
@@ -637,8 +633,6 @@ class SCAnalysis(BaseAnalysisElement):
 
         # get first two moments
         mu, D = self.get_moments(qoi)
-        mu = mu.flatten()
-        D = D.flatten()
 
         # partial variances
         D_u = {P[0]: mu**2}
@@ -683,10 +677,6 @@ class SCAnalysis(BaseAnalysisElement):
             # compute Sobol index, only include points where D > 0
             # sobol[u] = D_u[u][idx_gt0]/D[idx_gt0]
             sobol[u] = D_u[u] / D
-        import yaml
-        import uuid
-        with open(uuid.uuid4().hex + ".yml", 'w') as fd:
-            fd.write(yaml.dump({'qoi' : qoi, 'typ' : typ, 'sobol' : sobol}))
         return sobol
 
 
