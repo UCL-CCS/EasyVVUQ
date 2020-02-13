@@ -683,6 +683,10 @@ class SCAnalysis(BaseAnalysisElement):
             # compute Sobol index, only include points where D > 0
             # sobol[u] = D_u[u][idx_gt0]/D[idx_gt0]
             sobol[u] = D_u[u] / D
+        import yaml
+        import uuid
+        with open(uuid.uuid4().hex + ".yml", 'w') as fd:
+            fd.write(yaml.dump({'qoi' : qoi, 'typ' : typ, 'sobol' : sobol}))
         return sobol
 
 

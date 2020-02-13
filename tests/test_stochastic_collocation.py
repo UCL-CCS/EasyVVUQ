@@ -1,6 +1,9 @@
 import chaospy as cp
 import easyvvuq as uq
 import pytest
+import yaml
+import pickle
+import numpy as np
 
 
 def test_l_n_exception():
@@ -20,8 +23,6 @@ def test_lagrange_poly():
 
 
 def test_compute_marginal():
-    import yaml
-    import pickle
     files = ['tests/sc/compute_marginal/0b7b64b4dcea4d5797ce270c685408a7.yml',
              'tests/sc/compute_marginal/a2676d2279224b4f91ffb39501be165d.yml',
              'tests/sc/compute_marginal/f480d6dcf4334471937bf64209c21b7d.yml']
@@ -35,3 +36,15 @@ def test_compute_marginal():
         for key in h:
             assert((h[key] == datum['h'][key]).all())
         assert((wi_d_u == datum['wi_d_u']).all())
+
+
+def test_get_sobol_indices():
+    file_ = 'tests/sc/sobol_indices/6e1252d0b17f4a328c1320a390135c6a.yml'
+    with open(file_, 'r') as fd:
+        data = yaml.load(fd, Loader=yaml.Loader)
+    analysis = pickle.load(open('tests/sc/compute_marginal/analysis.p', 'rb'))
+    sobol = analysis.get_sobol_indices(data['qoi'], data['typ'])
+    for key in sobol:
+        assert(((sobol[key] == data['sobol'][key]) |
+                (np.isnan(sobol[key]) & np.isnan(data['sobol'][key]))).all())
+
