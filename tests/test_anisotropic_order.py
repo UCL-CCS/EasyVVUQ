@@ -79,6 +79,9 @@ def test_anisotropic_order(tmpdir):
 
     my_campaign.apply_analysis(analysis)
 
+    #import pickle
+    #pickle.dump(analysis, open('analysis.p', 'wb'))
+
     results = my_campaign.get_last_analysis()
 
     return results, my_sampler, analysis

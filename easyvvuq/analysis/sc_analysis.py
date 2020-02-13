@@ -331,7 +331,7 @@ class SCAnalysis(BaseAnalysisElement):
         var_f = self.quadrature(qoi, samples=variance_samples)
         return mean_f, var_f
 
-    def sc_expansion(self, L, samples, **kwargs):
+    def sc_expansion(self, L, samples, x):
         """
         -----------------------------------------
         This is the UQ Pattern for the SC method.
@@ -398,21 +398,14 @@ class SCAnalysis(BaseAnalysisElement):
 
             s_k = q_k - surr_lm1
 
-            idx = {}
             # indices of current collocation point (Map[k]['X'][n]),
             # in corresponding 1d colloc points (self.xi_1d[n][l[n]])
             # These are the j of the 1D lagrange polynomials l_j(x), see
             # lagrange_poly subroutine
-            for n in range(self.N):
-                idx[n] = (self.xi_1d[n][l[n]] == Map[k]['X'][n]).nonzero()[0][0]
-
-            weight = []
-            for n in range(self.N):
-                # interpolate
-                x = kwargs['x']
-                # add values of Lagrange polynomials at x
-                weight.append(lagrange_poly(x[n], self.xi_1d[n][l[n]], idx[n]))
-
+            idx = [(self.xi_1d[n][l[n]] == Map[k]['X'][n]).nonzero()[0][0] for n in range(self.N)]
+            # interpolate
+            # add values of Lagrange polynomials at x
+            weight = [lagrange_poly(x[n], self.xi_1d[n][l[n]], idx[n]) for n in range(self.N)]
             # Delta is the interpolation of the hierarchical surplus
             surr += s_k * np.prod(weight)
 
@@ -592,7 +585,6 @@ class SCAnalysis(BaseAnalysisElement):
         -------
 
         """
-
         # 1d weights and points of the levels in diff
         xi = [self.xi_1d[n][np.abs(diff)[n]] for n in range(self.N)]
         wi = [self.wi_1d[n][np.abs(diff)[n]] for n in range(self.N)]
