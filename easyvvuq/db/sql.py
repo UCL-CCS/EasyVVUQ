@@ -732,6 +732,38 @@ class CampaignDB(BaseCampaignDB):
         for r in selected:
             yield r.run_name, self._run_to_dict(r)
 
+    def run_ids(self, campaign=None, sampler=None, status=None, not_status=None, app_id=None):
+        """
+        A generator to return all run IDs for selected `campaign` and `sampler`.
+
+        Parameters
+        ----------
+        campaign: int or None
+            Campaign id to filter for.
+        sampler: int or None
+            Sampler id to filter for.
+        status: enum(Status) or None
+            Status string to filter for.
+        not_status: enum(Status) or None
+            Exclude runs with this status string
+
+        Returns
+        -------
+        str:
+            run ID for each selected run, one at a time.
+
+        """
+
+        selected = self._select_runs(
+            campaign=campaign,
+            sampler=sampler,
+            status=status,
+            not_status=not_status,
+            app_id=app_id)
+
+        for r in selected:
+            yield r.run_name
+
     def get_num_runs(self, campaign=None, sampler=None, status=None, not_status=None):
         """
         Returns the number of runs matching the filtering criteria.

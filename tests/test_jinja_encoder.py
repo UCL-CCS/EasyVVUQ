@@ -111,14 +111,14 @@ def test_jinjaencoder(tmpdir):
 
     vary = {
         "Nc_0": cp.Uniform(50e6, 100e6),
-        #"cf": cp.Uniform(2.4, 2.6),
-        #"cn": cp.Uniform(0.5, 0.9),
-        #"Rigc": cp.Uniform(0.1, 0.4),
-        #"Prandtl": cp.Uniform(0.2, 0.4),
-        #"z0": cp.Uniform(1e-4, 2e-4),
+        # "cf": cp.Uniform(2.4, 2.6),
+        # "cn": cp.Uniform(0.5, 0.9),
+        # "Rigc": cp.Uniform(0.1, 0.4),
+        # "Prandtl": cp.Uniform(0.2, 0.4),
+        # "z0": cp.Uniform(1e-4, 2e-4),
         "l_sb": cp.DiscreteUniform(0, 1),
-        #"Nh": cp.DiscreteUniform(10, 20),
-        #"extent": cp.Uniform(1000, 2000),
+        # "Nh": cp.DiscreteUniform(10, 20),
+        # "extent": cp.Uniform(1000, 2000),
         "seed": cp.Uniform(1, 2000),
     }
 
@@ -142,6 +142,7 @@ def test_jinjaencoder(tmpdir):
     my_campaign.set_sampler(my_sampler)
     my_campaign.draw_samples()
     my_campaign.populate_runs_dir()
+
 
 if __name__ == "__main__":
     test_jinjaencoder("/tmp/")

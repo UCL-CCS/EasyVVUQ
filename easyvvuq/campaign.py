@@ -667,6 +667,23 @@ class Campaign:
         info = {'num_collated': num_collated}
         self.log_element_application(self._active_app_collater, info)
 
+    def clear_collation(self):
+        self.campaign_db.clear_collation(self._active_app['id'])
+
+    def recollate(self):
+        """Clears the current collation table, changes all COLLATED status runs
+           back to ENCODED, then runs collate() again
+
+        Returns
+        -------
+
+        """
+
+        self.clear_collation()
+        collated_run_ids = list(self.campaign_db.run_ids(status=Status.COLLATED))
+        self.campaign_db.set_run_statuses(collated_run_ids, Status.ENCODED)
+        self.collate()
+
     def get_collation_result(self):
         """
         Return dataframe containing all collated results
@@ -680,9 +697,6 @@ class Campaign:
 
         """
         return self._active_app_collater.get_collated_dataframe(self, self._active_app['id'])
-
-    def clear_collation(self):
-        self.campaign_db.clear_collation(self._active_app['id'])
 
     def apply_analysis(self, analysis):
         """Run the `analysis` element on the output of the last run collation.
@@ -770,5 +784,53 @@ class Campaign:
 
         return self._active_sampler
 
+    def ignore_runs(self, list_of_run_IDs):
+        """ Flags the specified runs to be IGNORED in future collation. Note that
+        this does NOT remove previously collated results from the collation table.
+        For that you must refresh the collation by running recollate().
+
+        Parameters
+        ----------
+        list_of_run_IDs: list
+            The list of run IDs for the runs that should be set to status IGNORED
+
+
+        Returns
+        -------
+
+        """
+        self.campaign_db.set_run_statuses(list_of_run_IDs, Status.IGNORED)
+
+    def rerun(self, list_of_run_IDs):
+        """ Sets the status of the specified runs to ENCODED, so that their results
+        may be recollated later (presumably after extending, rerunning or otherwise
+        modifying the data in the relevant run folder). Note that this method will
+        NOT perform any execution - it simply flags the run in EasyVVUQ as being
+        uncollated. Actual execution is (as usual) the job of the user or middleware.
+
+        Parameters
+        ----------
+        list_of_run_IDs: list
+            The list of run IDs for the runs that should be set to status ENCODED
+
+
+        Returns
+        -------
+
+        """
+
+        for run_ID in list_of_run_IDs:
+            status = self.campaign_db.get_run_status(run_ID)
+            if status == Status.NEW:
+                msg = (f"Cannot rerun {run_ID} as it has status NEW, and must"
+                       f"be encoded before execution.")
+                raise RuntimeError(msg)
+
+        self.campaign_db.set_run_statuses(list_of_run_IDs, Status.ENCODED)
+
     def get_active_app(self):
+        """
+        Returns a dict of information regarding the application that is currently
+        set for this campaign.
+        """
         return self._active_app
