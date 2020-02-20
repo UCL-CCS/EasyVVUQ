@@ -216,7 +216,7 @@ class SCAnalysis(BaseAnalysisElement):
 
         logging.debug('done.')
 
-        return Map
+        return map_
 
     def surrogate(self, qoi, x, L=None):
         """
