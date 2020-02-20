@@ -152,20 +152,16 @@ class SCAnalysis(BaseAnalysisElement):
         # Compute descriptive statistics for each quantity of interest
         for qoi_k in qoi_cols:
             mean_k, var_k = self.get_moments(qoi_k)
-            std_k = var_k**0.5
-
+            std_k = np.sqrt(var_k)
             # compute statistical moments
             results['statistical_moments'][qoi_k] = {'mean': mean_k,
                                                      'var': var_k,
                                                      'std': std_k}
             # compute all Sobol indices
             results['sobols'][qoi_k] = self.get_sobol_indices(qoi_k, 'all')
-
-            idx = 0
-            for param_name in self.sampler.vary.get_keys():
+            for idx, param_name in enumerate(self.sampler.vary.get_keys()):
                 results['sobols_first'][qoi_k][param_name] = \
                     results['sobols'][qoi_k][(idx,)]
-                idx += 1
 
         return results
 
@@ -189,7 +185,7 @@ class SCAnalysis(BaseAnalysisElement):
         k = 0
         Map = {}
 
-        print('Creating multi-index map for level', L, '...')
+        logging.debug('Creating multi-index map for level', L, '...')
 
         # full tensor product
         if not self.sparse:
@@ -218,7 +214,7 @@ class SCAnalysis(BaseAnalysisElement):
                     Map[k] = {'l': l, 'X': x, 'f': j}
                     k += 1
 
-        print('done.')
+        logging.debug('done.')
 
         return Map
 
@@ -289,11 +285,8 @@ class SCAnalysis(BaseAnalysisElement):
             if not (np.abs(diff) < self.l_norm_min).any():
 
                 # compute the tensor product of parameter and weight values
-                X_k = []
-                W_k = []
-                for n in range(self.N):
-                    X_k.append(self.xi_1d[n][np.abs(diff)[n]])
-                    W_k.append(self.wi_1d[n][np.abs(diff)[n]])
+                X_k = [self.xi_1d[n][np.abs(diff)[n]] for n in range(self.N)]
+                W_k = [self.wi_1d[n][np.abs(diff)[n]] for n in range(self.N)]
 
                 X_k = np.array(list(product(*X_k)))
                 W_k = np.array(list(product(*W_k)))
@@ -301,11 +294,7 @@ class SCAnalysis(BaseAnalysisElement):
                 W_k = W_k.reshape([W_k.shape[0], 1])
 
                 # find corresponding code values
-                f_k = []
-                for x in X_k:
-                    j = np.where((x == self.xi_d).all(axis=1))[0][0]
-                    f_k.append(samples[j])
-                f_k = np.array(f_k).reshape([len(X_k), self.N_qoi])
+                f_k = np.array([samples[np.where((x == self.xi_d).all(axis=1))[0][0]] for x in X_k])
 
                 # quadrature of Q^1_{k1} X ... X Q^1_{kN} product
                 Q_prod = np.sum(f_k * W_k, axis=0).T
