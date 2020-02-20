@@ -180,39 +180,28 @@ class SCAnalysis(BaseAnalysisElement):
         --------
         - Map: a dict for level L containing k, l, X, and f
         """
-
         # unique index
         map_ = {}
-
         logging.debug('Creating multi-index map for level', L, '...')
-
         # full tensor product
         if not self.sparse:
-
             # l = (np.ones(N) * L).astype('int')
             l = (self.sampler.polynomial_order)
-
             for k, x in enumerate(self.xi_d):
                 map_[k] = {'l': l, 'X': x, 'f': k}
         # sparse grid
         else:
-
             # all sparse grid multi indices l with |l| <= L
             l_norm_le_L = self.sampler.compute_sparse_multi_idx(L, N)
-
             # loop over all multi indices
             for l in l_norm_le_L:
-
                 # colloc point of current level index l
                 X_l = [self.xi_1d[n][l[n]] for n in range(N)]
                 X_l = np.array(list(product(*X_l)))
-
                 for k, x in enumerate(X_l):
                     j = np.where((x == self.xi_d).all(axis=1))[0][0]
                     map_[k] = {'l': l, 'X': x, 'f': j}
-
         logging.debug('done.')
-
         return map_
 
     def surrogate(self, qoi, x, L=None):
