@@ -183,7 +183,7 @@ class SCAnalysis(BaseAnalysisElement):
 
         # unique index
         k = 0
-        Map = {}
+        map_ = {}
 
         logging.debug('Creating multi-index map for level', L, '...')
 
@@ -194,7 +194,7 @@ class SCAnalysis(BaseAnalysisElement):
             l = (self.sampler.polynomial_order)
 
             for x in self.xi_d:
-                Map[k] = {'l': l, 'X': x, 'f': k}
+                map_[k] = {'l': l, 'X': x, 'f': k}
                 k += 1
         # sparse grid
         else:
@@ -211,7 +211,7 @@ class SCAnalysis(BaseAnalysisElement):
 
                 for x in X_l:
                     j = np.where((x == self.xi_d).all(axis=1))[0][0]
-                    Map[k] = {'l': l, 'X': x, 'f': j}
+                    map_[k] = {'l': l, 'X': x, 'f': j}
                     k += 1
 
         logging.debug('done.')
