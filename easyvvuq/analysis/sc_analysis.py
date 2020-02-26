@@ -192,6 +192,8 @@ class SCAnalysis(BaseAnalysisElement):
         else:
             # all sparse grid multi indices l with |l| <= L
             l_norm_le_L = self.sampler.compute_sparse_multi_idx(L, N)
+            k = 0
+            map_ = {}
             # loop over all multi indices
             for l in l_norm_le_L:
                 # colloc point of current level index l
