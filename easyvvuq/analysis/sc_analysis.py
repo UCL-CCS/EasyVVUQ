@@ -8,6 +8,7 @@ import chaospy as cp
 from itertools import product, chain, combinations
 from easyvvuq import OutputType
 from .base import BaseAnalysisElement
+import logging
 
 __author__ = "Wouter Edeling"
 __copyright__ = """
@@ -181,14 +182,12 @@ class SCAnalysis(BaseAnalysisElement):
         - Map: a dict for level L containing k, l, X, and f
         """
         # unique index
-        map_ = {}
         logging.debug('Creating multi-index map for level', L, '...')
         # full tensor product
         if not self.sparse:
             # l = (np.ones(N) * L).astype('int')
             l = (self.sampler.polynomial_order)
-            for k, x in enumerate(self.xi_d):
-                map_[k] = {'l': l, 'X': x, 'f': k}
+            map_ = [{'l': l, 'X': x, 'f': k} for k, x in enumerate(self.xi_d)]
         # sparse grid
         else:
             # all sparse grid multi indices l with |l| <= L
@@ -198,9 +197,10 @@ class SCAnalysis(BaseAnalysisElement):
                 # colloc point of current level index l
                 X_l = [self.xi_1d[n][l[n]] for n in range(N)]
                 X_l = np.array(list(product(*X_l)))
-                for k, x in enumerate(X_l):
+                for x in X_l:
                     j = np.where((x == self.xi_d).all(axis=1))[0][0]
                     map_[k] = {'l': l, 'X': x, 'f': j}
+                    k += 1
         logging.debug('done.')
         return map_
 
