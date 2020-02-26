@@ -244,7 +244,6 @@ class SCAnalysis(BaseAnalysisElement):
         # tensor product
         return np.array([self.compute_Q_diff(l, samples) for l in self.l_norm]).sum(axis=0)
 
-
     def compute_Q_diff(self, l, samples):
         """
         =======================================================================
@@ -562,7 +561,7 @@ class SCAnalysis(BaseAnalysisElement):
 
         # compute tensor products and weights in dimension u and u'
         xi_d_u, wi_d_u, xi_d_u_prime, wi_d_u_prime =\
-          self.compute_tensor_prod_u(xi, wi, u, u_prime)
+            self.compute_tensor_prod_u(xi, wi, u, u_prime)
 
         idxs = np.argsort(np.concatenate((u, u_prime)))
         # marginals h = f*w' integrated over u', so cardinality is that of u

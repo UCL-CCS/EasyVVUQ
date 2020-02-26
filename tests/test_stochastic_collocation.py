@@ -14,6 +14,7 @@ def test_l_n_exception():
     with pytest.raises(RuntimeError):
         sampler = uq.sampling.SCSampler(vary=vary, polynomial_order=1, sparse=True)
 
+
 def test_lagrange_poly():
     assert(uq.analysis.sc_analysis.lagrange_poly(2.0, [8, 4, 9], 0) == -3.5)
     assert(uq.analysis.sc_analysis.lagrange_poly(2.0, [8, 4, 9], 1) == 2.0999999999999996)
@@ -32,7 +33,8 @@ def test_compute_marginal():
             data.append(yaml.load(fd, Loader=yaml.Loader))
     analysis = pickle.load(open('tests/sc/compute_marginal/analysis.p', 'rb'))
     for datum in data:
-        h, wi_d_u = analysis.compute_marginal(datum['qoi'], datum['u'], datum['u_prime'], datum['diff'])
+        h, wi_d_u = analysis.compute_marginal(datum['qoi'], datum['u'],
+                                              datum['u_prime'], datum['diff'])
         for index, row in enumerate(h):
             assert((row == datum['h'][index]).all())
         assert((wi_d_u == datum['wi_d_u']).all())
@@ -47,4 +49,3 @@ def test_get_sobol_indices():
     for key in sobol:
         assert(((sobol[key] == data['sobol'][key]) |
                 (np.isnan(sobol[key]) & np.isnan(data['sobol'][key]))).all())
-
