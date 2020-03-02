@@ -1,23 +1,5 @@
-import sys
-from .constants import OutputType
-from . import data_structs
-from .params_specification import ParamsSpecification
-from .campaign import Campaign
-from .campaign_dask import CampaignDask
-from .worker import Worker
-from . import actions
-from . import distributions
-from . import encoders
-from . import decoders
-from .base_element import BaseElement
-from . import sampling
-from . import analysis
-from . import comparison
-from . import valisation
+from .base import BaseSamplingElement
 
-# First make sure python version is 3.6+
-assert sys.version_info >= (3, 6), (f"Python version must be >= 3.6,"
-                                    f"found {sys.version_info}")
 
 __copyright__ = """
 
@@ -40,7 +22,3 @@ __copyright__ = """
 
 """
 __license__ = "LGPL"
-
-from ._version import get_versions
-__version__ = get_versions()['version']
-del get_versions
