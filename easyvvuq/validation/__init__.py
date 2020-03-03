@@ -1,4 +1,4 @@
-from .base import BaseSamplingElement
+from .base import BaseValidationElement
 
 
 __copyright__ = """
