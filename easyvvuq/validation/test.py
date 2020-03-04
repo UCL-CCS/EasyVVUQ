@@ -20,7 +20,8 @@ def cooling_exact(t, k, Te):
 def cooling_uq(tmpdir):
 
     # Set up a fresh campaign called "pce"
-    my_campaign = uq.Campaign(name='vvtest', work_dir=tmpdir)
+    campaign_name = "vvtest"
+    my_campaign = uq.Campaign(name=campaign_name, work_dir=tmpdir)
 
     # Define parameter space
     params = {
@@ -67,7 +68,7 @@ def cooling_uq(tmpdir):
 
 
     my_sampler = uq.sampling.PCESampler(vary=vary,
-                                        polynomial_order=3)
+                                        polynomial_order=4)
 
     print("N samples: ", my_sampler._number_of_samples)
     # Associate the sampler with the campaign
@@ -105,9 +106,9 @@ if __name__ == "__main__":
     # get 10 'measurements' in t=100
     ti = 100
     Texp = []
-    for j in range(10):
+    for j in range(100):
         k_j = vary["kappa"].sample()
-        tenv_j = vary["kappa"].sample()
+        tenv_j = vary["t_env"].sample()
         Texp.append(cooling_exact(ti, k_j, tenv_j))
 
     # PLOTS
