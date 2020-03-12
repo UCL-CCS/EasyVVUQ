@@ -3,6 +3,7 @@ from .ensemble_boot import EnsembleBoot
 from .sc_analysis import SCAnalysis
 from .pce_analysis import PCEAnalysis
 from .qmc_analysis import QMCAnalysis
+from .gp_analyse import GaussianProcessSurrogate
 
 __copyright__ = """
 
