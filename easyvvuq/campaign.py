@@ -210,7 +210,7 @@ class Campaign:
         if self.db_type == 'sql':
             from .db.sql import CampaignDB
             if self.db_location is None:
-                self.db_location = "sqlite:///" + self.campaign_dir + "test.db"
+                self.db_location = "sqlite:///" + self.campaign_dir + "/campaign.db"
         elif self.db_type == 'json':
             from .db.json import CampaignDB
             if self.db_location is None:
