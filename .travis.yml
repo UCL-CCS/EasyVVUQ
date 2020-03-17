@@ -8,6 +8,6 @@ install:
   - pip install coveralls
 script:
   - py.test --pep8 easyvvuq/
-  - py.test --cov=easyvvuq/ --pep8 test
+  - py.test --cov=easyvvuq/ --pep8 tests
 after_success:
   - coveralls
