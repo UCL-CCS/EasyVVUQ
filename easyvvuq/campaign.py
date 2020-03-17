@@ -128,10 +128,10 @@ class Campaign:
         self.work_dir = os.path.realpath(os.path.expanduser(work_dir))
         self.verify_all_runs = verify_all_runs
 
-        self.campaign_name = None
+        self.campaign_name = name
         self._campaign_dir = None
-        self.db_location = None
-        self.db_type = None
+        self.db_location = db_location
+        self.db_type = db_type
         self._log = []
 
         self.campaign_id = None
@@ -155,7 +155,7 @@ class Campaign:
             if change_to_state:
                 os.chdir(self._state_dir)
         else:
-            self.init_fresh(name, db_type, db_location, work_dir)
+            self.init_fresh(name, db_type, db_location, self.work_dir)
             self._state_dir = None
 
     @property
