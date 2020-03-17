@@ -181,6 +181,7 @@ class CampaignDB(BaseCampaignDB):
             raise RuntimeError(message)
 
         self._sample = sampler.serialize()
+        self._save()
 
         # For JSON db, sampler ID is always 1
         return 1
