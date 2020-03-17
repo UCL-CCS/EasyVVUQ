@@ -1,6 +1,3 @@
-import numpy as np
-import csv
-
 __copyright__ = """
 
     Copyright 2018 Robin A. Richardson, David W. Wright
