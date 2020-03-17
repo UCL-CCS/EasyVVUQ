@@ -1,5 +1,7 @@
 from .base import BaseComparisonElement
 from .validate import Validate
+from .metrics import wasserstein, hellinger, kullback_leibler
+from .tools import QoiDist_from_samples, QoiDist_from_moments
 
 __copyright__ = """
 
