@@ -166,4 +166,3 @@ def test_multisampler(db_type, tmpdir):
 if __name__ == "__main__":
     test_multisampler('sql', '/tmp/')
     test_multisampler('json', '/tmp/')
-
