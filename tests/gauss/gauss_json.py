@@ -64,3 +64,7 @@ header = 'Step,Value'
 
 fmt = '%i,%f'
 np.savetxt(output_filename, numbers_out, fmt=fmt, header=header)
+
+json_output = {'numbers': list(numbers)}
+with open(output_filename+'.json','wt') as json_fp:
+    json.dump(json_output, json_fp)
