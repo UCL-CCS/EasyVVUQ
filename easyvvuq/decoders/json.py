@@ -110,8 +110,8 @@ class JSONDecoder(BaseDecoder, decoder_name="json"):
                 data.append(get_multi_index(col, to_list(raw_data[col])))
             elif isinstance(col, list):
                 data.append(get_multi_index('.'.join(col), to_list(get_value(raw_data, col))))
+        data = sum(data, [])
         data = pd.DataFrame(dict(data))
-
         return data
 
     def get_restart_dict(self):
