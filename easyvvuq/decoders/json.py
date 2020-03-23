@@ -97,7 +97,7 @@ class JSONDecoder(BaseDecoder, decoder_name="json"):
                 return [x]
 
         def get_multi_index(col, lst):
-            return [((col, i), x) for i, x in enumerate(lst)]
+            return [((col, i), [x]) for i, x in enumerate(lst)]
 
         out_path = self._get_output_path(run_info, self.target_filename)
 
