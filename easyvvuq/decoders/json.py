@@ -107,9 +107,9 @@ class JSONDecoder(BaseDecoder, decoder_name="json"):
         data = []
         for col in self.output_columns:
             if isinstance(col, str):
-                data.append(get_multi_index(col, to_np_if_list(raw_data[col])))
+                data.append(get_multi_index(col, to_list(raw_data[col])))
             elif isinstance(col, list):
-                data.append(get_multi_index('.'.join(col), to_np_if_list(get_value(raw_data, col))))
+                data.append(get_multi_index('.'.join(col), to_list(get_value(raw_data, col))))
         data = pd.DataFrame(dict(data))
 
         return data
