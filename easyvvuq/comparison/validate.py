@@ -1,4 +1,7 @@
+import numpy as np
+from scipy.stats import entropy, wasserstein_distance
 from . import BaseComparisonElement
+
 
 __copyright__ = """
 
@@ -23,14 +26,61 @@ __copyright__ = """
 __license__ = "LGPL"
 
 
-class Validate(BaseComparisonElement):
+class Validate_Similarity(BaseComparisonElement):
+
+    def __init__(self, metric="jensen_shannon"):
+        """Compare Similarities between two QoI distributions.
+
+        Parameters
+        ----------
+        metric : str, optional
+            supported metrics: jensen_shannon, hellinger, wasserstein.
+            default: jensen_shannon, based on Kullback-Leibler divergence.
+        """
+
+        if metric not in ["jensen_shannon", "hellinger", "wasserstein"]:
+            raise RuntimeError("Validate_Similarity: Unknown distance name.")
+
+        self._metric = metric
 
     def element_name(self):
-        return "validate"
+        return "validate_similarity"
 
     def element_version(self):
         return "0.1"
 
+    def set_metric(self, metric):
+        self._metric = metric
+
     def compare(self, dataframe1, dataframe2):
-        # TODO: Implement simple comparison
-        raise NotImplementedError
+        """Perform comparaison between dataframe1 and dataframe2,
+        two lists of discrete probability distributions.
+
+        ASSUMPTION: each list can contain a set of numpy.array or lists
+        of (floats, intgers), results from the probability density function.
+        """
+
+        if len(dataframe1) != len(dataframe2):
+            raise RuntimeError("Input dataframe sizes are not equal")
+
+        # Compute probability distance
+        def dist(p, q):
+            if self._metric == "jensen_shannon":
+                return np.sqrt(0.5 * (entropy(p, 0.5 * (p + q)) +
+                                      entropy(q, 0.5 * (p + q))))
+
+            if self._metric == "hellinger":
+                return np.sqrt(0.5 * ((np.sqrt(p) - np.sqrt(q))**2).sum())
+
+            if self._metric == "wasserstein":
+                return wasserstein_distance(p, q)
+
+        #
+        results = []
+        for i in range(len(dataframe1)):
+            p1 = np.array(dataframe1[i])
+            p2 = np.array(dataframe2[i])
+            d = dist(p1, p2)
+            results.append(d)
+
+        return results

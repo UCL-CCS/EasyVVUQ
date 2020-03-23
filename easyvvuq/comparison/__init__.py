@@ -1,6 +1,5 @@
 from .base import BaseComparisonElement
-from .validate import Validate
-from .metrics import wasserstein, hellinger, kullback_leibler
+from .validate import Validate_Similarity
 
 __copyright__ = """
 
