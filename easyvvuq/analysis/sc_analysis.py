@@ -8,6 +8,7 @@ import chaospy as cp
 from itertools import product, chain, combinations
 from easyvvuq import OutputType
 from .base import BaseAnalysisElement
+import logging
 
 __author__ = "Wouter Edeling"
 __copyright__ = """
@@ -152,20 +153,16 @@ class SCAnalysis(BaseAnalysisElement):
         # Compute descriptive statistics for each quantity of interest
         for qoi_k in qoi_cols:
             mean_k, var_k = self.get_moments(qoi_k)
-            std_k = var_k**0.5
-
+            std_k = np.sqrt(var_k)
             # compute statistical moments
             results['statistical_moments'][qoi_k] = {'mean': mean_k,
                                                      'var': var_k,
                                                      'std': std_k}
             # compute all Sobol indices
             results['sobols'][qoi_k] = self.get_sobol_indices(qoi_k, 'all')
-
-            idx = 0
-            for param_name in self.sampler.vary.get_keys():
+            for idx, param_name in enumerate(self.sampler.vary.get_keys()):
                 results['sobols_first'][qoi_k][param_name] = \
                     results['sobols'][qoi_k][(idx,)]
-                idx += 1
 
         return results
 
@@ -184,45 +181,32 @@ class SCAnalysis(BaseAnalysisElement):
         --------
         - Map: a dict for level L containing k, l, X, and f
         """
-
         # unique index
-        k = 0
-        Map = {}
-
-        print('Creating multi-index map for level', L, '...')
-
+        logging.debug('Creating multi-index map for level', L, '...')
         # full tensor product
         if not self.sparse:
-
             # l = (np.ones(N) * L).astype('int')
             l = (self.sampler.polynomial_order)
-
-            for x in self.xi_d:
-                Map[k] = {'l': l, 'X': x, 'f': k}
-                k += 1
+            map_ = [{'l': l, 'X': x, 'f': k} for k, x in enumerate(self.xi_d)]
         # sparse grid
         else:
-
             # all sparse grid multi indices l with |l| <= L
             l_norm_le_L = self.sampler.compute_sparse_multi_idx(L, N)
-
+            k = 0
+            map_ = {}
             # loop over all multi indices
             for l in l_norm_le_L:
-
                 # colloc point of current level index l
                 X_l = [self.xi_1d[n][l[n]] for n in range(N)]
                 X_l = np.array(list(product(*X_l)))
-
                 for x in X_l:
                     j = np.where((x == self.xi_d).all(axis=1))[0][0]
-                    Map[k] = {'l': l, 'X': x, 'f': j}
+                    map_[k] = {'l': l, 'X': x, 'f': j}
                     k += 1
+        logging.debug('done.')
+        return map_
 
-        print('done.')
-
-        return Map
-
-    def surrogate(self, qoi, x, **kwargs):
+    def surrogate(self, qoi, x, L=None):
         """
         Use sc_expansion UQP as a surrogate
 
@@ -236,14 +220,12 @@ class SCAnalysis(BaseAnalysisElement):
 
         """
 
-        if 'L' in kwargs:
-            L = kwargs['L']
-        else:
+        if L is None:
             L = self.L
 
         return self.sc_expansion(L, self.samples[qoi], x=x)
 
-    def quadrature(self, qoi, **kwargs):
+    def quadrature(self, qoi, samples=None):
         """
         Computes a (Smolyak) quadrature
 
@@ -255,26 +237,14 @@ class SCAnalysis(BaseAnalysisElement):
           by setting samples = self.samples. To compute the variance,
           set samples = (self.samples - mean)**2
         """
-
-        if 'samples' in kwargs:
-            samples = kwargs['samples']
-        else:
+        if samples is None:
             samples = self.samples[qoi]
+        # compute the Delta Q :=
+        # (Q^1_l_1 - Q^1_{l_1 - 1}) X ... X (Q^1_{l_N} - Q^1_{L_N - 1})
+        # tensor product
+        return np.array([self.compute_Q_diff(l, samples) for l in self.l_norm]).sum(axis=0)
 
-        Delta = np.zeros([self.l_norm.shape[0], self.N_qoi])
-        idx = 0
-        for l in self.l_norm:
-            # compute the Delta Q :=
-            # (Q^1_l_1 - Q^1_{l_1 - 1}) X ... X (Q^1_{l_N} - Q^1_{L_N - 1})
-            # tensor product
-            Delta[idx, :] = self.compute_Q_diff(l, samples)
-            idx += 1
-
-        quadrature_approx = np.sum(Delta, axis=0)
-
-        return quadrature_approx
-
-    def compute_Q_diff(self, l, samples, **kwargs):
+    def compute_Q_diff(self, l, samples):
         """
         =======================================================================
         For every multi index l = (l1, l2, ..., ld), Smolyak sums over
@@ -302,11 +272,8 @@ class SCAnalysis(BaseAnalysisElement):
             if not (np.abs(diff) < self.l_norm_min).any():
 
                 # compute the tensor product of parameter and weight values
-                X_k = []
-                W_k = []
-                for n in range(self.N):
-                    X_k.append(self.xi_1d[n][np.abs(diff)[n]])
-                    W_k.append(self.wi_1d[n][np.abs(diff)[n]])
+                X_k = [self.xi_1d[n][np.abs(diff)[n]] for n in range(self.N)]
+                W_k = [self.wi_1d[n][np.abs(diff)[n]] for n in range(self.N)]
 
                 X_k = np.array(list(product(*X_k)))
                 W_k = np.array(list(product(*W_k)))
@@ -314,11 +281,7 @@ class SCAnalysis(BaseAnalysisElement):
                 W_k = W_k.reshape([W_k.shape[0], 1])
 
                 # find corresponding code values
-                f_k = []
-                for x in X_k:
-                    j = np.where((x == self.xi_d).all(axis=1))[0][0]
-                    f_k.append(samples[j])
-                f_k = np.array(f_k).reshape([len(X_k), self.N_qoi])
+                f_k = np.array([samples[np.where((x == self.xi_d).all(axis=1))[0][0]] for x in X_k])
 
                 # quadrature of Q^1_{k1} X ... X Q^1_{kN} product
                 Q_prod = np.sum(f_k * W_k, axis=0).T
@@ -337,20 +300,14 @@ class SCAnalysis(BaseAnalysisElement):
         - mean and variance of qoi (float (N_qoi,))
 
         """
-
         # compute mean
         mean_f = self.quadrature(qoi)
-
         # compute variance
-        variance_samples = []
-        for sample in self.samples[qoi]:
-            variance_samples.append((sample - mean_f)**2)
-
+        variance_samples = [(sample - mean_f)**2 for sample in self.samples[qoi]]
         var_f = self.quadrature(qoi, samples=variance_samples)
-
         return mean_f, var_f
 
-    def sc_expansion(self, L, samples, **kwargs):
+    def sc_expansion(self, L, samples, x):
         """
         -----------------------------------------
         This is the UQ Pattern for the SC method.
@@ -417,21 +374,14 @@ class SCAnalysis(BaseAnalysisElement):
 
             s_k = q_k - surr_lm1
 
-            idx = {}
             # indices of current collocation point (Map[k]['X'][n]),
             # in corresponding 1d colloc points (self.xi_1d[n][l[n]])
             # These are the j of the 1D lagrange polynomials l_j(x), see
             # lagrange_poly subroutine
-            for n in range(self.N):
-                idx[n] = (self.xi_1d[n][l[n]] == Map[k]['X'][n]).nonzero()[0][0]
-
-            weight = []
-            for n in range(self.N):
-                # interpolate
-                x = kwargs['x']
-                # add values of Lagrange polynomials at x
-                weight.append(lagrange_poly(x[n], self.xi_1d[n][l[n]], idx[n]))
-
+            idx = [(self.xi_1d[n][l[n]] == Map[k]['X'][n]).nonzero()[0][0] for n in range(self.N)]
+            # interpolate
+            # add values of Lagrange polynomials at x
+            weight = [lagrange_poly(x[n], self.xi_1d[n][l[n]], idx[n]) for n in range(self.N)]
             # Delta is the interpolation of the hierarchical surplus
             surr += s_k * np.prod(weight)
 
@@ -527,13 +477,7 @@ class SCAnalysis(BaseAnalysisElement):
         -------
          - array of all samples of qoi
         """
-
-        tmp = np.zeros([self._number_of_samples, self.N_qoi])
-
-        for k in range(self._number_of_samples):
-            tmp[k, :] = (self.samples[qoi][k])
-
-        return tmp
+        return np.array([self.samples[qoi][k] for k in range(self._number_of_samples)])
 
     def plot_grid(self):
         """
@@ -579,27 +523,20 @@ class SCAnalysis(BaseAnalysisElement):
         """
 
         # tensor products with dimension of u
-        xi_u = {}
-        wi_u = {}
-        for key in u:
-            xi_u[key] = xi[key]
-            wi_u[key] = wi[key]
+        xi_u = [xi[key] for key in u]
+        wi_u = [wi[key] for key in u]
 
-        xi_d_u = np.array(list(product(*xi_u.values())))
-        wi_d_u = np.array(list(product(*wi_u.values())))
+        xi_d_u = np.array(list(product(*xi_u)))
+        wi_d_u = np.array(list(product(*wi_u)))
 
         # tensor products with dimension of u' (complement of u)
-        xi_u_prime = {}
-        wi_u_prime = {}
-        for key in u_prime:
-            xi_u_prime[key] = xi[key]
-            wi_u_prime[key] = wi[key]
+        xi_u_prime = [xi[key] for key in u_prime]
+        wi_u_prime = [wi[key] for key in u_prime]
 
-        xi_d_u_prime = np.array(list(product(*xi_u_prime.values())))
-        wi_d_u_prime = np.array(list(product(*wi_u_prime.values())))
+        xi_d_u_prime = np.array(list(product(*xi_u_prime)))
+        wi_d_u_prime = np.array(list(product(*wi_u_prime)))
 
-        return {'xi_d_u': xi_d_u, 'wi_d_u': wi_d_u,
-                'xi_d_u_prime': xi_d_u_prime, 'wi_d_u_prime': wi_d_u_prime}
+        return xi_d_u, wi_d_u, xi_d_u_prime, wi_d_u_prime
 
     def compute_marginal(self, qoi, u, u_prime, diff):
         """
@@ -618,50 +555,25 @@ class SCAnalysis(BaseAnalysisElement):
         -------
 
         """
-
         # 1d weights and points of the levels in diff
         xi = [self.xi_1d[n][np.abs(diff)[n]] for n in range(self.N)]
         wi = [self.wi_1d[n][np.abs(diff)[n]] for n in range(self.N)]
 
         # compute tensor products and weights in dimension u and u'
-        tmp = self.compute_tensor_prod_u(xi, wi, u, u_prime)
-        xi_d_u = tmp['xi_d_u']
-        wi_d_u = tmp['wi_d_u']
-        xi_d_u_prime = tmp['xi_d_u_prime']
-        wi_d_u_prime = tmp['wi_d_u_prime']
+        xi_d_u, wi_d_u, xi_d_u_prime, wi_d_u_prime =\
+            self.compute_tensor_prod_u(xi, wi, u, u_prime)
 
-        S_u = xi_d_u.shape[0]
-        S_u_prime = xi_d_u_prime.shape[0]
-
+        idxs = np.argsort(np.concatenate((u, u_prime)))
         # marginals h = f*w' integrated over u', so cardinality is that of u
-        h = {}
-        for i_u in range(S_u):
-            h[i_u] = 0.
-            for i_up in range(S_u_prime):
-
-                # collocation point to be evaluated
-                xi_s = np.zeros(self.N)
-
-                # add the xi of u (at the correct location k)
-                idx = 0
-                for k in u:
-                    xi_s[k] = xi_d_u[i_u][idx]
-                    idx += 1
-
-                # add the xi of u' (at the correct location k)
-                idx = 0
-                for k in u_prime:
-                    xi_s[k] = xi_d_u_prime[i_up][idx]
-                    idx += 1
-
+        h = [0.0] * xi_d_u.shape[0]
+        for i_u, xi_d_u_ in enumerate(xi_d_u):
+            for i_up, xi_d_u_prime_ in enumerate(xi_d_u_prime):
+                xi_s = np.concatenate((xi_d_u_, xi_d_u_prime_))[idxs]
                 # find the index of the corresponding code sample
-                tmp = np.prod(self.xi_d == xi_s, axis=1)
-                idx = np.where(tmp == 1)[0][0]
-
+                idx = np.where(np.prod(self.xi_d == xi_s, axis=1))[0][0]
                 # perform quadrature
-                q_k = self.samples[qoi][idx].flatten()
+                q_k = self.samples[qoi][idx]
                 h[i_u] += q_k * wi_d_u_prime[i_up].prod()
-
         # return marginal and the weights of dimensions u
         return h, wi_d_u
 
@@ -680,11 +592,8 @@ class SCAnalysis(BaseAnalysisElement):
         -------
         Either the first order or all Sobol indices of qoi
         """
-
-        print('Computing', typ, 'Sobol indices')
-
         # multi indices
-        U = list(range(self.N))
+        U = np.arange(self.N)
 
         if typ == 'first_order':
             P = list(powerset(U))[0:self.N + 1]
@@ -694,8 +603,6 @@ class SCAnalysis(BaseAnalysisElement):
 
         # get first two moments
         mu, D = self.get_moments(qoi)
-        mu = mu.flatten()
-        D = D.flatten()
 
         # partial variances
         D_u = {P[0]: mu**2}
@@ -728,7 +635,7 @@ class SCAnalysis(BaseAnalysisElement):
                         for i_u in range(wi_d_u.shape[0]):
                             D_u[u] += np.sign(np.prod(diff)) * h[i_u]**2 * wi_d_u[i_u].prod()
 
-                D_u[u] = D_u[u].flatten()
+                #D_u[u] = D_u[u].flatten()
 
             # all subsets of u
             W = list(powerset(u))[0:-1]
@@ -740,16 +647,7 @@ class SCAnalysis(BaseAnalysisElement):
             # compute Sobol index, only include points where D > 0
             # sobol[u] = D_u[u][idx_gt0]/D[idx_gt0]
             sobol[u] = D_u[u] / D
-
-        sort = []
-        for u in P[1:]:
-
-            sort.append(sobol[u])
-
-        print('done')
         return sobol
-
-    # End SC specific methods
 
 
 def powerset(iterable):
@@ -792,15 +690,5 @@ def lagrange_poly(x, x_i, j):
     float
         l_j(x) calculated as shown above.
     """
-
-    l_j = 1.0
-
-    for m in range(len(x_i)):
-
-        if m != j:
-            denom = x_i[j] - x_i[m]
-            nom = x - x_i[m]
-
-            l_j *= nom / denom
-
-    return l_j
+    x_i_ = np.delete(x_i, j)
+    return np.prod((x - x_i_) / (x_i[j] - x_i_))
