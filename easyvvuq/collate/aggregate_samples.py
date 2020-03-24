@@ -81,7 +81,7 @@ class AggregateSamples(BaseCollationElement, collater_name="aggregate_samples"):
 
                 params = run_info['params']
                 column_list = list(params.keys()) + run_data.columns.tolist()
-                
+
                 for param, value in params.items():
                     run_data[param] = value
                 # we need to convert columns to tuples to account for multi-indexing
@@ -94,7 +94,6 @@ class AggregateSamples(BaseCollationElement, collater_name="aggregate_samples"):
                         else:
                             column_list_.append(column)
                     column_list = column_list_
-                #import pdb; pdb.set_trace()
                 # Reorder columns
                 run_data = run_data[column_list]
                 run_data['run_id'] = run_id
