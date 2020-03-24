@@ -86,7 +86,7 @@ class AggregateSamples(BaseCollationElement, collater_name="aggregate_samples"):
                     run_data[param] = value
                 # we need to convert columns to tuples to account for multi-indexing
                 # should not influence non-multi-index frames, I hope. hacky?
-                if not any([isinstance(x, tuple) for x in column_list]):
+                if any([isinstance(x, tuple) for x in column_list]):
                     column_list_ = []
                     for column in column_list:
                         if not isinstance(column, tuple):
@@ -94,6 +94,7 @@ class AggregateSamples(BaseCollationElement, collater_name="aggregate_samples"):
                         else:
                             column_list_.append(column)
                     column_list = column_list_
+                #import pdb; pdb.set_trace()
                 # Reorder columns
                 run_data = run_data[column_list]
                 run_data['run_id'] = run_id
