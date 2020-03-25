@@ -201,11 +201,8 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
     =========================
     """
 
-    def generate_grid(self, L, N, l_norm, **kwargs):
-
-        if 'dimensions' in kwargs:
-            dimensions = kwargs['dimensions']
-        else:
+    def generate_grid(self, L, N, l_norm, dimensions=None):
+        if dimensions is None:
             dimensions = range(N)
 
         H_L_N = []
