@@ -32,3 +32,15 @@ def test_generate_grid(sc_sampler):
                                 (188.72983346207417, 1.01193095930416),
                                 (188.72983346207417, 1.033060469323313),
                                 (188.72983346207417, 1.046623475710158)])).all())
+
+def test_cmpute_sparse_multi_idx(sc_sampler):
+    assert((sc_sampler.compute_sparse_multi_idx(5, 2) == np.array([[1, 1],
+                                                                    [1, 2],
+                                                                    [1, 3],
+                                                                    [1, 4],
+                                                                    [2, 1],
+                                                                    [2, 2],
+                                                                    [2, 3],
+                                                                    [3, 1],
+                                                                    [3, 2],
+                                                                    [4, 1]])).all())
