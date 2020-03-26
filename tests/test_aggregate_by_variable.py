@@ -100,7 +100,7 @@ def test_cannonsim(tmpdir):
     }
     sampler = uq.sampling.BasicSweep(sweep=sweep)
 
-    my_campaign = uq.Campaign(name='aggregate_by_var', work_dir=tmpdir)
+    my_campaign = uq.Campaign(name='aggregate_by_var', work_dir=tmpdir, db_location='sqlite:///')
     my_campaign.add_app(name="cannon_test",
                         params=params,
                         encoder=encoder,
