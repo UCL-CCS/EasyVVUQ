@@ -91,12 +91,12 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
 
         # for every dimension (parameter), create a hierachy of 1D
         # quadrature rules of increasing order
-        self.xi_1d = {}
-        self.wi_1d = {}
+        self.xi_1d = [{} for n in range(N)]
+        self.wi_1d = [{} for n in range(N)]
 
-        for n in range(N):
-            self.xi_1d[n] = {}
-            self.wi_1d[n] = {}
+        #for n in range(N):
+        #    self.xi_1d[n] = {}
+        #    self.wi_1d[n] = {}
 
         if sparse:
             for n in range(N):
