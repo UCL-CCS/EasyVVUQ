@@ -13,7 +13,7 @@ __license__ = "LGPL"
 def test_anisotropic_order(tmpdir):
 
     # Set up a fresh campaign called "sc"
-    my_campaign = uq.Campaign(name='sc', work_dir=tmpdir)
+    my_campaign = uq.Campaign(name='sc', work_dir=tmpdir, db_location='sqlite:///')
 
     # Define parameter space
     params = {
