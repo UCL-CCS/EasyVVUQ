@@ -24,3 +24,20 @@ def test_get_restart_dict(decoder):
 
 def test_sim_complete(decoder):
     assert(decoder.sim_complete({'run_dir': os.path.join('tests', 'simple_csv')}))
+
+
+def test_init_exceptions():
+    with pytest.raises(RuntimeError):
+        SimpleCSV(None, output_columns=['Step', 'Value'])
+    with pytest.raises(RuntimeError):
+        SimpleCSV('test.csv', None)
+    with pytest.raises(RuntimeError):
+        SimpleCSV('test.csv', [])
+
+
+def test_get_output_path(decoder):
+    assert(decoder._get_output_path(
+        {'run_dir' : os.path.join('tests', 'simple_csv')}, 'test.csv') ==
+               os.path.join('tests', 'simple_csv', 'test.csv'))
+    with pytest.raises(RuntimeError):
+        decoder._get_output_path({'run_dir' : os.path.join('simple_csv')}, 'test.csv')
