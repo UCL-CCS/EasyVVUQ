@@ -37,7 +37,7 @@ def test_init_exceptions():
 
 def test_get_output_path(decoder):
     assert(decoder._get_output_path(
-        {'run_dir' : os.path.join('tests', 'simple_csv')}, 'test.csv') ==
-               os.path.join('tests', 'simple_csv', 'test.csv'))
+        {'run_dir': os.path.join('tests', 'simple_csv')}, 'test.csv') ==
+        os.path.join('tests', 'simple_csv', 'test.csv'))
     with pytest.raises(RuntimeError):
-        decoder._get_output_path({'run_dir' : os.path.join('simple_csv')}, 'test.csv')
+        decoder._get_output_path({'run_dir': os.path.join('simple_csv')}, 'test.csv')
