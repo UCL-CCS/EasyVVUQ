@@ -154,3 +154,12 @@ def test_json_nested():
     assert((data['root1.node1.leaf1'] == np.array([0.33])).all().all())
     assert((data['root1.leaf2'] == np.array([0.32])).all().all())
     assert((data['leaf3'] == np.array([0.2, 0.3])).all().all())
+
+
+def test_get_restart_dict():
+    decoder = JSONDecoder('nested.json',
+                          [['root1', 'node1', 'leaf1'], ['root1', 'leaf2'], 'leaf3'])
+    restart_dict = decoder.get_restart_dict()
+    assert(restart_dict['target_filename'] == 'nested.json')
+    assert(restart_dict['output_columns'] ==
+           [['root1', 'node1', 'leaf1'], ['root1', 'leaf2'], 'leaf3'])
