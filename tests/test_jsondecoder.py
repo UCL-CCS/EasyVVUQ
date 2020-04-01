@@ -163,3 +163,9 @@ def test_get_restart_dict():
     assert(restart_dict['target_filename'] == 'nested.json')
     assert(restart_dict['output_columns'] ==
            [['root1', 'node1', 'leaf1'], ['root1', 'leaf2'], 'leaf3'])
+
+
+def test_sim_complete():
+    decoder = JSONDecoder('nested.json',
+                          [['root1', 'node1', 'leaf1'], ['root1', 'leaf2'], 'leaf3'])
+    assert(decoder.sim_complete({'run_dir' : os.path.join('tests', 'jsondecoder')}))
