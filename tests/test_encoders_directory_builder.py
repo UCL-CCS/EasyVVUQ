@@ -5,11 +5,11 @@ import os
 
 @pytest.fixture
 def builder():
-    return DirectoryBuilder({'a' : {'b' : {'c' : None, 'd' : None}}, 'e' : {'f' : None}})
+    return DirectoryBuilder({'a': {'b': {'c': None, 'd': None}}, 'e': {'f': None}})
 
 
 def test_init(builder):
-    assert(builder.tree == {'a' : {'b' : {'c' : None, 'd' : None}}, 'e' : {'f' : None}})
+    assert(builder.tree == {'a': {'b': {'c': None, 'd': None}}, 'e': {'f': None}})
 
 
 def test_encoder(builder, tmp_path):
@@ -26,7 +26,7 @@ def test_create_dir_tree(builder, tmp_path):
 
 def test_get_restart_dict(builder):
     restart_dict = builder.get_restart_dict()
-    assert(restart_dict['tree'] == {'a' : {'b' : {'c' : None, 'd' : None}}, 'e' : {'f' : None}})
+    assert(restart_dict['tree'] == {'a': {'b': {'c': None, 'd': None}}, 'e': {'f': None}})
 
 
 def test_element_version(builder):
