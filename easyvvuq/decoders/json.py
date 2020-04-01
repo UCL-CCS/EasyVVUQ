@@ -42,7 +42,7 @@ class JSONDecoder(BaseDecoder, decoder_name="json"):
                 f"the name of the output file this decoder acts on."
             )
             logging.error(msg)
-            raise Exception(msg)
+            raise RuntimeError(msg)
 
         if output_columns is None:
             msg = (
@@ -53,12 +53,12 @@ class JSONDecoder(BaseDecoder, decoder_name="json"):
                 f"that contains the value you need."
             )
             logging.error(msg)
-            raise Exception(msg)
+            raise RuntimeError(msg)
 
         if len(output_columns) == 0:
             msg = "output_columns cannot be empty."
             logger.error(msg)
-            raise Exception(msg)
+            raise RuntimeError(msg)
 
         self.target_filename = target_filename
         self.output_columns = output_columns
