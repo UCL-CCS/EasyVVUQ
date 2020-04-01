@@ -1,6 +1,7 @@
 from easyvvuq.decoders.json import JSONDecoder
 import os
 import numpy as np
+import pytest
 
 
 def test_jsondecoder_basic():
@@ -169,3 +170,13 @@ def test_sim_complete():
     decoder = JSONDecoder('nested.json',
                           [['root1', 'node1', 'leaf1'], ['root1', 'leaf2'], 'leaf3'])
     assert(decoder.sim_complete({'run_dir' : os.path.join('tests', 'jsondecoder')}))
+
+
+def test_init_exceptions():
+    with pytest.raises(RuntimeError):
+        JSONDecoder(None, output_columns=[['root1', 'node1', 'leaf1'],
+                                          ['root1', 'leaf2'], 'leaf3'])
+    with pytest.raises(RuntimeError):
+        JSONDecoder('nested.json', None)
+    with pytest.raises(RuntimeError):
+        JSONDecoder('nested.json', [])
