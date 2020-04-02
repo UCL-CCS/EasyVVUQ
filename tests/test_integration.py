@@ -297,7 +297,7 @@ def test_pce(tmpdir, campaign):
             "type": "string",
             "default": "output.csv"}}
     output_filename = params["out_file"]["default"]
-    output_columns = ["te", "ti"]
+    output_columns = ["te"]
     # Create an encoder and decoder for PCE test app
     encoder = uq.encoders.GenericEncoder(
         template_fname='tests/cooling/cooling.template',
@@ -380,7 +380,7 @@ def test_qmc(tmpdir, campaign):
             "type": "string",
             "default": "output.csv"}}
     output_filename = params["out_file"]["default"]
-    output_columns = ["te", "ti"]
+    output_columns = ["te"]
     # Create an encoder and decoder for QMC test app
     encoder = uq.encoders.GenericEncoder(
         template_fname='tests/cooling/cooling.template',

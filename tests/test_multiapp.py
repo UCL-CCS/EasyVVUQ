@@ -118,7 +118,7 @@ def setup_cooling_app():
             "type": "string",
             "default": "output.csv"}}
     output_filename = params["out_file"]["default"]
-    output_columns = ["te", "ti"]
+    output_columns = ["te"]
 
     encoder = uq.encoders.GenericEncoder(
         template_fname='tests/cooling/cooling.template',
