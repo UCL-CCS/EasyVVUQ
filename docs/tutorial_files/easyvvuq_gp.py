@@ -22,7 +22,7 @@ encoder = uq.encoders.GenericEncoder(
     target_filename='cooling_in.json')
 
 decoder = uq.decoders.SimpleCSV(target_filename="output.csv",
-                                output_columns=["te", "ti"],
+                                output_columns=["te"],
                                 header=0)
 
 collater = uq.collate.AggregateSamples(average=False)
@@ -56,12 +56,12 @@ my_campaign.collate()
 
 df = my_campaign.get_collation_result()
 
-analysis = uq.analysis.GaussianProcessSurrogate(['kappa', 't_env', 'temp_init', 'ti'], ['te'])
+analysis = uq.analysis.GaussianProcessSurrogate(['kappa', 't_env', 'temp_init'], ['te'])
 my_campaign.apply_analysis(analysis)
 
 gp = my_campaign.get_last_analysis()
 
-x = df[['kappa', 't_env', 'temp_init', 'ti']].values
+x = df[['kappa', 't_env', 'temp_init']].values
 y = df[['te']].values
 prediction_y = gp.predict(x)
 
@@ -75,7 +75,7 @@ plt.show()
 
 # Post-processing analysis
 #my_analysis = uq.analysis.PCEAnalysis(sampler=my_sampler,
-                                          #qoi_cols=["te", "ti"])
+                                          #qoi_cols=["te"])
 #my_campaign.apply_analysis(my_analysis)
 
 # Get Descriptive Statistics
