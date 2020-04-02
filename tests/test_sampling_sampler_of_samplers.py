@@ -29,7 +29,12 @@ def test_iterator():
 
 
 def test_is_restartable():
-    pass
+    sampler1 = mock.MagicMock()
+    sampler2 = mock.MagicMock()
+    sampler1.is_finite.return_value = True
+    sampler2.is_finite.return_value = True
+    multi_sampler = MultiSampler(sampler1, sampler2)
+    assert(multi_sampler.is_restartable())
 
 
 def test_get_restart_dict():
