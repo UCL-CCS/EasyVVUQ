@@ -11,3 +11,21 @@ def test_init_exceptions():
     sampler2.is_finite.return_value = False
     with pytest.raises(RuntimeError):
         multi_sampler = MultiSampler(sampler1, sampler2)
+    with pytest.raises(RuntimeError):
+        MultiSampler()
+
+
+def test_is_finite():
+    pass
+
+
+def test_iterator():
+    pass
+
+
+def test_is_restartable():
+    pass
+
+
+def test_get_restart_dict():
+    pass

@@ -35,6 +35,8 @@ class MultiSampler(BaseSamplingElement, sampler_name="multisampler"):
         """
 
         # If no serialized samplers list passed, generate one. Else deserialize the passed samplers.
+        if len(samplers) < 1 and serialized_list_of_samplers is None:
+            raise RuntimeError("You need to supply at least one sampler to the MultiSampler")
         if serialized_list_of_samplers is None:
             self.samplers = samplers
             self.serialized_list_of_samplers = [sampler.serialize() for sampler in self.samplers]
