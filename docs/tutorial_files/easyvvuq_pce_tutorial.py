@@ -20,7 +20,7 @@ encoder = uq.encoders.GenericEncoder(
     target_filename='cooling_in.json')
 
 decoder = uq.decoders.SimpleCSV(target_filename="output.csv",
-                                output_columns=["te", "ti"],
+                                output_columns=["te"],
                                 header=0)
 
 collater = uq.collate.AggregateSamples(average=False)
@@ -55,7 +55,7 @@ my_campaign.collate()
 
 # Post-processing analysis
 my_analysis = uq.analysis.PCEAnalysis(sampler=my_sampler,
-                                          qoi_cols=["te", "ti"])
+                                          qoi_cols=["te"])
 my_campaign.apply_analysis(my_analysis)
 
 # Get Descriptive Statistics
