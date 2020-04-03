@@ -1,10 +1,10 @@
-from easyvvuq.sampling.sweep import BasicSweep
+from easyvvuq.sampling.sweep import BasicSweep, wrap_iterable
 import pytest
 
 
 @pytest.fixture
 def basic_sweep_sampler():
-    return BasicSweep({'a' : [1, 2, 3], 'b' : [4, 5, 6]})
+    return BasicSweep({'a': [1, 2, 3], 'b': [4, 5, 6]})
 
 
 def test_wrap_iterable():
