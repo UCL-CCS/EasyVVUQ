@@ -23,6 +23,12 @@ def test_sweep(basic_sweep_sampler):
                    {'a': 3, 'b': 4}, {'a': 3, 'b': 5}, {'a': 3, 'b': 6}])
 
 
+def test_init():
+    sweep = BasicSweep({'a': [1, 2, 3], 'b': [4, 5, 6]}, 10)
+    with pytest.raises(StopIteration):
+        sweep.__next__()
+
+
 def test_element_version(basic_sweep_sampler):
     assert(isinstance(basic_sweep_sampler.element_version(), str))
 
