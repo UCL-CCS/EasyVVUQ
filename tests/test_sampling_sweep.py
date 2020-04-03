@@ -14,7 +14,7 @@ def test_wrap_iterable():
     assert(res == [('a', 1), ('a', 2), ('a', 3)])
 
 
-def test_init(basic_sweep_sampler):
+def test_sweep(basic_sweep_sampler):
     res = []
     for run_dict in basic_sweep_sampler:
         res.append(run_dict)
@@ -27,17 +27,15 @@ def test_element_version(basic_sweep_sampler):
     assert(isinstance(basic_sweep_sampler.element_version(), str))
 
 
-def test_is_finite():
-    pass
+def test_is_finite(basic_sweep_sampler):
+    assert(basic_sweep_sampler.is_finite())
 
 
-def test_iter():
-    pass
+def test_is_restartable(basic_sweep_sampler):
+    assert(basic_sweep_sampler.is_restartable())
 
 
-def test_is_restartable():
-    pass
-
-
-def test_get_restart_dict():
-    pass
+def test_get_restart_dict(basic_sweep_sampler):
+    restart_dict = basic_sweep_sampler.get_restart_dict()
+    assert(restart_dict['sweep'] == {'a': [1, 2, 3], 'b': [4, 5, 6]})
+    assert(restart_dict['count'] == 0)
