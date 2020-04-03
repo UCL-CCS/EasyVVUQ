@@ -23,8 +23,8 @@ def test_init(basic_sweep_sampler):
                    {'a': 3, 'b': 4}, {'a': 3, 'b': 5}, {'a': 3, 'b': 6}])
 
 
-def test_element_version():
-    pass
+def test_element_version(basic_sweep_sampler):
+    assert(isinstance(basic_sweep_sampler.element_version(), str))
 
 
 def test_is_finite():
