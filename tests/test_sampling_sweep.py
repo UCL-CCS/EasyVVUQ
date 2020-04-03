@@ -14,12 +14,13 @@ def test_wrap_iterable():
     assert(res == [('a', 1), ('a', 2), ('a', 3)])
 
 
-def test_init():
-    pass
-
-
-def test_init_exceptions():
-    pass
+def test_init(basic_sweep_sampler):
+    res = []
+    for run_dict in basic_sweep_sampler:
+        res.append(run_dict)
+    assert(res == [{'a': 1, 'b': 4}, {'a': 1, 'b': 5}, {'a': 1, 'b': 6},
+                   {'a': 2, 'b': 4}, {'a': 2, 'b': 5}, {'a': 2, 'b': 6},
+                   {'a': 3, 'b': 4}, {'a': 3, 'b': 5}, {'a': 3, 'b': 6}])
 
 
 def test_element_version():
