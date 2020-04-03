@@ -8,7 +8,10 @@ def basic_sweep_sampler():
 
 
 def test_wrap_iterable():
-    pass
+    res = []
+    for var_name, val in wrap_iterable('a', [1, 2, 3]):
+        res.append((var_name, val))
+    assert(res == [('a', 1), ('a', 2), ('a', 3)])
 
 
 def test_init():
