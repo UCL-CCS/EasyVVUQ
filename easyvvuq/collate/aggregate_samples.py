@@ -81,9 +81,12 @@ class AggregateSamples(BaseCollationElement, collater_name="aggregate_samples"):
 
                 params = run_info['params']
                 column_list = list(params.keys()) + run_data.columns.tolist()
-
                 for param, value in params.items():
-                    run_data[param] = value
+                    if type(value) == list:
+                        run_data[param] = run_data.apply(lambda x: value)
+                    else:
+                        run_data[param] = value
+
                 # we need to convert columns to tuples to account for multi-indexing
                 # should not influence non-multi-index frames, I hope. hacky?
                 if any([isinstance(x, tuple) for x in column_list]):
@@ -94,6 +97,7 @@ class AggregateSamples(BaseCollationElement, collater_name="aggregate_samples"):
                         else:
                             column_list_.append(column)
                     column_list = column_list_
+
                 # Reorder columns
                 run_data = run_data[column_list]
                 run_data['run_id'] = run_id
