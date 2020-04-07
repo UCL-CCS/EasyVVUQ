@@ -19,4 +19,3 @@ def test_set_sampler(campaign_db):
         campaign_db.set_sampler(1, 2)
     with pytest.raises(RuntimeError):
         campaign_db.set_sampler(2, 1)
-
