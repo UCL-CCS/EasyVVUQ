@@ -67,3 +67,7 @@ def test_load_save(campaign_db):
     with open(campaign_db.location) as fd:
         dict2 = json.load(fd)
     assert(dict1 == dict2)
+
+
+def test_campaign_dir(campaign_db):
+    assert(campaign_db.campaign_dir() == campaign_db._campaign_info['campaign_dir'])
