@@ -91,4 +91,4 @@ def test_load_campaign(campaign_db, tmpdir):
     with open(os.path.join(tmpdir, 'test2.json'), 'w') as fd:
         json.dump('{"campaign" : {"name" : "test_"}}', fd)
     with pytest.raises(RuntimeError):
-        campaign_db._load_campaign(os.path.join(tmpdir, 'test1.json'), 'test')
+        campaign_db._load_campaign(os.path.join(tmpdir, 'test2.json'), 'test')
