@@ -5,6 +5,7 @@ import json
 from easyvvuq.constants import Status
 import easyvvuq as uq
 import pytest
+import os
 
 
 @pytest.fixture
@@ -80,3 +81,14 @@ def test_new_campaign(campaign_db, tmpdir):
                    info=CampaignInfo('test', 'v0.5.1', default_campaign_prefix, str(tmpdir)))
     reloaded_campaign = CampaignDB(campaign_db.location)
     assert(reloaded_campaign.location == campaign_db.location)
+
+
+def test_load_campaign(campaign_db, tmpdir):
+    with open(os.path.join(tmpdir, 'test1.json'), 'w') as fd:
+        json.dump('{}', fd)
+    with pytest.raises(RuntimeError):
+        campaign_db._load_campaign(os.path.join(tmpdir, 'test1.json'), None)
+    with open(os.path.join(tmpdir, 'test2.json'), 'w') as fd:
+        json.dump('{"campaign" : {"name" : "test_"}}', fd)
+    with pytest.raises(RuntimeError):
+        campaign_db._load_campaign(os.path.join(tmpdir, 'test1.json'), 'test')
