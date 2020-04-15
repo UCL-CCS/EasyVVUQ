@@ -80,4 +80,3 @@ def test_new_campaign(campaign_db, tmpdir):
                    info=CampaignInfo('test', 'v0.5.1', default_campaign_prefix, str(tmpdir)))
     reloaded_campaign = CampaignDB(campaign_db.location)
     assert(reloaded_campaign.location == campaign_db.location)
-
