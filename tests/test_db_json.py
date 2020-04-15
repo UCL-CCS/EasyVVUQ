@@ -6,6 +6,7 @@ from easyvvuq.constants import Status
 import easyvvuq as uq
 import pytest
 
+
 @pytest.fixture
 def app_info():
     app_info = AppInfo('test', uq.ParamsSpecification({
