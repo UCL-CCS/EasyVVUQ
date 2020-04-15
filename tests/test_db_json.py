@@ -89,6 +89,13 @@ def test_load_campaign(campaign_db, tmpdir):
     with pytest.raises(RuntimeError):
         campaign_db._load_campaign(os.path.join(tmpdir, 'test1.json'), None)
     with open(os.path.join(tmpdir, 'test2.json'), 'w') as fd:
-        json.dump('{"campaign" : {"name" : "test_"}}', fd)
+        json.dump({"campaign": {"name": "test_"}}, fd)
     with pytest.raises(RuntimeError):
         campaign_db._load_campaign(os.path.join(tmpdir, 'test2.json'), 'test')
+
+
+def test_app(campaign_db, app_info):
+    d1 = campaign_db.app('test')
+    d2 = app_info.to_dict()
+    del d1['id']
+    assert(d1 == d2)
