@@ -99,3 +99,11 @@ def test_app(campaign_db, app_info):
     d2 = app_info.to_dict()
     del d1['id']
     assert(d1 == d2)
+
+
+def test_add_app(campaign_db, app_info):
+    with pytest.raises(RuntimeError):
+        campaign_db.add_app(app_info)
+    campaign_db._app = None
+    campaign_db.add_app(app_info)
+
