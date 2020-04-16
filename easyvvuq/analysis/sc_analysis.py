@@ -187,7 +187,13 @@ class SCAnalysis(BaseAnalysisElement):
         if not self.sparse:
             # l = (np.ones(N) * L).astype('int')
             l = (self.sampler.polynomial_order)
-            map_ = [{'l': l, 'X': x, 'f': k} for k, x in enumerate(self.xi_d)]
+            # map_ = [{'l': l, 'X': x, 'f': k} for k, x in enumerate(self.xi_d)]
+            k = 0
+            map_ = {}
+            for x in self.xi_d:
+                map_[k] = {'l': l, 'X': x, 'f': k}
+                k += 1
+            
         # sparse grid
         else:
             # all sparse grid multi indices l with |l| <= L
