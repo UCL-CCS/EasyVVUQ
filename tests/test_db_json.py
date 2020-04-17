@@ -106,4 +106,3 @@ def test_add_app(campaign_db, app_info):
         campaign_db.add_app(app_info)
     campaign_db._app = None
     campaign_db.add_app(app_info)
-
