@@ -159,4 +159,4 @@ if __name__ == "__main__":
 
     analysis.plot_grid()
 
-    plt.show()
+    #plt.show()
