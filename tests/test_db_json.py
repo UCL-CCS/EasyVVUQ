@@ -1,6 +1,7 @@
 from easyvvuq.db.json import CampaignDB
 from easyvvuq.constants import default_campaign_prefix
 from easyvvuq.data_structs import CampaignInfo, RunInfo, AppInfo
+from easyvvuq.sampling.sweep import BasicSweep
 import json
 from easyvvuq.constants import Status
 import easyvvuq as uq
@@ -107,3 +108,9 @@ def test_add_app(campaign_db, app_info):
     campaign_db._app = None
     campaign_db.add_app(app_info)
 
+
+def test_add_sampler(campaign_db):
+    campaign_db.add_sampler(BasicSweep({'a': [1, 2, 3], 'b': [4, 5, 6]}))
+    with pytest.raises(RuntimeError):
+        campaign_db.add_sampler(BasicSweep({'a': [1, 2, 3], 'b': [4, 5, 6]}))
+    assert(campaign_db._sample == BasicSweep({'a': [1, 2, 3], 'b': [4, 5, 6]}).serialize())
