@@ -12,7 +12,6 @@ from .base_element import BaseElement
 from . import sampling
 from . import analysis
 from . import comparison
-from . import collate
 
 # First make sure python version is 3.6+
 assert sys.version_info >= (3, 6), (f"Python version must be >= 3.6,"
