@@ -34,7 +34,7 @@ def app_info():
             target_filename='cooling_in.json'),
         uq.decoders.SimpleCSV(
             target_filename='output.csv',
-            output_columns=["te", "ti"],
+            output_columns=["te"],
             header=0),
         uq.collate.AggregateSamples(average=False))
 

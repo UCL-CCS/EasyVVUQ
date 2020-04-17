@@ -118,7 +118,7 @@ def setup_cooling_app():
             "type": "string",
             "default": "output.csv"}}
     output_filename = params["out_file"]["default"]
-    output_columns = ["te", "ti"]
+    output_columns = ["te"]
 
     encoder = uq.encoders.GenericEncoder(
         template_fname='tests/cooling/cooling.template',
@@ -142,7 +142,7 @@ def setup_cooling_app():
 
 def test_multiapp(tmpdir):
 
-    my_campaign = uq.Campaign(name='multiapp', work_dir=tmpdir)
+    my_campaign = uq.Campaign(name='multiapp', work_dir=tmpdir, db_location='sqlite:///')
 
     # Add the cannonsim app to the campaign
     (params, encoder, decoder, collater, cannon_sampler,

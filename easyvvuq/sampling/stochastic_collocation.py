@@ -91,12 +91,12 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
 
         # for every dimension (parameter), create a hierachy of 1D
         # quadrature rules of increasing order
-        self.xi_1d = {}
-        self.wi_1d = {}
+        self.xi_1d = [{} for n in range(N)]
+        self.wi_1d = [{} for n in range(N)]
 
-        for n in range(N):
-            self.xi_1d[n] = {}
-            self.wi_1d[n] = {}
+        #for n in range(N):
+        #    self.xi_1d[n] = {}
+        #    self.wi_1d[n] = {}
 
         if sparse:
             for n in range(N):
@@ -201,24 +201,17 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
     =========================
     """
 
-    def generate_grid(self, L, N, l_norm, **kwargs):
-
-        if 'dimensions' in kwargs:
-            dimensions = kwargs['dimensions']
-        else:
+    def generate_grid(self, L, N, l_norm, dimensions=None):
+        if dimensions is None:
             dimensions = range(N)
-
         H_L_N = []
         # loop over all multi indices i
         for l in l_norm:
-
             # compute the tensor product of nodes indexed by i
             X_l = [self.xi_1d[n][l[n]] for n in dimensions]
             H_L_N.append(list(product(*X_l)))
-
         # flatten the list of lists
         H_L_N = np.array(list(chain(*H_L_N)))
-
         # return unique nodes
         return np.unique(H_L_N, axis=0)
 

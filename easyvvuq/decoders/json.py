@@ -42,7 +42,7 @@ class JSONDecoder(BaseDecoder, decoder_name="json"):
                 f"the name of the output file this decoder acts on."
             )
             logging.error(msg)
-            raise Exception(msg)
+            raise RuntimeError(msg)
 
         if output_columns is None:
             msg = (
@@ -53,12 +53,12 @@ class JSONDecoder(BaseDecoder, decoder_name="json"):
                 f"that contains the value you need."
             )
             logging.error(msg)
-            raise Exception(msg)
+            raise RuntimeError(msg)
 
         if len(output_columns) == 0:
             msg = "output_columns cannot be empty."
             logger.error(msg)
-            raise Exception(msg)
+            raise RuntimeError(msg)
 
         self.target_filename = target_filename
         self.output_columns = output_columns
@@ -90,11 +90,14 @@ class JSONDecoder(BaseDecoder, decoder_name="json"):
                 data = data[node]
             return data
 
-        def to_np_if_list(x):
+        def to_list(x):
             if isinstance(x, list):
-                return [np.array(x)]
+                return x
             else:
                 return [x]
+
+        def get_multi_index(col, lst):
+            return [((col, i), [x]) for i, x in enumerate(lst)]
 
         out_path = self._get_output_path(run_info, self.target_filename)
 
@@ -104,11 +107,11 @@ class JSONDecoder(BaseDecoder, decoder_name="json"):
         data = []
         for col in self.output_columns:
             if isinstance(col, str):
-                data.append((col, to_np_if_list(raw_data[col])))
+                data.append(get_multi_index(col, to_list(raw_data[col])))
             elif isinstance(col, list):
-                data.append(('.'.join(col), to_np_if_list(get_value(raw_data, col))))
+                data.append(get_multi_index('.'.join(col), to_list(get_value(raw_data, col))))
+        data = sum(data, [])
         data = pd.DataFrame(dict(data))
-
         return data
 
     def get_restart_dict(self):

@@ -19,13 +19,13 @@ if __name__ == '__main__':
         template_fname='cooling.template',
         delimiter='$',
         target_filename='cooling_in.json')
-    
+
     decoder = uq.decoders.SimpleCSV(target_filename="output.csv",
-                                    output_columns=["te", "ti"],
+                                    output_columns=["te"],
                                     header=0)
 
     collater = uq.collate.AggregateSamples(average=False)
-    
+
     # Add the app (automatically set as current app)
     my_campaign.add_app(name="cooling",
                         params=params,
@@ -40,14 +40,14 @@ if __name__ == '__main__':
     }
     my_sampler = uq.sampling.PCESampler(vary=vary,
                                         polynomial_order=3)
-    
+
     # Associate the sampler with the campaign
     my_campaign.set_sampler(my_sampler)
-    
+
     # Will draw all (of the finite set of samples)
     my_campaign.draw_samples()
 
-    cluster = SLURMCluster(job_extra=['--cluster=mpp2'], queue='mpp2_batch', 
+    cluster = SLURMCluster(job_extra=['--cluster=mpp2'], queue='mpp2_batch',
                            cores=28, memory='1 GB')
     cluster.scale(1)
     print(cluster.job_script())
@@ -59,12 +59,12 @@ if __name__ == '__main__':
     cmd = f"{cwd}/cooling_model.py cooling_in.json"
     my_campaign.apply_for_each_run_dir(uq.actions.ExecuteLocal(cmd, interpret='python3'), client)
     my_campaign.collate()
-    
+
     # Post-processing analysis
     my_analysis = uq.analysis.PCEAnalysis(sampler=my_sampler,
-                                          qoi_cols=["te", "ti"])
+                                          qoi_cols=["te"])
     my_campaign.apply_analysis(my_analysis)
-    
+
     # Get Descriptive Statistics
     results = my_campaign.get_last_analysis()
     stats = results['statistical_moments']['te']

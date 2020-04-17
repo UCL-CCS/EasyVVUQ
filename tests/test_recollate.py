@@ -101,7 +101,7 @@ def test_recollate(tmpdir):
     }
     sampler = uq.sampling.RandomSampler(vary=vary, max_num=num_samples)
 
-    my_campaign = uq.Campaign(name='test', work_dir=tmpdir)
+    my_campaign = uq.Campaign(name='test', work_dir=tmpdir, db_location='sqlite:///')
     my_campaign.add_app(name="cannon",
                         params=params,
                         encoder=encoder,

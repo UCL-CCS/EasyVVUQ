@@ -13,7 +13,7 @@ __license__ = "LGPL"
 def test_anisotropic_order(tmpdir):
 
     # Set up a fresh campaign called "sc"
-    my_campaign = uq.Campaign(name='sc', work_dir=tmpdir)
+    my_campaign = uq.Campaign(name='sc', work_dir=tmpdir, db_location='sqlite:///')
 
     # Define parameter space
     params = {
@@ -78,6 +78,9 @@ def test_anisotropic_order(tmpdir):
     analysis = uq.analysis.SCAnalysis(sampler=my_sampler, qoi_cols=output_columns)
 
     my_campaign.apply_analysis(analysis)
+
+    #import pickle
+    #pickle.dump(analysis, open('analysis.p', 'wb'))
 
     results = my_campaign.get_last_analysis()
 

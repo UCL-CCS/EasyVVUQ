@@ -37,7 +37,7 @@ __license__ = "LGPL"
 logging.basicConfig(level=logging.CRITICAL)
 
 
-def test_gauss_vector():
+def test_gauss_vector(tmpdir):
     # vector version of test_gauss
     # loads json output containing vector data from gauss test
 
@@ -76,7 +76,7 @@ def test_gauss_vector():
     collater = uq.collate.AggregateSamples(average=False)
     actions = uq.actions.ExecuteLocal("tests/gauss/gauss_json.py gauss_in.json")
     sampler = uq.sampling.SCSampler(vary=vary, polynomial_order=3, quadrature_rule="C")
-    my_campaign = uq.Campaign(name='gauss_vector', db_type='json')
+    my_campaign = uq.Campaign(name='gauss_vector', db_type='json', work_dir=tmpdir)
     my_campaign.add_app(name="gauss_vector",
                         params=params,
                         encoder=encoder,
@@ -96,4 +96,4 @@ def test_gauss_vector():
 
 
 if __name__ == "__main__":
-    test_gauss_vector()
+    test_gauss_vector('/tmp')

@@ -125,7 +125,7 @@ def test_jinjaencoder(tmpdir):
     output_columns = ['cfrac', 'lwp', 'rwp', 'zb', 'zi', 'prec', 'wq', 'wtheta', 'we', 'walltime']
     my_sampler = uq.sampling.SCSampler(vary=vary, polynomial_order=2,
                                        quadrature_rule="C")
-    my_campaign = uq.Campaign(name='dales', work_dir=tmpdir)
+    my_campaign = uq.Campaign(name='dales', work_dir=tmpdir, db_location='sqlite:///')
     encoder = JinjaEncoder(template_fname='tests/jinjaencoder/namoptions.template',
                            target_filename='namoptions.001')
     decoder = uq.decoders.SimpleCSV(
