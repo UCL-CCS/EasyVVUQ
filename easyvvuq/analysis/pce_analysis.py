@@ -110,9 +110,6 @@ class PCEAnalysis(BaseAnalysisElement):
             if regression:
                 fit = cp.fit_regression(P, nodes, samples[k], "T")
             else:
-                print('nodes', nodes)
-                print('k: ', k)
-                print("samples: ", samples[k])
                 fit = cp.fit_quadrature(P, nodes, weights, samples[k])
 
             # Statistical moments
