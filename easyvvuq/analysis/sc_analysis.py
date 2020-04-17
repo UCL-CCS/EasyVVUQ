@@ -193,7 +193,6 @@ class SCAnalysis(BaseAnalysisElement):
             for x in self.xi_d:
                 map_[k] = {'l': l, 'X': x, 'f': k}
                 k += 1
-            
         # sparse grid
         else:
             # all sparse grid multi indices l with |l| <= L
@@ -323,9 +322,9 @@ class SCAnalysis(BaseAnalysisElement):
 
         For a qoi q, it computes the following tensor product:
 
-        q \approx \sum_{l\in\Lambda} \Delta_{l}[q](x)
+        $\\approx \\sum_{l in \\Lambda} \\Delta_{l}[q](x)$
 
-        where Delta_{l} is the difference at x between surrogates / quadratues
+        where $\\Delta_{l}$ is the difference at x between surrogates / quadratues
         of level L and L-1. See e.g.:
 
         Dimitrios Loukrezis et. al., "Assessing the Performance of Leja and
