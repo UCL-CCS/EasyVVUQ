@@ -77,8 +77,9 @@ class Validate_Similarity(BaseComparisonElement):
             - discrete probability densities if the metric is Hellinger or Shannon-Jenson,
             - discrete cumulative distributions if the metric is Wasserstein 1 or 2.
 
-        ASSUMPTION: each list can contain a set of numpy.array or lists
-        of (floats, intgers), results from the probability density or cumulative distribution functions.
+        ASSUMPTION: each list can contain a set of scalar (floats, intgers), numpy.array
+        or lists of (floats, intgers), results from the probability density or cumulative
+        distribution functions.
         """
 
         if len(dataframe1) != len(dataframe2):
@@ -90,14 +91,14 @@ class Validate_Similarity(BaseComparisonElement):
                 p /= p.sum()
                 q /= q.sum()
                 s = (p + q).sum()
-                return np.sqrt(((np.sqrt(p/s) - np.sqrt(q/s))**2).sum())
+                return np.sqrt(((np.sqrt(p / s) - np.sqrt(q / s))**2).sum())
 
             if self._metric == "JS":
                 p /= p.sum()
                 q /= q.sum()
                 m = 0.5 * (p + q)
                 div = 0.5 * (st.entropy(p, m) + st.entropy(q, m))
-                return np.sqrt(div/np.log(2))
+                return np.sqrt(div / np.log(2))
 
             if self._metric == "W1":
                 return st.wasserstein_distance(p, q)

@@ -26,13 +26,14 @@ __author__ = 'Jalal Lakhlili'
 __license__ = "LGPL"
 
 
-# Set to True to test with plot, False for travis
-_PLOT=False
+# Set to True to test with plots, False for travis
+_PLOT = False
+
 
 # Build QoI distributions to compare
 def samples(x, y):
     # Vary the mean
-    mu1 = (y - 50.)**2/500.
+    mu1 = (y - 50.)**2 / 500.
     sig1 = 0.2
     dist1 = cp.Normal(mu1, sig1)
 
@@ -95,7 +96,7 @@ if __name__ == "__main__":
         import pylab as plt
 
         # QoIs means and stdvs
-        m1 = (y - 50.)**2/500
+        m1 = (y - 50.)**2 / 500
         s1 = 0.2 * np.ones_like(y)
         m2 = 2.5 * np.ones_like(y)
         s2 = 0.1 * np.ones_like(y) + 0.01 * y
@@ -103,14 +104,14 @@ if __name__ == "__main__":
         fig, axs = plt.subplots(2, 1)
 
         axs[0].plot(y, m1, "k-", label="QoI 1")
-        axs[0].plot(y, m1+s1, "k-", alpha=0.2)
-        axs[0].plot(y, m1-s1, "k-", alpha=0.2)
-        axs[0].fill_between(y, m1-s1, m1+s1, color="k", alpha=0.15)
+        axs[0].plot(y, m1 + s1, "k-", alpha=0.2)
+        axs[0].plot(y, m1 - s1, "k-", alpha=0.2)
+        axs[0].fill_between(y, m1 - s1, m1 + s1, color="k", alpha=0.15)
 
         axs[0].plot(y, m2, "b-", label="QoI 2")
-        axs[0].plot(y, m2+s2, "b-", alpha=0.2)
-        axs[0].plot(y, m2-s2, "b-", alpha=0.2)
-        axs[0].fill_between(y, m2-s2, m2+s2, color="b", alpha=0.15)
+        axs[0].plot(y, m2 + s2, "b-", alpha=0.2)
+        axs[0].plot(y, m2 - s2, "b-", alpha=0.2)
+        axs[0].fill_between(y, m2 - s2, m2 + s2, color="b", alpha=0.15)
 
         axs[0].legend()
         axs[0].grid()
