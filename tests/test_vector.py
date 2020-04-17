@@ -96,4 +96,4 @@ def test_gauss_vector(tmpdir):
 
 
 if __name__ == "__main__":
-    test_gauss_vector()
+    test_gauss_vector('/tmp')
