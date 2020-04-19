@@ -99,7 +99,9 @@ class PCEAnalysis(BaseAnalysisElement):
 
         # Extract output values for each quantity of interest from Dataframe
         samples = {k: [] for k in qoi_cols}
+        print(">>> data_frame: ", data_frame)
         for run_id in data_frame.run_id.unique():
+            print(">>> run_id = ", run_id)
             for k in qoi_cols:
                 data = data_frame.loc[data_frame['run_id'] == run_id][k]
                 samples[k].append(data.values)

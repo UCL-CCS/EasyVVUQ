@@ -81,9 +81,21 @@ class AggregateSamples(BaseCollationElement, collater_name="aggregate_samples"):
 
                 params = run_info['params']
                 column_list = list(params.keys()) + run_data.columns.tolist()
+
+                # TRY another way to handel list
                 for param, value in params.items():
-                    if type(value) == list:
-                        run_data[param] = run_data.apply(lambda x: value)
+                    if isinstance(value, list):
+                        # use multi index
+                        nc = len(value)
+                        col = [(param, str(i)) for i in range(nc)]
+                        col = pd.MultiIndex.from_tuples(col)
+                        ret = pd.DataFrame(columns=col)
+                        for i in range(run_data.shape[1]):
+                            ci = run_data.columns[i]
+                            ret[ci] = run_data[ci]
+                        for i in range(nc):
+                            ret[col[i]] = value[i]
+                        run_data = ret.copy()
                     else:
                         run_data[param] = value
 
