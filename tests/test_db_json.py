@@ -122,3 +122,11 @@ def test_update_sampler(campaign_db):
         campaign_db.update_sampler(2, sampler)
     campaign_db.update_sampler(1, sampler)
     assert(campaign_db._sample == sampler.serialize())
+
+
+def test_resurrect_sampler(campaign_db):
+    sampler = BasicSweep({'a': [1, 2, 3], 'b': [4, 5, 6]})
+    campaign_db.add_sampler(sampler)
+    with pytest.raises(RuntimeError):
+        campaign_db.resurrect_sampler(2)
+    assert(campaign_db.resurrect_sampler(1).serialize() == sampler.serialize())
