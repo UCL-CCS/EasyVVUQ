@@ -114,3 +114,11 @@ def test_add_sampler(campaign_db):
     with pytest.raises(RuntimeError):
         campaign_db.add_sampler(BasicSweep({'a': [1, 2, 3], 'b': [4, 5, 6]}))
     assert(campaign_db._sample == BasicSweep({'a': [1, 2, 3], 'b': [4, 5, 6]}).serialize())
+
+
+def test_update_sampler(campaign_db):
+    sampler = BasicSweep({'a': [1, 11, 3], 'b': [4, 5, 6]})
+    with pytest.raises(RuntimeError):
+        campaign_db.update_sampler(2, sampler)
+    campaign_db.update_sampler(1, sampler)
+    assert(campaign_db._sample == sampler.serialize())
