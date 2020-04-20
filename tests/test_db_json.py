@@ -130,3 +130,18 @@ def test_resurrect_sampler(campaign_db):
     with pytest.raises(RuntimeError):
         campaign_db.resurrect_sampler(2)
     assert(campaign_db.resurrect_sampler(1).serialize() == sampler.serialize())
+
+
+def test_resurrect_app_1(campaign_db, app_info):
+    campaign_db._app = None
+    with pytest.raises(RuntimeError):
+        encoder, decoder, collater = campaign_db.resurrect_app('test')
+
+
+def test_resurrect_app_2(campaign_db, app_info):
+    with pytest.raises(RuntimeError):
+        encoder, decoder, collater = campaign_db.resurrect_app('test_')
+    encoder, decoder, collater = campaign_db.resurrect_app('test')
+    assert(app_info.input_encoder.serialize() == encoder.serialize())
+    assert(app_info.output_decoder.serialize() == decoder.serialize())
+    assert(app_info.collater.serialize() == collater.serialize())
