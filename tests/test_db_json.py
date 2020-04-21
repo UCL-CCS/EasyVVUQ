@@ -50,6 +50,11 @@ def campaign_db(tmpdir, app_info):
     return res
 
 
+@pytest.fixture
+def runs():
+    return [RunInfo('run', 'test', '.', 1, {'a': i}, 1, 1) for i in range(1010)]
+
+
 def test_campaign(campaign_db):
     assert(campaign_db.get_sampler_id(0) == 1)
 
@@ -145,3 +150,11 @@ def test_resurrect_app_2(campaign_db, app_info):
     assert(app_info.input_encoder.serialize() == encoder.serialize())
     assert(app_info.output_decoder.serialize() == decoder.serialize())
     assert(app_info.collater.serialize() == collater.serialize())
+
+
+def test_add_runs(campaign_db, runs):
+    campaign_db.add_runs(runs)
+    for i in range(1010):
+        assert(campaign_db.run('Run_{}'.format(i + 1))['params'] ==
+               runs[i].to_dict()['params'])
+
