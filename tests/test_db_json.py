@@ -157,4 +157,3 @@ def test_add_runs(campaign_db, runs):
     for i in range(1010):
         assert(campaign_db.run('Run_{}'.format(i + 1))['params'] ==
                runs[i].to_dict()['params'])
-
