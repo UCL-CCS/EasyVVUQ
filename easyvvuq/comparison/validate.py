@@ -72,6 +72,9 @@ class Validate_Similarity(BaseComparisonElement):
 
         self._metric = metric
 
+    def get_metric(self):
+        return self._metric
+
     def compare(self, dataframe1, dataframe2):
         """Perform comparaison between dataframe1 and dataframe2, two lists of:
             - discrete probability densities if the metric is Hellinger or Shannon-Jenson,
@@ -90,8 +93,7 @@ class Validate_Similarity(BaseComparisonElement):
             if self._metric == "H":
                 p /= p.sum()
                 q /= q.sum()
-                s = (p + q).sum()
-                return np.sqrt(((np.sqrt(p / s) - np.sqrt(q / s))**2).sum())
+                return np.sqrt(1. - np.sqrt(p * q).sum())
 
             if self._metric == "JS":
                 p /= p.sum()
