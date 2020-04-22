@@ -5,6 +5,7 @@ from easyvvuq.constants import default_campaign_prefix
 from easyvvuq.db.sql import CampaignDB
 from easyvvuq.data_structs import CampaignInfo, RunInfo, AppInfo
 from easyvvuq.constants import Status
+import pandas as pd
 
 
 @pytest.fixture
@@ -116,3 +117,18 @@ def test_version_check(campaign):
         campaign_dir=str(campaign.tmp_path))
     campaign3 = CampaignDB(location='sqlite:///{}/test.sqlite'.format(campaign.tmp_path),
                            new_campaign=True, name='test3', info=info)
+
+
+def test_multi_index(tmp_path, app_info):
+    info = CampaignInfo(
+                        name='test_multi_index',
+                        campaign_dir_prefix=default_campaign_prefix,
+                        easyvvuq_version=uq.__version__,
+                        campaign_dir=str(tmp_path))
+    db = CampaignDB(location='sqlite:///{}/test_multi_index.sqlite'.format(tmp_path),
+                    new_campaign=True, name='test_multi_index', info=info)
+    db.add_app(app_info)
+    df = pd.DataFrame({'a': [1, 2, 3], ('b', 0): [4, 5, 6], ('b', 1): [7, 8, 9]})
+    db.append_collation_dataframe(df, 'test')
+    df_ref = db.get_collation_dataframe('test')
+    assert(df.equals(df_ref))
