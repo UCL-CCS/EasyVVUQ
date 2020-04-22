@@ -128,7 +128,8 @@ def test_multi_index(tmp_path, app_info):
     db = CampaignDB(location='sqlite:///{}/test_multi_index.sqlite'.format(tmp_path),
                     new_campaign=True, name='test_multi_index', info=info)
     db.add_app(app_info)
-    df = pd.DataFrame({'a': [1, 2, 3], ('b', 0): [4, 5, 6], ('b', 1): [7, 8, 9]})
+    df = pd.DataFrame({('a', ''): [1, 2, 3], ('b', 0): [4, 5, 6], ('b', 1): [7, 8, 9]})
     db.append_collation_dataframe(df, 'test')
     df_ref = db.get_collation_dataframe('test')
-    assert(df.equals(df_ref))
+    assert((df.values == df_ref.values).all())
+    assert((df.columns == df_ref.columns).all())
