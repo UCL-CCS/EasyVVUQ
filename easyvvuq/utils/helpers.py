@@ -15,7 +15,7 @@ def multi_index_tuple_parser(lst):
     the lst contains any tuples
     """
     contains_tuples = True
-    if not lst:
+    if len(lst) == 0:
         raise RuntimeError('multi_index_tuple_parser needs a non-empty list of strings')
     for name in lst:
         if not isinstance(name, str):

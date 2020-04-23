@@ -17,6 +17,7 @@ from easyvvuq.encoders.base import BaseEncoder
 from easyvvuq.decoders.base import BaseDecoder
 from easyvvuq.collate.base import BaseCollationElement
 from easyvvuq import ParamsSpecification
+from easyvvuq.utils.helpers import multi_index_tuple_parser
 
 __copyright__ = """
 
@@ -858,6 +859,10 @@ class CampaignDB(BaseCampaignDB):
         if tablename in self.engine.table_names():
             query = "select * from " + tablename
             df = pd.read_sql_query(query, self.engine)
+            columns, multi = multi_index_tuple_parser(df.columns.values[1:])
+            if multi:
+                df = pd.DataFrame(df.values[:,1:],
+                                  columns=pd.MultiIndex.from_tuples(columns))
             return df
         else:
             return None
