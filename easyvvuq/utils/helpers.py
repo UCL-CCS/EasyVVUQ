@@ -1,5 +1,6 @@
 from ast import literal_eval
 
+
 def multi_index_tuple_parser(lst):
     """
     Parses a list of strings to tuples if they represent tuples, otherwise
