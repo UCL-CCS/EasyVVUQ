@@ -6,6 +6,7 @@ from easyvvuq.db.sql import CampaignDB
 from easyvvuq.data_structs import CampaignInfo, RunInfo, AppInfo
 from easyvvuq.constants import Status
 import pandas as pd
+import numpy as np
 
 
 @pytest.fixture
@@ -132,3 +133,8 @@ def test_multi_index(tmp_path, app_info):
     df_ref = db.get_collation_dataframe('test')
     assert((df.values == df_ref.values).all())
     assert((df.columns == df_ref.columns).all())
+    df2 = pd.DataFrame({('a', ''): [10, 11, 12], ('b', 0): [13, 14, 15], ('b', 1): [16, 17, 18]})
+    db.append_collation_dataframe(df2, 'test')
+    df_ref = db.get_collation_dataframe('test')
+    assert((np.vstack((df.values, df2.values)) == df_ref.values).all())
+    assert((df2.columns == df_ref.columns).all())
