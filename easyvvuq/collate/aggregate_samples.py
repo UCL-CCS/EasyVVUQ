@@ -82,7 +82,6 @@ class AggregateSamples(BaseCollationElement, collater_name="aggregate_samples"):
                 params = run_info['params']
                 column_list = list(params.keys()) + run_data.columns.tolist()
 
-                # TRY another way to handel list
                 for param, value in params.items():
                     if isinstance(value, list):
                         # use multi index
