@@ -10,3 +10,13 @@ def test_multi_index_tuple_parser_exceptions():
         multi_index_tuple_parser(['a', 'b', 3])
     with pytest.raises(RuntimeError):
         multi_index_tuple_parser([3, 'a', 'b'])
+
+
+def test_multi_index_parser_corner_cases():
+    assert(multi_index_tuple_parser(["a"]) == ["a"])
+    assert(multi_index_tuple_parser(['"a", ("b", 1)'] == ["a", ("b", 1)]))
+
+
+def test_multi_index_parser():
+    assert(multi_index_tuple_parser(['("a", 1), ("b", 1)']) == [("a", 1), ("b", 1)])
+
