@@ -13,10 +13,11 @@ def test_multi_index_tuple_parser_exceptions():
 
 
 def test_multi_index_parser_corner_cases():
-    assert(multi_index_tuple_parser(["a"]) == ["a"])
-    assert(multi_index_tuple_parser(['"a", ("b", 1)'] == ["a", ("b", 1)]))
+    assert(multi_index_tuple_parser(["a"]) == (["a"], False))
+    assert(multi_index_tuple_parser(['a', '("b", 1)']) == (["a", ("b", 1)], False))
 
 
 def test_multi_index_parser():
-    assert(multi_index_tuple_parser(['("a", 1), ("b", 1)']) == [("a", 1), ("b", 1)])
+    assert(multi_index_tuple_parser(['("a", 1)', '("b", 1)']) ==
+                                    ([("a", 1), ("b", 1)], True))
 

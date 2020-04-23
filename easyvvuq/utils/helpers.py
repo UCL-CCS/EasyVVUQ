@@ -14,9 +14,17 @@ def multi_index_tuple_parser(lst):
     a tuple consisting of a list of tuples and/or strings and a bool indicating if
     the lst contains any tuples
     """
+    contains_tuples = True
     if not lst:
         raise RuntimeError('multi_index_tuple_parser needs a non-empty list of strings')
     for name in lst:
         if not isinstance(name, str):
             raise RuntimeError('multi_index_tuple_parser needs a list of strings')
-    return [], False
+    result = []
+    for name in lst:
+        if name.strip()[0] == '(' and name.strip()[-1] == ')':
+            name = literal_eval(name)
+        else:
+            contains_tuples = False
+        result.append(name)
+    return result, contains_tuples
