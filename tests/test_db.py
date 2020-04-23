@@ -120,8 +120,7 @@ def test_version_check(campaign):
 
 
 def test_multi_index(tmp_path, app_info):
-    info = CampaignInfo(
-                        name='test_multi_index',
+    info = CampaignInfo(name='test_multi_index',
                         campaign_dir_prefix=default_campaign_prefix,
                         easyvvuq_version=uq.__version__,
                         campaign_dir=str(tmp_path))

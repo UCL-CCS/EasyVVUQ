@@ -18,6 +18,4 @@ def test_multi_index_parser_corner_cases():
 
 
 def test_multi_index_parser():
-    assert(multi_index_tuple_parser(['("a", 1)', '("b", 1)']) ==
-                                    ([("a", 1), ("b", 1)], True))
-
+    assert(multi_index_tuple_parser(['("a", 1)', '("b", 1)']) == ([("a", 1), ("b", 1)], True))
