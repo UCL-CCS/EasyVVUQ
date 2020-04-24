@@ -182,7 +182,7 @@ class SCAnalysis(BaseAnalysisElement):
         - Map: a dict for level L containing k, l, X, and f
         """
         # unique index
-        logging.debug('Creating multi-index map for level', L, '...')
+        logging.debug('Creating multi-index map for level %d ...', L)
         # full tensor product
         if not self.sparse:
             # l = (np.ones(N) * L).astype('int')

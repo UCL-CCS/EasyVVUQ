@@ -64,9 +64,9 @@ def campaign():
                   collater, actions, stats, vary, num_samples=0, replicas=1, db_type='sql',
                   call_fn=None):
         my_campaign = uq.Campaign(name=campaign_name, work_dir=work_dir, db_type=db_type)
-        logging.debug("Serialized encoder:", encoder.serialize())
-        logging.debug("Serialized decoder:", decoder.serialize())
-        logging.debug("Serialized collation:", collater.serialize())
+        logging.debug("Serialized encoder: %s", str(encoder.serialize()))
+        logging.debug("Serialized decoder: %s", str(decoder.serialize()))
+        logging.debug("Serialized collation: %s", str(collater.serialize()))
 
         # Add the cannonsim app
         my_campaign.add_app(name=app_name,
@@ -75,7 +75,7 @@ def campaign():
                             decoder=decoder,
                             collater=collater)
         my_campaign.set_app(app_name)
-        logging.debug("Serialized sampler:", sampler.serialize())
+        logging.debug("Serialized sampler: %s", str(sampler.serialize()))
         # Set the campaign to use this sampler
         my_campaign.set_sampler(sampler)
         # Draw 5 samples
@@ -98,7 +98,7 @@ def campaign():
             my_campaign.apply_for_each_run_dir(actions)
         # Collate all data into one pandas data frame
         my_campaign.collate()
-        logging.debug("data:", my_campaign.get_collation_result())
+        logging.debug("data: %s", str(my_campaign.get_collation_result()))
         # Save the state of the campaign
         state_file = work_dir + "{}_state.json".format(app_name)
         my_campaign.save_state(state_file)
@@ -119,17 +119,17 @@ def campaign():
             reloaded_campaign.apply_for_each_run_dir(actions)
         logging.debug("Completed runs:")
         logging.debug(pformat(reloaded_campaign.scan_completed()))
-        logging.debug("All completed?", reloaded_campaign.all_complete())
+        logging.debug("All completed? %s", str(reloaded_campaign.all_complete()))
         reloaded_campaign.collate()
-        logging.debug("data:\n", reloaded_campaign.get_collation_result())
+        logging.debug("data:\n %s", str(reloaded_campaign.get_collation_result()))
         logging.debug(reloaded_campaign)
         # Create a BasicStats analysis element and apply it to the campaign
         if stats is not None:
             reloaded_campaign.apply_analysis(stats)
-            logging.debug("stats:\n", reloaded_campaign.get_last_analysis())
+            logging.debug("stats:\n %s", str(reloaded_campaign.get_last_analysis()))
         # Print the campaign log
         logging.debug(pformat(reloaded_campaign._log))
-        logging.debug("All completed?", reloaded_campaign.all_complete())
+        logging.debug("All completed? %s", str(reloaded_campaign.all_complete()))
     return _campaign
 
 
