@@ -30,10 +30,8 @@ json_input = sys.argv[1]
 with open(json_input, "r") as f:
     inputs = json.load(f)
 
-#kappa = float(inputs['kappa'])
-#t_env = float(inputs['t_env'])
-kappa = float(inputs['up'][0])
-t_env = float(inputs['up'][1])
+kappa = float(inputs['kappa'])
+t_env = float(inputs['t_env'])
 temp0 = float(inputs['T0'])
 
 t = np.linspace(0, 200, 150)
