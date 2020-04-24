@@ -84,7 +84,7 @@ class AggregateSamples(BaseCollationElement, collater_name="aggregate_samples"):
 
                 for param, value in params.items():
                     if isinstance(value, list):
-                        # use multi index
+                        # use multi-indexing to add list values
                         nc = len(value)
                         col = [(param, str(i)) for i in range(nc)]
                         col = pd.MultiIndex.from_tuples(col)
