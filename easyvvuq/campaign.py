@@ -52,15 +52,12 @@ class Campaign:
     Multiple campaigns can be combined in a CampaignDB. Hence the particular
     campaign we are currently working on will be specified using `campaign_id`.
 
-    The JSON CampaignDB only supports a single campaign.
-
     Parameters
     ----------
     name : :obj:`str`, optional
         Description of `param1`.
     db_type : str, default="sql"
-        Type of database to use for CampaignDB. Options at present are "sql"
-        and "json".
+        Type of database to use for CampaignDB.
     db_location : :obj:`str`, optional
         Location of the underlying campaign database - either a path or
         acceptable URI for SQLAlchemy.
@@ -87,7 +84,7 @@ class Campaign:
         Location of the underlying campaign database - either a path or
         acceptable URI for SQLAlchemy.
     db_type : str or None
-        Type of CampaignDB ("sql" or "json").
+        Type of CampaignDB ("sql").
     _log: list
         The log of all elements that have been applied, with information about
         their application
@@ -182,7 +179,7 @@ class Campaign:
         name : str
             Campaign name.
         db_type : str
-            Database type - current options are 'sql' and 'json'.
+            Database type - current options are 'sql'.
         db_location : str or None
             Path in which to create campaign database - defaults to None which
             results in the database being placed in `campaign_dir` with a
@@ -211,13 +208,9 @@ class Campaign:
             from .db.sql import CampaignDB
             if self.db_location is None:
                 self.db_location = "sqlite:///" + self.campaign_dir + "/campaign.db"
-        elif self.db_type == 'json':
-            from .db.json import CampaignDB
-            if self.db_location is None:
-                self.db_location = self.campaign_dir + "/campaign.json"
         else:
             message = (f"Invalid 'db_type' {db_type}. Supported types are "
-                       f"'sql' or 'json'.")
+                       f"'sql'.")
             logger.critical(message)
             raise RuntimeError(message)
 
@@ -267,11 +260,9 @@ class Campaign:
 
         if self.db_type == 'sql':
             from .db.sql import CampaignDB
-        elif self.db_type == 'json':
-            from .db.json import CampaignDB
         else:
             message = (f"Invalid 'db_type' {self.db_type}. Supported types "
-                       f"are 'sql' or 'json'.")
+                       f"are 'sql'.")
             logger.critical(message)
             raise RuntimeError(message)
 
