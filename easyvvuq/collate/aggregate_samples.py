@@ -3,6 +3,7 @@
 
 from .base import BaseCollationElement
 from easyvvuq import OutputType, constants
+from easyvvuq.utils.helpers import multi_index_tuple_parser
 import pandas as pd
 
 __copyright__ = """
@@ -84,17 +85,14 @@ class AggregateSamples(BaseCollationElement, collater_name="aggregate_samples"):
 
                 for param, value in params.items():
                     if isinstance(value, list):
-                        # use multi-indexing to add list values
-                        nc = len(value)
-                        col = [(param, str(i)) for i in range(nc)]
-                        col = pd.MultiIndex.from_tuples(col)
-                        ret = pd.DataFrame(columns=col)
-                        for i in range(run_data.shape[1]):
-                            ci = run_data.columns[i]
-                            ret[ci] = run_data[ci]
-                        for i in range(nc):
-                            ret[col[i]] = value[i]
-                        run_data = ret.copy()
+                        # need to have multi-index dataframe
+                        col, mult = multi_index_tuple_parser(run_data.columns.values)
+                        if not mult:
+                            col = [(c, '') for c in col]
+                            run_data.columns = pd.MultiIndex.from_tuples(col)
+                        # add list values using columns tuple
+                        for i in range(len(value)):
+                            run_data[(param, i)] = value[i]
                     else:
                         run_data[param] = value
 
