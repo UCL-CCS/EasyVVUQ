@@ -43,7 +43,7 @@ class PCEAnalysis(BaseAnalysisElement):
 
     def element_version(self):
         """Version of this element for logging purposes"""
-        return "0.4"
+        return "0.5"
 
     def analyse(self, data_frame=None):
         """Perform PCE analysis on input `data_frame`.
@@ -132,12 +132,13 @@ class PCEAnalysis(BaseAnalysisElement):
             sobols_first_dict = {}
             sobols_second_dict = {}
             sobols_total_dict = {}
-            i_par = 0
+            ipar = 0
             for param_name in self.sampler.vary.get_keys():
-                sobols_first_dict[param_name] = sobols_first_narr[i_par]
-                sobols_second_dict[param_name] = sobols_second_narr[i_par]
-                sobols_total_dict[param_name] = sobols_total_narr[i_par]
-                i_par += 1
+                j = self.sampler.params_size[ipar]
+                sobols_first_dict[param_name] = sobols_first_narr[ipar:ipar + j]
+                sobols_second_dict[param_name] = sobols_second_narr[ipar:ipar + j]
+                sobols_total_dict[param_name] = sobols_total_narr[ipar:ipar + j]
+                ipar += j
             results['sobols_first'][k] = sobols_first_dict
             results['sobols_second'][k] = sobols_second_dict
             results['sobols_total'][k] = sobols_total_dict

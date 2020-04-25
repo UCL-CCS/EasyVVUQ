@@ -60,11 +60,16 @@ numbers = np.random.normal(mu, sigma, num_steps)
 numbers += bias
 numbers_out = np.array(list(enumerate(numbers)))
 
-header = 'Step,Value'
+#header = 'Step,Value'
 
-fmt = '%i,%f'
-np.savetxt(output_filename, numbers_out, fmt=fmt, header=header)
+#fmt = '%i,%f'
+#np.savetxt(output_filename, numbers_out, fmt=fmt, header=header)
 
-json_output = {'numbers': list(numbers)}
-with open(output_filename + '.json', 'wt') as json_fp:
-    json.dump(json_output, json_fp)
+#json_output = {'numbers': list(numbers)}
+#with open(output_filename + '.json', 'wt') as json_fp:
+#    json.dump(json_output, json_fp)
+
+# output csv file
+np.savetxt(output_filename, numbers,
+           delimiter=",", comments='',
+           header='numbers')
