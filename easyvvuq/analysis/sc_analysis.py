@@ -108,7 +108,7 @@ class SCAnalysis(BaseAnalysisElement):
             self.L_min = self.L
             self.l_norm = np.array([self.sampler.polynomial_order])
             self.l_norm_min = self.l_norm
-        # For sparse grid: multiple levels, L >= N must hold
+        # For sparse grid, has one or more levels
         else:
             self.L_min = 1
             self.l_norm = self.sampler.compute_sparse_multi_idx(self.L, self.N)
@@ -126,8 +126,6 @@ class SCAnalysis(BaseAnalysisElement):
         # All interpolation/quadrature subroutines loop over the entries in Map
         self.Map = {}
         self.surr_lm1 = {}
-
-        self.foo = []
 
         for level in range(self.L_min, self.L + 1):
             self.Map[level] = self.create_map(self.N, level)
@@ -182,7 +180,7 @@ class SCAnalysis(BaseAnalysisElement):
         - Map: a dict for level L containing k, l, X, and f
         """
         # unique index
-        logging.debug('Creating multi-index map for level', L, '...')
+        logging.debug('Creating multi-index map for level %d', L)
         # full tensor product
         if not self.sparse:
             # l = (np.ones(N) * L).astype('int')
@@ -366,12 +364,15 @@ class SCAnalysis(BaseAnalysisElement):
             # Recursively computed.
 
             if self.sparse:
-                Lm1 = np.sum(l) - 1
+                #In case of sparse grid: level = sum(l) - N + 1
+                #so prev level is sum(l) - N
+                Lm1 = np.sum(l) - self.N
             else:
+                #previous level of full tensor grid = L - 1, will yield a zero
                 Lm1 = self.L - 1
 
             if k in self.surr_lm1[L]:
-                #                print('surrogate already computed')
+                #print('surrogate already computed')
                 surr_lm1 = self.surr_lm1[L][k]
             else:
                 surr_lm1 = self.sc_expansion(Lm1, samples, x=Map[k]['X'])

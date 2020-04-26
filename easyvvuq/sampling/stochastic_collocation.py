@@ -88,45 +88,12 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
 
         # L = level of (sparse) grid
         L = np.max(self.polynomial_order)
-
-        # for every dimension (parameter), create a hierachy of 1D
-        # quadrature rules of increasing order
-        self.xi_1d = [{} for n in range(N)]
-        self.wi_1d = [{} for n in range(N)]
-
-        #for n in range(N):
-        #    self.xi_1d[n] = {}
-        #    self.wi_1d[n] = {}
-
-        if sparse:
-            for n in range(N):
-                for i in range(1, L + 1):
-                    xi_i, wi_i = cp.generate_quadrature(i + 1,
-                                                        params_distribution[n],
-                                                        rule=self.quad_rule,
-                                                        growth=self.growth)
-
-                    self.xi_1d[n][i] = xi_i[0]
-                    self.wi_1d[n][i] = wi_i
-        else:
-            for n in range(N):
-                xi_i, wi_i = cp.generate_quadrature(self.polynomial_order[n],
-                                                    params_distribution[n],
-                                                    rule=self.quad_rule,
-                                                    growth=self.growth)
-
-                self.xi_1d[n][self.polynomial_order[n]] = xi_i[0]
-                self.wi_1d[n][self.polynomial_order[n]] = wi_i
-
-        if not sparse:
-            # Generate collocation grid via chaospy
-            # NOTE: different poly orders per dimension does not work for all
-            #      guadarture rules - use self.generate_grid subroutine instead
-            # # the nodes of the collocation grid
-            # xi_d, _ = cp.generate_quadrature(self.polynomial_order,
-            #                                  self.joint_dist,
-            #                                  rule=quadrature_rule)
-            # self.xi_d = xi_d.T
+        
+        #compute the 1D collocation points (and quad weights) 
+        self.compute_1D_points_weights(L, N)
+        
+        #compute N-dimensional collocation points
+        if not self.sparse:
 
             # generate collocation grid locally
             l_norm = np.array([self.polynomial_order])
@@ -136,17 +103,12 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
         # of different order. Use chaospy to compute these 1D quadrature rules
         else:
 
-            # L >= N must hold
-            if L < N:
-                raise RuntimeError(("Sparse grid level is lower than the number of params. "
-                                    "Increase level (via polynomial_order) p such that p-1 >= N"))
-
-            # multi-index l, such that |l| <= L
-            l_norm_le_L = self.compute_sparse_multi_idx(L, N)
+            # simplex set of multi indices
+            multi_idx = self.compute_sparse_multi_idx(L, N)
 
             # create sparse grid of dimension N and level q using the 1d
             #rules in self.xi_1d
-            self.xi_d = self.generate_grid(L, N, l_norm_le_L)
+            self.xi_d = self.generate_grid(L, N, multi_idx)
 
         self.L = L
         self.N = N
@@ -162,7 +124,88 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
         else:
             for i in range(count):
                 self.__next__()
+                
+    def compute_1D_points_weights(self, L, N):
+        """
+        Computes 1D collocation points and quad weights,
+        and stores this in self.xi_1d, self.wi_1d. 
+        
+        Parameters
+        ----------
+        L : (int) the max level of the (sparse) grid
+        N : (int) the number of uncertain parameters
 
+        Returns
+        -------
+        None.
+
+        """
+        # for every dimension (parameter), create a hierachy of 1D
+        # quadrature rules of increasing order
+        self.xi_1d = [{} for n in range(N)]
+        self.wi_1d = [{} for n in range(N)]
+
+        if self.sparse:
+            for n in range(N):
+                for i in range(1, L + 1):
+                    #note: sometimes i+1 is used instead of i
+                    xi_i, wi_i = cp.generate_quadrature(i,
+                                                        self.params_distribution[n],
+                                                        rule=self.quad_rule,
+                                                        growth=self.growth)
+
+                    self.xi_1d[n][i] = xi_i[0]
+                    self.wi_1d[n][i] = wi_i
+        else:
+            for n in range(N):
+                xi_i, wi_i = cp.generate_quadrature(self.polynomial_order[n],
+                                                    self.params_distribution[n],
+                                                    rule=self.quad_rule,
+                                                    growth=self.growth)
+
+                self.xi_1d[n][self.polynomial_order[n]] = xi_i[0]
+                self.wi_1d[n][self.polynomial_order[n]] = wi_i
+            
+    def next_level_sparse_grid(self):
+        """
+        Adds the points of the next level for hierarchical sparse grids 
+
+        Returns
+        -------
+        None.
+
+        """
+        
+        if self.growth == False or self.sparse == False:
+            logging.debug('Only works for nested sparse grids')
+            return
+
+        #update level of sparse grid
+        L = np.max(self.polynomial_order) + 1
+        self.polynomial_order = [p+1 for p in self.polynomial_order]
+        
+        print('Moving grid from level %d to level %d' %(L-1, L))
+
+        #compute all multi indices
+        multi_idx = self.compute_sparse_multi_idx(L, self.N)
+        
+        #find only the indices of the new level (|l| = L + N - 1)
+        new = np.where(np.sum(multi_idx, axis=1) == L + self.N - 1)[0]
+        
+        #update the 1D points and weights
+        self.compute_1D_points_weights(L, self.N)
+        
+        #generate the new N-dimensional collocation points
+        new_points = self.generate_grid(L, self.N, multi_idx[new])
+        
+        print('%d new points added' % new_points.shape[0])
+        
+        #update the number of samples
+        self._number_of_samples += new_points.shape[0]
+        
+        #update the N-dimensional sparse grid
+        self.xi_d = np.concatenate((self.xi_d, new_points))
+     
     def element_version(self):
         return "0.4"
 
@@ -201,9 +244,9 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
     =========================
     """
 
-    def generate_grid(self, L, N, l_norm, dimensions=None):
-        if dimensions is None:
-            dimensions = range(N)
+    def generate_grid(self, L, N, l_norm):
+
+        dimensions = range(N)
         H_L_N = []
         # loop over all multi indices i
         for l in l_norm:
@@ -218,8 +261,13 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
     def compute_sparse_multi_idx(self, L, N):
         """
         computes all N dimensional multi-indices l = (l1,...,lN) such that
-        |l| <= Q. Here |l| is the internal sum of i (l1+...+lN)
+        |l| <= L + N - 1, i.e. a simplex set: 
+        3    *
+        2    *    *          (L=3 and N=2)
+        1    *    *    *
+             1    2    3
+        Here |l| is the internal sum of i (l1+...+lN)
         """
         P = np.array(list(product(range(1, L + 1), repeat=N)))
-        l_norm_le_q = P[np.where(np.sum(P, axis=1) <= L)[0]]
-        return l_norm_le_q
+        multi_idx = P[np.where(np.sum(P, axis=1) <= L+N-1)[0]]
+        return multi_idx
