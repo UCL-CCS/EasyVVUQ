@@ -125,7 +125,7 @@ class PCEAnalysis(BaseAnalysisElement):
             P90 = cp.Perc(fit, 90, self.sampler.distribution)
             results['percentiles'][k] = {'p10': P10, 'p90': P90}
 
-            # Sensitivity Analysis: First and Total Sobol indices
+            # Sensitivity Analysis: First, Second and Total Sobol indices
             sobols_first_narr = cp.Sens_m(fit, self.sampler.distribution)
             sobols_second_narr = cp.Sens_m2(fit, self.sampler.distribution)
             sobols_total_narr = cp.Sens_t(fit, self.sampler.distribution)
