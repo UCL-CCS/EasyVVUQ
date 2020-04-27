@@ -5,6 +5,7 @@ import numpy as np
 import json
 import sys
 
+
 def poly_model(theta):
     
     return np.prod(3*theta**2 + 1)/2**d

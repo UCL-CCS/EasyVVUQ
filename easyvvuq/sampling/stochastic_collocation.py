@@ -88,10 +88,10 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
 
         # L = level of (sparse) grid
         L = np.max(self.polynomial_order)
-        
-        #compute the 1D collocation points (and quad weights) 
+
+        #compute the 1D collocation points (and quad weights)
         self.compute_1D_points_weights(L, N)
-        
+
         #compute N-dimensional collocation points
         if not self.sparse:
 
@@ -124,12 +124,12 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
         else:
             for i in range(count):
                 self.__next__()
-                
+
     def compute_1D_points_weights(self, L, N):
         """
         Computes 1D collocation points and quad weights,
-        and stores this in self.xi_1d, self.wi_1d. 
-        
+        and stores this in self.xi_1d, self.wi_1d.
+
         Parameters
         ----------
         L : (int) the max level of the (sparse) grid
@@ -165,47 +165,47 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
 
                 self.xi_1d[n][self.polynomial_order[n]] = xi_i[0]
                 self.wi_1d[n][self.polynomial_order[n]] = wi_i
-            
+
     def next_level_sparse_grid(self):
         """
-        Adds the points of the next level for hierarchical sparse grids 
+        Adds the points of the next level for hierarchical sparse grids.
 
         Returns
         -------
         None.
 
         """
-        
-        if self.growth == False or self.sparse == False:
+
+        if self.growth is False or self.sparse is False:
             logging.debug('Only works for nested sparse grids')
             return
 
         #update level of sparse grid
         L = np.max(self.polynomial_order) + 1
-        self.polynomial_order = [p+1 for p in self.polynomial_order]
-        
-        print('Moving grid from level %d to level %d' %(L-1, L))
+        self.polynomial_order = [p + 1 for p in self.polynomial_order]
+
+        print('Moving grid from level %d to level %d' % (L - 1, L))
 
         #compute all multi indices
         multi_idx = self.compute_sparse_multi_idx(L, self.N)
-        
+
         #find only the indices of the new level (|l| = L + N - 1)
         new = np.where(np.sum(multi_idx, axis=1) == L + self.N - 1)[0]
-        
+
         #update the 1D points and weights
         self.compute_1D_points_weights(L, self.N)
-        
+
         #generate the new N-dimensional collocation points
         new_points = self.generate_grid(L, self.N, multi_idx[new])
-        
+
         print('%d new points added' % new_points.shape[0])
-        
+
         #update the number of samples
         self._number_of_samples += new_points.shape[0]
-        
+
         #update the N-dimensional sparse grid
         self.xi_d = np.concatenate((self.xi_d, new_points))
-     
+
     def element_version(self):
         return "0.4"
 
@@ -261,7 +261,7 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
     def compute_sparse_multi_idx(self, L, N):
         """
         computes all N dimensional multi-indices l = (l1,...,lN) such that
-        |l| <= L + N - 1, i.e. a simplex set: 
+        |l| <= L + N - 1, i.e. a simplex set:
         3    *
         2    *    *          (L=3 and N=2)
         1    *    *    *
@@ -269,5 +269,5 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
         Here |l| is the internal sum of i (l1+...+lN)
         """
         P = np.array(list(product(range(1, L + 1), repeat=N)))
-        multi_idx = P[np.where(np.sum(P, axis=1) <= L+N-1)[0]]
+        multi_idx = P[np.where(np.sum(P, axis=1) <= L + N - 1)[0]]
         return multi_idx
