@@ -8,7 +8,7 @@ import sys
 
 def poly_model(theta):
     
-    return np.prod(3*theta**2 + 1)/2**d
+    return np.prod(3 * theta**2 + 1) / 2**d
 
 # stocastic dimension of the problem
 d = 2
