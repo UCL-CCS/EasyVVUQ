@@ -21,7 +21,9 @@ class Population:
         for i, x1 in enumerate(self.x):
             for j, x2 in enumerate(self.x):
                 if i != j:
-                    if (x1 == x2).all() and self.ill[j] > 0 and self.ill[i] == 0 and not self.immune[i]:
+                    if ((x1 == x2).all() and
+                        self.ill[j] > 0 and
+                            self.ill[i] == 0 and not self.immune[i]):
                         self.ill[i] = self.duration
                         self.immune[i] = 1
         self.ill += np.array([-1] * self.n)
@@ -42,16 +44,17 @@ class Population:
 
     def __str__(self):
         lines = '\n'.join([''.join(['.' if self.status(i, j) < 0
-                                        else str(self.status(i, j))
-                                        for j in range(self.grid_size)])
-                               for i in range(self.grid_size)])
+                                    else str(self.status(i, j))
+                                    for j in range(self.grid_size)])
+                           for i in range(self.grid_size)])
         return str(lines)
 
 
 if __name__ == '__main__':
     with open(sys.argv[1], 'r') as fd:
         parameters = json.load(fd)
-    population = Population(parameters['grid_size'], parameters['n'], parameters['duration'])
+    population = Population(
+        parameters['grid_size'], parameters['n'], parameters['duration'])
     ill = []
     immune = []
     for i in range(parameters['iterations']):
