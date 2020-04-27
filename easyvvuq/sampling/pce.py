@@ -90,6 +90,7 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
 
         # List of the probability distributions of uncertain parameters
         params_distribution = list(vary.values())
+        self.params_size = [len(d) for d in params_distribution]
 
         # Multivariate distribution
         self.distribution = cp.J(*params_distribution)
@@ -119,20 +120,32 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
 
             # Generates samples
             self._number_of_samples = 2 * len(self.P)
-            self._nodes = cp.generate_samples(order=self._number_of_samples,
-                                              domain=self.distribution,
-                                              rule=self.rule)
+            nodes = cp.generate_samples(order=self._number_of_samples,
+                                        domain=self.distribution,
+                                        rule=self.rule)
 
         # Projection variante (Pseudo-spectral method)
         else:
             # Nodes and weights for the integration
-            self._nodes, _ = cp.generate_quadrature(order=self.quad_order,
-                                                    dist=self.distribution,
-                                                    rule=self.rule,
-                                                    sparse=sparse,
-                                                    growth=self.quad_growth)
+            nodes, _ = cp.generate_quadrature(order=self.quad_order,
+                                              dist=self.distribution,
+                                              rule=self.rule,
+                                              sparse=sparse,
+                                              growth=self.quad_growth)
             # Number of samples
-            self._number_of_samples = len(self._nodes[0])
+            self._number_of_samples = len(nodes[0])
+
+        # Reorganize nodes according to params type: scalar (float, integer) or list
+        self._nodes = []
+        ipar = 0
+        for j in self.params_size:
+            # Scalar
+            if j == 1:
+                self._nodes.append(nodes[ipar:ipar + 1].flatten())
+            # List
+            else:
+                self._nodes.append(nodes[ipar:ipar + j].T.tolist())
+            ipar += j
 
         # Fast forward to specified count, if possible
         self.count = 0
@@ -146,7 +159,7 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
                 self.__next__()
 
     def element_version(self):
-        return "0.4"
+        return "0.5"
 
     def is_finite(self):
         return True
@@ -157,10 +170,10 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
     def __next__(self):
         if self.count < self._number_of_samples:
             run_dict = {}
-            i_par = 0
+            ipar = 0
             for param_name in self.vary.get_keys():
-                run_dict[param_name] = self._nodes.T[self.count][i_par]
-                i_par += 1
+                run_dict[param_name] = self._nodes[ipar][self.count]
+                ipar += 1
             self.count += 1
             return run_dict
         else:
@@ -169,6 +182,7 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
     def get_restart_dict(self):
         return {"vary": self.vary.serialize(),
                 "count": self.count,
+                "params_size": self.params_size,
                 "polynomial_order": self.polynomial_order,
                 "regression": self.regression,
                 "rule": self.rule,
