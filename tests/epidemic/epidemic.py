@@ -43,13 +43,13 @@ class Population:
         self.x += np.random.randint(-1, 2, (self.n, 2))
         self.x = np.remainder(self.x, self.grid_size)
         for i, x1 in enumerate(self.x):
-            for j, x2 in enumerate(self.x):
-                if i != j:
-                    if ((x1 == x2).all() and
-                        self.ill[j] > 0 and
-                            self.ill[i] == 0 and not self.immune[i]):
-                        self.ill[i] = self.duration
-                        self.immune[i] = 1
+           for j, x2 in enumerate(self.x):
+               if i != j:
+                   if ((x1 == x2).all() and
+                       self.ill[j] > 0 and
+                           self.ill[i] == 0 and not self.immune[i]):
+                       self.ill[i] = self.duration
+                       self.immune[i] = 1
         to_delete = np.argwhere(np.logical_and(
             self.ill == 1, np.random.random(self.n) < self.mortality))
         self.ill[np.argwhere(self.ill > 0)] -= 1
@@ -65,11 +65,19 @@ class Population:
         else:
             return -1
 
-    def count_ill(self):
-        return np.count_nonzero(self.ill)
-
-    def count_immune(self):
-        return np.count_nonzero(self.immune)
+    def run(self):
+        ill = []
+        immune = []
+        population_size = []
+        n_ill = 1
+        while n_ill:
+            self.move()
+            n_ill = np.count_nonzero(self.ill)
+            n_immune = np.count_nonzero(self.immune)
+            ill.append(n_ill)
+            immune.append(n_immune)
+            population_size.append(population.n)
+        return ill, immune, population_size
 
 
 if __name__ == '__main__':
@@ -77,16 +85,7 @@ if __name__ == '__main__':
         parameters = json.load(fd)
     population = Population(parameters['grid_size'], parameters['n'],
                             parameters['duration'], parameters['mortality'])
-    ill = []
-    immune = []
-    population_size = []
-    while True:
-        population.move()
-        ill.append(population.count_ill())
-        immune.append(population.count_immune())
-        population_size.append(population.n)
-        if not population.count_ill():
-            break
+    ill, immune, population_size = population.run()
     if len(sys.argv) < 3:
         plt.plot(ill, label="Sick Individuals")
         plt.plot(immune, label="Immune Individuals")
