@@ -23,8 +23,8 @@ class Population:
             for j, x2 in enumerate(self.x):
                 if i != j:
                     if ((x1 == x2).all() and
-                           self.ill[j] > 0 and
-                           self.ill[i] == 0 and not self.immune[i]):
+                        self.ill[j] > 0 and
+                            self.ill[i] == 0 and not self.immune[i]):
                         self.ill[i] = self.duration
                         self.immune[i] = 1
         to_delete = []
@@ -54,13 +54,6 @@ class Population:
     def count_immune(self):
         return np.count_nonzero(self.immune)
 
-    def __str__(self):
-        lines = '\n'.join([''.join(['.' if self.status(i, j) < 0
-                                      else str(self.status(i, j))
-                                      for j in range(self.grid_size)])
-                              for i in range(self.grid_size)])
-        return str(lines)
-
 
 if __name__ == '__main__':
     with open(sys.argv[1], 'r') as fd:
@@ -86,7 +79,9 @@ if __name__ == '__main__':
         plt.legend()
         plt.show()
     else:
+        iteration = 0
         with open(sys.argv[2], 'w') as fd:
-            fd.write("ill,immune")
-            for a, b in zip(ill, immune):
-                fd.write("{},{}".format(a, b))
+            fd.write("iteration,ill,immune,population\n")
+            for a, b, c in zip(ill, immune, population_size):
+                fd.write("{},{},{},{}\n".format(iteration, a, b, c))
+                iteration += 1
