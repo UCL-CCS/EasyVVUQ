@@ -47,7 +47,7 @@ class Population:
                 if i != j:
                     if ((x1 == x2).all() and
                         self.ill[j] > 0 and
-                        self.ill[i] == 0 and not self.immune[i]):
+                            self.ill[i] == 0 and not self.immune[i]):
                         self.ill[i] = self.duration
                         self.immune[i] = 1
         to_delete = []
