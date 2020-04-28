@@ -43,13 +43,13 @@ class Population:
         self.x += np.random.randint(-1, 2, (self.n, 2))
         self.x = np.remainder(self.x, self.grid_size)
         for i, x1 in enumerate(self.x):
-           for j, x2 in enumerate(self.x):
-               if i != j:
-                   if ((x1 == x2).all() and
-                       self.ill[j] > 0 and
-                           self.ill[i] == 0 and not self.immune[i]):
-                       self.ill[i] = self.duration
-                       self.immune[i] = 1
+            for j, x2 in enumerate(self.x):
+                if i != j:
+                    if ((x1 == x2).all() and
+                        self.ill[j] > 0 and
+                            self.ill[i] == 0 and not self.immune[i]):
+                        self.ill[i] = self.duration
+                        self.immune[i] = 1
         to_delete = np.argwhere(np.logical_and(
             self.ill == 1, np.random.random(self.n) < self.mortality))
         self.ill[np.argwhere(self.ill > 0)] -= 1
