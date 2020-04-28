@@ -50,15 +50,9 @@ class Population:
                             self.ill[i] == 0 and not self.immune[i]):
                         self.ill[i] = self.duration
                         self.immune[i] = 1
-        to_delete = []
-        for i, status in enumerate(self.ill):
-            if status > 1:
-                self.ill[i] -= 1
-            elif status == 1:
-                self.ill[i] = 0
-                if np.random.random() < self.mortality:
-                    if self.n > 0:
-                        to_delete.append(i)
+        to_delete = np.argwhere(np.logical_and(
+            self.ill == 1, np.random.random(self.n) < self.mortality))
+        self.ill[np.argwhere(self.ill > 0)] -= 1
         self.x = np.delete(self.x, to_delete, axis=0)
         self.ill = np.delete(self.ill, to_delete)
         self.immune = np.delete(self.immune, to_delete)
