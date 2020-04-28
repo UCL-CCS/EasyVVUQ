@@ -1,6 +1,6 @@
 {
     "grid_size" : 20,
-    "n" : 50,
-    "duration" : 50,
-    "iterations" : 200
+    "n" : 100,
+    "duration" : 28,
+    "mortality" : 0.1
 }

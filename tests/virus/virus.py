@@ -7,10 +7,11 @@ import json
 
 
 class Population:
-    def __init__(self, grid_size, n, duration):
+    def __init__(self, grid_size, n, duration, mortality):
         self.grid_size = grid_size
         self.n = n
         self.duration = duration
+        self.mortality = mortality
         self.x = np.random.randint(0, grid_size, (n, 2))
         self.ill = np.array([duration] + [0] * (n - 1))
         self.immune = np.array([0] * n)
@@ -22,12 +23,23 @@ class Population:
             for j, x2 in enumerate(self.x):
                 if i != j:
                     if ((x1 == x2).all() and
-                        self.ill[j] > 0 and
-                            self.ill[i] == 0 and not self.immune[i]):
+                           self.ill[j] > 0 and
+                           self.ill[i] == 0 and not self.immune[i]):
                         self.ill[i] = self.duration
                         self.immune[i] = 1
-        self.ill += np.array([-1] * self.n)
-        self.ill = np.clip(self.ill, 0, self.duration)
+        to_delete = []
+        for i, status in enumerate(self.ill):
+            if status > 1:
+                self.ill[i] -= 1
+            elif status == 1:
+                self.ill[i] = 0
+                if np.random.random() < self.mortality:
+                    if self.n > 0:
+                        to_delete.append(i)
+        self.x = np.delete(self.x, to_delete, axis=0)
+        self.ill = np.delete(self.ill, to_delete)
+        self.immune = np.delete(self.immune, to_delete)
+        self.n -= len(to_delete)
 
     def status(self, i, j):
         find = np.argwhere((np.array([i, j]) == self.x).prod(axis=1) == 1)
@@ -44,26 +56,31 @@ class Population:
 
     def __str__(self):
         lines = '\n'.join([''.join(['.' if self.status(i, j) < 0
-                                    else str(self.status(i, j))
-                                    for j in range(self.grid_size)])
-                           for i in range(self.grid_size)])
+                                      else str(self.status(i, j))
+                                      for j in range(self.grid_size)])
+                              for i in range(self.grid_size)])
         return str(lines)
 
 
 if __name__ == '__main__':
     with open(sys.argv[1], 'r') as fd:
         parameters = json.load(fd)
-    population = Population(
-        parameters['grid_size'], parameters['n'], parameters['duration'])
+    population = Population(parameters['grid_size'], parameters['n'],
+                            parameters['duration'], parameters['mortality'])
     ill = []
     immune = []
-    for i in range(parameters['iterations']):
+    population_size = []
+    while True:
         population.move()
         ill.append(population.count_ill())
         immune.append(population.count_immune())
+        population_size.append(population.n)
+        if not population.count_ill():
+            break
     if len(sys.argv) < 3:
         plt.plot(ill, label="Sick Individuals")
         plt.plot(immune, label="Immune Individuals")
+        plt.plot(population_size, label="Population")
         plt.xlabel("Time")
         plt.ylabel("Count")
         plt.legend()
