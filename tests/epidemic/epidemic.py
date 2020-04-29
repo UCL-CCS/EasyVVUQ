@@ -61,9 +61,9 @@ class Population:
     def status(self, i, j):
         find = np.argwhere((np.array([i, j]) == self.x).prod(axis=1) == 1)
         if len(find) > 0:
-            return self.ill[find[0]][0]
+            return self.ill[find[0]][0] / float(self.duration)
         else:
-            return -1
+            return -1.0
 
     def run(self):
         ill = []
@@ -79,6 +79,14 @@ class Population:
             population_size.append(population.n)
         return ill, immune, population_size
 
+    def get_im(self):
+        im = []
+        for i in range(self.grid_size):
+            im_row = []
+            for j in range(self.grid_size):
+                im_row.append(self.status(i, j))
+            im.append(im_row)
+        return np.array(im)
 
 if __name__ == '__main__':
     with open(sys.argv[1], 'r') as fd:
