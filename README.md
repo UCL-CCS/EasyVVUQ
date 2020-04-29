@@ -66,3 +66,12 @@ python setup.py install
 ## Getting Started
 
 Documentation, including a basic tutorial, is avalable [here](https://easyvvuq.readthedocs.io).
+
+## Citing EasyVVUQ
+
+Please find the reference below of EasyVVUQ Library paper in _Journal of Open Research Software_:
+
+```
+Richardson, R A, Wright, D W, Edeling, W, Jancauskas, V, Lakhlili, J and Coveney, P V 2020 EasyVVUQ:
+A Library for Verification, Validation and Uncertainty Quantification in High Performance Computing. 
+Journal of Open Research Software, 8: 11. DOI: https://doi.org/10.5334/jors.303
