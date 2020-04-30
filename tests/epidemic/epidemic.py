@@ -60,10 +60,7 @@ class Population:
 
     def status(self, i, j):
         find = np.argwhere((np.array([i, j]) == self.x).prod(axis=1) == 1)
-        if len(find) > 0:
-            return self.ill[find[0]][0] / float(self.duration)
-        else:
-            return -1.0
+        return self.ill[find[0]][0], self.immune[find[0]][0]
 
     def run(self):
         ill = []
@@ -84,7 +81,17 @@ class Population:
         for i in range(self.grid_size):
             im_row = []
             for j in range(self.grid_size):
-                im_row.append(self.status(i, j))
+                try:
+                    ill, immune = self.status(i, j)
+                    if ill:
+                        illness = 1.0 - ill / float(self.duration)
+                        im_row.append([1, illness, illness])
+                    elif immune:
+                        im_row.append([0, 1, 0])
+                    else:
+                        im_row.append([1, 1, 1])
+                except IndexError:
+                    im_row.append([0, 0, 0])
             im.append(im_row)
         return np.array(im)
 
