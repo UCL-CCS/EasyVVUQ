@@ -38,6 +38,9 @@ class Population:
         self.x = np.random.randint(0, grid_size, (n, 2))
         self.ill = np.array([duration] + [0] * (n - 1))
         self.immune = np.array([0] * n)
+        self.n_history = []
+        self.ill_history = []
+        self.immune_history = []
 
     def move(self):
         self.x += np.random.randint(-1, 2, (self.n, 2))
@@ -57,6 +60,9 @@ class Population:
         self.ill = np.delete(self.ill, to_delete)
         self.immune = np.delete(self.immune, to_delete)
         self.n -= len(to_delete)
+        self.n_history.append(self.n)
+        self.ill_history.append(np.count_nonzero(self.ill))
+        self.immune_history.append(np.count_nonzero(self.immune))
 
     def status(self, i, j):
         find = np.argwhere((np.array([i, j]) == self.x).prod(axis=1) == 1)
