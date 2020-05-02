@@ -36,7 +36,8 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
                  quadrature_rule="G",
                  count=0,
                  growth=False,
-                 sparse=False):
+                 sparse=False,
+                 midpoint_level1 = False):
         """
         Create the sampler for the Stochastic Collocation method.
 
@@ -82,9 +83,22 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
 
         self.quad_rule = quadrature_rule
         self.sparse = sparse
+        #determines how many points the 1st level of a sparse grid will have.
+        #If midpoint_level1 = True, order 0 quadrature will be generated
+        self.midpoint_level1 = midpoint_level1
         self.quad_sparse = sparse
         self.growth = growth
         self.params_distribution = params_distribution
+
+        #determine if a nested sparse grid is used
+        if self.sparse is True and self.growth is True and (self.quad_rule == "C" or self.quad_rule == "clenshaw_curtis"):
+            self.nested = True
+        elif self.sparse is True and self.growth is False and self.quad_rule == "gauss_patterson":
+            self.nested = True
+        elif self.sparse is True and self.growth is True and self.quad_rule == "newton_cotes":
+            self.nested = True
+        else:
+            self.nested = False
 
         # L = level of (sparse) grid
         L = np.max(self.polynomial_order)
@@ -146,16 +160,24 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
         self.wi_1d = [{} for n in range(N)]
 
         if self.sparse:
+
+            #if level one of the sparse grid is a midpoint rule, generate
+            #the quadrature with order 0 (1 quad point). Else set order at
+            #level 1 to 1
+            if self.midpoint_level1:
+                j = 0
+            else:
+                j = 1
+
             for n in range(N):
-                for i in range(1, L + 1):
-                    #note: sometimes i+1 is used instead of i
-                    xi_i, wi_i = cp.generate_quadrature(i,
+                for i in range(L):
+                    xi_i, wi_i = cp.generate_quadrature(i + j,
                                                         self.params_distribution[n],
                                                         rule=self.quad_rule,
                                                         growth=self.growth)
 
-                    self.xi_1d[n][i] = xi_i[0]
-                    self.wi_1d[n][i] = wi_i
+                    self.xi_1d[n][i + 1] = xi_i[0]
+                    self.wi_1d[n][i + 1] = wi_i
         else:
             for n in range(N):
                 xi_i, wi_i = cp.generate_quadrature(self.polynomial_order[n],
@@ -176,7 +198,7 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
 
         """
 
-        if self.growth is False or self.sparse is False:
+        if self.nested is False:
             logging.debug('Only works for nested sparse grids')
             return
 

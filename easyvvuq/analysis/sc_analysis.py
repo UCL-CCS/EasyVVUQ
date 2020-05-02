@@ -1,14 +1,10 @@
-"""Analysis element for Stochastic Collocation (SC).
-
-Method: 'Global Sensitivity Analysis for Stochastic Collocation'
-        G. Tang and G. Iaccarino, AIAA 2922, 2010
-"""
 import numpy as np
 import chaospy as cp
 from itertools import product, chain, combinations
 from easyvvuq import OutputType
 from .base import BaseAnalysisElement
 import logging
+from scipy.special import comb
 
 __author__ = "Wouter Edeling"
 __copyright__ = """
@@ -193,7 +189,7 @@ class SCAnalysis(BaseAnalysisElement):
                 k += 1
         # sparse grid
         else:
-            # all sparse grid multi indices l with |l| <= L
+            # all sparse grid multi indices l 
             l_norm_le_L = self.sampler.compute_sparse_multi_idx(L, N)
             k = 0
             map_ = {}
@@ -245,17 +241,74 @@ class SCAnalysis(BaseAnalysisElement):
         # compute the Delta Q :=
         # (Q^1_l_1 - Q^1_{l_1 - 1}) X ... X (Q^1_{l_N} - Q^1_{L_N - 1})
         # tensor product
-        return np.array([self.compute_Q_diff(l, samples) for l in self.l_norm]).sum(axis=0)
+
+        if not self.sparse:
+            return np.array([self.compute_Q_diff(l, samples) for l in self.l_norm]).sum(axis=0)
+        else:
+            return self.combination_technique(qoi, samples)
+
+    def combination_technique(self, qoi, samples=None):
+        """
+        Efficient quadrature formulation for isotropic sparse grids. See:
+            
+            Gerstner, Griebel, "Numerical integration using sparse grids"
+            page 7.
+        
+        Parameters
+        ----------
+        - qoi (str): name of the qoi
+
+        - samples (optional in kwargs): Default: compute the mean
+          by setting samples = self.samples. To compute the variance,
+          set samples = (self.samples - mean)**2
+        """        
+        
+        if samples is None:
+            samples = self.samples[qoi]
+        
+        #quadrature Q
+        Q = 0.0
+        
+        #loop over l
+        for l in self.l_norm:
+            
+            #for sum(l) < L, combination technique formula shows that weights
+            #are zero
+            if np.sum(l) >= self.L:
+
+                # compute the tensor product of parameter and weight values
+                X_k = [self.xi_1d[n][l[n]] for n in range(self.N)]
+                W_k = [self.wi_1d[n][l[n]] for n in range(self.N)]
+
+                X_k = np.array(list(product(*X_k)))
+                W_k = np.array(list(product(*W_k)))
+                W_k = np.prod(W_k, axis=1)
+                W_k = W_k.reshape([W_k.shape[0], 1])
+
+                #scaling factor of combination technique
+                scaling_factor = (-1)**(self.L + self.N - np.sum(l) - 1) * comb(self.N - 1, np.sum(l) - self.L)
+                W_k *= scaling_factor
+
+                # find corresponding code values
+                f_k = np.array([samples[np.where((x == self.xi_d).all(axis=1))[0][0]] for x in X_k])
+
+                # quadrature of Q^1_{k1} X ... X Q^1_{kN} product
+                Q += np.sum(f_k * W_k, axis=0).T
+
+        return Q            
 
     def compute_Q_diff(self, l, samples):
         """
+        Brute force computation of difference operators \Delta_l
+        Note: superseded by combination_technique for sparse grids, but might 
+        still be useful for anisotropic sparse grids.
         =======================================================================
         For every multi index l = (l1, l2, ..., ld), Smolyak sums over
         tensor products difference quadrature rules:
         (Q^1_{l1} - Q^1_{l1-1}) X ... X (Q^1_{lN) - Q^1_{lN-1})
         Below this product is expanded into individual tensor products, each
         of which is then computed as:
-        Q^1_{k1} X ... X Q^1_{kN} = sum...sum w_{k1}*...*w{kN}*f(x_{k1},...,x_{kN})
+        Q^1_{k1} X ... X Q^1_{kN} = sum...sum w_{k1}*...*w_{kN}*f(x_{k1},...,x_{kN})
         =======================================================================
         """
 
@@ -264,7 +317,7 @@ class SCAnalysis(BaseAnalysisElement):
         diff_idx = np.array(list(product(*[[k, -(k - 1)] for k in l])))
 
         # Delta will be the sum of all expanded tensor products
-        # Q^1_{k1} X ... X Q^1_{kd} = sum...sum w_{k1}*...*w{kN}*f(x_{k1},...,x_{kd})
+        # Q^1_{k1} X ... X Q^1_{kd} = sum...sum w_{k1}*...*w_{kN}*f(x_{k1},...,x_{kd})
         Delta = 0.0
 
         # each diff contains the level indices of to a single
