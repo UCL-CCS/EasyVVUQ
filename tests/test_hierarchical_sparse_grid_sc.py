@@ -16,7 +16,7 @@ def exact_sobols_poly_model():
     return S_i
 
 # number of unknown variables
-d = 5
+d = 2
 
 # author: Wouter Edeling
 __license__ = "LGPL"
