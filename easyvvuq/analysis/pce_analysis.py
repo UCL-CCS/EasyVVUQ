@@ -108,6 +108,9 @@ class PCEAnalysis(BaseAnalysisElement):
         for k in qoi_cols:
             # Approximation solver
             if regression:
+                if samples[k][0].dtype == object:
+                    for i in range(self.sampler.count):
+                        samples[k][i] = samples[k][i].astype("float64")
                 fit = cp.fit_regression(P, nodes, samples[k], "T")
             else:
                 fit = cp.fit_quadrature(P, nodes, weights, samples[k])
@@ -133,12 +136,14 @@ class PCEAnalysis(BaseAnalysisElement):
             sobols_second_dict = {}
             sobols_total_dict = {}
             ipar = 0
+            i = 0
             for param_name in self.sampler.vary.get_keys():
                 j = self.sampler.params_size[ipar]
-                sobols_first_dict[param_name] = sobols_first_narr[ipar:ipar + j]
-                sobols_second_dict[param_name] = sobols_second_narr[ipar:ipar + j]
-                sobols_total_dict[param_name] = sobols_total_narr[ipar:ipar + j]
-                ipar += j
+                sobols_first_dict[param_name] = sobols_first_narr[i:i + j]
+                sobols_second_dict[param_name] = sobols_second_narr[i:i + j]
+                sobols_total_dict[param_name] = sobols_total_narr[i:i + j]
+                i += j
+                ipar += 1
             results['sobols_first'][k] = sobols_first_dict
             results['sobols_second'][k] = sobols_second_dict
             results['sobols_total'][k] = sobols_total_dict

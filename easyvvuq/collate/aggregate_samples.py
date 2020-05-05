@@ -83,13 +83,14 @@ class AggregateSamples(BaseCollationElement, collater_name="aggregate_samples"):
                 params = run_info['params']
                 column_list = list(params.keys()) + run_data.columns.tolist()
 
+                col, mult = multi_index_tuple_parser(run_data.columns.values)
                 for param, value in params.items():
                     if isinstance(value, list):
                         # need to have multi-index dataframe
-                        col, mult = multi_index_tuple_parser(run_data.columns.values)
                         if not mult:
                             col = [(c, '') for c in col]
                             run_data.columns = pd.MultiIndex.from_tuples(col)
+                            mult = True
                         # add list values using columns tuple
                         for i in range(len(value)):
                             run_data[(param, i)] = value[i]
