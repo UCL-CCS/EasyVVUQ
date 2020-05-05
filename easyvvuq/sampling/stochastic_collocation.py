@@ -37,7 +37,8 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
                  count=0,
                  growth=False,
                  sparse=False,
-                 midpoint_level1 = False):
+                 midpoint_level1 = False,
+                 dimension_adaptive = False):
         """
         Create the sampler for the Stochastic Collocation method.
 
@@ -86,6 +87,10 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
         #determines how many points the 1st level of a sparse grid will have.
         #If midpoint_level1 = True, order 0 quadrature will be generated
         self.midpoint_level1 = midpoint_level1
+        #determines wether to use an insotropic sparse grid, or to adapt
+        #the levels in the sparse grid based on a hierachical error measure
+        self.dimension_adaptive = dimension_adaptive
+        self.number_of_adaptations = 0
         self.quad_sparse = sparse
         self.growth = growth
         self.params_distribution = params_distribution
@@ -102,7 +107,9 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
 
         # L = level of (sparse) grid
         L = np.max(self.polynomial_order)
-
+        self.L = L
+        self.N = N
+        
         #compute the 1D collocation points (and quad weights)
         self.compute_1D_points_weights(L, N)
 
@@ -111,7 +118,7 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
 
             # generate collocation grid locally
             l_norm = np.array([self.polynomial_order])
-            self.xi_d = self.generate_grid(L, N, l_norm)
+            self.xi_d = self.generate_grid(l_norm)
 
         # sparse grid = a linear combination of tensor products of 1D rules
         # of different order. Use chaospy to compute these 1D quadrature rules
@@ -122,10 +129,8 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
 
             # create sparse grid of dimension N and level q using the 1d
             #rules in self.xi_1d
-            self.xi_d = self.generate_grid(L, N, multi_idx)
+            self.xi_d = self.generate_grid(multi_idx)
 
-        self.L = L
-        self.N = N
         self._number_of_samples = self.xi_d.shape[0]
 
         # Fast forward to specified count, if possible
@@ -218,7 +223,10 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
         self.compute_1D_points_weights(L, self.N)
 
         #generate the new N-dimensional collocation points
-        new_points = self.generate_grid(L, self.N, multi_idx[new])
+        new_grid = self.generate_grid(multi_idx[new])
+        
+        #find the new points unique to the new grid
+        new_points = setdiff2d(new_grid, self.xi_d)
 
         print('%d new points added' % new_points.shape[0])
 
@@ -227,6 +235,62 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
 
         #update the N-dimensional sparse grid
         self.xi_d = np.concatenate((self.xi_d, new_points))
+        
+    def adapt_dimension(self, current_multi_idx):
+        #NOTE: COULD PROBABLY MERGE THIS THE SUBROUTINE ABOVE,
+        #AND JUST ADD A DIMENSION_ADAPT FLAG
+        
+        if not self.dimension_adaptive:
+            print('Dimension adaptivity is not selected')
+            return
+
+        refinement = []
+        e_n = np.eye(self.N, dtype=int)
+
+        #compute all forward neighbors
+        for l in current_multi_idx:
+            for n in range(self.N):
+                refinement.append(l + e_n[n])
+        #remove duplicates
+        refinement = np.unique(np.array(refinement), axis = 0)
+        #remove those which are already in the grid
+        refinement = setdiff2d(refinement, current_multi_idx)
+        #make sure the final candidates are admissible (all backward neighbors
+        #must be in the current multi indices)
+        admissible_idx = []
+        for l in refinement:
+            admissible = True
+            for n in range(self.N):
+                backward_neighbor = l - e_n[n]
+                idx = np.where((backward_neighbor == current_multi_idx).all(axis=1))[0]
+                if idx.size == 0 and backward_neighbor[n] != 0:
+                    admissible = False
+                    break
+            if admissible:
+                admissible_idx.append(l)
+                
+        self.admissible_idx = np.array(admissible_idx)
+
+        print('Admissble multi-indices:', self.admissible_idx)
+
+        #determine the maximum level L via L = |l| - N + 1
+        L = np.max(np.sum(self.admissible_idx, axis = 1) - self.N + 1)
+        # self.polynomial_order = [p + 1 for p in self.polynomial_order]
+        self.compute_1D_points_weights(L, self.N)
+        new_grid = self.generate_grid(self.admissible_idx)
+        new_points = setdiff2d(new_grid, self.xi_d)
+        
+        print('%d new points added' % new_points.shape[0])
+
+        #update the number of samples
+        self._number_of_samples += new_points.shape[0]
+
+        if new_points.shape[0] > 0:
+            #update the N-dimensional sparse grid
+            self.xi_d = np.concatenate((self.xi_d, new_points))
+        
+        #count the number of times the dimensions were adapted
+        self.number_of_adaptations += 1
 
     def element_version(self):
         return "0.4"
@@ -266,9 +330,9 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
     =========================
     """
 
-    def generate_grid(self, L, N, l_norm):
+    def generate_grid(self, l_norm):
 
-        dimensions = range(N)
+        dimensions = range(self.N)
         H_L_N = []
         # loop over all multi indices i
         for l in l_norm:
@@ -293,3 +357,20 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
         P = np.array(list(product(range(1, L + 1), repeat=N)))
         multi_idx = P[np.where(np.sum(P, axis=1) <= L + N - 1)[0]]
         return multi_idx
+    
+def setdiff2d(X, Y):
+    """
+    Computes the difference of two 2D arrays X \ Y
+
+    Parameters
+    ----------
+    X : 2D numpy array
+    Y : 2D numpy array
+
+    Returns
+    -------
+    The difference X \ Y as a 2D array
+
+    """
+    diff = set(map(tuple, X)) - set(map(tuple, Y))
+    return np.array(list(diff))

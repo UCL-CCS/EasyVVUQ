@@ -59,6 +59,7 @@ class SCAnalysis(BaseAnalysisElement):
         self.output_type = OutputType.SUMMARY
         self.sampler = sampler
         self._number_of_samples = sampler._number_of_samples
+        self.dimension_adaptive = sampler.dimension_adaptive
         self.sparse = sampler.sparse
 
     def element_name(self):
@@ -92,11 +93,12 @@ class SCAnalysis(BaseAnalysisElement):
             raise RuntimeError(
                 "No data in data frame passed to analyse element")
 
-        # the maximum level (quad order) of the (sparse) grid
-        self.L = self.sampler.L
-
         # the number of uncertain parameters
         self.N = self.sampler.N
+        #tensor grid
+        self.xi_d = self.sampler.xi_d
+        # the maximum level (quad order) of the (sparse) grid
+        self.L = self.sampler.L
 
         # if L < L_min: quadratures and interpolations are zero
         # For full tensor grid: there is only one level: L_min = L
@@ -107,11 +109,13 @@ class SCAnalysis(BaseAnalysisElement):
         # For sparse grid, has one or more levels
         else:
             self.L_min = 1
-            self.l_norm = self.sampler.compute_sparse_multi_idx(self.L, self.N)
-            self.l_norm_min = np.ones(self.N, dtype=int)
+            #multi indices for isotropic sparse grid or dimension-adaptive grid before
+            #the 1st refinement
+            if not self.dimension_adaptive or self.sampler.number_of_adaptations == 0:
+                # the maximum level (quad order) of the (sparse) grid
+                self.l_norm = self.sampler.compute_sparse_multi_idx(self.L, self.N)
 
-        # full tensor grid
-        self.xi_d = self.sampler.xi_d
+            self.l_norm_min = np.ones(self.N, dtype=int)
 
         # 1d weights and points per level
         self.xi_1d = self.sampler.xi_1d
@@ -124,7 +128,7 @@ class SCAnalysis(BaseAnalysisElement):
         self.surr_lm1 = {}
 
         for level in range(self.L_min, self.L + 1):
-            self.Map[level] = self.create_map(self.N, level)
+            self.Map[level] = self.create_map(level)
 
         self.clear_surr_lm1()
 
@@ -132,6 +136,7 @@ class SCAnalysis(BaseAnalysisElement):
         qoi_cols = self.qoi_cols
         samples = {k: [] for k in qoi_cols}
         for run_id in data_frame.run_id.unique():
+        # for run_id in self.run_id:
             for k in qoi_cols:
                 values = data_frame.loc[data_frame['run_id'] == run_id][k].values
                 samples[k].append(values)
@@ -160,7 +165,7 @@ class SCAnalysis(BaseAnalysisElement):
 
         return results
 
-    def create_map(self, N, L):
+    def create_map(self, L):
         """
         Create a map from a unique integer k to each
         (level multi index l, collocation point X) combination. Also
@@ -189,14 +194,16 @@ class SCAnalysis(BaseAnalysisElement):
                 k += 1
         # sparse grid
         else:
-            # all sparse grid multi indices l 
-            l_norm_le_L = self.sampler.compute_sparse_multi_idx(L, N)
+            # all sparse grid multi indices l
+            # l_norm_le_L = self.sampler.compute_sparse_multi_idx(L, N)
+            idx_le_L = np.where(np.sum(self.l_norm, axis = 1) - self.N + 1 <= L)
+            l_norm_le_L = self.l_norm[idx_le_L]
             k = 0
             map_ = {}
             # loop over all multi indices
             for l in l_norm_le_L:
                 # colloc point of current level index l
-                X_l = [self.xi_1d[n][l[n]] for n in range(N)]
+                X_l = [self.xi_1d[n][l[n]] for n in range(self.N)]
                 X_l = np.array(list(product(*X_l)))
                 for x in X_l:
                     j = np.where((x == self.xi_d).all(axis=1))[0][0]
@@ -204,6 +211,48 @@ class SCAnalysis(BaseAnalysisElement):
                     k += 1
         logging.debug('done.')
         return map_
+    
+    def adaptation_metric(self, qoi, data_frame):
+        
+        samples = []
+        for run_id in data_frame.run_id.unique():
+            values = data_frame.loc[data_frame['run_id'] == run_id][qoi].values
+            samples.append(values)
+
+        error = {}
+        for l in self.sampler.admissible_idx:
+            error[tuple(l)] = []
+            # colloc point of current level index l
+            X_l = [self.sampler.xi_1d[n][l[n]] for n in range(self.N)]
+            X_l = np.array(list(product(*X_l)))
+            for xi in X_l:
+                idx = np.where((xi == self.sampler.xi_d).all(axis = 1))[0][0]
+                #only compute error for new collocation points
+                #(_number_of_samples is still set to the old value)
+                if idx >= self._number_of_samples:
+                    hier_surplus = samples[idx] - self.surrogate(qoi, xi)
+                    error[tuple(l)].append(np.linalg.norm(hier_surplus))
+            error[tuple(l)] = np.mean(error[tuple(l)])
+        print('Error measures:', error)
+        l_star = np.array(max(error, key = error.get)).reshape([1, self.N])
+        print('Selecting', l_star, 'for refinement.')
+
+        self.l_norm = np.concatenate((self.l_norm, l_star))
+        # self.L = np.max(np.sum(self.l_norm, axis = 1) - self.N + 1)
+        # self.xi_d = self.sampler.generate_grid(self.l_norm)
+        # self.run_id = []
+
+        # #names of the uncertain variables        
+        # uncertain_vars = list(self.sampler.vary.get_keys())
+        # #loop over all samples in the data frame
+        # for run_id in data_frame["run_id"].unique():
+        #     #find the value of the input params at current run_id
+        #     xi = data_frame.loc[data_frame["run_id"] == run_id][uncertain_vars].values[0]
+        #     #see if this point is also in self.xi_d
+        #     idx = np.where((xi == self.xi_d).all(axis = 1))[0]
+        #     #if so, add run_id to self.run_id
+        #     if idx.size != 0:
+        #         self.run_id.append(run_id)        
 
     def surrogate(self, qoi, x, L=None):
         """
@@ -242,7 +291,7 @@ class SCAnalysis(BaseAnalysisElement):
         # (Q^1_l_1 - Q^1_{l_1 - 1}) X ... X (Q^1_{l_N} - Q^1_{L_N - 1})
         # tensor product
 
-        if not self.sparse:
+        if not self.sparse or self.dimension_adaptive:
             return np.array([self.compute_Q_diff(l, samples) for l in self.l_norm]).sum(axis=0)
         else:
             return self.combination_technique(qoi, samples)
