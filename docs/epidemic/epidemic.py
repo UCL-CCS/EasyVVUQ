@@ -35,8 +35,8 @@ class Population:
         self.n = int(n)
         self.duration = int(duration)
         self.mortality = mortality
-        self.x = np.random.randint(0, grid_size, (n, 2))
-        self.ill = np.array([duration] + [0] * (n - 1))
+        self.x = np.random.randint(0, self.grid_size, (n, 2))
+        self.ill = np.array([self.duration] + [0] * (n - 1))
         self.immune = np.array([0] * n)
         self.n_history = []
         self.ill_history = []
