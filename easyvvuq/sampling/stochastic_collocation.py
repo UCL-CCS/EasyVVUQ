@@ -195,7 +195,7 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
 
     def next_level_sparse_grid(self):
         """
-        Adds the points of the next level for hierarchical sparse grids.
+        Adds the points of the next level for isotropic hierarchical sparse grids.
 
         Returns
         -------
@@ -235,65 +235,89 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
 
         #update the N-dimensional sparse grid
         self.xi_d = np.concatenate((self.xi_d, new_points))
+
+    def look_ahead(self, current_multi_idx):
+        """
+        The look-ahead step in dimension-adaptive sparse grid sampling. Allows
+        for anisotropic sampling plans.
         
-    def adapt_dimension(self, current_multi_idx):
-        #NOTE: COULD PROBABLY MERGE THIS THE SUBROUTINE ABOVE,
-        #AND JUST ADD A DIMENSION_ADAPT FLAG
+        Computes the admissible forward neighbors with respect to the current level
+        multi-indices. The admissible level indices l are added to self.admissible_idx.
+        The code will be evaluated next iteration at the new collocation points
+        corresponding to the levels in admissble_idx.
         
+        Source: Gerstner, Griebel, "Numerical integration using sparse grids"
+
+        Parameters
+        ----------
+        current_multi_idx : array of the levels in the current iteration
+        of the sparse grid.
+
+        Returns
+        -------
+        None.
+
+        """        
         if not self.dimension_adaptive:
             print('Dimension adaptivity is not selected')
             return
 
-        refinement = []
+        #compute all forward neighbors for every l in current_multi_idx
+        forward_neighbor = []
         e_n = np.eye(self.N, dtype=int)
-
-        #compute all forward neighbors
         for l in current_multi_idx:
             for n in range(self.N):
-                refinement.append(l + e_n[n])
+                #the forward neighbor is l plus a unit vector
+                forward_neighbor.append(l + e_n[n])
+
         #remove duplicates
-        refinement = np.unique(np.array(refinement), axis = 0)
+        forward_neighbor = np.unique(np.array(forward_neighbor), axis = 0)
         #remove those which are already in the grid
-        refinement = setdiff2d(refinement, current_multi_idx)
+        forward_neighbor = setdiff2d(forward_neighbor, current_multi_idx)
         #make sure the final candidates are admissible (all backward neighbors
         #must be in the current multi indices)
         admissible_idx = []
-        for l in refinement:
+        for l in forward_neighbor:
             admissible = True
             for n in range(self.N):
                 backward_neighbor = l - e_n[n]
+                #find backward_neighbor in current_multi_idx
                 idx = np.where((backward_neighbor == current_multi_idx).all(axis=1))[0]
+                #if backward neighbor is not in the current index set
+                #and it is 'on the interior' (contains no 0): not admissible
                 if idx.size == 0 and backward_neighbor[n] != 0:
                     admissible = False
                     break
+            #if all backward neighbors are in the current index set: l is admissible
             if admissible:
                 admissible_idx.append(l)
-                
-        self.admissible_idx = np.array(admissible_idx)
 
+        self.admissible_idx = np.array(admissible_idx)
         print('Admissble multi-indices:', self.admissible_idx)
 
-        #determine the maximum level L via L = |l| - N + 1
+        #determine the maximum level L of the new index set L = |l| - N + 1
         L = np.max(np.sum(self.admissible_idx, axis = 1) - self.N + 1)
-        # self.polynomial_order = [p + 1 for p in self.polynomial_order]
+        #recompute the 1D weights and collocation points
         self.compute_1D_points_weights(L, self.N)
-        new_grid = self.generate_grid(self.admissible_idx)
-        new_points = setdiff2d(new_grid, self.xi_d)
-        
+        #compute collocation grid based on the admissible level indices
+        admissible_grid = self.generate_grid(self.admissible_idx)
+        #remove collocation points which have already been computed
+        new_points = setdiff2d(admissible_grid, self.xi_d)
+
         print('%d new points added' % new_points.shape[0])
 
         #update the number of samples
         self._number_of_samples += new_points.shape[0]
 
+        #update the N-dimensional sparse grid if unsampled points are added
         if new_points.shape[0] > 0:
-            #update the N-dimensional sparse grid
             self.xi_d = np.concatenate((self.xi_d, new_points))
-        
+
         #count the number of times the dimensions were adapted
         self.number_of_adaptations += 1
 
     def element_version(self):
-        return "0.4"
+        return "0.5"
 
     def is_finite(self):
         return True
@@ -322,7 +346,9 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
             "quadrature_rule": self.quadrature_rule,
             "count": self.count,
             "growth": self.growth,
-            "sparse": self.sparse}
+            "sparse": self.sparse,
+            "midpoint_level1": self.midpoint_level1,
+            "dimension_adaptive": self.dimension_adaptive}
 
     """
     =========================

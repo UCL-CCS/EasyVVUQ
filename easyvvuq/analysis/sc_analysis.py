@@ -33,11 +33,7 @@ __license__ = "LGPL"
 class SCAnalysis(BaseAnalysisElement):
 
     def __init__(self, sampler=None, qoi_cols=None):
-        """Analysis element for Stochastic Collocation (SC).
-
-        Method: 'Global Sensitivity Analysis for Stocastic Collocation'
-                G. Tang and G. Iaccarino, AIAA 2922, 2010
-
+        """
         Parameters
         ----------
         sampler : :obj:`easyvvuq.sampling.stochastic_collocation.SCSampler`
@@ -106,11 +102,13 @@ class SCAnalysis(BaseAnalysisElement):
             self.L_min = self.L
             self.l_norm = np.array([self.sampler.polynomial_order])
             self.l_norm_min = self.l_norm
-        # For sparse grid, has one or more levels
+        # For sparse grid: one or more levels
         else:
             self.L_min = 1
-            #multi indices for isotropic sparse grid or dimension-adaptive grid before
-            #the 1st refinement
+            #multi indices (stored in l_norm) for isotropic sparse grid or 
+            #dimension-adaptive grid before the 1st refinement.
+            #If dimension_adaptive and number_of_adaptations > 0: l_norm
+            #is computed in self.adaptation_metric
             if not self.dimension_adaptive or self.sampler.number_of_adaptations == 0:
                 # the maximum level (quad order) of the (sparse) grid
                 self.l_norm = self.sampler.compute_sparse_multi_idx(self.L, self.N)
@@ -213,19 +211,41 @@ class SCAnalysis(BaseAnalysisElement):
         return map_
     
     def adaptation_metric(self, qoi, data_frame):
-        
+        """
+        Compute the adaptation metric and decide which of the admissible
+        level indices to include in next iteration of the sparse grid. The 
+        adaptation metric is based on the hierarchical surplus, defined as the 
+        difference between the new code values of the admissible level indices,
+        and the SC surrogate of the previous iteration. Important: this
+        subroutine must therefore be called AFTER the code is evaluated at
+        the new points, but BEFORE the analysis is performed.
+
+        Parameters
+        ----------
+        qoi : (string) the name of the quantity of interest which is used
+                       to base the adaptation metric on.
+        data_frame : the data frame from the EasyVVUQ Campaign
+
+        Returns
+        -------
+        None.
+
+        """
+        #load the code samples
         samples = []
         for run_id in data_frame.run_id.unique():
             values = data_frame.loc[data_frame['run_id'] == run_id][qoi].values
             samples.append(values)
 
+        #compute the hierarchical surplus based error for every admissible l
         error = {}
         for l in self.sampler.admissible_idx:
             error[tuple(l)] = []
-            # colloc point of current level index l
+            # collocation points of current level index l
             X_l = [self.sampler.xi_1d[n][l[n]] for n in range(self.N)]
             X_l = np.array(list(product(*X_l)))
             for xi in X_l:
+                #find the location of the current xi in the global grid
                 idx = np.where((xi == self.sampler.xi_d).all(axis = 1))[0][0]
                 #only compute error for new collocation points
                 #(_number_of_samples is still set to the old value)
@@ -234,10 +254,13 @@ class SCAnalysis(BaseAnalysisElement):
                     error[tuple(l)].append(np.linalg.norm(hier_surplus))
             error[tuple(l)] = np.mean(error[tuple(l)])
         print('Error measures:', error)
+        #find the admissble index with the largest error
         l_star = np.array(max(error, key = error.get)).reshape([1, self.N])
         print('Selecting', l_star, 'for refinement.')
 
+        #add l_star to the current accepted level indices
         self.l_norm = np.concatenate((self.l_norm, l_star))
+
         # self.L = np.max(np.sum(self.l_norm, axis = 1) - self.N + 1)
         # self.xi_d = self.sampler.generate_grid(self.l_norm)
         # self.run_id = []
