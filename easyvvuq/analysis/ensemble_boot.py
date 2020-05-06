@@ -177,7 +177,10 @@ def ensemble_bootstrap(data, groupby=[], qoi_cols=[],
             n_samples=n_samples,
             pivotal=pivotal)
 
-    grouped_data = data.groupby(groupby)
+    if not groupby:
+        grouped_data = data.groupby(lambda x: True)
+    else:
+        grouped_data = data.groupby(groupby)
 
     # Apply bootstrapping to all value columns selected
     # Note results come a tuple per cell
