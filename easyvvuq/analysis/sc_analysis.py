@@ -105,7 +105,7 @@ class SCAnalysis(BaseAnalysisElement):
         # For sparse grid: one or more levels
         else:
             self.L_min = 1
-            #multi indices (stored in l_norm) for isotropic sparse grid or 
+            #multi indices (stored in l_norm) for isotropic sparse grid or
             #dimension-adaptive grid before the 1st refinement.
             #If dimension_adaptive and number_of_adaptations > 0: l_norm
             #is computed in self.adaptation_metric
@@ -253,7 +253,8 @@ class SCAnalysis(BaseAnalysisElement):
                     hier_surplus = samples[idx] - self.surrogate(qoi, xi)
                     error[tuple(l)].append(np.linalg.norm(hier_surplus))
             error[tuple(l)] = np.mean(error[tuple(l)])
-        print('Error measures:', error)
+        for key in error.keys():
+            print("Surplus error when l =", key, "=", error[key])
         #find the admissble index with the largest error
         l_star = np.array(max(error, key = error.get)).reshape([1, self.N])
         print('Selecting', l_star, 'for refinement.')
@@ -620,17 +621,18 @@ class SCAnalysis(BaseAnalysisElement):
             fig = plt.figure()
             ax = fig.add_subplot(111, xlabel=r'$x_1$', ylabel=r'$x_2$')
             ax.plot(self.xi_d[:, 0], self.xi_d[:, 1], 'ro')
+            plt.tight_layout()
+            plt.show()
         elif self.N == 3:
             from mpl_toolkits.mplot3d import Axes3D
             fig = plt.figure()
             ax = fig.add_subplot(111, projection='3d', xlabel=r'$x_1$',
                                  ylabel=r'$x_2$', zlabel=r'$x_3$')
             ax.scatter(self.xi_d[:, 0], self.xi_d[:, 1], self.xi_d[:, 2])
+            plt.tight_layout()
+            plt.show()
         else:
             print('Will only plot for N = 2 or N = 3.')
-
-        plt.tight_layout()
-        plt.show()
 
     # Start SC specific methods
 

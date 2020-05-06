@@ -29,6 +29,9 @@ __license__ = "LGPL"
 
 
 class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
+    """
+    Stochastic Collocation sampler 
+    """
 
     def __init__(self,
                  vary=None,
@@ -37,8 +40,8 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
                  count=0,
                  growth=False,
                  sparse=False,
-                 midpoint_level1 = False,
-                 dimension_adaptive = False):
+                 midpoint_level1=False,
+                 dimension_adaptive=False):
         """
         Create the sampler for the Stochastic Collocation method.
 
@@ -96,7 +99,8 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
         self.params_distribution = params_distribution
 
         #determine if a nested sparse grid is used
-        if self.sparse is True and self.growth is True and (self.quad_rule == "C" or self.quad_rule == "clenshaw_curtis"):
+        if self.sparse is True and self.growth is True and \
+           (self.quad_rule == "C" or self.quad_rule == "clenshaw_curtis"):
             self.nested = True
         elif self.sparse is True and self.growth is False and self.quad_rule == "gauss_patterson":
             self.nested = True
@@ -109,7 +113,7 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
         L = np.max(self.polynomial_order)
         self.L = L
         self.N = N
-        
+
         #compute the 1D collocation points (and quad weights)
         self.compute_1D_points_weights(L, N)
 
@@ -224,7 +228,7 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
 
         #generate the new N-dimensional collocation points
         new_grid = self.generate_grid(multi_idx[new])
-        
+
         #find the new points unique to the new grid
         new_points = setdiff2d(new_grid, self.xi_d)
 
@@ -240,12 +244,12 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
         """
         The look-ahead step in dimension-adaptive sparse grid sampling. Allows
         for anisotropic sampling plans.
-        
+
         Computes the admissible forward neighbors with respect to the current level
         multi-indices. The admissible level indices l are added to self.admissible_idx.
         The code will be evaluated next iteration at the new collocation points
         corresponding to the levels in admissble_idx.
-        
+
         Source: Gerstner, Griebel, "Numerical integration using sparse grids"
 
         Parameters
@@ -257,7 +261,7 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
         -------
         None.
 
-        """        
+        """
         if not self.dimension_adaptive:
             print('Dimension adaptivity is not selected')
             return
@@ -271,7 +275,7 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
                 forward_neighbor.append(l + e_n[n])
 
         #remove duplicates
-        forward_neighbor = np.unique(np.array(forward_neighbor), axis = 0)
+        forward_neighbor = np.unique(np.array(forward_neighbor), axis=0)
         #remove those which are already in the grid
         forward_neighbor = setdiff2d(forward_neighbor, current_multi_idx)
         #make sure the final candidates are admissible (all backward neighbors
@@ -293,10 +297,10 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
                 admissible_idx.append(l)
 
         self.admissible_idx = np.array(admissible_idx)
-        print('Admissble multi-indices:', self.admissible_idx)
+        print('Admissble multi-indices:\n', self.admissible_idx)
 
         #determine the maximum level L of the new index set L = |l| - N + 1
-        L = np.max(np.sum(self.admissible_idx, axis = 1) - self.N + 1)
+        L = np.max(np.sum(self.admissible_idx, axis=1) - self.N + 1)
         #recompute the 1D weights and collocation points
         self.compute_1D_points_weights(L, self.N)
         #compute collocation grid based on the admissible level indices
@@ -383,7 +387,7 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
         P = np.array(list(product(range(1, L + 1), repeat=N)))
         multi_idx = P[np.where(np.sum(P, axis=1) <= L + N - 1)[0]]
         return multi_idx
-    
+
 def setdiff2d(X, Y):
     """
     Computes the difference of two 2D arrays X \ Y
