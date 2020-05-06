@@ -31,9 +31,9 @@ __license__ = "LGPL"
 
 class Population:
     def __init__(self, grid_size, n, duration, mortality):
-        self.grid_size = grid_size
-        self.n = n
-        self.duration = duration
+        self.grid_size = int(grid_size)
+        self.n = int(n)
+        self.duration = int(duration)
         self.mortality = mortality
         self.x = np.random.randint(0, grid_size, (n, 2))
         self.ill = np.array([duration] + [0] * (n - 1))
