@@ -333,7 +333,7 @@ class SCAnalysis(BaseAnalysisElement):
         - samples (optional in kwargs): Default: compute the mean
           by setting samples = self.samples. To compute the variance,
           set samples = (self.samples - mean)**2
-        """        
+        """
 
         if samples is None:
             samples = self.samples[qoi]
@@ -358,7 +358,8 @@ class SCAnalysis(BaseAnalysisElement):
                 W_k = W_k.reshape([W_k.shape[0], 1])
 
                 #scaling factor of combination technique
-                scaling_factor = (-1)**(self.L + self.N - np.sum(l) - 1) * comb(self.N - 1, np.sum(l) - self.L)
+                scaling_factor = (-1)**(self.L + self.N - np.sum(l) - 1) * \
+                    comb(self.N - 1, np.sum(l) - self.L)
                 W_k *= scaling_factor
 
                 # find corresponding code values
