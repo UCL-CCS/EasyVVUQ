@@ -835,7 +835,7 @@ class CampaignDB(BaseCampaignDB):
             return
 
         tablename = 'COLLATION_APP' + str(app_id)
-        df.to_sql(tablename, self.engine, if_exists='append', index=False)
+        df.to_sql(tablename, self.engine, if_exists='append')
 
     def get_collation_dataframe(self, app_id):
         """
