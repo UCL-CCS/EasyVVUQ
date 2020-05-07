@@ -134,7 +134,6 @@ class SCAnalysis(BaseAnalysisElement):
         qoi_cols = self.qoi_cols
         samples = {k: [] for k in qoi_cols}
         for run_id in data_frame.run_id.unique():
-        # for run_id in self.run_id:
             for k in qoi_cols:
                 values = data_frame.loc[data_frame['run_id'] == run_id][k].values
                 samples[k].append(values)
@@ -194,7 +193,7 @@ class SCAnalysis(BaseAnalysisElement):
         else:
             # all sparse grid multi indices l
             # l_norm_le_L = self.sampler.compute_sparse_multi_idx(L, N)
-            idx_le_L = np.where(np.sum(self.l_norm, axis = 1) - self.N + 1 <= L)
+            idx_le_L = np.where(np.sum(self.l_norm, axis=1) - self.N + 1 <= L)
             l_norm_le_L = self.l_norm[idx_le_L]
             k = 0
             map_ = {}
@@ -209,12 +208,12 @@ class SCAnalysis(BaseAnalysisElement):
                     k += 1
         logging.debug('done.')
         return map_
-    
+
     def adaptation_metric(self, qoi, data_frame):
         """
         Compute the adaptation metric and decide which of the admissible
-        level indices to include in next iteration of the sparse grid. The 
-        adaptation metric is based on the hierarchical surplus, defined as the 
+        level indices to include in next iteration of the sparse grid. The
+        adaptation metric is based on the hierarchical surplus, defined as the
         difference between the new code values of the admissible level indices,
         and the SC surrogate of the previous iteration. Important: this
         subroutine must therefore be called AFTER the code is evaluated at
@@ -246,7 +245,7 @@ class SCAnalysis(BaseAnalysisElement):
             X_l = np.array(list(product(*X_l)))
             for xi in X_l:
                 #find the location of the current xi in the global grid
-                idx = np.where((xi == self.sampler.xi_d).all(axis = 1))[0][0]
+                idx = np.where((xi == self.sampler.xi_d).all(axis=1))[0][0]
                 #only compute error for new collocation points
                 #(_number_of_samples is still set to the old value)
                 if idx >= self._number_of_samples:
@@ -256,7 +255,7 @@ class SCAnalysis(BaseAnalysisElement):
         for key in error.keys():
             print("Surplus error when l =", key, "=", error[key])
         #find the admissble index with the largest error
-        l_star = np.array(max(error, key = error.get)).reshape([1, self.N])
+        l_star = np.array(max(error, key=error.get)).reshape([1, self.N])
         print('Selecting', l_star, 'for refinement.')
 
         #add l_star to the current accepted level indices
@@ -266,7 +265,7 @@ class SCAnalysis(BaseAnalysisElement):
         # self.xi_d = self.sampler.generate_grid(self.l_norm)
         # self.run_id = []
 
-        # #names of the uncertain variables        
+        # #names of the uncertain variables
         # uncertain_vars = list(self.sampler.vary.get_keys())
         # #loop over all samples in the data frame
         # for run_id in data_frame["run_id"].unique():
@@ -276,7 +275,7 @@ class SCAnalysis(BaseAnalysisElement):
         #     idx = np.where((xi == self.xi_d).all(axis = 1))[0]
         #     #if so, add run_id to self.run_id
         #     if idx.size != 0:
-        #         self.run_id.append(run_id)        
+        #         self.run_id.append(run_id)
 
     def surrogate(self, qoi, x, L=None):
         """
@@ -323,10 +322,10 @@ class SCAnalysis(BaseAnalysisElement):
     def combination_technique(self, qoi, samples=None):
         """
         Efficient quadrature formulation for isotropic sparse grids. See:
-            
+
             Gerstner, Griebel, "Numerical integration using sparse grids"
             page 7.
-        
+
         Parameters
         ----------
         - qoi (str): name of the qoi
@@ -335,16 +334,16 @@ class SCAnalysis(BaseAnalysisElement):
           by setting samples = self.samples. To compute the variance,
           set samples = (self.samples - mean)**2
         """        
-        
+
         if samples is None:
             samples = self.samples[qoi]
-        
+
         #quadrature Q
         Q = 0.0
-        
+
         #loop over l
         for l in self.l_norm:
-            
+
             #for sum(l) < L, combination technique formula shows that weights
             #are zero
             if np.sum(l) >= self.L:
@@ -368,12 +367,12 @@ class SCAnalysis(BaseAnalysisElement):
                 # quadrature of Q^1_{k1} X ... X Q^1_{kN} product
                 Q += np.sum(f_k * W_k, axis=0).T
 
-        return Q            
+        return Q
 
     def compute_Q_diff(self, l, samples):
         """
         Brute force computation of difference operators \Delta_l
-        Note: superseded by combination_technique for sparse grids, but might 
+        Note: superseded by combination_technique for sparse grids, but might
         still be useful for anisotropic sparse grids.
         =======================================================================
         For every multi index l = (l1, l2, ..., ld), Smolyak sums over

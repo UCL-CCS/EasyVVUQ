@@ -8,6 +8,7 @@ plt.close('all')
 # author: Wouter Edeling
 __license__ = "LGPL"
 
+
 def run_campaign(d, number_of_adaptations):
     """
     Runs a EasVVUQ campaign with the dimension adaptive SC sampler
@@ -72,7 +73,7 @@ def run_campaign(d, number_of_adaptations):
     my_campaign.draw_samples()
     my_campaign.populate_runs_dir()
 
-    ##   Use this instead to run the samples using EasyVVUQ on the localhost
+    # Run the samples using EasyVVUQ on the localhost
     my_campaign.apply_for_each_run_dir(uq.actions.ExecuteLocal(
         "tests/sc/poly_model_anisotropic.py poly_in.json"))
 
@@ -102,12 +103,12 @@ def run_campaign(d, number_of_adaptations):
     analysis.plot_grid()
 
     #analytic mean and standard deviation
-    a = np.ones(d)*0.01
+    a = np.ones(d) * 0.01
     effective_d = 1
     a[0:effective_d] = 1.0
 
-    ref_mean = np.prod(a[0:d]+1)/2**d
-    ref_std = np.sqrt(np.prod(9*a[0:d]**2/5 + 2*a[0:d] + 1)/2**(2*d) - ref_mean**2)
+    ref_mean = np.prod(a[0:d] + 1) / 2**d
+    ref_std = np.sqrt(np.prod(9 * a[0:d]**2 / 5 + 2 * a[0:d] + 1) / 2**(2 * d) - ref_mean**2)
 
     print("======================================")
     print("Number of samples = %d" % my_sampler._number_of_samples)

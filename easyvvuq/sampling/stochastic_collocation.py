@@ -30,7 +30,7 @@ __license__ = "LGPL"
 
 class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
     """
-    Stochastic Collocation sampler 
+    Stochastic Collocation sampler
     """
 
     def __init__(self,
@@ -387,6 +387,7 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
         P = np.array(list(product(range(1, L + 1), repeat=N)))
         multi_idx = P[np.where(np.sum(P, axis=1) <= L + N - 1)[0]]
         return multi_idx
+
 
 def setdiff2d(X, Y):
     """
