@@ -3,6 +3,7 @@ from .generic_template import GenericEncoder
 from .multiencoder import MultiEncoder
 from .directory_builder import DirectoryBuilder
 from .apply_fixtures import ApplyFixtures
+from .jinja_encoder import JinjaEncoder
 
 __copyright__ = """
 
