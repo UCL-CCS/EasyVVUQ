@@ -45,3 +45,7 @@ def test_get_restart_dict(basic_sweep_sampler):
     restart_dict = basic_sweep_sampler.get_restart_dict()
     assert(restart_dict['sweep'] == {'a': [1, 2, 3], 'b': [4, 5, 6]})
     assert(restart_dict['count'] == 0)
+
+
+def test_basic_sweep_single_list():
+    assert(len(list(BasicSweep({'a': [1, 2, 3]}))) == 3)
