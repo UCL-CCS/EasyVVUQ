@@ -19,11 +19,11 @@ sys.path.insert(0, os.path.abspath('../'))
 # -- Project information -----------------------------------------------------
 
 project = 'EasyVVUQ'
-copyright = '2019, David W. Wright, Robin A. Richardson'
+copyright = '2020, David W. Wright, Robin A. Richardson'
 author = 'David W. Wright, Robin A. Richardson'
 
 # The full version, including alpha/beta/rc tags
-release = '0.3'
+release = '0.5.1'
 
 
 # -- General configuration ---------------------------------------------------
