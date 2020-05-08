@@ -23,7 +23,7 @@ easyvvuq.encoders.generic\_template module
 easyvvuq.encoders.jinja_encoder module
 --------------------------------
 
-.. automodule:: easyvvuq.encodedr.jinja_encoder
+.. automodule:: easyvvuq.encoders.jinja_encoder
     :members:
     :undoc-members:
     :show-inheritance:
