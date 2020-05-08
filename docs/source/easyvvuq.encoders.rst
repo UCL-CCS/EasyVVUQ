@@ -20,6 +20,14 @@ easyvvuq.encoders.generic\_template module
     :undoc-members:
     :show-inheritance:
 
+easyvvuq.encoders.jinja_encoder module
+--------------------------------
+
+.. automodule:: easyvvuq.encodedr.jinja_encoder
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 
 Module contents
 ---------------
