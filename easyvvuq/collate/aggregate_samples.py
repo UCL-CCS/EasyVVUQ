@@ -80,25 +80,26 @@ class AggregateSamples(BaseCollationElement, collater_name="aggregate_samples"):
                 if self.average:
                     run_data = pd.DataFrame(run_data.mean()).transpose()
 
-                params = run_info['params']
-                column_list = list(params.keys()) + run_data.columns.tolist()
+                mult = isinstance(run_data.columns, pd.MultiIndex)
 
-                col, mult = multi_index_tuple_parser(run_data.columns.values)
+                params = run_info['params']
                 for param, value in params.items():
                     if isinstance(value, list):
                         # need to have multi-index dataframe
                         if not mult:
+                            col, mult = multi_index_tuple_parser(run_data.columns.values)
                             col = [(c, '') for c in col]
                             run_data.columns = pd.MultiIndex.from_tuples(col)
-                            mult = True
                         # add list values using columns tuple
                         for i in range(len(value)):
                             run_data[(param, i)] = value[i]
                     else:
                         run_data[param] = value
+                column_list = run_data.columns.tolist()
 
                 # we need to convert columns to tuples to account for multi-indexing
                 # should not influence non-multi-index frames, I hope. hacky?
+                # TODO from Jalal: I think we don't need it, must be handled in the decoder
                 if any([isinstance(x, tuple) for x in column_list]):
                     column_list_ = []
                     for column in column_list:
