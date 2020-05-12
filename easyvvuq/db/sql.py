@@ -858,7 +858,7 @@ class CampaignDB(BaseCampaignDB):
         tablename = 'COLLATION_APP' + str(app_id)
         if tablename in self.engine.table_names():
             query = "select * from " + tablename
-            df = pd.read_sql_query(query, self.engine)
+            df = pd.read_sql_query(query, self.engine.execution_options(sqlite_raw_colnames=True))
             columns, multi = multi_index_tuple_parser(df.columns.values[1:])
             if multi:
                 df = pd.DataFrame(df.values[:, 1:],
