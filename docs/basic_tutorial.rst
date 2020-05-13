@@ -258,7 +258,7 @@ The backbone of EasyVVUQ workflows is the sampling of one or more parameters.
 The type of element used to do this is (imaginatively) called a *Sampler*.
 A *Sampler* implements an algorithm that choses sets of parameters to span the
 input parameter space.
-The paticular parameters to vary are specified by the user, along with the
+The particular parameters to vary are specified by the user, along with the
 distribution that they take.
 The distributions are specified as `Chaospy <https://chaospy.readthedocs.io/>`_
 distributions.
