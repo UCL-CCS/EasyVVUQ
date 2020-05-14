@@ -15,7 +15,7 @@ For example, the following code creates a new sampler which combines three exist
     my_multisampler = uq.sampling.MultiSampler(sampler1, sampler2, sampler3)
 
 
-Whilst this example invovles 3 samplers, any number of samplers can be combined in the same manner.
+Whilst this example involves 3 samplers, any number of samplers can be combined in the same manner.
 Note that the ordering of the samplers *does* matter.
 The last sampler in the list updates 'fastest' while the first sampler updates 'slowest'.
 Furthermore, every sampler in a multisampler must be finite (contain a finite number of samples).

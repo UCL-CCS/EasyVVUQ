@@ -72,7 +72,7 @@ In this example the GenericEncoder and SimpleCSV, both included in the core Easy
                                 output_columns=["te", "ti"],
                                 header=0)
 
-In this workflow all application runs will be analyzed as individual datapoint, so we set the collator to AggregateSamples without averaging. This element simply extracts information using the assigned decoder and adds it to a summary dataframe. ::
+In this workflow all application runs will be analyzed as individual datapoints, so we set the collator to AggregateSamples without averaging. This element simply extracts information using the assigned decoder and adds it to a summary dataframe. ::
 
     collater = uq.collate.AggregateSamples(average=False)
 
@@ -106,7 +106,7 @@ The user specified which parameters will vary and their corresponding distributi
         "t_env": cp.Uniform(15, 25)
     }
 
-To perform a polynomial chaos expansion we will create a PCESampler, informing it which parameters to vary, and what polynomial rder to use for the PCE. ::
+To perform a polynomial chaos expansion we will create a PCESampler, informing it which parameters to vary, and what polynomial order to use for the PCE. ::
 
     my_sampler = uq.sampling.PCESampler(vary=vary, polynomial_order=3)
 
