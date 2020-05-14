@@ -16,7 +16,7 @@ To update an existing installation::
 Alternatively, to get the most current version, the code can be installed from
 Github as follows::
 
-    git clone git@github.com:UCL-CCS/EasyVVUQ.git
+    git clone https://github.com/UCL-CCS/EasyVVUQ.git
     cd EasyVVUQ
     pip install -r requirements.txt
     python setupy.py install

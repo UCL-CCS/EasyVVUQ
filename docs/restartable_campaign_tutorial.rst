@@ -41,7 +41,7 @@ At this point we could in principle end the script, and reload the campaign in a
 Section 12. Load state in new campaign object
 ---------------------------------------------
 
-We can now make a new campaign object, which we shall call `reloaded_campaign` to make the distinction clearer. By specififying the state_file parameter, we can make this load the state of the previously saved campaign (stored in `campaign_state.json`). ::
+We can now make a new campaign object, which we shall call `reloaded_campaign` to make the distinction clearer. By specifying the state_file parameter, we can make this load the state of the previously saved campaign (stored in `campaign_state.json`). ::
 
     reloaded_campaign = uq.Campaign(state_file="campaign_state.json", work_dir=".")
 

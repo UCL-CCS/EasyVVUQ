@@ -65,7 +65,7 @@ python setup.py install
 
 ## Getting Started
 
-Documentation, including a basic tutorial, is avalable [here](https://easyvvuq.readthedocs.io).
+Documentation, including a basic tutorial, is avalable [here](https://easyvvuq.readthedocs.io/en/dev/).
 
 ## Citing EasyVVUQ
 
