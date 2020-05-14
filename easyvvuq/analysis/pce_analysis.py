@@ -87,7 +87,7 @@ class PCEAnalysis(BaseAnalysisElement):
 
         # Compute nodes (and weights)
         if regression:
-            nodes = cp.generate_samples(order=self.sampler._number_of_samples,
+            nodes = cp.generate_samples(order=self.sampler.n_samples,
                                         domain=self.sampler.distribution,
                                         rule=self.sampler.rule)
         else:

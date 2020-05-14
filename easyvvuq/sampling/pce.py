@@ -119,8 +119,8 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
                 self.rule = "M"
 
             # Generates samples
-            self._number_of_samples = 2 * len(self.P)
-            nodes = cp.generate_samples(order=self._number_of_samples,
+            self.n_samples = 2 * len(self.P)
+            nodes = cp.generate_samples(order=self.n_samples,
                                         domain=self.distribution,
                                         rule=self.rule)
 
@@ -133,7 +133,7 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
                                               sparse=sparse,
                                               growth=self.quad_growth)
             # Number of samples
-            self._number_of_samples = len(nodes[0])
+            self.n_samples = len(nodes[0])
 
         # Reorganize nodes according to params type: scalar (float, integer) or list
         self._nodes = []
@@ -149,9 +149,9 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
 
         # Fast forward to specified count, if possible
         self.count = 0
-        if self.count >= self._number_of_samples:
+        if self.count >= self.n_samples:
             msg = (f"Attempt to start sampler fastforwarded to count {self.count}, "
-                   f"but sampler only has {self._number_of_samples} samples, therefore"
+                   f"but sampler only has {self.n_samples} samples, therefore"
                    f"this sampler will not provide any more samples.")
             logging.warning(msg)
         else:
@@ -168,7 +168,7 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
         return True
 
     def __next__(self):
-        if self.count < self._number_of_samples:
+        if self.count < self.n_samples:
             run_dict = {}
             ipar = 0
             for param_name in self.vary.get_keys():
