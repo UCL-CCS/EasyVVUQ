@@ -1,4 +1,4 @@
-"""Validation by comparing Similarities between QoI distributions.
+"""Validation by comparing QoI distributions.
 """
 import numpy as np
 import scipy.stats as st
@@ -70,6 +70,9 @@ class Validate_Similarity(BaseComparisonElement):
                 W2 : Wasserstein 2
         """
 
+        if metric not in ["H", "JS", "W1", "W2"]:
+            raise RuntimeError("Validate_Similarity: Unknown distance name.")
+
         self._metric = metric
 
     def get_metric(self):
@@ -107,6 +110,89 @@ class Validate_Similarity(BaseComparisonElement):
 
             if self._metric == "W2":
                 return st.energy_distance(p, q)
+
+        # output
+        shape = np.shape(dataframe1)
+        if len(shape) == 2:
+            results = []
+            for i in range(len(dataframe1)):
+                p1 = np.array(dataframe1[i])
+                p2 = np.array(dataframe2[i])
+                d = dist(p1, p2)
+                results.append(d)
+        else:
+            p1 = np.array(dataframe1)
+            p2 = np.array(dataframe2)
+            results = dist(p1, p2)
+
+        return results
+
+
+class Validate_Compatability(BaseComparisonElement):
+
+    def __init__(self, weight_factor=0.5):
+        """Measure compatability between two QoI distributions.
+        Each distribution is characterized by three moments:
+        Mean, variance and skewness.
+        Lower metric means hight compatability.
+
+        Parameters
+        ----------
+        weight_factor : float, optional
+           parameter in [0, 1]
+           default: 0.5
+        """
+
+        if weight_factor < 0. or weight_factor > 1.:
+            raise RuntimeError("Validate_Compatability: Wrong parameter value.")
+
+        self._weight_factor = weight_factor
+
+    def element_name(self):
+        return "Validate_Compatability"
+
+    def element_version(self):
+        return "0.1"
+
+    def set_weight_factor(self, weight_factor):
+        """
+        Parameters
+        ----------
+        weight_factor : float
+        """
+
+        if weight_factor < 0. or weight_factor > 1.:
+            raise RuntimeError("set_weight_factor: wrong parameter value.")
+        self._weight_factor = weight_factor
+
+    def get_weight_factor(self):
+        return self._weight_factor
+
+    def compare(self, dataframe1, dataframe2):
+        """Measure compatability between dataframe1 and dataframe2, two lists of:
+            - mean, variance and skewness
+
+        ASSUMPTION: two cases are possible:
+        dataframe1 = [mu1, var1, skew1] and dataframe2 = [mu2, var2, skew2], or
+        dataframe1 = [[mu11, var11, skew11], [[mu12, var12, skew12], ...] and
+        dataframe2 = [[mu21, var21, skew21], [[mu22, var22, skew22], ...].
+        """
+
+        if len(dataframe1) != len(dataframe2):
+            raise RuntimeError("Input dataframe sizes are not equal")
+
+        # Compute the distance
+        def dist(mom1, mom2):
+            m1 = mom1[0]
+            v1 = mom1[1]
+            s1 = mom1[2]
+            m2 = mom2[0]
+            v2 = mom2[1]
+            s2 = mom2[2]
+            term1 = (m2 - m1)**2 / (2 * (v1 + v2) + (m2 - m1)**2)
+            term2 = (s2 - s1)**2 / (2 * (v1 + v2) + (m2 - m1)**2 + (abs(s1) + abs(s2))**2)
+
+            return (1 - self._weight_factor) * term1 + self._weight_factor * term2
 
         # output
         shape = np.shape(dataframe1)
