@@ -54,6 +54,8 @@ def confidence_interval(dist, value, alpha, pivotal=False):
           Lowest value of the confidence interval
 
     """
+    if len(dist) < 1:
+        raise ValueError("Dist array should be non-empty")
 
     if pivotal:
 
