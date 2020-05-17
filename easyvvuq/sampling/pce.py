@@ -182,7 +182,6 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
     def get_restart_dict(self):
         return {"vary": self.vary.serialize(),
                 "count": self.count,
-                "params_size": self.params_size,
                 "polynomial_order": self.polynomial_order,
                 "regression": self.regression,
                 "rule": self.rule,
