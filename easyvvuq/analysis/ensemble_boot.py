@@ -75,7 +75,7 @@ def confidence_interval(dist, value, alpha, pivotal=False):
     return stat, low, high
 
 
-def bootstrap(data, stat_func=None, alpha=0.05,
+def bootstrap(data, stat_func, alpha=0.05,
               sample_size=None, n_samples=1000,
               pivotal=False):
     """

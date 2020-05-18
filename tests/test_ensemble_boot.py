@@ -44,3 +44,7 @@ def test_confidence_interval():
     assert(stat == 0.0)
     assert(low == -1.90957202975)
     assert(high == 1.4859470412500002)
+
+
+def test_bootstrap():
+    bootstrap(pd.DataFrame({}))
