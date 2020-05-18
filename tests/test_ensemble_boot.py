@@ -59,6 +59,10 @@ def test_ensemble_bootstrap():
     df = pd.DataFrame({
         'a': np.concatenate((VALUES, VALUES)),
         'b': ['group1'] * VALUES.shape[0] + ['group2'] * VALUES.shape[0]})
-    results = ensemble_bootstrap(df, groupby=['b'])
+    results = ensemble_bootstrap(df, groupby=['b'], qoi_cols=['a'])
     assert(not results.empty)
     assert(results.values.shape == (2, 3))
+    with pytest.raises(RuntimeError):
+        ensemble_bootstrap(df, groupby=['b'], qoi_cols=['c'])
+    results = ensemble_bootstrap(df, qoi_cols=['a'])
+    assert(results.values.shape == (1, 3))
