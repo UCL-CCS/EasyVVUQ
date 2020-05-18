@@ -59,3 +59,6 @@ def test_ensemble_bootstrap():
     df = pd.DataFrame({
         'a': np.concatenate((VALUES, VALUES)),
         'b': ['group1'] * VALUES.shape[0] + ['group2'] * VALUES.shape[0]})
+    results = ensemble_bootstrap(df, groupby=['b'])
+    assert(not results.empty)
+    assert(results.values.shape == (2, 3))
