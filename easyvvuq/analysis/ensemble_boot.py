@@ -104,6 +104,8 @@ def bootstrap(data, stat_func, alpha=0.05,
     float:
           Lowest value of the confidence interval
     """
+    if data.empty:
+        raise RuntimeError("DataFrame passed to bootstrap has to be non-empty")
 
     stat = data.apply(stat_func)
 

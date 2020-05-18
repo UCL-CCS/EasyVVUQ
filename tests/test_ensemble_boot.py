@@ -47,4 +47,5 @@ def test_confidence_interval():
 
 
 def test_bootstrap():
-    bootstrap(pd.DataFrame({}))
+    with pytest.raises(RuntimeError):
+        bootstrap(pd.DataFrame({}), np.mean)
