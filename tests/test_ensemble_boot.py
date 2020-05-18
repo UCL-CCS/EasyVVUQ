@@ -60,7 +60,3 @@ def test_ensemble_bootstrap():
         'a': np.concatenate((VALUES, VALUES)),
         'b': ['group1'] * VALUES.shape[0] + ['group2'] * VALUES.shape[0]
         })
-    
-    
-    
-    
