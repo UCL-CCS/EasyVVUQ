@@ -40,3 +40,7 @@ def test_confidence_interval():
     assert(stat == -0.06909454)
     assert(low == -1.4859470412500002)
     assert(high == 1.90957202975)
+    stat, low, high = confidence_interval(VALUES, 0.0, 0.05, pivotal=True)
+    assert(stat == 0.0)
+    assert(low == -1.90957202975)
+    assert(high == 1.4859470412500002)
