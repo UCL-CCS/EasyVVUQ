@@ -58,5 +58,4 @@ def test_bootstrap():
 def test_ensemble_bootstrap():
     df = pd.DataFrame({
         'a': np.concatenate((VALUES, VALUES)),
-        'b': ['group1'] * VALUES.shape[0] + ['group2'] * VALUES.shape[0]
-        })
+        'b': ['group1'] * VALUES.shape[0] + ['group2'] * VALUES.shape[0]})
