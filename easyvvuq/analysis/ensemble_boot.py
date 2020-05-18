@@ -124,7 +124,7 @@ def bootstrap(data, stat_func, alpha=0.05,
 
 
 def ensemble_bootstrap(data, groupby=[], qoi_cols=[],
-                       stat_func=None, alpha=0.05,
+                       stat_func=np.mean, alpha=0.05,
                        sample_size=None, n_samples=1000,
                        pivotal=False, stat_name='boot'):
     """
@@ -166,9 +166,6 @@ def ensemble_bootstrap(data, groupby=[], qoi_cols=[],
     if not qoi_cols:
         qoi_cols = [
             x for x in data.columns if x not in groupby + ['run_id', 'status']]
-
-    if stat_func is None:
-        stat_func = np.mean
 
     for col in qoi_cols:
         if col not in data:
