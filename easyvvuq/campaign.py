@@ -574,7 +574,6 @@ class Campaign:
         the directories in the file system. The directory names will be formed
         in relation to the work_dir argument you have specified when creating
         the Campaign object.
-        
 
         Returns
         -------
