@@ -1,6 +1,8 @@
 import numpy as np
 import chaospy as cp
 from itertools import product, chain, combinations
+import pickle
+import copy
 from easyvvuq import OutputType
 from .base import BaseAnalysisElement
 import logging
@@ -56,6 +58,8 @@ class SCAnalysis(BaseAnalysisElement):
         self.sampler = sampler
         self._number_of_samples = sampler._number_of_samples
         self.dimension_adaptive = sampler.dimension_adaptive
+        if self.dimension_adaptive:
+            self.adaptation_errors = []
         self.sparse = sampler.sparse
 
     def element_name(self):
@@ -64,10 +68,27 @@ class SCAnalysis(BaseAnalysisElement):
 
     def element_version(self):
         """Version of this element for logging purposes"""
-        return "0.3"
+        return "0.5"
 
-    def analyse(self, data_frame=None):
-        """Perform PCE analysis on input `data_frame`.
+    def save_state(self, filename):
+        print("Saving analysis state to %s" % filename)
+        #make a copy of the state, and do not store the sampler as well
+        state = copy.copy(self.__dict__)
+        del state['sampler']
+        file = open(filename, 'wb')
+        pickle.dump(state, file)
+        file.close()
+
+    def load_state(self, filename):
+        print("Loading analysis state from %s" % filename)
+        file = open(filename, 'rb')
+        state = pickle.load(file)
+        for key in state.keys():
+            self.__dict__[key] = state[key]
+        file.close()
+
+    def analyse(self, data_frame=None, compute_results=True):
+        """Perform SC analysis on input `data_frame`.
 
         Parameters
         ----------
@@ -125,12 +146,14 @@ class SCAnalysis(BaseAnalysisElement):
         self.Map = {}
         self.surr_lm1 = {}
 
+        print('Computing collocation points and level indices...')
         for level in range(self.L_min, self.L + 1):
             self.Map[level] = self.create_map(level)
-
+        print('done.')
         self.clear_surr_lm1()
 
         # Extract output values for each quantity of interest from Dataframe
+        print('Loading samples...')
         qoi_cols = self.qoi_cols
         samples = {k: [] for k in qoi_cols}
         for run_id in data_frame.run_id.unique():
@@ -138,29 +161,31 @@ class SCAnalysis(BaseAnalysisElement):
                 values = data_frame.loc[data_frame['run_id'] == run_id][k].values
                 samples[k].append(values)
         self.samples = samples
+        print('done')
 
         # size of one code sample
         self.N_qoi = self.samples[qoi_cols[0]][0].size
 
-        results = {'statistical_moments': {},
-                   'sobols_first': {k: {} for k in self.qoi_cols},
-                   'sobols': {k: {} for k in self.qoi_cols}}
-
-        # Compute descriptive statistics for each quantity of interest
-        for qoi_k in qoi_cols:
-            mean_k, var_k = self.get_moments(qoi_k)
-            std_k = np.sqrt(var_k)
-            # compute statistical moments
-            results['statistical_moments'][qoi_k] = {'mean': mean_k,
-                                                     'var': var_k,
-                                                     'std': std_k}
-            # compute all Sobol indices
-            results['sobols'][qoi_k] = self.get_sobol_indices(qoi_k, 'all')
-            for idx, param_name in enumerate(self.sampler.vary.get_keys()):
-                results['sobols_first'][qoi_k][param_name] = \
-                    results['sobols'][qoi_k][(idx,)]
-
-        return results
+        if compute_results:
+            results = {'statistical_moments': {},
+                       'sobols_first': {k: {} for k in self.qoi_cols},
+                       'sobols': {k: {} for k in self.qoi_cols}}
+    
+            # Compute descriptive statistics for each quantity of interest
+            for qoi_k in qoi_cols:
+                mean_k, var_k = self.get_moments(qoi_k)
+                std_k = np.sqrt(var_k)
+                # compute statistical moments
+                results['statistical_moments'][qoi_k] = {'mean': mean_k,
+                                                         'var': var_k,
+                                                         'std': std_k}
+                # # compute all Sobol indices
+                # results['sobols'][qoi_k] = self.get_sobol_indices(qoi_k, 'first_order')
+                # for idx, param_name in enumerate(self.sampler.vary.get_keys()):
+                #     results['sobols_first'][qoi_k][param_name] = \
+                #         results['sobols'][qoi_k][(idx,)]
+    
+            return results
 
     def create_map(self, L):
         """
@@ -209,7 +234,7 @@ class SCAnalysis(BaseAnalysisElement):
         logging.debug('done.')
         return map_
 
-    def adaptation_metric(self, qoi, data_frame):
+    def adapt_dimension(self, qoi, data_frame):
         """
         Compute the adaptation metric and decide which of the admissible
         level indices to include in next iteration of the sparse grid. The
@@ -257,9 +282,16 @@ class SCAnalysis(BaseAnalysisElement):
         #find the admissble index with the largest error
         l_star = np.array(max(error, key=error.get)).reshape([1, self.N])
         print('Selecting', l_star, 'for refinement.')
+        #add max error to list
+        self.adaptation_errors.append(max(error.values()))
 
         #add l_star to the current accepted level indices
         self.l_norm = np.concatenate((self.l_norm, l_star))
+        #if someone executes this function twice for some reason,
+        #remove the duplicate l_star entry
+        self.l_norm = np.unique(self.l_norm, axis=0)
+
+        self.analyse(data_frame, compute_results=False)
 
         # self.L = np.max(np.sum(self.l_norm, axis = 1) - self.N + 1)
         # self.xi_d = self.sampler.generate_grid(self.l_norm)
@@ -276,6 +308,9 @@ class SCAnalysis(BaseAnalysisElement):
         #     #if so, add run_id to self.run_id
         #     if idx.size != 0:
         #         self.run_id.append(run_id)
+
+    def get_adaptation_errors(self):
+        return self.adaptation_errors
 
     def surrogate(self, qoi, x, L=None):
         """
@@ -429,11 +464,13 @@ class SCAnalysis(BaseAnalysisElement):
         - mean and variance of qoi (float (N_qoi,))
 
         """
+        print('Computing moments...')
         # compute mean
         mean_f = self.quadrature(qoi)
         # compute variance
         variance_samples = [(sample - mean_f)**2 for sample in self.samples[qoi]]
         var_f = self.quadrature(qoi, samples=variance_samples)
+        print('done')
         return mean_f, var_f
 
     def sc_expansion(self, L, samples, x):
@@ -725,6 +762,7 @@ class SCAnalysis(BaseAnalysisElement):
         -------
         Either the first order or all Sobol indices of qoi
         """
+        print('Computing Sobol indices...')
         # multi indices
         U = np.arange(self.N)
 
@@ -780,6 +818,7 @@ class SCAnalysis(BaseAnalysisElement):
             # compute Sobol index, only include points where D > 0
             # sobol[u] = D_u[u][idx_gt0]/D[idx_gt0]
             sobol[u] = D_u[u] / D
+        print('done.')
         return sobol
 
 

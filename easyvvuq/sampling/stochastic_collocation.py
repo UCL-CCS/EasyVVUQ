@@ -1,6 +1,7 @@
 from .base import BaseSamplingElement, Vary
 import chaospy as cp
 import numpy as np
+import pickle
 from itertools import product, chain
 import logging
 
@@ -137,16 +138,19 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
 
         self._number_of_samples = self.xi_d.shape[0]
 
-        # Fast forward to specified count, if possible
         self.count = 0
-        if self.count >= self._number_of_samples:
-            msg = (f"Attempt to start sampler fastforwarded to count {self.count}, "
-                   f"but sampler only has {self._number_of_samples} samples, therefore"
-                   f"this sampler will not provide any more samples.")
-            logging.warning(msg)
-        else:
-            for i in range(count):
-                self.__next__()
+
+        # This gives an error when storting and loading campaigns in the
+        #dimension adaptive setting - seems not required anyway - commented it
+        # Fast forward to specified count, if possible
+        # if self.count >= self._number_of_samples:
+        #     msg = (f"Attempt to start sampler fastforwarded to count {self.count}, "
+        #            f"but sampler only has {self._number_of_samples} samples, therefore"
+        #            f"this sampler will not provide any more samples.")
+        #     logging.warning(msg)
+        # else:
+        #     for i in range(count):
+        #         self.__next__()
 
     def compute_1D_points_weights(self, L, N):
         """
@@ -280,6 +284,7 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
         forward_neighbor = setdiff2d(forward_neighbor, current_multi_idx)
         #make sure the final candidates are admissible (all backward neighbors
         #must be in the current multi indices)
+        print('Computing admissible levels...')
         admissible_idx = []
         for l in forward_neighbor:
             admissible = True
@@ -295,6 +300,7 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
             #if all backward neighbors are in the current index set: l is admissible
             if admissible:
                 admissible_idx.append(l)
+        print('done')
 
         self.admissible_idx = np.array(admissible_idx)
         print('Admissble multi-indices:\n', self.admissible_idx)
@@ -353,6 +359,18 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
             "sparse": self.sparse,
             "midpoint_level1": self.midpoint_level1,
             "dimension_adaptive": self.dimension_adaptive}
+    
+    def save_state(self, filename):
+        print("Saving sampler state to %s" % filename)
+        file = open(filename, 'wb')
+        pickle.dump(self.__dict__, file)
+        file.close()
+
+    def load_state(self, filename):
+        print("Loading sampler state from %s" % filename)
+        file = open(filename, 'rb')
+        self.__dict__ = pickle.load(file)
+        file.close()
 
     """
     =========================

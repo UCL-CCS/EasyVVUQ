@@ -94,7 +94,7 @@ def run_campaign(d, number_of_adaptations):
             "tests/sc/poly_model_anisotropic.py poly_in.json"))
         my_campaign.collate()
         data_frame = my_campaign.get_collation_result()
-        analysis.adaptation_metric('f', data_frame)
+        analysis.adapt_dimension('f', data_frame)
 
         my_campaign.apply_analysis(analysis)
 

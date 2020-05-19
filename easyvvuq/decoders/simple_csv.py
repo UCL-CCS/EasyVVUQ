@@ -92,8 +92,6 @@ class SimpleCSV(BaseDecoder, decoder_name="csv"):
             usecols=self.output_columns,
             sep=self.delimiter,
             header=self.header)
-        
-        print(data)
 
         return data
 
