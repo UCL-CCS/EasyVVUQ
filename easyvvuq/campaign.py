@@ -570,7 +570,11 @@ class Campaign:
 
         This calls the encoder element defined for the current application to
         create input files for it in each run directory, usually with varying
-        input (scientific) parameters.
+        input (scientific) parameters. Note that this method will also create
+        the directories in the file system. The directory names will be formed
+        in relation to the work_dir argument you have specified when creating
+        the Campaign object.
+        
 
         Returns
         -------
