@@ -34,13 +34,13 @@ class AggregateSamples(BaseCollationElement, collater_name="aggregate_samples"):
     Aggregate the results of all completed simulations described by the
     Campaign. Will simply concatenate all simulation data into one big
     DataFrame.
-    
+
     Parameters
     ----------
     average : bool
     Should the values read in be averaged (mean).
     """
-    
+
     def __init__(self, average=False):
         self.average = average
 
