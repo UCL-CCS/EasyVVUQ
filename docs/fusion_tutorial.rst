@@ -1,10 +1,10 @@
-.. _fusion:
+.. _fusion_tutorial:
 
 A Reduced Version of the Fusion Workflow using Polynomial Chaos Expansion
 =========================================================================
 
 Within VECMA the fusion contributors (from the Max Planck Institute of
-Plasma Physics) are building a multiscale workflow looking at coupling
+Plasma Physics) are building a multi-scale workflow looking at coupling
 small space scale and fast time scale turbulence models with a larger
 space and slower time scale transport model [REF].
 
@@ -12,7 +12,7 @@ The following tutorial is designed to provide a simplified version of
 the workflow that can show key aspects of the uncertainty
 quantification applied to the full fusion workflow.
 
-For the purposes of this torial, we introduce some simplifications
+For the purposes of this tutorial, we introduce some simplifications
 from the full fusion workflow:
 
 - We replace the turbulence code with a simple specification of the
@@ -43,7 +43,7 @@ specified thermal diffusivity and sources:
     (T(\rho,t))\right] + S(\rho, t)
 
 with a boundary condition given by :math:`Te_{bc}` and an initial
-uniform temperatore of 1000 eV; the quantities are
+uniform temperature of 1000 eV; the quantities are
 
 :math:`n(\rho,t)` characterizes the plasma density
 
@@ -51,7 +51,7 @@ uniform temperatore of 1000 eV; the quantities are
 
 :math:`S(\rho,t)` characterizes the source
 
-The geometry of the simulation is characterised by the minor radius
+The geometry of the simulation is characterized by the minor radius
 :math:`a_0`, major radius :math:`R_0` and elongation :math:`E_0`
 (while the geometry is solved in the cylindrical approximation, the
 actual radius used, :math:`a`, is adjusted on the basis of :math:`a_0`
@@ -89,7 +89,7 @@ where :math:`\alpha` is chosen so that :math:`\int\; S(\rho,t) dV =
 Qe_{tot}`, the total heating power.
 
 In this example we will analyze this model using the polynomial chaos
-expansion (PCE) UQ algorithm.  The paramaters that can be varied are:
+expansion (PCE) UQ algorithm.  The parameters that can be varied are:
 
 ==================    =======    =======   =========
     Quantity            Min        Max      Default
@@ -130,19 +130,30 @@ EasyVVUQ Script Overview
 ------------------------
 
 We illustrate the intended workflow using the following basic example
-script, a python implementation of the cooling coffee cup model used
-in the \textit{uncertainpy} documentation (code for which is in the
-tests/cooling/ subdirectory of the EasyVVUQ distribution
-directory). The code takes a small key/value pair input and outputs a
-comma separated value CSV) file.
+script, a python implementation of the reduced fusion workflow model. 
 
-The input files for this tutorial are the *fusion* application (:download:`jet_model.py <tutorial_files/jet_model.py>`),
-an input template (:download:`jet.template <tutorial_files/jet.template>`) and the EasyVVUQ workflow
-script (:download:`easyvvuq_jet_tutorial.py <tutorial_files/easyvvuq_jet_tutorial.py>`).
+The input files for this tutorial are
+
+- the *fusion* application
+  (:download:`fusion.py <tutorial_files/fusion.py>`),
+
+- the *fusion* application interface to uq
+  (:download:`fusion_model.py <tutorial_files/fusion_model.py>`),
+
+- an input template
+  (:download:`fusion.template <tutorial_files/fusion.template>`),
+
+- the EasyVVUQ workflow script
+  (:download:`easyvvuq_fusion_tutorial.py <tutorial_files/easyvvuq_fusion_tutorial.py>`)
+
+- the EasyVVUQ workflow script demonstrating the use of dask
+  (:download:`easyvvuq_fusion_dask_tutorial.py <tutorial_files/easyvvuq_fusion_dask_tutorial.py>`)
+
+Note: the fusion tutorial uses the FiPy python package.
 
 To run the script execute the following command
 
-``python3 easyvvuq_pce_tutorial.py``
+``python3 easyvvuq_fusion_tutorial.py``
 
 Import necessary libraries
 --------------------------
@@ -155,9 +166,9 @@ For this example we import both easyvvuq and chaospy (for the distributions). Ea
 Create a new Campaign
 ---------------------
 
-As in the :doc:`Basic Tutorial <basic\_tutorial>`, we start by creating an EasyVVUQ Campaign. Here we call it 'jet_pce.'. ::
+As in the :doc:`Basic Tutorial <basic\_tutorial>`, we start by creating an EasyVVUQ Campaign. Here we call it 'fusion_pce.'. ::
 
-    my_campaign = uq.Campaign(name='jet_pce.')
+    my_campaign = uq.Campaign(name='fusion_pce.')
 
 Parameter space definition
 --------------------------
@@ -182,7 +193,7 @@ With a defined type, minimum and maximum value and default. If the parameter is 
 	      "b_sol":    {"type": "float",   "min": 2e18,  "max": 3e19,   "default": 2e19}, 
 	      "b_width":  {"type": "float",   "min": 0.005, "max": 0.02,   "default": 0.01}, 
 	      "b_slope":  {"type": "float",   "min": 0.0,   "max": 0.05,   "default": 0.01}, 
-	      "nr":       {"type": "integer", "min": 10,    "max": 1000,   "default": 10}, 
+	      "nr":       {"type": "integer", "min": 10,    "max": 1000,   "default": 100}, 
 	      "dt":       {"type": "float",   "min": 1e-3,  "max": 1e3,    "default": 100},
 	      "out_file": {"type": "string",  "default": "output.csv"}
 	     }
@@ -195,16 +206,16 @@ core EasyVVUQ library, were used as the encoder/decoder pair for this
 application. ::
 
     encoder = uq.encoders.GenericEncoder(
-        template_fname='tutorial_files/jet.template',
+        template_fname='tutorial_files/fusion.template',
         delimiter='$',
-        target_filename='jet_in.json')
+        target_filename='fusion_in.json')
 
     decoder = uq.decoders.SimpleCSV(target_filename="output.csv",
                                 output_columns=["te", "ne", "rho", "rho_norm"],
                                 header=0)
 
 In this workflow all application runs will be analyzed as individual
-datapoints, so we set the collator to AggregateSamples without
+data-points, so we set the collator to AggregateSamples without
 averaging. This element simply extracts information using the assigned
 decoder and adds it to a summary dataframe. ::
 
@@ -245,7 +256,7 @@ created an encoder, decoder and parameter space definition for our
 `fusion` app, we can add it to our campaign. ::
 
     # Add the app (automatically set as current app)
-    my_campaign.add_app(name="jet",
+    my_campaign.add_app(name="fusion",
                         params=params,
                         encoder=encoder,
                         decoder=decoder,
@@ -294,7 +305,7 @@ pilot job manager. ::
 
     import os
     my_campaign.populate_runs_dir()
-    my_campaign.apply_for_each_run_dir(uq.actions.ExecuteLocal("{} jet_in.json".format(os.path.abspath('tutorial_files/jet_model.py')), interpret="python3"))
+    my_campaign.apply_for_each_run_dir(uq.actions.ExecuteLocal("{} fusion_in.json".format(os.path.abspath('tutorial_files/fusion_model.py')), interpret="python3"))
 
 Collation and analysis
 ----------------------
@@ -313,6 +324,39 @@ The output of this is dependent on the type of analysis element. ::
     stats = results['statistical_moments']['te']
     per = results['percentiles']['te']
     sobols = results['sobols_first']['te']
+
+Running with dask
+-----------------
+
+Only minor changes are necessary to run with dask.  These can be found
+in easyvvuq_fusion_dask_tutorial.py and are basically:
+
+- changes so that matplotlib is not activated with an interactive
+  front-end if the code is run without an attached display
+
+- allowing for an optional argument to specify whether to use dask
+  locally ("-l") or in batch (the default)
+
+- the importing of the appropriate dask components (we use SLURM for
+  the batch scheduler --- other options are available in dask)
+
+- a conditioning on " __name__ == '__main__'" to prevent recursive
+  invocations from within dask
+
+- invoking uq.CampaignDask() rather than uq.Campaign()
+
+- setting up the dask workers
+  - with a local option, 
+  - or using SLURM, here configured to use
+    - p.tok.openmp.2h QOS
+    - send a mail at completion of the SLURM job(s)
+    - use the p.tok.openmp partition ("queue")
+    - 8 cores per job
+    - 8 processes per job
+    - 8 GB per job
+    - 32 workers (i.e. 4 SLURM jobs)
+  - specify the client when requesting "apply_for_each_run_dir"
+  - shutting down the dask workers
 
 I don't want to use Polynomial Chaos
 ------------------------------------
