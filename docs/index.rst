@@ -3,8 +3,8 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-EasyVVUQ: Error bars for everyone!
-====================================
+EasyVVUQ: Uncertainty intervals for everyone!
+=============================================
 
 EasyVVUQ is a Python library designed to facilitate verification, validation 
 and uncertainty quantification (VVUQ) for a wide variety of simulations.
