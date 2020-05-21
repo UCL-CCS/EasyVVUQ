@@ -153,7 +153,7 @@ The input files for this tutorial are
 - the EasyVVUQ workflow script demonstrating the use of dask
   (:download:`easyvvuq_fusion_dask_tutorial.py <tutorial_files/easyvvuq_fusion_dask_tutorial.py>`)
 
-Note: the fusion tutorial uses the FiPy python package.
+Note: the fusion tutorial uses the FiPy [FiPy]_ python package.
 
 To run the script execute the following command
 
@@ -426,3 +426,8 @@ References
 	   Review of Scientific Instruments 87, 11E536 (2016); https://doi.org/10.1063/1.4961554.
 	   The article cites as the source of the function: R. J. Groebener and T. N. Carlstrom,
 	   Plasma Phys. Controlled Fusion 40, 673 (1998). https://doi.org/10.1088/0741-3335/40/5/021
+
+.. [FiPy] J. E. Guyer, D. Wheeler & J. A. Warren, "FiPy: Partial Differential Equations with Python,"
+	  Computing in Science & Engineering 11(3) pp. 6—15 (2009),
+	  doi:10.1109/MCSE.2009.52, http://www.ctcms.nist.gov/fipy .
+	     
