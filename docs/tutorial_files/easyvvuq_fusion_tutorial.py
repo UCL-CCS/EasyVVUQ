@@ -69,7 +69,7 @@ my_campaign.add_app(name="fusion",
                     collater=collater)
 
 time_end = time.time()
-print('Time for phase 1', time_end-time_start)
+print('Time for phase 1 = %.3f' % (time_end-time_start))
 time_start = time.time()
 
 # Create the sampler
@@ -99,13 +99,13 @@ my_campaign.draw_samples()
 print('Number of samples = %s' % my_campaign.get_active_sampler().count)
 
 time_end = time.time()
-print('Time for phase 2', time_end-time_start)
+print('Time for phase 2 = %.3f' % (time_end-time_start))
 time_start = time.time()
 
 my_campaign.populate_runs_dir()
 
 time_end = time.time()
-print('Time for phase 3', time_end-time_start)
+print('Time for phase 3 = %.3f' % (time_end-time_start))
 time_start = time.time()
 
 cwd = os.getcwd().replace(' ', '\ ')      # deal with ' ' in the path
@@ -113,20 +113,20 @@ cmd = f"{cwd}/fusion_model.py fusion_in.json"
 my_campaign.apply_for_each_run_dir(uq.actions.ExecuteLocal(cmd, interpret='python3'))
 
 time_end = time.time()
-print('Time for phase 4', time_end-time_start)
+print('Time for phase 4 = %.3f' % (time_end-time_start))
 time_start = time.time()
 
 my_campaign.collate()
 
 time_end = time.time()
-print('Time for phase 5', time_end-time_start)
+print('Time for phase 5 = %.3f' % (time_end-time_start))
 time_start = time.time()
 
 # Post-processing analysis
 my_campaign.apply_analysis(uq.analysis.PCEAnalysis(sampler=my_campaign.get_active_sampler(), qoi_cols=["te", "ne", "rho", "rho_norm"]))
 
 time_end = time.time()
-print('Time for phase 6', time_end-time_start)
+print('Time for phase 6 = %.3f' % (time_end-time_start))
 time_start = time.time()
 
 # Get Descriptive Statistics
@@ -138,7 +138,7 @@ rho = results['statistical_moments']['rho']['mean']
 rho_norm = results['statistical_moments']['rho_norm']['mean']
 
 time_end = time.time()
-print('Time for phase 7', time_end-time_start)
+print('Time for phase 7 = %.3f' % (time_end-time_start))
 time_start = time.time()
 
 my_campaign.save_state("campaign_state.json")
@@ -149,7 +149,7 @@ pickle.dump(results, open('fusion_results.pickle','bw'))
 ###saved_results = pickle.load(open('fusion_results.pickle','br'))
 
 time_end = time.time()
-print('Time for phase 8', time_end-time_start)
+print('Time for phase 8 = %.3f' % (time_end-time_start))
 
 plt.ion()
 

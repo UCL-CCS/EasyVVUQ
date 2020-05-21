@@ -87,7 +87,7 @@ if __name__ == '__main__':      ### This is needed if you are using a local clus
                         collater=collater)
 
     time_end = time.time()
-    print('Time for phase 1', time_end-time_start)
+    print('Time for phase 1 = %.3f' % (time_end-time_start))
     time_start = time.time()
 
     # Create the sampler
@@ -117,13 +117,13 @@ if __name__ == '__main__':      ### This is needed if you are using a local clus
     print('Number of samples = %s' % my_campaign.get_active_sampler().count)
 
     time_end = time.time()
-    print('Time for phase 2', time_end-time_start)
+    print('Time for phase 2 = %.3f' % (time_end-time_start))
     time_start = time.time()
 
     my_campaign.populate_runs_dir()
 
     time_end = time.time()
-    print('Time for phase 3', time_end-time_start)
+    print('Time for phase 3 = %.3f' % (time_end-time_start))
     time_start = time.time()
 
     if args.local:
@@ -145,20 +145,20 @@ if __name__ == '__main__':      ### This is needed if you are using a local clus
     client.shutdown()
     
     time_end = time.time()
-    print('Time for phase 4', time_end-time_start)
+    print('Time for phase 4 = %.3f' % (time_end-time_start))
     time_start = time.time()
 
     my_campaign.collate()
 
     time_end = time.time()
-    print('Time for phase 5', time_end-time_start)
+    print('Time for phase 5 = %.3f' % (time_end-time_start))
     time_start = time.time()
 
     # Post-processing analysis
     my_campaign.apply_analysis(uq.analysis.PCEAnalysis(sampler=my_campaign.get_active_sampler(), qoi_cols=["te", "ne", "rho", "rho_norm"]))
 
     time_end = time.time()
-    print('Time for phase 6', time_end-time_start)
+    print('Time for phase 6 = %.3f' % (time_end-time_start))
     time_start = time.time()
 
     # Get Descriptive Statistics
@@ -170,7 +170,7 @@ if __name__ == '__main__':      ### This is needed if you are using a local clus
     rho_norm = results['statistical_moments']['rho_norm']['mean']
 
     time_end = time.time()
-    print('Time for phase 7', time_end-time_start)
+    print('Time for phase 7 = %.3f' % (time_end-time_start))
     time_start = time.time()
 
     my_campaign.save_state("campaign_state.json")
@@ -181,7 +181,7 @@ if __name__ == '__main__':      ### This is needed if you are using a local clus
     ###saved_results = pickle.load(open('fusion_results.pickle','br'))
 
     time_end = time.time()
-    print('Time for phase 8', time_end-time_start)
+    print('Time for phase 8 = %.3f' % (time_end-time_start))
 
     plt.ion()
 
