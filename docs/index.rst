@@ -39,6 +39,7 @@ Table of contents
    concepts
    basic_tutorial
    cooling_coffee_cup
+   fusion
    dask_tutorial
    multisampler_tutorial
    restartable_campaign_tutorial
