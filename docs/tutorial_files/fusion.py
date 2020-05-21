@@ -37,7 +37,7 @@ def mtanh(x, b_slope):
     :rtype: numpy float scalar or array (sime dimensions as x)
 
     See https://pdfs.semanticscholar.org/5dc9/029eb9614a0128ae7c3f16ae6c4e54be4ac5.pdf
-    for the mtanh definistion
+    for the mtanh definition
     """
     return ((1 + b_slope * x)*np.exp(x)-np.exp(-x))/(np.exp(x)+np.exp(-x))
 
