@@ -80,6 +80,10 @@ and
 .. math::
    mtanh(x, b_{slope}) = \frac{(1 + x \cdot b_{slope}) exp(x) - exp(-x)}{exp(x) + exp(-x)}
 
+A typical density profile used in these simulation is shown below:
+
+.. figure:: images/ne.svg
+
 The source is given by
 
 .. math::
@@ -324,6 +328,32 @@ The output of this is dependent on the type of analysis element. ::
     stats = results['statistical_moments']['te']
     per = results['percentiles']['te']
     sobols = results['sobols_first']['te']
+
+Typical results
+---------------
+
+The above workflow calculates the distribution of temeperatures as the
+uncertain parameters are varied.  A typical results is shown below.
+
+.. figure:: images/Te.svg
+
+Here the mean temperature, the mean plus and minus one sigma, the 10
+and 90 percentiles as well as the complete range are shown as a
+function of :math:`\rho`.
+
+The sensitivity of the results to the varying paramaters can be found
+from the Sobol first
+
+.. figure:: images/sobols_first.svg
+
+and total coefficients
+
+.. figure:: images/sobols_total.svg
+
+Here it can be seen that the width of the heating source ("Hw") is the
+most important determiner of the central temperature, the heat
+diffusivity ("chi") at mid-radius and the boundary condition ("Te_bc")
+at the edge.
 
 Running with dask
 -----------------
