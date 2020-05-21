@@ -6,7 +6,7 @@ A Reduced Version of the Fusion Workflow using Polynomial Chaos Expansion
 Within VECMA the fusion contributors (from the Max Planck Institute of
 Plasma Physics) are building a multi-scale workflow looking at coupling
 small space scale and fast time scale turbulence models with a larger
-space and slower time scale transport model [REF].
+space and slower time scale transport model [FUSION-WF]_.
 
 The following tutorial is designed to provide a simplified version of
 the workflow that can show key aspects of the uncertainty
@@ -57,7 +57,7 @@ The geometry of the simulation is characterized by the minor radius
 actual radius used, :math:`a`, is adjusted on the basis of :math:`a_0`
 and :math:`E_0`).
 
-The density is specified by a modified tanh function (:math:`mtanh`) [ref] given by
+The density is specified by a modified tanh function (:math:`mtanh`) [MTANH]_ given by
 
 .. math::
    n(\rho_{norm},t) = \frac{b_{height} - b_{sol}}{2} \; mtanh\left(\frac{b_{pos} - \rho_{norm}}{2 b_{width}}, b_{slope}\right)+1)+b_{sol}
@@ -162,7 +162,8 @@ To run the script execute the following command
 Import necessary libraries
 --------------------------
 
-For this example we import both easyvvuq and chaospy (for the distributions). EasyVVUQ will be referred to as 'uq' in the code. ::
+For this example we import both easyvvuq and chaospy (for the
+distributions). EasyVVUQ will be referred to as 'uq' in the code. ::
 
     import easyvvuq as uq
     import chaospy as cp
@@ -170,18 +171,23 @@ For this example we import both easyvvuq and chaospy (for the distributions). Ea
 Create a new Campaign
 ---------------------
 
-As in the :doc:`Basic Tutorial <basic\_tutorial>`, we start by creating an EasyVVUQ Campaign. Here we call it 'fusion_pce.'. ::
+As in the :doc:`Basic Tutorial <basic\_tutorial>`, we start by
+creating an EasyVVUQ Campaign. Here we call it 'fusion_pce.'. ::
 
     my_campaign = uq.Campaign(name='fusion_pce.')
 
 Parameter space definition
 --------------------------
 
-The parameter space is defined using a dictionary. Each entry in the dictionary follows the format:
+The parameter space is defined using a dictionary. Each entry in the
+dictionary follows the format:
 
 ``"parameter_name": {"type" : "<value>", "min": <value>, "max": <value>, "default": <value>}``
 
-With a defined type, minimum and maximum value and default. If the parameter is not selected to vary in the Sampler (see below) then the default value is used for every run. In this example, our full parameter space looks like the following: ::
+With a defined type, minimum and maximum value and default. If the
+parameter is not selected to vary in the Sampler (see below) then the
+default value is used for every run. In this example, our full
+parameter space looks like the following: ::
 
     params = {
               "Qe_tot":   {"type": "float",   "min": 1.0e6, "max": 50.0e6, "default": 2e6}, 
@@ -313,11 +319,16 @@ pilot job manager. ::
 
 Collation and analysis
 ----------------------
-Calling my\_campaign.collate() at any stage causes the campaign to aggregate decoded simulation output for all runs which have not yet been collated. ::
+
+Calling my\_campaign.collate() at any stage causes the campaign to
+aggregate decoded simulation output for all runs which have not yet
+been collated. ::
 
     my_campaign.collate()
 
-This collated data is stored in the campaign database. An analysis element, here PCEAnalysis, can then be applied to the campaign's collation result. ::
+This collated data is stored in the campaign database. An analysis
+element, here PCEAnalysis, can then be applied to the campaign's
+collation result. ::
 
     my_campaign.apply_analysis(uq.analysis.PCEAnalysis(sampler=my_sampler, qoi_cols=["te", "ne", "rho", "rho_norm"]))
 
@@ -400,3 +411,18 @@ Stochastic Collocation approach, replace the sampler line with: ::
 And the analysis can be done with: ::
 
     my_campaign.apply_analysis(uq.analysis.SCAnalysis(sampler=my_campaign.get_active_sampler(), qoi_cols=["te", "ne", "rho", "rho_norm"]))
+
+References
+----------
+
+.. [FUSION-WF] See ... , ... , ...
+
+.. [MTANH] See
+           https://pdfs.semanticscholar.org/5dc9/029eb9614a0128ae7c3f16ae6c4e54be4ac5.pdf
+           ("Fitting of the Thomson scatteringdensity and temperature profiles on the COMPASS tokamak",
+	   E. Stefanikova, M. Peterka, P. Bohm, P. Bilkova, M. Aftanas, M. Sos, J. Urban, M. Hron and R. Panek,
+	   presented at 21st Topical Conference on High-Temperature Plasma Diagnostics
+	   (HTPD 2016) in Madison, Wisconsin, USA and published in
+	   Review of Scientific Instruments 87, 11E536 (2016); https://doi.org/10.1063/1.4961554.
+	   The article cites as the source of the function: R. J. Groebener and T. N. Carlstrom,
+	   Plasma Phys. Controlled Fusion 40, 673 (1998). https://doi.org/10.1088/0741-3335/40/5/021
