@@ -66,3 +66,13 @@ def test_ensemble_bootstrap():
         ensemble_bootstrap(df, groupby=['b'], qoi_cols=['c'])
     results = ensemble_bootstrap(df, qoi_cols=['a'])
     assert(results.values.shape == (1, 3))
+
+
+def test_ensemble_boot():
+    analysis = EnsembleBoot()
+    assert(analysis.element_name() == 'ensemble_boot')
+    assert(analysis.element_version() == '0.1')
+    with pytest.raises(RuntimeError):
+        analysis.analyse()
+    with pytest.raises(RuntimeError):
+        analysis.analyse(pd.DataFrame({}))
