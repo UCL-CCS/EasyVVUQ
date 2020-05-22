@@ -170,7 +170,7 @@ class SCAnalysis(BaseAnalysisElement):
             results = {'statistical_moments': {},
                        'sobols_first': {k: {} for k in self.qoi_cols},
                        'sobols': {k: {} for k in self.qoi_cols}}
-    
+
             # Compute descriptive statistics for each quantity of interest
             for qoi_k in qoi_cols:
                 mean_k, var_k = self.get_moments(qoi_k)
@@ -179,12 +179,12 @@ class SCAnalysis(BaseAnalysisElement):
                 results['statistical_moments'][qoi_k] = {'mean': mean_k,
                                                          'var': var_k,
                                                          'std': std_k}
-                # # compute all Sobol indices
-                # results['sobols'][qoi_k] = self.get_sobol_indices(qoi_k, 'first_order')
-                # for idx, param_name in enumerate(self.sampler.vary.get_keys()):
-                #     results['sobols_first'][qoi_k][param_name] = \
-                #         results['sobols'][qoi_k][(idx,)]
-    
+                # compute all Sobol indices
+                results['sobols'][qoi_k] = self.get_sobol_indices(qoi_k, 'first_order')
+                for idx, param_name in enumerate(self.sampler.vary.get_keys()):
+                    results['sobols_first'][qoi_k][param_name] = \
+                        results['sobols'][qoi_k][(idx,)]
+
             return results
 
     def create_map(self, L):
@@ -407,9 +407,11 @@ class SCAnalysis(BaseAnalysisElement):
 
     def compute_Q_diff(self, l, samples):
         """
-        Brute force computation of difference operators \Delta_l
+        Brute force computation of quadrature difference operators \Delta_l
         Note: superseded by combination_technique for sparse grids, but might
-        still be useful for anisotropic sparse grids.
+        still be useful for anisotropic sparse grids. Becomes very slow though
+        for a large number of parameters, and is therefore in need of
+        replacement.
         =======================================================================
         For every multi index l = (l1, l2, ..., ld), Smolyak sums over
         tensor products difference quadrature rules:
@@ -418,6 +420,11 @@ class SCAnalysis(BaseAnalysisElement):
         of which is then computed as:
         Q^1_{k1} X ... X Q^1_{kN} = sum...sum w_{k1}*...*w_{kN}*f(x_{k1},...,x_{kN})
         =======================================================================
+        Parameters
+        - l : multi index of quadrature orders
+        - samples: array of samples to use in the quadrature
+
+        Returns: value of the difference operator
         """
 
         # expand the multi-index indices of the tensor product
@@ -648,9 +655,39 @@ class SCAnalysis(BaseAnalysisElement):
         """
         return np.array([self.samples[qoi][k] for k in range(self._number_of_samples)])
 
+    def adaptation_histogram(self):
+        """
+        Parameters
+        ----------
+        None
+
+        Returns
+        -------
+        Plots a bar chart of the maximum order of the quadrature rule
+        that is used in each dimension. Use in case of the dimension adaptive
+        sampler to get an idea of which parameters were more refined than others.
+        This gives only a first-order idea, as it only plots the max quad
+        order independently per input parameter, so higher-order refinements
+        that were made do not show up in the bar chart.
+        """
+        import matplotlib.pyplot as plt
+
+        fig = plt.figure(figsize=[4, 8])
+        ax = fig.add_subplot(111, ylabel='quadrature order',
+                             title='first-order adaptation measure')
+        #find max quad order for every parameter
+        adapt_measure = np.max(self.l_norm, axis=0)
+        ax.bar(range(adapt_measure.size), height=adapt_measure)
+        params = list(self.sampler.vary.get_keys())
+        ax.set_xticks(range(adapt_measure.size))
+        ax.set_xticklabels(params)
+        plt.xticks(rotation=90)
+        plt.tight_layout()
+        plt.show()
+
     def plot_grid(self):
         """
-        If N = 2 or N = 3 plot the (sparse) grid
+        Plots the collocation points for 2 and 3 dimensional problems
         """
         import matplotlib.pyplot as plt
 
