@@ -76,7 +76,7 @@ def test_ensemble_boot():
         analysis.analyse()
     with pytest.raises(RuntimeError):
         analysis.analyse(pd.DataFrame({}))
-    analysis = EnsembleBoot(groupby=['b'], qoi_cols=['a'])
+    analysis = EnsembleBoot(groupby=['b'], qoi_cols=['a'], stat_func=np.mean)
     df = pd.DataFrame({
         'a': np.concatenate((VALUES, VALUES)),
         'b': ['group1'] * VALUES.shape[0] + ['group2'] * VALUES.shape[0]})
