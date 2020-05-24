@@ -39,7 +39,7 @@ class SCAnalysis(BaseAnalysisElement):
         Parameters
         ----------
         sampler : :obj:`easyvvuq.sampling.stochastic_collocation.SCSampler`
-            Sampler used to initiate the PCE analysis
+            Sampler used to initiate the SC analysis
         qoi_cols : list or None
             Column names for quantities of interest (for which analysis is
             performed).
@@ -56,7 +56,6 @@ class SCAnalysis(BaseAnalysisElement):
         self.qoi_cols = qoi_cols
         self.output_type = OutputType.SUMMARY
         self.sampler = sampler
-        self._number_of_samples = sampler._number_of_samples
         self.dimension_adaptive = sampler.dimension_adaptive
         if self.dimension_adaptive:
             self.adaptation_errors = []
@@ -71,6 +70,19 @@ class SCAnalysis(BaseAnalysisElement):
         return "0.5"
 
     def save_state(self, filename):
+        """
+        Saves the complete state of the analysis object to a pickle file,
+        except the sampler object (self.samples).
+
+        Parameters
+        ----------
+        filename : (string) name to the file to write the state to
+
+        Returns
+        -------
+        None.
+
+        """
         print("Saving analysis state to %s" % filename)
         #make a copy of the state, and do not store the sampler as well
         state = copy.copy(self.__dict__)
@@ -80,6 +92,19 @@ class SCAnalysis(BaseAnalysisElement):
         file.close()
 
     def load_state(self, filename):
+        """
+        Loads the complete state of the analysis object from a 
+        pickle file, stored using save_state.
+
+        Parameters
+        ----------
+        filename : (string) name of the file to load
+
+        Returns
+        -------
+        None.
+
+        """
         print("Loading analysis state from %s" % filename)
         file = open(filename, 'rb')
         state = pickle.load(file)
@@ -261,6 +286,9 @@ class SCAnalysis(BaseAnalysisElement):
             values = data_frame.loc[data_frame['run_id'] == run_id][qoi].values
             samples.append(values)
 
+        #the currently accepted grid points
+        xi_d_accepted = self.sampler.generate_grid(self.l_norm)
+
         #compute the hierarchical surplus based error for every admissible l
         error = {}
         for l in self.sampler.admissible_idx:
@@ -268,14 +296,15 @@ class SCAnalysis(BaseAnalysisElement):
             # collocation points of current level index l
             X_l = [self.sampler.xi_1d[n][l[n]] for n in range(self.N)]
             X_l = np.array(list(product(*X_l)))
+            #only consider new points, subtract the accepted points
+            X_l = setdiff2d(X_l, xi_d_accepted)
             for xi in X_l:
                 #find the location of the current xi in the global grid
                 idx = np.where((xi == self.sampler.xi_d).all(axis=1))[0][0]
-                #only compute error for new collocation points
-                #(_number_of_samples is still set to the old value)
-                if idx >= self._number_of_samples:
-                    hier_surplus = samples[idx] - self.surrogate(qoi, xi)
-                    error[tuple(l)].append(np.linalg.norm(hier_surplus))
+                #hierarchical surplus error at xi
+                hier_surplus = samples[idx] - self.surrogate(qoi, xi)
+                error[tuple(l)].append(np.linalg.norm(hier_surplus))
+            #compute mean error over all points in X_l
             error[tuple(l)] = np.mean(error[tuple(l)])
         for key in error.keys():
             print("Surplus error when l =", key, "=", error[key])
@@ -310,6 +339,9 @@ class SCAnalysis(BaseAnalysisElement):
         #         self.run_id.append(run_id)
 
     def get_adaptation_errors(self):
+        """
+        Returns self.adaptation_errors
+        """
         return self.adaptation_errors
 
     def surrogate(self, qoi, x, L=None):
@@ -653,7 +685,7 @@ class SCAnalysis(BaseAnalysisElement):
         -------
          - array of all samples of qoi
         """
-        return np.array([self.samples[qoi][k] for k in range(self._number_of_samples)])
+        return np.array([self.samples[qoi][k] for k in range(len(self.samples[qoi]))])
 
     def adaptation_histogram(self):
         """
@@ -673,8 +705,8 @@ class SCAnalysis(BaseAnalysisElement):
         import matplotlib.pyplot as plt
 
         fig = plt.figure(figsize=[4, 8])
-        ax = fig.add_subplot(111, ylabel='quadrature order',
-                             title='first-order adaptation measure')
+        ax = fig.add_subplot(111, ylabel='max quadrature order',
+                             title='Number of refinements = %d' % self.sampler.number_of_adaptations)
         #find max quad order for every parameter
         adapt_measure = np.max(self.l_norm, axis=0)
         ax.bar(range(adapt_measure.size), height=adapt_measure)
@@ -901,3 +933,21 @@ def lagrange_poly(x, x_i, j):
     """
     x_i_ = np.delete(x_i, j)
     return np.prod((x - x_i_) / (x_i[j] - x_i_))
+
+
+def setdiff2d(X, Y):
+    """
+    Computes the difference of two 2D arrays X \ Y
+
+    Parameters
+    ----------
+    X : 2D numpy array
+    Y : 2D numpy array
+
+    Returns
+    -------
+    The difference X \ Y as a 2D array
+
+    """
+    diff = set(map(tuple, X)) - set(map(tuple, Y))
+    return np.array(list(diff))
