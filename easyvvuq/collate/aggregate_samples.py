@@ -75,6 +75,7 @@ class AggregateSamples(BaseCollationElement, collater_name="aggregate_samples"):
 
             # Use decoder to check if run has completed (in general application-specific)
             if decoder.sim_complete(run_info=run_info):
+
                 run_data = decoder.parse_sim_output(run_info=run_info)
 
                 if self.average:

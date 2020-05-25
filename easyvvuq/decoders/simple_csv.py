@@ -32,7 +32,8 @@ logger = logging.Logger(__name__)
 
 class SimpleCSV(BaseDecoder, decoder_name="csv"):
 
-    def __init__(self, target_filename=None, output_columns=None, header=0):
+    def __init__(self, target_filename=None, output_columns=None, header=0,
+                 delimiter=","):
 
         if target_filename is None:
             msg = (
@@ -59,6 +60,7 @@ class SimpleCSV(BaseDecoder, decoder_name="csv"):
         self.target_filename = target_filename
         self.output_columns = output_columns
         self.header = header
+        self.delimiter = delimiter
 
         self.output_type = OutputType('sample')
 
@@ -88,6 +90,7 @@ class SimpleCSV(BaseDecoder, decoder_name="csv"):
         data = pd.read_csv(
             out_path,
             usecols=self.output_columns,
+            sep=self.delimiter,
             header=self.header)
 
         return data
@@ -95,7 +98,8 @@ class SimpleCSV(BaseDecoder, decoder_name="csv"):
     def get_restart_dict(self):
         return {"target_filename": self.target_filename,
                 "output_columns": self.output_columns,
-                "header": self.header}
+                "header": self.header,
+                "delimiter": self.delimiter}
 
     def element_version(self):
         return "0.1"

@@ -1,14 +1,12 @@
-"""Analysis element for Stochastic Collocation (SC).
-
-Method: 'Global Sensitivity Analysis for Stochastic Collocation'
-        G. Tang and G. Iaccarino, AIAA 2922, 2010
-"""
 import numpy as np
 import chaospy as cp
 from itertools import product, chain, combinations
+import pickle
+import copy
 from easyvvuq import OutputType
 from .base import BaseAnalysisElement
 import logging
+from scipy.special import comb
 
 __author__ = "Wouter Edeling"
 __copyright__ = """
@@ -37,15 +35,11 @@ __license__ = "LGPL"
 class SCAnalysis(BaseAnalysisElement):
 
     def __init__(self, sampler=None, qoi_cols=None):
-        """Analysis element for Stochastic Collocation (SC).
-
-        Method: 'Global Sensitivity Analysis for Stocastic Collocation'
-                G. Tang and G. Iaccarino, AIAA 2922, 2010
-
+        """
         Parameters
         ----------
         sampler : :obj:`easyvvuq.sampling.stochastic_collocation.SCSampler`
-            Sampler used to initiate the PCE analysis
+            Sampler used to initiate the SC analysis
         qoi_cols : list or None
             Column names for quantities of interest (for which analysis is
             performed).
@@ -62,7 +56,9 @@ class SCAnalysis(BaseAnalysisElement):
         self.qoi_cols = qoi_cols
         self.output_type = OutputType.SUMMARY
         self.sampler = sampler
-        self._number_of_samples = sampler._number_of_samples
+        self.dimension_adaptive = sampler.dimension_adaptive
+        if self.dimension_adaptive:
+            self.adaptation_errors = []
         self.sparse = sampler.sparse
 
     def element_name(self):
@@ -71,10 +67,53 @@ class SCAnalysis(BaseAnalysisElement):
 
     def element_version(self):
         """Version of this element for logging purposes"""
-        return "0.3"
+        return "0.5"
 
-    def analyse(self, data_frame=None):
-        """Perform PCE analysis on input `data_frame`.
+    def save_state(self, filename):
+        """
+        Saves the complete state of the analysis object to a pickle file,
+        except the sampler object (self.samples).
+
+        Parameters
+        ----------
+        filename : (string) name to the file to write the state to
+
+        Returns
+        -------
+        None.
+
+        """
+        print("Saving analysis state to %s" % filename)
+        #make a copy of the state, and do not store the sampler as well
+        state = copy.copy(self.__dict__)
+        del state['sampler']
+        file = open(filename, 'wb')
+        pickle.dump(state, file)
+        file.close()
+
+    def load_state(self, filename):
+        """
+        Loads the complete state of the analysis object from a
+        pickle file, stored using save_state.
+
+        Parameters
+        ----------
+        filename : (string) name of the file to load
+
+        Returns
+        -------
+        None.
+
+        """
+        print("Loading analysis state from %s" % filename)
+        file = open(filename, 'rb')
+        state = pickle.load(file)
+        for key in state.keys():
+            self.__dict__[key] = state[key]
+        file.close()
+
+    def analyse(self, data_frame=None, compute_results=True):
+        """Perform SC analysis on input `data_frame`.
 
         Parameters
         ----------
@@ -96,11 +135,12 @@ class SCAnalysis(BaseAnalysisElement):
             raise RuntimeError(
                 "No data in data frame passed to analyse element")
 
-        # the maximum level (quad order) of the (sparse) grid
-        self.L = self.sampler.L
-
         # the number of uncertain parameters
         self.N = self.sampler.N
+        #tensor grid
+        self.xi_d = self.sampler.xi_d
+        # the maximum level (quad order) of the (sparse) grid
+        self.L = self.sampler.L
 
         # if L < L_min: quadratures and interpolations are zero
         # For full tensor grid: there is only one level: L_min = L
@@ -108,14 +148,18 @@ class SCAnalysis(BaseAnalysisElement):
             self.L_min = self.L
             self.l_norm = np.array([self.sampler.polynomial_order])
             self.l_norm_min = self.l_norm
-        # For sparse grid: multiple levels, L >= N must hold
+        # For sparse grid: one or more levels
         else:
             self.L_min = 1
-            self.l_norm = self.sampler.compute_sparse_multi_idx(self.L, self.N)
-            self.l_norm_min = np.ones(self.N, dtype=int)
+            #multi indices (stored in l_norm) for isotropic sparse grid or
+            #dimension-adaptive grid before the 1st refinement.
+            #If dimension_adaptive and number_of_adaptations > 0: l_norm
+            #is computed in self.adaptation_metric
+            if not self.dimension_adaptive or self.sampler.number_of_adaptations == 0:
+                # the maximum level (quad order) of the (sparse) grid
+                self.l_norm = self.sampler.compute_sparse_multi_idx(self.L, self.N)
 
-        # full tensor grid
-        self.xi_d = self.sampler.xi_d
+            self.l_norm_min = np.ones(self.N, dtype=int)
 
         # 1d weights and points per level
         self.xi_1d = self.sampler.xi_1d
@@ -127,14 +171,14 @@ class SCAnalysis(BaseAnalysisElement):
         self.Map = {}
         self.surr_lm1 = {}
 
-        self.foo = []
-
+        print('Computing collocation points and level indices...')
         for level in range(self.L_min, self.L + 1):
-            self.Map[level] = self.create_map(self.N, level)
-
+            self.Map[level] = self.create_map(level)
+        print('done.')
         self.clear_surr_lm1()
 
         # Extract output values for each quantity of interest from Dataframe
+        print('Loading samples...')
         qoi_cols = self.qoi_cols
         samples = {k: [] for k in qoi_cols}
         for run_id in data_frame.run_id.unique():
@@ -142,31 +186,33 @@ class SCAnalysis(BaseAnalysisElement):
                 values = data_frame.loc[data_frame['run_id'] == run_id][k].values
                 samples[k].append(values)
         self.samples = samples
+        print('done')
 
         # size of one code sample
         self.N_qoi = self.samples[qoi_cols[0]][0].size
 
-        results = {'statistical_moments': {},
-                   'sobols_first': {k: {} for k in self.qoi_cols},
-                   'sobols': {k: {} for k in self.qoi_cols}}
+        if compute_results:
+            results = {'statistical_moments': {},
+                       'sobols_first': {k: {} for k in self.qoi_cols},
+                       'sobols': {k: {} for k in self.qoi_cols}}
 
-        # Compute descriptive statistics for each quantity of interest
-        for qoi_k in qoi_cols:
-            mean_k, var_k = self.get_moments(qoi_k)
-            std_k = np.sqrt(var_k)
-            # compute statistical moments
-            results['statistical_moments'][qoi_k] = {'mean': mean_k,
-                                                     'var': var_k,
-                                                     'std': std_k}
-            # compute all Sobol indices
-            results['sobols'][qoi_k] = self.get_sobol_indices(qoi_k, 'all')
-            for idx, param_name in enumerate(self.sampler.vary.get_keys()):
-                results['sobols_first'][qoi_k][param_name] = \
-                    results['sobols'][qoi_k][(idx,)]
+            # Compute descriptive statistics for each quantity of interest
+            for qoi_k in qoi_cols:
+                mean_k, var_k = self.get_moments(qoi_k)
+                std_k = np.sqrt(var_k)
+                # compute statistical moments
+                results['statistical_moments'][qoi_k] = {'mean': mean_k,
+                                                         'var': var_k,
+                                                         'std': std_k}
+                # compute all Sobol indices
+                results['sobols'][qoi_k] = self.get_sobol_indices(qoi_k, 'first_order')
+                for idx, param_name in enumerate(self.sampler.vary.get_keys()):
+                    results['sobols_first'][qoi_k][param_name] = \
+                        results['sobols'][qoi_k][(idx,)]
 
-        return results
+            return results
 
-    def create_map(self, N, L):
+    def create_map(self, L):
         """
         Create a map from a unique integer k to each
         (level multi index l, collocation point X) combination. Also
@@ -182,7 +228,7 @@ class SCAnalysis(BaseAnalysisElement):
         - Map: a dict for level L containing k, l, X, and f
         """
         # unique index
-        logging.debug('Creating multi-index map for level %d ...', L)
+        logging.debug('Creating multi-index map for level %d', L)
         # full tensor product
         if not self.sparse:
             # l = (np.ones(N) * L).astype('int')
@@ -195,14 +241,16 @@ class SCAnalysis(BaseAnalysisElement):
                 k += 1
         # sparse grid
         else:
-            # all sparse grid multi indices l with |l| <= L
-            l_norm_le_L = self.sampler.compute_sparse_multi_idx(L, N)
+            # all sparse grid multi indices l
+            # l_norm_le_L = self.sampler.compute_sparse_multi_idx(L, N)
+            idx_le_L = np.where(np.sum(self.l_norm, axis=1) - self.N + 1 <= L)
+            l_norm_le_L = self.l_norm[idx_le_L]
             k = 0
             map_ = {}
             # loop over all multi indices
             for l in l_norm_le_L:
                 # colloc point of current level index l
-                X_l = [self.xi_1d[n][l[n]] for n in range(N)]
+                X_l = [self.xi_1d[n][l[n]] for n in range(self.N)]
                 X_l = np.array(list(product(*X_l)))
                 for x in X_l:
                     j = np.where((x == self.xi_d).all(axis=1))[0][0]
@@ -210,6 +258,91 @@ class SCAnalysis(BaseAnalysisElement):
                     k += 1
         logging.debug('done.')
         return map_
+
+    def adapt_dimension(self, qoi, data_frame):
+        """
+        Compute the adaptation metric and decide which of the admissible
+        level indices to include in next iteration of the sparse grid. The
+        adaptation metric is based on the hierarchical surplus, defined as the
+        difference between the new code values of the admissible level indices,
+        and the SC surrogate of the previous iteration. Important: this
+        subroutine must therefore be called AFTER the code is evaluated at
+        the new points, but BEFORE the analysis is performed.
+
+        Parameters
+        ----------
+        qoi : (string) the name of the quantity of interest which is used
+                       to base the adaptation metric on.
+        data_frame : the data frame from the EasyVVUQ Campaign
+
+        Returns
+        -------
+        None.
+
+        """
+        #load the code samples
+        samples = []
+        for run_id in data_frame.run_id.unique():
+            values = data_frame.loc[data_frame['run_id'] == run_id][qoi].values
+            samples.append(values)
+
+        #the currently accepted grid points
+        xi_d_accepted = self.sampler.generate_grid(self.l_norm)
+
+        #compute the hierarchical surplus based error for every admissible l
+        error = {}
+        for l in self.sampler.admissible_idx:
+            error[tuple(l)] = []
+            # collocation points of current level index l
+            X_l = [self.sampler.xi_1d[n][l[n]] for n in range(self.N)]
+            X_l = np.array(list(product(*X_l)))
+            #only consider new points, subtract the accepted points
+            X_l = setdiff2d(X_l, xi_d_accepted)
+            for xi in X_l:
+                #find the location of the current xi in the global grid
+                idx = np.where((xi == self.sampler.xi_d).all(axis=1))[0][0]
+                #hierarchical surplus error at xi
+                hier_surplus = samples[idx] - self.surrogate(qoi, xi)
+                error[tuple(l)].append(np.linalg.norm(hier_surplus))
+            #compute mean error over all points in X_l
+            error[tuple(l)] = np.mean(error[tuple(l)])
+        for key in error.keys():
+            print("Surplus error when l =", key, "=", error[key])
+        #find the admissble index with the largest error
+        l_star = np.array(max(error, key=error.get)).reshape([1, self.N])
+        print('Selecting', l_star, 'for refinement.')
+        #add max error to list
+        self.adaptation_errors.append(max(error.values()))
+
+        #add l_star to the current accepted level indices
+        self.l_norm = np.concatenate((self.l_norm, l_star))
+        #if someone executes this function twice for some reason,
+        #remove the duplicate l_star entry
+        self.l_norm = np.unique(self.l_norm, axis=0)
+
+        self.analyse(data_frame, compute_results=False)
+
+        # self.L = np.max(np.sum(self.l_norm, axis = 1) - self.N + 1)
+        # self.xi_d = self.sampler.generate_grid(self.l_norm)
+        # self.run_id = []
+
+        # #names of the uncertain variables
+        # uncertain_vars = list(self.sampler.vary.get_keys())
+        # #loop over all samples in the data frame
+        # for run_id in data_frame["run_id"].unique():
+        #     #find the value of the input params at current run_id
+        #     xi = data_frame.loc[data_frame["run_id"] == run_id][uncertain_vars].values[0]
+        #     #see if this point is also in self.xi_d
+        #     idx = np.where((xi == self.xi_d).all(axis = 1))[0]
+        #     #if so, add run_id to self.run_id
+        #     if idx.size != 0:
+        #         self.run_id.append(run_id)
+
+    def get_adaptation_errors(self):
+        """
+        Returns self.adaptation_errors
+        """
+        return self.adaptation_errors
 
     def surrogate(self, qoi, x, L=None):
         """
@@ -247,18 +380,83 @@ class SCAnalysis(BaseAnalysisElement):
         # compute the Delta Q :=
         # (Q^1_l_1 - Q^1_{l_1 - 1}) X ... X (Q^1_{l_N} - Q^1_{L_N - 1})
         # tensor product
-        return np.array([self.compute_Q_diff(l, samples) for l in self.l_norm]).sum(axis=0)
+
+        if not self.sparse or self.dimension_adaptive:
+            return np.array([self.compute_Q_diff(l, samples) for l in self.l_norm]).sum(axis=0)
+        else:
+            return self.combination_technique(qoi, samples)
+
+    def combination_technique(self, qoi, samples=None):
+        """
+        Efficient quadrature formulation for isotropic sparse grids. See:
+
+            Gerstner, Griebel, "Numerical integration using sparse grids"
+            page 7.
+
+        Parameters
+        ----------
+        - qoi (str): name of the qoi
+
+        - samples (optional in kwargs): Default: compute the mean
+          by setting samples = self.samples. To compute the variance,
+          set samples = (self.samples - mean)**2
+        """
+
+        if samples is None:
+            samples = self.samples[qoi]
+
+        #quadrature Q
+        Q = 0.0
+
+        #loop over l
+        for l in self.l_norm:
+
+            #for sum(l) < L, combination technique formula shows that weights
+            #are zero
+            if np.sum(l) >= self.L:
+
+                # compute the tensor product of parameter and weight values
+                X_k = [self.xi_1d[n][l[n]] for n in range(self.N)]
+                W_k = [self.wi_1d[n][l[n]] for n in range(self.N)]
+
+                X_k = np.array(list(product(*X_k)))
+                W_k = np.array(list(product(*W_k)))
+                W_k = np.prod(W_k, axis=1)
+                W_k = W_k.reshape([W_k.shape[0], 1])
+
+                #scaling factor of combination technique
+                scaling_factor = (-1)**(self.L + self.N - np.sum(l) - 1) * \
+                    comb(self.N - 1, np.sum(l) - self.L)
+                W_k *= scaling_factor
+
+                # find corresponding code values
+                f_k = np.array([samples[np.where((x == self.xi_d).all(axis=1))[0][0]] for x in X_k])
+
+                # quadrature of Q^1_{k1} X ... X Q^1_{kN} product
+                Q += np.sum(f_k * W_k, axis=0).T
+
+        return Q
 
     def compute_Q_diff(self, l, samples):
         """
+        Brute force computation of quadrature difference operators \Delta_l
+        Note: superseded by combination_technique for sparse grids, but might
+        still be useful for anisotropic sparse grids. Becomes very slow though
+        for a large number of parameters, and is therefore in need of
+        replacement.
         =======================================================================
         For every multi index l = (l1, l2, ..., ld), Smolyak sums over
         tensor products difference quadrature rules:
         (Q^1_{l1} - Q^1_{l1-1}) X ... X (Q^1_{lN) - Q^1_{lN-1})
         Below this product is expanded into individual tensor products, each
         of which is then computed as:
-        Q^1_{k1} X ... X Q^1_{kN} = sum...sum w_{k1}*...*w{kN}*f(x_{k1},...,x_{kN})
+        Q^1_{k1} X ... X Q^1_{kN} = sum...sum w_{k1}*...*w_{kN}*f(x_{k1},...,x_{kN})
         =======================================================================
+        Parameters
+        - l : multi index of quadrature orders
+        - samples: array of samples to use in the quadrature
+
+        Returns: value of the difference operator
         """
 
         # expand the multi-index indices of the tensor product
@@ -266,7 +464,7 @@ class SCAnalysis(BaseAnalysisElement):
         diff_idx = np.array(list(product(*[[k, -(k - 1)] for k in l])))
 
         # Delta will be the sum of all expanded tensor products
-        # Q^1_{k1} X ... X Q^1_{kd} = sum...sum w_{k1}*...*w{kN}*f(x_{k1},...,x_{kd})
+        # Q^1_{k1} X ... X Q^1_{kd} = sum...sum w_{k1}*...*w_{kN}*f(x_{k1},...,x_{kd})
         Delta = 0.0
 
         # each diff contains the level indices of to a single
@@ -305,11 +503,13 @@ class SCAnalysis(BaseAnalysisElement):
         - mean and variance of qoi (float (N_qoi,))
 
         """
+        print('Computing moments...')
         # compute mean
         mean_f = self.quadrature(qoi)
         # compute variance
         variance_samples = [(sample - mean_f)**2 for sample in self.samples[qoi]]
         var_f = self.quadrature(qoi, samples=variance_samples)
+        print('done')
         return mean_f, var_f
 
     def sc_expansion(self, L, samples, x):
@@ -366,12 +566,15 @@ class SCAnalysis(BaseAnalysisElement):
             # Recursively computed.
 
             if self.sparse:
-                Lm1 = np.sum(l) - 1
+                #In case of sparse grid: level = sum(l) - N + 1
+                #so prev level is sum(l) - N
+                Lm1 = np.sum(l) - self.N
             else:
+                #previous level of full tensor grid = L - 1, will yield a zero
                 Lm1 = self.L - 1
 
             if k in self.surr_lm1[L]:
-                #                print('surrogate already computed')
+                #print('surrogate already computed')
                 surr_lm1 = self.surr_lm1[L][k]
             else:
                 surr_lm1 = self.sc_expansion(Lm1, samples, x=Map[k]['X'])
@@ -482,11 +685,42 @@ class SCAnalysis(BaseAnalysisElement):
         -------
          - array of all samples of qoi
         """
-        return np.array([self.samples[qoi][k] for k in range(self._number_of_samples)])
+        return np.array([self.samples[qoi][k] for k in range(len(self.samples[qoi]))])
+
+    def adaptation_histogram(self):
+        """
+        Parameters
+        ----------
+        None
+
+        Returns
+        -------
+        Plots a bar chart of the maximum order of the quadrature rule
+        that is used in each dimension. Use in case of the dimension adaptive
+        sampler to get an idea of which parameters were more refined than others.
+        This gives only a first-order idea, as it only plots the max quad
+        order independently per input parameter, so higher-order refinements
+        that were made do not show up in the bar chart.
+        """
+        import matplotlib.pyplot as plt
+
+        fig = plt.figure(figsize=[4, 8])
+        ax = fig.add_subplot(111, ylabel='max quadrature order',
+                             title='Number of refinements = %d'
+                             % self.sampler.number_of_adaptations)
+        #find max quad order for every parameter
+        adapt_measure = np.max(self.l_norm, axis=0)
+        ax.bar(range(adapt_measure.size), height=adapt_measure)
+        params = list(self.sampler.vary.get_keys())
+        ax.set_xticks(range(adapt_measure.size))
+        ax.set_xticklabels(params)
+        plt.xticks(rotation=90)
+        plt.tight_layout()
+        plt.show()
 
     def plot_grid(self):
         """
-        If N = 2 or N = 3 plot the (sparse) grid
+        Plots the collocation points for 2 and 3 dimensional problems
         """
         import matplotlib.pyplot as plt
 
@@ -494,17 +728,18 @@ class SCAnalysis(BaseAnalysisElement):
             fig = plt.figure()
             ax = fig.add_subplot(111, xlabel=r'$x_1$', ylabel=r'$x_2$')
             ax.plot(self.xi_d[:, 0], self.xi_d[:, 1], 'ro')
+            plt.tight_layout()
+            plt.show()
         elif self.N == 3:
             from mpl_toolkits.mplot3d import Axes3D
             fig = plt.figure()
             ax = fig.add_subplot(111, projection='3d', xlabel=r'$x_1$',
                                  ylabel=r'$x_2$', zlabel=r'$x_3$')
             ax.scatter(self.xi_d[:, 0], self.xi_d[:, 1], self.xi_d[:, 2])
+            plt.tight_layout()
+            plt.show()
         else:
             print('Will only plot for N = 2 or N = 3.')
-
-        plt.tight_layout()
-        plt.show()
 
     # Start SC specific methods
 
@@ -597,6 +832,7 @@ class SCAnalysis(BaseAnalysisElement):
         -------
         Either the first order or all Sobol indices of qoi
         """
+        print('Computing Sobol indices...')
         # multi indices
         U = np.arange(self.N)
 
@@ -652,6 +888,7 @@ class SCAnalysis(BaseAnalysisElement):
             # compute Sobol index, only include points where D > 0
             # sobol[u] = D_u[u][idx_gt0]/D[idx_gt0]
             sobol[u] = D_u[u] / D
+        print('done.')
         return sobol
 
 
@@ -697,3 +934,21 @@ def lagrange_poly(x, x_i, j):
     """
     x_i_ = np.delete(x_i, j)
     return np.prod((x - x_i_) / (x_i[j] - x_i_))
+
+
+def setdiff2d(X, Y):
+    """
+    Computes the difference of two 2D arrays X \ Y
+
+    Parameters
+    ----------
+    X : 2D numpy array
+    Y : 2D numpy array
+
+    Returns
+    -------
+    The difference X \ Y as a 2D array
+
+    """
+    diff = set(map(tuple, X)) - set(map(tuple, Y))
+    return np.array(list(diff))
