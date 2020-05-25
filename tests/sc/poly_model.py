@@ -1,13 +1,25 @@
 #!/usr/bin/env python3
+"""
+Analytic isotropic function to test the SC sampler on
+"""
 
 # scalar analytic test function, defined on [0, 1]**d
-import numpy as np
 import json
 import sys
-
+import numpy as np
 
 def poly_model(theta):
-    
+    """
+    A simple analytic test function
+
+    Parameters
+    ----------
+    theta : array of input parameters in [0, 1]
+
+    Returns
+    -------
+    (float) function value
+    """
     return np.prod(3 * theta**2 + 1) / 2**d
 
 # stocastic dimension of the problem
