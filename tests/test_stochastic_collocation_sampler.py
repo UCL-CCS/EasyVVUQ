@@ -69,4 +69,4 @@ def test_cmpute_sparse_multi_idx(sc_sampler):
                                                                    [2, 3],
                                                                    [3, 1],
                                                                    [3, 2],
-                                                                   [4, 1]])).all())
+                                                                   [4, 1]])))
