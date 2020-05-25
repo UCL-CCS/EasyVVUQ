@@ -359,7 +359,7 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
             "sparse": self.sparse,
             "midpoint_level1": self.midpoint_level1,
             "dimension_adaptive": self.dimension_adaptive}
-    
+
     def save_state(self, filename):
         print("Saving sampler state to %s" % filename)
         file = open(filename, 'wb')

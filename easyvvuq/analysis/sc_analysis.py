@@ -93,7 +93,7 @@ class SCAnalysis(BaseAnalysisElement):
 
     def load_state(self, filename):
         """
-        Loads the complete state of the analysis object from a 
+        Loads the complete state of the analysis object from a
         pickle file, stored using save_state.
 
         Parameters
@@ -706,7 +706,8 @@ class SCAnalysis(BaseAnalysisElement):
 
         fig = plt.figure(figsize=[4, 8])
         ax = fig.add_subplot(111, ylabel='max quadrature order',
-                             title='Number of refinements = %d' % self.sampler.number_of_adaptations)
+                             title='Number of refinements = %d'
+                             % self.sampler.number_of_adaptations)
         #find max quad order for every parameter
         adapt_measure = np.max(self.l_norm, axis=0)
         ax.bar(range(adapt_measure.size), height=adapt_measure)
