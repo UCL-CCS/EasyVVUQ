@@ -38,7 +38,7 @@ def test_sampler(sc_sampler):
 
 
 def test_generate_grid(sc_sampler):
-    grid = sc_sampler.generate_grid(5, 2, np.array([[2, 5]]))
+    grid = sc_sampler.generate_grid(np.array([[2, 5]]))
     assert((grid == np.array([(111.27016653792582, 0.9533765242898424),
                               (111.27016653792582, 0.9669395306766867),
                               (111.27016653792582, 0.98806904069584),
