@@ -303,12 +303,12 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
         print('done')
 
         self.admissible_idx = np.array(admissible_idx)
-        print('Admissble multi-indices:\n', self.admissible_idx)
+        print('Admissible multi-indices:\n', self.admissible_idx)
 
         #determine the maximum level L of the new index set L = |l| - N + 1
-        L = np.max(np.sum(self.admissible_idx, axis=1) - self.N + 1)
+        self.L = np.max(np.sum(self.admissible_idx, axis=1) - self.N + 1)
         #recompute the 1D weights and collocation points
-        self.compute_1D_points_weights(L, self.N)
+        self.compute_1D_points_weights(self.L, self.N)
         #compute collocation grid based on the admissible level indices
         admissible_grid = self.generate_grid(self.admissible_idx)
         #remove collocation points which have already been computed
