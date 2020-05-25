@@ -8,6 +8,7 @@ import json
 import sys
 import numpy as np
 
+
 def poly_model(theta):
     """
     Analytic test function where some parameters are more important than others.

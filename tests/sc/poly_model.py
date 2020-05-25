@@ -8,6 +8,7 @@ import json
 import sys
 import numpy as np
 
+
 def poly_model(theta):
     """
     A simple analytic test function
