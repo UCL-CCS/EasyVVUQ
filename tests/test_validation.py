@@ -74,7 +74,7 @@ if __name__ == "__main__":
         cdf2.append(c2)
 
     # Compute distances
-    validater = uq.comparison.Validate_Similarity()
+    validater = uq.comparison.ValidateSimilarity()
 
     # Hellinger distance (the default one)
     dh = validater.compare(pdf1, pdf2)
