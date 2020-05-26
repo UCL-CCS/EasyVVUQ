@@ -29,7 +29,7 @@ __author__ = 'Jalal Lakhlili'
 __license__ = "LGPL"
 
 
-class Validate_Similarity(BaseComparisonElement):
+class ValidateSimilarity(BaseComparisonElement):
 
     def __init__(self, metric="H"):
         """Compare Similarities between two QoI distributions.
@@ -128,7 +128,7 @@ class Validate_Similarity(BaseComparisonElement):
         return results
 
 
-class Validate_Compatability(BaseComparisonElement):
+class ValidateCompatability(BaseComparisonElement):
 
     def __init__(self, weight_factor=0.5):
         """Measure compatability between two QoI distributions.
