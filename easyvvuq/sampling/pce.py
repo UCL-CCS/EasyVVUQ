@@ -99,7 +99,6 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
         self.P = cp.orth_ttr(polynomial_order, self.distribution)
 
         # The quadrature information
-        self.quad_order = polynomial_order + 1
         self.quad_sparse = sparse
         self.rule = rule
 
@@ -127,7 +126,7 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
         # Projection variante (Pseudo-spectral method)
         else:
             # Nodes and weights for the integration
-            nodes, _ = cp.generate_quadrature(order=self.quad_order,
+            nodes, _ = cp.generate_quadrature(order=polynomial_order,
                                               dist=self.distribution,
                                               rule=self.rule,
                                               sparse=sparse,

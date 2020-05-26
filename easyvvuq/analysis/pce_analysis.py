@@ -91,7 +91,7 @@ class PCEAnalysis(BaseAnalysisElement):
                                         domain=self.sampler.distribution,
                                         rule=self.sampler.rule)
         else:
-            nodes, weights = cp.generate_quadrature(order=self.sampler.quad_order,
+            nodes, weights = cp.generate_quadrature(order=self.sampler.polynomial_order,
                                                     dist=self.sampler.distribution,
                                                     rule=self.sampler.rule,
                                                     sparse=self.sampler.quad_sparse,
