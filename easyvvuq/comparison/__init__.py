@@ -1,5 +1,5 @@
 from .base import BaseComparisonElement
-from .validate import Validate_Similarity, Validate_Compatability
+from .validate import ValidateSimilarity, ValidateCompatability
 
 __copyright__ = """
 
