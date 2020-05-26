@@ -102,12 +102,14 @@ time_end = time.time()
 print('Time for phase 2 = %.3f' % (time_end-time_start))
 time_start = time.time()
 
+# Create and populate the run directories
 my_campaign.populate_runs_dir()
 
 time_end = time.time()
 print('Time for phase 3 = %.3f' % (time_end-time_start))
 time_start = time.time()
 
+# Run the cases
 cwd = os.getcwd().replace(' ', '\ ')      # deal with ' ' in the path
 cmd = f"{cwd}/fusion_model.py fusion_in.json"
 my_campaign.apply_for_each_run_dir(uq.actions.ExecuteLocal(cmd, interpret='python3'))
@@ -116,6 +118,7 @@ time_end = time.time()
 print('Time for phase 4 = %.3f' % (time_end-time_start))
 time_start = time.time()
 
+# Collate the results
 my_campaign.collate()
 
 time_end = time.time()
@@ -153,6 +156,7 @@ print('Time for phase 8 = %.3f' % (time_end-time_start))
 
 plt.ion()
 
+# plot the calculated Te: mean, with std deviation, 10 and 90% and range
 plt.figure() 
 plt.plot(rho, stats['mean'], 'b-', label='Mean')
 plt.plot(rho, stats['mean']-stats['std'], 'b--', label='+1 std deviation')
@@ -168,6 +172,7 @@ plt.ylabel('Te [eV]')
 plt.title(my_campaign.campaign_dir)
 plt.savefig('Te.png')
 
+# plot the first Sobol results
 plt.figure() 
 for k in sobols.keys(): plt.plot(rho, sobols[k][0], label=k)
 plt.legend(loc=0)
@@ -176,6 +181,7 @@ plt.ylabel('sobols_first')
 plt.title(my_campaign.campaign_dir)
 plt.savefig('sobols_first.png')
 
+# plot the total Sobol results
 plt.figure() 
 for k in results['sobols_total']['te'].keys(): plt.plot(rho, results['sobols_total']['te'][k][0], label=k)
 plt.legend(loc=0)    
@@ -184,6 +190,7 @@ plt.ylabel('sobols_total')
 plt.title(my_campaign.campaign_dir)
 plt.savefig('sobols_total.png')
 
+# plot the distributions
 plt.figure()
 for i, D in enumerate(results['output_distributions']['te']):
     _Te = np.linspace(D.lower[0], D.upper[0], 101)
