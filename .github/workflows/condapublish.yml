@@ -1,7 +1,7 @@
 # This workflows will upload a Python Package using Twine when a release is created
 # For more information see: https://help.github.com/en/actions/language-and-framework-guides/using-python-with-github-actions#publishing-to-package-registries
 
-name: Upload Python Package
+name: Upload Python Package to Conda Cloud
 
 on:
   release:
@@ -20,12 +20,21 @@ jobs:
         python-version: '3.x'
     - name: Install dependencies
       run: |
-        python -m pip install --upgrade pip
-        pip install setuptools wheel twine
+        wget https://repo.continuum.io/miniconda/Miniconda2-latest-Linux-x86_64.sh -O miniconda.sh
+        bash miniconda.sh -b -p $HOME/miniconda
+	export PATH="$HOME/miniconda/bin:$PATH"
+	hash -r
+	conda config --set always_yes yes --set changeps1 no
+	conda update -q conda
+        conda install conda-build
+	conda install anaconda-client
     - name: Build and publish
       env:
         TWINE_USERNAME: ${{ secrets.PYPI_USERNAME }}
         TWINE_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
       run: |
-        python setup.py sdist bdist_wheel
-        twine upload dist/*
+        conda skeleton pypi easyvvuq
+	sed -i 's/dask_jobqueue/dask-jobqueue/g' easyvvuq/meta.yaml
+	sed -i '/^build:/a noarch: python
+	conda build easyvvuq
+	
