@@ -37,4 +37,3 @@ jobs:
         sed -i 's/dask_jobqueue/dask-jobqueue/g' easyvvuq/meta.yaml
         sed -i '/^build:/a noarch: python
         conda build easyvvuq
-	
