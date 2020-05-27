@@ -5,7 +5,7 @@ name: Upload Python Package to Conda Cloud
 
 on:
   release:
-    types: [created,updated]
+    types: [created,edited]
 
 jobs:
   deploy:
