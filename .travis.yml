@@ -4,6 +4,7 @@ python:
 install:
   - pip install -r requirements.txt
   - python setup.py develop
+  - python setup.py build_cannonsim
   - pip install pytest-cov
   - pip install coveralls
 script:
