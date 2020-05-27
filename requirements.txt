@@ -12,3 +12,4 @@ cerberus
 dask[complete]
 dask_jobqueue
 scikit-learn
+jinja2
