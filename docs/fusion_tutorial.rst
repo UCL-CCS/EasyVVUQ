@@ -415,23 +415,56 @@ And the analysis can be done with: ::
 References
 ----------
 
-.. [FUSION-WF] See 
+.. |_| unicode:: 0xA0 
+   :trim:
 
- 	Falchetto, G.L., Coster, D., Coelho, R., Scott, B., Figini, L., Kalupin, D., Nardon,E., Nowak, S., Alves, L.L., Artaud, J.F., et al.: The European Integrated TokamakModelling (itm) effort: achievements and first physics results. Nuclear Fusion54(4)(2014) 043018.
+
+.. [FUSION-WF] |_| See
+
+- Olivier Hoenen, Luis Fazendeiro, Bruce D. Scott, Joris Borgdoff,
+  Alfons G. Hoekstra, Pär Strand, and David P. Coster:
+  Designing and running turbulence transport simulations using a distributed multiscale computing approach.
+  In 40th EPS Conference on Plasma Physics, EPS 2013; Espoo; Finland; 1 July 2013 through 5 July 2013, vol. 2, pp. 1094-1097. 2013.
+  http://publications.lib.chalmers.se/records/fulltext/185427/local_185427.pdf
+  
+- Falchetto, G.L., Coster, D., Coelho, R., Scott, B., Figini, L., Kalupin,
+  D., Nardon,E., Nowak, S., Alves, L.L., Artaud, J.F., et al.:
+  The European Integrated Tokamak Modelling (ITM) effort: achievements and first physics results.
+  Nuclear Fusion 54(4)(2014) 043018.
+  https://doi.org/10.1088/0029-5515/54/4/043018
+
+- Luk, O. O., O. Hoenen, A. Bottino, B. D. Scott, and D. P. Coster:
+  Optimization of Multiscale Fusion Plasma Simulations within the ComPat Framework.
+  In 45th EPS Conference on Plasma Physics. European Physical Society, 2018.
+  http://ocs.ciemat.es/EPS2018PAP/pdf/P1.1102.pdf
+  
+- O. O. Luk,  O. Hoenen,  O. Perks, K. Brabazon, T. Piontek, P. Kopta, B. Bosak, A. Bottino,
+  B. D. Scott and D. P. Coster:
+  Application of the extreme scaling computing pattern on multiscale fusion plasma modelling
+  Phil. Trans. R. Soc. A.37720180152 (2019).
+  http://doi.org/10.1098/rsta.2018.0152
 	  
-	Luk, O., Hoenen, O., Bottino, A., Scott, B., Coster, D.:  Compat framework formultiscale simulations applied to fusion plasmas.  Computer Physics Communica-tions (2019).
+- Luk, O., Hoenen, O., Bottino, A., Scott, B., Coster, D.:
+  ComPat framework for multiscale simulations applied to fusion plasmas.
+  Computer Physics Communications (2019).
+  https://doi.org/10.1016/j.cpc.2018.12.021
 	   
-.. [MTANH] See
-           https://pdfs.semanticscholar.org/5dc9/029eb9614a0128ae7c3f16ae6c4e54be4ac5.pdf
-           ("Fitting of the Thomson scatteringdensity and temperature profiles on the COMPASS tokamak",
-	   E. Stefanikova, M. Peterka, P. Bohm, P. Bilkova, M. Aftanas, M. Sos, J. Urban, M. Hron and R. Panek,
-	   presented at 21st Topical Conference on High-Temperature Plasma Diagnostics
-	   (HTPD 2016) in Madison, Wisconsin, USA and published in
-	   Review of Scientific Instruments 87, 11E536 (2016); https://doi.org/10.1063/1.4961554.
-	   The article cites as the source of the function: R. J. Groebener and T. N. Carlstrom,
-	   Plasma Phys. Controlled Fusion 40, 673 (1998). https://doi.org/10.1088/0741-3335/40/5/021
+.. [MTANH] |_| See 
+	   
+- E. Stefanikova, M. Peterka, P. Bohm, P. Bilkova, M. Aftanas, M. Sos, J. Urban, M. Hron and R. Panek:
+  Fitting of the Thomson scatteringdensity and temperature profiles on the COMPASS tokamak.
+  Presented at 21st Topical Conference on High-Temperature Plasma Diagnostics
+  (HTPD 2016) in Madison, Wisconsin, USA and published in
+  Review of Scientific Instruments 87, 11E536 (2016); https://doi.org/10.1063/1.4961554.
+  https://pdfs.semanticscholar.org/5dc9/029eb9614a0128ae7c3f16ae6c4e54be4ac5.pdf
+  
+- The article cites as the source of the function: R. J. Groebener and T. N. Carlstrom,
+  Plasma Phys. Controlled Fusion 40, 673 (1998). https://doi.org/10.1088/0741-3335/40/5/021
 
-.. [FiPy] J. E. Guyer, D. Wheeler & J. A. Warren, "FiPy: Partial Differential Equations with Python,"
-	  Computing in Science & Engineering 11(3) pp. 6—15 (2009),
-	  doi:10.1109/MCSE.2009.52, http://www.ctcms.nist.gov/fipy .
+.. [FiPy] |_| See 
+
+- J. E. Guyer, D. Wheeler & J. A. Warren:
+  FiPy: Partial Differential Equations with Python.
+  Computing in Science & Engineering 11(3) pp. 6—15 (2009).
+  https://doi.org/10.1109/MCSE.2009.52, http://www.ctcms.nist.gov/fipy
 	     
