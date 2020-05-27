@@ -9,6 +9,6 @@ install:
   - pip install coveralls
 script:
   - py.test --pep8 easyvvuq/
-  - py.test --cov=easyvvuq/ --pep8 tests --ignore=tests/test_vector.py --ignore=tests/test_integration.py --ignore=tests/test_worker.py
+  - py.test --cov=easyvvuq/ --pep8 tests --ignore=tests/test_vector.py --ignore=tests/test_integration.py --ignore=tests/test_worker.py --ignore=tests/test_multisampler.py
 after_success:
   - coveralls
