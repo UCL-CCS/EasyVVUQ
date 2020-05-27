@@ -22,5 +22,5 @@ jobs:
         conda install anaconda-client
         conda skeleton pypi easyvvuq
         sed -i 's/dask_jobqueue/dask-jobqueue/g' easyvvuq/meta.yaml
-        sed -i '/^build:/a noarch: python
+        sed -i '/^build:/a noarch: python' easyvvuq/meta.yaml
         conda build easyvvuq
