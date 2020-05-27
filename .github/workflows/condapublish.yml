@@ -20,11 +20,6 @@ jobs:
         export PATH="$HOME/miniconda/bin:$PATH"
         conda install conda-build
         conda install anaconda-client
-    - name: Build and publish
-      env:
-        TWINE_USERNAME: ${{ secrets.PYPI_USERNAME }}
-        TWINE_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
-      run: |
         conda skeleton pypi easyvvuq
         sed -i 's/dask_jobqueue/dask-jobqueue/g' easyvvuq/meta.yaml
         sed -i '/^build:/a noarch: python
