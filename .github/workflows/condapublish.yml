@@ -5,7 +5,7 @@ name: Upload Python Package to Conda Cloud
 
 on:
   release:
-    types: [created]
+    types: [created,edited]
 
 jobs:
   deploy:
@@ -28,7 +28,7 @@ jobs:
         conda update -q conda
         conda install conda-build
         conda install anaconda-client
-	conda skeleton pypi easyvvuq
+        conda skeleton pypi easyvvuq
     - name: Build and publish
       env:
         TWINE_USERNAME: ${{ secrets.PYPI_USERNAME }}
