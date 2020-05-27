@@ -419,7 +419,7 @@ References
    :trim:
 
 
-.. [FUSION-WF] |_| See 
+.. [FUSION-WF] |_| See
 
 - Olivier Hoenen, Luis Fazendeiro, Bruce D. Scott, Joris Borgdoff,
   Alfons G. Hoekstra, Pär Strand, and David P. Coster:
