@@ -449,7 +449,7 @@ References
   Computer Physics Communications (2019).
   https://doi.org/10.1016/j.cpc.2018.12.021
 	   
-.. [MTANH] |_| See
+.. [MTANH] |_| See 
 	   
 - E. Stefanikova, M. Peterka, P. Bohm, P. Bilkova, M. Aftanas, M. Sos, J. Urban, M. Hron and R. Panek:
   Fitting of the Thomson scatteringdensity and temperature profiles on the COMPASS tokamak.
@@ -457,11 +457,11 @@ References
   (HTPD 2016) in Madison, Wisconsin, USA and published in
   Review of Scientific Instruments 87, 11E536 (2016); https://doi.org/10.1063/1.4961554.
   https://pdfs.semanticscholar.org/5dc9/029eb9614a0128ae7c3f16ae6c4e54be4ac5.pdf
-	   
+  
 - The article cites as the source of the function: R. J. Groebener and T. N. Carlstrom,
-   Plasma Phys. Controlled Fusion 40, 673 (1998). https://doi.org/10.1088/0741-3335/40/5/021
+  Plasma Phys. Controlled Fusion 40, 673 (1998). https://doi.org/10.1088/0741-3335/40/5/021
 
-.. [FiPy] |_| See
+.. [FiPy] |_| See 
 
 - J. E. Guyer, D. Wheeler & J. A. Warren:
   FiPy: Partial Differential Equations with Python.
