@@ -52,8 +52,5 @@ jobs:
         sed -i '/^build:/a\
           noarch: python' easyvvuq/meta.yaml
         conda build easyvvuq
-
-    - name: Publish to Conda Cloud
-      run: |
         anaconda login --username ${{ secrets.CONDA_USERNAME }} --password ${{ secrets.CONDA_PASSWORD }}
         anaconda upload noarch/easyvvuq-*.tar.bz2
