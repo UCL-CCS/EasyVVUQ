@@ -68,9 +68,9 @@ class ExecuteLocal(BaseAction):
         """
 
         if self.interpreter is None:
-            full_cmd = f'cd {target_dir}\n{self.run_cmd}\n'
+            full_cmd = f'cd "{target_dir}"\n{self.run_cmd}\n'
         else:
-            full_cmd = f'cd {target_dir}\n{self.interpreter} {self.run_cmd}\n'
+            full_cmd = f'cd "{target_dir}"\n{self.interpreter} {self.run_cmd}\n'
         result = os.system(full_cmd)
         if result != 0:
             sys.exit(f'Non-zero exit code from command "{full_cmd}"\n')

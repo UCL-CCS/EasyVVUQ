@@ -19,3 +19,6 @@ pep.sh
 *.bak
 *.db
 *.csv
+env/
+.ipynb_checkpoints/
+fusion_pce.*/
