@@ -53,5 +53,5 @@ jobs:
           noarch: python' easyvvuq/meta.yaml
         conda build --output-folder=. easyvvuq
         anaconda login --username ${{ secrets.CONDA_USERNAME }} --password ${{ secrets.CONDA_PASSWORD }}
-        anaconda upload `ls noarch/easyvvuq-*.tar.bz2`
+        anaconda upload noarch/easyvvuq-*.tar.bz2
         anaconda logout
