@@ -37,7 +37,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Install Miniconda
+    - name: Deploy to Conda Cloud
       run: |
         sleep 5m
         wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh
@@ -51,7 +51,7 @@ jobs:
         sed -i 's/dask_jobqueue/dask-jobqueue/g' easyvvuq/meta.yaml
         sed -i '/^build:/a\
           noarch: python' easyvvuq/meta.yaml
+        conda build --output-folder=. easyvvuq
         anaconda login --username ${{ secrets.CONDA_USERNAME }} --password ${{ secrets.CONDA_PASSWORD }}
-        conda build easyvvuq
-        anaconda upload `ls conda-bld/noarch/easyvvuq-*.tar.bz2`
+        anaconda upload `ls noarch/easyvvuq-*.tar.bz2`
         anaconda logout
