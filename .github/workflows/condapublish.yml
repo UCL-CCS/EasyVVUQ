@@ -20,8 +20,15 @@ jobs:
         export PATH="$HOME/miniconda/bin:$PATH"
         conda install conda-build
         conda install anaconda-client
+        conda config --add channels conda-forge
+        conda config --set channel_priority strict
         conda skeleton pypi easyvvuq
         sed -i 's/dask_jobqueue/dask-jobqueue/g' easyvvuq/meta.yaml
         sed -i '/^build:/a\
           noarch: python' easyvvuq/meta.yaml
         conda build easyvvuq
+
+    - name: Publish to Conda Cloud
+      run: |
+        anaconda login --username ${{ secrets.CONDA_USERNAME }} --password ${{ secrets.CONDA_PASSWORD }}
+        anaconda upload noarch/easyvvuq-*.tar.bz2
