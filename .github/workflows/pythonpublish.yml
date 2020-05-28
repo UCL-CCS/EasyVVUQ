@@ -52,5 +52,5 @@ jobs:
         sed -i '/^build:/a\
           noarch: python' easyvvuq/meta.yaml
         anaconda login --username ${{ secrets.CONDA_USERNAME }} --password ${{ secrets.CONDA_PASSWORD }}
-        anaconda upload `conda build easyvvuq`
+        anaconda upload `conda build --output easyvvuq`
         anaconda logout
