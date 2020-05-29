@@ -63,3 +63,6 @@ An example sparse SC sampler is given by::
 Here :code:`"C"` stands for the Clenshar Curtis rule, which can be made nested by turning on the :code:`growth`
 flag. You can also select other quadrature rules, e.g. the standard Gaussian option (:code:`"G"`). Not all
 rules can be made nested though, see the Chaospy documentation for more information.
+
+The rest of the Campaign proceed exactly as it would in the non-sparse case. The only exception is in the case of
+a nested rule, in which case the sampling plan can be isotropically refined.
