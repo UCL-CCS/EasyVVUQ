@@ -39,6 +39,14 @@ For the sparse grid we have a linear combination of:
     * [1, 2]: a line of 3 points with constant X
     * [2, 1]: a line of 3 points with constant Y
 
+In the case of sparse grids it is common to select a *nested* quadrature rule. This means that the quadrature
+rule of order p contains all points of the same rule of order p-1. When taking the linear combinations of
+quadrature orders, a nested rule ensures that many points will conincide, which yields efficient sampling 
+plans, especially in higher dimensions. If our 1D rule of order 1 and 2 generates the points [0.5] and [0, 0.5, 1]
+we obtain the points
 
+    * [1, 1]: [0.5, 0.5]
+    * [1, 2]: [0.5, 0.0], [0.5, 0.5], [0.5, 1.0]
+    * [2, 1]: [0.0, 0.5], [0.5, 0.5], [1.0, 0.5],
 
-
+which gives a total of 5 unique points, compared to the 9 points of [2, 2].
