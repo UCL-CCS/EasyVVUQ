@@ -33,6 +33,11 @@ of tensor products involving 1D quadrature rules of different orders. For two in
 consider using 1D quadrature rules of order [1, 1], [1, 2] and [2, 1], whereas a standard EasyVVUQ campaign
 with :code:`polynomial_order=2` uses just [2,2]. If the chosen quadrature rule generates 1 point for order 1 
 and 3 points for order 2, then [2, 2] (the 2nd order rule for both dimensions) will generate 3*3 = 9 points.
+For the sparse grid we have a linear combination of:
+
+    * [1, 1]: a single point in the 2D domain (X, Y)
+    * [1, 2]: a line of 3 points with constant X
+    * [2, 1]: a line of 3 points with constant Y
 
 
 
