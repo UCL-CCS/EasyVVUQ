@@ -21,6 +21,8 @@ Campaign, an SC sampler object might be created via::
     my_sampler = uq.sampling.SCSampler(vary=vary, polynomial_order=3,
                                        quadrature_rule="G")
 
-Here the specified polynomial_order, and the number of inputs in vary, determine the
-number of samples. 
+Here the specified :code:`polynomial_order`, and the number of inputs in :code:`vary`, determine the
+number of samples, which increases exponentially fast with an increasing amount of inputs. This
+is the so-called *curse of dimensionality*. Sparse grids do **not** circumvent the curse of 
+dimensionality, although they can postpone its effect to higher dimensions.
 
