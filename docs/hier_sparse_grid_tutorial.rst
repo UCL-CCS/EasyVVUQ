@@ -1,13 +1,12 @@
 .. _hier_sparse_grid_tutorial:
 
-Basic Tutorial
+Hierarchical sparse grid tutorial
 ==============
 
-This tutorial shows a simple EasyVVUQ workflow in action.
-The example is slightly daft (it uses a program, `gauss.py` program which
-simply samples values from a Gaussian distribution),
-but illustrates how EasyVVUQ samples from a parameter space, wraps an
-application and analyses output.
+This tutorial shows how to use a sparse Stochastic Collocation sampler
+in EasyVVUQ. We will assume you are familiar with the basic building
+block of an EasyVVUQ Campaign. If not, see the basic tutorial 
+`here <https://github.com/UCL-CCS/EasyVVUQ/blob/dev/docs/basic_tutorial.rst>`_.
 
 The input files for this tutorial are the *gauss* application
 (:download:`gauss.py <tutorial_files/gauss.py>`), an input template
