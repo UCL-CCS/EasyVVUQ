@@ -38,7 +38,7 @@ class ValidateSimilarity(BaseComparisonElement):
         raise NotImplemented
 
     def compare(self, dataframe1, dataframe2):
-        """Perform comparaison between dataframe1 and dataframe2, two lists of:
+        """Perform comparison between dataframe1 and dataframe2, two lists of:
             - discrete probability densities if the metric is Hellinger or Shannon-Jenson,
             - discrete cumulative distributions if the metric is Wasserstein 1 or 2.
 
