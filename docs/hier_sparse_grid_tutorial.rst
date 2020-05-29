@@ -43,10 +43,14 @@ In the case of sparse grids it is common to select a *nested* quadrature rule. T
 rule of order p contains all points of the same rule of order p-1. When taking the linear combinations of
 quadrature orders, a nested rule ensures that many points will conincide, which yields efficient sampling 
 plans, especially in higher dimensions. If our 1D rule of order 1 and 2 generates the points [0.5] and [0, 0.5, 1]
-we obtain the points
+we obtain a sampling plan consisting of
 
     * [1, 1]: [0.5, 0.5]
     * [1, 2]: [0.5, 0.0], [0.5, 0.5], [0.5, 1.0]
     * [2, 1]: [0.0, 0.5], [0.5, 0.5], [1.0, 0.5],
 
-which gives a total of 5 unique points, compared to the 9 points of [2, 2].
+which gives a total of 5 unique points, compared to the 9 points of [2, 2]. An example sparse SC sampler is given by::
+
+    my_sampler = uq.sampling.SCSampler(vary=vary, polynomial_order=poly_order,
+                                       quadrature_rule="C", sparse=True,
+                                       growth=True)
