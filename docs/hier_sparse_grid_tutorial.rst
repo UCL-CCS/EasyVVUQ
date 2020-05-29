@@ -24,5 +24,7 @@ Campaign, an SC sampler object might be created via::
 Here the specified :code:`polynomial_order`, and the number of inputs in :code:`vary`, determine the
 number of samples, which increases exponentially fast with an increasing amount of inputs. This
 is the so-called *curse of dimensionality*. Sparse grids do **not** circumvent the curse of 
-dimensionality, although they can postpone its effect to higher dimensions.
+dimensionality, although they can postpone its effect to higher dimensions. In the case of a standard
+EasyVVUQ Canpaign, by setting :code:`polynomial_order=3` we create a sampling through a 
+single tensor product of one-dimensional quadrature rules or order 3, for all inputs.
 
