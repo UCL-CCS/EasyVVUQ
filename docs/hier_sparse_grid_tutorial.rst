@@ -65,4 +65,11 @@ flag. You can also select other quadrature rules, e.g. the standard Gaussian opt
 rules can be made nested though, see the Chaospy documentation for more information.
 
 The rest of the Campaign proceed exactly as it would in the non-sparse case. The only exception is in the case of
-a nested rule, in which case the sampling plan can be isotropically refined.
+a nested rule, in which case the sampling plan can be isotropically refined. This is done with the following command::
+
+    #update the sparse grid to the next level
+    my_sampler.next_level_sparse_grid()
+
+    #draw the new samples
+    my_campaign.draw_samples()
+    my_campaign.populate_runs_dir()
