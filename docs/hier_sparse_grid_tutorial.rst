@@ -3,7 +3,7 @@
 Hierarchical sparse grid tutorial
 ==============
 
-This tutorial shows how to use a sparse Stochastic Collocation sampler
+This tutorial shows how to use a sparse Stochastic Collocation (SC) sampler
 in EasyVVUQ. We will assume you are familiar with the basic building
 block of an EasyVVUQ Campaign. If not, see the basic tutorial 
 `here <https://github.com/UCL-CCS/EasyVVUQ/blob/dev/docs/basic_tutorial.rst>`_.
@@ -49,8 +49,17 @@ we obtain a sampling plan consisting of
     * [1, 2]: [0.5, 0.0], [0.5, 0.5], [0.5, 1.0]
     * [2, 1]: [0.0, 0.5], [0.5, 0.5], [1.0, 0.5],
 
-which gives a total of 5 unique points, compared to the 9 points of [2, 2]. An example sparse SC sampler is given by::
+which gives a total of 5 unique points, compared to the 9 points of [2, 2]. 
+
+Create a sparse SC sampler
+--------------------------
+
+An example sparse SC sampler is given by::
 
     my_sampler = uq.sampling.SCSampler(vary=vary, polynomial_order=poly_order,
                                        quadrature_rule="C", sparse=True,
                                        growth=True)
+                                       
+Here :code:`"C"` stands for the Clenshar Curtis rule, which can be made nested by turning on the :code:`growth`
+flag. You can also select other quadrature rules, e.g. the standard Gaussian option (:code:`"G"`). Not all
+rules can be made nested though, see the Chaospy documentation for more information.
