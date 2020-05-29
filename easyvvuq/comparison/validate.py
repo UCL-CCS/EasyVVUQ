@@ -33,7 +33,7 @@ class ValidateSimilarity(BaseComparisonElement):
 
     def __init__(self):
         pass
-    
+
     def dist(p, q):
         raise NotImplemented
 
@@ -77,7 +77,7 @@ class ValidateSimilarityHellinger(ValidateSimilarity):
     def dist(self, p, q):
         p /= p.sum()
         q /= q.sum()
-        return np.sqrt(1. - np.sqrt(p * q).sum())        
+        return np.sqrt(1. - np.sqrt(p * q).sum())
 
 
 class ValidateSimilarityShannonJenson(ValidateSimilarity):
