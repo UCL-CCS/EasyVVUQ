@@ -28,3 +28,5 @@ dimensionality, although they can postpone its effect to higher dimensions. In t
 EasyVVUQ Canpaign, by setting :code:`polynomial_order=3` we create a sampling through a 
 single tensor product of one-dimensional quadrature rules or order 3, for all inputs.
 
+baldie bla
+
