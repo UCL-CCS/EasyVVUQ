@@ -33,13 +33,7 @@ class ValidateSimilarity(BaseComparisonElement):
 
     def __init__(self):
         pass
-
-    def element_name(self):
-        return "validate_similarity"
-
-    def element_version(self):
-        return "0.1"
-
+    
     def dist(p, q):
         raise NotImplemented
 
@@ -74,14 +68,26 @@ class ValidateSimilarity(BaseComparisonElement):
 
 
 class ValidateSimilarityHellinger(ValidateSimilarity):
-    def dist(p, q):
+    def element_name(self):
+        return "validate_similarity_hellinger"
+
+    def element_version(self):
+        return "0.1"
+
+    def dist(self, p, q):
         p /= p.sum()
         q /= q.sum()
         return np.sqrt(1. - np.sqrt(p * q).sum())        
 
 
 class ValidateSimilarityShannonJenson(ValidateSimilarity):
-    def dist(p, q):
+    def element_name(self):
+        return "validate_similarity_shannon_jenson"
+
+    def element_version(self):
+        return "0.1"
+
+    def dist(self, p, q):
         p /= p.sum()
         q /= q.sum()
         m = 0.5 * (p + q)
@@ -90,17 +96,28 @@ class ValidateSimilarityShannonJenson(ValidateSimilarity):
 
 
 class ValidateSimilarityWasserstein1(ValidateSimilarity):
-    def dist(p, q):
+    def element_name(self):
+        return "validate_similarity_wasserstein1"
+
+    def element_version(self):
+        return "0.1"
+
+    def dist(self, p, q):
         return st.wasserstein_distance(p, q)
 
 
 class ValidateSimilarityWasserstein2(ValidateSimilarity):
-    def dist(p, q):
+    def element_name(self):
+        return "validate_similarity_wassertstein1"
+
+    def element_version(self):
+        return "0.1"
+
+    def dist(self, p, q):
         return st.energy_distance(p, q)
 
 
-class ValidateCompatability(BaseComparisonElement):
-
+class ValidateCompatability(ValidateSimilarity):
     def __init__(self, weight_factor=0.5):
         """Measure compatability between two QoI distributions.
         Each distribution is characterized by three moments:
@@ -139,44 +156,13 @@ class ValidateCompatability(BaseComparisonElement):
     def get_weight_factor(self):
         return self._weight_factor
 
-    def compare(self, dataframe1, dataframe2):
-        """Measure compatability between dataframe1 and dataframe2, two lists of:
-            - mean, variance and skewness
-
-        ASSUMPTION: two cases are possible:
-        dataframe1 = [mu1, var1, skew1] and dataframe2 = [mu2, var2, skew2], or
-        dataframe1 = [[mu11, var11, skew11], [[mu12, var12, skew12], ...] and
-        dataframe2 = [[mu21, var21, skew21], [[mu22, var22, skew22], ...].
-        """
-
-        if len(dataframe1) != len(dataframe2):
-            raise RuntimeError("Input dataframe sizes are not equal")
-
-        # Compute the distance
-        def dist(mom1, mom2):
-            m1 = mom1[0]
-            v1 = mom1[1]
-            s1 = mom1[2]
-            m2 = mom2[0]
-            v2 = mom2[1]
-            s2 = mom2[2]
-            term1 = (m2 - m1)**2 / (2 * (v1 + v2) + (m2 - m1)**2)
-            term2 = (s2 - s1)**2 / (2 * (v1 + v2) + (m2 - m1)**2 + (abs(s1) + abs(s2))**2)
-
-            return (1 - self._weight_factor) * term1 + self._weight_factor * term2
-
-        # output
-        shape = np.shape(dataframe1)
-        if len(shape) == 2:
-            results = []
-            for i in range(len(dataframe1)):
-                p1 = np.array(dataframe1[i])
-                p2 = np.array(dataframe2[i])
-                d = dist(p1, p2)
-                results.append(d)
-        else:
-            p1 = np.array(dataframe1)
-            p2 = np.array(dataframe2)
-            results = dist(p1, p2)
-
-        return results
+    def dist(self, mom1, mom2):
+        m1 = mom1[0]
+        v1 = mom1[1]
+        s1 = mom1[2]
+        m2 = mom2[0]
+        v2 = mom2[1]
+        s2 = mom2[2]
+        term1 = (m2 - m1)**2 / (2 * (v1 + v2) + (m2 - m1)**2)
+        term2 = (s2 - s1)**2 / (2 * (v1 + v2) + (m2 - m1)**2 + (abs(s1) + abs(s2))**2)
+        return (1 - self._weight_factor) * term1 + self._weight_factor * term2
