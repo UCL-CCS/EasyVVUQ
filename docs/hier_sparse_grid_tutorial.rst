@@ -60,9 +60,10 @@ An example sparse SC sampler is given by::
                                        quadrature_rule="C", sparse=True,
                                        growth=True)
                                        
-Here :code:`"C"` stands for the Clenshar Curtis rule, which can be made nested by turning on the :code:`growth`
+Here :code:`"C"` stands for the Clenshaw Curtis rule, which can be made nested by turning on the :code:`growth`
 flag. You can also select other quadrature rules, e.g. the standard Gaussian option (:code:`"G"`). Not all
-rules can be made nested though, see the Chaospy documentation for more information.
+rules can be made nested though, see the Chaospy `documentation <https://chaospy.readthedocs.io/en/master/quadrature.html>`_
+for a list of all quadrature rules and their properties.
 
 The rest of the Campaign proceed exactly as it would in the non-sparse case. The only exception is in the case of
 a nested rule, in which case the sampling plan can be isotropically refined. This is done with the following command::
@@ -73,3 +74,6 @@ a nested rule, in which case the sampling plan can be isotropically refined. Thi
     #draw the new samples
     my_campaign.draw_samples()
     my_campaign.populate_runs_dir()
+
+In the `example <https://github.com/UCL-CCS/EasyVVUQ/blob/dev/tests/test_hierarchical_sparse_grid_sc.py>`_ the grid 
+is refined once, after which the Sobol sensitivity indices are calculated and compared against the reference.
