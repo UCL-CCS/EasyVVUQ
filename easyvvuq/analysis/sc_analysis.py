@@ -322,7 +322,7 @@ class SCAnalysis(BaseAnalysisElement):
         idx = np.unique(self.l_norm, axis=0, return_index=True)[1]
         self.l_norm = self.l_norm[idx]
 
-        #peform the analyse step, but do not compute moments and Sobols 
+        #peform the analyse step, but do not compute moments and Sobols
         self.analyse(data_frame, compute_results=False)
 
         if store_mean_history:
@@ -349,7 +349,7 @@ class SCAnalysis(BaseAnalysisElement):
         Returns self.adaptation_errors
         """
         return self.adaptation_errors
-    
+
     def plot_mean_convergence(self):
         """
         Plots the convergence of the statistical mean over the different
@@ -364,22 +364,22 @@ class SCAnalysis(BaseAnalysisElement):
             print('Only works for the dimension adaptive sampler.')
             return
 
-        K = len(self.mean_history) 
+        K = len(self.mean_history)
         if K < 2:
             print('Means from at least two refinements are required')
             return
         else:
-            differ = np.zeros(K-1)
+            differ = np.zeros(K - 1)
             for i in range(1, K):
-                differ[i-1] = np.linalg.norm(self.mean_history[i] - 
-                                             self.mean_history[i-1], np.inf)
+                differ[i - 1] = np.linalg.norm(self.mean_history[i] -
+                                               self.mean_history[i - 1], np.inf)
         import matplotlib.pyplot as plt
-        fig = plt.figure(figsize=[4,4])
+        fig = plt.figure(figsize=[4, 4])
         ax = fig.add_subplot(111, xlabel=r'refinement step',
-                             ylabel=r'$ ||\mathrm{mean}_i - \mathrm{mean}_{i-1}||_\infty$') 
+                             ylabel=r'$ ||\mathrm{mean}_i - \mathrm{mean}_{i - 1}||_\infty$')
         ax.plot(range(2, K + 1), differ, '-b+')
         plt.tight_layout()
-        plt.show()            
+        plt.show()
 
     def surrogate(self, qoi, x, L=None):
         """
