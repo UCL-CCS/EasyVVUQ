@@ -60,6 +60,7 @@ class SCAnalysis(BaseAnalysisElement):
         if self.dimension_adaptive:
             self.adaptation_errors = []
             self.mean_history = []
+            self.std_history = []
         self.sparse = sampler.sparse
 
     def element_name(self):
@@ -271,7 +272,7 @@ class SCAnalysis(BaseAnalysisElement):
         logging.debug('done.')
         return map_
 
-    def adapt_dimension(self, qoi, data_frame, store_mean_history=False):
+    def adapt_dimension(self, qoi, data_frame, store_stats_history=True):
         """
         Compute the adaptation metric and decide which of the admissible
         level indices to include in next iteration of the sparse grid. The
@@ -336,8 +337,10 @@ class SCAnalysis(BaseAnalysisElement):
         #peform the analyse step, but do not compute moments and Sobols
         self.analyse(data_frame, compute_results=False)
 
-        if store_mean_history:
-            self.mean_history.append(self.quadrature(qoi))
+        if store_stats_history:
+            mean_f, var_f = self.get_moments(qoi)
+            self.mean_history.append(mean_f)
+            self.std_history.append(var_f**0.5)
 
         # self.L = np.max(np.sum(self.l_norm, axis = 1) - self.N + 1)
         # self.xi_d = self.sampler.generate_grid(self.l_norm)
@@ -361,10 +364,12 @@ class SCAnalysis(BaseAnalysisElement):
         """
         return self.adaptation_errors
 
-    def plot_mean_convergence(self):
+    def plot_stat_convergence(self):
         """
-        Plots the convergence of the statistical mean over the different
-        refinements in a dimension-adaptive setting.
+        Plots the convergence of the statistical mean and std dev over the different
+        refinements in a dimension-adaptive setting. Specifically the inf norm
+        of the difference between the stats of iteration i and iteration i-1
+        is plotted.
 
         Returns
         -------
@@ -380,15 +385,31 @@ class SCAnalysis(BaseAnalysisElement):
             print('Means from at least two refinements are required')
             return
         else:
-            differ = np.zeros(K - 1)
+            differ_mean = np.zeros(K - 1)
+            differ_std = np.zeros(K - 1)
             for i in range(1, K):
-                differ[i - 1] = np.linalg.norm(self.mean_history[i] -
-                                               self.mean_history[i - 1], np.inf)
+                differ_mean[i - 1] = np.linalg.norm(self.mean_history[i] -
+                                                    self.mean_history[i - 1], np.inf)
+
+                differ_std[i - 1] = np.linalg.norm(self.std_history[i] -
+                                                   self.std_history[i - 1], np.inf)
+
         import matplotlib.pyplot as plt
-        fig = plt.figure(figsize=[4, 4])
-        ax = fig.add_subplot(111, xlabel=r'refinement step',
-                             ylabel=r'$ ||\mathrm{mean}_i - \mathrm{mean}_{i - 1}||_\infty$')
-        ax.plot(range(2, K + 1), differ, '-b+')
+        fig = plt.figure('stat_conv')
+        ax1 = fig.add_subplot(111, title='moment convergence')
+        ax1.set_xlabel('refinement step')
+        ax1.set_ylabel(r'$ ||\mathrm{mean}_i - \mathrm{mean}_{i - 1}||_\infty$', 
+                       color='r', fontsize=12)
+        ax1.plot(range(2, K + 1), differ_mean, color='r', marker='+')
+        ax1.tick_params(axis='y', labelcolor='r')
+
+        ax2 = ax1.twinx()  # instantiate a second axes that shares the same x-axis
+
+        ax2.set_ylabel(r'$ ||\mathrm{std}_i - \mathrm{std}_{i - 1}||_\infty$',
+                       color='b', fontsize=12)
+        ax2.plot(range(2, K + 1), differ_std, color='b', marker='*')
+        ax2.tick_params(axis='y', labelcolor='b')
+        
         plt.tight_layout()
         plt.show()
 
@@ -753,7 +774,7 @@ class SCAnalysis(BaseAnalysisElement):
         """
         import matplotlib.pyplot as plt
 
-        fig = plt.figure(figsize=[4, 8])
+        fig = plt.figure('adapt_hist', figsize=[4, 8])
         ax = fig.add_subplot(111, ylabel='max quadrature order',
                              title='Number of refinements = %d'
                              % self.sampler.number_of_adaptations)
