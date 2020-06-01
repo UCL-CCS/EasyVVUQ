@@ -81,37 +81,37 @@ class AggregateSamples(BaseCollationElement, collater_name="aggregate_samples"):
                 if self.average:
                     run_data = pd.DataFrame(run_data.mean()).transpose()
 
-                mult = isinstance(run_data.columns, pd.MultiIndex)
+                # mult = isinstance(run_data.columns, pd.MultiIndex)
 
-                params = run_info['params']
-                for param, value in params.items():
-                    if isinstance(value, list):
-                        # need to have multi-index dataframe
-                        if not mult:
-                            col, mult = multi_index_tuple_parser(run_data.columns.values)
-                            col = [(c, '') for c in col]
-                            run_data.columns = pd.MultiIndex.from_tuples(col)
-                        # add list values using columns tuple
-                        for i in range(len(value)):
-                            run_data[(param, i)] = value[i]
-                    else:
-                        run_data[param] = value
-                column_list = run_data.columns.tolist()
+                # params = run_info['params']
+                # for param, value in params.items():
+                #     if isinstance(value, list):
+                #         # need to have multi-index dataframe
+                #         if not mult:
+                #             col, mult = multi_index_tuple_parser(run_data.columns.values)
+                #             col = [(c, '') for c in col]
+                #             run_data.columns = pd.MultiIndex.from_tuples(col)
+                #         # add list values using columns tuple
+                #         for i in range(len(value)):
+                #             run_data[(param, i)] = value[i]
+                #     else:
+                #         run_data[param] = value
+                # column_list = run_data.columns.tolist()
 
-                # we need to convert columns to tuples to account for multi-indexing
-                # should not influence non-multi-index frames, I hope. hacky?
-                # TODO from Jalal: I think we don't need it, must be handled in the decoder
-                if any([isinstance(x, tuple) for x in column_list]):
-                    column_list_ = []
-                    for column in column_list:
-                        if not isinstance(column, tuple):
-                            column_list_.append((column, ''))
-                        else:
-                            column_list_.append(column)
-                    column_list = column_list_
+                # # we need to convert columns to tuples to account for multi-indexing
+                # # should not influence non-multi-index frames, I hope. hacky?
+                # # TODO from Jalal: I think we don't need it, must be handled in the decoder
+                # if any([isinstance(x, tuple) for x in column_list]):
+                #     column_list_ = []
+                #     for column in column_list:
+                #         if not isinstance(column, tuple):
+                #             column_list_.append((column, ''))
+                #         else:
+                #             column_list_.append(column)
+                #     column_list = column_list_
 
-                # Reorder columns
-                run_data = run_data[column_list]
+                # # Reorder columns
+                # run_data = run_data[column_list]
                 run_data['run_id'] = run_id
                 run_data['ensemble_id'] = run_info['ensemble_name']
                 new_data = new_data.append(run_data, ignore_index=True)

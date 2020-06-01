@@ -162,6 +162,17 @@ class SCAnalysis(BaseAnalysisElement):
 
             self.l_norm_min = np.ones(self.N, dtype=int)
 
+        #compute combination coefficients
+        unit_vecs = np.array(list(product([0, 1], repeat=self.N)))
+        self.comb_coef = {}
+        print('computing combination coefficients...')
+        for k in self.l_norm:
+            self.comb_coef[tuple(k)] = 0.0
+            for z in unit_vecs:
+                if np.where((k + z == self.l_norm).all(axis = 1))[0].size != 0:
+                    self.comb_coef[tuple(k)] += (-1)**(np.sum(z))
+        print('done')
+
         # 1d weights and points per level
         self.xi_1d = self.sampler.xi_1d
         self.wi_1d = self.compute_SC_weights(rule=self.sampler.quad_rule)
@@ -205,11 +216,11 @@ class SCAnalysis(BaseAnalysisElement):
                 results['statistical_moments'][qoi_k] = {'mean': mean_k,
                                                          'var': var_k,
                                                          'std': std_k}
-                # compute all Sobol indices
-                results['sobols'][qoi_k] = self.get_sobol_indices(qoi_k, 'first_order')
-                for idx, param_name in enumerate(self.sampler.vary.get_keys()):
-                    results['sobols_first'][qoi_k][param_name] = \
-                        results['sobols'][qoi_k][(idx,)]
+                # # compute all Sobol indices
+                # results['sobols'][qoi_k] = self.get_sobol_indices(qoi_k, 'first_order')
+                # for idx, param_name in enumerate(self.sampler.vary.get_keys()):
+                #     results['sobols_first'][qoi_k][param_name] = \
+                #         results['sobols'][qoi_k][(idx,)]
 
             return results
 
@@ -418,7 +429,7 @@ class SCAnalysis(BaseAnalysisElement):
         # (Q^1_l_1 - Q^1_{l_1 - 1}) X ... X (Q^1_{l_N} - Q^1_{L_N - 1})
         # tensor product
 
-        if not self.sparse or self.dimension_adaptive:
+        if not self.sparse:
             return np.array([self.compute_Q_diff(l, samples) for l in self.l_norm]).sum(axis=0)
         else:
             return self.combination_technique(qoi, samples)
@@ -448,29 +459,30 @@ class SCAnalysis(BaseAnalysisElement):
         #loop over l
         for l in self.l_norm:
 
-            #for sum(l) < L, combination technique formula shows that weights
-            #are zero
-            if np.sum(l) >= self.L:
+            # #for sum(l) < L, combination technique formula shows that weights
+            # #are zero
+            # if np.sum(l) >= self.L:
 
-                # compute the tensor product of parameter and weight values
-                X_k = [self.xi_1d[n][l[n]] for n in range(self.N)]
-                W_k = [self.wi_1d[n][l[n]] for n in range(self.N)]
+            # compute the tensor product of parameter and weight values
+            X_k = [self.xi_1d[n][l[n]] for n in range(self.N)]
+            W_k = [self.wi_1d[n][l[n]] for n in range(self.N)]
 
-                X_k = np.array(list(product(*X_k)))
-                W_k = np.array(list(product(*W_k)))
-                W_k = np.prod(W_k, axis=1)
-                W_k = W_k.reshape([W_k.shape[0], 1])
+            X_k = np.array(list(product(*X_k)))
+            W_k = np.array(list(product(*W_k)))
+            W_k = np.prod(W_k, axis=1)
+            W_k = W_k.reshape([W_k.shape[0], 1])
 
-                #scaling factor of combination technique
-                scaling_factor = (-1)**(self.L + self.N - np.sum(l) - 1) * \
-                    comb(self.N - 1, np.sum(l) - self.L)
-                W_k *= scaling_factor
+            # #scaling factor of combination technique
+            # scaling_factor = (-1)**(self.L + self.N - np.sum(l) - 1) * \
+            #     comb(self.N - 1, np.sum(l) - self.L)
+            # W_k *= scaling_factor
+            W_k *= self.comb_coef[tuple(l)]
 
-                # find corresponding code values
-                f_k = np.array([samples[np.where((x == self.xi_d).all(axis=1))[0][0]] for x in X_k])
+            # find corresponding code values
+            f_k = np.array([samples[np.where((x == self.xi_d).all(axis=1))[0][0]] for x in X_k])
 
-                # quadrature of Q^1_{k1} X ... X Q^1_{kN} product
-                Q += np.sum(f_k * W_k, axis=0).T
+            # quadrature of Q^1_{k1} X ... X Q^1_{kN} product
+            Q += np.sum(f_k * W_k, axis=0).T
 
         return Q
 
