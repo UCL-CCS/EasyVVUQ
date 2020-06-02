@@ -1,5 +1,5 @@
 from .base import BaseComparisonElement
-from .validate import ValidateSimilarity, ValidateCompatability, ValidateSimilarityHellinger
+from .validate import ValidateSimilarity, ValidateCompatibility, ValidateSimilarityHellinger
 from .validate import ValidateSimilarityShannonJensen, ValidateSimilarityWasserstein1
 from .validate import ValidateSimilarityWasserstein2
 

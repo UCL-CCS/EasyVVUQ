@@ -117,7 +117,7 @@ class ValidateSimilarityWasserstein2(ValidateSimilarity):
         return st.energy_distance(p, q)
 
 
-class ValidateCompatability(ValidateSimilarity):
+class ValidateCompatibility(ValidateSimilarity):
     def __init__(self, weight_factor=0.5):
         """Measure compatability between two QoI distributions.
         Each distribution is characterized by three moments:
@@ -142,7 +142,12 @@ class ValidateCompatability(ValidateSimilarity):
     def element_version(self):
         return "0.1"
 
-    def set_weight_factor(self, weight_factor):
+    @property
+    def weight_factor(self):
+        return self._weight_factor
+
+    @weight_factor.setter
+    def weight_factor(self, weight_factor):
         """
         Parameters
         ----------
@@ -152,9 +157,6 @@ class ValidateCompatability(ValidateSimilarity):
         if weight_factor < 0. or weight_factor > 1.:
             raise RuntimeError("set_weight_factor: wrong parameter value.")
         self._weight_factor = weight_factor
-
-    def get_weight_factor(self):
-        return self._weight_factor
 
     def dist(self, mom1, mom2):
         m1 = mom1[0]

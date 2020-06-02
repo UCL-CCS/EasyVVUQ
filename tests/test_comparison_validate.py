@@ -1,6 +1,7 @@
 import numpy as np
 import chaospy as cp
 import easyvvuq as uq
+import pytest
 
 
 __copyright__ = """
@@ -57,6 +58,14 @@ def test_validate_similarity_wasserstein2():
     validator = uq.comparison.validate.ValidateSimilarityWasserstein2()
     assert(validator.element_name() == 'validate_similarity_wasserstein2')
     assert(validator.element_version() == '0.1')
+
+
+def test_validate_compatibility():
+    validator = uq.comparison.validate.ValidateCompatibility()
+    validator.weight_factor = 0.2
+    with pytest.raises(RuntimeError):
+        validator.weight_factor = 1.5
+    assert(validator.weight_factor == 0.2)
 
 
 # Build QoI distributions to compare
