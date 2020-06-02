@@ -80,9 +80,9 @@ class ValidateSimilarityHellinger(ValidateSimilarity):
         return np.sqrt(1. - np.sqrt(p * q).sum())
 
 
-class ValidateSimilarityShannonJenson(ValidateSimilarity):
+class ValidateSimilarityShannonJensen(ValidateSimilarity):
     def element_name(self):
-        return "validate_similarity_shannon_jenson"
+        return "validate_similarity_shannon_jensen"
 
     def element_version(self):
         return "0.1"
@@ -108,7 +108,7 @@ class ValidateSimilarityWasserstein1(ValidateSimilarity):
 
 class ValidateSimilarityWasserstein2(ValidateSimilarity):
     def element_name(self):
-        return "validate_similarity_wassertstein1"
+        return "validate_similarity_wasserstein2"
 
     def element_version(self):
         return "0.1"

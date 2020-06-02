@@ -1,6 +1,6 @@
 from .base import BaseComparisonElement
 from .validate import ValidateSimilarity, ValidateCompatability, ValidateSimilarityHellinger
-from .validate import ValidateSimilarityShannonJenson, ValidateSimilarityWasserstein1
+from .validate import ValidateSimilarityShannonJensen, ValidateSimilarityWasserstein1
 from .validate import ValidateSimilarityWasserstein2
 
 __copyright__ = """

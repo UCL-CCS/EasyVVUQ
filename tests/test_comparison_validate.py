@@ -2,6 +2,7 @@ import numpy as np
 import chaospy as cp
 import easyvvuq as uq
 
+
 __copyright__ = """
 
     Copyright 2018 Robin A. Richardson, David W. Wright
@@ -35,19 +36,27 @@ def test_validate_similarity():
 
 
 def test_validate_similarity_hellinger():
-    pass
+    validator = uq.comparison.validate.ValidateSimilarityHellinger()
+    assert(validator.element_name() == 'validate_similarity_hellinger')
+    assert(validator.element_version() == '0.1')
 
 
-def test_validate_similarity_shannon_jenson():
-    pass
+def test_validate_similarity_shannon_jensen():
+    validator = uq.comparison.validate.ValidateSimilarityShannonJensen()
+    assert(validator.element_name() == 'validate_similarity_shannon_jensen')
+    assert(validator.element_version() == '0.1')
 
 
 def test_validate_similarity_wasserstein1():
-    pass
+    validator = uq.comparison.validate.ValidateSimilarityWasserstein1()
+    assert(validator.element_name() == 'validate_similarity_wasserstein1')
+    assert(validator.element_version() == '0.1')
 
 
 def test_validate_similarity_wasserstein2():
-    pass
+    validator = uq.comparison.validate.ValidateSimilarityWasserstein2()
+    assert(validator.element_name() == 'validate_similarity_wasserstein2')
+    assert(validator.element_version() == '0.1')
 
 
 # Build QoI distributions to compare
