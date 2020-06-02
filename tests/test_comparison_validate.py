@@ -30,6 +30,26 @@ __license__ = "LGPL"
 _PLOT = False
 
 
+def test_validate_similarity():
+    pass
+
+
+def test_validate_similarity_hellinger():
+    pass
+
+
+def test_validate_similarity_shannon_jenson():
+    pass
+
+
+def test_validate_similarity_wasserstein1():
+    pass
+
+
+def test_validate_similarity_wasserstein2():
+    pass
+
+
 # Build QoI distributions to compare
 def samples(x, y):
     # Vary the mean
@@ -74,21 +94,21 @@ if __name__ == "__main__":
         cdf2.append(c2)
 
     # Compute distances
-    validater = uq.comparison.ValidateSimilarity()
+    validater = uq.comparison.ValidateSimilarityHellinger()
 
     # Hellinger distance (the default one)
     dh = validater.compare(pdf1, pdf2)
 
     # Jensen-Shannon distance
-    validater.set_metric("JS")
+    validater = uq.comparison.ValidateSimilarityShannonJenson()
     dj = validater.compare(pdf1, pdf2)
 
     # Wasserstein-1 distance
-    validater.set_metric("W1")
+    validater = uq.comparison.ValidateSimilarityWasserstein1()
     dw1 = validater.compare(cdf1, cdf2)
 
     # Wasserstein-2 distance
-    validater.set_metric("W2")
+    validater = uq.comparison.ValidateSimilarityWasserstein2()
     dw2 = validater.compare(cdf1, cdf2)
 
     # Visualisations
