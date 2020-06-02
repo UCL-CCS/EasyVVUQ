@@ -75,6 +75,18 @@ class ValidateSimilarityHellinger(ValidateSimilarity):
         return "0.1"
 
     def dist(self, p, q):
+        """ Compute Hellinger distance between two discrete probability distributions.
+
+        Parameters
+        ----------
+        p : NumPy array
+        q : NumPy array
+        
+        Returns
+        -------
+        Hellinger distance between distributions p and q.
+        https://en.wikipedia.org/wiki/Hellinger_distance
+        """
         p /= p.sum()
         q /= q.sum()
         return np.sqrt(1. - np.sqrt(p * q).sum())
@@ -88,6 +100,18 @@ class ValidateSimilarityShannonJensen(ValidateSimilarity):
         return "0.1"
 
     def dist(self, p, q):
+        """ Compute Shannon-Jensen divergence between two discrete probability distributions.
+
+        Parameters
+        ----------
+        p : NumPy array
+        q : NumPy array
+        
+        Returns
+        -------
+        Shannon-Jensen divergence between distributions p and q.
+        https://en.wikipedia.org/wiki/Jensen%E2%80%93Shannon_divergence
+        """
         p /= p.sum()
         q /= q.sum()
         m = 0.5 * (p + q)
@@ -103,6 +127,18 @@ class ValidateSimilarityWasserstein1(ValidateSimilarity):
         return "0.1"
 
     def dist(self, p, q):
+        """ Compute Wasserstein distance between two discrete probability distributions.
+
+        Parameters
+        ----------
+        p : NumPy array
+        q : NumPy array
+        
+        Returns
+        -------
+        Wasserstein distance between distributions p and q.
+        https://en.wikipedia.org/wiki/Wasserstein_metric
+        """
         return st.wasserstein_distance(p, q)
 
 
@@ -114,6 +150,18 @@ class ValidateSimilarityWasserstein2(ValidateSimilarity):
         return "0.1"
 
     def dist(self, p, q):
+        """ Compute Wasserstein distance between two discrete probability distributions.
+
+        Parameters
+        ----------
+        p : NumPy array
+        q : NumPy array
+        
+        Returns
+        -------
+        Wasserstein distance between distributions p and q.
+        https://en.wikipedia.org/wiki/Wasserstein_metric
+        """
         return st.energy_distance(p, q)
 
 
