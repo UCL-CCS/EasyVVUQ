@@ -34,8 +34,8 @@ class ValidateSimilarity(BaseComparisonElement):
     def __init__(self):
         pass
 
-    def dist(p, q):
-        raise NotImplemented
+    def dist(self, p, q):
+        raise NotImplementedError
 
     def compare(self, dataframe1, dataframe2):
         """Perform comparison between dataframe1 and dataframe2, two lists of:
