@@ -81,7 +81,7 @@ class ValidateSimilarityHellinger(ValidateSimilarity):
         ----------
         p : NumPy array
         q : NumPy array
-        
+
         Returns
         -------
         Hellinger distance between distributions p and q.
@@ -106,7 +106,7 @@ class ValidateSimilarityShannonJensen(ValidateSimilarity):
         ----------
         p : NumPy array
         q : NumPy array
-        
+
         Returns
         -------
         Shannon-Jensen divergence between distributions p and q.
@@ -133,7 +133,7 @@ class ValidateSimilarityWasserstein1(ValidateSimilarity):
         ----------
         p : NumPy array
         q : NumPy array
-        
+
         Returns
         -------
         Wasserstein distance between distributions p and q.
@@ -156,7 +156,7 @@ class ValidateSimilarityWasserstein2(ValidateSimilarity):
         ----------
         p : NumPy array
         q : NumPy array
-        
+
         Returns
         -------
         Wasserstein distance between distributions p and q.
