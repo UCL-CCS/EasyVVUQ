@@ -187,7 +187,7 @@ def ensemble_bootstrap(data, groupby=[], qoi_cols=[],
     # Note results come a tuple per cell
     results = grouped_data.agg(agg_funcs)
 
-    outputs = [stat_name, 'high', 'low']
+    outputs = [stat_name, 'low', 'high']
 
     # Split out tuples in each cell and provide sensible naming
     results = pd.concat({col: results[col].apply(
