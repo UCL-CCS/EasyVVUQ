@@ -163,13 +163,17 @@ class SCAnalysis(BaseAnalysisElement):
 
             self.l_norm_min = np.ones(self.N, dtype=int)
 
-        #compute combination coefficients
+        #Compute general combination coefficients. These are the coefficients
+        #multiplying the tensor products associated to each multi index l,
+        #see page 12 Gerstner & Griebel, numerical integration using sparse grids
         unit_vecs = np.array(list(product([0, 1], repeat=self.N)))
         self.comb_coef = {}
         print('computing combination coefficients...')
         for k in self.l_norm:
             self.comb_coef[tuple(k)] = 0.0
             for z in unit_vecs:
+                #if the forward neighbor of k in z direction is in the
+                #accepted set of multi indices, add -1^(sum(z))
                 if np.where((k + z == self.l_norm).all(axis = 1))[0].size != 0:
                     self.comb_coef[tuple(k)] += (-1)**(np.sum(z))
         print('done')
@@ -217,11 +221,11 @@ class SCAnalysis(BaseAnalysisElement):
                 results['statistical_moments'][qoi_k] = {'mean': mean_k,
                                                          'var': var_k,
                                                          'std': std_k}
-                # # compute all Sobol indices
-                # results['sobols'][qoi_k] = self.get_sobol_indices(qoi_k, 'first_order')
-                # for idx, param_name in enumerate(self.sampler.vary.get_keys()):
-                #     results['sobols_first'][qoi_k][param_name] = \
-                #         results['sobols'][qoi_k][(idx,)]
+                # compute Sobol indices
+                results['sobols'][qoi_k] = self.get_sobol_indices(qoi_k, 'first_order')
+                for idx, param_name in enumerate(self.sampler.vary.get_keys()):
+                    results['sobols_first'][qoi_k][param_name] = \
+                        results['sobols'][qoi_k][(idx,)]
 
             return results
 
@@ -413,24 +417,30 @@ class SCAnalysis(BaseAnalysisElement):
         plt.tight_layout()
         plt.show()
 
-    def surrogate(self, qoi, x, L=None):
+    def surrogate(self, qoi, x, L=None, recursive=False):
         """
         Use sc_expansion UQP as a surrogate
 
         Parameters
         ----------
         - qoi (str): name of the qoi
+        - x (array): location at which to evaluate the surrogate
+        - L (int): level of the (sparse) grid, default = self.L
+        - recursive (boolean): use the recursive implementation of the 
+          SC expansion, default = False.
 
         Returns
         -------
         the interpolated value of qoi at x (float, (N_qoi,))
-
         """
 
         if L is None:
             L = self.L
 
-        return self.sc_expansion(L, self.samples[qoi], x=x)
+        if not recursive:
+            return self.sc_expansion(self.samples[qoi], x=x)
+        else:
+            return self.sc_expansion_recursive(L, self.samples[qoi], x=x)
 
     def quadrature(self, qoi, samples=None):
         """
@@ -581,8 +591,31 @@ class SCAnalysis(BaseAnalysisElement):
         var_f = self.quadrature(qoi, samples=variance_samples)
         print('done')
         return mean_f, var_f
+    
+    def sc_expansion(self, samples, x):
 
-    def sc_expansion(self, L, samples, x):
+        surr = 0.0
+        for l in self.l_norm:
+            
+            xi = [self.xi_1d[n][l[n]] for n in range(self.N)]
+            xi_d = np.array(list(product(*xi)))
+            
+            for xi in xi_d:
+                # indices of current collocation point
+                # in corresponding 1d colloc points (self.xi_1d[n][l[n]])
+                # These are the j of the 1D lagrange polynomials l_j(x), see
+                # lagrange_poly subroutine
+                idx = [(self.xi_1d[n][l[n]] == xi[n]).nonzero()[0][0] for n in range(self.N)]
+                # values of Lagrange polynomials at x
+                weight = [lagrange_poly(x[n], self.xi_1d[n][l[n]], idx[n]) for n in range(self.N)]
+                
+                idx = np.where((xi == self.xi_d).all(axis=1))[0][0]
+                surr += self.comb_coef[tuple(l)] * samples[idx] * np.prod(weight)
+
+        return surr
+            
+
+    def sc_expansion_recursive(self, L, samples, x):
         """
         -----------------------------------------
         This is the UQ Pattern for the SC method.
@@ -647,7 +680,7 @@ class SCAnalysis(BaseAnalysisElement):
                 #print('surrogate already computed')
                 surr_lm1 = self.surr_lm1[L][k]
             else:
-                surr_lm1 = self.sc_expansion(Lm1, samples, x=Map[k]['X'])
+                surr_lm1 = self.sc_expansion_recursive(Lm1, samples, x=Map[k]['X'])
                 self.surr_lm1[L][k] = surr_lm1
 
             s_k = q_k - surr_lm1
@@ -852,18 +885,15 @@ class SCAnalysis(BaseAnalysisElement):
         """
         Computes a marginal integral of the qoi(x) over the dimension defined
         by u_prime, for every x value in dimensions u
-
         Parameters
         ----------
         - qoi (str): name of the quantity of interest
         - u (array of int): dimensions which are not integrated
         - u_prime (array of int): dimensions which are integrated
         - diff (array of int): levels
-
         Returns
         - Values of the marginal integral
         -------
-
         """
         # 1d weights and points of the levels in diff
         xi = [self.xi_1d[n][np.abs(diff)[n]] for n in range(self.N)]
@@ -892,12 +922,10 @@ class SCAnalysis(BaseAnalysisElement):
         Computes Sobol indices using Stochastic Collocation. Method:
         Tang (2009), GLOBAL SENSITIVITY ANALYSIS  FOR STOCHASTIC COLLOCATION
         EXPANSION.
-
         Parameters
         ----------
         qoi (str): name of the Quantity of Interest for which to compute the indices
         typ (str): Default = 'first_order'. 'all' is also possible
-
         Returns
         -------
         Either the first order or all Sobol indices of qoi
