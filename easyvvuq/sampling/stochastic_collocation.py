@@ -98,7 +98,7 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
         self.quad_sparse = sparse
         self.growth = growth
         self.params_distribution = params_distribution
-        self.check_max_quad_order()
+        self.check_max_quad_level()
 
         #determine if a nested sparse grid is used
         if self.sparse is True and self.growth is True and \
@@ -199,27 +199,39 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
                 self.xi_1d[n][self.polynomial_order[n]] = xi_i[0]
                 self.wi_1d[n][self.polynomial_order[n]] = wi_i
                 
-    def check_max_quad_order(self):
+    def check_max_quad_level(self):
         """
 
         If a discrete variable is specified, there is the possibility of
-        non unique collocation points if the quadrature order is high enough. 
+        non unique collocation points if the quadrature order is high enough.
         This subroutine prevents that.
 
         NOTE: Only detects cp.DiscreteUniform thus far
 
+        The max quad orders are stores in self.max_quad_order
+
         Returns
         -------
-        xi_i, wi_i: a quadrature rule with a unique set of points
+        None
 
         """
-        self.max_quad_order = np.ones(self.N)*1000
+        #assume no maximum by default
+        self.max_level = np.ones(self.N)*1000
         for n in range(self.N):
 
             #if a discrete uniform is specified check max order
             if isinstance(self.params_distribution[n], cp.DiscreteUniform):
+
+                #if level one of the sparse grid is a midpoint rule, generate
+                #the quadrature with order 0 (1 quad point). Else set order at
+                #level 1 to 1
+                if self.midpoint_level1:
+                    j = 0
+                else:
+                    j = 1
+
                 for order in range(1000):
-                    xi_i, wi_i = cp.generate_quadrature(order, 
+                    xi_i, wi_i = cp.generate_quadrature(order + j, 
                                                         self.params_distribution[n],
                                                         rule=self.quad_rule,
                                                         growth=self.growth)
@@ -227,7 +239,8 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
                     if not unique_nodes: break
                 print("Input %d is discrete, setting max quadrature order to %d"
                       %(n, order - 1))
-                self.max_quad_order[n] = order - 1
+                #level 1 = order 0, so no order - 1 below
+                self.max_level[n] = order
 
     def next_level_sparse_grid(self):
         """
@@ -333,7 +346,7 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
         self.admissible_idx = np.array(admissible_idx)
         #make sure that all entries of each index are <= the max quadrature order
         #The max quad order can be low for discrete input variables
-        idx = np.where((self.admissible_idx <= self.max_quad_order).all(axis=1))[0]
+        idx = np.where((self.admissible_idx <= self.max_level).all(axis=1))[0]
         self.admissible_idx = self.admissible_idx[idx]
         print('Admissible multi-indices:\n', self.admissible_idx)
 
