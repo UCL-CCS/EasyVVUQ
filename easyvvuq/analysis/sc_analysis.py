@@ -442,7 +442,7 @@ class SCAnalysis(BaseAnalysisElement):
         else:
             return self.sc_expansion_recursive(L, self.samples[qoi], x=x)
 
-    def quadrature(self, qoi, samples=None):
+    def quadrature(self, qoi, samples=None, combination_technique=True):
         """
         Computes a (Smolyak) quadrature
 
@@ -450,27 +450,33 @@ class SCAnalysis(BaseAnalysisElement):
         ----------
         - qoi (str): name of the qoi
 
-        - samples (optional in kwargs): Default: compute the mean
+        - samples: Default: compute the mean
           by setting samples = self.samples. To compute the variance,
           set samples = (self.samples - mean)**2
+          
+        - combination_technique: compute the (sparse) grid quadrature by
+          using the general combination technique, default = True. If False,
+          the quadrature is computed by a brute force expansion of quadrature
+          difference formulas, which is inefficient in high dimensions.
+          
+        Returns: the quadrature of qoi
+        -------
         """
         if samples is None:
             samples = self.samples[qoi]
-        # compute the Delta Q :=
-        # (Q^1_l_1 - Q^1_{l_1 - 1}) X ... X (Q^1_{l_N} - Q^1_{L_N - 1})
-        # tensor product
 
-        if not self.sparse:
-            return np.array([self.compute_Q_diff(l, samples) for l in self.l_norm]).sum(axis=0)
-        else:
+        if combination_technique:
             return self.combination_technique(qoi, samples)
+        else:
+            #brute force quad computation
+            return np.array([self.compute_Q_diff(l, samples) for l in self.l_norm]).sum(axis=0)
 
     def combination_technique(self, qoi, samples=None):
         """
-        Efficient quadrature formulation for isotropic sparse grids. See:
+        Efficient quadrature formulation for (sparse) grids. See:
 
             Gerstner, Griebel, "Numerical integration using sparse grids"
-            page 7.
+            Uses the general combination technique (page 12).
 
         Parameters
         ----------
@@ -490,10 +496,6 @@ class SCAnalysis(BaseAnalysisElement):
         #loop over l
         for l in self.l_norm:
 
-            # #for sum(l) < L, combination technique formula shows that weights
-            # #are zero
-            # if np.sum(l) >= self.L:
-
             # compute the tensor product of parameter and weight values
             X_k = [self.xi_1d[n][l[n]] for n in range(self.N)]
             W_k = [self.wi_1d[n][l[n]] for n in range(self.N)]
@@ -503,10 +505,7 @@ class SCAnalysis(BaseAnalysisElement):
             W_k = np.prod(W_k, axis=1)
             W_k = W_k.reshape([W_k.shape[0], 1])
 
-            # #scaling factor of combination technique
-            # scaling_factor = (-1)**(self.L + self.N - np.sum(l) - 1) * \
-            #     comb(self.N - 1, np.sum(l) - self.L)
-            # W_k *= scaling_factor
+            # scaling factor of combination technique
             W_k *= self.comb_coef[tuple(l)]
 
             # find corresponding code values
@@ -520,10 +519,8 @@ class SCAnalysis(BaseAnalysisElement):
     def compute_Q_diff(self, l, samples):
         """
         Brute force computation of quadrature difference operators \Delta_l
-        Note: superseded by combination_technique for sparse grids, but might
-        still be useful for anisotropic sparse grids. Becomes very slow though
-        for a large number of parameters, and is therefore in need of
-        replacement.
+        Note: superseded by combination_technique. Becomes slow though
+        for a large number of parameters.
         =======================================================================
         For every multi index l = (l1, l2, ..., ld), Smolyak sums over
         tensor products difference quadrature rules:
@@ -593,10 +590,28 @@ class SCAnalysis(BaseAnalysisElement):
         return mean_f, var_f
     
     def sc_expansion(self, samples, x):
+        """
+        -------------------------------------------------
+        Non recursive implementation of the SC expansion.
+        (Default setting of surrogate)
+        -------------------------------------------------
+        Performs interpolation for both full and sparse grids.
 
+        Parameters
+        ----------
+        - samples: array of code samples
+        - x (float (N,)): location in stochastic space at which to eval 
+          the surrogate
+
+        Returns
+        -------
+
+        surr (float, (N_qoi,)): the interpolated value of qoi at x
+        
+        """
         surr = 0.0
         for l in self.l_norm:
-            
+            #all points corresponding to l
             xi = [self.xi_1d[n][l[n]] for n in range(self.N)]
             xi_d = np.array(list(product(*xi)))
             
@@ -614,12 +629,11 @@ class SCAnalysis(BaseAnalysisElement):
 
         return surr
             
-
     def sc_expansion_recursive(self, L, samples, x):
         """
-        -----------------------------------------
-        This is the UQ Pattern for the SC method.
-        -----------------------------------------
+        --------------------------------------------
+        Recursive implementation of the SC expansion.
+        --------------------------------------------
 
         Can perform interpolation for both full and sparse grids.
 
@@ -736,7 +750,6 @@ class SCAnalysis(BaseAnalysisElement):
         - wi_1d (dict): wi_1d[n][l] gives an array
           of quadrature weigths for the n-th parameter at level l.
 
-          IMPORTANT:
           If rule is the same as the rule used to compute the SC
           collocation points, these weights will equal the weights
           computed by chaospy, since L_j(x_k) = 1 when j=k and 0
@@ -956,25 +969,34 @@ class SCAnalysis(BaseAnalysisElement):
 
             for l in self.l_norm:
 
-                # expand the multi-index indices of the tensor product
-                # (Q^1_{i1} - Q^1_{i1-1}) X ... X (Q^1_{id) - Q^1_{id-1})
-                diff_idx = np.array(list(product(*[[k, -(k - 1)] for k in l])))
+                #Below: old implementation using compute_Q_diff subroutine
+                # # expand the multi-index indices of the tensor product
+                # # (Q^1_{i1} - Q^1_{i1-1}) X ... X (Q^1_{id) - Q^1_{id-1})
+                # diff_idx = np.array(list(product(*[[k, -(k - 1)] for k in l])))
 
-                # perform analysis on each Q^1_l1 X ... X Q^1_l_N tensor prod
-                for diff in diff_idx:
+                # # perform analysis on each Q^1_l1 X ... X Q^1_l_N tensor prod
+                # for diff in diff_idx:
 
-                    # if any Q^1_li is below the minimim level, Q^1_li is defined
-                    # as zero: do not compute this Q^1_l1 X ... X Q^1_l_N tensor prod
-                    if not (np.abs(diff) < self.l_norm_min).any():
+                #     # if any Q^1_li is below the minimim level, Q^1_li is defined
+                #     # as zero: do not compute this Q^1_l1 X ... X Q^1_l_N tensor prod
+                #     if not (np.abs(diff) < self.l_norm_min).any():
 
-                        # mariginal integral h, integrate over dimensions u'
-                        h, wi_d_u = self.compute_marginal(qoi, u, u_prime, diff)
+                #         # mariginal integral h, integrate over dimensions u'
+                #         h, wi_d_u = self.compute_marginal(qoi, u, u_prime, diff)
 
-                        # square result and integrate over remaining dimensions u
-                        for i_u in range(wi_d_u.shape[0]):
-                            D_u[u] += np.sign(np.prod(diff)) * h[i_u]**2 * wi_d_u[i_u].prod()
+                #         # square result and integrate over remaining dimensions u
+                #         for i_u in range(wi_d_u.shape[0]):
+                #             D_u[u] += np.sign(np.prod(diff)) * h[i_u]**2 * wi_d_u[i_u].prod()
 
-                #D_u[u] = D_u[u].flatten()
+                # #D_u[u] = D_u[u].flatten()
+
+                #New implementation using combination coefficients
+                # mariginal integral h, integrate over dimensions u'
+                h, wi_d_u = self.compute_marginal(qoi, u, u_prime, l)
+                # square result and integrate over remaining dimensions u
+                for i_u in range(wi_d_u.shape[0]):                
+                    D_u[u] += h[i_u]**2 * wi_d_u[i_u].prod()
+                D_u[u] *= self.comb_coef[tuple(l)]**3
 
             # all subsets of u
             W = list(powerset(u))[0:-1]
