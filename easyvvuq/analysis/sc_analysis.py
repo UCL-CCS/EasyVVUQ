@@ -222,7 +222,7 @@ class SCAnalysis(BaseAnalysisElement):
                                                          'var': var_k,
                                                          'std': std_k}
                 # compute Sobol indices
-                results['sobols'][qoi_k] = self.get_sobol_indices(qoi_k, 'first_order')
+                results['sobols'][qoi_k], _ = self.get_sobol_indices(qoi_k, 'first_order')
                 for idx, param_name in enumerate(self.sampler.vary.get_keys()):
                     results['sobols_first'][qoi_k][param_name] = \
                         results['sobols'][qoi_k][(idx,)]
@@ -336,7 +336,7 @@ class SCAnalysis(BaseAnalysisElement):
         #if someone executes this function twice for some reason,
         #remove the duplicate l_star entry. Keep order unaltered
         idx = np.unique(self.l_norm, axis=0, return_index=True)[1]
-        self.l_norm = self.l_norm[idx]
+        self.l_norm = np.array([self.l_norm[i] for i in sorted(idx)])
 
         #peform the analyse step, but do not compute moments and Sobols
         self.analyse(data_frame, compute_results=False)
@@ -1009,7 +1009,7 @@ class SCAnalysis(BaseAnalysisElement):
             # sobol[u] = D_u[u][idx_gt0]/D[idx_gt0]
             sobol[u] = D_u[u] / D
         print('done.')
-        return sobol
+        return sobol, D_u
 
 
 def powerset(iterable):
