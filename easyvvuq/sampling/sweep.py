@@ -68,7 +68,8 @@ class BasicSweep(BaseSamplingElement, sampler_name="basic_sweep"):
         -------
         a product of the lengths of lists passed to BasicSweep
         """
-        return functools.reduce(lambda x, y: x * y, [len(lst) for lst in self.sweep], 1)
+        return functools.reduce(
+            lambda x, y: x * y, [len(lst) for lst in [self.sweep[key] for key in self.sweep]], 1)
 
     def __next__(self):
         # Will raise StopIteration when there are none left
