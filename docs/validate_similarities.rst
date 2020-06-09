@@ -57,3 +57,9 @@ The complete code for this example can be found `here <https://github.com/UCL-CC
 References
 ----------
 
+`Hellinger distance <https://en.wikipedia.org/wiki/Hellinger_distance>`_
+
+`Jensen-Shannon divergence <https://en.wikipedia.org/wiki/Jensen%E2%80%93Shannon_divergence>`_
+
+`Wasserstein metrics <https://en.wikipedia.org/wiki/Wasserstein_metric>`_
+
