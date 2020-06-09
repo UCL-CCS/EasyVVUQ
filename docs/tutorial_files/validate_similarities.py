@@ -3,8 +3,7 @@ import chaospy as cp
 import easyvvuq as uq
 import pylab as plt
 
-__author__ = 'Jalal Lakhlili'
-__license__ = "LGPL"
+# author: Jalal Lakhlili (based on work with Udo von Toussaint)
 
 
 # Build QoI distributions for comparisons
@@ -49,10 +48,8 @@ if __name__ == "__main__":
         cdf1.append(c1)
         cdf2.append(c2)
 
-    # Compute distances
+    # Hellinger distance
     validater = uq.comparison.ValidateSimilarityHellinger()
-
-    # Hellinger distance (the default one)
     dh = validater.compare(pdf1, pdf2)
 
     # Jensen-Shannon distance
@@ -72,7 +69,7 @@ if __name__ == "__main__":
     s1 = 0.2 * np.ones_like(y)
     m2 = 2.5 * np.ones_like(y)
     s2 = 0.1 * np.ones_like(y) + 0.01 * y
-   
+
     fig, axs = plt.subplots(2, 1)
 
     axs[0].plot(y, m1, "k-", label="QoI #1")
