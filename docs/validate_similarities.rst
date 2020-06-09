@@ -3,7 +3,7 @@
 Validation by comparing QoI distributions
 =========================================
 
-This tutorial shows how to use a Validation Similarities pattern in EasyVVUQ. 
+This tutorial shows how to use a Validation Similarities pattern in EasyVVUQ.
 
 We test here two quantities of interest (QoI) represented by two analytical functions with Gaussian uncertainties.
 
@@ -26,8 +26,11 @@ Here you see how these functions look, when we are varing :code:`y` in the inter
 Validations metrics
 -------------------
 
-In EasyVVUQ, we implemented the calculation of four different divergence measures (aka distances between probability distributions):
-Hellinger, Jensen-Shannon, Wasserstein-1 and Wasserstein-2.
+In EasyVVUQ, we implemented the calculation of four different divergence measures:
+Hellinger, Jensen-Shannon, Wasserstein-1 and Wasserstein-2 (cf. Refenrces below for more details). This allows us to computes distances between two probability distributions. 
+
+QoI distributions
+-----------------
 
 We can use Chaospy to compute the probability densities and the cummulative distributions functions needed for the above-mentioned  metrics::
 
@@ -43,6 +46,14 @@ We can use Chaospy to compute the probability densities and the cummulative dist
 The sampling values :code:`x` can be computed using the min/max values of a common large support of QoI distrubtions, for example::
 
     x = np.linspace(min_value, max_value, 1000, endpoint=True)
+    
+**Note**: the min/max values can be obtained from lower and upper bound of the distributions. In case of univarainte distribution, we can use: :code:`dist.lower[0]` and :code:`dist.upper[0]`.
+
 
 
 The complete code for this example can be found `here <https://github.com/UCL-CCS/EasyVVUQ/blob/dev/docs/tutorial_files/validate_similarities.py>`_.
+
+
+References
+----------
+
