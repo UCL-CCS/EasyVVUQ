@@ -1,11 +1,11 @@
 .. _validate_similarities_tutorial:
 
-Validation examples by comparing QoI distributions
-==================================================
+Validation by comparing QoI distributions
+=========================================
 
 This tutorial shows how to use a Validation Similarities pattern in EasyVVUQ. 
 
-We test here two analytical functions with Gaussian uncertainties.
+We test here two quantities of interest (QoI) represented by two analytical functions with Gaussian uncertainties.
 
 The first function is a parabolic function::
   
@@ -19,8 +19,10 @@ The second function a constant but with changing uncertainty on one side::
     sig2 = 0.1 + 0.01 * y
     dist2 = chaospy.Normal(mu2, sig2)
     
-The variable y is vector
-    
+Here you how these functions look, when we are varing y in the intervalle [0, 100]:
+.. figure:: images/val_qoi_1.png
+
+
 Validations metrics
 -------------------
 
