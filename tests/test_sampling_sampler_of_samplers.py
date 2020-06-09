@@ -1,4 +1,5 @@
 from easyvvuq.sampling.sampler_of_samplers import MultiSampler
+from easyvvuq.sampling.sweep import BasicSweep
 import pytest
 import unittest.mock as mock
 
@@ -31,6 +32,13 @@ def test_element_version(multi_sampler):
 
 def test_is_finite(multi_sampler):
     assert(multi_sampler.is_finite())
+
+
+def test_n_samples():
+    sampler1 = BasicSweep({'a': [1, 2, 3], 'b': [4, 5, 6]})
+    sampler2 = BasicSweep({'a': [1, 2, 3], 'b': [4, 5, 6]})
+    multi = MultiSampler(sampler1, sampler2)
+    assert(multi.n_samples() == 81)
 
 
 def test_iterator():
