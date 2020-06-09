@@ -114,6 +114,9 @@ class QMCSampler(BaseSamplingElement, sampler_name="QMC_sampler"):
     def is_finite(self):
         return True
 
+    def n_samples(self):
+        return self.n_samples
+
     def is_restartable(self):
         return True
 
