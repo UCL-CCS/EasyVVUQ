@@ -41,6 +41,18 @@ class RandomSampler(BaseSamplingElement, sampler_name="random_sampler"):
             return True
         return False
 
+    def n_samples(self):
+        """Returns the number of samples in this sampler.
+
+        Returns
+        -------
+        if the user specifies maximum number of samples than return that, otherwise - error
+        """
+        if self.is_finite():
+            raise RuntimeError("You can't get the number of samples in an infinite sampler")
+        else:
+            return self.max_num
+
     def __next__(self):
 
         if self.is_finite():
