@@ -20,6 +20,7 @@ The second function a constant but with changing uncertainty on one side::
     dist2 = chaospy.Normal(mu2, sig2)
     
 Here you how these functions look, when we are varing y in the intervalle [0, 100]:
+
 .. figure:: images/val_qoi_1.png
 
 
