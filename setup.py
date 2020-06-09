@@ -41,7 +41,6 @@ class BuildNotebooks(distutils.cmd.Command):
 
 class BuildPyCommand(setuptools.command.build_py.build_py):
     def run(self):
-        self.run_command('build_cannonsim')
         setuptools.command.build_py.build_py.run(self)
 
 # read the contents of README file

@@ -59,6 +59,7 @@ class SCAnalysis(BaseAnalysisElement):
         self.dimension_adaptive = sampler.dimension_adaptive
         if self.dimension_adaptive:
             self.adaptation_errors = []
+            self.mean_history = []
         self.sparse = sampler.sparse
 
     def element_name(self):
@@ -259,7 +260,7 @@ class SCAnalysis(BaseAnalysisElement):
         logging.debug('done.')
         return map_
 
-    def adapt_dimension(self, qoi, data_frame):
+    def adapt_dimension(self, qoi, data_frame, store_mean_history=False):
         """
         Compute the adaptation metric and decide which of the admissible
         level indices to include in next iteration of the sparse grid. The
@@ -303,7 +304,7 @@ class SCAnalysis(BaseAnalysisElement):
                 idx = np.where((xi == self.sampler.xi_d).all(axis=1))[0][0]
                 #hierarchical surplus error at xi
                 hier_surplus = samples[idx] - self.surrogate(qoi, xi)
-                error[tuple(l)].append(np.linalg.norm(hier_surplus))
+                error[tuple(l)].append(np.linalg.norm(hier_surplus, np.inf))
             #compute mean error over all points in X_l
             error[tuple(l)] = np.mean(error[tuple(l)])
         for key in error.keys():
@@ -317,10 +318,15 @@ class SCAnalysis(BaseAnalysisElement):
         #add l_star to the current accepted level indices
         self.l_norm = np.concatenate((self.l_norm, l_star))
         #if someone executes this function twice for some reason,
-        #remove the duplicate l_star entry
-        self.l_norm = np.unique(self.l_norm, axis=0)
+        #remove the duplicate l_star entry. Keep order unaltered
+        idx = np.unique(self.l_norm, axis=0, return_index=True)[1]
+        self.l_norm = self.l_norm[idx]
 
+        #peform the analyse step, but do not compute moments and Sobols
         self.analyse(data_frame, compute_results=False)
+
+        if store_mean_history:
+            self.mean_history.append(self.quadrature(qoi))
 
         # self.L = np.max(np.sum(self.l_norm, axis = 1) - self.N + 1)
         # self.xi_d = self.sampler.generate_grid(self.l_norm)
@@ -343,6 +349,37 @@ class SCAnalysis(BaseAnalysisElement):
         Returns self.adaptation_errors
         """
         return self.adaptation_errors
+
+    def plot_mean_convergence(self):
+        """
+        Plots the convergence of the statistical mean over the different
+        refinements in a dimension-adaptive setting.
+
+        Returns
+        -------
+        None.
+
+        """
+        if not self.dimension_adaptive:
+            print('Only works for the dimension adaptive sampler.')
+            return
+
+        K = len(self.mean_history)
+        if K < 2:
+            print('Means from at least two refinements are required')
+            return
+        else:
+            differ = np.zeros(K - 1)
+            for i in range(1, K):
+                differ[i - 1] = np.linalg.norm(self.mean_history[i] -
+                                               self.mean_history[i - 1], np.inf)
+        import matplotlib.pyplot as plt
+        fig = plt.figure(figsize=[4, 4])
+        ax = fig.add_subplot(111, xlabel=r'refinement step',
+                             ylabel=r'$ ||\mathrm{mean}_i - \mathrm{mean}_{i - 1}||_\infty$')
+        ax.plot(range(2, K + 1), differ, '-b+')
+        plt.tight_layout()
+        plt.show()
 
     def surrogate(self, qoi, x, L=None):
         """

@@ -37,6 +37,7 @@ Table of contents
 
    installation
    concepts
+   tutorials
    basic_tutorial
    cooling_coffee_cup
    dask_tutorial
