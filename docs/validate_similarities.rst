@@ -27,7 +27,7 @@ Validations metrics
 -------------------
 
 In EasyVVUQ, we implemented the calculation of four different divergence measures:
-Hellinger, Jensen-Shannon, Wasserstein-1 and Wasserstein-2 (cf. Refenrces below for more details). This allows us to computes distances between two probability distributions. 
+Hellinger, Jensen-Shannon, Wasserstein-1 and Wasserstein-2 (cf. refenrces below for more details). This allows us to compute distances between two QoI probability distributions.
 
 QoI distributions
 -----------------
@@ -47,7 +47,15 @@ The sampling values :code:`x` can be computed using the min/max values of a comm
 
     x = np.linspace(min_value, max_value, 1000, endpoint=True)
     
-**Note**: the min/max values can be obtained from lower and upper bound of the distributions. In case of univarainte distribution, we can use: :code:`dist.lower[0]` and :code:`dist.upper[0]`.
+**Note 1**: The min/max values can be obtained from lower and upper bound of the distributions. In case of univarainte distribution, we can use: :code:`dist.lower[0]` and :code:`dist.upper[0]`.
+
+**Note 2: Distribution based on samples**
+
+To build QoI distribution from list of samples that resutls fron UQ simulations, observation or measurements, we can use::
+
+  dist = chaospy.SampleDist(samples)
+It sstimates a distribution from the given samples by constructing a kernel  density estimator (KDE).
+
 
 
 
@@ -57,9 +65,9 @@ The complete code for this example can be found `here <https://github.com/UCL-CC
 References
 ----------
 
-`Hellinger distance <https://en.wikipedia.org/wiki/Hellinger_distance>`_
+`Hellinger distance <https://en.wikipedia.org/wiki/Hellinger_distance>`_.
 
-`Jensen-Shannon divergence <https://en.wikipedia.org/wiki/Jensen%E2%80%93Shannon_divergence>`_
+`Jensen-Shannon divergence <https://en.wikipedia.org/wiki/Jensen%E2%80%93Shannon_divergence>`_.
 
-`Wasserstein metrics <https://en.wikipedia.org/wiki/Wasserstein_metric>`_
+`Wasserstein metrics <https://en.wikipedia.org/wiki/Wasserstein_metric>`_.
 
