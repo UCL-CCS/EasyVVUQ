@@ -19,9 +19,7 @@ The second function a constant but with changing uncertainty on one side::
     sig2 = 0.1 + 0.01 * y
     dist2 = chaospy.Normal(mu2, sig2)
     
-Here you see how these functions look, when we are varing :code:`y` in the intervalle :code:`[0, 100]`:
-
-.. figure:: images/val_qoi_1.png
+In the upper pannel of the figure given below, you see how these functions look when we are varing :code:`y` in the intervalle :code:`[0, 100]`.
 
 Validations metrics
 -------------------
@@ -54,13 +52,24 @@ The sampling values :code:`x` can be computed using the min/max values of a comm
 To build QoI distribution from list of samples that resutls fron UQ simulations, observation or measurements, we can use::
 
   dist = chaospy.SampleDist(samples)
-It sstimates a distribution from the given samples by constructing a kernel  density estimator (KDE).
+It estimates a distribution from the given samples by constructing a kernel  density estimator (KDE).
 
+vVlidate similarities
+----------------------
 
+Once probabily densities functions (or Cummulative distributions) are comupted for each Qoi, we created a validater and get the distance. We use for example Hellinger metric by comparing two lists of robabily densities, :code:`pdf1` and :code:`pdf2`::
 
+    # Validater based on Hellinger metric
+    validater = easyvvuq.comparison.ValidateSimilarityHellinger()
+    distance = validater.compare(pdf1, pdf2)
 
-The complete code for this example can be found `here <https://github.com/UCL-CCS/EasyVVUQ/blob/dev/docs/tutorial_files/validate_similarities.py>`_.
+The complete code for this example, using other metrics, can be found `here <https://github.com/UCL-CCS/EasyVVUQ/blob/dev/docs/tutorial_files/validate_similarities.py>`_.
 
+Finally, in the lower panel of the the different distances between function 1 and function 2 are displayed:
+
+.. figure:: images/val_qoi_2.png
+
+The first two are yielding answers between 0 (zero distance : identical distributions) and 1 (very different), Wasserstein instead are unrestricted with a lower limit of zero.
 
 References
 ----------
