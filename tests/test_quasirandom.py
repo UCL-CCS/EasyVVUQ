@@ -10,6 +10,7 @@ def test_lhc():
         assert(sample['a'] <= 3.0)
         assert(sample['b'] >= 2.0)
         assert(sample['b'] <= 10.0)
+    assert(sampler.n_samples() == 10)
 
 
 def test_halton():
@@ -20,3 +21,4 @@ def test_halton():
         assert(sample['a'] <= 3.0)
         assert(sample['b'] >= 2.0)
         assert(sample['b'] <= 10.0)
+    assert(sampler.n_samples() == 10)
