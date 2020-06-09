@@ -332,6 +332,9 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
     def is_finite(self):
         return True
 
+    def n_samples(self):
+        return self._number_of_samples
+
     # SC collocations points are not random, generate_runs simply returns
     # one collocation point from the tensor product after the other
     def __next__(self):
