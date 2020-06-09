@@ -25,7 +25,7 @@ Validations metrics
 -------------------
 
 In EasyVVUQ, we implemented the calculation of four different divergence measures:
-Hellinger, Jensen-Shannon, Wasserstein-1 and Wasserstein-2 (cf. refenrces below for more details). This allows us to compute distances between two QoI probability distributions.
+Hellinger, Jensen-Shannon, Wasserstein-1 and Wasserstein-2 (cf. references below for more details). This allows us to compute distances between two QoI distributions.
 
 QoI distributions
 -----------------
@@ -36,7 +36,7 @@ We can use Chaospy to compute the probability densities and the cummulative dist
     p1 = dist1.pdf(x)
     p2 = dist2.pdf(x)
 
-    # Cummulative distributions (w/ weight): for Wasserstein
+    # Cummulative distributions (with weight): for Wasserstein
     dx = x[-1] - x[0]
     c1 = dx * dist1.cdf(x)
     c2 = dx * dist2.cdf(x)
@@ -49,15 +49,15 @@ The sampling values :code:`x` can be computed using the min/max values of a comm
 
 **Note 2: Distribution based on samples**
 
-To build QoI distribution from list of samples that resutls fron UQ simulations, observation or measurements, we can use::
+To build QoI distribution from list of samples that resutls fron UQ simulations, observations or measurements, we can use::
 
   dist = chaospy.SampleDist(samples)
 It estimates a distribution from the given samples by constructing a kernel  density estimator (KDE).
 
-vVlidate similarities
+Validate similarities
 ----------------------
 
-Once probabily densities functions (or Cummulative distributions) are comupted for each Qoi, we created a validater and get the distance. We use for example Hellinger metric by comparing two lists of robabily densities, :code:`pdf1` and :code:`pdf2`::
+Once probabily densities functions (or Cummulative distributions) are comupted for each QoI, we create a :code:`validater`, object of EasyVVUQ, and get the distance using :code:`compare` routine. We can use for example Hellinger metric by comparing two lists of probabily densities, :code:`pdf1` and :code:`pdf2`::
 
     # Validater based on Hellinger metric
     validater = easyvvuq.comparison.ValidateSimilarityHellinger()
@@ -65,11 +65,11 @@ Once probabily densities functions (or Cummulative distributions) are comupted f
 
 The complete code for this example, using other metrics, can be found `here <https://github.com/UCL-CCS/EasyVVUQ/blob/dev/docs/tutorial_files/validate_similarities.py>`_.
 
-Finally, in the lower panel of the the different distances between function 1 and function 2 are displayed:
+Finally, in the lower panel of the the different distances between QoI 1 and Qo 2 are displayed:
 
-.. figure:: images/val_qoi_2.png
+.. figure:: images/validation.png
 
-The first two are yielding answers between 0 (zero distance : identical distributions) and 1 (very different), Wasserstein instead are unrestricted with a lower limit of zero.
+The first two are yielding answers between 0 (zero distance: identical distributions) and 1 (very different), Wasserstein instead are unrestricted with a lower limit of zero.
 
 References
 ----------
@@ -79,4 +79,3 @@ References
 `Jensen-Shannon divergence <https://en.wikipedia.org/wiki/Jensen%E2%80%93Shannon_divergence>`_.
 
 `Wasserstein metrics <https://en.wikipedia.org/wiki/Wasserstein_metric>`_.
-
