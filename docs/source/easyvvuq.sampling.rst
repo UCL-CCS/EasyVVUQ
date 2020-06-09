@@ -20,6 +20,14 @@ easyvvuq.sampling.pce module
     :undoc-members:
     :show-inheritance:
 
+easyvvuq.sampling.qmc module
+----------------------------
+
+.. automodule:: easyvvuq.sampling.qmc
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 easyvvuq.sampling.random module
 -------------------------------
 
