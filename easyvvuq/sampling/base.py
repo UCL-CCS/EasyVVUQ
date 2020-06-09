@@ -71,6 +71,9 @@ class BaseSamplingElement(BaseElement):
     def is_finite(self):
         raise NotImplementedError
 
+    def n_samples(self):
+        raise NotImplementedError
+
     def __iter__(self):
         """
         This method allows the sampler to be used as an iterator.
