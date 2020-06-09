@@ -1,16 +1,14 @@
 import numpy as np
 import chaospy as cp
 import easyvvuq as uq
-import pytest
+import pylab as plt
 
 __author__ = 'Jalal Lakhlili'
 __license__ = "LGPL"
 
 
-
 # Build QoI distributions for comparisons
 def samples(x, y):
-
     # First distributions: vary the mean
     mu1 = (y - 50.)**2 / 500.
     sig1 = 0.2
@@ -31,7 +29,6 @@ def samples(x, y):
     c2 = dx * dist2.cdf(x)
 
     return p1, p2, c1, c2
-
 
 if __name__ == "__main__":
     # Grid for pdf and cdf evaluations
@@ -71,22 +68,19 @@ if __name__ == "__main__":
     dw2 = validater.compare(cdf1, cdf2)
 
     # Visualisations
-    import pylab as plt
-
-    # QoIs means and stdvs
     m1 = (y - 50.)**2 / 500
     s1 = 0.2 * np.ones_like(y)
     m2 = 2.5 * np.ones_like(y)
     s2 = 0.1 * np.ones_like(y) + 0.01 * y
-
+   
     fig, axs = plt.subplots(2, 1)
 
-    axs[0].plot(y, m1, "k-", label="QoI 1")
+    axs[0].plot(y, m1, "k-", label="QoI #1")
     axs[0].plot(y, m1 + s1, "k-", alpha=0.2)
     axs[0].plot(y, m1 - s1, "k-", alpha=0.2)
     axs[0].fill_between(y, m1 - s1, m1 + s1, color="k", alpha=0.15)
 
-    axs[0].plot(y, m2, "b-", label="QoI 2")
+    axs[0].plot(y, m2, "b-", label="QoI #2")
     axs[0].plot(y, m2 + s2, "b-", alpha=0.2)
     axs[0].plot(y, m2 - s2, "b-", alpha=0.2)
     axs[0].fill_between(y, m2 - s2, m2 + s2, color="b", alpha=0.15)
