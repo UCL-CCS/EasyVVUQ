@@ -36,6 +36,14 @@ easyvvuq.analysis.pce\_analysis module
     :undoc-members:
     :show-inheritance:
 
+easyvvuq.analysis.qmc\_analysis module
+--------------------------------------
+
+.. automodule:: easyvvuq.analysis.qmc_analysis
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 easyvvuq.analysis.sc\_analysis module
 -------------------------------------
 
