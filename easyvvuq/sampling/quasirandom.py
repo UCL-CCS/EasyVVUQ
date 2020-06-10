@@ -1,3 +1,18 @@
+"""
+Summary
+-------
+This module provides classes based on RandomSampler but modified in such a way
+that the output of the sampler is not random but is meant to be used in place
+of uniformly random number sequences. Usually this is used to cover the sampling
+space more "evenly" than a uniform random distribution would. Two methods are
+implemented:
+
+https://en.wikipedia.org/wiki/Latin_hypercube_sampling
+https://en.wikipedia.org/wiki/Halton_sequence
+
+"""
+
+
 from .random import RandomSampler
 import numpy as np
 import chaospy as cp
