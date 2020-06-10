@@ -14,3 +14,4 @@ dask_jobqueue
 scikit-learn
 jinja2
 fsspec
+msmb_theme
