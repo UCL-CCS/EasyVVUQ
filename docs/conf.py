@@ -19,11 +19,11 @@ sys.path.insert(0, os.path.abspath('../'))
 # -- Project information -----------------------------------------------------
 
 project = 'EasyVVUQ'
-copyright = '2020, David W. Wright, Robin A. Richardson'
-author = 'David W. Wright, Robin A. Richardson'
+copyright = '2020, David W. Wright, Robin A. Richardson, Vytautas Jancauskas, Jalal Lakhlili'
+author = 'David W. Wright, Robin A. Richardson, Vytautas Jancauskas, Jalal Lakhlili'
 
 # The full version, including alpha/beta/rc tags
-release = '0.5.1'
+release = '0.6'
 
 
 # -- General configuration ---------------------------------------------------
@@ -54,7 +54,12 @@ exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 # a list of builtin themes.
 #
 html_favicon = 'images/favicon.ico'
-html_theme = 'alabaster'
+
+html_theme = 'msmb_theme'   
+
+import msmb_theme   
+
+html_theme_path = [msmb_theme.get_html_theme_path()]
 
 html_sidebars = {
     '**': [
