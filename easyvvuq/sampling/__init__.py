@@ -1,3 +1,12 @@
+"""Classes implementing the sampling element for EasyVVUQ
+
+Summary
+-------
+Samplers in the context of EasyVVUQ are classes that generate
+sequences of parameter dictionaries. These dictionaries are then used
+to create input files for the simulations.
+"""
+
 from .base import BaseSamplingElement, Vary
 from .random import RandomSampler
 from .stochastic_collocation import SCSampler
