@@ -35,6 +35,14 @@ easyvvuq.sampling.random module
     :members:
     :undoc-members:
     :show-inheritance:
+    
+easyvvuq.sampling.quasirandom module
+-------------------------------
+
+.. automodule:: easyvvuq.sampling.quasirandom
+    :members:
+    :undoc-members:
+    :show-inheritance:
 
 easyvvuq.sampling.stochastic\_collocation module
 ------------------------------------------------
