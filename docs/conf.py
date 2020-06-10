@@ -85,4 +85,4 @@ html_theme_options = {
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ['_static']
 
-html_logo = "../_static/circle-logo.svg"
+html_logo = "../_static/easyvvuq_logo.png"
