@@ -38,14 +38,6 @@ Table of contents
    installation
    concepts
    tutorials
-   basic_tutorial
-   cooling_coffee_cup
-   dask_tutorial
-   fusion_tutorial
-   multisampler_tutorial
-   restartable_campaign_tutorial
-   custom_encoder
-   multiencoder_tutorial
 
 Indices and tables
 ==================
