@@ -1,7 +1,10 @@
 .. _installation:
 
+EasyVVUQ installation
+=====================
+
 Installation
-============
+------------
 
 .. note:: To use the library you will need Python 3.6+.
 
