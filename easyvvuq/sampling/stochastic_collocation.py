@@ -94,7 +94,7 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
         #determines wether to use an insotropic sparse grid, or to adapt
         #the levels in the sparse grid based on a hierachical error measure
         self.dimension_adaptive = dimension_adaptive
-        self.number_of_adaptations = 0
+        self.nadaptations = 0
         self.quad_sparse = sparse
         self.growth = growth
         self.params_distribution = params_distribution
@@ -136,16 +136,16 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
             #rules in self.xi_1d
             self.xi_d = self.generate_grid(multi_idx)
 
-        self._number_of_samples = self.xi_d.shape[0]
+        self._n_samples = self.xi_d.shape[0]
 
         self.count = 0
 
         # This gives an error when storting and loading campaigns in the
         #dimension adaptive setting - seems not required anyway - commented it
         # Fast forward to specified count, if possible
-        # if self.count >= self._number_of_samples:
+        # if self.count >= self._n_samples:
         #     msg = (f"Attempt to start sampler fastforwarded to count {self.count}, "
-        #            f"but sampler only has {self._number_of_samples} samples, therefore"
+        #            f"but sampler only has {self._n_samples} samples, therefore"
         #            f"this sampler will not provide any more samples.")
         #     logging.warning(msg)
         # else:
@@ -239,7 +239,7 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
         print('%d new points added' % new_points.shape[0])
 
         #update the number of samples
-        self._number_of_samples += new_points.shape[0]
+        self._n_samples += new_points.shape[0]
 
         #update the N-dimensional sparse grid
         self.xi_d = np.concatenate((self.xi_d, new_points))
@@ -317,14 +317,14 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
         print('%d new points added' % new_points.shape[0])
 
         #update the number of samples
-        self._number_of_samples += new_points.shape[0]
+        self._n_samples += new_points.shape[0]
 
         #update the N-dimensional sparse grid if unsampled points are added
         if new_points.shape[0] > 0:
             self.xi_d = np.concatenate((self.xi_d, new_points))
 
         #count the number of times the dimensions were adapted
-        self.number_of_adaptations += 1
+        self.nadaptations += 1
 
     def element_version(self):
         return "0.5"
@@ -332,13 +332,25 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
     def is_finite(self):
         return True
 
+    @property
     def n_samples(self):
-        return self._number_of_samples
+        """
+        Number of samples (Ns) of SC method.
+
+        - When using tensor quadrature: Ns = (p + 1)**d
+        - When using sparid: Ns = bigO((p + 1)*log(p + 1)**(d-1))
+        Where: p is the polynomial degree and d is the number of
+        uncertain parameters.
+
+        Ref: Eck et al. 'A guide to uncertainty quantification and
+        sensitivity analysis for cardiovascular applications' [2016].
+        """
+        return self._n_samples
 
     # SC collocations points are not random, generate_runs simply returns
     # one collocation point from the tensor product after the other
     def __next__(self):
-        if self.count < self._number_of_samples:
+        if self.count < self._n_samples:
             run_dict = {}
             i_par = 0
             for param_name in self.vary.get_keys():

@@ -32,7 +32,7 @@ class QMCSampler(BaseSamplingElement, sampler_name="QMC_sampler"):
     def __init__(self,
                  vary=None,
                  count=0,
-                 n_samples=10**4):
+                 n_mc_samples=10**4):
         """
         Create the sampler using Quasi-Monte Carlo Method
 
@@ -44,11 +44,9 @@ class QMCSampler(BaseSamplingElement, sampler_name="QMC_sampler"):
         count : int, optional
             Specified counter for Fast forward, default is 0.
 
-        n_samples : int, optional
-            The number of samples requierd to get a given acccuray,
-            default is 10**4. To be able to compute the Sobol indices,
-            n_total_samples = (n_samples/2)*(n_uncertain_params + 2)
-            samples are quasi-randomly drawn using Saltelli's sampling scheme.
+        n_mc_samples : int, optional
+            The number of samples requierd to get a given acccuray with
+            Monte-Carlo method, default is 10**4.
         """
 
         if vary is None:
@@ -69,7 +67,6 @@ class QMCSampler(BaseSamplingElement, sampler_name="QMC_sampler"):
             raise Exception(msg)
 
         self.vary = Vary(vary)
-        self.n_samples = n_samples
 
         # List of the probability distributions of uncertain parameters
         params_distribution = list(vary.values())
@@ -78,30 +75,30 @@ class QMCSampler(BaseSamplingElement, sampler_name="QMC_sampler"):
         self.distribution = cp.J(*params_distribution)
 
         # Generate samples
-        self.n_uncertain_params = len(vary)
-        n_sobol_samples = int(np.round(self.n_samples / 2.))
+        self.n_params = len(vary)
+        n_sobol_samples = int(np.round(self.n_mc_samples / 2.))
 
         dist_U = []
-        for i in range(self.n_uncertain_params):
+        for i in range(self.n_params):
             dist_U.append(cp.Uniform())
         dist_U = cp.J(*dist_U)
 
         problem = {
-            "num_vars": self.n_uncertain_params,
+            "num_vars": self.n_params,
             "names": list(vary.keys()),
-            "bounds": [[0, 1]] * self.n_uncertain_params
+            "bounds": [[0, 1]] * self.n_params
         }
 
         nodes = saltelli.sample(problem, n_sobol_samples, calc_second_order=False)
         self._samples = self.distribution.inv(dist_U.fwd(nodes.transpose()))
 
-        self.n_total_samples = n_sobol_samples * (self.n_uncertain_params + 2)
+        self._n_samples = n_sobol_samples * (self.n_params + 2)
 
         # Fast forward to specified count, if possible
         self.count = 0
         if self.count >= self.n_total_samples:
             msg = (f"Attempt to start sampler fastforwarded to count {self.count}, "
-                   f"but sampler only has {self.n_total_samples} samples, therefore"
+                   f"but sampler only has {self._n_samples} samples, therefore"
                    f"this sampler will not provide any more samples.")
             logging.warning(msg)
         else:
@@ -114,8 +111,18 @@ class QMCSampler(BaseSamplingElement, sampler_name="QMC_sampler"):
     def is_finite(self):
         return True
 
+    @property
     def n_samples(self):
-        return self.n_samples
+        """
+        Number of samples (Ns) of QMC method.
+
+        To be able to compute the Sobol indices, using Saltelli's
+        sampling scheme: NS = (n_mc_samples/2)*(n_uncertain_params + 2)
+
+        Ref: Eck et al. 'A guide to uncertainty quantification and
+        sensitivity analysis for cardiovascular applications' [2016].
+        """
+        return self._n_samples
 
     def is_restartable(self):
         return True
@@ -135,4 +142,4 @@ class QMCSampler(BaseSamplingElement, sampler_name="QMC_sampler"):
     def get_restart_dict(self):
         return {"vary": self.vary.serialize(),
                 "count": self.count,
-                "n_samples": self.n_samples}
+                "n_mc_samples": self.n_mc_samples}
