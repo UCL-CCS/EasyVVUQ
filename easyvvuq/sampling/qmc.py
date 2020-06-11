@@ -115,9 +115,9 @@ class QMCSampler(BaseSamplingElement, sampler_name="QMC_sampler"):
     def n_samples(self):
         """
         Number of samples (Ns) of QMC method.
-
         To be able to compute the Sobol indices, using Saltelli's
-        sampling scheme: NS = (n_mc_samples/2)*(n_uncertain_params + 2)
+        sampling scheme: NS = N/2*(n_uncertain_params + 2).
+        N is the number of samples for MC method, by default N = 10**4.
 
         Ref: Eck et al. 'A guide to uncertainty quantification and
         sensitivity analysis for cardiovascular applications' [2016].

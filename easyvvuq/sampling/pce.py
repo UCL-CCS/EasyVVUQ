@@ -59,7 +59,6 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
             The quadrature method, in case of projection (default is Gaussian "G").
             The sequence sampler in case of regression (default is Hammersley "M")
 
-
         sparse : bool, optional
             If True, use Smolyak sparse grid instead of normal tensor product
             grid. Default value is False.
@@ -167,7 +166,6 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
     def n_samples(self):
         """
         Number of samples (Ns) of PCE method.
-
         - When using pseudo-spectral projection method with tensored
           quadrature: Ns = (p + 1)**d
         - When using pseudo-spectral projection method with sparce grid

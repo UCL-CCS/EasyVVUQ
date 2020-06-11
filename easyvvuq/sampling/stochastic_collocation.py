@@ -336,7 +336,6 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
     def n_samples(self):
         """
         Number of samples (Ns) of SC method.
-
         - When using tensor quadrature: Ns = (p + 1)**d
         - When using sparid: Ns = bigO((p + 1)*log(p + 1)**(d-1))
         Where: p is the polynomial degree and d is the number of
