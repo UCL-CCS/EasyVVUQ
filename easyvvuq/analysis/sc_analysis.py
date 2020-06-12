@@ -409,7 +409,7 @@ class SCAnalysis(BaseAnalysisElement):
 
         ax2 = ax1.twinx()  # instantiate a second axes that shares the same x-axis
 
-        ax2.set_ylabel(r'$ ||\mathrm{std}_i - \mathrm{std}_{i - 1}||_\infty$',
+        ax2.set_ylabel(r'$ ||\mathrm{var}_i - \mathrm{var}_{i - 1}||_\infty$',
                        color='b', fontsize=12)
         ax2.plot(range(2, K + 1), differ_std, color='b', marker='*')
         ax2.tick_params(axis='y', labelcolor='b')
