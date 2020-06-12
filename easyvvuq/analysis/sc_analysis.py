@@ -60,7 +60,7 @@ class SCAnalysis(BaseAnalysisElement):
         if self.dimension_adaptive:
             self.adaptation_errors = []
             self.mean_history = []
-            self.var_history = []
+            self.std_history = []
         self.sparse = sampler.sparse
 
     def element_name(self):
@@ -340,11 +340,11 @@ class SCAnalysis(BaseAnalysisElement):
 
         #peform the analyse step, but do not compute moments and Sobols
         self.analyse(data_frame, compute_results=False)
-        
+
         if store_stats_history:
             mean_f, var_f = self.get_moments(qoi)
             self.mean_history.append(mean_f)
-            self.var_history.append(var_f)
+            self.std_history.append(var_f**0.5)
 
         # self.L = np.max(np.sum(self.l_norm, axis = 1) - self.N + 1)
         # self.xi_d = self.sampler.generate_grid(self.l_norm)
@@ -389,15 +389,14 @@ class SCAnalysis(BaseAnalysisElement):
             print('Means from at least two refinements are required')
             return
         else:
-            
             differ_mean = np.zeros(K - 1)
-            differ_var = np.zeros(K - 1)
+            differ_std = np.zeros(K - 1)
             for i in range(1, K):
                 differ_mean[i - 1] = np.linalg.norm(self.mean_history[i] -
                                                     self.mean_history[i - 1], np.inf)
 
-                differ_var[i - 1] = np.linalg.norm(self.var_history[i] -
-                                                   self.var_history[i - 1], np.inf)
+                differ_std[i - 1] = np.linalg.norm(self.std_history[i] -
+                                                   self.std_history[i - 1], np.inf)
 
         import matplotlib.pyplot as plt
         fig = plt.figure('stat_conv')
@@ -410,9 +409,9 @@ class SCAnalysis(BaseAnalysisElement):
 
         ax2 = ax1.twinx()  # instantiate a second axes that shares the same x-axis
 
-        ax2.set_ylabel(r'$ ||\mathrm{var}_i - \mathrm{var}_{i - 1}||_\infty$',
+        ax2.set_ylabel(r'$ ||\mathrm{std}_i - \mathrm{std}_{i - 1}||_\infty$',
                        color='b', fontsize=12)
-        ax2.plot(range(2, K + 1), differ_var, color='b', marker='*')
+        ax2.plot(range(2, K + 1), differ_std, color='b', marker='*')
         ax2.tick_params(axis='y', labelcolor='b')
         
         plt.tight_layout()
