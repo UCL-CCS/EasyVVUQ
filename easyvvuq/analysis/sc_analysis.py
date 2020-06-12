@@ -340,6 +340,12 @@ class SCAnalysis(BaseAnalysisElement):
 
         #peform the analyse step, but do not compute moments and Sobols
         self.analyse(data_frame, compute_results=False)
+        
+        #remove this later
+        if hasattr(self, 'std_history'):
+            import copy
+            self.var_history = copy.copy(self.std_history)
+            delattr(self, 'std_history')
 
         if store_stats_history:
             mean_f, var_f = self.get_moments(qoi)
@@ -389,13 +395,14 @@ class SCAnalysis(BaseAnalysisElement):
             print('Means from at least two refinements are required')
             return
         else:
+            
             differ_mean = np.zeros(K - 1)
-            differ_std = np.zeros(K - 1)
+            differ_var = np.zeros(K - 1)
             for i in range(1, K):
                 differ_mean[i - 1] = np.linalg.norm(self.mean_history[i] -
                                                     self.mean_history[i - 1], np.inf)
 
-                differ_std[i - 1] = np.linalg.norm(self.var_history[i] -
+                differ_var[i - 1] = np.linalg.norm(self.var_history[i] -
                                                    self.var_history[i - 1], np.inf)
 
         import matplotlib.pyplot as plt
@@ -411,7 +418,7 @@ class SCAnalysis(BaseAnalysisElement):
 
         ax2.set_ylabel(r'$ ||\mathrm{var}_i - \mathrm{var}_{i - 1}||_\infty$',
                        color='b', fontsize=12)
-        ax2.plot(range(2, K + 1), differ_std, color='b', marker='*')
+        ax2.plot(range(2, K + 1), differ_var, color='b', marker='*')
         ax2.tick_params(axis='y', labelcolor='b')
         
         plt.tight_layout()
