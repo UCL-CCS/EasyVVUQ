@@ -1,7 +1,8 @@
 from .base import BaseComparisonElement
-from .validate import ValidateSimilarity, ValidateCompatibility, ValidateSimilarityHellinger
-from .validate import ValidateSimilarityShannonJensen, ValidateSimilarityWasserstein1
-from .validate import ValidateSimilarityWasserstein2
+from .validate import ValidateSimilarity
+from .validate import ValidateSimilarityHellinger
+from .validate import ValidateSimilarityJensenShannon
+from .validate import ValidateSimilarityWasserstein
 
 __copyright__ = """
 

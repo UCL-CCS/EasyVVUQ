@@ -36,29 +36,43 @@ def test_validate_similarity_hellinger():
     validator = uq.comparison.validate.ValidateSimilarityHellinger()
     assert(validator.element_name() == 'validate_similarity_hellinger')
     assert(validator.element_version() == '0.1')
+    d1 = cp.Exponential(1)
+    d2 = cp.Exponential(2)
+    xmin = min(d1.lower[0], d2.lower[0])
+    xmax = max(d1.upper[0], d2.upper[0])
+    x = np.linspace(xmin, xmax, 100)
+    p1 = d1.pdf(x)
+    p2 = d2.pdf(x)
+    distance = validator.compare(p1, p2)
+    err = abs(distance - np.sqrt(1 - 2 * np.sqrt(2) / 3))
+    assert err < 1.e-2
 
 
-def test_validate_similarity_shannon_jensen():
-    validator = uq.comparison.validate.ValidateSimilarityShannonJensen()
-    assert(validator.element_name() == 'validate_similarity_shannon_jensen')
+def test_validate_similarity_jensen_shannon():
+    validator = uq.comparison.validate.ValidateSimilarityJensenShannon()
+    assert(validator.element_name() == 'validate_similarity_jensen_shannon')
     assert(validator.element_version() == '0.1')
+    d1 = cp.Normal(0, 1)
+    d2 = cp.Normal(1, 2)
+    xmin = min(d1.lower[0], d2.lower[0])
+    xmax = max(d1.upper[0], d2.upper[0])
+    x = np.linspace(xmin, xmax, 100)
+    p1 = d1.pdf(x)
+    p2 = d2.pdf(x)
+    distance = validator.compare(p1, p2)
+    assert distance >= 0.0 and distance <= 1.0
 
 
-def test_validate_similarity_wasserstein1():
-    validator = uq.comparison.validate.ValidateSimilarityWasserstein1()
-    assert(validator.element_name() == 'validate_similarity_wasserstein1')
+def test_validate_similarity_wasserstein():
+    validator = uq.comparison.validate.ValidateSimilarityWasserstein()
+    assert(validator.element_name() == 'validate_similarity_wasserstein')
     assert(validator.element_version() == '0.1')
-
-
-def test_validate_similarity_wasserstein2():
-    validator = uq.comparison.validate.ValidateSimilarityWasserstein2()
-    assert(validator.element_name() == 'validate_similarity_wasserstein2')
-    assert(validator.element_version() == '0.1')
-
-
-def test_validate_compatibility():
-    validator = uq.comparison.validate.ValidateCompatibility()
-    validator.weight_factor = 0.2
-    with pytest.raises(RuntimeError):
-        validator.weight_factor = 1.5
-    assert(validator.weight_factor == 0.2)
+    d1 = cp.Normal(0, 1)
+    d2 = cp.Normal(1, 2)
+    xmin = min(d1.lower[0], d2.lower[0])
+    xmax = max(d1.upper[0], d2.upper[0])
+    x = np.linspace(xmin, xmax, 100)
+    p1 = (xmax - xmin) * d1.cdf(x)
+    p2 = (xmax - xmin) * d2.cdf(x)
+    distance = validator.compare(p1, p2)
+    assert distance >= 0.0

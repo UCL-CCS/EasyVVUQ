@@ -38,19 +38,23 @@ class ValidateSimilarity(BaseComparisonElement):
         raise NotImplementedError
 
     def compare(self, dataframe1, dataframe2):
-        """Perform comparison between dataframe1 and dataframe2, two lists of:
-            - discrete probability densities if the metric is Hellinger or Shannon-Jenson,
-            - discrete cumulative distributions if the metric is Wasserstein 1 or 2.
+        """Perform comparison between two lists or arrays
+        of discrete distributions.
 
-        ASSUMPTION: each list can contain a set of scalar (floats, intgers), numpy.array
-        or lists of (floats, intgers), results from the probability density or cumulative
-        distribution functions.
+        Parameters
+        ----------
+        dataframe1 : NumPy array or list
+        dataframe2 : NumPy array or list
+
+        Returns
+        -------
+        A list of distances between two lists of discrete distributions,
+        dataframe1 and dataframe2.
         """
 
         if len(dataframe1) != len(dataframe2):
             raise RuntimeError("Input dataframe sizes are not equal")
 
-        # output
         shape = np.shape(dataframe1)
         if len(shape) == 2:
             results = []
@@ -75,7 +79,10 @@ class ValidateSimilarityHellinger(ValidateSimilarity):
         return "0.1"
 
     def dist(self, p, q):
-        """ Compute Hellinger distance between two discrete probability distributions.
+        """ Compute Hellinger distance between two discrete probability
+        distributions (PDF). The Hellinger distance metric gives an
+        output in the range [0,1] with values closer to 0 meaning the
+        PDFs are more similar.
 
         Parameters
         ----------
@@ -92,15 +99,18 @@ class ValidateSimilarityHellinger(ValidateSimilarity):
         return np.sqrt(1. - np.sqrt(p * q).sum())
 
 
-class ValidateSimilarityShannonJensen(ValidateSimilarity):
+class ValidateSimilarityJensenShannon(ValidateSimilarity):
     def element_name(self):
-        return "validate_similarity_shannon_jensen"
+        return "validate_similarity_jensen_shannon"
 
     def element_version(self):
         return "0.1"
 
     def dist(self, p, q):
-        """ Compute Shannon-Jensen divergence between two discrete probability distributions.
+        """ Compute Jensen-Shannon distance between two discrete
+        probability distributions (PDF). It is based on Kullback–Leibler
+        divergence and gives an output metric un the range [0,1] with
+        values closer to 0 meaning the PDFs are more similar.
 
         Parameters
         ----------
@@ -109,8 +119,9 @@ class ValidateSimilarityShannonJensen(ValidateSimilarity):
 
         Returns
         -------
-        Shannon-Jensen divergence between distributions p and q.
+        Jensen-Shannon divergence between distributions p and q.
         https://en.wikipedia.org/wiki/Jensen%E2%80%93Shannon_divergence
+        https://en.wikipedia.org/wiki/Kullback%E2%80%93Leibler_divergence
         """
         p /= p.sum()
         q /= q.sum()
@@ -119,15 +130,18 @@ class ValidateSimilarityShannonJensen(ValidateSimilarity):
         return np.sqrt(div / np.log(2))
 
 
-class ValidateSimilarityWasserstein1(ValidateSimilarity):
+class ValidateSimilarityWasserstein(ValidateSimilarity):
     def element_name(self):
-        return "validate_similarity_wasserstein1"
+        return "validate_similarity_wasserstein"
 
     def element_version(self):
         return "0.1"
 
     def dist(self, p, q):
-        """ Compute Wasserstein distance between two discrete probability distributions.
+        """ Compute Wasserstein distance between two discrete cumulative
+        distributions (CDF). The Wasserstein distance has an
+        unrestricted range with a lower limit of 0. A smaller distance
+        indicates a stronger similarity between between CFDs.
 
         Parameters
         ----------
@@ -140,79 +154,3 @@ class ValidateSimilarityWasserstein1(ValidateSimilarity):
         https://en.wikipedia.org/wiki/Wasserstein_metric
         """
         return st.wasserstein_distance(p, q)
-
-
-class ValidateSimilarityWasserstein2(ValidateSimilarity):
-    def element_name(self):
-        return "validate_similarity_wasserstein2"
-
-    def element_version(self):
-        return "0.1"
-
-    def dist(self, p, q):
-        """ Compute Wasserstein distance between two discrete probability distributions.
-
-        Parameters
-        ----------
-        p : NumPy array
-        q : NumPy array
-
-        Returns
-        -------
-        Wasserstein distance between distributions p and q.
-        https://en.wikipedia.org/wiki/Wasserstein_metric
-        """
-        return st.energy_distance(p, q)
-
-
-class ValidateCompatibility(ValidateSimilarity):
-    def __init__(self, weight_factor=0.5):
-        """Measure compatability between two QoI distributions.
-        Each distribution is characterized by three moments:
-        Mean, variance and skewness.
-        Lower metric means hight compatability.
-
-        Parameters
-        ----------
-        weight_factor : float, optional
-           parameter in [0, 1]
-           default: 0.5
-        """
-
-        if weight_factor < 0. or weight_factor > 1.:
-            raise RuntimeError("Validate_Compatability: Wrong parameter value.")
-
-        self._weight_factor = weight_factor
-
-    def element_name(self):
-        return "Validate_Compatability"
-
-    def element_version(self):
-        return "0.1"
-
-    @property
-    def weight_factor(self):
-        return self._weight_factor
-
-    @weight_factor.setter
-    def weight_factor(self, weight_factor):
-        """
-        Parameters
-        ----------
-        weight_factor : float
-        """
-
-        if weight_factor < 0. or weight_factor > 1.:
-            raise RuntimeError("set_weight_factor: wrong parameter value.")
-        self._weight_factor = weight_factor
-
-    def dist(self, mom1, mom2):
-        m1 = mom1[0]
-        v1 = mom1[1]
-        s1 = mom1[2]
-        m2 = mom2[0]
-        v2 = mom2[1]
-        s2 = mom2[2]
-        term1 = (m2 - m1)**2 / (2 * (v1 + v2) + (m2 - m1)**2)
-        term2 = (s2 - s1)**2 / (2 * (v1 + v2) + (m2 - m1)**2 + (abs(s1) + abs(s2))**2)
-        return (1 - self._weight_factor) * term1 + self._weight_factor * term2
