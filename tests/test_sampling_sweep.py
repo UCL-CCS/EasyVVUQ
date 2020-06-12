@@ -37,6 +37,10 @@ def test_is_finite(basic_sweep_sampler):
     assert(basic_sweep_sampler.is_finite())
 
 
+def test_n_samples(basic_sweep_sampler):
+    assert(basic_sweep_sampler.n_samples() == 9)
+
+
 def test_is_restartable(basic_sweep_sampler):
     assert(basic_sweep_sampler.is_restartable())
 

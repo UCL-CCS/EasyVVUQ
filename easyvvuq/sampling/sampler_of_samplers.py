@@ -1,6 +1,7 @@
 from .base import BaseSamplingElement
 import logging
 import itertools
+import functools
 
 __copyright__ = """
 
@@ -68,6 +69,16 @@ class MultiSampler(BaseSamplingElement, sampler_name="multisampler"):
 
     def is_finite(self):
         return True
+
+    def n_samples(self):
+        """Returns the number of samples in this sampler.
+
+        Returns
+        -------
+        a product of the sizes of samplers passed to MultiSampler
+        """
+        return functools.reduce(
+            lambda x, y: x * y, [sampler.n_samples() for sampler in self.samplers], 1)
 
     def __next__(self):
         # Will raise StopIteration when there are none left

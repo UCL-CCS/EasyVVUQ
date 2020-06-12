@@ -397,7 +397,7 @@ def test_qmc(tmpdir, campaign):
         "t_env": cp.Uniform(15, 25)
     }
     sampler = uq.sampling.QMCSampler(vary=vary,
-                                     n_samples=10)
+                                     n_mc_samples=10)
     actions = uq.actions.ExecuteLocal("tests/cooling/cooling_model.py cooling_in.json")
     stats = uq.analysis.QMCAnalysis(sampler=sampler,
                                     qoi_cols=output_columns)

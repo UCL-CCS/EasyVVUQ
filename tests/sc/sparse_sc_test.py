@@ -80,7 +80,7 @@ my_sampler = uq.sampling.SCSampler(vary=vary, polynomial_order=3,
 my_campaign.set_sampler(my_sampler)
 
 # Will draw all (of the finite set of samples)
-my_campaign.draw_samples(num_samples=my_sampler._number_of_samples)
+my_campaign.draw_samples(num_samples=my_sampler.n_samples)
 my_campaign.populate_runs_dir()
 
 # Use this instead to run the samples using EasyVVUQ on the localhost

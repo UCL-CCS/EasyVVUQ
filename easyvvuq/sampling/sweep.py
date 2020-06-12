@@ -1,6 +1,7 @@
 from .base import BaseSamplingElement
 import itertools
 import logging
+import functools
 
 __copyright__ = """
 
@@ -59,6 +60,16 @@ class BasicSweep(BaseSamplingElement, sampler_name="basic_sweep"):
 
     def is_finite(self):
         return True
+
+    def n_samples(self):
+        """Returns the number of samples in this sampler.
+
+        Returns
+        -------
+        a product of the lengths of lists passed to BasicSweep
+        """
+        return functools.reduce(
+            lambda x, y: x * y, [len(lst) for lst in [self.sweep[key] for key in self.sweep]], 1)
 
     def __next__(self):
         # Will raise StopIteration when there are none left
