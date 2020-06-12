@@ -341,12 +341,6 @@ class SCAnalysis(BaseAnalysisElement):
         #peform the analyse step, but do not compute moments and Sobols
         self.analyse(data_frame, compute_results=False)
         
-        #remove this later
-        if hasattr(self, 'std_history'):
-            import copy
-            self.var_history = copy.copy(self.std_history)
-            delattr(self, 'std_history')
-
         if store_stats_history:
             mean_f, var_f = self.get_moments(qoi)
             self.mean_history.append(mean_f)
