@@ -60,7 +60,7 @@ class SCAnalysis(BaseAnalysisElement):
         if self.dimension_adaptive:
             self.adaptation_errors = []
             self.mean_history = []
-            self.std_history = []
+            self.var_history = []
         self.sparse = sampler.sparse
 
     def element_name(self):
@@ -344,7 +344,7 @@ class SCAnalysis(BaseAnalysisElement):
         if store_stats_history:
             mean_f, var_f = self.get_moments(qoi)
             self.mean_history.append(mean_f)
-            self.std_history.append(var_f**0.5)
+            self.var_history.append(var_f)
 
         # self.L = np.max(np.sum(self.l_norm, axis = 1) - self.N + 1)
         # self.xi_d = self.sampler.generate_grid(self.l_norm)
@@ -395,8 +395,8 @@ class SCAnalysis(BaseAnalysisElement):
                 differ_mean[i - 1] = np.linalg.norm(self.mean_history[i] -
                                                     self.mean_history[i - 1], np.inf)
 
-                differ_std[i - 1] = np.linalg.norm(self.std_history[i] -
-                                                   self.std_history[i - 1], np.inf)
+                differ_std[i - 1] = np.linalg.norm(self.var_history[i] -
+                                                   self.var_history[i - 1], np.inf)
 
         import matplotlib.pyplot as plt
         fig = plt.figure('stat_conv')
@@ -569,7 +569,7 @@ class SCAnalysis(BaseAnalysisElement):
 
         return Delta
 
-    def get_moments(self, qoi):
+    def get_moments(self, qoi, combination_technique=True):
         """
         Parameters
         ----------
@@ -582,10 +582,11 @@ class SCAnalysis(BaseAnalysisElement):
         """
         print('Computing moments...')
         # compute mean
-        mean_f = self.quadrature(qoi)
+        mean_f = self.quadrature(qoi, combination_technique=combination_technique)
         # compute variance
         variance_samples = [(sample - mean_f)**2 for sample in self.samples[qoi]]
-        var_f = self.quadrature(qoi, samples=variance_samples)
+        var_f = self.quadrature(qoi, samples=variance_samples,
+                                combination_technique=combination_technique)
         print('done')
         return mean_f, var_f
     
