@@ -25,7 +25,7 @@ Validations metrics
 -------------------
 
 In EasyVVUQ, we implemented the calculation of four different divergence measures:
-Hellinger, Jensen-Shannon, Wasserstein-1 and Wasserstein-2 (cf. references below for more details). This allows us to compute distances between two QoI distributions.
+Hellinger, Jensen-Shannon and Wasserstein (cf. references below for more details). This allows us to compute distances between two QoI distributions.
 
 QoI distributions
 -----------------

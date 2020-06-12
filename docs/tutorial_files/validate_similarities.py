@@ -53,16 +53,12 @@ if __name__ == "__main__":
     dh = validater.compare(pdf1, pdf2)
 
     # Jensen-Shannon distance
-    validater = uq.comparison.ValidateSimilarityShannonJensen()
+    validater = uq.comparison.ValidateSimilarityJensenShannon()
     dj = validater.compare(pdf1, pdf2)
 
-    # Wasserstein-1 distance
-    validater = uq.comparison.ValidateSimilarityWasserstein1()
-    dw1 = validater.compare(cdf1, cdf2)
-
-    # Wasserstein-2 distance
-    validater = uq.comparison.ValidateSimilarityWasserstein2()
-    dw2 = validater.compare(cdf1, cdf2)
+    # Wasserstein distance
+    validater = uq.comparison.ValidateSimilarityWasserstein()
+    dw = validater.compare(cdf1, cdf2)
 
     # Visualisations
     m1 = (y - 50.)**2 / 500
@@ -86,9 +82,8 @@ if __name__ == "__main__":
     axs[0].grid()
 
     axs[1].plot(y, dh, label="Hellinger")
-    axs[1].plot(y, dj, label="Shannon-Jenseen")
-    axs[1].plot(y, dw1, label="Wassertein-1")
-    axs[1].plot(y, dw2, label="Wassertein-2")
+    axs[1].plot(y, dj, label="Jensen-Shannon")
+    axs[1].plot(y, dw, label="Wassertein")
 
     axs[1].set_ylabel("distances")
     axs[1].legend()
