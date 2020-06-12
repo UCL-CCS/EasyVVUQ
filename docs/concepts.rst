@@ -1,6 +1,6 @@
 .. _concepts:
 
-Conceptual Basis
+Conceptual basis
 ================
 
 EasyVVUQ was created as part of the `VECMA <http://www.vecma.eu/>`_ project.
@@ -39,7 +39,7 @@ formats for analysis (a ``Decoder``).
 Below we describe the components of EasyVVUQ designed to perform each step in
 more detail.
 
-Parameter Description
+Parameter description
 ---------------------
 
 The first step in our generalised workflow is a description of the model

@@ -33,7 +33,8 @@ Table of contents
 -----------------
 
 .. toctree::
-   :maxdepth: 1
+   :maxdepth: 2
+   :caption: Contents
 
    installation
    concepts
