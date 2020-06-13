@@ -78,6 +78,6 @@ References
 
 `Jensen-Shannon divergence <https://en.wikipedia.org/wiki/Jensen%E2%80%93Shannon_divergence>`_.
 
-`Kullback–Leibler divergence <https://en.wikipedia.org/wiki/Kullback%E2%80%93Leibler_divergence`_.
+`Kullback–Leibler divergence <https://en.wikipedia.org/wiki/Kullback%E2%80%93Leibler_divergence>`_.
 
 `Wasserstein metric <https://en.wikipedia.org/wiki/Wasserstein_metric>`_.
