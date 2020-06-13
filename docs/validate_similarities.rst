@@ -25,7 +25,7 @@ Validations metrics
 -------------------
 
 In EasyVVUQ, we implemented the calculation of three different metrics:
-Hellinger, Jensen-Shannon (distance based on Kullback–Leibler divergence) and Wasserstein (cf. references below for more details). This allows us to compute distances between two QoI distributions.
+Hellinger, Jensen-Shannon and Wasserstein (cf. references below for more details). This allows us to compute distances between two QoI distributions.
 
 QoI distributions
 -----------------
@@ -77,7 +77,5 @@ References
 `Hellinger distance <https://en.wikipedia.org/wiki/Hellinger_distance>`_.
 
 `Jensen-Shannon divergence <https://en.wikipedia.org/wiki/Jensen%E2%80%93Shannon_divergence>`_.
-
-`Kullback–Leibler divergence <https://en.wikipedia.org/wiki/Kullback%E2%80%93Leibler_divergence>`_.
 
 `Wasserstein metric <https://en.wikipedia.org/wiki/Wasserstein_metric>`_.
