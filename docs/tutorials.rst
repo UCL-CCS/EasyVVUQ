@@ -16,3 +16,4 @@ A good place to start would be to follow our interactive Jupyter notebook `tutor
    custom_encoder
    multiencoder_tutorial
    hier_sparse_grid_tutorial
+   validate_similarities
