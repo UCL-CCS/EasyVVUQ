@@ -52,6 +52,13 @@ easyvvuq.sampling.stochastic\_collocation module
     :undoc-members:
     :show-inheritance:
 
+       easyvvuq.sampling.replica\_sampler
+------------------------------------------------
+
+.. automodule:: easyvvuq.sampling.replica_sampler
+    :members:
+    :undoc-members:
+    :show-inheritance:
 
 Module contents
 ---------------
