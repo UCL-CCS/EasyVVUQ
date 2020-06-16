@@ -1,3 +1,16 @@
+"""Replica Sampler
+
+Summary
+-------
+
+Primarily intended for sampling the same paramater values but with
+different random seed. Other uses may be possible. It takes a finite
+sampler and produces an infinite sampler from it. This infinite
+sampler loops through the parameters produced by the finite sampler
+and at each cycle adds a unique id number for that cycle to the
+parameter dictionary.
+"""
+
 from easyvvuq.sampling import BaseSamplingElement
 from itertools import cycle
 
