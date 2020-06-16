@@ -1,4 +1,5 @@
 from easyvvuq.sampling import BaseSamplingElement
+from itertools import cycle
 
 
 class ReplicaSampler(BaseSamplingElement, sampler_name='replica_sampler'):
@@ -8,6 +9,12 @@ class ReplicaSampler(BaseSamplingElement, sampler_name='replica_sampler'):
         self.sampler = sampler
         self.ensemble_col = ensemble_col
         self.history = []
+        for sample in sampler:
+            self.history.append(sample)
+        self.size = len(self.history)
+        self.cycle = cycle(self.history)
+        self.ensemble = 0
+        self.counter = 0
 
     def is_finite(self):
         return False
@@ -19,7 +26,14 @@ class ReplicaSampler(BaseSamplingElement, sampler_name='replica_sampler'):
         raise RuntimeError("You can't get the number of samples in an infinite sampler")
 
     def __next__(self):
-        pass
+        params = dict(next(self.cycle))
+        if self.counter < self.size - 1:
+            self.counter += 1
+        else:
+            self.counter = 0
+            self.ensemble += 1
+        params[self.ensemble_col] = self.ensemble
+        return params
 
     def is_restartable(self):
         return False
