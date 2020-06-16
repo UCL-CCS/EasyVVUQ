@@ -3,6 +3,8 @@ from easyvvuq.sampling import BaseSamplingElement
 
 class ReplicaSampler(BaseSamplingElement, sampler_name='replica_sampler'):
     def __init__(self, sampler, ensemble_col='ensemble'):
+        if not sampler.is_finite():
+            raise RuntimeError("Replica sampler only works with finite samplers")
         self.sampler = sampler
         self.ensemble_col = ensemble_col
         self.history = []
