@@ -1,5 +1,8 @@
-class ReplicaSampler(BaseSamplingElement, name='replica_sampler'):
-    def __init__(self, sampler, ensemble_col):
+from easyvvuq.sampling import BaseSamplingElement
+
+
+class ReplicaSampler(BaseSamplingElement, sampler_name='replica_sampler'):
+    def __init__(self, sampler, ensemble_col='ensemble'):
         self.sampler = sampler
         self.ensemble_col = ensemble_col
 
