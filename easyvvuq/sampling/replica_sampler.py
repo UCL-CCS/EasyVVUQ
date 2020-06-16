@@ -5,6 +5,7 @@ class ReplicaSampler(BaseSamplingElement, sampler_name='replica_sampler'):
     def __init__(self, sampler, ensemble_col='ensemble'):
         self.sampler = sampler
         self.ensemble_col = ensemble_col
+        self.history = []
 
     def is_finite(self):
         return False
