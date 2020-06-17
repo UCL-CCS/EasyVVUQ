@@ -6,7 +6,7 @@ import pytest
 
 @pytest.fixture
 def replica_sampler():
-    return ReplicaSampler(BasicSweep({'a' : [1, 2], 'b' : [3, 4]}))
+    return ReplicaSampler(BasicSweep({'a': [1, 2], 'b': [3, 4]}))
 
 
 def test_infite_exception():
