@@ -12,6 +12,7 @@ cerberus
 dask[complete]
 dask_jobqueue
 dask-kubernetes
+cloudpickle
 scikit-learn
 jinja2
 fsspec
