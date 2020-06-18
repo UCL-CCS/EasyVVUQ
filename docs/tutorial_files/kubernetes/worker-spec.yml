@@ -1,0 +1,18 @@
+kind: Pod
+metadata:
+  labels:
+    foo: bar
+spec:
+  restartPolicy: Never
+  containers:
+  - image: orbitfold/easyvvuq:latest
+    imagePullPolicy: IfNotPresent
+    args: [dask-worker, --nthreads, '1', --no-dashboard, --memory-limit, 6GB, --death-timeout, '60']
+    name: easyvvuq
+    resources:
+      limits:
+        cpu: "1"
+        memory: 6G
+      requests:
+        cpu: "1"
+        memory: 6G
