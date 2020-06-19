@@ -7,12 +7,12 @@ spec:
   containers:
   - image: orbitfold/easyvvuq:latest
     imagePullPolicy: IfNotPresent
-    args: [dask-worker, --nthreads, '1', --no-dashboard, --memory-limit, 6GB, --death-timeout, '60']
+    args: [dask-worker, --nthreads, '3', --no-dashboard, --memory-limit, 6GB, --death-timeout, '60']
     name: easyvvuq
     resources:
       limits:
-        cpu: "1"
+        cpu: "3"
         memory: 6G
       requests:
-        cpu: "1"
+        cpu: "3"
         memory: 6G
