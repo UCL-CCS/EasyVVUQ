@@ -41,7 +41,7 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
                  count=0,
                  growth=False,
                  sparse=False,
-                 midpoint_level1=False,
+                 midpoint_level1=True,
                  dimension_adaptive=False):
         """
         Create the sampler for the Stochastic Collocation method.

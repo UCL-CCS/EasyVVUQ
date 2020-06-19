@@ -222,7 +222,11 @@ class SCAnalysis(BaseAnalysisElement):
                                                          'var': var_k,
                                                          'std': std_k}
                 # compute Sobol indices
-                results['sobols'][qoi_k], _ = self.get_sobol_indices(qoi_k, 'first_order')
+                if not self.sparse:
+                    results['sobols'][qoi_k], _ = self.get_sobol_indices(qoi_k, 'first_order')
+                else:
+                    _, _, results['sobols'][qoi_k] = self.get_pce_sobol_indices(qoi_k, 'first_order')
+
                 for idx, param_name in enumerate(self.sampler.vary.get_keys()):
                     results['sobols_first'][qoi_k][param_name] = \
                         results['sobols'][qoi_k][(idx,)]
@@ -402,7 +406,7 @@ class SCAnalysis(BaseAnalysisElement):
         fig = plt.figure('stat_conv')
         ax1 = fig.add_subplot(111, title='moment convergence')
         ax1.set_xlabel('refinement step')
-        ax1.set_ylabel(r'$ ||\mathrm{mean}_i - \mathrm{mean}_{i - 1}||_\infty$', 
+        ax1.set_ylabel(r'$ ||\mathrm{mean}_i - \mathrm{mean}_{i - 1}||_\infty$',
                        color='r', fontsize=12)
         ax1.plot(range(2, K + 1), differ_mean, color='r', marker='+')
         ax1.tick_params(axis='y', labelcolor='r')
@@ -413,7 +417,7 @@ class SCAnalysis(BaseAnalysisElement):
                        color='b', fontsize=12)
         ax2.plot(range(2, K + 1), differ_std, color='b', marker='*')
         ax2.tick_params(axis='y', labelcolor='b')
-        
+
         plt.tight_layout()
         plt.show()
 
@@ -426,7 +430,7 @@ class SCAnalysis(BaseAnalysisElement):
         - qoi (str): name of the qoi
         - x (array): location at which to evaluate the surrogate
         - L (int): level of the (sparse) grid, default = self.L
-        - recursive (boolean): use the recursive implementation of the 
+        - recursive (boolean): use the recursive implementation of the
           SC expansion, default = False.
 
         Returns
@@ -453,12 +457,12 @@ class SCAnalysis(BaseAnalysisElement):
         - samples: Default: compute the mean
           by setting samples = self.samples. To compute the variance,
           set samples = (self.samples - mean)**2
-          
+
         - combination_technique: compute the (sparse) grid quadrature by
           using the general combination technique, default = True. If False,
           the quadrature is computed by a brute force expansion of quadrature
           difference formulas, which is inefficient in high dimensions.
-          
+
         Returns: the quadrature of qoi
         -------
         """
@@ -589,7 +593,7 @@ class SCAnalysis(BaseAnalysisElement):
                                 combination_technique=combination_technique)
         print('done')
         return mean_f, var_f
-    
+
     def sc_expansion(self, samples, x):
         """
         -------------------------------------------------
@@ -601,21 +605,21 @@ class SCAnalysis(BaseAnalysisElement):
         Parameters
         ----------
         - samples: array of code samples
-        - x (float (N,)): location in stochastic space at which to eval 
+        - x (float (N,)): location in stochastic space at which to eval
           the surrogate
 
         Returns
         -------
 
         surr (float, (N_qoi,)): the interpolated value of qoi at x
-        
+
         """
         surr = 0.0
         for l in self.l_norm:
             #all points corresponding to l
             xi = [self.xi_1d[n][l[n]] for n in range(self.N)]
             xi_d = np.array(list(product(*xi)))
-            
+
             for xi in xi_d:
                 # indices of current collocation point
                 # in corresponding 1d colloc points (self.xi_1d[n][l[n]])
@@ -624,12 +628,12 @@ class SCAnalysis(BaseAnalysisElement):
                 idx = [(self.xi_1d[n][l[n]] == xi[n]).nonzero()[0][0] for n in range(self.N)]
                 # values of Lagrange polynomials at x
                 weight = [lagrange_poly(x[n], self.xi_1d[n][l[n]], idx[n]) for n in range(self.N)]
-                
+
                 idx = np.where((xi == self.xi_d).all(axis=1))[0][0]
                 surr += self.comb_coef[tuple(l)] * samples[idx] * np.prod(weight)
 
         return surr
-            
+
     def sc_expansion_recursive(self, L, samples, x):
         """
         --------------------------------------------
@@ -858,8 +862,181 @@ class SCAnalysis(BaseAnalysisElement):
         else:
             print('Will only plot for N = 2 or N = 3.')
 
-    # Start SC specific methods
+    def SC2PCE(self, qoi):
+        """
+        Computes the Polynomials Chaos Expansion coefficients from the SC
+        expansion via a transformation of basis (Lagrange polynomials basis -->
+        orthonomial basis).
 
+        Parameters
+        ----------
+        qoi : (string) quantity of interest to compute the PCE coefficients for
+
+        Returns
+        -------
+        pce_coefs : dict of PCE coefficients per multi index l
+
+        """
+        pce_coefs = {}
+
+        print('Computing PCE coefficients...')
+        for l in self.l_norm:
+            #pce coefficients for current multi-index l        
+            pce_coefs[tuple(l)] = {}
+
+            #1d points generated by l
+            x_1d = [self.xi_1d[n][l[n]] for n in range(self.N)]
+            #1d Lagrange polynomials generated by l
+            a_1d = [cp.lagrange_polynomial(self.xi_1d[n][l[n]]) for n in range(self.N)]
+            #N-dimensional grid generated by l
+            x_l = np.array(list(product(*x_1d)))
+
+            #all multi indices of the PCE expansion: k <= l
+            k_norm = list(product(*[np.arange(1, l[n] + 1) for n in range(self.N)]))
+
+            count_k = 1
+            for k in k_norm:
+                print('Computing coeffienct %d of %d' % (count_k, len(k_norm)))
+                #product of the PCE basis function or order k - 1 and all
+                #Lagrange basis functions in a_1d, per dimension
+                #[[phi_k[0]*a_1d[0]], ..., [phi_k[N-1]*a_1d[N-1]]]
+                cross_prod = [cp.orth_ttr(k[n] - 1,
+                                          dist=self.sampler.params_distribution[n],
+                                          normed=True)[-1] * a_1d[n] for n in range(self.N)]
+
+                #the tensor product of cross prod gives all the integrands
+                #for which we must compute the integral
+                integrands = list(product(*cross_prod))
+
+                #eta_k = the PCE coef corresponding to multi index k
+                eta_k = 0.0
+                count = 0
+                for integrand in integrands:
+                    v_prod = 1.0
+                    #compute v_{k,j_1} * ... * v_{k,j_N}, where each v is
+                    #the integral
+                    for n in range(self.N):
+                        v_kj_n = cp.E(integrand[n],
+                                      self.sampler.params_distribution[n])
+                        v_prod = v_prod * v_kj_n
+
+                    #find corresponding point in global grid
+                    idx = np.where((x_l[count] == self.xi_d).all(axis=1))[0][0]
+                    #multiply v_{k,j_1} * ... * v_{k,j_N} with the code output
+                    v_prod = v_prod * self.samples[qoi][idx]
+                    count += 1
+
+                    #the sum of all code sample * v_{k,j_1} * ... * v_{k,j_N}
+                    #equals the PCE coefficient
+                    eta_k = eta_k + v_prod
+
+                pce_coefs[tuple(l)][tuple(k)] = eta_k
+                count_k += 1
+
+        print('done')
+        self.pce_coefs = pce_coefs
+        return pce_coefs
+
+    def get_pce_sobol_indices(self, qoi, typ='first_order'):
+        """
+        Computes Sobol indices using Polynomials Chaos coefficients. These
+        coefficients are computed from the SC expansion via a transformation
+        of basis (SC2PCE subroutine). This works better than computing the
+        Sobol indices directly from the SC expansion in the case of the
+        dimension-adaptive sampler.
+
+        Method: J.D. Jakeman et al, "Adaptive multi-index collocation
+        for uncertainty quantification and sensitivity analysis", 2019.
+        (Page 18)
+
+        Parameters
+        ----------
+        qoi (str): name of the Quantity of Interest for which to compute the indices
+        typ (str): Default = 'first_order'. 'all' is also possible
+
+        Returns
+        -------
+        Mean: PCE mean
+        Var: PCE variance
+        S_u: PCE Sobol indices, either the first order indices or all indices
+        """
+
+        #compute the PCE coefficients
+        self.SC2PCE(qoi)
+
+        #Compute the PCE mean (not really required)
+        k1 = tuple(np.ones(self.N, dtype=int))
+        mean = 0.0
+        for l in self.l_norm:
+            mean = mean + self.comb_coef[tuple(l)] * self.pce_coefs[tuple(l)][k1]
+
+        #dict to hold the variance per multi index k
+        var = {}
+        #D = total PCE variance
+        D = 0.0
+        for k in self.l_norm[1:]:
+            var_k = 0.0
+            for l in self.l_norm[1:]:
+                if tuple(k) in self.pce_coefs[tuple(l)].keys():
+                    eta_k = self.pce_coefs[tuple(l)][tuple(k)]
+                    var_k = var_k + self.comb_coef[tuple(l)] * eta_k
+            var[tuple(k)] = var_k**2
+            D = D + var[tuple(k)]
+
+        print('Computing Sobol indices...')
+        # Universe = (0, 1, ..., N - 1)
+        U = np.arange(self.N)
+
+        #the powerset of U for either the first order or all Sobol indices
+        if typ == 'first_order':
+            P = list(powerset(U))[0:self.N + 1]
+        else:
+            # all indices u
+            P = list(powerset(U))
+
+        #dict to hold the partial Sobol variances and Sobol indices
+        D_u = {}; S_u = {}
+        for u in P[1:]:
+            # complement of u
+            u_prime = np.delete(U, u)
+            k = []
+            D_u[u] = np.zeros(self.N_qoi)
+            S_u[u] = np.zeros(self.N_qoi)
+
+            #compute the set of multi indices corresponding to varying ONLY
+            #the inputs indexed by u
+            for l in self.l_norm:
+                #assume l_i = 1 for all i in u' until found otherwise
+                all_ones = True
+                for i_up in u_prime:
+                    if l[i_up] != 1:
+                        all_ones = False
+                        break
+                #if l_i = 1 for all i in u'
+                if all_ones:
+                    #assume all l_i for i in u are > 1
+                    all_gt_one = True
+                    for i_u in u:
+                        if l[i_u] == 1:
+                            all_gt_one = False
+                            break
+                    #if both conditions above are True, the current l varies
+                    #only inputs indexed by u, add this l to k
+                    if all_gt_one:
+                        k.append(l)
+
+            print('Multi indices of dimension u =', u, 'are', k)
+            #the partial variance of u is the sum of all variances index by k
+            for k_u in k:
+                D_u[u] = D_u[u] + var[tuple(k_u)]
+
+            #normalize D_u by total variance D to get the Sobol index
+            S_u[u] = D_u[u] / D
+
+        print('done')
+        return mean, D, S_u
+
+    # Start SC specific methods
     @staticmethod
     def compute_tensor_prod_u(xi, wi, u, u_prime):
         """
@@ -995,7 +1172,7 @@ class SCAnalysis(BaseAnalysisElement):
                 # mariginal integral h, integrate over dimensions u'
                 h, wi_d_u = self.compute_marginal(qoi, u, u_prime, l)
                 # square result and integrate over remaining dimensions u
-                for i_u in range(wi_d_u.shape[0]):                
+                for i_u in range(wi_d_u.shape[0]):      
                     D_u[u] += h[i_u]**2 * wi_d_u[i_u].prod()
                 D_u[u] *= self.comb_coef[tuple(l)]**3
 
@@ -1004,7 +1181,7 @@ class SCAnalysis(BaseAnalysisElement):
 
             # partial variance of u
             for w in W:
-                D_u[u] -= D_u[w]
+                D_u[u] = D_u[u] - D_u[w]
 
             # compute Sobol index, only include points where D > 0
             # sobol[u] = D_u[u][idx_gt0]/D[idx_gt0]
