@@ -7,4 +7,4 @@ RUN apt-get update && \
     pip3 install easyvvuq && \
     git clone https://github.com/UCL-CCS/EasyVVUQ.git
 
-ENTRYPOINT ["/tini", "--"]
+ENTRYPOINT ["tini", "--"]
