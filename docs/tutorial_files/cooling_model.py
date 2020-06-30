@@ -39,7 +39,6 @@ t = np.linspace(0, 200, 150)
 output_filename = inputs['out_file']
 
 te = model(t, temp0, kappa, t_env)
-print("te= ", te)
 # output csv file
 np.savetxt(output_filename, te,
            delimiter=",", comments='',
