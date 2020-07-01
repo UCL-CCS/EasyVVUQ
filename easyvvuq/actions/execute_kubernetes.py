@@ -60,11 +60,7 @@ class ExecuteKubernetes(BaseAction):
             raise NotImplementedError(msg)
         with open(pod_config, 'r') as fd:
             self.dep = yaml.load(fd)
-        self.dep['metadata'] = {'annotations' : {}}
-        for file_name in input_file_names:
-            with open(file_name, 'r') as fd:
-                self.dep['metadata']['annotations'][os.path.basename(file_name)] = fd.read()
-
+        self.input_file_names = input_file_names
 
     def act_on_dir(self, target_dir):
         """
@@ -74,7 +70,11 @@ class ExecuteKubernetes(BaseAction):
             Directory in which to execute command.
 
         """
-        k8s_apps_v1 = client.AppsV1Api()
-        resp = k8s_apps_v1.create_namespaced_deployment(
-            body=dep, namespace="default")
-        print(resp)
+        self.dep['metadata'] = {'annotations' : {}}
+        for file_name in input_file_names:
+            with open(os.path.join(target_dir, file_name), 'r') as fd:
+                self.dep['metadata']['annotations'][os.path.basename(file_name)] = fd.read()
+        #k8s_apps_v1 = client.AppsV1Api()
+        #resp = k8s_apps_v1.create_namespaced_deployment(
+        #    body=dep, namespace="default")
+        #print(resp)
