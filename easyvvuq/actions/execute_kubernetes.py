@@ -8,7 +8,8 @@ Examples
 import os
 import sys
 import logging
-from kubernetes import client, config
+import yaml
+from kubernetes import client, config, watch
 from . import BaseAction
 
 __copyright__ = """
@@ -61,8 +62,8 @@ class ExecuteKubernetes(BaseAction):
             self.dep = yaml.load(fd)
         self.dep['metadata'] = {'annotations' : {}}
         for file_name in input_file_names:
-            with open(filename, 'r') as fd:
-                self.dep['metadata']['annotations']['filename'] = fd.read()
+            with open(file_name, 'r') as fd:
+                self.dep['metadata']['annotations'][os.path.basename(file_name)] = fd.read()
 
 
     def act_on_dir(self, target_dir):
@@ -76,3 +77,4 @@ class ExecuteKubernetes(BaseAction):
         k8s_apps_v1 = client.AppsV1Api()
         resp = k8s_apps_v1.create_namespaced_deployment(
             body=dep, namespace="default")
+        print(resp)
