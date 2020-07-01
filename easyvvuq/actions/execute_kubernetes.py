@@ -1,11 +1,14 @@
 """Provides element to execute a simulation on a Kubernetes cluster
-and retrieve the output
+and retrieve the output.
+
+Examples
+--------
 """
 
 import os
 import sys
 import logging
-import kubernetes
+from kubernetes import client, config
 from . import BaseAction
 
 __copyright__ = """
@@ -34,7 +37,6 @@ logger = logging.getLogger(__name__)
 
 
 class ExecuteKubernetes(BaseAction):
-
     def __init__(self, pod_config, input_file_names):
         """
         Provides an action element to run a shell command in a specified
@@ -55,10 +57,13 @@ class ExecuteKubernetes(BaseAction):
                    'only. We detect you are using Windows.')
             logger.error(msg)
             raise NotImplementedError(msg)
+        with open(pod_config, 'r') as fd:
+            self.dep = yaml.load(fd)
+        self.dep['metadata'] = {'annotations' : {}}
+        for file_name in input_file_names:
+            with open(filename, 'r') as fd:
+                self.dep['metadata']['annotations']['filename'] = fd.read()
 
-        # Need to expand users, get absolute path and dereference symlinks
-        self.run_cmd = os.path.realpath(os.path.expanduser(run_cmd))
-        self.interpreter = interpret
 
     def act_on_dir(self, target_dir):
         """
