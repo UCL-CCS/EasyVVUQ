@@ -614,6 +614,9 @@ class SCAnalysis(BaseAnalysisElement):
         surr (float, (N_qoi,)): the interpolated value of qoi at x
 
         """
+        #TODO: xi_d, idx are computed every time, but only depend upon
+        #self.l_norm. Makes it slow, store globally, and only recompute when
+        #self.l_norm has changed
         surr = 0.0
         for l in self.l_norm:
             #all points corresponding to l
@@ -1113,6 +1116,7 @@ class SCAnalysis(BaseAnalysisElement):
         Computes Sobol indices using Stochastic Collocation. Method:
         Tang (2009), GLOBAL SENSITIVITY ANALYSIS  FOR STOCHASTIC COLLOCATION
         EXPANSION.
+
         Parameters
         ----------
         qoi (str): name of the Quantity of Interest for which to compute the indices
@@ -1189,6 +1193,65 @@ class SCAnalysis(BaseAnalysisElement):
         print('done.')
         return sobol, D_u
 
+    def get_confidence_intervals(self, qoi, n_samples, conf=0.9):
+        """
+        Compute the confidence intervals based upon samples of the SC surrogate.
+        Uses a non-parametric approach based upon the empirical cumulative
+        distribution function.
+
+        Parameters:
+        -----------
+        qoi (str): name of the Quantity of Interest for which to compute the intervals
+        n_samples (int): number of surrogate samples to be used in the computation
+        conf (float in [0, 1]): the confidence interval magnitude
+
+        Returns:
+        --------
+        lower, upper (array of floats): the upper and lower bound of the interval
+        """
+
+        #ake sure conf is in [0, 1]
+        if conf < 0.0 or conf > 1.0:
+            print('conf must be specified within [0, 1]')
+            return
+        #lower bound = alpha, upper bound = 1 - alpha 
+        alpha = 0.5*(1.0 - conf)
+
+        #draw n_samples draws from the input distributions
+        xi_mc = np.zeros([n_samples, self.N])
+        idx = 0
+        for dist in self.sampler.vary.get_values():
+            xi_mc[:, idx] = dist.sample(n_samples)
+            idx += 1
+
+        #sample the surrogate n_samples times
+        surr_samples = np.zeros([n_samples, self.N_qoi])
+        print('Sampling surrogate %d times' % (n_samples,))
+        for i in range(n_samples):
+            surr_samples[i, :] = self.surrogate(qoi, xi_mc[i])
+            if np.mod(i, 10) == 0:
+                print('%d of %d' % (i + 1, n_samples))
+        print('done')
+
+        #arrays for lower and upper bound of the interval
+        lower = np.zeros(self.N_qoi)
+        upper = np.zeros(self.N_qoi)
+
+        #the probabilities of the ecdf
+        prob = np.linspace(0, 1, n_samples)
+        #the closest locations in prob that correspond to the interval bounds
+        idx0 = np.where(prob <= alpha)[0][-1]
+        idx1 = np.where(prob <= 1.0 - alpha)[0][-1]
+
+        #for every location of qoi compute the ecdf-based confidence interval
+        for i in range(self.N_qoi):
+            #the sorted surrogate samples at the current location
+            samples_sorted = np.sort(surr_samples[:, i])
+            #the corresponding confidence interval
+            lower[i] = samples_sorted[idx0]
+            upper[i] = samples_sorted[idx1]
+
+        return lower, upper
 
 def powerset(iterable):
     """
