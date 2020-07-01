@@ -73,11 +73,6 @@ class ExecuteKubernetes(BaseAction):
             Directory in which to execute command.
 
         """
-
-        if self.interpreter is None:
-            full_cmd = f'cd "{target_dir}"\n{self.run_cmd}\n'
-        else:
-            full_cmd = f'cd "{target_dir}"\n{self.interpreter} {self.run_cmd}\n'
-        result = os.system(full_cmd)
-        if result != 0:
-            sys.exit(f'Non-zero exit code from command "{full_cmd}"\n')
+        k8s_apps_v1 = client.AppsV1Api()
+        resp = k8s_apps_v1.create_namespaced_deployment(
+            body=dep, namespace="default")
