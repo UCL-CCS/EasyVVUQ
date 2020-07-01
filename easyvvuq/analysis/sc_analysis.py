@@ -114,7 +114,7 @@ class SCAnalysis(BaseAnalysisElement):
             self.__dict__[key] = state[key]
         file.close()
 
-    def analyse(self, data_frame=None, compute_results=True):
+    def analyse(self, data_frame=None, compute_moments=True, compute_Sobols=True):
         """Perform SC analysis on input `data_frame`.
 
         Parameters
@@ -163,12 +163,15 @@ class SCAnalysis(BaseAnalysisElement):
 
             self.l_norm_min = np.ones(self.N, dtype=int)
 
+        #flag to initialise the interpolation
+        # self.init_interpolation = True
+
         #Compute general combination coefficients. These are the coefficients
         #multiplying the tensor products associated to each multi index l,
         #see page 12 Gerstner & Griebel, numerical integration using sparse grids
         unit_vecs = np.array(list(product([0, 1], repeat=self.N)))
         self.comb_coef = {}
-        print('computing combination coefficients...')
+        print('Computing combination coefficients...')
         for k in self.l_norm:
             self.comb_coef[tuple(k)] = 0.0
             for z in unit_vecs:
@@ -208,12 +211,12 @@ class SCAnalysis(BaseAnalysisElement):
         # size of one code sample
         self.N_qoi = self.samples[qoi_cols[0]][0].size
 
-        if compute_results:
-            results = {'statistical_moments': {},
-                       'sobols_first': {k: {} for k in self.qoi_cols},
-                       'sobols': {k: {} for k in self.qoi_cols}}
-
-            # Compute descriptive statistics for each quantity of interest
+        # Compute descriptive statistics for each quantity of interest
+        results = {'statistical_moments': {},
+                   'sobols_first': {k: {} for k in self.qoi_cols},
+                   'sobols': {k: {} for k in self.qoi_cols}}
+ 
+        if compute_moments:
             for qoi_k in qoi_cols:
                 mean_k, var_k = self.get_moments(qoi_k)
                 std_k = np.sqrt(var_k)
@@ -221,7 +224,9 @@ class SCAnalysis(BaseAnalysisElement):
                 results['statistical_moments'][qoi_k] = {'mean': mean_k,
                                                          'var': var_k,
                                                          'std': std_k}
-                # compute Sobol indices
+
+        if compute_Sobols:
+            for qoi_k in qoi_cols:
                 if not self.sparse:
                     results['sobols'][qoi_k], _ = self.get_sobol_indices(qoi_k, 'first_order')
                 else:
@@ -231,7 +236,7 @@ class SCAnalysis(BaseAnalysisElement):
                     results['sobols_first'][qoi_k][param_name] = \
                         results['sobols'][qoi_k][(idx,)]
 
-            return results
+        return results
 
     def create_map(self, L):
         """
@@ -342,8 +347,11 @@ class SCAnalysis(BaseAnalysisElement):
         idx = np.unique(self.l_norm, axis=0, return_index=True)[1]
         self.l_norm = np.array([self.l_norm[i] for i in sorted(idx)])
 
+        #if l_norm changes, the interpolation must be reinitialized
+        # self.init_interpolation = True
+
         #peform the analyse step, but do not compute moments and Sobols
-        self.analyse(data_frame, compute_results=False)
+        self.analyse(data_frame, compute_moments=False, compute_Sobols=False)
 
         if store_stats_history:
             mean_f, var_f = self.get_moments(qoi)
@@ -617,6 +625,15 @@ class SCAnalysis(BaseAnalysisElement):
         #TODO: xi_d, idx are computed every time, but only depend upon
         #self.l_norm. Makes it slow, store globally, and only recompute when
         #self.l_norm has changed
+        
+        # if self.init_interpolation:
+        #     self.xi_d_per_l = {}
+        #     for l in self.l_norm:
+        #         #all points corresponding to l
+        #         xi = [self.xi_1d[n][l[n]] for n in range(self.N)]
+        #         self.xi_d_per_l[tuple(l)] = np.array(list(product(*xi)))
+        #     self.init_interpolation = False
+        
         surr = 0.0
         for l in self.l_norm:
             #all points corresponding to l
@@ -1293,8 +1310,20 @@ def lagrange_poly(x, x_i, j):
     float
         l_j(x) calculated as shown above.
     """
-    x_i_ = np.delete(x_i, j)
-    return np.prod((x - x_i_) / (x_i[j] - x_i_))
+    l_j = 1.0
+
+    for m in range(len(x_i)):
+
+        if m != j:
+            denom = x_i[j] - x_i[m]
+            nom = x - x_i[m]
+
+            l_j *= nom / denom
+
+    return l_j
+    #implementation below is more beautiful, but slower
+    # x_i_ = np.delete(x_i, j)
+    # return np.prod((x - x_i_) / (x_i[j] - x_i_))
 
 
 def setdiff2d(X, Y):
