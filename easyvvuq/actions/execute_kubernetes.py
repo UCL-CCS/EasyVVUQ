@@ -41,21 +41,20 @@ logger = logging.getLogger(__name__)
 
 
 class ExecuteKubernetes(BaseAction):
+    """ Provides an action element to run a shell command in a specified
+    directory.
+
+    Parameters
+    ----------
+
+    pod_config : str
+        Command to execute.
+    input_file_names : list of str
+        A list of input file names for your simulation.
+    output_file_name : str
+        An output file name for the output of the simulation.
+    """
     def __init__(self, pod_config, input_file_names, output_file_name):
-        """
-        Provides an action element to run a shell command in a specified
-        directory.
-
-        Parameters
-        ----------
-
-        run_cmd : str
-            Command to execute.
-        interpret : str or None
-            Interpreter to use to execute cmd.
-
-        """
-
         if os.name == 'nt':
             msg = ('Local execution is provided for testing on Posix systems'
                    'only. We detect you are using Windows.')
@@ -72,12 +71,10 @@ class ExecuteKubernetes(BaseAction):
 
 
     def act_on_dir(self, target_dir):
-        """
-        Executes `self.run_cmd` in the shell in `target_dir`.
+        """Executes a dockerized simulation on input files found in `target_dir`.
 
         target_dir : str
-            Directory in which to execute command.
-
+            Directory in which to execute simulation.
         """
         self.dep['metadata'] = {'annotations': {}, 'name': 'epidemic'}
         for file_name in self.input_file_names:
