@@ -41,7 +41,7 @@ logger = logging.getLogger(__name__)
 
 
 class ExecuteKubernetes(BaseAction):
-    def __init__(self, pod_config, input_file_names):
+    def __init__(self, pod_config, input_file_names, output_file_name):
         """
         Provides an action element to run a shell command in a specified
         directory.
@@ -64,6 +64,7 @@ class ExecuteKubernetes(BaseAction):
         with open(pod_config, 'r') as fd:
             self.dep = yaml.load(fd)
         self.input_file_names = input_file_names
+        self.output_file_name = output_file_name
         config.load_kube_config()
         c = Configuration()
         c.assert_hostname = False
