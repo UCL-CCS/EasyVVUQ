@@ -93,3 +93,6 @@ class ExecuteKubernetes(BaseAction):
             if resp.status.phase != 'Pending':
                 break
             time.sleep(1)
+        log_ = core_v1.read_namespaced_pod_log(self.dep['spec']['containers'][0]['name'], 'default')
+        with open(self.output_file_name, 'w') as fd:
+            fd.write(log_)
