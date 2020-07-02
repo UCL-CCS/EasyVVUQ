@@ -9,7 +9,10 @@ import os
 import sys
 import logging
 import yaml
-from kubernetes import client, config, watch
+import time
+from kubernetes.client.api import core_v1_api
+from kubernetes import config
+from kubernetes.client import Configuration
 from . import BaseAction
 
 __copyright__ = """
@@ -61,6 +64,11 @@ class ExecuteKubernetes(BaseAction):
         with open(pod_config, 'r') as fd:
             self.dep = yaml.load(fd)
         self.input_file_names = input_file_names
+        config.load_kube_config()
+        c = Configuration()
+        c.assert_hostname = False
+        Configuration.set_default(c)
+
 
     def act_on_dir(self, target_dir):
         """
@@ -70,11 +78,17 @@ class ExecuteKubernetes(BaseAction):
             Directory in which to execute command.
 
         """
-        self.dep['metadata'] = {'annotations' : {}}
-        for file_name in input_file_names:
+        self.dep['metadata'] = {'annotations': {}, 'name': 'epidemic'}
+        for file_name in self.input_file_names:
             with open(os.path.join(target_dir, file_name), 'r') as fd:
                 self.dep['metadata']['annotations'][os.path.basename(file_name)] = fd.read()
-        #k8s_apps_v1 = client.AppsV1Api()
-        #resp = k8s_apps_v1.create_namespaced_deployment(
-        #    body=dep, namespace="default")
-        #print(resp)
+        core_v1 = core_v1_api.CoreV1Api()
+        resp = core_v1.create_namespaced_pod(
+            body=self.dep, namespace="default")
+        while True:
+            resp = core_v1.read_namespaced_pod(
+                name=self.dep['spec']['containers'][0]['name'],
+                namespace='default')
+            if resp.status.phase != 'Pending':
+                break
+            time.sleep(1)
