@@ -86,7 +86,7 @@ class ExecuteKubernetes(BaseAction):
                           'readOnly': True}
                          for file_name, id_ in self.input_file_names]
         self.dep['spec']['volumes'] = volumes
-        self.dep['spec']['containers']['volumeMounts'] = volume_mounts
+        self.dep['spec']['containers'][0]['volumeMounts'] = volume_mounts
 
 
     def create_config_maps(self):
