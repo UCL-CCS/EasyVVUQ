@@ -72,6 +72,21 @@ class ExecuteKubernetes(BaseAction):
         Configuration.set_default(c)
         self.core_v1 = core_v1_api.CoreV1Api()
         self.create_config_maps()
+        self.create_volumes()
+
+
+    def create_volumes(self):
+        """Create descriptions of Volumes that will hold the input files.
+        """
+        volumes = [{'name': id_ + '-volume', 'configMap': id_}
+                   for _, id_ in self.input_file_names]
+        volume_mounts = [{'name': id_ + '-volume',
+                          'mountPath': os.path.join('/config/', file_name),
+                          'subPath': file_name,
+                          'readOnly': True}
+                         for file_name, id_ in self.input_file_names]
+        self.dep['spec']['volumes'] = volumes
+        self.dep['spec']['containers']['volumeMounts'] = volume_mounts
 
 
     def create_config_maps(self):
@@ -108,7 +123,8 @@ class ExecuteKubernetes(BaseAction):
             if resp.status.phase != 'Pending':
                 break
             time.sleep(1)
-        log_ = self.core_v1.read_namespaced_pod_log(self.dep['spec']['containers'][0]['name'], 'default')
+        log_ = self.core_v1.read_namespaced_pod_log(
+            self.dep['spec']['containers'][0]['name'], 'default')
         with open(self.output_file_name, 'w') as fd:
             fd.write(log_)
         for filename, id_ in self.input_file_names:
