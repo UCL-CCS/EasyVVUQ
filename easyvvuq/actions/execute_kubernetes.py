@@ -76,10 +76,6 @@ class ExecuteKubernetes(BaseAction):
         target_dir : str
             Directory in which to execute simulation.
         """
-        self.dep['metadata'] = {'annotations': {}, 'name': 'epidemic'}
-        for file_name in self.input_file_names:
-            with open(os.path.join(target_dir, file_name), 'r') as fd:
-                self.dep['metadata']['annotations'][os.path.basename(file_name)] = fd.read()
         core_v1 = core_v1_api.CoreV1Api()
         resp = core_v1.create_namespaced_pod(
             body=self.dep, namespace="default")
