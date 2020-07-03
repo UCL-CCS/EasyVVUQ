@@ -63,6 +63,7 @@ class ExecuteKubernetes(BaseAction):
             raise NotImplementedError(msg)
         with open(pod_config, 'r') as fd:
             self.dep = yaml.load(fd)
+        self.dep['metadata']['name'] = str(uuid.uuid4())
         self.input_file_names = [(input_file_name, str(uuid.uuid4()))
                                  for input_file_name in input_file_names]
         self.output_file_name = output_file_name
@@ -78,11 +79,11 @@ class ExecuteKubernetes(BaseAction):
     def create_volumes(self):
         """Create descriptions of Volumes that will hold the input files.
         """
-        volumes = [{'name': id_ + '-volume', 'configMap': id_}
+        volumes = [{'name': id_ + '-volume', 'configMap': {'name': id_}}
                    for _, id_ in self.input_file_names]
         volume_mounts = [{'name': id_ + '-volume',
-                          'mountPath': os.path.join('/config/', file_name),
-                          'subPath': file_name,
+                          'mountPath': os.path.join('/config/', os.path.basename(file_name)),
+                          'subPath': os.path.basename(file_name),
                           'readOnly': True}
                          for file_name, id_ in self.input_file_names]
         self.dep['spec']['volumes'] = volumes
@@ -118,14 +119,17 @@ class ExecuteKubernetes(BaseAction):
             body=self.dep, namespace="default")
         while True:
             resp = self.core_v1.read_namespaced_pod(
-                name=self.dep['spec']['containers'][0]['name'],
+                name=self.dep['metadata']['name'],
                 namespace='default')
             if resp.status.phase != 'Pending':
                 break
             time.sleep(1)
         log_ = self.core_v1.read_namespaced_pod_log(
-            self.dep['spec']['containers'][0]['name'], 'default')
+            self.dep['metadata']['name'], 'default')
         with open(self.output_file_name, 'w') as fd:
             fd.write(log_)
         for filename, id_ in self.input_file_names:
             self.core_v1.delete_namespaced_config_map(id_, 'default')
+        self.core_v1.delete_namespaced_pod(
+            name=self.dep['metadata']['name'],
+            namespace='default')
