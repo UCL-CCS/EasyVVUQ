@@ -10,9 +10,10 @@ import sys
 import logging
 import yaml
 import time
+import uuid
 from kubernetes.client.api import core_v1_api
 from kubernetes import config
-from kubernetes.client import Configuration
+from kubernetes.client import Configuration, V1ConfigMap, V1ObjectMeta
 from . import BaseAction
 
 __copyright__ = """
@@ -62,12 +63,32 @@ class ExecuteKubernetes(BaseAction):
             raise NotImplementedError(msg)
         with open(pod_config, 'r') as fd:
             self.dep = yaml.load(fd)
-        self.input_file_names = input_file_names
+        self.input_file_names = [(input_file_name, str(uuid.uuid4()))
+                                 for input_file_name in input_file_names]
         self.output_file_name = output_file_name
         config.load_kube_config()
         c = Configuration()
         c.assert_hostname = False
         Configuration.set_default(c)
+        self.core_v1 = core_v1_api.CoreV1Api()
+
+
+    def create_config_maps(self):
+        """Create Kubernetes ConfigMaps for the input files to the simulation.
+        """
+        for file_name, id_ in self.input_file_names:
+            with open(file_name, 'r') as fd:
+                data = fd.read()
+            metadata = V1ObjectMeta(
+                name=id_,
+                namespace='default'
+            )
+            configmap = V1ConfigMap(
+                api_version='v1',
+                kind='ConfigMap',
+                data={file_name: data}
+            )
+            self.core_v1.create_namespaced_config_map(namespace='default', body=configmap)
 
 
     def act_on_dir(self, target_dir):
@@ -76,16 +97,15 @@ class ExecuteKubernetes(BaseAction):
         target_dir : str
             Directory in which to execute simulation.
         """
-        core_v1 = core_v1_api.CoreV1Api()
-        resp = core_v1.create_namespaced_pod(
+        resp = self.core_v1.create_namespaced_pod(
             body=self.dep, namespace="default")
         while True:
-            resp = core_v1.read_namespaced_pod(
+            resp = self.core_v1.read_namespaced_pod(
                 name=self.dep['spec']['containers'][0]['name'],
                 namespace='default')
             if resp.status.phase != 'Pending':
                 break
             time.sleep(1)
-        log_ = core_v1.read_namespaced_pod_log(self.dep['spec']['containers'][0]['name'], 'default')
+        log_ = self.core_v1.read_namespaced_pod_log(self.dep['spec']['containers'][0]['name'], 'default')
         with open(self.output_file_name, 'w') as fd:
             fd.write(log_)
