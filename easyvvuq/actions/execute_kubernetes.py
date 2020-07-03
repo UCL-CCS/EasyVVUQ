@@ -87,7 +87,8 @@ class ExecuteKubernetes(BaseAction):
             configmap = V1ConfigMap(
                 api_version='v1',
                 kind='ConfigMap',
-                data={file_name: data}
+                data={os.path.basename(file_name): data},
+                metadata=metadata
             )
             self.core_v1.create_namespaced_config_map(namespace='default', body=configmap)
 
