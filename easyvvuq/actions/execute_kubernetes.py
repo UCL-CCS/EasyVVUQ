@@ -71,6 +71,7 @@ class ExecuteKubernetes(BaseAction):
         c.assert_hostname = False
         Configuration.set_default(c)
         self.core_v1 = core_v1_api.CoreV1Api()
+        self.create_config_maps()
 
 
     def create_config_maps(self):
