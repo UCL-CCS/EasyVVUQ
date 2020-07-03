@@ -111,3 +111,5 @@ class ExecuteKubernetes(BaseAction):
         log_ = self.core_v1.read_namespaced_pod_log(self.dep['spec']['containers'][0]['name'], 'default')
         with open(self.output_file_name, 'w') as fd:
             fd.write(log_)
+        for filename, id_ in self.input_file_names:
+            self.core_v1.delete_namespaced_config_map(id_, 'default')
