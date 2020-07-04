@@ -230,12 +230,13 @@ class SCAnalysis(BaseAnalysisElement):
                 if not self.sparse:
                     results['sobols'][qoi_k], _ = self.get_sobol_indices(qoi_k, 'first_order')
                 else:
-                    _, _, results['sobols'][qoi_k] = self.get_pce_sobol_indices(qoi_k, 'first_order')
+                    _, _, _, results['sobols'][qoi_k] = self.get_pce_sobol_indices(qoi_k, 'first_order')
 
                 for idx, param_name in enumerate(self.sampler.vary.get_keys()):
                     results['sobols_first'][qoi_k][param_name] = \
                         results['sobols'][qoi_k][(idx,)]
 
+        self.results = results
         return results
 
     def create_map(self, L):
@@ -505,6 +506,8 @@ class SCAnalysis(BaseAnalysisElement):
         #quadrature Q
         Q = 0.0
 
+        self.foo = {}
+
         #loop over l
         for l in self.l_norm:
 
@@ -516,6 +519,8 @@ class SCAnalysis(BaseAnalysisElement):
             W_k = np.array(list(product(*W_k)))
             W_k = np.prod(W_k, axis=1)
             W_k = W_k.reshape([W_k.shape[0], 1])
+
+            self.foo[tuple(l)] = np.copy(W_k)
 
             # scaling factor of combination technique
             W_k *= self.comb_coef[tuple(l)]
@@ -882,7 +887,7 @@ class SCAnalysis(BaseAnalysisElement):
         else:
             print('Will only plot for N = 2 or N = 3.')
 
-    def SC2PCE(self, qoi):
+    def SC2PCE(self, samples):
         """
         Computes the Polynomials Chaos Expansion coefficients from the SC
         expansion via a transformation of basis (Lagrange polynomials basis -->
@@ -890,7 +895,7 @@ class SCAnalysis(BaseAnalysisElement):
 
         Parameters
         ----------
-        qoi : (string) quantity of interest to compute the PCE coefficients for
+        samples : array of SC code samples from which to compute the PCE coefficients
 
         Returns
         -------
@@ -898,8 +903,9 @@ class SCAnalysis(BaseAnalysisElement):
 
         """
         pce_coefs = {}
+        self.foo2 = {}
 
-        print('Computing PCE coefficients...')
+        count_l = 1
         for l in self.l_norm:
             #pce coefficients for current multi-index l        
             pce_coefs[tuple(l)] = {}
@@ -914,50 +920,62 @@ class SCAnalysis(BaseAnalysisElement):
             #all multi indices of the PCE expansion: k <= l
             k_norm = list(product(*[np.arange(1, l[n] + 1) for n in range(self.N)]))
 
-            count_k = 1
+            if self.comb_coef[tuple(l)] != 0:
+                print('Computing PCE coefficients of refinement %d / %d' % (count_l, self.l_norm.shape[0]))
+            else:
+                print('Skipping PCE coefficients of refinement %d / %d' % (count_l, self.l_norm.shape[0]))
+
             for k in k_norm:
-                print('Computing coeffienct %d of %d' % (count_k, len(k_norm)))
-                #product of the PCE basis function or order k - 1 and all
-                #Lagrange basis functions in a_1d, per dimension
-                #[[phi_k[0]*a_1d[0]], ..., [phi_k[N-1]*a_1d[N-1]]]
-                cross_prod = [cp.orth_ttr(k[n] - 1,
-                                          dist=self.sampler.params_distribution[n],
-                                          normed=True)[-1] * a_1d[n] for n in range(self.N)]
+                if self.comb_coef[tuple(l)] != 0:
+                    #product of the PCE basis function or order k - 1 and all
+                    #Lagrange basis functions in a_1d, per dimension
+                    #[[phi_k[0]*a_1d[0]], ..., [phi_k[N-1]*a_1d[N-1]]]
+                    cross_prod = [cp.orth_ttr(k[n] - 1,
+                                              dist=self.sampler.params_distribution[n],
+                                              normed=True)[-1] * a_1d[n] for n in range(self.N)]
 
-                #the tensor product of cross prod gives all the integrands
-                #for which we must compute the integral
-                integrands = list(product(*cross_prod))
+                    #the tensor product of cross prod gives all the integrands
+                    #for which we must compute the integral
+                    integrands = list(product(*cross_prod))
 
-                #eta_k = the PCE coef corresponding to multi index k
-                eta_k = 0.0
-                count = 0
-                for integrand in integrands:
-                    v_prod = 1.0
-                    #compute v_{k,j_1} * ... * v_{k,j_N}, where each v is
-                    #the integral
-                    for n in range(self.N):
-                        v_kj_n = cp.E(integrand[n],
-                                      self.sampler.params_distribution[n])
-                        v_prod = v_prod * v_kj_n
+                    #eta_k = the PCE coef corresponding to multi index k
+                    eta_k = 0.0
+                    count = 0
+                    
+                    if k == tuple(np.ones(self.N, dtype=int)):
+                        self.foo2[tuple(l)] = []
+                    
+                    for integrand in integrands:
+                        v_prod = 1.0
+                        #compute v_{k,j_1} * ... * v_{k,j_N}, where each v is
+                        #the integral
+                        for n in range(self.N):
+                            v_kj_n = cp.E(integrand[n],
+                                          self.sampler.params_distribution[n])
+                            v_prod = v_prod * v_kj_n
+                        if k == tuple(np.ones(self.N, dtype=int)):
+                            self.foo2[tuple(l)].append(v_prod)                          
 
-                    #find corresponding point in global grid
-                    idx = np.where((x_l[count] == self.xi_d).all(axis=1))[0][0]
-                    #multiply v_{k,j_1} * ... * v_{k,j_N} with the code output
-                    v_prod = v_prod * self.samples[qoi][idx]
-                    count += 1
+                        #find corresponding point in global grid
+                        idx = np.where((x_l[count] == self.xi_d).all(axis=1))[0][0]
+                        #multiply v_{k,j_1} * ... * v_{k,j_N} with the code output
+                        v_prod = v_prod * samples[idx]
+                        count += 1
 
-                    #the sum of all code sample * v_{k,j_1} * ... * v_{k,j_N}
-                    #equals the PCE coefficient
-                    eta_k = eta_k + v_prod
+                        #the sum of all code sample * v_{k,j_1} * ... * v_{k,j_N}
+                        #equals the PCE coefficient
+                        eta_k = eta_k + v_prod
+                else:
+                   eta_k = np.zeros(self.N_qoi) 
 
                 pce_coefs[tuple(l)][tuple(k)] = eta_k
-                count_k += 1
+            count_l += 1
 
         print('done')
         self.pce_coefs = pce_coefs
         return pce_coefs
 
-    def get_pce_sobol_indices(self, qoi, typ='first_order'):
+    def get_pce_sobol_indices(self, qoi, typ='first_order', **kwargs):
         """
         Computes Sobol indices using Polynomials Chaos coefficients. These
         coefficients are computed from the SC expansion via a transformation
@@ -971,18 +989,25 @@ class SCAnalysis(BaseAnalysisElement):
 
         Parameters
         ----------
-        qoi (str): name of the Quantity of Interest for which to compute the indices
-        typ (str): Default = 'first_order'. 'all' is also possible
+        - qoi (str): name of the Quantity of Interest for which to compute the indices
+        - typ (str): Default = 'first_order'. 'all' is also possible
+        - **kwargs: if this contains 'samples', use these instead of the SC samples 
+          in the database
 
         Returns
         -------
-        Mean: PCE mean
-        Var: PCE variance
-        S_u: PCE Sobol indices, either the first order indices or all indices
+        - Mean: PCE mean
+        - Var: PCE variance
+        - S_u: PCE Sobol indices, either the first order indices or all indices
         """
+        
+        if 'samples' in kwargs:
+            samples = kwargs['samples']
+        else:
+            samples = self.samples[qoi]
 
         #compute the PCE coefficients
-        self.SC2PCE(qoi)
+        self.SC2PCE(samples)
 
         #Compute the PCE mean (not really required)
         k1 = tuple(np.ones(self.N, dtype=int))
@@ -997,6 +1022,7 @@ class SCAnalysis(BaseAnalysisElement):
         for k in self.l_norm[1:]:
             var_k = 0.0
             for l in self.l_norm[1:]:
+                #IS THIS CORRECT?
                 if tuple(k) in self.pce_coefs[tuple(l)].keys():
                     eta_k = self.pce_coefs[tuple(l)][tuple(k)]
                     var_k = var_k + self.comb_coef[tuple(l)] * eta_k
@@ -1054,7 +1080,7 @@ class SCAnalysis(BaseAnalysisElement):
             S_u[u] = D_u[u] / D
 
         print('done')
-        return mean, D, S_u
+        return mean, D, D_u, S_u
 
     # Start SC specific methods
     @staticmethod
@@ -1210,7 +1236,7 @@ class SCAnalysis(BaseAnalysisElement):
         print('done.')
         return sobol, D_u
 
-    def get_confidence_intervals(self, qoi, n_samples, conf=0.9):
+    def get_confidence_intervals(self, qoi, n_samples, conf=0.9, **kwargs):
         """
         Compute the confidence intervals based upon samples of the SC surrogate.
         Uses a non-parametric approach based upon the empirical cumulative
@@ -1218,13 +1244,16 @@ class SCAnalysis(BaseAnalysisElement):
 
         Parameters:
         -----------
-        qoi (str): name of the Quantity of Interest for which to compute the intervals
-        n_samples (int): number of surrogate samples to be used in the computation
-        conf (float in [0, 1]): the confidence interval magnitude
+        - qoi (str): name of the Quantity of Interest for which to compute the intervals
+        - n_samples (int): number of surrogate samples to be used in the computation
+          conf (float in [0, 1]): the confidence interval magnitude
+        - kwargs: can contain 'surr_samples' key if you want to use precomputed
+          surrogate samples. Should be an array of dimension [n_samples, N_qoi],
+          where N_qoi is the size of the quantity of interest
 
         Returns:
         --------
-        lower, upper (array of floats): the upper and lower bound of the interval
+        lower, upper (array of floats): the lower and upper bound of the interval
         """
 
         #ake sure conf is in [0, 1]
@@ -1234,21 +1263,25 @@ class SCAnalysis(BaseAnalysisElement):
         #lower bound = alpha, upper bound = 1 - alpha 
         alpha = 0.5*(1.0 - conf)
 
-        #draw n_samples draws from the input distributions
-        xi_mc = np.zeros([n_samples, self.N])
-        idx = 0
-        for dist in self.sampler.vary.get_values():
-            xi_mc[:, idx] = dist.sample(n_samples)
-            idx += 1
+        #use precomputed surrogate samples or not
+        if 'surr_samples' in kwargs:
+            surr_samples = kwargs['surr_samples']
+        else:
+            #draw n_samples draws from the input distributions
+            xi_mc = np.zeros([n_samples, self.N])
+            idx = 0
+            for dist in self.sampler.vary.get_values():
+                xi_mc[:, idx] = dist.sample(n_samples)
+                idx += 1
 
-        #sample the surrogate n_samples times
-        surr_samples = np.zeros([n_samples, self.N_qoi])
-        print('Sampling surrogate %d times' % (n_samples,))
-        for i in range(n_samples):
-            surr_samples[i, :] = self.surrogate(qoi, xi_mc[i])
-            if np.mod(i, 10) == 0:
-                print('%d of %d' % (i + 1, n_samples))
-        print('done')
+            #sample the surrogate n_samples times
+            surr_samples = np.zeros([n_samples, self.N_qoi])
+            print('Sampling surrogate %d times to compute %.2f % confidence interval' % (n_samples, conf*100))
+            for i in range(n_samples):
+                surr_samples[i, :] = self.surrogate(qoi, xi_mc[i])
+                if np.mod(i, 10) == 0:
+                    print('%d of %d' % (i + 1, n_samples))
+            print('done')
 
         #arrays for lower and upper bound of the interval
         lower = np.zeros(self.N_qoi)
