@@ -1,4 +1,5 @@
 from .base import BaseSamplingElement, Vary
+import numpy as np
 
 __copyright__ = """
 
@@ -49,7 +50,11 @@ class RandomSampler(BaseSamplingElement, sampler_name="random_sampler"):
 
         run_dict = {}
         for param_name, dist in self.vary.get_items():
-            run_dict[param_name] = dist.sample(1)[0]
+            sample = dist.sample(1)[0]
+            #convert integers to float, e.g 2 --> 2.0
+            if type(sample) == np.dtype(int).type:
+                sample = np.float(sample)
+            run_dict[param_name] = sample
 
         self.count += 1
         return run_dict
