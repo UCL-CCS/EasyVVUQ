@@ -951,12 +951,11 @@ class SCAnalysis(BaseAnalysisElement):
                         if isinstance(self.sampler.params_distribution[n], cp.DiscreteUniform):
                             xi = self.xi_1d[n][l[n]]
                             # wi = self.wi_1d[n][l[n]]
+                            #TODO: remove when chaospy discrete weights have been fixed
                             wi = np.ones(xi.size)/xi.size
                         else:
                             xi, wi = cp.generate_quadrature(n_quad_points - 1, self.sampler.params_distribution[n], rule="G")
                             xi = xi[0]
-                        # xi = self.xi_1d[n][l[n]]
-                        # wi = self.wi_1d[n][l[n]]                
 
                         #number of colloc points = number of Lagrange polynomials
                         n_lagrange_poly = int(self.xi_1d[n][l[n]].size)
@@ -1416,6 +1415,46 @@ class SCAnalysis(BaseAnalysisElement):
             upper[i] = samples_sorted[idx1]
 
         return lower, upper
+
+    def get_uncertainty_blowup(self, qoi):
+        """
+        Computes a measure that signifies the ratio of output to input 
+        uncertainty. It is computed as the (mean) Coefficient of Variation (V)
+        of the output divided by the (mean) CV of the input.
+
+        Parameters
+        ----------
+        qoi (string): name of the Quantity of Interest 
+
+        Returns
+        -------
+        blowup (float): the ratio output CV / input CV
+
+        """
+
+        mean_f, var_f = self.get_moments(qoi)
+        std_f = np.sqrt(var_f)
+
+        mean_xi = []; std_xi = []; CV_xi = []
+        for param in self.sampler.params_distribution:
+            E = cp.E(param); Std = cp.Std(param)
+            mean_xi.append(E)
+            std_xi.append(Std)
+            CV_xi.append(Std/E)
+
+        CV_in = np.mean(CV_xi)
+        CV_out = std_f/mean_f
+        idx = np.where(np.isnan(CV_out) == False)[0]
+        CV_out = np.mean(CV_out[idx])
+        blowup = CV_out / CV_in
+
+        print('-----------------')
+        print('Mean CV input = %.4f %%' % (CV_in, ))
+        print('Mean CV output = %.4f %%' % (CV_out, ))
+        print('Uncertainty blowup factor = %.4f/%.4f = %.4f %%' % (CV_out, CV_in, blowup))
+        print('-----------------')
+
+        return blowup        
 
 def powerset(iterable):
     """
