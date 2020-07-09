@@ -7,6 +7,8 @@ from easyvvuq import OutputType
 from .base import BaseAnalysisElement
 import logging
 from scipy.special import comb
+import pandas as pd
+from numba import jit
 
 __author__ = "Wouter Edeling"
 __copyright__ = """
@@ -133,7 +135,7 @@ class SCAnalysis(BaseAnalysisElement):
         if data_frame is None:
             raise RuntimeError("Analysis element needs a data frame to "
                                "analyse")
-        elif data_frame.empty:
+        elif type(data_frame) == pd.DataFrame and data_frame.empty:
             raise RuntimeError(
                 "No data in data frame passed to analyse element")
 
@@ -163,23 +165,8 @@ class SCAnalysis(BaseAnalysisElement):
 
             self.l_norm_min = np.ones(self.N, dtype=int)
 
-        #flag to initialise the interpolation
-        # self.init_interpolation = True
-
-        #Compute general combination coefficients. These are the coefficients
-        #multiplying the tensor products associated to each multi index l,
-        #see page 12 Gerstner & Griebel, numerical integration using sparse grids
-        unit_vecs = np.array(list(product([0, 1], repeat=self.N)))
-        self.comb_coef = {}
-        print('Computing combination coefficients...')
-        for k in self.l_norm:
-            self.comb_coef[tuple(k)] = 0.0
-            for z in unit_vecs:
-                #if the forward neighbor of k in z direction is in the
-                #accepted set of multi indices, add -1^(sum(z))
-                if np.where((k + z == self.l_norm).all(axis = 1))[0].size != 0:
-                    self.comb_coef[tuple(k)] += (-1)**(np.sum(z))
-        print('done')
+        #compute generalized combination coefficients
+        self.compute_comb_coef()
 
         # 1d weights and points per level
         self.xi_1d = self.sampler.xi_1d
@@ -201,10 +188,17 @@ class SCAnalysis(BaseAnalysisElement):
         print('Loading samples...')
         qoi_cols = self.qoi_cols
         samples = {k: [] for k in qoi_cols}
-        for run_id in data_frame.run_id.unique():
+        if type(data_frame) == pd.DataFrame:
+            for run_id in data_frame.run_id.unique():
+                for k in qoi_cols:
+                    values = data_frame.loc[data_frame['run_id'] == run_id][k].values
+                    samples[k].append(values)
+        elif type(data_frame) == dict:
+            #dict is not sorted, make sure the runs are processed in ascending order
             for k in qoi_cols:
-                values = data_frame.loc[data_frame['run_id'] == run_id][k].values
-                samples[k].append(values)
+                run_id_int = [int(run_id.split('Run_')[-1]) for run_id in data_frame[k].keys()]
+                for run_id in range(1, np.max(run_id_int) + 1):
+                        samples[k].append(data_frame[k]['Run_' + str(run_id)])
         self.samples = samples
         print('done')
 
@@ -238,6 +232,25 @@ class SCAnalysis(BaseAnalysisElement):
 
         self.results = results
         return results
+
+    @jit(nopython=True)
+    def compute_comb_coef(self):
+        """
+        Compute general combination coefficients. These are the coefficients
+        multiplying the tensor products associated to each multi index l,
+        see page 12 Gerstner & Griebel, numerical integration using sparse grids
+        """
+        unit_vecs = np.array(list(product([0, 1], repeat=self.N)))
+        self.comb_coef = {}
+        print('Computing combination coefficients...')
+        for k in self.l_norm:
+            self.comb_coef[tuple(k)] = 0.0
+            for z in unit_vecs:
+                #if the forward neighbor of k in z direction is in the
+                #accepted set of multi indices, add -1^(sum(z))
+                if np.where((k + z == self.l_norm).all(axis = 1))[0].size != 0:
+                    self.comb_coef[tuple(k)] += (-1)**(np.sum(z))
+        print('done')
 
     def create_map(self, L):
         """
@@ -309,9 +322,16 @@ class SCAnalysis(BaseAnalysisElement):
         """
         #load the code samples
         samples = []
-        for run_id in data_frame.run_id.unique():
-            values = data_frame.loc[data_frame['run_id'] == run_id][qoi].values
-            samples.append(values)
+        if type(data_frame) == pd.DataFrame:
+            for run_id in data_frame.run_id.unique():
+                values = data_frame.loc[data_frame['run_id'] == run_id][qoi].values
+                samples.append(values)
+        elif type(data_frame) == dict:
+            #dict is not sorted, make sure the runs are processed in ascending order
+            run_id_int = [int(run_id.split('Run_')[-1]) for run_id in data_frame[qoi].keys()]
+            for run_id in range(1, np.max(run_id_int) + 1):
+                values = data_frame[qoi]['Run_' + str(run_id)]
+                samples.append(values)
 
         #the currently accepted grid points
         xi_d_accepted = self.sampler.generate_grid(self.l_norm)
@@ -1449,9 +1469,9 @@ class SCAnalysis(BaseAnalysisElement):
         blowup = CV_out / CV_in
 
         print('-----------------')
-        print('Mean CV input = %.4f %%' % (CV_in, ))
-        print('Mean CV output = %.4f %%' % (CV_out, ))
-        print('Uncertainty blowup factor = %.4f/%.4f = %.4f %%' % (CV_out, CV_in, blowup))
+        print('Mean CV input = %.4f %%' % (100*CV_in, ))
+        print('Mean CV output = %.4f %%' % (100*CV_out, ))
+        print('Uncertainty blowup factor = %.4f/%.4f = %.4f %%' % (100*CV_out, 100*CV_in, 100*blowup))
         print('-----------------')
 
         return blowup        
