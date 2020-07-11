@@ -53,6 +53,7 @@ class AggregateHDF5(BaseCollationElement, collater_name="aggregate_hdf5"):
             The number of new data rows added during collation
         """
 
+        print('collating data...')
         decoder = campaign._active_app_decoder
 
         if decoder.output_type != OutputType.SAMPLE:
@@ -76,11 +77,9 @@ class AggregateHDF5(BaseCollationElement, collater_name="aggregate_hdf5"):
                     new_data[run_id][qoi] = run_data[qoi].values
                 processed_run_IDs.append(run_id)
 
-        print('a')
         self.append_data(campaign, new_data)
-        print('b')
         campaign.campaign_db.set_run_statuses(processed_run_IDs, constants.Status.COLLATED)
-        print('c')
+        print('done.')
 
         return len(processed_run_IDs)
 

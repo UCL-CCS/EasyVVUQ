@@ -165,8 +165,23 @@ class SCAnalysis(BaseAnalysisElement):
 
             self.l_norm_min = np.ones(self.N, dtype=int)
 
-        #compute generalized combination coefficients
+        # #compute generalized combination coefficients
         self.compute_comb_coef()
+        # if not hasattr(self, 'unit_vecs'):
+        #     print('Computing tensor product of %d unit vectors...' % (self.N,))
+        #     #compute the tensor product of unit vectors once
+        #     self.unit_vecs = np.array(list(product([0, 1], repeat=self.N)))
+        #     print('done.')
+        # #subroutine to compute combination coefficients
+        # comb_coef = compute_comb_coef(self.l_norm, self.unit_vecs, self.N)
+        # comb_coef = compute_comb_coef3(self.l_norm, self.N)
+
+        # #store coefficient c_l in a dict with l as key
+        # self.comb_coef = {}
+        # idx = 0
+        # for l in self.l_norm: 
+        #     self.comb_coef[tuple(l)] = comb_coef[idx]
+        #     idx += 1
 
         # 1d weights and points per level
         self.xi_1d = self.sampler.xi_1d
@@ -233,23 +248,25 @@ class SCAnalysis(BaseAnalysisElement):
         self.results = results
         return results
 
-    @jit(nopython=True)
     def compute_comb_coef(self):
         """
         Compute general combination coefficients. These are the coefficients
         multiplying the tensor products associated to each multi index l,
         see page 12 Gerstner & Griebel, numerical integration using sparse grids
         """
-        unit_vecs = np.array(list(product([0, 1], repeat=self.N)))
         self.comb_coef = {}
         print('Computing combination coefficients...')
         for k in self.l_norm:
-            self.comb_coef[tuple(k)] = 0.0
-            for z in unit_vecs:
-                #if the forward neighbor of k in z direction is in the
-                #accepted set of multi indices, add -1^(sum(z))
-                if np.where((k + z == self.l_norm).all(axis = 1))[0].size != 0:
-                    self.comb_coef[tuple(k)] += (-1)**(np.sum(z))
+            coef = 0.0
+            #for every k, subtract all multi indices
+            for l in self.l_norm:
+                z = l - k
+                #if the results contains only 0's and 1's, then z is the
+                #vector that can be formed from a tensor product of unit vectors
+                #for which k+z is in self.l_norm
+                if np.array_equal(z, z.astype(bool)):
+                    coef += (-1)**(np.sum(z))
+            self.comb_coef[tuple(k)] = coef
         print('done')
 
     def create_map(self, L):
@@ -320,6 +337,7 @@ class SCAnalysis(BaseAnalysisElement):
         None.
 
         """
+        print('Refining sampling plan...')
         #load the code samples
         samples = []
         if type(data_frame) == pd.DataFrame:
@@ -970,9 +988,9 @@ class SCAnalysis(BaseAnalysisElement):
                         #generate Gaussian quad rule
                         if isinstance(self.sampler.params_distribution[n], cp.DiscreteUniform):
                             xi = self.xi_1d[n][l[n]]
-                            # wi = self.wi_1d[n][l[n]]
+                            wi = self.wi_1d[n][l[n]]
                             #TODO: remove when chaospy discrete weights have been fixed
-                            wi = np.ones(xi.size)/xi.size
+                            # wi = np.ones(xi.size)/xi.size
                         else:
                             xi, wi = cp.generate_quadrature(n_quad_points - 1, self.sampler.params_distribution[n], rule="G")
                             xi = xi[0]
@@ -1168,7 +1186,9 @@ class SCAnalysis(BaseAnalysisElement):
 
         #the powerset of U for either the first order or all Sobol indices
         if typ == 'first_order':
-            P = list(powerset(U))[0:self.N + 1]
+            P = [()]
+            for i in range(self.N):
+                P.append((i,))
         else:
             # all indices u
             P = list(powerset(U))
@@ -1474,7 +1494,8 @@ class SCAnalysis(BaseAnalysisElement):
         print('Uncertainty blowup factor = %.4f/%.4f = %.4f %%' % (100*CV_out, 100*CV_in, 100*blowup))
         print('-----------------')
 
-        return blowup        
+        return blowup
+
 
 def powerset(iterable):
     """

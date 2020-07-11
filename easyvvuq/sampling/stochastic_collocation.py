@@ -182,19 +182,40 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
                 j = 1
 
             for n in range(N):
+                #check if input is discrete uniform, in which case the 
+                #rule and growth flag must be modified
+                if isinstance(self.params_distribution[n], cp.DiscreteUniform):
+                    rule = "discrete"
+                    growth = False
+                    order = 2**np.arange(L)
+                    order[0] = 0
+                else:
+                    rule = self.quad_rule
+                    growth = self.growth
+                    order = np.arange(L)
+
                 for i in range(L):
-                    xi_i, wi_i = cp.generate_quadrature(i + j,
+                    xi_i, wi_i = cp.generate_quadrature(order[i] + j,
                                                         self.params_distribution[n],
-                                                        rule=self.quad_rule,
-                                                        growth=self.growth)
+                                                        rule=rule,
+                                                        growth=growth)
                     self.xi_1d[n][i + 1] = xi_i[0]
                     self.wi_1d[n][i + 1] = wi_i
         else:
             for n in range(N):
+                #check if input is discrete uniform, in which case the 
+                #rule and growth flag must be modified
+                if isinstance(self.params_distribution[n], cp.DiscreteUniform):
+                    rule = "discrete"
+                    growth = False
+                else:
+                    rule = self.quad_rule
+                    growth = self.growth
+
                 xi_i, wi_i = cp.generate_quadrature(self.polynomial_order[n],
                                                     self.params_distribution[n],
-                                                    rule=self.quad_rule,
-                                                    growth=self.growth)
+                                                    rule=rule,
+                                                    growth=growth)
 
                 self.xi_1d[n][self.polynomial_order[n]] = xi_i[0]
                 self.wi_1d[n][self.polynomial_order[n]] = wi_i
@@ -230,13 +251,27 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
                 else:
                     j = 1
 
+                number_of_points = 0
                 for order in range(1000):
-                    xi_i, wi_i = cp.generate_quadrature(order + j, 
-                                                        self.params_distribution[n],
-                                                        rule=self.quad_rule,
-                                                        growth=self.growth)
-                    unique_nodes = np.unique(xi_i).size == xi_i.size
-                    if not unique_nodes: break
+
+                    #determine quadrature order
+                    if self.sparse:
+                        if order == 0:
+                            quad_order = 0
+                        else:
+                            quad_order = 2**order
+                    else:
+                        quad_order = order
+
+                    xi_i, wi_i = cp.generate_quadrature(quad_order + j, 
+                                                        self.params_distribution[n])
+                    # unique_nodes = np.unique(xi_i).size == xi_i.size
+                    # if not unique_nodes: break
+                    # if the quadrature points no longer grow with the quad order,
+                    # then the max order has been reached
+                    if xi_i.size == number_of_points: break
+                    number_of_points = xi_i.size
+
                 print("Input %d is discrete, setting max quadrature order to %d"
                       %(n, order - 1))
                 #level 1 = order 0, so no order - 1 below
