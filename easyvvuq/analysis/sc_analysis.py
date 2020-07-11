@@ -167,21 +167,6 @@ class SCAnalysis(BaseAnalysisElement):
 
         # #compute generalized combination coefficients
         self.compute_comb_coef()
-        # if not hasattr(self, 'unit_vecs'):
-        #     print('Computing tensor product of %d unit vectors...' % (self.N,))
-        #     #compute the tensor product of unit vectors once
-        #     self.unit_vecs = np.array(list(product([0, 1], repeat=self.N)))
-        #     print('done.')
-        # #subroutine to compute combination coefficients
-        # comb_coef = compute_comb_coef(self.l_norm, self.unit_vecs, self.N)
-        # comb_coef = compute_comb_coef3(self.l_norm, self.N)
-
-        # #store coefficient c_l in a dict with l as key
-        # self.comb_coef = {}
-        # idx = 0
-        # for l in self.l_norm: 
-        #     self.comb_coef[tuple(l)] = comb_coef[idx]
-        #     idx += 1
 
         # 1d weights and points per level
         self.xi_1d = self.sampler.xi_1d
