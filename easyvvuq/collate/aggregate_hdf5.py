@@ -53,7 +53,7 @@ class AggregateHDF5(BaseCollationElement, collater_name="aggregate_hdf5"):
             The number of new data rows added during collation
         """
 
-        print('collating data...')
+        print('Collating data...')
         decoder = campaign._active_app_decoder
 
         if decoder.output_type != OutputType.SAMPLE:
@@ -152,6 +152,6 @@ class AggregateHDF5(BaseCollationElement, collater_name="aggregate_hdf5"):
         Returns
         -------
         dict:
-            Only parameter needed for restart is location of hdf5 file
+            No restart parameters required
         """
         return {}
