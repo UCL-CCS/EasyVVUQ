@@ -883,35 +883,43 @@ class SCAnalysis(BaseAnalysisElement):
         plt.tight_layout()
         plt.show()
 
-    def adaptation_table(self):
+    def adaptation_table(self, **kwargs):
         """
-        Plots a color-coded table of the quadrature order refinement.
+        Plots a color-coded table of the quadrature-order refinement.
         Shows in what order the parameters were refined, and unlike
         adaptation_histogram, this also shows higher-order refinements.
+
+        Parameters
+        ----------
+        **kwargs: can contain kwarg 'order' to specify the order in which
+        the variables on the x axis are plotted (e.g. in order of decreasing
+        1st order Sobol index).
 
         Returns
         -------
         None.
 
         """
-        params = list(self.sampler.vary.get_keys())
-        #TODO: sort x axis on size of first solbols indices
-        # sobols = results['sobols_first']['f']
-        # tmp = np.array([sobols[params[i]] for i in range(analysis.N)]).flatten()
-        # idx = np.flipud(np.argsort(tmp))
-        # l = np.copy(analysis.l_norm)[:, idx]
-        l = np.copy(self.l_norm)
+
+        #if specified, plot the variables on the x axis in a given order
+        if 'order' in kwargs:
+            order = kwargs['order']
+        else:
+            order = range(self.N)
+
+        l = np.copy(self.l_norm)[:, order]
+        # l = np.copy(analysis.l_norm)
         import matplotlib as mpl
         import matplotlib.pyplot as plt
 
-        fig = plt.figure()
+        fig = plt.figure(figsize=[4,8])
         ax = fig.add_subplot(111)
 
         #max quad order
         M = np.max(l)
         cmap = plt.get_cmap('Purples', M)
         #plot 'heat map' of refinement
-        plt.imshow(l, cmap=cmap)
+        plt.imshow(l, cmap=cmap, aspect='auto')
         norm = mpl.colors.Normalize(vmin=0, vmax=M-1)
         sm = plt.cm.ScalarMappable(cmap=cmap, norm=norm)
         sm.set_array([])
@@ -921,13 +929,15 @@ class SCAnalysis(BaseAnalysisElement):
         tick_p = 0.5 * (p[1:] + p[0:-1])
         cb.set_ticks(tick_p)
         cb.set_ticklabels(np.arange(M))
-        cb.set_label(r'quadrature order', fontsize=12)
+        cb.set_label(r'quadrature order')
         #plot the variables names on the x axis
         ax.set_xticks(range(l.shape[1]))
-        ax.set_xticklabels(params)
-        ax.set_yticks(range(l.shape[0]))
-        ax.set_ylabel('iteration', fontsize=12)
+        params = list(self.sampler.vary.get_keys())
+        ax.set_xticklabels(params, fontsize=8)
+        # ax.set_yticks(range(l.shape[0]))
+        ax.set_ylabel('iteration')
         plt.xticks(rotation=90)
+        plt.tight_layout()
         plt.show()
 
     def plot_grid(self):
@@ -1434,7 +1444,7 @@ class SCAnalysis(BaseAnalysisElement):
         print('-----------------')
         print('Mean CV input = %.4f %%' % (100*CV_in, ))
         print('Mean CV output = %.4f %%' % (100*CV_out, ))
-        print('Uncertainty blowup factor = %.4f/%.4f = %.4f %%' % (100*CV_out, 100*CV_in, 100*blowup))
+        print('Uncertainty blowup factor = %.4f/%.4f = %.4f' % (CV_out, CV_in, blowup))
         print('-----------------')
 
         return blowup
