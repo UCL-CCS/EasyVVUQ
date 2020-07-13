@@ -908,18 +908,17 @@ class SCAnalysis(BaseAnalysisElement):
             order = range(self.N)
 
         l = np.copy(self.l_norm)[:, order]
-        # l = np.copy(analysis.l_norm)
         import matplotlib as mpl
         import matplotlib.pyplot as plt
 
-        fig = plt.figure(figsize=[4,8])
+        fig = plt.figure(figsize=[12, 4])
         ax = fig.add_subplot(111)
 
         #max quad order
         M = np.max(l)
         cmap = plt.get_cmap('Purples', M)
         #plot 'heat map' of refinement
-        plt.imshow(l, cmap=cmap, aspect='auto')
+        plt.imshow(l.T, cmap=cmap, aspect='auto')
         norm = mpl.colors.Normalize(vmin=0, vmax=M-1)
         sm = plt.cm.ScalarMappable(cmap=cmap, norm=norm)
         sm.set_array([])
@@ -931,12 +930,12 @@ class SCAnalysis(BaseAnalysisElement):
         cb.set_ticklabels(np.arange(M))
         cb.set_label(r'quadrature order')
         #plot the variables names on the x axis
-        ax.set_xticks(range(l.shape[1]))
+        ax.set_yticks(range(l.shape[1]))
         params = list(self.sampler.vary.get_keys())
-        ax.set_xticklabels(params, fontsize=8)
+        ax.set_yticklabels(params, fontsize=9)
         # ax.set_yticks(range(l.shape[0]))
-        ax.set_ylabel('iteration')
-        plt.xticks(rotation=90)
+        ax.set_xlabel('iteration')
+        # plt.yticks(rotation=90)
         plt.tight_layout()
         plt.show()
 
