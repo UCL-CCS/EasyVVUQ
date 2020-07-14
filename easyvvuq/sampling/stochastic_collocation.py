@@ -199,7 +199,7 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
         else:
             for n in range(N):
                 #check if input is discrete uniform, in which case the 
-                #rule and growth flag must be modified
+                #rule flag must be modified
                 if isinstance(self.params_distribution[n], cp.DiscreteUniform):
                     rule = "discrete"
                 else:

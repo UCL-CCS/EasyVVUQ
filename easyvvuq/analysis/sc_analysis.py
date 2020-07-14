@@ -71,7 +71,7 @@ class SCAnalysis(BaseAnalysisElement):
 
     def element_version(self):
         """Version of this element for logging purposes"""
-        return "0.5"
+        return "0.6"
 
     def save_state(self, filename):
         """
@@ -166,7 +166,7 @@ class SCAnalysis(BaseAnalysisElement):
             self.l_norm_min = np.ones(self.N, dtype=int)
 
         # #compute generalized combination coefficients
-        self.compute_comb_coef()
+        self.comb_coef = self.compute_comb_coef()
 
         # 1d weights and points per level
         self.xi_1d = self.sampler.xi_1d
@@ -233,26 +233,33 @@ class SCAnalysis(BaseAnalysisElement):
         self.results = results
         return results
 
-    def compute_comb_coef(self):
+    def compute_comb_coef(self, **kwargs):
         """
         Compute general combination coefficients. These are the coefficients
         multiplying the tensor products associated to each multi index l,
         see page 12 Gerstner & Griebel, numerical integration using sparse grids
         """
-        self.comb_coef = {}
+
+        if 'l_norm' in kwargs:
+            l_norm = kwargs['l_norm']
+        else:
+            l_norm = self.l_norm
+
+        comb_coef = {}
         print('Computing combination coefficients...')
-        for k in self.l_norm:
+        for k in l_norm:
             coef = 0.0
             #for every k, subtract all multi indices
-            for l in self.l_norm:
+            for l in l_norm:
                 z = l - k
                 #if the results contains only 0's and 1's, then z is the
                 #vector that can be formed from a tensor product of unit vectors
                 #for which k+z is in self.l_norm
                 if np.array_equal(z, z.astype(bool)):
                     coef += (-1)**(np.sum(z))
-            self.comb_coef[tuple(k)] = coef
+            comb_coef[tuple(k)] = coef
         print('done')
+        return comb_coef
 
     def create_map(self, L):
         """
@@ -301,7 +308,8 @@ class SCAnalysis(BaseAnalysisElement):
         logging.debug('done.')
         return map_
 
-    def adapt_dimension(self, qoi, data_frame, store_stats_history=True):
+    def adapt_dimension(self, qoi, data_frame, store_stats_history=True,
+                        interp_based_error = True):
         """
         Compute the adaptation metric and decide which of the admissible
         level indices to include in next iteration of the sparse grid. The
@@ -336,6 +344,12 @@ class SCAnalysis(BaseAnalysisElement):
                 values = data_frame[qoi]['Run_' + str(run_id)]
                 samples.append(values)
 
+        if not interp_based_error:
+            mean_l = self.combination_technique(qoi)
+            # already need next 1d weights and points for quadrature-based refinement
+            self.xi_1d = self.sampler.xi_1d
+            self.wi_1d = self.compute_SC_weights(rule=self.sampler.quad_rule)            
+
         #the currently accepted grid points
         xi_d_accepted = self.sampler.generate_grid(self.l_norm)
 
@@ -343,19 +357,29 @@ class SCAnalysis(BaseAnalysisElement):
         error = {}
         for l in self.sampler.admissible_idx:
             error[tuple(l)] = []
-            # collocation points of current level index l
-            X_l = [self.sampler.xi_1d[n][l[n]] for n in range(self.N)]
-            X_l = np.array(list(product(*X_l)))
-            #only consider new points, subtract the accepted points
-            X_l = setdiff2d(X_l, xi_d_accepted)
-            for xi in X_l:
-                #find the location of the current xi in the global grid
-                idx = np.where((xi == self.sampler.xi_d).all(axis=1))[0][0]
-                #hierarchical surplus error at xi
-                hier_surplus = samples[idx] - self.surrogate(qoi, xi)
-                error[tuple(l)].append(np.linalg.norm(hier_surplus, np.inf))
-            #compute mean error over all points in X_l
-            error[tuple(l)] = np.mean(error[tuple(l)])
+            if interp_based_error:
+                # collocation points of current level index l
+                X_l = [self.sampler.xi_1d[n][l[n]] for n in range(self.N)]
+                X_l = np.array(list(product(*X_l)))
+                #only consider new points, subtract the accepted points
+                X_l = setdiff2d(X_l, xi_d_accepted)
+                for xi in X_l:
+                    #find the location of the current xi in the global grid
+                    idx = np.where((xi == self.sampler.xi_d).all(axis=1))[0][0]
+                    #hierarchical surplus error at xi
+                    hier_surplus = samples[idx] - self.surrogate(qoi, xi)
+                    error[tuple(l)].append(np.linalg.norm(hier_surplus, np.inf))
+                #compute mean error over all points in X_l
+                error[tuple(l)] = np.mean(error[tuple(l)])
+            else:
+                candidate_l_norm = np.concatenate((self.l_norm, l.reshape([1, self.N])))
+                c_l = self.compute_comb_coef(l_norm=candidate_l_norm)
+                mean_candidate_l = self.combination_technique(qoi,
+                                                              samples=samples,
+                                                              l_norm=candidate_l_norm,
+                                                              comb_coef=c_l,
+                                                              xi_d = self.sampler.xi_d)
+                error[tuple(l)] =  np.linalg.norm(mean_candidate_l - mean_l, np.inf)               
         for key in error.keys():
             print("Surplus error when l =", key, "=", error[key])
         #find the admissble index with the largest error
@@ -507,7 +531,7 @@ class SCAnalysis(BaseAnalysisElement):
             #brute force quad computation
             return np.array([self.compute_Q_diff(l, samples) for l in self.l_norm]).sum(axis=0)
 
-    def combination_technique(self, qoi, samples=None):
+    def combination_technique(self, qoi, samples=None, **kwargs):
         """
         Efficient quadrature formulation for (sparse) grids. See:
 
@@ -526,12 +550,27 @@ class SCAnalysis(BaseAnalysisElement):
         if samples is None:
             samples = self.samples[qoi]
 
+        if 'l_norm' in kwargs:
+            l_norm = kwargs['l_norm']
+        else:
+            l_norm = self.l_norm
+
+        if 'comb_coef' in kwargs:
+            comb_coef = kwargs['comb_coef']
+        else:
+            comb_coef = self.comb_coef
+            
+        if 'xi_d' in kwargs:
+            xi_d = kwargs['xi_d']
+        else:
+            xi_d = self.xi_d
+            
         #quadrature Q
         Q = 0.0
 
         #loop over l
-        for l in self.l_norm:
-
+        for l in l_norm:
+            
             # compute the tensor product of parameter and weight values
             X_k = [self.xi_1d[n][l[n]] for n in range(self.N)]
             W_k = [self.wi_1d[n][l[n]] for n in range(self.N)]
@@ -542,10 +581,10 @@ class SCAnalysis(BaseAnalysisElement):
             W_k = W_k.reshape([W_k.shape[0], 1])
 
             # scaling factor of combination technique
-            W_k *= self.comb_coef[tuple(l)]
+            W_k *= comb_coef[tuple(l)]
 
             # find corresponding code values
-            f_k = np.array([samples[np.where((x == self.xi_d).all(axis=1))[0][0]] for x in X_k])
+            f_k = np.array([samples[np.where((x == xi_d).all(axis=1))[0][0]] for x in X_k])
 
             # quadrature of Q^1_{k1} X ... X Q^1_{kN} product
             Q += np.sum(f_k * W_k, axis=0).T
