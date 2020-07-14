@@ -203,6 +203,7 @@ class SCAnalysis(BaseAnalysisElement):
         print('done')
 
         # size of one code sample
+        #TODO: change this to include QoI of different size
         self.N_qoi = self.samples[qoi_cols[0]][0].size
 
         # Compute descriptive statistics for each quantity of interest
@@ -309,21 +310,31 @@ class SCAnalysis(BaseAnalysisElement):
         return map_
 
     def adapt_dimension(self, qoi, data_frame, store_stats_history=True,
-                        interp_based_error = True):
+                        interp_based_error=True):
         """
         Compute the adaptation metric and decide which of the admissible
         level indices to include in next iteration of the sparse grid. The
         adaptation metric is based on the hierarchical surplus, defined as the
         difference between the new code values of the admissible level indices,
-        and the SC surrogate of the previous iteration. Important: this
-        subroutine must therefore be called AFTER the code is evaluated at
+        and the SC surrogate of the previous iteration. Alternatively, it can be
+        based on the difference between the output mean of the current level,
+        and the mean computed with one extra admissible index.
+
+        This subroutine must be called AFTER the code is evaluated at
         the new points, but BEFORE the analysis is performed.
 
         Parameters
         ----------
-        qoi : (string) the name of the quantity of interest which is used
-                       to base the adaptation metric on.
-        data_frame : the data frame from the EasyVVUQ Campaign
+        - qoi : (string) the name of the quantity of interest which is used
+                        to base the adaptation metric on.
+        - data_frame : the data frame from the EasyVVUQ Campaign
+        - store_stats_history (boolean, default=True): store the mean and variance
+          at each refinement in self.mean_history and self.std_history. Used for
+          checking convergence in the stattistics over the refinement iterations
+        - interp_based_error (boolean, default=True): compute the hierachical
+          surplus as an error estimate. Set to False for refinement based
+          on quadrature error between subsequent levels. If any discrete variables
+          are present, the quadrature error should be preferred.
 
         Returns
         -------
@@ -344,11 +355,13 @@ class SCAnalysis(BaseAnalysisElement):
                 values = data_frame[qoi]['Run_' + str(run_id)]
                 samples.append(values)
 
+        #if the refinement error is based upon on quadrature, compute the
+        #mean of the current setup, to be used as a reference
         if not interp_based_error:
             mean_l = self.combination_technique(qoi)
             # already need next 1d weights and points for quadrature-based refinement
             self.xi_1d = self.sampler.xi_1d
-            self.wi_1d = self.compute_SC_weights(rule=self.sampler.quad_rule)            
+            self.wi_1d = self.compute_SC_weights(rule=self.sampler.quad_rule)      
 
         #the currently accepted grid points
         xi_d_accepted = self.sampler.generate_grid(self.l_norm)
@@ -357,6 +370,7 @@ class SCAnalysis(BaseAnalysisElement):
         error = {}
         for l in self.sampler.admissible_idx:
             error[tuple(l)] = []
+            #compute the error based on the hierarchical surplus (interpolation based)
             if interp_based_error:
                 # collocation points of current level index l
                 X_l = [self.sampler.xi_1d[n][l[n]] for n in range(self.N)]
@@ -371,15 +385,23 @@ class SCAnalysis(BaseAnalysisElement):
                     error[tuple(l)].append(np.linalg.norm(hier_surplus, np.inf))
                 #compute mean error over all points in X_l
                 error[tuple(l)] = np.mean(error[tuple(l)])
+            #compute the error based on quadrature
             else:
+                #create a candidate set of multi indices by adding the current
+                #adimissible index to l_norm
                 candidate_l_norm = np.concatenate((self.l_norm, l.reshape([1, self.N])))
+                #now we must recompute the combination coefficients
                 c_l = self.compute_comb_coef(l_norm=candidate_l_norm)
+                #compute the new mean based on the candidate l_norm. To do so we must
+                #pass the new comb coef, but also the samples and grid of the
+                #next level
                 mean_candidate_l = self.combination_technique(qoi,
                                                               samples=samples,
                                                               l_norm=candidate_l_norm,
                                                               comb_coef=c_l,
-                                                              xi_d = self.sampler.xi_d)
-                error[tuple(l)] =  np.linalg.norm(mean_candidate_l - mean_l, np.inf)               
+                                                              xi_d=self.sampler.xi_d)
+                #error in mean
+                error[tuple(l)] = np.linalg.norm(mean_candidate_l - mean_l, np.inf)           
         for key in error.keys():
             print("Surplus error when l =", key, "=", error[key])
         #find the admissble index with the largest error
@@ -394,9 +416,6 @@ class SCAnalysis(BaseAnalysisElement):
         #remove the duplicate l_star entry. Keep order unaltered
         idx = np.unique(self.l_norm, axis=0, return_index=True)[1]
         self.l_norm = np.array([self.l_norm[i] for i in sorted(idx)])
-
-        #if l_norm changes, the interpolation must be reinitialized
-        # self.init_interpolation = True
 
         #peform the analyse step, but do not compute moments and Sobols
         self.analyse(data_frame, compute_moments=False, compute_Sobols=False)
@@ -550,6 +569,8 @@ class SCAnalysis(BaseAnalysisElement):
         if samples is None:
             samples = self.samples[qoi]
 
+        #In the case of quadrature-based refinement, we need to specify
+        #l_norm, comb_coef and xi_d other than the current defualt values
         if 'l_norm' in kwargs:
             l_norm = kwargs['l_norm']
         else:
@@ -559,18 +580,17 @@ class SCAnalysis(BaseAnalysisElement):
             comb_coef = kwargs['comb_coef']
         else:
             comb_coef = self.comb_coef
-            
+
         if 'xi_d' in kwargs:
             xi_d = kwargs['xi_d']
         else:
             xi_d = self.xi_d
-            
+
         #quadrature Q
         Q = 0.0
 
         #loop over l
         for l in l_norm:
-            
             # compute the tensor product of parameter and weight values
             X_k = [self.xi_1d[n][l[n]] for n in range(self.N)]
             W_k = [self.wi_1d[n][l[n]] for n in range(self.N)]
@@ -1051,8 +1071,8 @@ class SCAnalysis(BaseAnalysisElement):
 
                     #orthogonal polynomial generated by chaospy
                     phi_k = [cp.orth_ttr(k[n] - 1,
-                                        dist=self.sampler.params_distribution[n],
-                                        normed=True)[-1] for n in range(self.N)]
+                                         dist=self.sampler.params_distribution[n],
+                                         normed=True)[-1] for n in range(self.N)]
 
                     #the polynomial order of each integrand phi_k*a_j = (k - 1) + (number of colloc. points - 1)
                     orders = [(k[n] - 1) + (self.xi_1d[n][l[n]].size - 1) for n in range(self.N)]
