@@ -102,10 +102,10 @@ def solve_Te(Qe_tot=2e6, H0=0, Hw=0.1, Te_bc=100, chi=1, a0=1, R0=3, E0=1.5, b_p
     Te = CellVariable(name="Te", mesh=mesh, value=1e3)
     ne = CellVariable(name="ne", mesh=mesh, value=F_ped(mesh.cellCenters.value[0]/a, b_pos, b_height, b_sol, b_width, b_slope))
     Qe = CellVariable(name="Qe", mesh=mesh, value=np.exp(-((mesh.cellCenters.value/a-H0)/(Hw))**2)[0])
-    Qe = Qe * Qe_tot/V / Qe.cellVolumeAverage.value
+    Qe = Qe * Qe_tot/((mesh.cellVolumes*Qe.value).sum() * V)
 
     print('Volume = %s m^3' % (mesh.cellVolumes.sum() * V))
-    print('Heating power = %0.3e W' % (Qe.cellVolumeAverage.value * V))
+    print('Heating power = %0.3e W' % ((mesh.cellVolumes*Qe).sum() * V))
 
     Te.constrain(Te_bc, mesh.facesRight)
     eqI = TransientTerm(coeff=scipy.constants.e*ne*1.5) == DiffusionTerm(coeff=scipy.constants.e*ne*chi) + Qe
