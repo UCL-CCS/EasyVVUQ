@@ -649,7 +649,7 @@ class CampaignDB(BaseCampaignDB):
         if campaign:
             filter_options['campaign'] = campaign
         if sampler:
-            filter_options['sampler'] = sampler
+            filter_options['sample'] = sampler
         if status:
             filter_options['status'] = status
         if app_id:
