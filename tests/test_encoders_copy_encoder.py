@@ -1,4 +1,5 @@
 import pytest
+import os
 from easyvvuq.encoders.copy_encoder import CopyEncoder
 
 
