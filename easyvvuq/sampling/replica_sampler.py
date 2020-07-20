@@ -26,6 +26,7 @@ class ReplicaSampler(BaseSamplingElement, sampler_name='replica_sampler'):
     ensemble_col : string
         a parameter name for the ensemble id
     """
+
     def __init__(self, sampler, ensemble_col='ensemble'):
         if not sampler.is_finite():
             raise RuntimeError("Replica sampler only works with finite samplers")

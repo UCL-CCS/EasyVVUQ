@@ -80,7 +80,7 @@ class QMCAnalysis(BaseAnalysisElement):
         # Get the number of samples and uncertain parameters
         n_params = self.sampler.n_params
         n_sobol_samples = int(np.round(2 * self.sampler.n_samples /
-                              (2 + n_params)))
+                                       (2 + n_params)))
 
         # Extract output values for each quantity of interest from Dataframe
         samples = {k: [] for k in qoi_cols}

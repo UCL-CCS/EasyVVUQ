@@ -92,7 +92,7 @@ def test_gauss_vector_sc(tmpdir):
     my_campaign.collate()
 
     data = my_campaign.get_collation_result()
-    print("===== DATA:\n ",data)
+    print("===== DATA:\n ", data)
     analysis = uq.analysis.SCAnalysis(sampler=sampler, qoi_cols=["numbers"])
     my_campaign.apply_analysis(analysis)
     results = my_campaign.get_last_analysis()
@@ -153,11 +153,12 @@ def test_gauss_vector_pce(tmpdir):
     my_campaign.collate()
 
     data = my_campaign.get_collation_result()
-    print("===== DATA:\n ",data)
+    print("===== DATA:\n ", data)
     analysis = uq.analysis.PCEAnalysis(sampler=sampler, qoi_cols=["numbers"])
     my_campaign.apply_analysis(analysis)
     results = my_campaign.get_last_analysis()
 
+
 if __name__ == "__main__":
-    #test_gauss_vector_pce("/tmp")
+    # test_gauss_vector_pce("/tmp")
     test_gauss_vector_sc("/tmp")

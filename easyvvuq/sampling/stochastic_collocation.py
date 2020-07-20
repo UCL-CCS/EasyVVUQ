@@ -88,18 +88,18 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
 
         self.quad_rule = quadrature_rule
         self.sparse = sparse
-        #determines how many points the 1st level of a sparse grid will have.
-        #If midpoint_level1 = True, order 0 quadrature will be generated
+        # determines how many points the 1st level of a sparse grid will have.
+        # If midpoint_level1 = True, order 0 quadrature will be generated
         self.midpoint_level1 = midpoint_level1
-        #determines wether to use an insotropic sparse grid, or to adapt
-        #the levels in the sparse grid based on a hierachical error measure
+        # determines wether to use an insotropic sparse grid, or to adapt
+        # the levels in the sparse grid based on a hierachical error measure
         self.dimension_adaptive = dimension_adaptive
         self.nadaptations = 0
         self.quad_sparse = sparse
         self.growth = growth
         self.params_distribution = params_distribution
 
-        #determine if a nested sparse grid is used
+        # determine if a nested sparse grid is used
         if self.sparse is True and self.growth is True and \
            (self.quad_rule == "C" or self.quad_rule == "clenshaw_curtis"):
             self.nested = True
@@ -115,10 +115,10 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
         self.L = L
         self.N = N
 
-        #compute the 1D collocation points (and quad weights)
+        # compute the 1D collocation points (and quad weights)
         self.compute_1D_points_weights(L, N)
 
-        #compute N-dimensional collocation points
+        # compute N-dimensional collocation points
         if not self.sparse:
 
             # generate collocation grid locally
@@ -141,7 +141,7 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
         self.count = 0
 
         # This gives an error when storting and loading campaigns in the
-        #dimension adaptive setting - seems not required anyway - commented it
+        # dimension adaptive setting - seems not required anyway - commented it
         # Fast forward to specified count, if possible
         # if self.count >= self._n_samples:
         #     msg = (f"Attempt to start sampler fastforwarded to count {self.count}, "
@@ -174,9 +174,9 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
 
         if self.sparse:
 
-            #if level one of the sparse grid is a midpoint rule, generate
-            #the quadrature with order 0 (1 quad point). Else set order at
-            #level 1 to 1
+            # if level one of the sparse grid is a midpoint rule, generate
+            # the quadrature with order 0 (1 quad point). Else set order at
+            # level 1 to 1
             if self.midpoint_level1:
                 j = 0
             else:
@@ -215,33 +215,33 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
             logging.debug('Only works for nested sparse grids')
             return
 
-        #update level of sparse grid
+        # update level of sparse grid
         L = np.max(self.polynomial_order) + 1
         self.polynomial_order = [p + 1 for p in self.polynomial_order]
 
         print('Moving grid from level %d to level %d' % (L - 1, L))
 
-        #compute all multi indices
+        # compute all multi indices
         multi_idx = self.compute_sparse_multi_idx(L, self.N)
 
-        #find only the indices of the new level (|l| = L + N - 1)
+        # find only the indices of the new level (|l| = L + N - 1)
         new = np.where(np.sum(multi_idx, axis=1) == L + self.N - 1)[0]
 
-        #update the 1D points and weights
+        # update the 1D points and weights
         self.compute_1D_points_weights(L, self.N)
 
-        #generate the new N-dimensional collocation points
+        # generate the new N-dimensional collocation points
         new_grid = self.generate_grid(multi_idx[new])
 
-        #find the new points unique to the new grid
+        # find the new points unique to the new grid
         new_points = setdiff2d(new_grid, self.xi_d)
 
         print('%d new points added' % new_points.shape[0])
 
-        #update the number of samples
+        # update the number of samples
         self._n_samples += new_points.shape[0]
 
-        #update the N-dimensional sparse grid
+        # update the N-dimensional sparse grid
         self.xi_d = np.concatenate((self.xi_d, new_points))
 
     def look_ahead(self, current_multi_idx):
@@ -270,34 +270,34 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
             print('Dimension adaptivity is not selected')
             return
 
-        #compute all forward neighbors for every l in current_multi_idx
+        # compute all forward neighbors for every l in current_multi_idx
         forward_neighbor = []
         e_n = np.eye(self.N, dtype=int)
         for l in current_multi_idx:
             for n in range(self.N):
-                #the forward neighbor is l plus a unit vector
+                # the forward neighbor is l plus a unit vector
                 forward_neighbor.append(l + e_n[n])
 
-        #remove duplicates
+        # remove duplicates
         forward_neighbor = np.unique(np.array(forward_neighbor), axis=0)
-        #remove those which are already in the grid
+        # remove those which are already in the grid
         forward_neighbor = setdiff2d(forward_neighbor, current_multi_idx)
-        #make sure the final candidates are admissible (all backward neighbors
-        #must be in the current multi indices)
+        # make sure the final candidates are admissible (all backward neighbors
+        # must be in the current multi indices)
         print('Computing admissible levels...')
         admissible_idx = []
         for l in forward_neighbor:
             admissible = True
             for n in range(self.N):
                 backward_neighbor = l - e_n[n]
-                #find backward_neighbor in current_multi_idx
+                # find backward_neighbor in current_multi_idx
                 idx = np.where((backward_neighbor == current_multi_idx).all(axis=1))[0]
-                #if backward neighbor is not in the current index set
-                #and it is 'on the interior' (contains no 0): not admissible
+                # if backward neighbor is not in the current index set
+                # and it is 'on the interior' (contains no 0): not admissible
                 if idx.size == 0 and backward_neighbor[n] != 0:
                     admissible = False
                     break
-            #if all backward neighbors are in the current index set: l is admissible
+            # if all backward neighbors are in the current index set: l is admissible
             if admissible:
                 admissible_idx.append(l)
         print('done')
@@ -305,25 +305,25 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
         self.admissible_idx = np.array(admissible_idx)
         print('Admissible multi-indices:\n', self.admissible_idx)
 
-        #determine the maximum level L of the new index set L = |l| - N + 1
+        # determine the maximum level L of the new index set L = |l| - N + 1
         self.L = np.max(np.sum(self.admissible_idx, axis=1) - self.N + 1)
-        #recompute the 1D weights and collocation points
+        # recompute the 1D weights and collocation points
         self.compute_1D_points_weights(self.L, self.N)
-        #compute collocation grid based on the admissible level indices
+        # compute collocation grid based on the admissible level indices
         admissible_grid = self.generate_grid(self.admissible_idx)
-        #remove collocation points which have already been computed
+        # remove collocation points which have already been computed
         new_points = setdiff2d(admissible_grid, self.xi_d)
 
         print('%d new points added' % new_points.shape[0])
 
-        #update the number of samples
+        # update the number of samples
         self._n_samples += new_points.shape[0]
 
-        #update the N-dimensional sparse grid if unsampled points are added
+        # update the N-dimensional sparse grid if unsampled points are added
         if new_points.shape[0] > 0:
             self.xi_d = np.concatenate((self.xi_d, new_points))
 
-        #count the number of times the dimensions were adapted
+        # count the number of times the dimensions were adapted
         self.nadaptations += 1
 
     def element_version(self):
