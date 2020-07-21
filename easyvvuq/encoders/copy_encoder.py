@@ -18,6 +18,7 @@ import os
 import shutil
 from .base import BaseEncoder
 
+
 class CopyEncoder(BaseEncoder, encoder_name="copy_encoder"):
     """An Encoder to copy an input file to a simulation.
 
@@ -25,10 +26,11 @@ class CopyEncoder(BaseEncoder, encoder_name="copy_encoder"):
     ----------
     source_filename : str
       a full path to some file that a simulation needs
-    
+
     target_filename : str
       a target filename inside the simulation directory
     """
+
     def __init__(self, source_filename, target_filename):
         self.source_filename = source_filename
         self.target_filename = target_filename
@@ -42,7 +44,7 @@ class CopyEncoder(BaseEncoder, encoder_name="copy_encoder"):
         ----------
         params : dict
            keep empty, has no effect
-        
+
         target_dir : str
            target directory, full path
         """
@@ -51,9 +53,8 @@ class CopyEncoder(BaseEncoder, encoder_name="copy_encoder"):
         shutil.copyfile(self.source_filename, os.path.join(target_dir, self.target_filename))
 
     def get_restart_dict(self):
-        return {"source_filename" : self.source_filename,
-                "target_filename" : self.target_filename}
+        return {"source_filename": self.source_filename,
+                "target_filename": self.target_filename}
 
     def element_version(self):
         return "0.1"
-        
