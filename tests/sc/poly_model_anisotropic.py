@@ -26,6 +26,7 @@ def poly_model(theta):
         sol *= 3 * a[i] * theta[i]**2 + 1.0
     return sol / 2**d
 
+
 # stocastic dimension of the problem
 d = 3
 a = np.ones(d) * 0.01
