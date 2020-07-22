@@ -74,8 +74,8 @@ The first two are yielding answers between 0 (zero distance: identical distribut
 References
 ----------
 
-`Hellinger distance <https://en.wikipedia.org/wiki/Hellinger_distance>`_.
+`Hellinger distance <https://en.wikipedia.org/wiki/Hellinger_distance>`_
 
-`Jensen-Shannon divergence <https://en.wikipedia.org/wiki/Jensen%E2%80%93Shannon_divergence>`_.
+`Jensen-Shannon divergence <https://en.wikipedia.org/wiki/Jensen%E2%80%93Shannon_divergence>`_
 
-`Wasserstein metric <https://en.wikipedia.org/wiki/Wasserstein_metric>`_.
+`Wasserstein metric <https://en.wikipedia.org/wiki/Wasserstein_metric>`_
