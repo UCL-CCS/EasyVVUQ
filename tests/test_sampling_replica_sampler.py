@@ -33,3 +33,18 @@ def test_replica_sampler(replica_sampler):
     assert(params['a'] == 1)
     assert(params['b'] == 4)
     assert(params['ensemble'] == 4)
+
+
+def test_replica_sampler_ensemble(replica_sampler):
+    params = next(replica_sampler)
+    assert(params == {'a': 1, 'b': 3, 'ensemble' : 0})
+    params = next(replica_sampler)
+    assert(params == {'a': 1, 'b': 4, 'ensemble' : 0})
+    params = next(replica_sampler)
+    assert(params == {'a': 2, 'b': 3, 'ensemble' : 0})
+    params = next(replica_sampler)
+    assert(params == {'a': 2, 'b': 4, 'ensemble' : 0})
+    params = next(replica_sampler)
+    assert(params == {'a': 1, 'b': 3, 'ensemble' : 1})
+    params = next(replica_sampler)
+    assert(params == {'a': 1, 'b': 4, 'ensemble' : 1})

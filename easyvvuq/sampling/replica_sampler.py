@@ -51,12 +51,10 @@ class ReplicaSampler(BaseSamplingElement, sampler_name='replica_sampler'):
 
     def __next__(self):
         params = dict(next(self.cycle))
-        if self.counter < self.size - 1:
-            self.counter += 1
-        else:
-            self.counter = 0
-            self.ensemble += 1
         params[self.ensemble_col] = self.ensemble
+        self.counter = (self.counter + 1) % self.size
+        if self.counter == 0:
+            self.ensemble += 1
         return params
 
     def is_restartable(self):
