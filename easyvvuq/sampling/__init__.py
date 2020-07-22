@@ -16,6 +16,7 @@ from .sweep import BasicSweep
 from .sampler_of_samplers import MultiSampler
 from .quasirandom import LHCSampler
 from .empty import EmptySampler
+from .replica_sampler import ReplicaSampler
 
 __copyright__ = """
 

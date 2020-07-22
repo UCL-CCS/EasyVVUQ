@@ -102,7 +102,7 @@ def run_campaign(d, number_of_adaptations):
 
     analysis.plot_grid()
 
-    #analytic mean and standard deviation
+    # analytic mean and standard deviation
     a = np.ones(d) * 0.01
     effective_d = 1
     a[0:effective_d] = 1.0
@@ -121,6 +121,7 @@ def run_campaign(d, number_of_adaptations):
     print("--------------------------------------")
     print("First order Sobol indices =", results['sobols_first']['f'])
     print("--------------------------------------")
+
 
 if __name__ == '__main__':
     run_campaign(3, 6)
