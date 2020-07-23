@@ -63,7 +63,6 @@ class ExecuteKubernetes(BaseAction):
             raise NotImplementedError(msg)
         with open(pod_config, 'r') as fd:
             self.dep = yaml.load(fd)
-        self.dep['metadata']['name'] = str(uuid.uuid4())
         self.input_file_names = [(input_file_name, str(uuid.uuid4()))
                                  for input_file_name in input_file_names]
         self.output_file_name = output_file_name
@@ -117,6 +116,7 @@ class ExecuteKubernetes(BaseAction):
                                  for input_file_name, id_ in self.input_file_names]
         self.create_config_maps()
         self.create_volumes()
+        self.dep['metadata']['name'] = str(uuid.uuid4())
         resp = self.core_v1.create_namespaced_pod(
             body=self.dep, namespace="default")
         while True:
@@ -128,7 +128,7 @@ class ExecuteKubernetes(BaseAction):
             time.sleep(1)
         log_ = self.core_v1.read_namespaced_pod_log(
             self.dep['metadata']['name'], 'default')
-        with open(self.output_file_name, 'w') as fd:
+        with open(os.path.join(target_dir, self.output_file_name), 'w') as fd:
             fd.write(log_)
         for filename, id_ in self.input_file_names:
             self.core_v1.delete_namespaced_config_map(id_, 'default')
