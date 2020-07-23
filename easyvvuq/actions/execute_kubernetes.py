@@ -49,7 +49,7 @@ class ExecuteKubernetes(BaseAction):
     ----------
 
     pod_config : str
-        Command to execute.
+        Filename of the YAML file with the Kubernetes Pod configuration.
     input_file_names : list of str
         A list of input file names for your simulation.
     output_file_name : str
@@ -72,8 +72,6 @@ class ExecuteKubernetes(BaseAction):
         c.assert_hostname = False
         Configuration.set_default(c)
         self.core_v1 = core_v1_api.CoreV1Api()
-        self.create_config_maps()
-        self.create_volumes()
 
 
     def create_volumes(self):
@@ -115,6 +113,10 @@ class ExecuteKubernetes(BaseAction):
         target_dir : str
             Directory in which to execute simulation.
         """
+        self.input_file_names = [(os.path.join(target_dir, input_file_name), id_)
+                                 for input_file_name, id_ in self.input_file_names]
+        self.create_config_maps()
+        self.create_volumes()
         resp = self.core_v1.create_namespaced_pod(
             body=self.dep, namespace="default")
         while True:
