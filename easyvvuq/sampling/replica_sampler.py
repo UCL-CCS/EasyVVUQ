@@ -37,7 +37,6 @@ class ReplicaSampler(BaseSamplingElement, sampler_name='replica_sampler'):
             self.history.append(sample)
         self.size = len(self.history)
         self.cycle = cycle(self.history)
-        self.ensemble = 0
         self.counter = 0
 
     def is_finite(self):
@@ -51,10 +50,8 @@ class ReplicaSampler(BaseSamplingElement, sampler_name='replica_sampler'):
 
     def __next__(self):
         params = dict(next(self.cycle))
-        params[self.ensemble_col] = self.ensemble
+        params[self.ensemble_col] = self.counter
         self.counter = (self.counter + 1) % self.size
-        if self.counter == 0:
-            self.ensemble += 1
         return params
 
     def is_restartable(self):
