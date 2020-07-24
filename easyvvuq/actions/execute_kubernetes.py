@@ -40,6 +40,23 @@ __license__ = "LGPL"
 logger = logging.getLogger(__name__)
 
 
+class ActionStatusKubernetes():
+    def __init__(self, api, pod_name, config_names, namespace):
+        self.corev1 = api
+        self.pod_name = pod_name
+        self.config_names = config_names
+        self.namespace = namespace
+    
+    def finished(self):
+        return False
+
+    def cleanup(self):
+        pass
+
+    def finalize(self):
+        return "Success"
+
+
 class ExecuteKubernetes(BaseAction):
     """ Provides an action element to run a shell command in a specified
     directory.
