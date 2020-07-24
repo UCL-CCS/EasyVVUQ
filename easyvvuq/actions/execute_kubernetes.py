@@ -6,7 +6,6 @@ Examples
 """
 
 import os
-import sys
 import logging
 import yaml
 import time
@@ -117,15 +116,16 @@ class ExecuteKubernetes(BaseAction):
         self.create_config_maps()
         self.create_volumes()
         self.dep['metadata']['name'] = str(uuid.uuid4())
-        resp = self.core_v1.create_namespaced_pod(
-            body=self.dep, namespace="default")
+        self.core_v1.create_namespaced_pod(body=self.dep, namespace="default")
         while True:
             resp = self.core_v1.read_namespaced_pod(
                 name=self.dep['metadata']['name'],
                 namespace='default')
-            if resp.status.phase != 'Pending':
+            if resp.status.phase not in ['Pending', 'Running']:
                 break
             time.sleep(1)
+        if resp.status.phase != 'Succeeded':
+            raise RuntimeError("Kubernetes pod failed:", self.dep['metadata']['name'])
         log_ = self.core_v1.read_namespaced_pod_log(
             self.dep['metadata']['name'], 'default')
         with open(os.path.join(target_dir, self.output_file_name), 'w') as fd:
