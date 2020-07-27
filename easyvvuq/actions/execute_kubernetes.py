@@ -63,7 +63,7 @@ class ActionStatusKubernetes():
         self.config_names = config_names
         self.namespace = namespace
         self.outfile = outfile
-        self.succeeded = False
+        self._succeeded = False
     
     def finished(self):
         """Will return True if the pod has finished, otherwise will return False.
@@ -72,7 +72,7 @@ class ActionStatusKubernetes():
             name=self.pod_name, namespace=self.namespace)
         if resp.status.phase not in ['Pending', 'Running']:
             if resp.status.phase == 'Succeeded':
-                self.succeeded = True
+                self._succeeded = True
             return True
         else:
             return False
@@ -96,7 +96,7 @@ class ActionStatusKubernetes():
         """Will return True if the pod has finished successfully, otherwise will return False.
         If the job hasn't finished yet will return False.
         """
-        return self.succeeded
+        return self._succeeded
 
 
 class ExecuteKubernetes(BaseAction):
