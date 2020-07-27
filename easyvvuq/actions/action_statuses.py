@@ -54,3 +54,10 @@ class ActionStatuses:
             else:
                 active_.append(status)
         self.active = active_
+
+    def stats(self):
+        """Return the number of active, finished and failed jobs.
+        """
+        return {'active': len(self.active),
+                'finished': len(self.finished),
+                'failed': len(self.failed)}
