@@ -41,6 +41,20 @@ logger = logging.getLogger(__name__)
 
 
 class ActionStatusKubernetes():
+    """Provides a way to track the status of an on-going Kubernetes
+    action.
+
+    Parameters
+    ----------
+    api : CoreV1Api
+        will be used to communicate with the cluster
+    pod_name : str
+        pod identifier
+    config_names : list of str
+        list of ConfigMap identifiers
+    namespace : str
+        Kubernetes namespace
+    """
     def __init__(self, api, pod_name, config_names, namespace):
         self.corev1 = api
         self.pod_name = pod_name
@@ -53,7 +67,7 @@ class ActionStatusKubernetes():
     def cleanup(self):
         pass
 
-    def finalize(self):
+    def outcome(self):
         return "Success"
 
 
