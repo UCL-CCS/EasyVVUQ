@@ -37,7 +37,7 @@ class ActionStatuses:
         action_status : ActionStatus
             an object representing an actions status
         """
-        self.statuses.append(action_status)
+        self.active.append(action_status)
 
     def poll(self):
         """Iterate over active actions, finalize finished ones,
