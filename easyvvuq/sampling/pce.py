@@ -104,7 +104,7 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
         # Clenshaw-Curtis should be nested if sparse (#139 chaospy issue)
         self.quad_growth = growth
         cc = ['c', 'C', 'clenshaw_curtis', 'Clenshaw_Curtis']
-        if sparse and quadrature_rule in cc:
+        if sparse and rule in cc:
             self.quad_growth = True
 
         # To determinate the PCE vrainte to use
