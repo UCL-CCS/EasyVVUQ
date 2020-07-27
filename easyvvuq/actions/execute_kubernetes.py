@@ -85,7 +85,7 @@ class ActionStatusKubernetes():
             self.pod_name, namespace=self.namespace)
         with open(self.outfile, 'w') as fd:
             fd.write(log_)
-        for _, id_ in self.config__names:
+        for _, id_ in self.config_names:
             self.core_v1.delete_namespaced_config_map(
                 id_, namespace=self.namespace)
         self.core_v1.delete_namespaced_pod(
