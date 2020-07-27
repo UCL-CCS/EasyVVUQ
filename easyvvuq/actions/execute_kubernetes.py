@@ -54,21 +54,49 @@ class ActionStatusKubernetes():
         list of ConfigMap identifiers
     namespace : str
         Kubernetes namespace
+    outfile : str
+        a filename to write the output of the simulation
     """
-    def __init__(self, api, pod_name, config_names, namespace):
-        self.corev1 = api
+    def __init__(self, api, pod_name, config_names, namespace, outfile):
+        self.core_v1 = api
         self.pod_name = pod_name
         self.config_names = config_names
         self.namespace = namespace
+        self.outfile = outfile
+        self.succeeded = False
     
     def finished(self):
-        return False
+        """Will return True if the pod has finished, otherwise will return False.
+        """
+        resp = self.core_v1.read_namespaced_pod(
+            name=self.pod_name, namespace=self.namespace)
+        if resp.status.phase not in ['Pending', 'Running']:
+            if resp.status.phase == 'Succeeded':
+                self.succeeded = True
+            return True
+        else:
+            return False
 
-    def cleanup(self):
-        pass
+    def finalise(self):
+        """Will read the logs from the Kubernetes pod, output them to a file and
+        delete the Kubernetes resources we have allocated.
+        """
+        log_ = self.core_v1.read_namespaced_pod_log(
+            self.pod_name, namespace=self.namespace)
+        with open(self.outfile, 'w') as fd:
+            fd.write(log_)
+        for _, id_ in self.config__names:
+            self.core_v1.delete_namespaced_config_map(
+                id_, namespace=self.namespace)
+        self.core_v1.delete_namespaced_pod(
+            self.pod_name, namespace=self.namespace)
 
-    def outcome(self):
-        return "Success"
+
+    def succeeded(self):
+        """Will return True if the pod has finished successfully, otherwise will return False.
+        If the job hasn't finished yet will return False.
+        """
+        return self.succeeded
 
 
 class ExecuteKubernetes(BaseAction):
@@ -148,21 +176,6 @@ class ExecuteKubernetes(BaseAction):
         self.create_volumes(file_names, dep)
         dep['metadata']['name'] = str(uuid.uuid4())
         self.core_v1.create_namespaced_pod(body=dep, namespace="default")
-        while True:
-            resp = self.core_v1.read_namespaced_pod(
-                name=dep['metadata']['name'],
-                namespace='default')
-            if resp.status.phase not in ['Pending', 'Running']:
-                break
-            time.sleep(1)
-        if resp.status.phase != 'Succeeded':
-            raise RuntimeError("Kubernetes pod failed:", dep['metadata']['name'])
-        log_ = self.core_v1.read_namespaced_pod_log(
-            dep['metadata']['name'], 'default')
-        with open(os.path.join(target_dir, self.output_file_name), 'w') as fd:
-            fd.write(log_)
-        for filename, id_ in file_names:
-            self.core_v1.delete_namespaced_config_map(id_, 'default')
-        self.core_v1.delete_namespaced_pod(
-            name=dep['metadata']['name'],
-            namespace='default')
+        return ActionStatusKubernetes(
+            self.core_v1, dep['metadata']['name'], file_names, 'default',
+            os.path.join(target_dir, self.output_file_name))
