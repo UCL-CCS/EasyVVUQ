@@ -81,6 +81,8 @@ class ActionStatusKubernetes():
         """Will read the logs from the Kubernetes pod, output them to a file and
         delete the Kubernetes resources we have allocated.
         """
+        if not (self.finished() and self.succeeded()):
+            raise RuntimeError("Cannot finalise an Action that hasn't finished.")
         log_ = self.core_v1.read_namespaced_pod_log(
             self.pod_name, namespace=self.namespace)
         with open(self.outfile, 'w') as fd:
