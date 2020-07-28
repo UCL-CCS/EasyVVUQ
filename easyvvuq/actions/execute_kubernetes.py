@@ -8,7 +8,6 @@ Examples
 import os
 import logging
 import yaml
-import time
 import uuid
 from kubernetes.client.api import core_v1_api
 from kubernetes import config
