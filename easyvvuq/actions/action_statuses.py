@@ -41,7 +41,10 @@ class ActionStatuses:
 
     def poll(self):
         """Iterate over active actions, finalize finished ones,
-        sort finished actions into finished and failed.
+        sort finished actions into finished and failed. An action
+        is considered finished if it has finished executed and reports
+        success. It is considered failed if it has reported failure and
+        is considered active (running) otherwise.
         """
         active_ = []
         for status in self.active:
