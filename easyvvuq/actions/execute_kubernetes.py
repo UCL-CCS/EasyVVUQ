@@ -121,7 +121,7 @@ class ExecuteKubernetes(BaseAction):
             logger.error(msg)
             raise NotImplementedError(msg)
         with open(pod_config, 'r') as fd:
-            self.dep = yaml.load(fd)
+            self.dep = yaml.load(fd, Loader=yaml.BaseLoader)
         self.input_file_names = input_file_names
         self.output_file_name = output_file_name
         config.load_kube_config()
