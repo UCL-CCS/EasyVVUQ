@@ -24,6 +24,7 @@ __license__ = "LGPL"
 class ActionStatuses:
     """A class that tracks statuses of a list of actions.
     """
+
     def __init__(self):
         self.active = []
         self.finished = []

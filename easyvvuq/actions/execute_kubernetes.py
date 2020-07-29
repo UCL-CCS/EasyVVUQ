@@ -56,6 +56,7 @@ class ActionStatusKubernetes():
     outfile : str
         a filename to write the output of the simulation
     """
+
     def __init__(self, api, pod_name, config_names, namespace, outfile):
         self.core_v1 = api
         self.pod_name = pod_name
@@ -63,7 +64,7 @@ class ActionStatusKubernetes():
         self.namespace = namespace
         self.outfile = outfile
         self._succeeded = False
-    
+
     def finished(self):
         """Will return True if the pod has finished, otherwise will return False.
         """
@@ -92,7 +93,6 @@ class ActionStatusKubernetes():
         self.core_v1.delete_namespaced_pod(
             self.pod_name, namespace=self.namespace)
 
-
     def succeeded(self):
         """Will return True if the pod has finished successfully, otherwise will return False.
         If the job hasn't finished yet will return False.
@@ -114,6 +114,7 @@ class ExecuteKubernetes(BaseAction):
     output_file_name : str
         An output file name for the output of the simulation.
     """
+
     def __init__(self, pod_config, input_file_names, output_file_name):
         if os.name == 'nt':
             msg = ('Local execution is provided for testing on Posix systems'
@@ -130,7 +131,6 @@ class ExecuteKubernetes(BaseAction):
         Configuration.set_default(c)
         self.core_v1 = core_v1_api.CoreV1Api()
 
-
     def create_volumes(self, file_names, dep):
         """Create descriptions of Volumes that will hold the input files.
         """
@@ -143,7 +143,6 @@ class ExecuteKubernetes(BaseAction):
                          for file_name, id_ in file_names]
         dep['spec']['volumes'] = volumes
         dep['spec']['containers'][0]['volumeMounts'] = volume_mounts
-
 
     def create_config_maps(self, file_names):
         """Create Kubernetes ConfigMaps for the input files to the simulation.
@@ -162,7 +161,6 @@ class ExecuteKubernetes(BaseAction):
                 metadata=metadata
             )
             self.core_v1.create_namespaced_config_map(namespace='default', body=configmap)
-
 
     def act_on_dir(self, target_dir):
         """Executes a dockerized simulation on input files found in `target_dir`.

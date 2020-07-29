@@ -646,7 +646,6 @@ class Campaign:
         for run_id, run_data in self.campaign_db.runs(status=status, app_id=self._active_app['id']):
             action_statuses.add(action.act_on_dir(run_data['run_dir']))
         return action_statuses
-                
 
     def collate(self):
         """Combine the output from all runs associated with the current app.
