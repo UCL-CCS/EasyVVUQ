@@ -1,12 +1,24 @@
 import pytest
 from unittest.mock import MagicMock
-from easyvvuq.actions import ExecuteKubernetes
+import easyvvuq.actions.execute_kubernetes as execute_kubernetes
 from easyvvuq.actions.execute_kubernetes import ActionStatusKubernetes
 import os
 
 
+# Monkey patch some stuff
+
+execute_kubernetes.config = MagicMock()
+execute_kubernetes.core_v1_api = MagicMock()
+execute_kubernetes.Configuration = MagicMock()
+execute_kubernetes.V1ConfigMap = MagicMock()
+execute_kubernetes.V1ObjectMeta = MagicMock()
+
+
 def test_execute_kubernetes():
-    pass
+    action = execute_kubernetes.ExecuteKubernetes(
+        'tests/kubernetes/epidemic.yaml',
+        ['tests/kubernetes/epidemic.json'],
+        'tests/kubernetes/out.csv')
 
 
 def test_action_status_kubernetes():
