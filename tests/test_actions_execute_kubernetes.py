@@ -18,7 +18,8 @@ def test_execute_kubernetes():
     action = execute_kubernetes.ExecuteKubernetes(
         'tests/kubernetes/epidemic.yaml',
         ['tests/kubernetes/epidemic.json'],
-        'tests/kubernetes/out.csv')
+        'out.csv')
+    action.act_on_dir('tests/kubernetes')
 
 
 def test_action_status_kubernetes():
