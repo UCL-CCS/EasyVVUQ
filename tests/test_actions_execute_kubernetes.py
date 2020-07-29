@@ -16,9 +16,7 @@ execute_kubernetes.V1ObjectMeta = MagicMock()
 
 def test_execute_kubernetes():
     action = execute_kubernetes.ExecuteKubernetes(
-        'tests/kubernetes/epidemic.yaml',
-        ['tests/kubernetes/epidemic.json'],
-        'out.csv')
+        'tests/kubernetes/epidemic.yaml', ['epidemic.json'], 'out.csv')
     action.act_on_dir('tests/kubernetes')
 
 
