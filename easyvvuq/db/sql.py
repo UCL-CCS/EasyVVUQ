@@ -65,7 +65,7 @@ class CampaignTable(Base):
     campaign_dir_prefix = Column(String)
     campaign_dir = Column(String)
     runs_dir = Column(String)
-    sampler = Column(Integer, ForeignKey('sample.id'))
+    sampler = Column(Integer, ForeignKey('sampler.id'))
 
 
 class AppTable(Base):
@@ -92,13 +92,13 @@ class RunTable(Base):
     status = Column(Integer)
     run_dir = Column(String)
     campaign = Column(Integer, ForeignKey('campaign_info.id'))
-    sample = Column(Integer, ForeignKey('sample.id'))
+    sampler = Column(Integer, ForeignKey('sampler.id'))
 
 
 class SamplerTable(Base):
     """An SQLAlchemy schema for the run table.
     """
-    __tablename__ = 'sample'
+    __tablename__ = 'sampler'
     id = Column(Integer, primary_key=True)
     sampler = Column(String)
 
@@ -380,7 +380,7 @@ class CampaignDB(BaseCampaignDB):
             'ensemble_name': run_row.ensemble_name,
             'params': json.loads(run_row.params),
             'status': constants.Status(run_row.status),
-            'sample': run_row.sample,
+            'sampler': run_row.sampler,
             'campaign': run_row.campaign,
             'app': run_row.app,
             'run_dir': run_row.run_dir
@@ -649,7 +649,7 @@ class CampaignDB(BaseCampaignDB):
         if campaign:
             filter_options['campaign'] = campaign
         if sampler:
-            filter_options['sample'] = sampler
+            filter_options['sampler'] = sampler
         if status:
             filter_options['status'] = status
         if app_id:
