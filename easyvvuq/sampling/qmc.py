@@ -67,6 +67,7 @@ class QMCSampler(BaseSamplingElement, sampler_name="QMC_sampler"):
             raise Exception(msg)
 
         self.vary = Vary(vary)
+        self.n_mc_samples = n_mc_samples
 
         # List of the probability distributions of uncertain parameters
         params_distribution = list(vary.values())
@@ -76,7 +77,7 @@ class QMCSampler(BaseSamplingElement, sampler_name="QMC_sampler"):
 
         # Generate samples
         self.n_params = len(vary)
-        n_sobol_samples = int(np.round(self.n_mc_samples / 2.))
+        n_sobol_samples = int(np.round(n_mc_samples / 2.))
 
         dist_U = []
         for i in range(self.n_params):
@@ -96,7 +97,7 @@ class QMCSampler(BaseSamplingElement, sampler_name="QMC_sampler"):
 
         # Fast forward to specified count, if possible
         self.count = 0
-        if self.count >= self.n_total_samples:
+        if self.count >= self._n_samples:
             msg = (f"Attempt to start sampler fastforwarded to count {self.count}, "
                    f"but sampler only has {self._n_samples} samples, therefore"
                    f"this sampler will not provide any more samples.")
@@ -129,7 +130,7 @@ class QMCSampler(BaseSamplingElement, sampler_name="QMC_sampler"):
         return True
 
     def __next__(self):
-        if self.count < self.n_total_samples:
+        if self.count < self.n_samples:
             run_dict = {}
             i_par = 0
             for param_name in self.vary.get_keys():

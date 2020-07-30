@@ -15,6 +15,7 @@ def exact_sobols_poly_model():
 
     return S_i
 
+
 # number of unknown variables
 d = 2
 
@@ -24,7 +25,7 @@ __license__ = "LGPL"
 HOME = os.path.abspath(os.path.dirname(__file__))
 
 
-#An EasyVVUQ campaign on sobol_model.py. Takes the polynomial order as input
+# An EasyVVUQ campaign on sobol_model.py. Takes the polynomial order as input
 def run_campaign(poly_order, work_dir='/tmp'):
     # Set up a fresh campaign called "sc"
     my_campaign = uq.Campaign(name='sc', work_dir=work_dir)
@@ -90,8 +91,8 @@ def run_campaign(poly_order, work_dir='/tmp'):
         "x1": cp.Uniform(0.0, 1.0),
         "x2": cp.Uniform(0.0, 1.0)}
 
-    #To use 'next_level_sparse_grid' below, we must select a nested
-    #sparse grid here
+    # To use 'next_level_sparse_grid' below, we must select a nested
+    # sparse grid here
     my_sampler = uq.sampling.SCSampler(vary=vary, polynomial_order=poly_order,
                                        quadrature_rule="C", sparse=True,
                                        growth=True)
@@ -116,10 +117,10 @@ def run_campaign(poly_order, work_dir='/tmp'):
     my_campaign.apply_analysis(analysis)
     results = my_campaign.get_last_analysis()
 
-    #update the sparse grid to the next level
+    # update the sparse grid to the next level
     my_sampler.next_level_sparse_grid()
 
-    #draw the new samples
+    # draw the new samples
     my_campaign.draw_samples()
     my_campaign.populate_runs_dir()
 
@@ -130,14 +131,15 @@ def run_campaign(poly_order, work_dir='/tmp'):
     my_campaign.apply_analysis(analysis)
     results = my_campaign.get_last_analysis()
 
-    #check the computed Sobol indices against the analytical result
+    # check the computed Sobol indices against the analytical result
     for i in range(ref_sobols.size):
         print('Exact Sobol indices order %d = %.4f' % (i + 1, ref_sobols[i]))
     print('Computed Sobol indices', results['sobols']['f'])
 
+
 if __name__ == '__main__':
 
-    #analytic Sobol indices
+    # analytic Sobol indices
     ref_sobols = exact_sobols_poly_model()
 
     run_campaign(poly_order=2)

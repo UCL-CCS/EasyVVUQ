@@ -5,7 +5,7 @@ import yaml
 import pickle
 import numpy as np
 
-#No longer required
+# No longer required
 # def test_l_n_exception():
 #     vary = {
 #         "gravity": cp.Uniform(9.8, 1.0),
