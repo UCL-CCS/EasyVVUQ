@@ -189,7 +189,7 @@ class RunInfo:
                 'params': json.dumps(self.params, default=convert_nonserializable),
                 'status': constants.Status(self.status),
                 'campaign': self.campaign,
-                'sample': self.sample,
+                'sampler': self.sample,
                 'app': self.app,
             }
 
@@ -202,7 +202,7 @@ class RunInfo:
                 'params': self.params,
                 'status': constants.Status(self.status),
                 'campaign': self.campaign,
-                'sample': self.sample,
+                'sampler': self.sample,
                 'app': self.app,
             }
 
