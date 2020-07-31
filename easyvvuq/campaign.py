@@ -633,11 +633,11 @@ class Campaign:
             be called with the run directory path as its only argument.
         status : Status
             Will apply the action only to those runs whose status is as specified
-        block : bool
-            If set to False will run in non-blocking mode
 
         Returns
         -------
+        action_statuses: ActionStatuses
+            An object containing ActionStatus instances to track action execution
         """
 
         # Loop through all runs in this campaign with status ENCODED, and
