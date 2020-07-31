@@ -1,8 +1,23 @@
-"""Provides element to execute a simulation on a Kubernetes cluster
-and retrieve the output.
+"""Provides an action element to execute a simulation on a Kubernetes
+cluster and retrieve the output. The successful use of this actions
+requires that the Kubernetes cluster is properly set-up on the users
+system. Namely the ~/.kube/config file should contain valid
+information. Exact details will depend on the cloud service
+provider. Otherwise this action works similarly to how ExecuteLocal
+works. The difference is that the simulations are executed on a
+Kubernetes cluster. The input files are passed to the Pods via the
+ConfigMap mechanism. This probably limits the size of the
+configuration files but this can be alleviated with some kind of a
+pre-processing script on the Pod side. Likewise, output from the
+simulation is retrieved using the Kubernetes log mechanism. Therefore
+the simulation output needs to be printed to stdout on the Pod
+side. Again, if the simulation produces complicated or large output
+you should extract the quantitities of interest on the Pod using some
+kind of script and print them to stdout.
 
 Examples
 --------
+
 """
 
 import os
