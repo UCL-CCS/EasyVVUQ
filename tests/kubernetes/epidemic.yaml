@@ -9,10 +9,3 @@ spec:
     image: orbitfold/easyvvuq:latest
     command: ["/bin/sh", "-c"]
     args: ["python3 /EasyVVUQ/docs/epidemic/epidemic.py /config/epidemic_in.json out.csv && cat out.csv"]
-    volumeMounts:
-    - name: config-volume
-      mountPath: /config
-  volumes:
-    - name: config-volume
-      configMap:
-        name: example.json
