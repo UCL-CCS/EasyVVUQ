@@ -12,6 +12,7 @@ from easyvvuq import ParamsSpecification
 from easyvvuq.constants import default_campaign_prefix, Status
 from easyvvuq.data_structs import RunInfo, CampaignInfo, AppInfo
 from easyvvuq.sampling import BaseSamplingElement
+from easyvvuq.actions import ActionStatuses
 
 __copyright__ = """
 
@@ -630,16 +631,21 @@ class Campaign:
         action : the action to be applied to each run directory
             The function to be applied to each run directory. func() will
             be called with the run directory path as its only argument.
+        status : Status
+            Will apply the action only to those runs whose status is as specified
 
         Returns
         -------
+        action_statuses: ActionStatuses
+            An object containing ActionStatus instances to track action execution
         """
 
         # Loop through all runs in this campaign with status ENCODED, and
         # run the specified action on each run's dir
+        action_statuses = ActionStatuses()
         for run_id, run_data in self.campaign_db.runs(status=status, app_id=self._active_app['id']):
-            logger.info("Applying " + action.__module__ + " to " + run_data['run_dir'])
-            action.act_on_dir(run_data['run_dir'])
+            action_statuses.add(action.act_on_dir(run_data['run_dir']))
+        return action_statuses
 
     def collate(self):
         """Combine the output from all runs associated with the current app.
