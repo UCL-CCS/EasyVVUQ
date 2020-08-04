@@ -1,3 +1,6 @@
+import time
+import threading
+
 __copyright__ = """
 
     Copyright 2020 Vytautas Jancauskas
@@ -25,20 +28,13 @@ class ActionStatuses:
     """A class that tracks statuses of a list of actions.
     """
 
-    def __init__(self):
-        self.active = []
+    def __init__(self, statuses, poll_sleep_time=10):
+        self.active = list(statuses)
         self.finished = []
         self.failed = []
-
-    def add(self, action_status):
-        """Add a new action status to the list.
-
-        Parameters
-        ----------
-        action_status : ActionStatus
-            an object representing an actions status
-        """
-        self.active.append(action_status)
+        self.poll_sleep_time = poll_sleep_time
+        polling_thread = threading.Thread(target=self.poll)
+        polling_thread.start()
 
     def poll(self):
         """Iterate over active actions, finalize finished ones,
@@ -47,16 +43,21 @@ class ActionStatuses:
         success. It is considered failed if it has reported failure and
         is considered active (running) otherwise.
         """
-        active_ = []
-        for status in self.active:
-            if status.finished():
-                if status.succeeded():
-                    status.finalise()
-                    self.finished.append(status)
+        while True:
+            active_ = []
+            for status in self.active:
+                if status.finished():
+                    if status.succeeded():
+                        status.finalise()
+                        self.finished.append(status)
+                    else:
+                        self.failed.append(status)
                 else:
-                    self.failed.append(status)
+                    active_.append(status)
+            if not active_:
+                break
             else:
-                active_.append(status)
+                time.sleep(self.poll_sleep_time)
         self.active = active_
 
     def stats(self):
