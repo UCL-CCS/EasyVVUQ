@@ -31,6 +31,20 @@ __license__ = "LGPL"
 logger = logging.getLogger(__name__)
 
 
+class ActionStatusLocal():
+    def __init__(self):
+        pass
+
+    def finished(self):
+        return True
+
+    def finalise(self):
+        return None
+
+    def succeeded(self):
+        return True
+
+
 class ExecuteLocal(BaseAction):
 
     def __init__(self, run_cmd, interpret=None):
@@ -74,3 +88,4 @@ class ExecuteLocal(BaseAction):
         result = os.system(full_cmd)
         if result != 0:
             sys.exit(f'Non-zero exit code from command "{full_cmd}"\n')
+        return ActionStatusLocal()
