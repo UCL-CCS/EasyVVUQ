@@ -26,13 +26,26 @@ __license__ = "LGPL"
 
 class ActionStatuses:
     """A class that tracks statuses of a list of actions.
-    """
 
+    Parameters
+    ----------
+    statuses: list of ActionStatus
+        a list of action statuses to track
+    poll_sleep_time: int
+        a time to sleep for after iterating over all active statuses 
+        before starting again
+    
+    """
     def __init__(self, statuses, poll_sleep_time=10):
         self.active = list(statuses)
         self.finished = []
         self.failed = []
         self.poll_sleep_time = poll_sleep_time
+        self._stats = {
+            'active' : len(self.active),
+            'finished' : 0,
+            'failed' : 0
+        }
         polling_thread = threading.Thread(target=self.poll)
         polling_thread.start()
 
@@ -47,22 +60,23 @@ class ActionStatuses:
             active_ = []
             for status in self.active:
                 if status.finished():
+                    self._stats['active'] -= 1
                     if status.succeeded():
+                        self._stats['finished'] += 1
                         status.finalise()
                         self.finished.append(status)
                     else:
+                        self._stats['failed'] += 1
                         self.failed.append(status)
                 else:
                     active_.append(status)
+            self.active = active_
             if not active_:
                 break
             else:
                 time.sleep(self.poll_sleep_time)
-        self.active = active_
 
     def stats(self):
         """Return the number of active, finished and failed jobs.
         """
-        return {'active': len(self.active),
-                'finished': len(self.finished),
-                'failed': len(self.failed)}
+        return self._stats
