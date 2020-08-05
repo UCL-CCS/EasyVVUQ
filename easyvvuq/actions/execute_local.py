@@ -128,6 +128,7 @@ class ExecuteLocalV2(ExecuteLocal):
     """An improvement over ExecuteLocal that uses Popen and provides the non-blocking
     execution that allows you to track progress. In line with other Action classes in EasyVVUQ.
     """
+
     def act_on_dir(self, target_dir):
         """
         Executes `self.run_cmd` in the shell in `target_dir`.
@@ -142,4 +143,3 @@ class ExecuteLocalV2(ExecuteLocal):
         else:
             full_cmd = [self.interpreter] + self.run_cmd.split()
         return ActionStatusLocalV2(subprocess.Popen(full_cmd, cwd=target_dir))
-
