@@ -621,7 +621,7 @@ class Campaign:
         for run_id, run_data in self.campaign_db.runs(status=status, app_id=self._active_app['id']):
             fn(run_id, run_data)
 
-    def apply_for_each_run_dir(self, action, status=Status.ENCODED):
+    def apply_for_each_run_dir(self, action, status=Status.ENCODED, batch_size=None):
         """
         For each run in this Campaign's run list, apply the specified action
         (an object of type Action)

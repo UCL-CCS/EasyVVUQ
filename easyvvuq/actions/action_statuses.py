@@ -37,13 +37,16 @@ class ActionStatuses:
 
     """
 
-    def __init__(self, statuses, poll_sleep_time=10):
-        self.active = list(statuses)
+    def __init__(self, statuses, batch_size=8, poll_sleep_time=1):
+        self.ready = list(statuses)
+        self.active = []
         self.finished = []
         self.failed = []
+        self.batch_size = batch_size
         self.poll_sleep_time = poll_sleep_time
         self._stats = {
-            'active': len(self.active),
+            'ready': len(self.ready),
+            'active': 0,
             'finished': 0,
             'failed': 0
         }
@@ -58,6 +61,16 @@ class ActionStatuses:
         is considered active (running) otherwise.
         """
         while True:
+            ready_ = []
+            for status in self.ready:
+                if len(self.active) < self.batch_size:
+                    status.start()
+                    self.active.append(status)
+                    self._stats['active'] += 1
+                    self._stats['ready'] -= 1
+                else:
+                    ready_.append(status)
+            self.ready = ready_
             active_ = []
             for status in self.active:
                 if status.finished():
@@ -72,10 +85,11 @@ class ActionStatuses:
                 else:
                     active_.append(status)
             self.active = active_
-            if not active_:
+            if (not active_) and (not ready_):
                 break
             else:
                 time.sleep(self.poll_sleep_time)
+
 
     def stats(self):
         """Return the number of active, finished and failed jobs.

@@ -36,6 +36,9 @@ class ActionStatusLocal():
     def __init__(self):
         pass
 
+    def start(self):
+        return None
+
     def finished(self):
         return True
 
@@ -93,24 +96,25 @@ class ExecuteLocal(BaseAction):
 
 
 class ActionStatusLocalV2():
-    def __init__(self, closure):
-        self.closure = closure
+    def __init__(self, full_cmd, target_dir):
+        self.full_cmd = full_cmd
+        self.target_dir = target_dir
         self.popen_object = None
         self.ret = None
         self._started = False
 
-    def start():
-        self.popen_obect = self.closure()
+    def start(self):
+        self.popen_object = subprocess.Popen(self.full_cmd, cwd=self.target_dir)
         self._started = True
 
-    def started():
+    def started(self):
         return self._started
 
     def finished(self):
         """Returns true if action is finished. In this case if calling poll on
         the popen object returns a non-None value.
         """
-        if not self.started():
+        if self.popen_object is None:
             return False
         ret = self.popen_object.poll()
         if ret is not None:
@@ -155,4 +159,4 @@ class ExecuteLocalV2(ExecuteLocal):
             full_cmd = self.run_cmd.split()
         else:
             full_cmd = [self.interpreter] + self.run_cmd.split()
-        return ActionStatusLocalV2(lambda: subprocess.Popen(full_cmd, cwd=target_dir))
+        return ActionStatusLocalV2(full_cmd, target_dir)
