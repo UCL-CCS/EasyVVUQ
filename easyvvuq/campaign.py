@@ -667,7 +667,7 @@ class Campaign:
         """
         self.draw_samples(nsamples)
         self.populate_runs_dir()
-        action_statuses = campaign.apply_for_each_run_dir(action)
+        action_statuses = self.apply_for_each_run_dir(action)
         return action_statuses
 
     def collate(self):
