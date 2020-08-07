@@ -645,7 +645,30 @@ class Campaign:
         action_statuses = []
         for run_id, run_data in self.campaign_db.runs(status=status, app_id=self._active_app['id']):
             action_statuses.append(action.act_on_dir(run_data['run_dir']))
-        return ActionStatuses(action_statuses)
+        return ActionStatuses(action_statuses, batch_size=batch_size)
+
+    def sample_and_apply(self, nsamples, action, batch_size=None):
+        """This will draw samples, populated the runs directories and run the specified action.
+        This is a convenience method.
+
+        Parameters
+        ----------
+        nsamples : int
+            number of samples to draw
+        action : BaseAction
+            an action to be executed
+        batch_size : int
+            number of actions to be executed at the same time
+
+        Returns
+        -------
+        action_statuses: ActionStatuses
+            An object containing ActionStatus instances to track action execution
+        """
+        self.draw_samples(nsamples)
+        self.populate_runs_dir()
+        action_statuses = campaign.apply_for_each_run_dir(action)
+        return action_statuses
 
     def collate(self):
         """Combine the output from all runs associated with the current app.

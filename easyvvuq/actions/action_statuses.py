@@ -37,7 +37,7 @@ class ActionStatuses:
 
     """
 
-    def __init__(self, statuses, batch_size=8, poll_sleep_time=1):
+    def __init__(self, statuses, batch_size=None, poll_sleep_time=1):
         self.ready = list(statuses)
         self.active = []
         self.finished = []
@@ -91,7 +91,7 @@ class ActionStatuses:
                 time.sleep(self.poll_sleep_time)
 
 
-    def stats(self):
+    def progress(self):
         """Return the number of active, finished and failed jobs.
         """
         return self._stats
