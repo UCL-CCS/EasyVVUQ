@@ -12,7 +12,7 @@ def test_action_status_kubernetes():
     status2.succeeded.return_value = False
     status3.succeeded.return_value = True
     statuses = ActionStatuses([status1, status2, status3], 1)
-    stats = statuses.stats()
+    stats = statuses.progress()
     assert(stats['active'] == 1)
     assert(stats['finished'] == 1)
     assert(stats['failed'] == 1)
