@@ -91,7 +91,6 @@ class ActionStatuses:
             else:
                 time.sleep(self.poll_sleep_time)
 
-
     def progress(self):
         """Return the number of active, finished and failed jobs.
         """

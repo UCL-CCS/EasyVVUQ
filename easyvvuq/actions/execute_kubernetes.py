@@ -164,7 +164,6 @@ class ActionStatusKubernetes():
             self.core_v1.create_namespaced_config_map(namespace='default', body=configmap)
 
 
-
 class ExecuteKubernetes(BaseAction):
     """ Provides an action element to run a shell command in a specified
     directory.
