@@ -647,7 +647,7 @@ class Campaign:
             action_statuses.append(action.act_on_dir(run_data['run_dir']))
         return ActionStatuses(action_statuses, batch_size=batch_size)
 
-    def sample_and_apply(self, nsamples, action, batch_size=None):
+    def sample_and_apply(self, nsamples, action, batch_size):
         """This will draw samples, populated the runs directories and run the specified action.
         This is a convenience method.
 
@@ -667,7 +667,7 @@ class Campaign:
         """
         self.draw_samples(nsamples)
         self.populate_runs_dir()
-        action_statuses = self.apply_for_each_run_dir(action)
+        action_statuses = self.apply_for_each_run_dir(action, batch_size=batch_size)
         return action_statuses
 
     def collate(self):

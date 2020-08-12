@@ -1,5 +1,6 @@
 import time
 import threading
+import logging
 
 __copyright__ = """
 
@@ -37,7 +38,7 @@ class ActionStatuses:
 
     """
 
-    def __init__(self, statuses, batch_size=None, poll_sleep_time=1):
+    def __init__(self, statuses, batch_size, poll_sleep_time=1):
         self.ready = list(statuses)
         self.active = []
         self.finished = []
