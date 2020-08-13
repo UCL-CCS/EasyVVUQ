@@ -18,8 +18,6 @@ def test_execute_kubernetes():
     action = execute_kubernetes.ExecuteKubernetes(
         'tests/kubernetes/epidemic.yaml', ['epidemic.json'], 'out.csv')
     action.act_on_dir('tests/kubernetes')
-    assert(action.core_v1.create_namespaced_config_map.called)
-    assert(action.core_v1.create_namespaced_pod.called)
 
 
 def test_action_status_kubernetes():
