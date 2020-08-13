@@ -1,4 +1,5 @@
 import pytest
+import time
 from unittest.mock import MagicMock
 from easyvvuq.actions import ActionStatuses
 
@@ -11,7 +12,8 @@ def test_action_status_kubernetes():
     status1.succeeded.return_value = False
     status2.succeeded.return_value = False
     status3.succeeded.return_value = True
-    statuses = ActionStatuses([status1, status2, status3], 1)
+    statuses = ActionStatuses([status1, status2, status3], 3)
+    time.sleep(1)
     stats = statuses.progress()
     assert(stats['active'] == 1)
     assert(stats['finished'] == 1)
