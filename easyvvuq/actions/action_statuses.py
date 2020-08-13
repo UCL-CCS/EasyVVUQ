@@ -1,3 +1,6 @@
+import time
+import threading
+
 __copyright__ = """
 
     Copyright 2020 Vytautas Jancauskas
@@ -23,22 +26,32 @@ __license__ = "LGPL"
 
 class ActionStatuses:
     """A class that tracks statuses of a list of actions.
+
+    Parameters
+    ----------
+    statuses: list of ActionStatus
+        a list of action statuses to track
+    poll_sleep_time: int
+        a time to sleep for after iterating over all active statuses
+        before starting again
+
     """
 
-    def __init__(self):
+    def __init__(self, statuses, batch_size, poll_sleep_time=1):
+        self.ready = list(statuses)
         self.active = []
         self.finished = []
         self.failed = []
-
-    def add(self, action_status):
-        """Add a new action status to the list.
-
-        Parameters
-        ----------
-        action_status : ActionStatus
-            an object representing an actions status
-        """
-        self.active.append(action_status)
+        self.batch_size = batch_size
+        self.poll_sleep_time = poll_sleep_time
+        self._stats = {
+            'ready': len(self.ready),
+            'active': 0,
+            'finished': 0,
+            'failed': 0
+        }
+        polling_thread = threading.Thread(target=self.poll)
+        polling_thread.start()
 
     def poll(self):
         """Iterate over active actions, finalize finished ones,
@@ -47,21 +60,37 @@ class ActionStatuses:
         success. It is considered failed if it has reported failure and
         is considered active (running) otherwise.
         """
-        active_ = []
-        for status in self.active:
-            if status.finished():
-                if status.succeeded():
-                    status.finalise()
-                    self.finished.append(status)
+        while True:
+            ready_ = []
+            for status in self.ready:
+                if len(self.active) < self.batch_size:
+                    status.start()
+                    self.active.append(status)
+                    self._stats['active'] += 1
+                    self._stats['ready'] -= 1
                 else:
-                    self.failed.append(status)
+                    ready_.append(status)
+            self.ready = ready_
+            active_ = []
+            for status in self.active:
+                if status.finished():
+                    self._stats['active'] -= 1
+                    if status.succeeded():
+                        self._stats['finished'] += 1
+                        status.finalise()
+                        self.finished.append(status)
+                    else:
+                        self._stats['failed'] += 1
+                        self.failed.append(status)
+                else:
+                    active_.append(status)
+            self.active = active_
+            if (not active_) and (not ready_):
+                break
             else:
-                active_.append(status)
-        self.active = active_
+                time.sleep(self.poll_sleep_time)
 
-    def stats(self):
+    def progress(self):
         """Return the number of active, finished and failed jobs.
         """
-        return {'active': len(self.active),
-                'finished': len(self.finished),
-                'failed': len(self.failed)}
+        return self._stats

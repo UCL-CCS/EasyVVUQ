@@ -1,5 +1,5 @@
 from .base import BaseAction
-from .execute_local import ExecuteLocal
+from .execute_local import ExecuteLocal, ExecuteLocalV2
 from .execute_kubernetes import ExecuteKubernetes
 from .action_statuses import ActionStatuses
 

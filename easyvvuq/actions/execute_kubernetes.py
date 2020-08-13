@@ -24,6 +24,7 @@ import os
 import logging
 import yaml
 import uuid
+import copy
 from kubernetes.client.api import core_v1_api
 from kubernetes import config
 from kubernetes.client import Configuration, V1ConfigMap, V1ObjectMeta
@@ -72,13 +73,30 @@ class ActionStatusKubernetes():
         a filename to write the output of the simulation
     """
 
-    def __init__(self, api, pod_name, config_names, namespace, outfile):
+    def __init__(self, api, body, config_names, namespace, outfile):
         self.core_v1 = api
-        self.pod_name = pod_name
+        self.body = dict(body)
+        self.pod_name = body['metadata']['name']
         self.config_names = config_names
         self.namespace = namespace
         self.outfile = outfile
         self._succeeded = False
+        self._started = False
+
+    def start(self):
+        """Will create the Kubernetes pod and hence start the action.
+        """
+        if self.started():
+            raise RuntimeError('The pod has already started!')
+        self.create_config_maps(self.config_names)
+        self.create_volumes(self.config_names, self.body)
+        self.core_v1.create_namespaced_pod(body=self.body, namespace="default")
+        self._started = True
+
+    def started(self):
+        """Will return true if start() was called.
+        """
+        return self._started
 
     def finished(self):
         """Will return True if the pod has finished, otherwise will return False.
@@ -114,6 +132,37 @@ class ActionStatusKubernetes():
         """
         return self._succeeded
 
+    def create_volumes(self, file_names, dep):
+        """Create descriptions of Volumes that will hold the input files.
+        """
+        volumes = [{'name': id_ + '-volume', 'configMap': {'name': id_}}
+                   for _, id_ in file_names]
+        volume_mounts = [{'name': id_ + '-volume',
+                          'mountPath': os.path.join('/config/', os.path.basename(file_name)),
+                          'subPath': os.path.basename(file_name),
+                          'readOnly': True}
+                         for file_name, id_ in file_names]
+        dep['spec']['volumes'] = volumes
+        dep['spec']['containers'][0]['volumeMounts'] = volume_mounts
+
+    def create_config_maps(self, file_names):
+        """Create Kubernetes ConfigMaps for the input files to the simulation.
+        """
+        for file_name, id_ in file_names:
+            with open(file_name, 'r') as fd:
+                data = fd.read()
+            metadata = V1ObjectMeta(
+                name=id_,
+                namespace='default'
+            )
+            configmap = V1ConfigMap(
+                api_version='v1',
+                kind='ConfigMap',
+                data={os.path.basename(file_name): data},
+                metadata=metadata
+            )
+            self.core_v1.create_namespaced_config_map(namespace='default', body=configmap)
+
 
 class ExecuteKubernetes(BaseAction):
     """ Provides an action element to run a shell command in a specified
@@ -146,37 +195,6 @@ class ExecuteKubernetes(BaseAction):
         Configuration.set_default(c)
         self.core_v1 = core_v1_api.CoreV1Api()
 
-    def create_volumes(self, file_names, dep):
-        """Create descriptions of Volumes that will hold the input files.
-        """
-        volumes = [{'name': id_ + '-volume', 'configMap': {'name': id_}}
-                   for _, id_ in file_names]
-        volume_mounts = [{'name': id_ + '-volume',
-                          'mountPath': os.path.join('/config/', os.path.basename(file_name)),
-                          'subPath': os.path.basename(file_name),
-                          'readOnly': True}
-                         for file_name, id_ in file_names]
-        dep['spec']['volumes'] = volumes
-        dep['spec']['containers'][0]['volumeMounts'] = volume_mounts
-
-    def create_config_maps(self, file_names):
-        """Create Kubernetes ConfigMaps for the input files to the simulation.
-        """
-        for file_name, id_ in file_names:
-            with open(file_name, 'r') as fd:
-                data = fd.read()
-            metadata = V1ObjectMeta(
-                name=id_,
-                namespace='default'
-            )
-            configmap = V1ConfigMap(
-                api_version='v1',
-                kind='ConfigMap',
-                data={os.path.basename(file_name): data},
-                metadata=metadata
-            )
-            self.core_v1.create_namespaced_config_map(namespace='default', body=configmap)
-
     def act_on_dir(self, target_dir):
         """Executes a dockerized simulation on input files found in `target_dir`.
 
@@ -185,11 +203,8 @@ class ExecuteKubernetes(BaseAction):
         """
         file_names = [(os.path.join(target_dir, input_file_name), str(uuid.uuid4()))
                       for input_file_name in self.input_file_names]
-        dep = dict(self.dep)
-        self.create_config_maps(file_names)
-        self.create_volumes(file_names, dep)
+        dep = copy.deepcopy(self.dep)
         dep['metadata']['name'] = str(uuid.uuid4())
-        self.core_v1.create_namespaced_pod(body=dep, namespace="default")
         return ActionStatusKubernetes(
-            self.core_v1, dep['metadata']['name'], file_names, 'default',
+            self.core_v1, dep, file_names, 'default',
             os.path.join(target_dir, self.output_file_name))

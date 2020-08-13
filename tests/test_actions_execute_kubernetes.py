@@ -18,8 +18,6 @@ def test_execute_kubernetes():
     action = execute_kubernetes.ExecuteKubernetes(
         'tests/kubernetes/epidemic.yaml', ['epidemic.json'], 'out.csv')
     action.act_on_dir('tests/kubernetes')
-    assert(action.core_v1.create_namespaced_config_map.called)
-    assert(action.core_v1.create_namespaced_pod.called)
 
 
 def test_action_status_kubernetes():
@@ -28,7 +26,9 @@ def test_action_status_kubernetes():
     config_names = [('a', 'b'), ('c', 'd')]
     namespace = 'test_namespace'
     outfile = 'test.csv'
-    status = ActionStatusKubernetes(api, pod_name, config_names, namespace, outfile)
+    status = ActionStatusKubernetes(
+        api, {'metadata': {'name': 'test'}},
+        config_names, namespace, outfile)
     resp = MagicMock()
     resp.status.phase = 'Pending'
     api.read_namespaced_pod.return_value = resp
