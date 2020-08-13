@@ -27,7 +27,7 @@ def test_action_status_kubernetes():
     namespace = 'test_namespace'
     outfile = 'test.csv'
     status = ActionStatusKubernetes(
-        api, {'metadata' : {'name' : 'test'}},
+        api, {'metadata': {'name': 'test'}},
         config_names, namespace, outfile)
     resp = MagicMock()
     resp.status.phase = 'Pending'
