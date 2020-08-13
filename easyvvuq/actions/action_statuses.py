@@ -1,6 +1,5 @@
 import time
 import threading
-import logging
 
 __copyright__ = """
 
