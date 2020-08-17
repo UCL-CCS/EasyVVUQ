@@ -80,7 +80,20 @@ class ActionStatusSLURM():
 class ExecuteSLURM(ExecuteLocal):
     """An improvement over ExecuteLocal that uses Popen and provides the non-blocking
     execution that allows you to track progress. In line with other Action classes in EasyVVUQ.
+
+    Parameters
+    ----------
+    template_script: str
+       filename for the template slurm script
+
+    variable: str
+       a string in the template script that will be replaced with the target_dir
     """
+
+    def __init__(self, template_script, variable):
+        with open(template_script, 'r') as fd:
+            self.template = fd.read()
+        self.variable = variable
 
     def act_on_dir(self, target_dir):
         """
@@ -90,9 +103,4 @@ class ExecuteSLURM(ExecuteLocal):
             Directory in which to execute command.
 
         """
-
-        if self.interpreter is None:
-            full_cmd = self.run_cmd.split()
-        else:
-            full_cmd = [self.interpreter] + self.run_cmd.split()
-        return ActionStatusSLURM(full_cmd, target_dir)
+        return ActionStatusSLURM(self.template.replace(self.variable, target_dir))
