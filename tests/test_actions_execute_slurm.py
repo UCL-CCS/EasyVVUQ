@@ -4,12 +4,10 @@ import easyvvuq.actions.execute_slurm as execute_slurm
 from easyvvuq.actions.execute_slurm import ExecuteSLURM, ActionStatusSLURM
 import os
 
-
-def test_execute_slurm():
-    action = ExecuteSlurm()
-
 def test_action_status_slurm():
-    pass
+    action = ExecuteSLURM('docs/epidemic/example.slurm', '$target_dir')
+    status = action.act_on_dir('docs/epidemic')
+    assert(isinstance(status, ActionStatusSLURM))
 
 
 # Monkey patch some stuff
