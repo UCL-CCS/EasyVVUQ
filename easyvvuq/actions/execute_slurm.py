@@ -32,15 +32,16 @@ __license__ = "LGPL"
 logger = logging.getLogger(__name__)
 
 class ActionStatusSLURM():
-    def __init__(self, full_cmd, target_dir):
-        self.full_cmd = full_cmd
+    def __init__(self, script, script_name, target_dir):
+        self.script = script
+        self.script_name = script_name
         self.target_dir = target_dir
-        self.popen_object = None
-        self.ret = None
         self._started = False
 
     def start(self):
-        self.popen_object = subprocess.Popen(self.full_cmd, cwd=self.target_dir)
+        result = subprocess.run(['sbatch', self.script_name], cwd=self.target_dir, check=True)
+        stdout = result.stdout.decode('utf-8')
+        self.job_id = re.findall(r'\d+', stdout)[0]
         self._started = True
 
     def started(self):
@@ -50,11 +51,11 @@ class ActionStatusSLURM():
         """Returns true if action is finished. In this case if calling poll on
         the popen object returns a non-None value.
         """
-        if self.popen_object is None:
+        if not self.started():
             return False
-        ret = self.popen_object.poll()
-        if ret is not None:
-            self.ret = ret
+        result = subprocess.run(['squeue', '-j', self.job_id], cwd=self.target_dir, check=True)
+        stdout = result.stdout.decode('utf-8')
+        if len(re.findall(r'\d+', stdout)) > 0:
             return True
         else:
             return False
@@ -93,6 +94,7 @@ class ExecuteSLURM(ExecuteLocal):
     def __init__(self, template_script, variable):
         with open(template_script, 'r') as fd:
             self.template = fd.read()
+        self.script_name = template_script
         self.variable = variable
 
     def act_on_dir(self, target_dir):
@@ -103,4 +105,4 @@ class ExecuteSLURM(ExecuteLocal):
             Directory in which to execute command.
 
         """
-        return ActionStatusSLURM(self.template.replace(self.variable, target_dir))
+        return ActionStatusSLURM(self.template.replace(self.variable, target_dir), target_dir)
