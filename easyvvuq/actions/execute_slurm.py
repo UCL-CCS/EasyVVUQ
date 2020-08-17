@@ -96,7 +96,7 @@ class ActionStatusSLURM():
             return True
 
 
-class ExecuteSLURM(ExecuteLocal):
+class ExecuteSLURM(BaseAction):
     """An improvement over ExecuteLocal that uses Popen and provides the
     non-blocking execution that allows you to track progress. In line
     with other Action classes in EasyVVUQ.
