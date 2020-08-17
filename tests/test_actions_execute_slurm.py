@@ -1,12 +1,12 @@
 import pytest
 from unittest.mock import MagicMock
-import easyvvuq.actions.execute_kubernetes as execute_kubernetes
-from easyvvuq.actions.execute_kubernetes import ExecuteSLURM
+import easyvvuq.actions.execute_slurm as execute_slurm
+from easyvvuq.actions.execute_slurm import ExecuteSLURM, ActionStatusSLURM
 import os
 
 
 def test_execute_slurm():
-    pass
+    action = ExecuteSlurm()
 
 def test_action_status_slurm():
     pass
