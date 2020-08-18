@@ -32,20 +32,22 @@ __license__ = "LGPL"
 
 logger = logging.getLogger(__name__)
 
+
 class ActionStatusSLURM():
     """An ActionStatus to track the execution of a SLURM job.
-    
+
     Parameters
     ----------
     script: str
-        The body of the script. Will be written to a file 
+        The body of the script. Will be written to a file
         relative to target_dir named script_name.
     script_name: str
-        Name of the script file. This will be written to. 
+        Name of the script file. This will be written to.
         So beware of overwriting issues.
     target_dir: str
         Name of the execution directory for this job.
     """
+
     def __init__(self, script, script_name, target_dir):
         self.script = script
         self.script_name = script_name
