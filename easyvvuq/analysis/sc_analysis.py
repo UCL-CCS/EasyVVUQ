@@ -206,6 +206,13 @@ class SCAnalysis(BaseAnalysisElement):
         #TODO: change this to include QoI of different size
         self.N_qoi = self.samples[qoi_cols[0]][0].size
 
+        #assume that self.l_norm has changed, and that the interpolation
+        #must be initialised, see sc_expansion subroutine
+        self.init_interpolation = True
+        
+        #TODO: same pce coefs must be computed for every qoi
+        self.pce_coefs = self.SC2PCE(samples[qoi_cols[0]])
+
         # Compute descriptive statistics for each quantity of interest
         results = {'statistical_moments': {},
                    'sobols_first': {k: {} for k in self.qoi_cols},
@@ -213,8 +220,14 @@ class SCAnalysis(BaseAnalysisElement):
 
         if compute_moments:
             for qoi_k in qoi_cols:
-                mean_k, var_k = self.get_moments(qoi_k)
-                std_k = np.sqrt(var_k)
+                if not self.sparse:
+                    mean_k, var_k = self.get_moments(qoi_k)
+                    std_k = np.sqrt(var_k)
+                else:
+                    pce_coefs = self.SC2PCE(self.samples[qoi_k])
+                    mean_k, var_k = self.get_pce_stats(self.l_norm, pce_coefs, self.comb_coef)
+                    std_k = np.sqrt(var_k)
+
                 # compute statistical moments
                 results['statistical_moments'][qoi_k] = {'mean': mean_k,
                                                          'var': var_k,
@@ -365,9 +378,9 @@ class SCAnalysis(BaseAnalysisElement):
             all_idx = np.concatenate((self.l_norm, self.sampler.admissible_idx))
             self.xi_1d = self.sampler.xi_1d
             self.wi_1d = self.sampler.wi_1d
-            all_pce_coefs = self.SC2PCE(samples, l_norm=all_idx, 
-                                        xi_d=self.sampler.xi_d, verbose=True)
-            _, var_l = self.get_pce_stats(self.l_norm, all_pce_coefs, self.comb_coef)
+            self.pce_coefs = self.SC2PCE(samples, l_norm=all_idx, 
+                                         xi_d=self.sampler.xi_d, verbose=True)
+            _, var_l = self.get_pce_stats(self.l_norm, self.pce_coefs, self.comb_coef)
 
         #the currently accepted grid points
         xi_d_accepted = self.sampler.generate_grid(self.l_norm)
@@ -391,7 +404,24 @@ class SCAnalysis(BaseAnalysisElement):
                     error[tuple(l)].append(np.linalg.norm(hier_surplus, np.inf))
                 #compute mean error over all points in X_l
                 error[tuple(l)] = np.mean(error[tuple(l)])
-            #compute the error based on quadrature of the mean
+            elif method == 'surplus_quad':
+                # collocation points of current level index l
+                X_l = [self.sampler.xi_1d[n][l[n]] for n in range(self.N)]
+                W_l = [self.sampler.wi_1d[n][l[n]] for n in range(self.N)]
+                X_l = np.array(list(product(*X_l)))
+                W_l = np.array(list(product(*W_l)))
+                #only consider new points, subtract the accepted points
+                X_l = setdiff2d(X_l, xi_d_accepted)
+                err = 0.0
+                for i in range(X_l.shape[0]):
+                    xi = X_l[i]; wi = W_l[i]
+                    #find the location of the current xi in the global grid
+                    idx = np.where((xi == self.sampler.xi_d).all(axis=1))[0][0]
+                    #hierarchical surplus error at xi
+                    err += (samples[idx] - self.surrogate(qoi, xi))*np.prod(wi)
+                #compute mean error over all points in X_l
+                error[tuple(l)] = np.linalg.norm(err)
+           #compute the error based on quadrature of the mean
             elif method == 'mean':
                 #create a candidate set of multi indices by adding the current
                 #admissible index to l_norm
@@ -415,7 +445,7 @@ class SCAnalysis(BaseAnalysisElement):
                 candidate_l_norm = np.concatenate((self.l_norm, l.reshape([1, self.N])))
                 #now we must recompute the combination coefficients
                 c_l = self.compute_comb_coef(l_norm=candidate_l_norm)
-                _, var_candidate_l = self.get_pce_stats(candidate_l_norm, all_pce_coefs, c_l)
+                _, var_candidate_l = self.get_pce_stats(candidate_l_norm, self.pce_coefs, c_l)
                 #error in var
                 error[tuple(l)] = np.linalg.norm(var_candidate_l - var_l, np.inf)
             else:
@@ -441,10 +471,16 @@ class SCAnalysis(BaseAnalysisElement):
         #peform the analyse step, but do not compute moments and Sobols
         self.analyse(data_frame, compute_moments=False, compute_Sobols=False)
 
+        #if True store the mean and variance at eacht iteration of the adaptive
+        #algorithmn
         if store_stats_history:
-            mean_f, var_f = self.get_moments(qoi)
+            # mean_f, var_f = self.get_moments(qoi)
+            print('Storing moments of iteration %d' % self.sampler.number_of_adaptations)
+            pce_coefs = self.SC2PCE(samples, verbose=True)
+            mean_f, var_f = self.get_pce_stats(self.l_norm, pce_coefs, self.comb_coef)
             self.mean_history.append(mean_f)
             self.std_history.append(var_f)
+            print('done')
 
         # self.L = np.max(np.sum(self.l_norm, axis = 1) - self.N + 1)
         # self.xi_d = self.sampler.generate_grid(self.l_norm)
@@ -468,51 +504,68 @@ class SCAnalysis(BaseAnalysisElement):
         """
         return self.adaptation_errors
 
-    # def merge_accepted_and_admissible(self):
-    #     """
-    #     In the case of the dimension-adaptive sampler, there are 2 sets of
-    #     quadrature multi indices. There are the accepted indices that are actually
-    #     used in the analysis, and the admissible indices, of which some might
-    #     move to the accepted set in subsequent iterations. This subroutine merges
-    #     the two sets of multi indices by moving all admissible to the set of
-    #     accepted indices.
+    def merge_accepted_and_admissible(self, level=0, **kwargs):
+        """
+        In the case of the dimension-adaptive sampler, there are 2 sets of
+        quadrature multi indices. There are the accepted indices that are actually
+        used in the analysis, and the admissible indices, of which some might
+        move to the accepted set in subsequent iterations. This subroutine merges
+        the two sets of multi indices by moving all admissible to the set of
+        accepted indices.
 
-    #     Do this at the end, when no more refinements will be executed. The
-    #     samples related to the admissble indices are already computed, although
-    #     not used in the analysis. By executing this subroutine at very end, all
-    #     computed samples are used during the final postprocessing stage. Execute
-    #     campaign.apply_analysis to let the new set of indices take effect.
+        Do this at the end, when no more refinements will be executed. The
+        samples related to the admissble indices are already computed, although
+        not used in the analysis. By executing this subroutine at very end, all
+        computed samples are used during the final postprocessing stage. Execute
+        campaign.apply_analysis to let the new set of indices take effect.
 
-    #     If further refinements are executed after all via sampler.look_ahead, the
-    #     number of new admissible samples to be computed can be very high,
-    #     especially in high dimensions. It is possible to undo the merge via
-    #     analysis.undo_merge before new refinements are made. Execute
-    #     campaign.apply_analysis again to let the old set of indices take effect.
+        If further refinements are executed after all via sampler.look_ahead, the
+        number of new admissible samples to be computed can be very high,
+        especially in high dimensions. It is possible to undo the merge via
+        analysis.undo_merge before new refinements are made. Execute
+        campaign.apply_analysis again to let the old set of indices take effect.
 
-    #     """
+        """
+        
+        if 'include' in kwargs:
+            include = kwargs['include']
+        else:
+            include = np.arange(self.N)
 
-    #     if self.sampler.dimension_adaptive:
-    #         print('Moving all adimissible indices to the accepted set...')
-    #         #make a backup of l_norm, such that undo_merge can revert back
-    #         self.l_norm_backup = np.copy(self.l_norm)
-    #         #merge admissible and accepted multi indices
-    #         merged_l = np.concatenate((self.l_norm, self.sampler.admissible_idx))
-    #         #make sure final result contains only unique indices and store
-    #         #results in l_norm
-    #         idx = np.unique(merged_l, axis=0, return_index=True)[1]
-    #         return np.array([merged_l[i] for i in sorted(idx)])
-    #         # self.l_norm = np.array([merged_l[i] for i in sorted(idx)])
-    #         print('done')
+        if self.sampler.dimension_adaptive:
+            print('Moving admissible indices to the accepted set...')
+            #make a backup of l_norm, such that undo_merge can revert back
+            self.l_norm_backup = np.copy(self.l_norm)
+            #merge admissible and accepted multi indices
+            if level == 0:
+                merged_l = np.concatenate((self.l_norm, self.sampler.admissible_idx))
+            else:
+                admissible_idx = []
+                count = 0
+                for l in self.sampler.admissible_idx:
+                    L = np.sum(l) - self.N + 1
+                    tmp = np.where(l == L)[0]
+                    if L <= level and np.in1d(tmp, include)[0]:
+                        admissible_idx.append(l)
+                        count += 1
+                admissible_idx = np.array(admissible_idx).reshape([count, self.N])
+                merged_l = np.concatenate((self.l_norm, admissible_idx))
+            #make sure final result contains only unique indices and store
+            #results in l_norm
+            idx = np.unique(merged_l, axis=0, return_index=True)[1]
+            # return np.array([merged_l[i] for i in sorted(idx)])
+            self.l_norm = np.array([merged_l[i] for i in sorted(idx)])
+            print('done')
 
-    # def undo_merge(self):
-    #     """
-    #     This reverses the effect of the merge_accepted_and_admissble subroutine.
-    #     Execute if further refinement are required after all.
+    def undo_merge(self):
+        """
+        This reverses the effect of the merge_accepted_and_admissble subroutine.
+        Execute if further refinement are required after all.
 
-    #     """
-    #     if self.sampler.dimension_adaptive:
-    #         self.l_norm = self.l_norm_backup
-    #         print('Restored old multi indices.')
+        """
+        if self.sampler.dimension_adaptive:
+            self.l_norm = self.l_norm_backup
+            print('Restored old multi indices.')
 
     def plot_stat_convergence(self):
         """
@@ -676,13 +729,13 @@ class SCAnalysis(BaseAnalysisElement):
             W_k = W_k.reshape([W_k.shape[0], 1])
 
             # scaling factor of combination technique
-            W_k *= comb_coef[tuple(l)]
+            W_k = W_k * comb_coef[tuple(l)]
 
             # find corresponding code values
             f_k = np.array([samples[np.where((x == xi_d).all(axis=1))[0][0]] for x in X_k])
 
             # quadrature of Q^1_{k1} X ... X Q^1_{kN} product
-            Q += np.sum(f_k * W_k, axis=0).T
+            Q = Q + np.sum(f_k * W_k, axis=0).T
 
         return Q
 
@@ -780,23 +833,24 @@ class SCAnalysis(BaseAnalysisElement):
         surr (float, (N_qoi,)): the interpolated value of qoi at x
 
         """
-        #TODO: xi_d, idx are computed every time, but only depend upon
-        #self.l_norm. Makes it slow, store globally, and only recompute when
-        #self.l_norm has changed
-
-        # if self.init_interpolation:
-        #     self.xi_d_per_l = {}
-        #     for l in self.l_norm:
-        #         #all points corresponding to l
-        #         xi = [self.xi_1d[n][l[n]] for n in range(self.N)]
-        #         self.xi_d_per_l[tuple(l)] = np.array(list(product(*xi)))
-        #     self.init_interpolation = False
+        #Computing the tensor grid of each multiindex l (xi_d below)
+        #every time is slow. Instead store it globally, and only recompute when
+        #self.l_norm has changed, when the flag init_interpolation = True.
+        #This flag is set to True when self.analyse is executed
+        if self.init_interpolation:
+            self.xi_d_per_l = {}
+            for l in self.l_norm:
+                #all points corresponding to l
+                xi = [self.xi_1d[n][l[n]] for n in range(self.N)]
+                self.xi_d_per_l[tuple(l)] = np.array(list(product(*xi)))
+            self.init_interpolation = False
 
         surr = 0.0
         for l in self.l_norm:
             #all points corresponding to l
-            xi = [self.xi_1d[n][l[n]] for n in range(self.N)]
-            xi_d = np.array(list(product(*xi)))
+            # xi = [self.xi_1d[n][l[n]] for n in range(self.N)]
+            # xi_d = np.array(list(product(*xi)))
+            xi_d = self.xi_d_per_l[tuple(l)]
 
             for xi in xi_d:
                 # indices of current collocation point
@@ -1124,93 +1178,91 @@ class SCAnalysis(BaseAnalysisElement):
         else:
             xi_d = self.xi_d
 
+        if not hasattr(self, 'pce_coefs'):
+            self.pce_coefs = {}
+
         count_l = 1
         for l in l_norm:
-            #pce coefficients for current multi-index l
-            pce_coefs[tuple(l)] = {}
-
-            #1d points generated by l
-            x_1d = [self.xi_1d[n][l[n]] for n in range(self.N)]
-            #1d Lagrange polynomials generated by l
-            #EDIT: do not use chaospy for Lagrange, converts lagrange into monomial, requires
-            #Vandermonde matrix inversion to find coefficients, which becomes
-            #very ill conditioned rather quickly. Can no longer use cp.E to compute
-            #integrals, use GQ instead
-            # a_1d = [cp.lagrange_polynomial(sampler.xi_1d[n][l[n]]) for n in range(d)]
-
-            #N-dimensional grid generated by l
-            x_l = np.array(list(product(*x_1d)))
-
-            #all multi indices of the PCE expansion: k <= l
-            k_norm = list(product(*[np.arange(1, l[n] + 1) for n in range(self.N)]))
-
-            # if verbose:
-            #     if self.comb_coef[tuple(l)] != 0:
-            #         print('Computing PCE coefficients of refinement %d / %d' % (count_l, l_norm.shape[0]))
-            #     else:
-            #         print('Skipping PCE coefficients of refinement %d / %d' % (count_l, l_norm.shape[0]))
-            
-            if verbose:
-                print('Computing PCE coefficients %d / %d' % (count_l, l_norm.shape[0]))
-
-            for k in k_norm:
-                #product of the PCE basis function or order k - 1 and all
-                #Lagrange basis functions in a_1d, per dimension
-                #[[phi_k[0]*a_1d[0]], ..., [phi_k[N-1]*a_1d[N-1]]]
-
-                #orthogonal polynomial generated by chaospy
-                phi_k = [cp.orth_ttr(k[n] - 1,
-                                     dist=self.sampler.params_distribution[n],
-                                     normed=True)[-1] for n in range(self.N)]
-
-                #the polynomial order of each integrand phi_k*a_j = (k - 1) + (number of colloc. points - 1)
-                orders = [(k[n] - 1) + (self.xi_1d[n][l[n]].size - 1) for n in range(self.N)]
-
-                #will hold the products of PCE basis functions phi_k and lagrange interpolation polynomials a_1d
-                cross_prod = []
-
-                for n in range(self.N):
-                    #GQ using n points can exactly integrate polynomials of order 2n-1:
-                    #solve for required number of points when given order
-                    n_quad_points = int(np.ceil((orders[n] + 1) / 2))
-
-                    #generate Gaussian quad rule
-                    if isinstance(self.sampler.params_distribution[n], cp.DiscreteUniform):
-                        xi = self.xi_1d[n][l[n]]
-                        wi = self.wi_1d[n][l[n]]
-                    else:
-                        xi, wi = cp.generate_quadrature(n_quad_points - 1, self.sampler.params_distribution[n], rule="G")
-                        xi = xi[0]
-
-                    #number of colloc points = number of Lagrange polynomials
-                    n_lagrange_poly = int(self.xi_1d[n][l[n]].size)
-
-                    #compute the v coefficients = coefficients of SC2PCE mapping
-                    v_coefs_n = []
-                    for j in range(n_lagrange_poly):
-                        #compute values of Lagrange polys at quadrature points
-                        l_j = np.array([lagrange_poly(xi[i], self.xi_1d[n][l[n]], j) for i in range(xi.size)])
-                        #each coef is the integral of the lagrange poly times the current orthogonal PCE poly
-                        v_coefs_n.append(np.sum(l_j*phi_k[n](xi)*wi))
-                    cross_prod.append(v_coefs_n)
-
-                #tensor product of all integrals
-                integrals = np.array(list(product(*cross_prod)))
-                #multiply over the number of parameters: v_prod = v_k1_j1 * ... * v_kd_jd
-                v_prod = np.prod(integrals, axis=1)
-                v_prod = v_prod.reshape([v_prod.size, 1])
-
-                # find corresponding code values
-                f_k = np.array([samples[np.where((x == xi_d).all(axis=1))[0][0]] for x in x_l])
-
-                #the sum of all code sample * v_{k,j_1} * ... * v_{k,j_N}
-                #equals the PCE coefficient
-                eta_k = np.sum(f_k * v_prod, axis=0).T
-
-            # else:
-            #     eta_k = np.zeros(samples[0].size)
-
-                pce_coefs[tuple(l)][tuple(k)] = eta_k
+            if not tuple(l) in self.pce_coefs.keys():
+                #pce coefficients for current multi-index l
+                pce_coefs[tuple(l)] = {}
+    
+                #1d points generated by l
+                x_1d = [self.xi_1d[n][l[n]] for n in range(self.N)]
+                #1d Lagrange polynomials generated by l
+                #EDIT: do not use chaospy for Lagrange, converts lagrange into monomial, requires
+                #Vandermonde matrix inversion to find coefficients, which becomes
+                #very ill conditioned rather quickly. Can no longer use cp.E to compute
+                #integrals, use GQ instead
+                # a_1d = [cp.lagrange_polynomial(sampler.xi_1d[n][l[n]]) for n in range(d)]
+    
+                #N-dimensional grid generated by l
+                x_l = np.array(list(product(*x_1d)))
+    
+                #all multi indices of the PCE expansion: k <= l
+                k_norm = list(product(*[np.arange(1, l[n] + 1) for n in range(self.N)]))
+    
+                if verbose:
+                    print('Computing PCE coefficients %d / %d' % (count_l, l_norm.shape[0]))
+    
+                for k in k_norm:
+                    #product of the PCE basis function or order k - 1 and all
+                    #Lagrange basis functions in a_1d, per dimension
+                    #[[phi_k[0]*a_1d[0]], ..., [phi_k[N-1]*a_1d[N-1]]]
+    
+                    #orthogonal polynomial generated by chaospy
+                    phi_k = [cp.orth_ttr(k[n] - 1,
+                                         dist=self.sampler.params_distribution[n],
+                                         normed=True)[-1] for n in range(self.N)]
+    
+                    #the polynomial order of each integrand phi_k*a_j = (k - 1) + (number of colloc. points - 1)
+                    orders = [(k[n] - 1) + (self.xi_1d[n][l[n]].size - 1) for n in range(self.N)]
+    
+                    #will hold the products of PCE basis functions phi_k and lagrange interpolation polynomials a_1d
+                    cross_prod = []
+    
+                    for n in range(self.N):
+                        #GQ using n points can exactly integrate polynomials of order 2n-1:
+                        #solve for required number of points n when given order
+                        n_quad_points = int(np.ceil((orders[n] + 1) / 2))
+    
+                        #generate Gaussian quad rule
+                        if isinstance(self.sampler.params_distribution[n], cp.DiscreteUniform):
+                            xi = self.xi_1d[n][l[n]]
+                            wi = self.wi_1d[n][l[n]]
+                        else:
+                            xi, wi = cp.generate_quadrature(n_quad_points - 1, self.sampler.params_distribution[n], rule="G")
+                            xi = xi[0]
+    
+                        #number of colloc points = number of Lagrange polynomials
+                        n_lagrange_poly = int(self.xi_1d[n][l[n]].size)
+    
+                        #compute the v coefficients = coefficients of SC2PCE mapping
+                        v_coefs_n = []
+                        for j in range(n_lagrange_poly):
+                            #compute values of Lagrange polys at quadrature points
+                            l_j = np.array([lagrange_poly(xi[i], self.xi_1d[n][l[n]], j) for i in range(xi.size)])
+                            #each coef is the integral of the lagrange poly times the current orthogonal PCE poly
+                            v_coefs_n.append(np.sum(l_j*phi_k[n](xi)*wi))
+                        cross_prod.append(v_coefs_n)
+    
+                    #tensor product of all integrals
+                    integrals = np.array(list(product(*cross_prod)))
+                    #multiply over the number of parameters: v_prod = v_k1_j1 * ... * v_kd_jd
+                    v_prod = np.prod(integrals, axis=1)
+                    v_prod = v_prod.reshape([v_prod.size, 1])
+    
+                    # find corresponding code values
+                    f_k = np.array([samples[np.where((x == xi_d).all(axis=1))[0][0]] for x in x_l])
+    
+                    #the sum of all code sample * v_{k,j_1} * ... * v_{k,j_N}
+                    #equals the PCE coefficient
+                    eta_k = np.sum(f_k * v_prod, axis=0).T
+    
+                    pce_coefs[tuple(l)][tuple(k)] = eta_k
+            else:
+                #pce coefs previously computed, just copy result
+                pce_coefs[tuple(l)] = self.pce_coefs[tuple(l)]
             count_l += 1
 
         print('done')
