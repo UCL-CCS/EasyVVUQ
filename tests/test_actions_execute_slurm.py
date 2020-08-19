@@ -5,20 +5,34 @@ from easyvvuq.actions.execute_slurm import ExecuteSLURM, ActionStatusSLURM
 import os
 
 
-def test_action_status_slurm():
-    action = ExecuteSLURM('docs/epidemic/example.slurm', '$target_dir')
-    status = action.act_on_dir('docs/epidemic')
-    assert(isinstance(status, ActionStatusSLURM))
+BATCH_FILE = """#!/bin/bash
+#
+#SBATCH --job-name=test
+#SBATCH --output=res.txt
+#
+#SBATCH --ntasks=1
+#SBATCH --time=10:00
+#SBATCH --mem-per-cpu=100
+
+srun python3 /EasyVVUQ/docs/epidemic/epidemic.py docs/epidemic/epidemic_in.json out.csv"""
 
 
 # Monkey patch some stuff
 
-#execute_kubernetes.config = MagicMock()
+execute_slurm.subprocess.run = MagicMock()
+
 #execute_kubernetes.core_v1_api = MagicMock()
 #execute_kubernetes.Configuration = MagicMock()
 #execute_kubernetes.V1ConfigMap = MagicMock()
 #execute_kubernetes.V1ObjectMeta = MagicMock()
 
+
+def test_action_status_slurm():
+    action = ExecuteSLURM('docs/epidemic/example.slurm', '$target_dir')
+    status = action.act_on_dir('docs/epidemic')
+    assert(isinstance(status, ActionStatusSLURM))
+    status.start()
+    
 
 # def test_execute_kubernetes():
 #     action = execute_kubernetes.ExecuteKubernetes(
