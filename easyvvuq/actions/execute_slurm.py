@@ -2,8 +2,6 @@
 execute your simulation on a SLURM cluster.
 """
 
-import os
-import sys
 import logging
 import re
 import subprocess
