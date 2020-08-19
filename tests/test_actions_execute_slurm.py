@@ -16,6 +16,15 @@ BATCH_FILE = """#!/bin/bash
 
 srun python3 /EasyVVUQ/docs/epidemic/epidemic.py docs/epidemic/epidemic_in.json out.csv"""
 
+SQUEUE_OUTPUT_1 = """CLUSTER: mpp3
+             JOBID PARTITION     NAME     USER ST       TIME  NODES NODELIST(REASON)
+"""
+
+SQUEUE_OUTPUT_2 = """JOBID PARTITION     NAME     USER  ST       TIME  NODES NODELIST(REASON)
+  65541 general-c hello_te      cdc  PD       0:00      2 (Priority)
+"""
+
+
 def test_action_status_slurm():
     execute_slurm.subprocess.run = MagicMock()
     slurm_result = MagicMock()
@@ -24,6 +33,11 @@ def test_action_status_slurm():
     action = ExecuteSLURM('docs/epidemic/example.slurm', '$target_dir')
     status = action.act_on_dir('docs/epidemic')
     assert(isinstance(status, ActionStatusSLURM))
+    assert(not status.finished())
     status.start()
     assert(status.job_id == '65541')
     assert(status.started())
+    slurm_result.stdout.decode.return_value = SQUEUE_OUTPUT_2
+    assert(not status.finished())
+    slurm_result.stdout.decode.return_value = SQUEUE_OUTPUT_1
+    assert(status.finished())
