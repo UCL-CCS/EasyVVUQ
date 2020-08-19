@@ -76,7 +76,7 @@ class ActionStatusSLURM():
             return False
         result = subprocess.run(['squeue', '-j', self.job_id], cwd=self.target_dir, check=True)
         stdout = result.stdout.decode('utf-8')
-        return not self.job_id in stdout
+        return not (self.job_id in stdout)
 
     def finalise(self):
         """Performs clean-up if necessary. In this case it isn't. I think.
