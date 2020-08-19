@@ -1,11 +1,6 @@
 from easyvvuq.decoders.json import JSONDecoder
-import os
 import logging
-import pandas as pd
-from easyvvuq import OutputType
-from .base import BaseDecoder
 import yaml
-import numpy as np
 
 __copyright__ = """
 
