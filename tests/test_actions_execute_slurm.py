@@ -20,6 +20,9 @@ srun python3 /EasyVVUQ/docs/epidemic/epidemic.py docs/epidemic/epidemic_in.json 
 # Monkey patch some stuff
 
 execute_slurm.subprocess.run = MagicMock()
+slurm_result = MagicMock()
+slurm_result.stdout.decode.return_value = "sbatch: Submitted batch job 65541"
+execute_slurm.subprocess.run.return_value = slurm_result
 
 #execute_kubernetes.core_v1_api = MagicMock()
 #execute_kubernetes.Configuration = MagicMock()
@@ -32,6 +35,7 @@ def test_action_status_slurm():
     status = action.act_on_dir('docs/epidemic')
     assert(isinstance(status, ActionStatusSLURM))
     status.start()
+    assert(status.job_id == '65541')
     
 
 # def test_execute_kubernetes():
