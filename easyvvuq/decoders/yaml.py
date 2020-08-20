@@ -27,6 +27,7 @@ __license__ = "LGPL"
 
 logger = logging.Logger(__name__)
 
+
 class YAMLDecoder(JSONDecoder, decoder_name="yaml"):
     def _get_raw_data(self, out_path):
         with open(out_path) as fd:
