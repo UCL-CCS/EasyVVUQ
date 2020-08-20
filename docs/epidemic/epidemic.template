@@ -1,6 +1,0 @@
-{
-    "grid_size" : $grid_size,
-    "n" : $n,
-    "duration" : $duration,
-    "mortality" : $mortality
-}
