@@ -19,7 +19,22 @@ easyvvuq.actions.execute\_local module
     :members:
     :undoc-members:
     :show-inheritance:
+    
+easyvvuq.actions.execute\_kubernetes module
+--------------------------------------
 
+.. automodule:: easyvvuq.actions.execute_kubernetes
+    :members:
+    :undoc-members:
+    :show-inheritance:
+    
+easyvvuq.actions.execute\_slurm module
+--------------------------------------
+
+.. automodule:: easyvvuq.actions.execute_slurm
+    :members:
+    :undoc-members:
+    :show-inheritance:
 
 Module contents
 ---------------
