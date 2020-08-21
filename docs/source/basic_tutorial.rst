@@ -17,7 +17,7 @@ In preparation for this tutorial download the files and place them in
 an empty directory, then change into this directory.
 
 Important Note About the CSV File Format
----------------------------------
+----------------------------------------
 
 Please note that when creating CSV files to be used with EasyVVUQ
 and in the examples below, special care needs to be taken to respect
