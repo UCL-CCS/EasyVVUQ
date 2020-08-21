@@ -1,3 +1,4 @@
+:orphan:
 .. _api-ref:
 
 EasyVVUQ API Reference
