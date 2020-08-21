@@ -197,7 +197,8 @@ Notice that the keys in the parameter description match the tags in the template
           application directly. In the next section we will see how *Decoder*
           elements map the parameter space to the application inputs.
 
-Section 3: Wrap Application
+
+Wrap Application
 ---------------------------
 
 In order for an application to be used in an EasyVVUQ workflow two processes
@@ -206,7 +207,7 @@ have to be accounted for:
 1. the parameters being sampled need to be converted into a format that
 the application can understand; we call this process *encoding*,
 2. the application output must be converted into a standard form that can be
-analysed (we use `panda.DataFrame`s by default); we call this process *decoding*.
+analysed (we use `panda.DataFrame` by default); we call this process *decoding*.
 
 Within EasyVVUQ these actions are performed by *Encoders* and *Decoders*
 respectively.
