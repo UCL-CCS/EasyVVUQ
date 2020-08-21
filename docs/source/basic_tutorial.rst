@@ -198,7 +198,7 @@ Notice that the keys in the parameter description match the tags in the template
           elements map the parameter space to the application inputs.
 
 
-Wrap Application
+Section 3: Wrap Application
 ---------------------------
 
 In order for an application to be used in an EasyVVUQ workflow two processes
