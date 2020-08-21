@@ -1,3 +1,5 @@
+.. _api-ref:
+
 EasyVVUQ API Reference
 ======================
 

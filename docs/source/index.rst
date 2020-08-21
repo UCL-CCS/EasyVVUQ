@@ -44,7 +44,8 @@ Table of contents
    concepts
    tutorials
 
-:ref:`EasyVVUQ API Reference`
+For technical details please see :ref:`api-ref`.
+   
 
 Indices and tables
 ==================
