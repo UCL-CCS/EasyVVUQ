@@ -20,9 +20,9 @@ EasyVVUQ Script Overview
 ------------------------
 We illustrate the intended workflow using the following basic example script, a python implementation of the cooling coffee cup model used in the \textit{uncertainpy} documentation (code for which is in the tests/cooling/ subdirectory of the EasyVVUQ distribution directory). The code takes a small key/value pair input and outputs a comma separated value CSV) file.
 
-The input files for this tutorial are the *cooling_model* application (:download:`cooling_model.py <tutorial_files/cooling_model.py>`),
-an input template (:download:`cooling.template <tutorial_files/cooling.template>`) and the EasyVVUQ workflow
-script (:download:`easyvvuq_pce_tutorial.py <tutorial_files/easyvvuq_pce_tutorial.py>`).
+The input files for this tutorial are the *cooling_model* application (:download:`cooling_model.py <../../tutorials/cooling_model.py>`),
+an input template (:download:`cooling.template <../../tutorials/cooling.template>`) and the EasyVVUQ workflow
+script (:download:`easyvvuq_pce_tutorial.py <../../tutorials/easyvvuq_pce_tutorial.py>`).
 
 To run the script execute the following command
 

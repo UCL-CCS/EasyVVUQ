@@ -29,7 +29,7 @@ from the full fusion workflow:
 - Instead of doing a time-dependent analysis, we look for the steady
   state (or, more exactly, the long time) solution
 
-.. figure:: images/cyl_jet.svg
+.. figure:: ../images/cyl_jet.svg
 
 We will perform a Polynomial Chaos Expansion for this cylindrical
 model of a tokamak.
@@ -82,7 +82,7 @@ and
 
 A typical density profile used in these simulation is shown below:
 
-.. figure:: images/ne.svg
+.. figure:: ../images/ne.svg
 
 The source is given by
 
@@ -139,19 +139,19 @@ script, a python implementation of the reduced fusion workflow model.
 The input files for this tutorial are
 
 - the *fusion* application
-  (:download:`fusion.py <tutorial_files/fusion.py>`),
+  (:download:`fusion.py <../../tutorials/fusion.py>`),
 
 - the *fusion* application interface to uq
-  (:download:`fusion_model.py <tutorial_files/fusion_model.py>`),
+  (:download:`fusion_model.py <../../tutorials/fusion_model.py>`),
 
 - an input template
-  (:download:`fusion.template <tutorial_files/fusion.template>`),
+  (:download:`fusion.template <../../tutorials/fusion.template>`),
 
 - the EasyVVUQ workflow script
-  (:download:`easyvvuq_fusion_tutorial.py <tutorial_files/easyvvuq_fusion_tutorial.py>`)
+  (:download:`easyvvuq_fusion_tutorial.py <../../tutorials/easyvvuq_fusion_tutorial.py>`)
 
 - the EasyVVUQ workflow script demonstrating the use of dask
-  (:download:`easyvvuq_fusion_dask_tutorial.py <tutorial_files/easyvvuq_fusion_dask_tutorial.py>`)
+  (:download:`easyvvuq_fusion_dask_tutorial.py <../../tutorials/easyvvuq_fusion_dask_tutorial.py>`)
 
 Note: the fusion tutorial uses the FiPy [FiPy]_ python package.
 
@@ -346,7 +346,7 @@ Typical results
 The above workflow calculates the distribution of temeperatures as the
 uncertain parameters are varied.  A typical results is shown below.
 
-.. figure:: images/Te.svg
+.. figure:: ../images/Te.svg
 
 Here the mean temperature, the mean plus and minus one sigma, the 10
 and 90 percentiles as well as the complete range are shown as a
@@ -355,11 +355,11 @@ function of :math:`\rho`.
 The sensitivity of the results to the varying paramaters can be found
 from the Sobol first
 
-.. figure:: images/sobols_first.svg
+.. figure:: ../images/sobols_first.svg
 
 and total coefficients
 
-.. figure:: images/sobols_total.svg
+.. figure:: ../images/sobols_total.svg
 
 Here it can be seen that the width of the heating source ("Hw") is the
 most important determiner of the central temperature, the heat
@@ -387,8 +387,10 @@ in easyvvuq_fusion_dask_tutorial.py and are basically:
 - invoking uq.CampaignDask() rather than uq.Campaign()
 
 - setting up the dask workers
+  
   - with a local option, 
   - or using SLURM, here configured to use
+    
     - p.tok.openmp.2h QOS
     - send a mail at completion of the SLURM job(s)
     - use the p.tok.openmp partition ("queue")
@@ -396,6 +398,7 @@ in easyvvuq_fusion_dask_tutorial.py and are basically:
     - 8 processes per job
     - 8 GB per job
     - 32 workers (i.e. 4 SLURM jobs)
+      
   - specify the client when requesting "apply_for_each_run_dir"
   - shutting down the dask workers
 
