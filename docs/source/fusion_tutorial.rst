@@ -139,19 +139,19 @@ script, a python implementation of the reduced fusion workflow model.
 The input files for this tutorial are
 
 - the *fusion* application
-  (:download:`fusion.py <tutorial_files/fusion.py>`),
+  (:download:`fusion.py <../../tutorials/fusion.py>`),
 
 - the *fusion* application interface to uq
-  (:download:`fusion_model.py <tutorial_files/fusion_model.py>`),
+  (:download:`fusion_model.py <../../tutorials/fusion_model.py>`),
 
 - an input template
-  (:download:`fusion.template <tutorial_files/fusion.template>`),
+  (:download:`fusion.template <../../tutorials/fusion.template>`),
 
 - the EasyVVUQ workflow script
-  (:download:`easyvvuq_fusion_tutorial.py <tutorial_files/easyvvuq_fusion_tutorial.py>`)
+  (:download:`easyvvuq_fusion_tutorial.py <../../tutorials/easyvvuq_fusion_tutorial.py>`)
 
 - the EasyVVUQ workflow script demonstrating the use of dask
-  (:download:`easyvvuq_fusion_dask_tutorial.py <tutorial_files/easyvvuq_fusion_dask_tutorial.py>`)
+  (:download:`easyvvuq_fusion_dask_tutorial.py <../../tutorials/easyvvuq_fusion_dask_tutorial.py>`)
 
 Note: the fusion tutorial uses the FiPy [FiPy]_ python package.
 
