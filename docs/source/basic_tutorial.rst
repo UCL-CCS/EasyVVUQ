@@ -10,9 +10,9 @@ but illustrates how EasyVVUQ samples from a parameter space, wraps an
 application and analyses output.
 
 The input files for this tutorial are the *gauss* application
-(:download:`gauss.py <tutorial_files/gauss.py>`), an input template
-(:download:`gauss.template <tutorial_files/gauss.template>`) and the EasyVVUQ workflow
-script (:download:`easyvvuq_gauss_tutorial.py <tutorial_files/easyvvuq_gauss_tutorial.py>`).
+(:download:`gauss.py <../../tutorials/gauss.py>`), an input template
+(:download:`gauss.template <../../tutorials/gauss.template>`) and the EasyVVUQ workflow
+script (:download:`easyvvuq_gauss_tutorial.py <../../tutorials/easyvvuq_gauss_tutorial.py>`).
 In preparation for this tutorial download the files and place them in
 an empty directory, then change into this directory.
 
