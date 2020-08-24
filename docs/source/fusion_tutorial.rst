@@ -387,8 +387,10 @@ in easyvvuq_fusion_dask_tutorial.py and are basically:
 - invoking uq.CampaignDask() rather than uq.Campaign()
 
 - setting up the dask workers
+  
   - with a local option, 
   - or using SLURM, here configured to use
+    
     - p.tok.openmp.2h QOS
     - send a mail at completion of the SLURM job(s)
     - use the p.tok.openmp partition ("queue")
@@ -396,6 +398,7 @@ in easyvvuq_fusion_dask_tutorial.py and are basically:
     - 8 processes per job
     - 8 GB per job
     - 32 workers (i.e. 4 SLURM jobs)
+      
   - specify the client when requesting "apply_for_each_run_dir"
   - shutting down the dask workers
 
