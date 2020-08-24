@@ -29,7 +29,7 @@ from the full fusion workflow:
 - Instead of doing a time-dependent analysis, we look for the steady
   state (or, more exactly, the long time) solution
 
-.. figure:: images/cyl_jet.svg
+.. figure:: ../images/cyl_jet.svg
 
 We will perform a Polynomial Chaos Expansion for this cylindrical
 model of a tokamak.
@@ -82,7 +82,7 @@ and
 
 A typical density profile used in these simulation is shown below:
 
-.. figure:: images/ne.svg
+.. figure:: ../images/ne.svg
 
 The source is given by
 
@@ -346,7 +346,7 @@ Typical results
 The above workflow calculates the distribution of temeperatures as the
 uncertain parameters are varied.  A typical results is shown below.
 
-.. figure:: images/Te.svg
+.. figure:: ../images/Te.svg
 
 Here the mean temperature, the mean plus and minus one sigma, the 10
 and 90 percentiles as well as the complete range are shown as a
@@ -355,11 +355,11 @@ function of :math:`\rho`.
 The sensitivity of the results to the varying paramaters can be found
 from the Sobol first
 
-.. figure:: images/sobols_first.svg
+.. figure:: ../images/sobols_first.svg
 
 and total coefficients
 
-.. figure:: images/sobols_total.svg
+.. figure:: ../images/sobols_total.svg
 
 Here it can be seen that the width of the heating source ("Hw") is the
 most important determiner of the central temperature, the heat
