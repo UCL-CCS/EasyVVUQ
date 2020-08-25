@@ -40,5 +40,5 @@ or `pipenv <https://docs.pipenv.org>`_.
 Questions & Troubleshooting
 ---------------------------
 
-For any problems and questions you might have related to ``chaospy``, please
+For any problems and questions you might have related to ``EasyVVUQ``, please
 feel free to file an `<https://github.com/UCL-CCS/EasyVVUQ/issues>`_.
