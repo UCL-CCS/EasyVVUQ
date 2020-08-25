@@ -30,7 +30,7 @@ def test_action_status_slurm():
     slurm_result = MagicMock()
     slurm_result.stdout.decode.return_value = "sbatch: Submitted batch job 65541"
     execute_slurm.subprocess.run.return_value = slurm_result
-    action = ExecuteSLURM('docs/epidemic/example.slurm', '$target_dir')
+    action = ExecuteSLURM('tutorials/epidemic/example.slurm', '$target_dir')
     status = action.act_on_dir('docs/epidemic')
     assert(isinstance(status, ActionStatusSLURM))
     assert(not status.finished())

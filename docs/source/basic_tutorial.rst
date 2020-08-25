@@ -10,14 +10,14 @@ but illustrates how EasyVVUQ samples from a parameter space, wraps an
 application and analyses output.
 
 The input files for this tutorial are the *gauss* application
-(:download:`gauss.py <tutorial_files/gauss.py>`), an input template
-(:download:`gauss.template <tutorial_files/gauss.template>`) and the EasyVVUQ workflow
-script (:download:`easyvvuq_gauss_tutorial.py <tutorial_files/easyvvuq_gauss_tutorial.py>`).
+(:download:`gauss.py <../../tutorials/gauss.py>`), an input template
+(:download:`gauss.template <../../tutorials/gauss.template>`) and the EasyVVUQ workflow
+script (:download:`easyvvuq_gauss_tutorial.py <../../tutorials/easyvvuq_gauss_tutorial.py>`).
 In preparation for this tutorial download the files and place them in
 an empty directory, then change into this directory.
 
 Important Note About the CSV File Format
----------------------------------
+----------------------------------------
 
 Please note that when creating CSV files to be used with EasyVVUQ
 and in the examples below, special care needs to be taken to respect
@@ -197,6 +197,7 @@ Notice that the keys in the parameter description match the tags in the template
           application directly. In the next section we will see how *Decoder*
           elements map the parameter space to the application inputs.
 
+
 Section 3: Wrap Application
 ---------------------------
 
@@ -206,7 +207,7 @@ have to be accounted for:
 1. the parameters being sampled need to be converted into a format that
 the application can understand; we call this process *encoding*,
 2. the application output must be converted into a standard form that can be
-analysed (we use `panda.DataFrame`s by default); we call this process *decoding*.
+analysed (we use `panda.DataFrame` by default); we call this process *decoding*.
 
 Within EasyVVUQ these actions are performed by *Encoders* and *Decoders*
 respectively.

@@ -1,5 +1,7 @@
 from .base import BaseDecoder
 from .simple_csv import SimpleCSV
+from .json import JSONDecoder
+from .yaml import YAMLDecoder
 
 __copyright__ = """
 

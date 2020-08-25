@@ -52,6 +52,7 @@ The sampling values :code:`x` can be computed using the min/max values of a comm
 To build QoI distribution from list of samples that resutls fron UQ simulations, observations or measurements, we can use::
 
   dist = chaospy.SampleDist(samples)
+
 It estimates a distribution from the given samples by constructing a kernel  density estimator (KDE).
 
 Validate similarities
@@ -67,7 +68,7 @@ The complete code for this example, using other metrics, can be found `here <htt
 
 Finally, in the lower panel of the the different distances between QoI 1 and Qo 2 are displayed:
 
-.. figure:: images/validation.png
+.. figure:: ../images/validation.png
 
 The first two are yielding answers between 0 (zero distance: identical distributions) and 1 (very different), Wasserstein instead are unrestricted with a lower limit of zero.
 

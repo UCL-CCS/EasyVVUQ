@@ -27,6 +27,8 @@ Our aim is to expose these features in as accessible a way for users
 of scientific codes, in particular simulation software targeting HPC 
 machines.
 
+For technical details please see :ref:`api-ref`.
+
 .. _toc:
 
 Table of contents
@@ -39,6 +41,7 @@ Table of contents
    installation
    concepts
    tutorials
+   
 
 Indices and tables
 ==================

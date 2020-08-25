@@ -13,7 +13,7 @@ Gauss test case as in the :doc:`Basic Tutorial <basic\_tutorial>`.
 EasyVVUQ Script Overview
 ------------------------
 
-The full script can be found here: (:download:`easyvvuq_restart_campaign_tutorial.py <tutorial_files/easyvvuq_restart_campaign_tutorial.py>`)
+The full script can be found here: (:download:`easyvvuq_restart_campaign_tutorial.py <../../tutorials/easyvvuq_restart_campaign_tutorial.py>`)
 
 To run the script execute the following command ::
 
