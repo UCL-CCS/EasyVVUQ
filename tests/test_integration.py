@@ -5,8 +5,8 @@ import sys
 import pytest
 import logging
 from pprint import pformat, pprint
-from gauss.encoder_gauss import GaussEncoder
-from gauss.decoder_gauss import GaussDecoder
+from .gauss.encoder_gauss import GaussEncoder
+from .gauss.decoder_gauss import GaussDecoder
 
 __copyright__ = """
 
