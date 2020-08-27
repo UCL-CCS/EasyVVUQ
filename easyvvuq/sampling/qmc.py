@@ -29,7 +29,7 @@ __license__ = "LGPL"
 
 
 class QMCSampler(BaseSamplingElement, sampler_name="QMC_sampler"):
-    def __init__(self, vary=None, count=0, n_mc_samples=10**4):
+    def __init__(self, vary, count=0, n_mc_samples=10**4):
         """
         Create the sampler using Quasi-Monte Carlo Method
 
@@ -45,12 +45,6 @@ class QMCSampler(BaseSamplingElement, sampler_name="QMC_sampler"):
             The number of samples requierd to get a given acccuray with
             Monte-Carlo method, default is 10**4.
         """
-
-        if vary is None:
-            msg = ("'vary' cannot be None. RandomSampler must be passed a "
-                   "dict of the names of the parameters you want to vary, "
-                   "and their corresponding distributions.")
-            raise Exception(msg)
         if not isinstance(vary, dict):
             msg = ("'vary' must be a dictionary of the names of the "
                    "parameters you want to vary, and their corresponding "
