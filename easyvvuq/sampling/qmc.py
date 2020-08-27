@@ -29,10 +29,7 @@ __license__ = "LGPL"
 
 
 class QMCSampler(BaseSamplingElement, sampler_name="QMC_sampler"):
-    def __init__(self,
-                 vary=None,
-                 count=0,
-                 n_mc_samples=10**4):
+    def __init__(self, vary=None, count=0, n_mc_samples=10**4):
         """
         Create the sampler using Quasi-Monte Carlo Method
 
