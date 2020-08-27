@@ -38,10 +38,10 @@ class QMCSampler(BaseSamplingElement, sampler_name="QMC_sampler"):
         vary: dict or None
             keys = parameters to be sampled, values = distributions.
 
-        count : int, optional
+        count : int
             Specified counter for Fast forward, default is 0.
 
-        n_mc_samples : int, optional
+        n_mc_samples : int
             The number of samples requierd to get a given acccuray with
             Monte-Carlo method, default is 10**4.
         """
@@ -49,10 +49,10 @@ class QMCSampler(BaseSamplingElement, sampler_name="QMC_sampler"):
             msg = ("'vary' must be a dictionary of the names of the "
                    "parameters you want to vary, and their corresponding "
                    "distributions.")
-            raise Exception(msg)
+            raise RuntimeError(msg)
         if len(vary) == 0:
             msg = "'vary' cannot be empty."
-            raise Exception(msg)
+            raise RuntimeError(msg)
 
         self.vary = Vary(vary)
         self.n_mc_samples = n_mc_samples
@@ -79,6 +79,7 @@ class QMCSampler(BaseSamplingElement, sampler_name="QMC_sampler"):
         }
 
         nodes = saltelli.sample(problem, n_sobol_samples, calc_second_order=False)
+        
         self._samples = self.distribution.inv(dist_U.fwd(nodes.transpose()))
 
         self._n_samples = n_sobol_samples * (self.n_params + 2)
@@ -95,9 +96,11 @@ class QMCSampler(BaseSamplingElement, sampler_name="QMC_sampler"):
                 self.__next__()
 
     def element_version(self):
+        """Version number for the sampler."""
         return "0.2"
 
     def is_finite(self):
+        """Can this sampler produce only a finite number of samples."""
         return True
 
     @property
@@ -108,13 +111,12 @@ class QMCSampler(BaseSamplingElement, sampler_name="QMC_sampler"):
         sampling scheme: NS = (d + 2)*N/2.
         Where: d is the number of uncertain parameters and N is the
         number of samples for MC method, by default N = 10**4.
-
-        Ref: Eck et al. 'A guide to uncertainty quantification and
-        sensitivity analysis for cardiovascular applications' [2016].
         """
         return self._n_samples
 
     def is_restartable(self):
+        """Can this sampler be resumed.
+        """
         return True
 
     def __next__(self):
@@ -130,6 +132,9 @@ class QMCSampler(BaseSamplingElement, sampler_name="QMC_sampler"):
             raise StopIteration
 
     def get_restart_dict(self):
-        return {"vary": self.vary.serialize(),
-                "count": self.count,
-                "n_mc_samples": self.n_mc_samples}
+        """This information 
+        return {
+            "vary": self.vary.serialize(),
+            "count": self.count,
+            "n_mc_samples": self.n_mc_samples
+        }
