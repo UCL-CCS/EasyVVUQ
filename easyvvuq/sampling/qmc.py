@@ -136,7 +136,8 @@ class QMCSampler(BaseSamplingElement, sampler_name="QMC_sampler"):
             raise StopIteration
 
     def get_restart_dict(self):
-        """This information 
+        """This information is used to restart the sampler.
+        """
         return {
             "vary": self.vary.serialize(),
             "count": self.count,
