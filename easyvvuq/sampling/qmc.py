@@ -1,3 +1,6 @@
+"""This sampler is meant to be used with the QMC Analysis module.
+"""
+
 import logging
 import numpy as np
 import chaospy as cp
@@ -29,21 +32,22 @@ __license__ = "LGPL"
 
 
 class QMCSampler(BaseSamplingElement, sampler_name="QMC_sampler"):
-    def __init__(self, vary, count=0, n_mc_samples=10**4):
-        """
-        Create the sampler using Quasi-Monte Carlo Method
+    def __init__(self, vary, n_mc_samples, count=0):
+        """Create a Quasi Monte Carlo sampler.
 
-        Parameters
-        ----------
-        vary: dict or None
-            keys = parameters to be sampled, values = distributions.
+        Parameters 
+        ---------- 
 
-        count : int
-            Specified counter for Fast forward, default is 0.
-
+        vary: dict
+            Expects a dictionary where the keys are variable names
+            (inputs for your simulation that you want to vary during
+            sampling) and values are ChaosPy distributions you want to
+            sample from.
         n_mc_samples : int
-            The number of samples requierd to get a given acccuray with
-            Monte-Carlo method, default is 10**4.
+            An estimate for how many samples the monte carlo run will need.
+        count : int
+            This is used to resume sampling. It will skip the first
+            count samples if this parameter is not zero.
         """
         if not isinstance(vary, dict):
             msg = ("'vary' must be a dictionary of the names of the "
