@@ -34,8 +34,8 @@ class QMCSampler(BaseSamplingElement, sampler_name="QMC_sampler"):
     def __init__(self, vary, n_mc_samples, count=0):
         """Create a Quasi Monte Carlo sampler.
 
-        Parameters 
-        ---------- 
+        Parameters
+        ----------
 
         vary: dict
             Expects a dictionary where the keys are variable names

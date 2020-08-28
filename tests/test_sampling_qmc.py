@@ -54,4 +54,4 @@ def test_resume():
     for _ in range(10):
         sample = next(sampler)
     with pytest.raises(StopIteration):
-        next(sampler)    
+        next(sampler)
