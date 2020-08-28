@@ -89,14 +89,14 @@ class QMCSampler(BaseSamplingElement, sampler_name="QMC_sampler"):
         self._n_samples = n_sobol_samples * (self.n_params + 2)
 
         # Fast forward to specified count, if possible
-        self.count = count
-        if self.count >= self._n_samples:
+        self.count = 0
+        if count >= self._n_samples:
             msg = (f"Attempt to start sampler fastforwarded to count {self.count}, "
                    f"but sampler only has {self._n_samples} samples, therefore"
                    f"this sampler will not provide any more samples.")
             raise RuntimeError(msg)
         else:
-            for i in range(count):
+            for _ in range(count):
                 self.__next__()
 
     def element_version(self):
