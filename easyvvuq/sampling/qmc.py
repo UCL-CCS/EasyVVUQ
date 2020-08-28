@@ -35,8 +35,8 @@ class QMCSampler(BaseSamplingElement, sampler_name="QMC_sampler"):
     def __init__(self, vary, n_mc_samples, count=0):
         """Create a Quasi Monte Carlo sampler.
 
-        Parameters 
-        ---------- 
+        Parameters
+        ----------
 
         vary: dict
             Expects a dictionary where the keys are variable names
@@ -83,7 +83,7 @@ class QMCSampler(BaseSamplingElement, sampler_name="QMC_sampler"):
         }
 
         nodes = saltelli.sample(problem, n_sobol_samples, calc_second_order=False)
-        
+
         self._samples = self.distribution.inv(dist_U.fwd(nodes.transpose()))
 
         self._n_samples = n_sobol_samples * (self.n_params + 2)

@@ -32,4 +32,3 @@ def test_restart_dict():
     assert(restart['vary'] == Vary(vary).serialize())
     assert(restart['count'] == 10)
     assert(restart['n_mc_samples'] == 100)
-
