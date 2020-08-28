@@ -43,7 +43,7 @@ CANNONSIM_PATH = os.path.realpath(os.path.expanduser("tests/cannonsim/bin/cannon
 def test_worker(tmpdir):
 
     # Set up a fresh campaign called "cannon"
-    my_campaign = uq.Campaign(name='cannon', work_dir=tmpdir, db_location='sqlite:///')
+    my_campaign = uq.Campaign(name='cannon', work_dir=tmpdir)
 
     # Define parameter space for the cannonsim app
     params = {

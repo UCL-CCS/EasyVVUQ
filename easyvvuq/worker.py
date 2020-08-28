@@ -51,11 +51,9 @@ class Worker:
 
         if self.db_type == 'sql':
             from .db.sql import CampaignDB
-        elif self.db_type == 'json':
-            from .db.json import CampaignDB
         else:
             message = (f"Invalid 'db_type' {self.db_type}. Supported types "
-                       f"are 'sql' or 'json'.")
+                       f"are: 'sql'.")
             logger.critical(message)
             raise RuntimeError(message)
 
