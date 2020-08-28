@@ -35,8 +35,8 @@ class QMCSampler(BaseSamplingElement, sampler_name="QMC_sampler"):
     def __init__(self, vary, n_mc_samples, count=0):
         """Create a Quasi Monte Carlo sampler.
 
-        Parameters
-        ----------
+        Parameters 
+        ---------- 
 
         vary: dict
             Expects a dictionary where the keys are variable names
@@ -89,12 +89,12 @@ class QMCSampler(BaseSamplingElement, sampler_name="QMC_sampler"):
         self._n_samples = n_sobol_samples * (self.n_params + 2)
 
         # Fast forward to specified count, if possible
-        self.count = 0
+        self.count = count
         if self.count >= self._n_samples:
             msg = (f"Attempt to start sampler fastforwarded to count {self.count}, "
                    f"but sampler only has {self._n_samples} samples, therefore"
                    f"this sampler will not provide any more samples.")
-            logging.warning(msg)
+            raise RuntimeError(msg)
         else:
             for i in range(count):
                 self.__next__()
