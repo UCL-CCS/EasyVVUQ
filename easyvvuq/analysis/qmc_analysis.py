@@ -28,7 +28,8 @@ class QMCAnalysis(BaseAnalysisElement):
             performed).
         """
         if not isinstance(sampler, QMCSampler):
-            raise RuntimeError('QMCAnalysis class relies on the QMCSampler as its sampling component')
+            raise RuntimeError(
+                'QMCAnalysis class relies on the QMCSampler as its sampling component')
         if qoi_cols is None:
             self.qoi_cols = list(sampler.vary.keys())
         else:
@@ -147,7 +148,7 @@ class QMCAnalysis(BaseAnalysisElement):
         Returns
         -------
         A NumPy array
-        """ 
+        """
         V = np.var(np.r_[A, B], axis=0)
         return np.mean(B * (AB - A), axis=0) / (V + (V == 0)) * (V != 0)
 
