@@ -108,12 +108,13 @@ class QMCSampler(BaseSamplingElement, sampler_name="QMC_sampler"):
 
     @property
     def n_samples(self):
-        """
-        Number of samples (Ns) of QMC method.
-        To be able to compute the Sobol indices, using Saltelli's
-        sampling scheme: NS = (d + 2)*N/2.
-        Where: d is the number of uncertain parameters and N is the
-        number of samples for MC method, by default N = 10**4.
+        """Returns the number of samples in this sampler.
+
+        Returns
+        -------
+        This computed with the formula (d + 2) * (N / 2), where
+        d is the number of uncertain parameters and N is the (estimated)
+        number of samples for the Monte Carlo method.
         """
         return self._n_samples
 
