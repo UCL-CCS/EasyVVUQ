@@ -16,7 +16,7 @@ logger = logging.getLogger(__name__)
 
 class QMCAnalysis(BaseAnalysisElement):
 
-    def __init__(self, sampler, qoi_cols):
+    def __init__(self, sampler, qoi_cols=None):
         """Analysis element for Quasi-Monte Carlo (QMC).
 
         Parameters
@@ -27,6 +27,8 @@ class QMCAnalysis(BaseAnalysisElement):
             Column names for quantities of interest (for which analysis is
             performed).
         """
+        if not isinstance(sampler, QMCSampler):
+            raise RuntimeError('QMCAnalysis class relies on the QMCSampler as its sampling component')
         self.qoi_cols = qoi_cols
         self.output_type = OutputType.SUMMARY
         self.sampler = sampler
