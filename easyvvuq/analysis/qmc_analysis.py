@@ -39,7 +39,7 @@ class QMCAnalysis(BaseAnalysisElement):
         """Version of this element"""
         return "0.2"
 
-    def analyse(self, data_frame=None):
+    def analyse(self, data_frame):
         """Perform QMC analysis on a given pandas DataFrame.
 
         Parameters
@@ -54,11 +54,7 @@ class QMCAnalysis(BaseAnalysisElement):
             ['statistical_moments', 'percentiles', 'sobol_indices',
              'correlation_matrices', 'output_distributions']
         """
-
-        if data_frame is None:
-            raise RuntimeError("Analysis element needs a data frame to "
-                               "analyse")
-        elif data_frame.empty:
+        if data_frame.empty:
             raise RuntimeError(
                 "No data in data frame passed to analyse element")
 
