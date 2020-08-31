@@ -101,8 +101,8 @@ class QMCAnalysis(BaseAnalysisElement):
             sobols_total_dict = {}
             i_par = 0
             for param_name in self.sampler.vary.get_keys():
-                sobols_first_dict[param_name] = self._first_order(A, AB[:, i_par], B)
-                sobols_total_dict[param_name] = self._total_order(A, AB[:, i_par], B)
+                sobols_first_dict[param_name] = self._first_order(A, B, AB[:, i_par])
+                sobols_total_dict[param_name] = self._total_order(A, B, AB[:, i_par])
                 i_par += 1
             results['sobols_first'][k] = sobols_first_dict
             results['sobols_total'][k] = sobols_total_dict
@@ -130,14 +130,14 @@ class QMCAnalysis(BaseAnalysisElement):
         return A, B, AB
 
     @staticmethod
-    def _first_order(A, AB, B):
+    def _first_order(A, B, AB):
         """Calculate first order sensitivity indices.
 
         Parameters
         ----------
         A: NumPy array
-        AB: NumPy array
         B: NumPy array
+        AB: NumPy array
 
         Returns
         -------
@@ -147,6 +147,18 @@ class QMCAnalysis(BaseAnalysisElement):
         return np.mean(B * (AB - A), axis=0) / (V + (V == 0)) * (V != 0)
 
     @staticmethod
-    def _total_order(A, AB, B):
+    def _total_order(A, B, AB):
+        """Calculate total order sensitivity indices.
+
+        Parameters
+        ----------
+        A: NumPy array
+        B: NumPy array
+        AB: NumPy array
+
+        Returns
+        -------
+        A NumPy array
+        """
         V = np.var(np.r_[A, B], axis=0)
         return 0.5 * np.mean((A - AB) ** 2, axis=0) / (V + (V == 0)) * (V != 0)
