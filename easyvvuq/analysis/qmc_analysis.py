@@ -29,7 +29,10 @@ class QMCAnalysis(BaseAnalysisElement):
         """
         if not isinstance(sampler, QMCSampler):
             raise RuntimeError('QMCAnalysis class relies on the QMCSampler as its sampling component')
-        self.qoi_cols = qoi_cols
+        if qoi_cols is None:
+            self.qoi_cols = list(sampler.vary.keys())
+        else:
+            self.qoi_cols = qoi_cols
         self.output_type = OutputType.SUMMARY
         self.sampler = sampler
 
