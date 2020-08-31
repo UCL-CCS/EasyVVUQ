@@ -1,4 +1,7 @@
-"""Analysis element for Quasi-Monte Carlo (QMC).
+"""Analysis element for Quasi-Monte Carlo (QMC) sensitivity analysis.
+
+Please refer to the article below for further references.
+https://en.wikipedia.org/wiki/Variance-based_sensitivity_analysis
 """
 import logging
 import numpy as np
@@ -13,7 +16,7 @@ logger = logging.getLogger(__name__)
 
 class QMCAnalysis(BaseAnalysisElement):
 
-    def __init__(self, sampler=None, qoi_cols=None):
+    def __init__(self, sampler, qoi_cols):
         """Analysis element for Quasi-Monte Carlo (QMC).
 
         Parameters
@@ -24,29 +27,20 @@ class QMCAnalysis(BaseAnalysisElement):
             Column names for quantities of interest (for which analysis is
             performed).
         """
-
-        if sampler is None:
-            msg = 'QMC analysis requires a paired sampler to be passed'
-            raise RuntimeError(msg)
-
-        if qoi_cols is None:
-            raise RuntimeError("Analysis element requires a list of "
-                               "quantities of interest (qoi)")
-
         self.qoi_cols = qoi_cols
         self.output_type = OutputType.SUMMARY
         self.sampler = sampler
 
     def element_name(self):
-        """Name for this element for logging purposes"""
+        """Name for this element"""
         return "QMC_Analysis"
 
     def element_version(self):
-        """Version of this element for logging purposes"""
+        """Version of this element"""
         return "0.2"
 
     def analyse(self, data_frame=None):
-        """Perform QMC analysis on input `data_frame`.
+        """Perform QMC analysis on a given pandas DataFrame.
 
         Parameters
         ----------
