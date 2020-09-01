@@ -28,8 +28,7 @@ class QMCAnalysis(BaseAnalysisElement):
             performed).
         """
         if not isinstance(sampler, QMCSampler):
-            raise RuntimeError(
-                'QMCAnalysis class relies on the QMCSampler as its sampling component')
+            raise RuntimeError('QMCAnalysis class relies on the QMCSampler as its sampling component')
         if qoi_cols is None:
             self.qoi_cols = list(sampler.vary.keys())
         else:
@@ -121,6 +120,17 @@ class QMCAnalysis(BaseAnalysisElement):
     # Adapted from SALib
     @staticmethod
     def _separate_output_values(evaluations, n_uncertain_params, n_samples):
+        """
+        Parameters
+        ----------
+        evaluations: NumPy array
+        n_uncertain_params: int
+        n_samples: int
+
+        Returns
+        -------
+        3-tuple of NumPy arrays
+        """
         evaluations = np.array(evaluations)
 
         shape = (n_samples, n_uncertain_params) + evaluations[0].shape
@@ -148,7 +158,7 @@ class QMCAnalysis(BaseAnalysisElement):
         Returns
         -------
         A NumPy array
-        """
+        """ 
         V = np.var(np.r_[A, B], axis=0)
         return np.mean(B * (AB - A), axis=0) / (V + (V == 0)) * (V != 0)
 
