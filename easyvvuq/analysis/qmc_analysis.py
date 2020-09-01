@@ -112,10 +112,6 @@ class QMCAnalysis(BaseAnalysisElement):
                 i_par += 1
             results['sobols_first'][k] = sobols_first_dict
             results['sobols_total'][k] = sobols_total_dict
-
-            # Correlation matrix
-            results['correlation_matrices'][k] = np.corrcoef(samples[k])
-
         return results
 
     # Adapted from SALib
