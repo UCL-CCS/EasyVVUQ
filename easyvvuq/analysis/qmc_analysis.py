@@ -66,12 +66,10 @@ class QMCAnalysis(BaseAnalysisElement):
 
         qoi_cols = self.qoi_cols
 
-        results = {'statistical_moments': {},
-                   'percentiles': {},
-                   'sobols_first': {k: {} for k in qoi_cols},
-                   'sobols_total': {k: {} for k in qoi_cols},
-                   'correlation_matrices': {},
-                   }
+        results = {
+            'sobols_first': {k: {} for k in qoi_cols},
+            'sobols_total': {k: {} for k in qoi_cols}
+        }
 
         # Get the number of samples and uncertain parameters
         n_params = self.sampler.n_params
@@ -86,19 +84,6 @@ class QMCAnalysis(BaseAnalysisElement):
 
         # Compute descriptive statistics for each quantity of interest
         for k in qoi_cols:
-            # Statistical moments
-            mean = np.mean(samples[k], 0)
-            var = np.var(samples[k], 0)
-            std = np.std(samples[k], 0)
-            results['statistical_moments'][k] = {'mean': mean,
-                                                 'var': var,
-                                                 'std': std}
-
-            # Percentiles (Pxx)
-            p_10 = np.percentile(samples[k], 10, 0)
-            p_90 = np.percentile(samples[k], 90, 0)
-            results['percentiles'][k] = {'p10': p_10, 'p90': p_90}
-
             # Sensitivity Analysis: First and Total Sobol indices
             A, B, AB = self._separate_output_values(samples[k],
                                                     n_params,
