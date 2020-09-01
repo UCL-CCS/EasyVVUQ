@@ -7,6 +7,7 @@ import logging
 import numpy as np
 from easyvvuq import OutputType
 from .base import BaseAnalysisElement
+from easyvvuq.sampling import QMCSampler
 
 __author__ = 'Jalal Lakhlili'
 __license__ = "LGPL"
@@ -21,7 +22,7 @@ class QMCAnalysis(BaseAnalysisElement):
 
         Parameters
         ----------
-        sampler : :obj:`easyvvuq.sampling.qmc.QMCSampler`
+        sampler : easyvvuq.sampling.qmc.QMCSampler
             Sampler used to initiate the QMC analysis
         qoi_cols : list or None
             Column names for quantities of interest (for which analysis is
@@ -30,7 +31,7 @@ class QMCAnalysis(BaseAnalysisElement):
         if not isinstance(sampler, QMCSampler):
             raise RuntimeError('QMCAnalysis class relies on the QMCSampler as its sampling component')
         if qoi_cols is None:
-            self.qoi_cols = list(sampler.vary.keys())
+            self.qoi_cols = list(sampler.vary.get_keys())
         else:
             self.qoi_cols = qoi_cols
         self.output_type = OutputType.SUMMARY
@@ -49,7 +50,7 @@ class QMCAnalysis(BaseAnalysisElement):
 
         Parameters
         ----------
-        data_frame : :obj:`pandas.DataFrame`
+        data_frame : pandas DataFrame
             Input data for analysis.
 
         Returns
