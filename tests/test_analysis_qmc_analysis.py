@@ -19,7 +19,6 @@ def test_analyse():
     df = pd.DataFrame(samples, columns=['run_id', 'a', 'b', 'a+b'])
     analysis = QMCAnalysis(sampler)
     results = analysis.analyse(df)
-    print(results)
 
 if __name__ == '__main__':
     test_analyse()
