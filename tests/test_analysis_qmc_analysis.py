@@ -12,7 +12,13 @@ def test_analyse():
         "b": cp.Uniform(0.0, 1.0)
     }
     sampler = QMCSampler(vary, 100)
+    samples = []
+    for i, sample in enumerate(sampler):
+        samples.append(
+            [i, sample['a'], sample['b'], sample['a'] + sample['b']])
+    df = pd.DataFrame(samples, columns=['run_id', 'a', 'b', 'a+b'])
     analysis = QMCAnalysis(sampler)
+    analysis.analyse(df)
 
 if __name__ == '__main__':
     test_analyse()
