@@ -94,9 +94,9 @@ class QMCAnalysis(BaseAnalysisElement):
                                                  'std': std}
 
             # Percentiles (Pxx)
-            P10 = np.percentile(samples[k], 10, 0)
-            P90 = np.percentile(samples[k], 90, 0)
-            results['percentiles'][k] = {'p10': P10, 'p90': P90}
+            p_10 = np.percentile(samples[k], 10, 0)
+            p_90 = np.percentile(samples[k], 90, 0)
+            results['percentiles'][k] = {'p10': p_10, 'p90': p_90}
 
             # Sensitivity Analysis: First and Total Sobol indices
             A, B, AB = self._separate_output_values(samples[k],
