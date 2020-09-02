@@ -245,7 +245,6 @@ class EnsembleBoot(BaseAnalysisElement):
         if self.stat_func is None:
             raise ValueError('stat_func cannot be None.')
 
-
     def element_name(self):
         """Name for this element for logging purposes"""
         return "ensemble_boot"
