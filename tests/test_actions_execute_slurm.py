@@ -24,6 +24,7 @@ SQUEUE_OUTPUT_2 = """JOBID PARTITION     NAME     USER  ST       TIME  NODES NOD
   65541 general-c hello_te      cdc  PD       0:00      2 (Priority)
 """
 
+
 @patch.object(execute_slurm.subprocess, 'run')
 def test_action_status_slurm(mock_subprocess_run):
     slurm_result = MagicMock()
