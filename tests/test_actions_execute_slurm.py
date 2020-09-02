@@ -1,5 +1,5 @@
 import pytest
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, patch
 import easyvvuq.actions.execute_slurm as execute_slurm
 from easyvvuq.actions.execute_slurm import ExecuteSLURM, ActionStatusSLURM
 import os
@@ -24,12 +24,12 @@ SQUEUE_OUTPUT_2 = """JOBID PARTITION     NAME     USER  ST       TIME  NODES NOD
   65541 general-c hello_te      cdc  PD       0:00      2 (Priority)
 """
 
-
-def test_action_status_slurm():
-    execute_slurm.subprocess.run = MagicMock()
+@patch.object(execute_slurm.subprocess, 'run')
+def test_action_status_slurm(mock_subprocess_run):
     slurm_result = MagicMock()
     slurm_result.stdout.decode.return_value = "sbatch: Submitted batch job 65541"
-    execute_slurm.subprocess.run.return_value = slurm_result
+    mock_subprocess_run.return_value = slurm_result
+
     action = ExecuteSLURM('tutorials/epidemic/example.slurm', '$target_dir')
     status = action.act_on_dir('docs/epidemic')
     assert(isinstance(status, ActionStatusSLURM))
