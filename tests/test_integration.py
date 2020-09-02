@@ -259,7 +259,7 @@ def test_gauss(tmpdir, campaign):
     decoder = GaussDecoder(target_filename=params['out_file']['default'])
     collater = uq.collate.AggregateSamples(average=False)
     actions = uq.actions.ExecuteLocal("tests/gauss/gauss_json.py gauss_in.json")
-    stats = uq.analysis.EnsembleBoot(groupby=["mu"], qoi_cols=["Value"])
+    stats = uq.analysis.EnsembleBoot(groupby=["mu"], qoi_cols=["numbers"])
     vary = {
         "mu": cp.Uniform(1.0, 100.0),
     }
@@ -271,8 +271,6 @@ def test_gauss(tmpdir, campaign):
              collater, actions, stats, vary, 2, 2)
     campaign(tmpdir, 'gauss', 'gauss', params, encoder_with_fixtures, decoder, sampler,
              collater, actions, stats, vary, 2, 2)
-    campaign(tmpdir, 'gauss', 'gauss', params, encoder_with_fixtures, decoder, sampler,
-             collater, actions, stats, vary, 2, 2, db_type='json')
 
 
 def test_pce(tmpdir, campaign):
