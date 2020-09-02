@@ -1,4 +1,6 @@
-import logging
+"""This sampler is meant to be used with the QMC Analysis module.
+"""
+
 import numpy as np
 import chaospy as cp
 from SALib.sample import saltelli
@@ -29,39 +31,31 @@ __license__ = "LGPL"
 
 
 class QMCSampler(BaseSamplingElement, sampler_name="QMC_sampler"):
-    def __init__(self, vary=None, count=0, n_mc_samples=10**4):
-        """
-        Create the sampler using Quasi-Monte Carlo Method
+    def __init__(self, vary, n_mc_samples, count=0):
+        """Create a Quasi Monte Carlo sampler.
 
         Parameters
         ----------
-        vary: dict or None
-            keys = parameters to be sampled, values = distributions.
 
-        count : int, optional
-            Specified counter for Fast forward, default is 0.
-
-        n_mc_samples : int, optional
-            The number of samples requierd to get a given acccuray with
-            Monte-Carlo method, default is 10**4.
+        vary: dict
+            Expects a dictionary where the keys are variable names
+            (inputs for your simulation that you want to vary during
+            sampling) and values are ChaosPy distributions you want to
+            sample from.
+        n_mc_samples : int
+            An estimate for how many samples the monte carlo run will need.
+        count : int
+            This is used to resume sampling. It will skip the first
+            count samples if this parameter is not zero.
         """
-
-        if vary is None:
-            msg = ("'vary' cannot be None. RandomSampler must be passed a "
-                   "dict of the names of the parameters you want to vary, "
-                   "and their corresponding distributions.")
-            logging.error(msg)
-            raise Exception(msg)
         if not isinstance(vary, dict):
             msg = ("'vary' must be a dictionary of the names of the "
                    "parameters you want to vary, and their corresponding "
                    "distributions.")
-            logging.error(msg)
-            raise Exception(msg)
+            raise RuntimeError(msg)
         if len(vary) == 0:
             msg = "'vary' cannot be empty."
-            logging.error(msg)
-            raise Exception(msg)
+            raise RuntimeError(msg)
 
         self.vary = Vary(vary)
         self.n_mc_samples = n_mc_samples
@@ -88,42 +82,45 @@ class QMCSampler(BaseSamplingElement, sampler_name="QMC_sampler"):
         }
 
         nodes = saltelli.sample(problem, n_sobol_samples, calc_second_order=False)
+
         self._samples = self.distribution.inv(dist_U.fwd(nodes.transpose()))
 
         self._n_samples = n_sobol_samples * (self.n_params + 2)
 
         # Fast forward to specified count, if possible
         self.count = 0
-        if self.count >= self._n_samples:
+        if count >= self._n_samples:
             msg = (f"Attempt to start sampler fastforwarded to count {self.count}, "
                    f"but sampler only has {self._n_samples} samples, therefore"
                    f"this sampler will not provide any more samples.")
-            logging.warning(msg)
+            raise RuntimeError(msg)
         else:
-            for i in range(count):
+            for _ in range(count):
                 self.__next__()
 
     def element_version(self):
+        """Version number for the sampler."""
         return "0.2"
 
     def is_finite(self):
+        """Can this sampler produce only a finite number of samples."""
         return True
 
     @property
     def n_samples(self):
-        """
-        Number of samples (Ns) of QMC method.
-        To be able to compute the Sobol indices, using Saltelli's
-        sampling scheme: NS = (d + 2)*N/2.
-        Where: d is the number of uncertain parameters and N is the
-        number of samples for MC method, by default N = 10**4.
+        """Returns the number of samples in this sampler.
 
-        Ref: Eck et al. 'A guide to uncertainty quantification and
-        sensitivity analysis for cardiovascular applications' [2016].
+        Returns
+        -------
+        This computed with the formula (d + 2) * (N / 2), where
+        d is the number of uncertain parameters and N is the (estimated)
+        number of samples for the Monte Carlo method.
         """
         return self._n_samples
 
     def is_restartable(self):
+        """Can this sampler be resumed.
+        """
         return True
 
     def __next__(self):
@@ -139,6 +136,10 @@ class QMCSampler(BaseSamplingElement, sampler_name="QMC_sampler"):
             raise StopIteration
 
     def get_restart_dict(self):
-        return {"vary": self.vary.serialize(),
-                "count": self.count,
-                "n_mc_samples": self.n_mc_samples}
+        """This information is used to restart the sampler.
+        """
+        return {
+            "vary": self.vary.serialize(),
+            "count": self.count,
+            "n_mc_samples": self.n_mc_samples
+        }
