@@ -124,4 +124,4 @@ class ExecuteSLURM(BaseAction):
         return ActionStatusSLURM(
             self.template.replace(
                 self.variable, target_dir),
-            'example.slurm', target_dir)
+            self.script_name, target_dir)
