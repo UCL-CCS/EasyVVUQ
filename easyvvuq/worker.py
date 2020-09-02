@@ -84,6 +84,7 @@ class Worker:
 
         # Loop through all runs in the run_id_list
         runs_dir = self.campaign_db.runs_dir()
+
         for run_id in run_id_list:
 
             run_data = self.campaign_db.run(run_id)
