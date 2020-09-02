@@ -1,4 +1,4 @@
-<img align="left" width="75" height="75" src="https://easyvvuq.readthedocs.io/en/latest/_static/circle-logo.svg" alt="EasyVVUQ icon">
+<img align="left" width="75" height="75" src="https://github.com/UCL-CCS/EasyVVUQ/blob/dev/docs/images/circle-logo.svg" alt="EasyVVUQ icon">
 
 # EasyVVUQ
 

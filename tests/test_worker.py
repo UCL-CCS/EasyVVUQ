@@ -1,6 +1,7 @@
 import easyvvuq as uq
 import chaospy as cp
 import os
+import sys
 import pytest
 from easyvvuq.constants import default_campaign_prefix, Status
 from pprint import pprint
@@ -42,7 +43,7 @@ CANNONSIM_PATH = os.path.realpath(os.path.expanduser("tests/cannonsim/bin/cannon
 def test_worker(tmpdir):
 
     # Set up a fresh campaign called "cannon"
-    my_campaign = uq.Campaign(name='cannon', work_dir=tmpdir, db_location='sqlite:///')
+    my_campaign = uq.Campaign(name='cannon', work_dir=tmpdir)
 
     # Define parameter space for the cannonsim app
     params = {
@@ -136,8 +137,16 @@ def test_worker(tmpdir):
             run_id
         ]
         encoder_path = os.path.realpath(os.path.expanduser("easyvvuq/tools/external_encoder.py"))
-        subprocess.run(['python3', encoder_path] + enc_args)
-        subprocess.run([CANNONSIM_PATH, "in.cannon", "output.csv"], cwd=run_data['run_dir'])
+        try:
+            subprocess.run(['python3', encoder_path] + enc_args, check=True)
+        except subprocess.CalledProcessError as e:
+            sys.exit(f"Failed during encoding of run: f{e}")
+
+        try:
+            subprocess.run([CANNONSIM_PATH, "in.cannon", "output.csv"],
+                           cwd=run_data['run_dir'], check=True)
+        except subprocess.CalledProcessError as e:
+            sys.exit(f"Failed during execution of run: f{e}")
 
         my_campaign.campaign_db.set_run_statuses([run_id], Status.ENCODED)  # see note further down
 
