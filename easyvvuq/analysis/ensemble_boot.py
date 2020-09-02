@@ -169,7 +169,7 @@ def ensemble_bootstrap(data, groupby=[], qoi_cols=[],
 
     for col in qoi_cols:
         if col not in data:
-            raise RuntimeError("No such attribute: {}".format(col))
+            raise RuntimeError(f"No such attribute: {col}\nAttributes found in data: {data}")
         agg_funcs[col] = lambda x: bootstrap(
             x,
             stat_func=stat_func,
@@ -201,7 +201,7 @@ def ensemble_bootstrap(data, groupby=[], qoi_cols=[],
 class EnsembleBoot(BaseAnalysisElement):
 
     def __init__(self, groupby=[], qoi_cols=[],
-                 stat_func=None, alpha=0.05,
+                 stat_func=np.mean, alpha=0.05,
                  sample_size=None, n_boot_samples=1000,
                  pivotal=False, stat_name='boot'):
         """
@@ -241,6 +241,10 @@ class EnsembleBoot(BaseAnalysisElement):
         self.stat_name = stat_name
 
         self.output_type = OutputType.SUMMARY
+
+        if self.stat_func is None:
+            raise ValueError('stat_func cannot be None.')
+
 
     def element_name(self):
         """Name for this element for logging purposes"""
