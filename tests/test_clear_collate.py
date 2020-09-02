@@ -4,7 +4,6 @@ import os
 import sys
 import pytest
 from pprint import pprint
-import subprocess
 
 __copyright__ = """
 
