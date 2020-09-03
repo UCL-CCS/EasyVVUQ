@@ -32,7 +32,7 @@ def test_action_status_slurm(mock_subprocess_run):
     mock_subprocess_run.return_value = slurm_result
 
     action = ExecuteSLURM('tutorials/epidemic/example.slurm', '$target_dir')
-    status = action.act_on_dir('docs/epidemic')
+    status = action.act_on_dir('.')
     assert(isinstance(status, ActionStatusSLURM))
     assert(not status.finished())
     status.start()
