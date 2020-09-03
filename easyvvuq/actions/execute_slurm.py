@@ -58,7 +58,8 @@ class ActionStatusSLURM():
     def start(self):
         """Start the SLURM job.
         """
-        result = subprocess.run(['sbatch', self.script_name], cwd=self.target_dir, check=True)
+        result = subprocess.run(['sbatch', self.script_name],
+                                cwd=self.target_dir, check=True, capture_output=True)
         stdout = result.stdout.decode('utf-8')
         self.job_id = re.findall(r'\d+', stdout)[0]
         self._started = True
@@ -74,7 +75,8 @@ class ActionStatusSLURM():
         """
         if not self.started():
             return False
-        result = subprocess.run(['squeue', '-j', self.job_id], cwd=self.target_dir, check=True)
+        result = subprocess.run(['squeue', '-j', self.job_id],
+                                cwd=self.target_dir, check=True, capture_output=True)
         stdout = result.stdout.decode('utf-8')
         return not (self.job_id in stdout)
 
@@ -126,4 +128,4 @@ class ExecuteSLURM(BaseAction):
         return ActionStatusSLURM(
             self.template.replace(
                 self.variable, target_dir),
-            'example.slurm', target_dir)
+            self.script_name, target_dir)
