@@ -1,4 +1,7 @@
 """Represents the results obtained during the analysis stage.
+All the analysis classes should implement this in a way that makes
+most sense. Provides a more unified interface for accessing the results
+in a variety of formats (e.g. NumPy arrays or pandas DataFrames).
 """
 
 class AnalysisResults:
