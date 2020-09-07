@@ -322,7 +322,8 @@ class SCAnalysis(BaseAnalysisElement):
         logging.debug('done.')
         return map_
 
-    def adapt_dimension(self, qoi, data_frame, store_stats_history=True, method='surplus'):
+    def adapt_dimension(self, qoi, data_frame, store_stats_history=True, 
+                        method='surplus', **kwargs):
         """
         Compute the adaptation metric and decide which of the admissible
         level indices to include in next iteration of the sparse grid. The
@@ -399,9 +400,13 @@ class SCAnalysis(BaseAnalysisElement):
                 for xi in X_l:
                     #find the location of the current xi in the global grid
                     idx = np.where((xi == self.sampler.xi_d).all(axis=1))[0][0]
-                    #hierarchical surplus error at xi
+                    #hierarchical surplus error at xi                    
                     hier_surplus = samples[idx] - self.surrogate(qoi, xi)
-                    error[tuple(l)].append(np.linalg.norm(hier_surplus, np.inf))
+                    if 'index' in kwargs:
+                        hier_surplus = hier_surplus[kwargs['index']]
+                        error[tuple(l)].append(np.abs(hier_surplus))
+                    else:
+                        error[tuple(l)].append(np.linalg.norm(hier_surplus, np.inf))
                 #compute mean error over all points in X_l
                 error[tuple(l)] = np.mean(error[tuple(l)])
             elif method == 'surplus_quad':
