@@ -13,7 +13,7 @@ class AnalysisResults:
         an arbitrary object that contains raw analysis data
     """
     def __init__(self, raw_data=None):
-        self.raw_data = None
+        self.raw_data = raw_data
 
     def to_numpy(self):
         """Returns a NumPy array with the results. Will depend on the analysis
