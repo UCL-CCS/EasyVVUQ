@@ -108,10 +108,10 @@ vary = {
     # "x5": cp.Uniform(0.0, 1.0)}
 
 #Select the MC sampler
-my_sampler = uq.sampling.RandomSampler(vary=vary)
+my_sampler = uq.sampling.RandomSampler(vary)
 #Generate the n_mc*(n_params + 2) input samples required to compute both
 #the first-order and total-order Sobol indices
-my_sampler.generate_sobol_samples(1000)
+my_sampler.generate_sobol_samples(100)
 
 # Associate the sampler with the campaign
 my_campaign.set_sampler(my_sampler)

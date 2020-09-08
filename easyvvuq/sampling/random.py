@@ -1,6 +1,7 @@
 from .base import BaseSamplingElement, Vary
 from copy import deepcopy
 import numpy as np
+import chaospy as cp
 
 __copyright__ = """
 
@@ -39,6 +40,8 @@ class RandomSampler(BaseSamplingElement, sampler_name="random_sampler"):
         self.n_params = len(vary)
         #compute the Sobol indices
         self.compute_sobol = False
+        #joint distribution
+        self.joint = cp.J(*list(vary.values()))
 
     def element_version(self):
         return "0.2"
@@ -111,12 +114,9 @@ class RandomSampler(BaseSamplingElement, sampler_name="random_sampler"):
         print('Generating %d input samples spread over %d sample matrices.' % 
               (self.max_num, self.n_params + 2))
         #Matrix M1, the sample matrix
-        M_1 = np.zeros([n_mc, self.n_params])
+        M_1 = self.joint.sample(n_mc).T
         #<atrix M2, the resample matrix (see reference above)
-        M_2 = np.zeros([n_mc, self.n_params])
-        #fill them with values drawn from the input distributions
-        self.fill_sample_matrix(M_1)
-        self.fill_sample_matrix(M_2)
+        M_2 = self.joint.sample(n_mc).T
         #xi_mc will stores all input samples
         self.xi_mc = []
         self.xi_mc.append(M_1)
@@ -130,26 +130,6 @@ class RandomSampler(BaseSamplingElement, sampler_name="random_sampler"):
         #turn into array of size n_mc*(n_params + 2) x n_params
         self.xi_mc = np.array(self.xi_mc).reshape([self.max_num, self.n_params])
         print('Done.')
-
-    def fill_sample_matrix(self, A):
-        """
-        Fill the matrix A (size n_mc x n_params) with n_mc random draws from
-        the input distribution.
-
-        Parameters
-        ----------
-        A : A matrix to be filled with random values of the inputs
-
-        Returns
-        -------
-        None.
-
-        """        
-
-        idx = 0
-        for dist in self.vary.get_values():
-            A[:, idx] = dist.sample(A.shape[0])
-            idx += 1        
 
     def is_restartable(self):
         return True
