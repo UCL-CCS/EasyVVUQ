@@ -1,4 +1,6 @@
 from .base import BaseSamplingElement, Vary
+from copy import deepcopy
+import numpy as np
 
 __copyright__ = """
 
@@ -31,10 +33,15 @@ class RandomSampler(BaseSamplingElement, sampler_name="random_sampler"):
         """
         self.vary = Vary(vary)
         self.count = count
+        #the number of MC samples
         self.max_num = max_num
+        #the number of uncertain inputs
+        self.n_params = len(vary)
+        #compute the Sobol indices
+        self.compute_sobol = False
 
     def element_version(self):
-        return "0.1"
+        return "0.2"
 
     def is_finite(self):
         if self.max_num > 0:
@@ -42,7 +49,8 @@ class RandomSampler(BaseSamplingElement, sampler_name="random_sampler"):
         return False
 
     def n_samples(self):
-        """Returns the number of samples in this sampler.
+        """
+        Returns the number of samples in this sampler.
 
         Returns
         -------
@@ -60,14 +68,92 @@ class RandomSampler(BaseSamplingElement, sampler_name="random_sampler"):
                 raise StopIteration
 
         run_dict = {}
-        for param_name, dist in self.vary.get_items():
-            run_dict[param_name] = dist.sample(1)[0]
+        if not self.compute_sobol:
+            for param_name, dist in self.vary.get_items():
+                run_dict[param_name] = dist.sample(1)[0]
+        else:
+            idx = 0
+            for param_name in self.vary.get_keys():
+                run_dict[param_name] = self.xi_mc[self.sobol_count][idx]
+                idx += 1
+            self.sobol_count += 1
 
         self.count += 1
         return run_dict
+
+    def generate_sobol_samples(self, n_mc):
+        """
+        Generates the n_mc*(n_params + 2) input samples needed to compute the
+        Sobol indices. Stored in MCAnalysis.xi_mc.
+
+        Method: A. Saltelli, Making best use of model evaluations to compute
+        sensitivity indices, Computer Physics Communications, 2002.
+
+        Parameters
+        ----------
+        n_mc : the number of Monte Carlo samples per input matrix. The total
+        number of samples is n_mc*(n_params + 2)
+
+        Returns
+        -------
+        None.
+
+        """
+        print('Drawing input samples for Sobol index computation.')
+        #set the flag to True
+        self.compute_sobol = True
+        #the index in the dataframe of the first sobol sample
+        self.sobol_start = self.count
+        #a counter for the sobol samples. Used in __next__
+        self.sobol_count = 0
+        #the number of MC samples required to compute the Sobol indices
+        self.max_num = n_mc*(self.n_params + 2)
+        print('Generating %d input samples spread over %d sample matrices.' % 
+              (self.max_num, self.n_params + 2))
+        #Matrix M1, the sample matrix
+        M_1 = np.zeros([n_mc, self.n_params])
+        #<atrix M2, the resample matrix (see reference above)
+        M_2 = np.zeros([n_mc, self.n_params])
+        #fill them with values drawn from the input distributions
+        self.fill_sample_matrix(M_1)
+        self.fill_sample_matrix(M_2)
+        #xi_mc will stores all input samples
+        self.xi_mc = []
+        self.xi_mc.append(M_1)
+        self.xi_mc.append(M_2)
+        #Compute the N_i matrices (see again reference above)
+        for i in range(self.n_params):
+            N_i = deepcopy(M_2)
+            #N_i = M2 with i-th colum from M1
+            N_i[:, i] = M_1[:, i]
+            self.xi_mc.append(N_i)
+        #turn into array of size n_mc*(n_params + 2) x n_params
+        self.xi_mc = np.array(self.xi_mc).reshape([self.max_num, self.n_params])
+        print('Done.')
+
+    def fill_sample_matrix(self, A):
+        """
+        Fill the matrix A (size n_mc x n_params) with n_mc random draws from
+        the input distribution.
+
+        Parameters
+        ----------
+        A : A matrix to be filled with random values of the inputs
+
+        Returns
+        -------
+        None.
+
+        """        
+
+        idx = 0
+        for dist in self.vary.get_values():
+            A[:, idx] = dist.sample(A.shape[0])
+            idx += 1        
 
     def is_restartable(self):
         return True
 
     def get_restart_dict(self):
-        return {"vary": self.vary.serialize(), "max_num": self.max_num, "count": self.count}
+        return {"vary": self.vary.serialize(), 
+                "max_num": self.max_num, "count": self.count}

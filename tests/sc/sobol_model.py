@@ -9,12 +9,12 @@ import sys
 def sobol_g_func(theta):
     Y = 1.0
     for i in range(d):
-        Y *= 2.0 * (np.abs(4.0 * theta[i] - 2.0) + a[i]) / (1.0 + a[i])
+        Y *= (np.abs(4.0 * theta[i] - 2.0) + a[i]) / (1.0 + a[i])
     return Y
 
 
 # parameters required by test function
-a = [0.0, 1.0, 2.0, 4.0, 8.0]
+a = [0.0, 0.5, 3.0, 9.0, 99.0]
 
 # stocastic dimension of the problem
 d = 5
