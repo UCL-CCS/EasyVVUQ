@@ -74,7 +74,7 @@ class QMCAnalysis(BaseAnalysisElement):
 
         # Get the number of samples and uncertain parameters
         n_params = self.sampler.n_params
-        n_sobol_samples = int(np.round(self.sampler.n_mc_samples / 2.))
+        n_mc_samples = self.sampler.n_mc_samples
 
         # Extract output values for each quantity of interest from Dataframe
         samples = {k: [] for k in qoi_cols}
@@ -88,7 +88,7 @@ class QMCAnalysis(BaseAnalysisElement):
             # Sensitivity Analysis: First and Total Sobol indices
             A, B, AB = self._separate_output_values(samples[k],
                                                     n_params,
-                                                    n_sobol_samples)
+                                                    n_mc_samples)
             sobols_first_dict = {}
             sobols_total_dict = {}
             i_par = 0

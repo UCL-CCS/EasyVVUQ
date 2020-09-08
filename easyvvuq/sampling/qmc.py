@@ -68,7 +68,6 @@ class QMCSampler(BaseSamplingElement, sampler_name="QMC_sampler"):
 
         # Generate samples
         self.n_params = len(vary)
-        n_sobol_samples = int(np.round(n_mc_samples / 2.))
 
         dist_U = []
         for i in range(self.n_params):
@@ -81,11 +80,11 @@ class QMCSampler(BaseSamplingElement, sampler_name="QMC_sampler"):
             "bounds": [[0, 1]] * self.n_params
         }
 
-        nodes = saltelli.sample(problem, n_sobol_samples, calc_second_order=False)
+        nodes = saltelli.sample(problem, n_mc_samples, calc_second_order=False)
 
         self._samples = self.distribution.inv(dist_U.fwd(nodes.transpose()))
 
-        self._n_samples = n_sobol_samples * (self.n_params + 2)
+        self._n_samples = n_mc_samples * (self.n_params + 2)
 
         # Fast forward to specified count, if possible
         self.count = 0
@@ -112,7 +111,7 @@ class QMCSampler(BaseSamplingElement, sampler_name="QMC_sampler"):
 
         Returns
         -------
-        This computed with the formula (d + 2) * (N / 2), where
+        This computed with the formula (d + 2) * N , where
         d is the number of uncertain parameters and N is the (estimated)
         number of samples for the Monte Carlo method.
         """
