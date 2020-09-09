@@ -11,9 +11,13 @@ class AnalysisResults:
     ----------
     raw_data: obj
         an arbitrary object that contains raw analysis data
+
+    samples: pandas DataFrame
+        collated samples
     """
-    def __init__(self, raw_data=None):
+    def __init__(self, raw_data=None, samples=None):
         self.raw_data = raw_data
+        self.samples = samples
 
     def to_numpy(self):
         """Returns a NumPy array with the results. Will depend on the analysis
@@ -32,5 +36,15 @@ class AnalysisResults:
         Returns
         -------
         a pandas DataFrame
+        """
+        raise NotImplementedError
+
+
+    def describe(self):
+        """Returns descriprive statistics.
+
+        Returns
+        -------
+        a pandas DataFrame with descriptive statistics (moments)
         """
         raise NotImplementedError

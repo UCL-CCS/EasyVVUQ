@@ -8,11 +8,17 @@ import numpy as np
 from easyvvuq import OutputType
 from .base import BaseAnalysisElement
 from easyvvuq.sampling import QMCSampler
+from .results import AnalysisResults
 
 __author__ = 'Jalal Lakhlili'
 __license__ = "LGPL"
 
 logger = logging.getLogger(__name__)
+
+
+class QMCAnalysisResults(AnalysisResults):
+    def describe(self):
+        return self.samples.describe()
 
 
 class QMCAnalysis(BaseAnalysisElement):
@@ -98,7 +104,7 @@ class QMCAnalysis(BaseAnalysisElement):
                 i_par += 1
             results['sobols_first'][k] = sobols_first_dict
             results['sobols_total'][k] = sobols_total_dict
-        return results
+        return QMCAnalysisResults(raw_data=results, samples=data_frame)
 
     # Adapted from SALib
     @staticmethod
