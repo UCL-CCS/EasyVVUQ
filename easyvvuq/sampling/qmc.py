@@ -1,7 +1,6 @@
 """This sampler is meant to be used with the QMC Analysis module.
 """
 
-import numpy as np
 import chaospy as cp
 from SALib.sample import saltelli
 from .base import BaseSamplingElement, Vary
