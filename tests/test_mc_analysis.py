@@ -108,10 +108,10 @@ vary = {
     # "x5": cp.Uniform(0.0, 1.0)}
 
 #Select the MC sampler
-my_sampler = uq.sampling.RandomSampler(vary)
+my_sampler = uq.sampling.QMCSampler(vary, n_mc_samples=100)
 #Generate the n_mc*(n_params + 2) input samples required to compute both
 #the first-order and total-order Sobol indices
-my_sampler.generate_sobol_samples(100)
+# my_sampler.generate_sobol_samples(100)
 
 # Associate the sampler with the campaign
 my_campaign.set_sampler(my_sampler)
@@ -121,21 +121,21 @@ my_campaign.draw_samples()
 my_campaign.populate_runs_dir()
 
 # Use this instead to run the samples using EasyVVUQ on the localhost
-# my_campaign.apply_for_each_run_dir(uq.actions.ExecuteLocal(
-#     "sc/sobol_model.py sobol_in.json"))
 my_campaign.apply_for_each_run_dir(uq.actions.ExecuteLocal(
-    "sc/poly_model.py model_in.json"))
+    "sc/sobol_model.py model_in.json"))
+# my_campaign.apply_for_each_run_dir(uq.actions.ExecuteLocal(
+#     "sc/poly_model.py model_in.json"))
 my_campaign.collate()
 
 # Post-processing analysis
-analysis = uq.analysis.MCAnalysis(sampler=my_sampler, qoi_cols=output_columns)
+analysis = uq.analysis.QMCAnalysis(sampler=my_sampler, qoi_cols=output_columns)
 my_campaign.apply_analysis(analysis)
 results = my_campaign.get_last_analysis()
 
-# sobol_exact = exact_sobols_g_func()
-sobol_exact = exact_sobols_poly_model()[0]
+sobol_exact = exact_sobols_g_func()
+# sobol_exact = exact_sobols_poly_model()[0]
 print(results['sobols_first'])
-# print(results['sobols_total'])
+print(results['sobols_total'])
 
 fig = plt.figure()
 ax = fig.add_subplot(111, ylim=[0,1])
