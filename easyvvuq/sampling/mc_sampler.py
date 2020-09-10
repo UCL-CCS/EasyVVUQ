@@ -96,9 +96,9 @@ class MCSampler(RandomSampler, sampler_name='mc_sampler'):
         self.max_num = n_mc * (self.n_params + 2)
         logging.debug('Generating {} input samples spread over {} sample matrices.'.format(
             self.max_num, self.n_params + 2))
-        #Matrix M1, the sample matrix
+        # Matrix M1, the sample matrix
         M_1 = self.joint.sample(n_mc).T
-        #<atrix M2, the resample matrix (see reference above)
+        # Matrix M2, the resample matrix (see reference above)
         M_2 = self.joint.sample(n_mc).T
         #array which contains all samples
         self.xi_mc = np.zeros([self.max_num, self.n_params])
@@ -113,7 +113,7 @@ class MCSampler(RandomSampler, sampler_name='mc_sampler'):
         #store N_i entries between M2 and M1
         for i in range(self.n_params):
             N_i = np.array(M_2)
-            #N_i = M2 with i-th colum from M1
+            # N_i = M2 with i-th colum from M1
             N_i[:, i] = M_1[:, i]
             self.xi_mc[(i+1):self.max_num:step] = N_i
         logging.debug('Done.')
