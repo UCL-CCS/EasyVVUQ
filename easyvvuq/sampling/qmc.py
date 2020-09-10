@@ -68,7 +68,8 @@ class QMCSampler(BaseSamplingElement, sampler_name="QMC_sampler"):
 
         # Generate samples
         self.n_params = len(vary)
-        n_sobol_samples = int(np.round(n_mc_samples / 2.))
+        #n_sobol_samples = int(np.round(n_mc_samples / 2.))
+        n_sobol_samples = n_mc_samples
 
         dist_U = []
         for i in range(self.n_params):

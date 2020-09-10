@@ -111,18 +111,20 @@ class MCAnalysis(BaseAnalysisElement):
 
         """
         print('Computing Sobol indices...')
-        #the starting index of the sobol samples in the dataframe
-        sobol_start = self.sampler.sobol_start
-        #the end index of the sobol samples in the dataframe
-        sobol_count = self.sampler.sobol_count
-        #the samples to be used to compute the Sobol indices
-        sobol_samples = np.array(samples[qoi][sobol_start:sobol_count])
+        # #the starting index of the sobol samples in the dataframe
+        # sobol_start = self.sampler.sobol_start
+        # #the end index of the sobol samples in the dataframe
+        # sobol_count = self.sampler.sobol_count
+        # #the samples to be used to compute the Sobol indices
+        # sobol_samples = np.array(samples[qoi][sobol_start:sobol_count])
+        sobol_samples = np.array(samples[qoi])
         #the number of input parameters
         n_params = self.sampler.n_params
         #the total variance
         var = np.var(sobol_samples, axis=0)
         #Saltelli: cost = n_mc*(n_params + 2), find n_mc
-        n_mc = int((sobol_count - sobol_start)/(n_params + 2))
+        cost = self.sampler.max_num
+        n_mc = int(cost/(n_params + 2))
         #the size of the QoI
         n_qoi = self.N_qoi[qoi]
         #seperate the samples into contribution due to M1, M2 and the Ni matrices

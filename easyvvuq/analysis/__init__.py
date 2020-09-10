@@ -4,7 +4,6 @@ from .sc_analysis import SCAnalysis
 from .pce_analysis import PCEAnalysis
 from .qmc_analysis import QMCAnalysis
 from .gp_analyse import GaussianProcessSurrogate
-from .mc_analysis import MCAnalysis
 
 __copyright__ = """
 

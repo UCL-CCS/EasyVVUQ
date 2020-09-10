@@ -19,17 +19,6 @@ def exact_sobols_g_func():
 
     return V_i/V
 
-def exact_sobols_poly_model():
-    """
-    Exact Sobol indices for the polynomial test model
-    """
-    S_i = np.zeros(d)
-
-    for i in range(d):
-        S_i[i] = 5**-(i + 1) / ((6 / 5)**d - 1)
-
-    return S_i
-
 plt.close('all')
 
 # number of unknown variables
@@ -41,9 +30,10 @@ a = [0.0, 0.5, 3.0, 9.0, 99.0]
 # author: Wouter Edeling
 __license__ = "LGPL"
 
-# home directory of user
-home = os.path.expanduser('~')
 HOME = os.path.abspath(os.path.dirname(__file__))
+
+#fix random seed to make this test deterministic
+np.random.seed(10000000)
 
 # Set up a fresh campaign called "mc"
 my_campaign = uq.Campaign(name='mc', work_dir='/tmp')
@@ -108,10 +98,7 @@ vary = {
     # "x5": cp.Uniform(0.0, 1.0)}
 
 #Select the MC sampler
-my_sampler = uq.sampling.QMCSampler(vary, n_mc_samples=100)
-#Generate the n_mc*(n_params + 2) input samples required to compute both
-#the first-order and total-order Sobol indices
-# my_sampler.generate_sobol_samples(100)
+my_sampler = uq.sampling.MCSampler(vary, n_mc_samples=100)
 
 # Associate the sampler with the campaign
 my_campaign.set_sampler(my_sampler)
@@ -123,8 +110,6 @@ my_campaign.populate_runs_dir()
 # Use this instead to run the samples using EasyVVUQ on the localhost
 my_campaign.apply_for_each_run_dir(uq.actions.ExecuteLocal(
     "sc/sobol_model.py model_in.json"))
-# my_campaign.apply_for_each_run_dir(uq.actions.ExecuteLocal(
-#     "sc/poly_model.py model_in.json"))
 my_campaign.collate()
 
 # Post-processing analysis
@@ -133,14 +118,18 @@ my_campaign.apply_analysis(analysis)
 results = my_campaign.get_last_analysis()
 
 sobol_exact = exact_sobols_g_func()
-# sobol_exact = exact_sobols_poly_model()[0]
-print(results['sobols_first'])
-print(results['sobols_total'])
 
-fig = plt.figure()
-ax = fig.add_subplot(111, ylim=[0,1])
-ax.plot(sobol_exact*np.ones(d), 'ro')
-ax.plot(results['sobols_first']['f'].values(), 'b*')
-plt.tight_layout()
+# fig = plt.figure()
+# ax = fig.add_subplot(111, ylim=[0,1])
+# ax.plot(sobol_exact, 'ro')
+# for i, param_name in enumerate(results['sobols_total']['f']):
+#     sobol_idx = results['sobols_first']['f'][param_name]
+#     low = results['conf_sobols_first']['f'][param_name]['low']
+#     high = results['conf_sobols_first']['f'][param_name]['high']
+#     yerr = np.array([sobol_idx - low, high - sobol_idx])
+#     ax.errorbar(i, sobol_idx,
+#                 yerr=yerr,
+#                 fmt='*', color='b')
+# plt.tight_layout()
 
 plt.show()
