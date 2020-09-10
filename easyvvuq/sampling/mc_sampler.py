@@ -21,14 +21,15 @@ __author__ = "Wouter Edeling"
 __license__ = "LGPL"
 
 from . import RandomSampler
-from .base import Vary 
+from .base import Vary
 import logging
 import numpy as np
 import chaospy as cp
 
+
 class MCSampler(RandomSampler, sampler_name='mc_sampler'):
     """
-    This is a Monte Carlo sampler, used to compute the Sobol indices, mean 
+    This is a Monte Carlo sampler, used to compute the Sobol indices, mean
     and variance of the different QoIs.
     """
 
@@ -49,15 +50,15 @@ class MCSampler(RandomSampler, sampler_name='mc_sampler'):
 
         """
         super().__init__(vary=vary, max_num=n_mc_samples, **kwargs)
-        #the number of uncertain inputs
+        # the number of uncertain inputs
         self.n_params = len(vary)
-        #the number of MC samples, for each of the n_params + 2 input matrices
+        # the number of MC samples, for each of the n_params + 2 input matrices
         self.n_mc_samples = n_mc_samples
         self.vary = Vary(vary)
         self.count = 0
-        #joint distribution
+        # joint distribution
         self.joint = cp.J(*list(vary.values()))
-        #create the Saltelli sampling plan
+        # create the Saltelli sampling plan
         self.saltelli(n_mc_samples)
 
     def __next__(self):
@@ -75,7 +76,7 @@ class MCSampler(RandomSampler, sampler_name='mc_sampler'):
 
     def saltelli(self, n_mc):
         """
-        Generates a Saltelli sampling plan of n_mc*(n_params + 2) input samples 
+        Generates a Saltelli sampling plan of n_mc*(n_params + 2) input samples
         needed to compute the Sobol indices. Stored in xi_mc.
 
         Method: A. Saltelli, Making best use of model evaluations to compute
@@ -92,7 +93,7 @@ class MCSampler(RandomSampler, sampler_name='mc_sampler'):
 
         """
         logging.debug('Drawing input samples for Sobol index computation.')
-        #the number of MC samples required to compute the Sobol indices
+        # the number of MC samples required to compute the Sobol indices
         self.max_num = n_mc * (self.n_params + 2)
         logging.debug('Generating {} input samples spread over {} sample matrices.'.format(
             self.max_num, self.n_params + 2))
@@ -100,20 +101,20 @@ class MCSampler(RandomSampler, sampler_name='mc_sampler'):
         M_1 = self.joint.sample(n_mc).T
         # Matrix M2, the resample matrix (see reference above)
         M_2 = self.joint.sample(n_mc).T
-        #array which contains all samples
+        # array which contains all samples
         self.xi_mc = np.zeros([self.max_num, self.n_params])
-        #The order in which the inputs samples must be stored is
-        #[M2_1 N1_1, ..., Nd_1, M1_1, M2_2, N1_2, ...Nd_2, M1_2, M1_3 etc]
-        #number of different sampling matrices
+        # The order in which the inputs samples must be stored is
+        # [M2_1 N1_1, ..., Nd_1, M1_1, M2_2, N1_2, ...Nd_2, M1_2, M1_3 etc]
+        # number of different sampling matrices
         step = self.n_params + 2
-        #store M2 first, with entries separated by step places
+        # store M2 first, with entries separated by step places
         self.xi_mc[0:self.max_num:step] = M_2
-        #store M1 entries last
+        # store M1 entries last
         self.xi_mc[(step - 1):self.max_num:step] = M_1
-        #store N_i entries between M2 and M1
+        # store N_i entries between M2 and M1
         for i in range(self.n_params):
             N_i = np.array(M_2)
             # N_i = M2 with i-th colum from M1
             N_i[:, i] = M_1[:, i]
-            self.xi_mc[(i+1):self.max_num:step] = N_i
+            self.xi_mc[(i + 1):self.max_num:step] = N_i
         logging.debug('Done.')

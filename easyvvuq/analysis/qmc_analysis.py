@@ -86,7 +86,7 @@ class QMCAnalysis(BaseAnalysisElement):
                                                  'var': np.var(samples[k], axis=0),
                                                  'std': np.std(samples[k], axis=0)}
             sobols_first, conf_first, sobols_total, conf_total = \
-            self.sobol_bootstrap(samples[k])            
+                self.sobol_bootstrap(samples[k])
             results['sobols_first'][k] = sobols_first
             results['sobols_total'][k] = sobols_total
             results['conf_sobols_first'][k] = conf_first
@@ -127,7 +127,7 @@ class QMCAnalysis(BaseAnalysisElement):
         Parameters
         ----------
         * samples : A list of samples for a given QoI.
-        * alpha : The (1-alpha)*100 confidence interval parameter. 
+        * alpha : The (1-alpha)*100 confidence interval parameter.
           The default is 0.05.
         * n_samples : The number of bootstrap samples. The default is 1000.
 
@@ -138,50 +138,52 @@ class QMCAnalysis(BaseAnalysisElement):
         parameters, and (1-alpha)*100 lower and upper confidence bounds.
 
         """
-        #convert to array
+        # convert to array
         samples = np.array(samples)
-        #the number of parameter and the number of MC samples in n_mc * (n_params + 2)
-        #and the size of the QoI
+        # the number of parameter and the number of MC samples in n_mc * (n_params + 2)
+        # and the size of the QoI
         n_params = self.sampler.n_params
         n_mc = self.sampler.n_mc_samples
         n_qoi = samples[0].size
-        sobols_first_dict = {}; conf_first_dict = {}
-        sobols_total_dict = {}; conf_total_dict = {}
+        sobols_first_dict = {}
+        conf_first_dict = {}
+        sobols_total_dict = {}
+        conf_total_dict = {}
         self.foo = {}
 
         for j, param_name in enumerate(self.sampler.vary.get_keys()):
-            #code evaluations of input matrices M1, M2 and Ni, i = 1,...,n_params
-            #see reference above.
+            # code evaluations of input matrices M1, M2 and Ni, i = 1,...,n_params
+            # see reference above.
             f_M2, f_M1, f_Ni = self._separate_output_values(samples, n_params, n_mc)
-            #our point estimate for the 1st and total order Sobol indices
+            # our point estimate for the 1st and total order Sobol indices
             value_first = self._first_order(f_M2, f_M1, f_Ni[:, j])
             value_total = self._total_order(f_M2, f_M1, f_Ni[:, j])
-            #array for resampled estimates
+            # array for resampled estimates
             sobols_first = np.zeros([n_samples, n_qoi])
-            sobols_total = np.zeros([n_samples, n_qoi])           
+            sobols_total = np.zeros([n_samples, n_qoi])
             for i in range(n_samples):
-                #resample, must be done on already seperated output due to
-                #the specific order in samples
+                # resample, must be done on already seperated output due to
+                # the specific order in samples
                 idx = np.random.randint(0, n_mc - 1, n_mc)
                 f_M2_resample = f_M2[idx]
                 f_M1_resample = f_M1[idx]
                 f_Ni_resample = f_Ni[idx]
-                #recompute Sobol indices
-                sobols_first[i] = self._first_order(f_M2_resample, f_M1_resample, 
+                # recompute Sobol indices
+                sobols_first[i] = self._first_order(f_M2_resample, f_M1_resample,
                                                     f_Ni_resample[:, j])
-                sobols_total[i] = self._total_order(f_M2_resample, f_M1_resample, 
+                sobols_total[i] = self._total_order(f_M2_resample, f_M1_resample,
                                                     f_Ni_resample[:, j])
             self.foo[param_name] = sobols_first
-            #compute confidence intervals
+            # compute confidence intervals
             _, low_first, high_first = confidence_interval(sobols_first, value_first,
                                                            alpha, pivotal=True)
             _, low_total, high_total = confidence_interval(sobols_total, value_total,
                                                            alpha, pivotal=True)
-            #store results
+            # store results
             sobols_first_dict[param_name] = value_first
-            conf_first_dict[param_name] = {'low':low_first, 'high':high_first}
+            conf_first_dict[param_name] = {'low': low_first, 'high': high_first}
             sobols_total_dict[param_name] = value_total
-            conf_total_dict[param_name] = {'low':low_total, 'high':high_total}
+            conf_total_dict[param_name] = {'low': low_total, 'high': high_total}
 
         return sobols_first_dict, conf_first_dict, sobols_total_dict, conf_total_dict
 
@@ -190,10 +192,10 @@ class QMCAnalysis(BaseAnalysisElement):
     def _separate_output_values(samples, n_params, n_mc_samples):
         """
         There are n_params + 2 different input matrices: M1, M2, N_i, i=1,...,n_params.
-        (see reference under sobol_bootstrap). The EasyVVUQ dataframe is stored 
+        (see reference under sobol_bootstrap). The EasyVVUQ dataframe is stored
         in the order:
 
-        [sample from M2, sample from N1, N2, ... sample from N_n_params, 
+        [sample from M2, sample from N1, N2, ... sample from N_n_params,
          sample from M1, repeat].
 
         This subroutine separates the output values into the contributions
@@ -244,9 +246,9 @@ class QMCAnalysis(BaseAnalysisElement):
 
     @staticmethod
     def _total_order(f_M2, f_M1, f_Ni):
-        """Calculate total order sensitivity indices. See also: 
+        """Calculate total order sensitivity indices. See also:
 
-        A Saltelli et al, Variance based sensitivity analysis of model output. 
+        A Saltelli et al, Variance based sensitivity analysis of model output.
         Design and estimator for the total sensitivity index, 2009.
 
         Parameters
