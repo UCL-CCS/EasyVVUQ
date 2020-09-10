@@ -61,11 +61,22 @@ class AnalysisResults:
         raise NotImplementedError
 
 
-    def describe(self):
+    def describe(self, groupby=None, qoi_cols=[]):
         """Returns descriprive statistics.
 
         Returns
         -------
         a pandas DataFrame with descriptive statistics (moments)
         """
-        return self.samples.describe()
+        assert(not self.samples.empty)
+        if groupby:
+            grouped_data = self.samples.groupby(groupby)
+            results = grouped_data.describe()
+            if qoi_cols:
+                results = results[qoi_cols]
+        else:
+            if qoi_cols:
+                results = self.samples[qoi_cols].describe()
+            else:
+                results = self.samples.describe()
+        return results
