@@ -2,6 +2,13 @@
 All the analysis classes should implement this in a way that makes
 most sense. Provides a more unified interface for accessing the results
 in a variety of formats (e.g. NumPy arrays or pandas DataFrames).
+
+Examples
+--------
+
+>>> results = PCEAnalysis(sampler, ['a', 'b'])
+>>> results.to_pd()
+>>> results.describe()
 """
 
 class AnalysisResults:
