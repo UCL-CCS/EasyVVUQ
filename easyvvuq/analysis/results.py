@@ -40,6 +40,20 @@ class AnalysisResults:
         raise NotImplementedError
 
 
+    def surrogate(self):
+        """Returns the surrogate model as a function from parameter dictionary 
+        to pandas DataFrame. This only needs to be implemented if the analysis
+        method in question provides surrogate models.
+
+
+        Returns
+        -------
+        a function that takes a dictionary of parameter - value pairs and returns
+        a pandas DataFrame with the results (same output as decoder)
+        """
+        raise NotImplementedError
+
+
     def describe(self):
         """Returns descriprive statistics.
 
@@ -47,4 +61,4 @@ class AnalysisResults:
         -------
         a pandas DataFrame with descriptive statistics (moments)
         """
-        raise NotImplementedError
+        return self.samples.describe()

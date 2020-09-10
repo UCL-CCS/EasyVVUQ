@@ -17,8 +17,8 @@ logger = logging.getLogger(__name__)
 
 
 class QMCAnalysisResults(AnalysisResults):
-    def describe(self):
-        return self.samples.describe()
+    def to_pd(self):
+        pass
 
 
 class QMCAnalysis(BaseAnalysisElement):
