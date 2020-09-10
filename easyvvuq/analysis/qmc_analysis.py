@@ -255,7 +255,8 @@ class QMCAnalysis(BaseAnalysisElement):
         ----------
         * f_M2: NumPy array of code evaluations on input array M2 (matrix A in ref above)
         * f_M1: NumPy array of code evaluations on input array M1 (matrix B in ref above)
-        * f_Ni: NumPy array of code evaluations on input array Ni, i=1,...,n_params (matrix AB in ref above)
+        * f_Ni: NumPy array of code evaluations on input array Ni, i=1,...,n_params
+          (matrix AB in ref above)
 
         Returns
         -------

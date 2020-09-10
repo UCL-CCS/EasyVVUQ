@@ -1,3 +1,9 @@
+from . import RandomSampler
+from .base import Vary
+import logging
+import numpy as np
+import chaospy as cp
+
 __author__ = "Wouter Edeling"
 """
     Copyright 2018 Robin A. Richardson, David W. Wright
@@ -19,12 +25,6 @@ __author__ = "Wouter Edeling"
 
 """
 __license__ = "LGPL"
-
-from . import RandomSampler
-from .base import Vary
-import logging
-import numpy as np
-import chaospy as cp
 
 
 class MCSampler(RandomSampler, sampler_name='mc_sampler'):
