@@ -29,6 +29,11 @@ class PCEResults(AnalysisResults):
             new_dicts[col] = dict(data)
         return pd.DataFrame(new_dicts, columns=cols)
 
+    def describe_cp(self):
+        """Specific to PCE.
+        """
+        pass
+
 
 class PCEAnalysis(BaseAnalysisElement):
 
@@ -175,4 +180,4 @@ class PCEAnalysis(BaseAnalysisElement):
             results['output_distributions'][k] = cp.QoI_Dist(
                 fit, self.sampler.distribution)
 
-        return PCEResults(raw_data=results)
+        return PCEResults(raw_data=results, samples=data_frame)

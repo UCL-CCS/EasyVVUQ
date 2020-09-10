@@ -4,6 +4,7 @@ import numpy as np
 import pandas as pd
 from easyvvuq import OutputType
 from .base import BaseAnalysisElement
+from .results import AnalysisResults
 
 __copyright__ = """
 
@@ -198,6 +199,13 @@ def ensemble_bootstrap(data, groupby=[], qoi_cols=[],
     return results
 
 
+class ResultsBoot(AnalysisResults):
+    """Bootstrap results class.
+    """
+    def to_pd(self):
+        return self.raw_data
+
+
 class EnsembleBoot(BaseAnalysisElement):
 
     def __init__(self, groupby=[], qoi_cols=[],
@@ -288,4 +296,4 @@ class EnsembleBoot(BaseAnalysisElement):
             pivotal=self.pivotal,
             stat_name=self.stat_name)
 
-        return results
+        return ResultsBoot(results, data_frame)
