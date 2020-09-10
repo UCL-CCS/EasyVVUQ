@@ -17,8 +17,16 @@ logger = logging.getLogger(__name__)
 
 
 class QMCAnalysisResults(AnalysisResults):
-    def to_pd(self):
-        pass
+    def to_pd(self, key='sobols_first'):
+        assert(key in ['sobols_first', 'sobols_second', 'sobols_total'])
+        raw_dicts = self.raw_data[key]
+        cols = list(raw_dicts.keys())
+        new_dicts = {}
+        for col in cols:
+            data = [(key, raw_dicts[col][key][0][0]) for key in raw_dicts[col]]
+            data.append((col, 0.0))
+            new_dicts[col] = dict(data)
+        return pd.DataFrame(new_dicts, columns=cols)
 
 
 class QMCAnalysis(BaseAnalysisElement):
