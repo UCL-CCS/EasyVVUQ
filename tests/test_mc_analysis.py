@@ -114,7 +114,7 @@ def run_campaign():
 
     # Use this instead to run the samples using EasyVVUQ on the localhost
     my_campaign.apply_for_each_run_dir(uq.actions.ExecuteLocal(
-        "sc/sobol_model.py model_in.json"))
+        "tests/sc/sobol_model.py model_in.json"))
     my_campaign.collate()
 
     # Post-processing analysis
