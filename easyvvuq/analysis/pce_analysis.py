@@ -16,20 +16,13 @@ logger = logging.getLogger(__name__)
 class PCEResults(AnalysisResults):
     """Results class for PCEAnalysis.
     """
-    def to_pd(self, key='sobols_first'):
-        """Returns a pandas DataFrame.
-        """
-        assert(key in ['sobols_first', 'sobols_second', 'sobols_total'])
-        raw_dicts = self.raw_data[key]
-        cols = list(raw_dicts.keys())
-        new_dicts = {}
-        for col in cols:
-            data = [(key, raw_dicts[col][key][0][0]) for key in raw_dicts[col]]
-            data.append((col, 0.0))
-            new_dicts[col] = dict(data)
-        return pd.DataFrame(new_dicts, columns=cols)
+    def sobol_first(self):
+        pass
 
-    def describe(self):
+    def sobol_second(self):
+        pass
+
+    def sobol_total(self):
         pass
 
 class PCEAnalysis(BaseAnalysisElement):
