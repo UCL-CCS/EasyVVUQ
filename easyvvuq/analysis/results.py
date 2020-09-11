@@ -26,19 +26,8 @@ class AnalysisResults:
         self.raw_data = raw_data
         self.samples = samples
 
-    def to_numpy(self):
-        """Returns a NumPy array with the results. Will depend on the analysis
-        method. Might not be implemented.
-
-        Returns
-        -------
-        a NumPy array
-        """
-        raise NotImplementedError
-
-    def to_pd(self):
-        """Returns a pandas DataFrame with the results. Will depend on the
-        analysis method. Might not be implemented.
+    def sobol_first(self):
+        """Returns first order Sobol indices.
 
         Returns
         -------
@@ -46,6 +35,23 @@ class AnalysisResults:
         """
         raise NotImplementedError
 
+    def sobol_second(self):
+        """Returns second order Sobol indices.
+        
+        Returns
+        -------
+        a pandas DataFrame
+        """
+        raise NotImplementedError
+
+    def sobol_total(self):
+        """Returns total order Sobol indices.
+        
+        Returns
+        -------
+        a pandas DataFrame
+        """
+        raise NotImplementedError
 
     def surrogate(self):
         """Returns the surrogate model as a function from parameter dictionary 
@@ -61,7 +67,7 @@ class AnalysisResults:
         raise NotImplementedError
 
 
-    def describe(self, groupby=None, qoi_cols=[]):
+    def moments(self, groupby=None, qoi_cols=[]):
         """Returns descriprive statistics.
 
         Returns

@@ -29,11 +29,8 @@ class PCEResults(AnalysisResults):
             new_dicts[col] = dict(data)
         return pd.DataFrame(new_dicts, columns=cols)
 
-    def describe_cp(self):
-        """Specific to PCE.
-        """
+    def describe(self):
         pass
-
 
 class PCEAnalysis(BaseAnalysisElement):
 
