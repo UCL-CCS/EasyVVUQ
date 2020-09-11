@@ -97,7 +97,7 @@ def campaign():
         if actions is not None:
             my_campaign.apply_for_each_run_dir(actions)
         # Collate all data into one pandas data frame
-        my_campaign.recollate()
+        my_campaign.collate()
         logging.debug("data: %s", str(my_campaign.get_collation_result()))
         # Save the state of the campaign
         state_file = work_dir + "{}_state.json".format(app_name)
@@ -120,7 +120,7 @@ def campaign():
         logging.debug("Completed runs:")
         logging.debug(pformat(reloaded_campaign.scan_completed()))
         logging.debug("All completed? %s", str(reloaded_campaign.all_complete()))
-        reloaded_campaign.recollate()
+        reloaded_campaign.collate()
         logging.debug("data:\n %s", str(reloaded_campaign.get_collation_result()))
         logging.debug(reloaded_campaign)
         # Create a BasicStats analysis element and apply it to the campaign
@@ -399,5 +399,5 @@ def test_qmc(tmpdir, campaign):
     actions = uq.actions.ExecuteLocal("tests/cooling/cooling_model.py cooling_in.json")
     stats = uq.analysis.QMCAnalysis(sampler=sampler,
                                     qoi_cols=output_columns)
-    campaign(tmpdir, 'qmc', 'qmc', params, encoder, decoder, sampler,
+    campaign(tmpdir, 'qmc2', 'qmc2', params, encoder, decoder, sampler,
              collater, actions, stats, vary, 10, 1)
