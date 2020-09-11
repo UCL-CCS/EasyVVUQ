@@ -120,7 +120,7 @@ def campaign():
         logging.debug("Completed runs:")
         logging.debug(pformat(reloaded_campaign.scan_completed()))
         logging.debug("All completed? %s", str(reloaded_campaign.all_complete()))
-        reloaded_campaign.collate()
+        reloaded_campaign.recollate()
         logging.debug("data:\n %s", str(reloaded_campaign.get_collation_result()))
         logging.debug(reloaded_campaign)
         # Create a BasicStats analysis element and apply it to the campaign
