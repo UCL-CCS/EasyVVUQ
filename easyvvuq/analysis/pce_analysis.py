@@ -177,4 +177,4 @@ class PCEAnalysis(BaseAnalysisElement):
             results['output_distributions'][k] = cp.QoI_Dist(
                 fit, self.sampler.distribution)
 
-        return PCEResults(raw_data=results, samples=data_frame)
+        return PCEResults(raw_data=(fit, self.sampler.distribution), samples=data_frame)
