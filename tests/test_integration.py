@@ -97,7 +97,7 @@ def campaign():
         if actions is not None:
             my_campaign.apply_for_each_run_dir(actions)
         # Collate all data into one pandas data frame
-        my_campaign.collate()
+        my_campaign.recollate()
         logging.debug("data: %s", str(my_campaign.get_collation_result()))
         # Save the state of the campaign
         state_file = work_dir + "{}_state.json".format(app_name)
