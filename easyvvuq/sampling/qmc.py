@@ -111,9 +111,9 @@ class QMCSampler(BaseSamplingElement, sampler_name="QMC_sampler"):
 
         Returns
         -------
-        This computed with the formula (d + 2) * (N / 2), where
-        d is the number of uncertain parameters and N is the (estimated)
-        number of samples for the Monte Carlo method.
+        This computed with the formula (d + 2) * N, where d is the number
+        of uncertain parameters and N is the (estimated) number of samples
+        for the Monte Carlo method.
         """
         return self._n_samples
 
