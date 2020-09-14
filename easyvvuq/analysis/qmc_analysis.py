@@ -149,7 +149,6 @@ class QMCAnalysis(BaseAnalysisElement):
         conf_first_dict = {}
         sobols_total_dict = {}
         conf_total_dict = {}
-        self.foo = {}
 
         for j, param_name in enumerate(self.sampler.vary.get_keys()):
             # code evaluations of input matrices M1, M2 and Ni, i = 1,...,n_params
@@ -173,7 +172,6 @@ class QMCAnalysis(BaseAnalysisElement):
                                                     f_Ni_resample[:, j])
                 sobols_total[i] = self._total_order(f_M2_resample, f_M1_resample,
                                                     f_Ni_resample[:, j])
-            self.foo[param_name] = sobols_first
             # compute confidence intervals
             _, low_first, high_first = confidence_interval(sobols_first, value_first,
                                                            alpha, pivotal=True)
