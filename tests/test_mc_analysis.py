@@ -64,3 +64,19 @@ def test_mc_analysis():
 
 def test_sobol_bootstrap():
     pass
+
+
+def test_separate_output_values():
+    pass
+
+
+def test_first_order():
+    pass
+
+
+def test_total_order():
+    pass
+
+
+def test_get_samples():
+    pass
