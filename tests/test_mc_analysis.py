@@ -151,4 +151,4 @@ if __name__ == '__main__':
     assert sobol_x1 == pytest.approx(ref_sobols[0], abs=0.1)
     assert sobol_x2 == pytest.approx(ref_sobols[1], abs=0.1)
 
-plt.show()
+# plt.show()
