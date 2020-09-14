@@ -126,10 +126,12 @@ class QMCAnalysis(BaseAnalysisElement):
 
         Parameters
         ----------
-        * samples : A list of samples for a given QoI.
-        * alpha : The (1-alpha)*100 confidence interval parameter.
-          The default is 0.05.
-        * n_samples : The number of bootstrap samples. The default is 1000.
+        samples : list
+            The samples for a given QoI.
+        alpha: float
+            The (1 - alpha) * 100 confidence interval parameter. The default is 0.05.
+        n_samples: int
+            The number of bootstrap samples. The default is 1000.
 
         Returns
         -------
@@ -188,10 +190,9 @@ class QMCAnalysis(BaseAnalysisElement):
     # Adapted from SALib
     @staticmethod
     def _separate_output_values(samples, n_params, n_mc_samples):
-        """
-        There are n_params + 2 different input matrices: M1, M2, N_i, i=1,...,n_params.
-        (see reference under sobol_bootstrap). The EasyVVUQ dataframe is stored
-        in the order:
+        """There are n_params + 2 different input matrices: M1, M2, N_i,
+        i=1,...,n_params.  (see reference under sobol_bootstrap). The
+        EasyVVUQ dataframe is stored in the order:
 
         [sample from M2, sample from N1, N2, ... sample from N_n_params,
          sample from M1, repeat].
@@ -201,15 +202,19 @@ class QMCAnalysis(BaseAnalysisElement):
 
         Parameters
         ----------
-        * samples: a list of samples for a given QoI
-        * n_params: int, the number of uncertain input parameters
-        * n_mc_samples: int, the number of MC samples per input matrix, i.e. the
+        samples: list
+            The samples for a given QoI
+        n_params: int
+            The number of uncertain input parameters.
+        n_mc_samples: int
+            The number of MC samples per input matrix, i.e. the
           number of rows in M1, M2 or Ni.
 
         Returns
         -------
         NumPy arrays of the separated code evaluations: f_M2, f_M1, f_Ni, where
         f_Ni contains n_params entries corresponding to the n_params Ni matrices.
+
         """
         evaluations = np.array(samples)
 
@@ -231,9 +236,12 @@ class QMCAnalysis(BaseAnalysisElement):
 
         Parameters
         ----------
-        * f_M2: NumPy array of code evaluations on input array M2
-        * f_M1: NumPy array of code evaluations on input array M1
-        * f_Ni: NumPy array of code evaluations on input array Ni, i=1,...,n_params
+        f_M2: NumPy array
+            Array of code evaluations on input array M2
+        f_M1: NumPy array
+            Array of code evaluations on input array M1
+        f_Ni: NumPy array
+            Array of code evaluations on input array Ni, i=1,...,n_params
 
         Returns
         -------
@@ -251,9 +259,12 @@ class QMCAnalysis(BaseAnalysisElement):
 
         Parameters
         ----------
-        * f_M2: NumPy array of code evaluations on input array M2 (matrix A in ref above)
-        * f_M1: NumPy array of code evaluations on input array M1 (matrix B in ref above)
-        * f_Ni: NumPy array of code evaluations on input array Ni, i=1,...,n_params
+        f_M2: NumPy array
+            Array of code evaluations on input array M2 (matrix A in ref above)
+        f_M1: NumPy array
+            Array of code evaluations on input array M1 (matrix B in ref above)
+        f_Ni: NumPy array
+            Array of code evaluations on input array Ni, i=1,...,n_params
           (matrix AB in ref above)
 
         Returns
