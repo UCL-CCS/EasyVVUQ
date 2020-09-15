@@ -24,8 +24,8 @@ __license__ = "LGPL"
 
 HOME = os.path.abspath(os.path.dirname(__file__))
 
-
-def run_campaign():
+@pytest.fixture
+def data():
     # fix random seed to make this test deterministic
     np.random.seed(10000000)
     # Create the sampler
@@ -45,16 +45,20 @@ def run_campaign():
         })
 
     df = pd.DataFrame(data)
+    return mc_sampler, df
 
+
+@pytest.fixture
+def results(data):
      # Post-processing analysis
+    mc_sampler, df = data
     analysis = uq.analysis.QMCAnalysis(sampler=mc_sampler, qoi_cols=['f'])
     results = analysis.analyse(df)
-
     return results
 
-def test_mc_analysis():
+
+def test_mc_analysis(results):
     # analytic Sobol indices
-    results = run_campaign()
     ref_sobols = exact_sobols_g_func()
     sobol_x1 = results['sobols_first']['f']['x1']
     sobol_x2 = results['sobols_first']['f']['x2']
@@ -62,9 +66,23 @@ def test_mc_analysis():
     assert sobol_x2 == pytest.approx(ref_sobols[1], abs=0.1)
 
 
-def test_sobol_bootstrap():
-    pass
-
+def test_sobol_bootstrap(data):
+    mc_sampler, df = data
+    analysis = uq.analysis.QMCAnalysis(sampler=mc_sampler, qoi_cols=['f'])
+    s1, s1_conf, st, st_conf = analysis.sobol_bootstrap(list(df['f']))
+    assert(s1['x1'] == pytest.approx(0.5569058947880715, 0.01))
+    assert(s1['x2'] == pytest.approx(0.20727553481694053, 0.01))
+    assert(st['x1'] == pytest.approx(0.8132793654841785, 0.01))
+    assert(st['x2'] == pytest.approx(0.3804962894947435, 0.01))
+    assert(s1_conf['x1']['low'][0] == pytest.approx(0.14387035, 0.01))
+    assert(s1_conf['x1']['high'][0] == pytest.approx(0.89428774, 0.01))
+    assert(s1_conf['x2']['low'][0] == pytest.approx(-0.11063341, 0.01))
+    assert(s1_conf['x2']['high'][0] == pytest.approx(0.46752829, 0.01))
+    assert(st_conf['x1']['low'][0] == pytest.approx(0.61368887, 0.01))
+    assert(st_conf['x1']['high'][0] == pytest.approx(1.01858671, 0.01))
+    assert(st_conf['x2']['low'][0] == pytest.approx(0.24361207, 0.01))
+    assert(st_conf['x2']['high'][0] == pytest.approx(0.49214117, 0.01))    
+    
 
 def test_separate_output_values():
     pass
