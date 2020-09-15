@@ -140,6 +140,10 @@ class QMCAnalysis(BaseAnalysisElement):
         parameters, and (1-alpha)*100 lower and upper confidence bounds.
 
         """
+        assert len(samples) > 0
+        assert alpha > 0.0
+        assert alpha < 1.0
+        assert n_samples > 0
         # convert to array
         samples = np.array(samples)
         # the number of parameter and the number of MC samples in n_mc * (n_params + 2)

@@ -61,3 +61,22 @@ def test_mc_analysis():
     assert sobol_x1 == pytest.approx(ref_sobols[0], abs=0.1)
     assert sobol_x2 == pytest.approx(ref_sobols[1], abs=0.1)
 
+
+def test_sobol_bootstrap():
+    pass
+
+
+def test_separate_output_values():
+    pass
+
+
+def test_first_order():
+    pass
+
+
+def test_total_order():
+    pass
+
+
+def test_get_samples():
+    pass
