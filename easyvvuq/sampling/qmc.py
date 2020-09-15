@@ -5,6 +5,7 @@ import numpy as np
 import chaospy as cp
 from SALib.sample import saltelli
 from .base import BaseSamplingElement, Vary
+import logging
 
 __author__ = "Jalal Lakhlili"
 __copyright__ = """
