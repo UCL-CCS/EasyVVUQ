@@ -48,8 +48,6 @@ def test_sampling():
 
 def test_resume():
     vary = {'a': cp.Uniform(-5, 0), 'b': cp.Uniform(2, 10)}
-    with pytest.raises(RuntimeError):
-        QMCSampler(vary, 100, 410)
     sampler = QMCSampler(vary, 100, 390)
     for _ in range(10):
         sample = next(sampler)
