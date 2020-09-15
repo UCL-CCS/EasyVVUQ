@@ -84,16 +84,13 @@ def test_sobol_bootstrap(data):
     assert(st_conf['x2']['high'][0] == pytest.approx(0.49214117, 0.01))    
     
 
-def test_separate_output_values():
-    pass
-
-
-def test_first_order():
-    pass
-
-
-def test_total_order():
-    pass
+def test_separate_output_values(data):
+    mc_sampler, df = data
+    analysis = uq.analysis.QMCAnalysis(sampler=mc_sampler, qoi_cols=['f'])
+    f_M2, f_M1, f_Ni = analysis._separate_output_values(df['f'], 2, 100)
+    assert(f_M2.shape == (100,))
+    assert(f_M1.shape == (100,))
+    assert(f_Ni.shape == (100, 2))
 
 
 def test_get_samples():
