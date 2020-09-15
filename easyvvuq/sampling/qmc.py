@@ -86,8 +86,8 @@ class QMCSampler(BaseSamplingElement, sampler_name="QMC_sampler"):
 
         self._n_samples = n_mc_samples * (self.n_params + 2)
 
-        # # Fast forward to specified count, if possible
-        # self.count = 0
+        # Fast forward to specified count, if possible
+        self.count = 0
         # if count >= self._n_samples:
         #     msg = (f"Attempt to start sampler fastforwarded to count {self.count}, "
         #            f"but sampler only has {self._n_samples} samples, therefore"
