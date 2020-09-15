@@ -59,18 +59,18 @@ def confidence_interval(dist, value, alpha, pivotal=False):
 
     if pivotal:
 
-        low = 2 * value - np.percentile(dist, 100 * (1 - alpha / 2.))
+        low = 2 * value - np.percentile(dist, 100 * (1 - alpha / 2.), axis=0)
         stat = value
-        high = 2 * value - np.percentile(dist, 100 * (alpha / 2.))
+        high = 2 * value - np.percentile(dist, 100 * (alpha / 2.), axis=0)
 
     else:
 
-        low = np.percentile(dist, 100 * (alpha / 2.))
+        low = np.percentile(dist, 100 * (alpha / 2.), axis=0)
         stat = np.percentile(dist, 50)
-        high = np.percentile(dist, 100 * (1 - alpha / 2.))
+        high = np.percentile(dist, 100 * (1 - alpha / 2.), axis=0)
 
-    if low > high:
-        (low, high) = (high, low)
+    # if low > high:
+    #     (low, high) = (high, low)
 
     return stat, low, high
 

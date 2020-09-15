@@ -25,7 +25,7 @@ plt.close('all')
 d = 5
 
 # parameters required by test function
-a = [0.0, 1.0, 2.0, 4.0, 8.0]
+a = [0.0, 0.5, 3.0, 9.0, 99.0]
 
 # author: Wouter Edeling
 __license__ = "LGPL"
