@@ -24,6 +24,7 @@ __license__ = "LGPL"
 
 HOME = os.path.abspath(os.path.dirname(__file__))
 
+
 @pytest.fixture
 def data():
     # fix random seed to make this test deterministic
@@ -38,7 +39,7 @@ def data():
     data = []
     for run_id, sample in enumerate(mc_sampler):
         data.append({
-            'run_id' : run_id,
+            'run_id': run_id,
             'x1': sample['x1'],
             'x2': sample['x2'],
             'f': sobol_g_func([sample['x1'], sample['x2']], d=2)
@@ -50,7 +51,7 @@ def data():
 
 @pytest.fixture
 def results(data):
-     # Post-processing analysis
+    # Post-processing analysis
     mc_sampler, df = data
     analysis = uq.analysis.QMCAnalysis(sampler=mc_sampler, qoi_cols=['f'])
     results = analysis.analyse(df)
@@ -81,8 +82,8 @@ def test_sobol_bootstrap(data):
     assert(st_conf['x1']['low'][0] == pytest.approx(0.61368887, 0.01))
     assert(st_conf['x1']['high'][0] == pytest.approx(1.01858671, 0.01))
     assert(st_conf['x2']['low'][0] == pytest.approx(0.24361207, 0.01))
-    assert(st_conf['x2']['high'][0] == pytest.approx(0.49214117, 0.01))    
-    
+    assert(st_conf['x2']['high'][0] == pytest.approx(0.49214117, 0.01))
+
 
 def test_separate_output_values(data):
     mc_sampler, df = data
@@ -95,4 +96,3 @@ def test_separate_output_values(data):
 
 def test_get_samples(data):
     pass
-

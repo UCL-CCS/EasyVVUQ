@@ -13,6 +13,7 @@ def sobol_g_func(theta, d=5, a=[0.0, 0.5, 3.0, 9.0, 99.0]):
         Y *= (np.abs(4.0 * theta[i] - 2.0) + a[i]) / (1.0 + a[i])
     return Y
 
+
 if __name__ == '__main__':
     # parameters required by test function
     a = [0.0, 0.5, 3.0, 9.0, 99.0]
