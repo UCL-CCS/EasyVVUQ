@@ -93,5 +93,9 @@ def test_separate_output_values(data):
     assert(f_Ni.shape == (100, 2))
 
 
-def test_get_samples():
-    pass
+def test_get_samples(data):
+    mc_sampler, df = data
+    analysis = uq.analysis.QMCAnalysis(sampler=mc_sampler, qoi_cols=['f'])
+    samples = analysis.get_samples(df)
+    import pdb; pdb.set_trace()
+
