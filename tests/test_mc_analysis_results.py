@@ -61,3 +61,4 @@ def results(data):
 
 def test_results(results):
     assert(isinstance(results, QMCAnalysisResults))
+    sobols_first = results.sobols_first('f', 'x1')

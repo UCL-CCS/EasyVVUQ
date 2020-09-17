@@ -26,25 +26,20 @@ class AnalysisResults:
         self.raw_data = raw_data
         self.samples = samples
 
-    def sobol_first(self):
+    def get_sobols_first(self, qoi, input_):
         """Returns first order Sobol indices.
 
+        Attribute
+        ---------
+
         Returns
         -------
         a pandas DataFrame
         """
         raise NotImplementedError
 
-    def sobol_second(self):
-        """Returns second order Sobol indices.
-        
-        Returns
-        -------
-        a pandas DataFrame
-        """
-        raise NotImplementedError
 
-    def sobol_total(self):
+    def get_sobols_total(self, qoi, input_):
         """Returns total order Sobol indices.
         
         Returns
