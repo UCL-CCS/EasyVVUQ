@@ -17,6 +17,7 @@ from .sampler_of_samplers import MultiSampler
 from .quasirandom import LHCSampler
 from .empty import EmptySampler
 from .replica_sampler import ReplicaSampler
+from .mc_sampler import MCSampler
 
 __copyright__ = """
 
