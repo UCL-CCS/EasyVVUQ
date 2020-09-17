@@ -59,5 +59,5 @@ def results(data):
     return results
 
 
-def test_results(data):
+def test_results(results):
     assert(isinstance(results, QMCAnalysisResults))
