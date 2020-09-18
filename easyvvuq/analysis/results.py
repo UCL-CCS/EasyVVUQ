@@ -132,8 +132,10 @@ class AnalysisResults:
         --------
         >>> AnalysisResults._keys_to_tuples({'a': 1, 'b': 2})
         {('a', 0): 1, ('b', 0): 2})
+
         >>> AnalysisResults._keys_to_tuples({('a', 0): 1, ('b', 0): 2})
         {('a', 0): 1, ('b', 0): 2})
+
         >>> AnalysisResults._keys_to_tuples({('a', 0): 1, 'b': 2})
         {('a', 0): 1, ('b', 0): 2})
   
@@ -153,6 +155,14 @@ class AnalysisResults:
         Parameters
         ----------
         key: str or tuple
+
+        Examples
+        --------
+        >>> AnalysisResults._to_tuple('a')
+        ('a', 0)
+
+        >>> AnalysisResults._to_tuple(('a', 0))
+        ('a', 0)
 
         Returns
         -------
