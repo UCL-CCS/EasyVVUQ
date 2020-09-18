@@ -29,8 +29,14 @@ class AnalysisResults:
     def get_sobols_first(self, qoi, input_):
         """Returns first order Sobol indices.
 
-        Attribute
-        ---------
+        Parameters
+        ----------
+        qoi - str or tuple
+           Quantity of interest or if a tuple quantity of interest plus 
+        coordinate index (for cases where qoi is vector valued.
+
+        input_ - str
+           Input variable name.
 
         Returns
         -------

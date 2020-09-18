@@ -20,10 +20,12 @@ logger = logging.getLogger(__name__)
 
 class QMCAnalysisResults(AnalysisResults):
     def get_sobols_first(self, qoi, input_):
-        return self.raw_data['sobols_first'][qoi]
+        raw_dict = AnalysisResults._keys_to_tuples(self.raw_data['sobols_first'])
+        return raw_dict[qoi][input_]
 
     def get_sobols_total(self, qoi, input_):
-        return self.raw_data['sobols_total'][qoi]
+        raw_dict = AnalysisResults._keys_to_tuples(self.raw_data['sobols_total'])
+        return raw_dict[qoi][input_]
 
 
 class QMCAnalysis(BaseAnalysisElement):
@@ -100,7 +102,7 @@ class QMCAnalysis(BaseAnalysisElement):
             results['conf_sobols_first'][k] = conf_first
             results['conf_sobols_total'][k] = conf_total
 
-        return QMCAnalysisResults(raw_data=results, samples=data_frame)
+        return QMCAnalysisResults(raw_data, samples=data_frame)
 
     def get_samples(self, data_frame):
         """
