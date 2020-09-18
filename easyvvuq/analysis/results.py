@@ -134,4 +134,10 @@ class AnalysisResults:
         -------
         A dictionary with tuples as keys.
         """
-        return dictionary
+        new_dict = {}
+        for key in dictionary.keys():
+            if isinstance(key, tuple):
+                new_dict[key] = dictionary[key]
+            else:
+                new_dict[(key, 0)] = dictionary[key]
+        return new_dict
