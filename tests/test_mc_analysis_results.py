@@ -20,12 +20,6 @@ def exact_sobols_g_func(d=2, a=[0.0, 0.5, 3.0, 9.0, 99.0]):
     return V_i / V
 
 
-# author: Wouter Edeling
-__license__ = "LGPL"
-
-HOME = os.path.abspath(os.path.dirname(__file__))
-
-
 @pytest.fixture
 def data():
     # fix random seed to make this test deterministic
@@ -61,4 +55,13 @@ def results(data):
 
 def test_results(results):
     assert(isinstance(results, QMCAnalysisResults))
-    sobols_first = results.sobols_first('f', 'x1')
+    sobols_first_x1 = results.get_sobols_first('f', 'x1')
+    sobols_first_x2 = results.get_sobols_first('f', 'x2')
+    sobols_total_x1 = results.get_sobols_total('f', 'x1')
+    sobols_total_x2 = results.get_sobols_total('f', 'x2')
+    assert(isinstance(sobols_first_x1, np.ndarray))
+    assert(sobols_first_x1[0] == pytest.approx(0.55690589, 0.001))
+    assert(sobols_first_x2[0] == pytest.approx(0.20727553, 0.001))
+    assert(sobols_total_x1[0] == pytest.approx(0.81327937, 0.001))
+    assert(sobols_total_x2[0] == pytest.approx(0.38049629, 0.001))
+    
