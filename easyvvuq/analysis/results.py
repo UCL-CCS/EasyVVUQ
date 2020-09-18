@@ -120,7 +120,7 @@ class AnalysisResults:
         return results
 
     @staticmethod
-    def _keys_to_tuples(self, dictionary):
+    def _keys_to_tuples(dictionary):
         """Convert the keys in the dictionary to tuples.
 
         Parameters
