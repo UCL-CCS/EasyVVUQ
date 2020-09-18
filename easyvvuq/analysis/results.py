@@ -127,8 +127,14 @@ class AnalysisResults:
         ----------
         A dictionary with either strings or tuples as keys.
 
-        Example
-        -------
+        Examples
+        --------
+        >>> AnalysisResults._keys_to_tuples({'a': 1, 'b': 2})
+        {('a', 0): 1, ('b', 0): 2})
+        >>> AnalysisResults._keys_to_tuples({('a', 0): 1, ('b', 0): 2})
+        {('a', 0): 1, ('b', 0): 2})
+        >>> AnalysisResults._keys_to_tuples({('a', 0): 1, 'b': 2})
+        {('a', 0): 1, ('b', 0): 2})
   
         Returns
         -------
