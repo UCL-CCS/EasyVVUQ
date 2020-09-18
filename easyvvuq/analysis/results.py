@@ -48,6 +48,43 @@ class AnalysisResults:
         """
         raise NotImplementedError
 
+    def get_sobols_first_conf(self, qoi, input_):
+        """Returns confidence intervals for first order Sobol indices.
+
+        Attributes
+        ----------
+        qoi : str
+            Name of the qoi for which the first order sensitivity index 
+        confidence interval is requested.
+        input_ : str
+            Name of the input for which the first order sensitivy index
+        confidence interval is requested.
+
+        Returns
+        -------
+        a pandas DataFrame
+        """
+        raise NotImplementedError
+
+
+    def get_sobols_total_conf(self, qoi, input_):
+        """Returns confidence intervals for total order Sobol indices.
+
+        Attributes
+        ----------
+        qoi : str
+            Name of the qoi for which the first order sensitivity index 
+        confidence interval is requested.
+        input_ : str
+            Name of the input for which the first order sensitivy index
+        confidence interval is requested.
+
+        Returns
+        -------
+        a pandas DataFrame
+        """
+        raise NotImplementedError        
+
     def surrogate(self):
         """Returns the surrogate model as a function from parameter dictionary 
         to pandas DataFrame. This only needs to be implemented if the analysis
@@ -81,3 +118,20 @@ class AnalysisResults:
             else:
                 results = self.samples.describe()
         return results
+
+    @staticmethod
+    def _keys_to_tuples(self, dictionary):
+        """Convert the keys in the dictionary to tuples.
+
+        Parameters
+        ----------
+        A dictionary with either strings or tuples as keys.
+
+        Example
+        -------
+  
+        Returns
+        -------
+        A dictionary with tuples as keys.
+        """
+        return dictionary
