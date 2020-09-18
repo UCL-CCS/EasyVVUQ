@@ -125,7 +125,8 @@ class AnalysisResults:
 
         Parameters
         ----------
-        A dictionary with either strings or tuples as keys.
+        dictionary : dict
+            A dictionary with either strings or tuples as keys.
 
         Examples
         --------
@@ -142,8 +143,24 @@ class AnalysisResults:
         """
         new_dict = {}
         for key in dictionary.keys():
-            if isinstance(key, tuple):
-                new_dict[key] = dictionary[key]
-            else:
-                new_dict[(key, 0)] = dictionary[key]
+            new_dict[AnalysisResults._to_tuple(key)] = dictionary[key]
         return new_dict
+
+    @staticmethod
+    def _to_tuple(key):
+        """Convert key to tuple if it is string, otherwise leave as is.
+
+        Parameters
+        ----------
+        key: str or tuple
+
+        Returns
+        -------
+        Tuple if key is string, key if key is tuple.
+        """
+        if isinstance(key, tuple):
+            return key
+        elif isinstance(key, str):
+            return (key, 0)
+        else:
+            raise RuntimeError("this method expects either a string or tuple")
