@@ -64,4 +64,18 @@ def test_results(results):
     assert(sobols_first_x2[0] == pytest.approx(0.20727553, 0.001))
     assert(sobols_total_x1[0] == pytest.approx(0.81327937, 0.001))
     assert(sobols_total_x2[0] == pytest.approx(0.38049629, 0.001))
-    
+
+
+def test_results_conf(results):
+    sobols_first_x1_conf = results.get_sobols_first_conf('f', 'x1')
+    assert(sobols_first_x1_conf['low'][0] == pytest.approx(0.14387, 0.001))
+    assert(sobols_first_x1_conf['high'][0] == pytest.approx(0.894288, 0.001))
+    sobols_first_x2_conf = results.get_sobols_first_conf('f', 'x2')
+    assert(sobols_first_x2_conf['low'][0] == pytest.approx(-0.110633, 0.001))
+    assert(sobols_first_x2_conf['high'][0] == pytest.approx(0.467528, 0.001))
+    sobols_total_x1_conf = results.get_sobols_total_conf('f', 'x1')
+    assert(sobols_total_x1_conf['low'][0] == pytest.approx(0.613689, 0.001))
+    assert(sobols_total_x1_conf['high'][0] == pytest.approx(1.018587, 0.001))
+    sobols_total_x2_conf = results.get_sobols_total_conf('f', 'x2')
+    assert(sobols_total_x2_conf['low'][0] == pytest.approx(0.243612, 0.001))
+    assert(sobols_total_x2_conf['high'][0] == pytest.approx(0.492141, 0.001))

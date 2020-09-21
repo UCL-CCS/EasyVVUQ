@@ -11,6 +11,7 @@ from easyvvuq.sampling import QMCSampler
 from .results import AnalysisResults
 from easyvvuq.sampling import MCSampler
 from .ensemble_boot import confidence_interval
+import pandas as pd
 
 __author__ = 'Jalal Lakhlili'
 __license__ = "LGPL"
@@ -26,6 +27,14 @@ class QMCAnalysisResults(AnalysisResults):
     def get_sobols_total(self, qoi, input_):
         raw_dict = AnalysisResults._keys_to_tuples(self.raw_data['sobols_total'])
         return raw_dict[AnalysisResults._to_tuple(qoi)][input_]
+
+    def get_sobols_first_conf(self, qoi, input_):
+        raw_dict = AnalysisResults._keys_to_tuples(self.raw_data['conf_sobols_first'])
+        return pd.DataFrame(raw_dict[AnalysisResults._to_tuple(qoi)][input_])
+
+    def get_sobols_total_conf(self, qoi, input_):
+        raw_dict = AnalysisResults._keys_to_tuples(self.raw_data['conf_sobols_total'])
+        return pd.DataFrame(raw_dict[AnalysisResults._to_tuple(qoi)][input_])
 
 
 class QMCAnalysis(BaseAnalysisElement):

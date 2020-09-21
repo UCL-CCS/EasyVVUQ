@@ -72,7 +72,6 @@ class AnalysisResults:
         """
         raise NotImplementedError
 
-
     def get_sobols_total_conf(self, qoi, input_):
         """Returns confidence intervals for total order Sobol indices.
 
