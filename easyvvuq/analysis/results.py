@@ -11,6 +11,8 @@ Examples
 >>> results.describe()
 """
 
+import pandas as pd
+
 class AnalysisResults:
     """Contains the analysis results.
 
@@ -96,7 +98,7 @@ class AnalysisResults:
         df = {}
         for qoi in self.qois:
             qoi = AnalysisResults._to_tuple(qoi)
-            df[qoi] = [(AnalysisResults._to_tuple(input_), self.get_sobols_first(qoi, AnalysisResults._to_tuple(input_))) for input_ in self.inputs]
+            df[qoi] = dict([(AnalysisResults._to_tuple(input_), self.get_sobols_first(qoi, input_)[0]) for input_ in self.inputs])
         return pd.DataFrame(df)
 
     def sobols_total(self):

@@ -22,19 +22,21 @@ logger = logging.getLogger(__name__)
 class QMCAnalysisResults(AnalysisResults):
     def get_sobols_first(self, qoi, input_):
         raw_dict = AnalysisResults._keys_to_tuples(self.raw_data['sobols_first'])
-        return raw_dict[AnalysisResults._to_tuple(qoi)][input_]
+        return raw_dict[AnalysisResults._to_tuple(qoi)][input_][0]
 
     def get_sobols_total(self, qoi, input_):
         raw_dict = AnalysisResults._keys_to_tuples(self.raw_data['sobols_total'])
-        return raw_dict[AnalysisResults._to_tuple(qoi)][input_]
+        return raw_dict[AnalysisResults._to_tuple(qoi)][input_][0]
 
     def get_sobols_first_conf(self, qoi, input_):
         raw_dict = AnalysisResults._keys_to_tuples(self.raw_data['conf_sobols_first'])
-        return pd.DataFrame(raw_dict[AnalysisResults._to_tuple(qoi)][input_])
+        return [raw_dict[AnalysisResults._to_tuple(qoi)][input_]['low'],
+                raw_dict[AnalysisResults._to_tuple(qoi)][input_]['high']]
 
     def get_sobols_total_conf(self, qoi, input_):
         raw_dict = AnalysisResults._keys_to_tuples(self.raw_data['conf_sobols_total'])
-        return pd.DataFrame(raw_dict[AnalysisResults._to_tuple(qoi)][input_])
+        return [raw_dict[AnalysisResults._to_tuple(qoi)][input_]['low'],
+                raw_dict[AnalysisResults._to_tuple(qoi)][input_]['high']]
 
 
 class QMCAnalysis(BaseAnalysisElement):
@@ -111,7 +113,7 @@ class QMCAnalysis(BaseAnalysisElement):
             results['conf_sobols_first'][k] = conf_first
             results['conf_sobols_total'][k] = conf_total
 
-        return QMCAnalysisResults(raw_data=results, samples=data_frame, qois=self.qoi_cols, inputs_=list(self.vary.get_keys()))
+        return QMCAnalysisResults(raw_data=results, samples=data_frame, qois=self.qoi_cols, inputs=list(self.sampler.vary.get_keys()))
 
     def get_samples(self, data_frame):
         """
