@@ -22,9 +22,11 @@ class AnalysisResults:
     samples: pandas DataFrame
         collated samples
     """
-    def __init__(self, raw_data=None, samples=None):
+    def __init__(self, raw_data=None, samples=None, qois=None, inputs=None):
         self.raw_data = raw_data
         self.samples = samples
+        self.qois = qois
+        self.inputs = inputs
 
     def get_sobols_first(self, qoi, input_):
         """Returns first order Sobol indices.
@@ -88,7 +90,19 @@ class AnalysisResults:
         -------
         a pandas DataFrame
         """
-        raise NotImplementedError        
+        raise NotImplementedError
+
+    def sobols_first(self):
+        df = {}
+        for qoi in self.qois:
+            qoi = AnalysisResults._to_tuple(qoi)
+            df[qoi] = [(AnalysisResults._to_tuple(input_), self.get_sobols_first(qoi, AnalysisResults._to_tuple(input_))) for input_ in self.inputs]
+        return pd.DataFrame(df)
+
+    def sobols_total(self):
+        for qoi in self.qois:
+            for input_ in self.inputs:
+                pass
 
     def surrogate(self):
         """Returns the surrogate model as a function from parameter dictionary 
