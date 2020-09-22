@@ -98,8 +98,17 @@ class AnalysisResults:
         df = {}
         for qoi in self.qois:
             qoi = AnalysisResults._to_tuple(qoi)
-            df[qoi] = dict([(AnalysisResults._to_tuple(input_), self.get_sobols_first(qoi, input_)[0]) for input_ in self.inputs])
-        return pd.DataFrame(df)
+            rows = {}
+            for input_ in self.inputs:
+                key = AnalysisResults._to_tuple(input_)
+                key_1 = key + ('low',)
+                key_2 = key + ('est',)
+                key_3 = key + ('high',)
+                rows[key_1] = self.get_sobols_first_conf(qoi, input_)[0]
+                rows[key_2] = self.get_sobols_first(qoi, input_)
+                rows[key_3] = self.get_sobols_first_conf(qoi, input_)[1]
+            df[qoi] = rows
+        return pd.DataFrame(df).T
 
     def sobols_total(self):
         for qoi in self.qois:
