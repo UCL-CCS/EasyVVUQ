@@ -95,7 +95,24 @@ class AnalysisResults:
         raise NotImplementedError
 
     def sobols_first(self):
-        """Creates a pandas DataFrame with the first order sensitivity indices.
+        """Creates a pandas DataFrame with the first order sensitivity
+        indices.
+
+        The row indices are of the form (qoi, i) where qoi is the name
+        of the quantity of interest and i is the coordinate index
+        (will be zero for scalar qois).
+
+        The columns indices are of the form (input, i, {low, est,
+        high}) where input is the name of the input variable, i is the
+        coordinate provided it is a vector quantitty and the last
+        element of the 3-tuple is a string which specifies whether it
+        is the estimator value for the first order sensitivity index
+        or lower or higher 95% confidence interval values.
+
+        Returns
+        -------
+        a pandas DataFrame
+
         """
         df = {}
         for qoi in self.qois:
@@ -114,6 +131,21 @@ class AnalysisResults:
 
     def sobols_total(self):
         """Creates a pandas DataFrame with the total order sensitivity indices.
+
+        The row indices are of the form (qoi, i) where qoi is the name
+        of the quantity of interest and i is the coordinate index
+        (will be zero for scalar qois).
+
+        The columns indices are of the form (input, i, {low, est,
+        high}) where input is the name of the input variable, i is the
+        coordinate provided it is a vector quantitty and the last
+        element of the 3-tuple is a string which specifies whether it
+        is the estimator value for the first order sensitivity index
+        or lower or higher 95% confidence interval values.
+
+        Returns
+        -------
+        a pandas DataFrame
         """
         df = {}
         for qoi in self.qois:
