@@ -80,5 +80,6 @@ def test_results_conf(results):
     assert(sobols_total_x2_conf[1] == pytest.approx(0.492141, 0.001))
 
 def test_full_results(results):
-    #import pdb; pdb.set_trace()
-    pass
+    assert(results.sobols_first().shape == (1, 6))
+    assert(results.sobols_total().shape == (1, 6))
+    

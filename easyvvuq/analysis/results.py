@@ -95,6 +95,8 @@ class AnalysisResults:
         raise NotImplementedError
 
     def sobols_first(self):
+        """Creates a pandas DataFrame with the first order sensitivity indices.
+        """
         df = {}
         for qoi in self.qois:
             qoi = AnalysisResults._to_tuple(qoi)
@@ -111,10 +113,23 @@ class AnalysisResults:
         return pd.DataFrame(df).T
 
     def sobols_total(self):
+        """Creates a pandas DataFrame with the total order sensitivity indices.
+        """
+        df = {}
         for qoi in self.qois:
+            qoi = AnalysisResults._to_tuple(qoi)
+            rows = {}
             for input_ in self.inputs:
-                pass
-
+                key = AnalysisResults._to_tuple(input_)
+                key_1 = key + ('low',)
+                key_2 = key + ('est',)
+                key_3 = key + ('high',)
+                rows[key_1] = self.get_sobols_total_conf(qoi, input_)[0]
+                rows[key_2] = self.get_sobols_total(qoi, input_)
+                rows[key_3] = self.get_sobols_total_conf(qoi, input_)[1]
+            df[qoi] = rows
+        return pd.DataFrame(df).T        
+        
     def surrogate(self):
         """Returns the surrogate model as a function from parameter dictionary 
         to pandas DataFrame. This only needs to be implemented if the analysis
