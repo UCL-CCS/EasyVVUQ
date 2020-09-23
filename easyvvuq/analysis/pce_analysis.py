@@ -6,6 +6,7 @@ import pandas as pd
 from easyvvuq import OutputType
 from .base import BaseAnalysisElement
 from .results import AnalysisResults
+from .qmc_analysis import QMCAnalysisResults
 
 __author__ = 'Jalal Lakhlili'
 __license__ = "LGPL"
@@ -13,17 +14,9 @@ __license__ = "LGPL"
 logger = logging.getLogger(__name__)
 
 
-class PCEResults(AnalysisResults):
-    """Results class for PCEAnalysis.
-    """
-    def sobol_first(self):
-        pass
+class PCEResults(QMCAnalysisResults):
+    pass
 
-    def sobol_second(self):
-        pass
-
-    def sobol_total(self):
-        pass
 
 class PCEAnalysis(BaseAnalysisElement):
 
@@ -169,5 +162,4 @@ class PCEAnalysis(BaseAnalysisElement):
             # Output distributions
             results['output_distributions'][k] = cp.QoI_Dist(
                 fit, self.sampler.distribution)
-        return results
-        #return PCEResults(raw_data=(fit, self.sampler.distribution), samples=data_frame)
+        return PCEResults(raw_data=results, samples=data_frame)
