@@ -109,6 +109,14 @@ class AnalysisResults:
         is the estimator value for the first order sensitivity index
         or lower or higher 95% confidence interval values.
 
+        Examples
+        --------
+        >>> results.sobols_first()
+                   x1                           x2                    
+                    0                            0                    
+                  est      high      low       est      high       low
+        f 0  0.556906  0.894288  0.14387  0.207276  0.467528 -0.110633
+
         Returns
         -------
         a pandas DataFrame
@@ -143,6 +151,15 @@ class AnalysisResults:
         is the estimator value for the first order sensitivity index
         or lower or higher 95% confidence interval values.
 
+        Examples
+        --------
+        >>> results.sobols_total()
+                   x1                            x2                    
+                    0                             0                    
+                  est      high       low       est      high       low
+        f 0  0.813279  1.018587  0.613689  0.380496  0.492141  0.243612
+
+
         Returns
         -------
         a pandas DataFrame
@@ -176,12 +193,25 @@ class AnalysisResults:
         raise NotImplementedError
 
 
-    def moments(self, groupby=None, qoi_cols=[]):
-        """Returns descriprive statistics.
+    def describe(self, groupby=None, qoi_cols=[]):
+        """Returns descriptive statistics.
+
+        Examples
+        --------
+        >>> results.moments()
+                   run_id          x1          x2           f
+        count  400.000000  400.000000  400.000000  400.000000
+        mean   199.500000    0.466909    0.469184    1.018103
+        std    115.614301    0.290085    0.292512    0.775780
+        min      0.000000    0.005779    0.003853    0.017025
+        25%     99.750000    0.208518    0.201850    0.351034
+        50%    199.500000    0.471223    0.449555    0.882288
+        75%    299.250000    0.724372    0.686953    1.548116
+        max    399.000000    0.984971    0.998398    3.152954
 
         Returns
         -------
-        a pandas DataFrame with descriptive statistics (moments)
+        a pandas DataFrame with descriptive statistics
         """
         assert(not self.samples.empty)
         if groupby:
