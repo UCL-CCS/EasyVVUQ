@@ -71,9 +71,6 @@ html_theme_options = {
     "github_user": "UCL-CCS",
     "github_repo": "EasyVVUQ",
     "github_banner": True,
-    "logo": "circle-logo.svg",
-    "logo_name": True,
-    "logo_text_align": "center",
     "description": "Verification, validation and uncertainty quantification for HPC simulations"
 }
 
@@ -82,4 +79,4 @@ html_theme_options = {
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ['_static']
 
-html_logo = "../images/easyvvuq_logo.png"
+html_logo = "../images/circle-logo.png"
