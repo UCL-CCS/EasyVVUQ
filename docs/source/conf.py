@@ -56,11 +56,7 @@ exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 #
 html_favicon = '../images/favicon.ico'
 
-#html_theme = 'msmb_theme'   
-
-#import msmb_theme   
-
-#html_theme_path = [msmb_theme.get_html_theme_path()]
+html_theme = 'alabaster'   
 
 html_sidebars = {
     '**': [
