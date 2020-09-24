@@ -15,6 +15,5 @@ cloudpickle
 scikit-learn
 jinja2
 fsspec
-msmb_theme
 kubernetes
 certifi>=2020.06.20
