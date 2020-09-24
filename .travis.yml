@@ -2,7 +2,7 @@ language: python
 python:
   - "3.6"
 install:
-  - pip install -r requirements.txt
+  - pip install --use-feature=2020-resolver -r requirements.txt
   - python setup.py develop
   - python setup.py build_cannonsim
   - pip install pytest-cov
