@@ -14,7 +14,4 @@ dask_jobqueue
 cloudpickle
 scikit-learn
 jinja2
-fsspec
 kubernetes
-matplotlib
-certifi>=2020.06.20
