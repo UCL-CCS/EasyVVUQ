@@ -16,4 +16,5 @@ scikit-learn
 jinja2
 fsspec
 kubernetes
+matplotlib
 certifi
