@@ -6,7 +6,6 @@ SALib
 pytest
 pytest-pep8
 SQLAlchemy
-sqlalchemy-utils
 jsonpickle
 cerberus
 dask[complete]
