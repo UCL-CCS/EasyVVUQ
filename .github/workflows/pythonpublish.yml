@@ -52,6 +52,8 @@ jobs:
         sed -i 's/dask_jobqueue/dask-jobqueue/g' easyvvuq/meta.yaml
         sed -i '/^build:/a\
           noarch: python' easyvvuq/meta.yaml
+        sed -i '/^    - kubernetes/a\
+            - python-kubernetes' easyvvuq/meta.yaml
         yes | anaconda login --username ${{ secrets.CONDA_USERNAME }} --password ${{ secrets.CONDA_PASSWORD }}
         conda config --set anaconda_upload yes
         conda build easyvvuq
