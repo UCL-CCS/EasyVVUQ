@@ -14,7 +14,7 @@ __license__ = "LGPL"
 logger = logging.getLogger(__name__)
 
 
-class PCEResults(QMCAnalysisResults):
+class PCEAnalysisResults(QMCAnalysisResults):
     pass
 
 
@@ -162,4 +162,4 @@ class PCEAnalysis(BaseAnalysisElement):
             # Output distributions
             results['output_distributions'][k] = cp.QoI_Dist(
                 fit, self.sampler.distribution)
-        return PCEResults(raw_data=results, samples=data_frame)
+        return PCEAnalysisResults(raw_data=results, samples=data_frame)
