@@ -5,8 +5,19 @@ import chaospy as cp
 import pytest
 import logging
 import pandas as pd
+import json
 from tests.sc.sobol_model import sobol_g_func
 from easyvvuq.analysis.qmc_analysis import QMCAnalysisResults
+
+
+DESCRIBE_RESULTS = """{"run_id":{"count":400.0,"mean":199.5,"std":115.6143013068,\
+"min":0.0,"25%":99.75,"50%":199.5,"75%":299.25,"max":399.0},"x1":{"count":400.0,\
+"mean":0.4669087199,"std":0.2900847389,"min":0.0057789696,"25%":0.2085183865,\
+"50%":0.4712230161,"75%":0.7243719834,"max":0.9849714587},"x2":{"count":400.0,\
+"mean":0.4691844467,"std":0.2925121512,"min":0.0038532032,"25%":0.2018501193,\
+"50%":0.4495551186,"75%":0.6869525315,"max":0.9983981908},"f":{"count":400.0,\
+"mean":1.0181029471,"std":0.7757795887,"min":0.0170251,"25%":0.3510339027,\
+"50%":0.8822882238,"75%":1.5481160285,"max":3.1529538623}}"""
 
 
 def exact_sobols_g_func(d=2, a=[0.0, 0.5, 3.0, 9.0, 99.0]):
@@ -79,8 +90,11 @@ def test_results_conf(results):
     assert(sobols_total_x2_conf[0] == pytest.approx(0.243612, 0.001))
     assert(sobols_total_x2_conf[1] == pytest.approx(0.492141, 0.001))
 
+
 def test_full_results(results):
-    import pdb; pdb.set_trace()
     assert(results.sobols_first().shape == (1, 6))
     assert(results.sobols_total().shape == (1, 6))
-    
+
+
+def test_describe(results):
+    assert(json.loads(results.describe().to_json()) == json.loads(DESCRIBE_RESULTS))
