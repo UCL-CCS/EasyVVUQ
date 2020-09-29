@@ -55,14 +55,14 @@ def results(data):
 
 def test_results(results):
     assert(isinstance(results, PCEAnalysisResults))
-#     sobols_first_x1 = results.get_sobols_first('f', 'x1')
-#     sobols_first_x2 = results.get_sobols_first('f', 'x2')
-#     sobols_total_x1 = results.get_sobols_total('f', 'x1')
-#     sobols_total_x2 = results.get_sobols_total('f', 'x2')
-#     assert(sobols_first_x1 == pytest.approx(0.55690589, 0.001))
-#     assert(sobols_first_x2 == pytest.approx(0.20727553, 0.001))
-#     assert(sobols_total_x1 == pytest.approx(0.81327937, 0.001))
-#     assert(sobols_total_x2 == pytest.approx(0.38049629, 0.001))
+    sobols_first_x1 = results.get_sobols_first('f', 'x1')
+    sobols_first_x2 = results.get_sobols_first('f', 'x2')
+    sobols_total_x1 = results.get_sobols_total('f', 'x1')
+    sobols_total_x2 = results.get_sobols_total('f', 'x2')
+    assert(sobols_first_x1 == pytest.approx(0.62644867, 0.001))
+    assert(sobols_first_x2 == pytest.approx(0.26789576, 0.001))
+    assert(sobols_total_x1 == pytest.approx(0.73210424, 0.001))
+    assert(sobols_total_x2 == pytest.approx(0.37355133, 0.001))
 
 
 # def test_results_conf(results):
