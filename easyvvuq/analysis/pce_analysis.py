@@ -15,7 +15,19 @@ logger = logging.getLogger(__name__)
 
 
 class PCEAnalysisResults(QMCAnalysisResults):
-    pass
+    def get_sobols_first(self, qoi, input_):
+        raw_dict = AnalysisResults._keys_to_tuples(self.raw_data['sobols_first'])
+        return raw_dict[AnalysisResults._to_tuple(qoi)][input_][0]
+
+    def get_sobols_total(self, qoi, input_):
+        raw_dict = AnalysisResults._keys_to_tuples(self.raw_data['sobols_total'])
+        return raw_dict[AnalysisResults._to_tuple(qoi)][input_][0]
+
+    def get_sobols_first_conf(self, qoi, input_):
+        return [float('nan'), float('nan')]
+
+    def get_sobols_total_conf(self, qoi, input_):
+        return [float('nan'), float('nan')]
 
 
 class PCEAnalysis(BaseAnalysisElement):
@@ -162,4 +174,5 @@ class PCEAnalysis(BaseAnalysisElement):
             # Output distributions
             results['output_distributions'][k] = cp.QoI_Dist(
                 fit, self.sampler.distribution)
-        return PCEAnalysisResults(raw_data=results, samples=data_frame)
+        return PCEAnalysisResults(raw_data=results, samples=data_frame,
+                                  qois=self.qoi_cols, inputs=list(self.sampler.vary.get_keys()))

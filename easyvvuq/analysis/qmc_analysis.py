@@ -113,7 +113,8 @@ class QMCAnalysis(BaseAnalysisElement):
             results['conf_sobols_first'][k] = conf_first
             results['conf_sobols_total'][k] = conf_total
 
-        return QMCAnalysisResults(raw_data=results, samples=data_frame, qois=self.qoi_cols, inputs=list(self.sampler.vary.get_keys()))
+        return QMCAnalysisResults(raw_data=results, samples=data_frame,
+                                  qois=self.qoi_cols, inputs=list(self.sampler.vary.get_keys()))
 
     def get_samples(self, data_frame):
         """
