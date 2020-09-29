@@ -193,7 +193,7 @@ class AnalysisResults:
         raise NotImplementedError
 
 
-    def describe(self, groupby=None, qoi_cols=[]):
+    def describe(self, groupby=None, qoi_cols=[], percentiles=[0.1, 0.5, 0.9]):
         """Returns descriptive statistics.
 
         Examples
@@ -216,7 +216,7 @@ class AnalysisResults:
         assert(not self.samples.empty)
         if groupby:
             grouped_data = self.samples.groupby(groupby)
-            results = grouped_data.describe()
+            results = grouped_data.describe(percentiles=percentiles)
             if qoi_cols:
                 results = results[qoi_cols]
         else:

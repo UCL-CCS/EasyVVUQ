@@ -84,4 +84,4 @@ def test_results_conf(results):
 def test_full_results(results):
     assert(results.sobols_first().shape == (1, 6))
     assert(results.sobols_total().shape == (1, 6))
-    
+
