@@ -13,6 +13,7 @@ Examples
 
 import pandas as pd
 
+
 class AnalysisResults:
     """Contains the analysis results.
 
@@ -24,6 +25,7 @@ class AnalysisResults:
     samples: pandas DataFrame
         collated samples
     """
+
     def __init__(self, raw_data=None, samples=None, qois=None, inputs=None):
         self.raw_data = raw_data
         self.samples = samples
@@ -36,7 +38,7 @@ class AnalysisResults:
         Parameters
         ----------
         qoi - str or tuple
-           Quantity of interest or if a tuple quantity of interest plus 
+           Quantity of interest or if a tuple quantity of interest plus
         coordinate index (for cases where qoi is vector valued.
 
         input_ - str
@@ -48,10 +50,9 @@ class AnalysisResults:
         """
         raise NotImplementedError
 
-
     def get_sobols_total(self, qoi, input_):
         """Returns total order Sobol indices.
-        
+
         Returns
         -------
         a pandas DataFrame
@@ -64,7 +65,7 @@ class AnalysisResults:
         Attributes
         ----------
         qoi : str
-            Name of the qoi for which the first order sensitivity index 
+            Name of the qoi for which the first order sensitivity index
         confidence interval is requested.
         input_ : str
             Name of the input for which the first order sensitivy index
@@ -82,7 +83,7 @@ class AnalysisResults:
         Attributes
         ----------
         qoi : str
-            Name of the qoi for which the first order sensitivity index 
+            Name of the qoi for which the first order sensitivity index
         confidence interval is requested.
         input_ : str
             Name of the input for which the first order sensitivy index
@@ -112,8 +113,8 @@ class AnalysisResults:
         Examples
         --------
         >>> results.sobols_first()
-                   x1                           x2                    
-                    0                            0                    
+                   x1                           x2
+                    0                            0
                   est      high      low       est      high       low
         f 0  0.556906  0.894288  0.14387  0.207276  0.467528 -0.110633
 
@@ -154,8 +155,8 @@ class AnalysisResults:
         Examples
         --------
         >>> results.sobols_total()
-                   x1                            x2                    
-                    0                             0                    
+                   x1                            x2
+                    0                             0
                   est      high       low       est      high       low
         f 0  0.813279  1.018587  0.613689  0.380496  0.492141  0.243612
 
@@ -177,10 +178,10 @@ class AnalysisResults:
                 rows[key_2] = self.get_sobols_total(qoi, input_)
                 rows[key_3] = self.get_sobols_total_conf(qoi, input_)[1]
             df[qoi] = rows
-        return pd.DataFrame(df).T        
-        
+        return pd.DataFrame(df).T
+
     def surrogate(self):
-        """Returns the surrogate model as a function from parameter dictionary 
+        """Returns the surrogate model as a function from parameter dictionary
         to pandas DataFrame. This only needs to be implemented if the analysis
         method in question provides surrogate models.
 
@@ -191,7 +192,6 @@ class AnalysisResults:
         a pandas DataFrame with the results (same output as decoder)
         """
         raise NotImplementedError
-
 
     def describe(self, groupby=None, qoi_cols=[], percentiles=[0.1, 0.5, 0.9]):
         """Returns descriptive statistics.
@@ -245,7 +245,7 @@ class AnalysisResults:
 
         >>> AnalysisResults._keys_to_tuples({('a', 0): 1, 'b': 2})
         {('a', 0): 1, ('b', 0): 2})
-  
+
         Returns
         -------
         A dictionary with tuples as keys.

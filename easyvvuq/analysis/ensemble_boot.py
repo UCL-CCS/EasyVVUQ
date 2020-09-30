@@ -202,6 +202,7 @@ def ensemble_bootstrap(data, groupby=[], qoi_cols=[],
 class ResultsBoot(AnalysisResults):
     """Bootstrap results class.
     """
+
     def to_pd(self):
         return self.raw_data
 
