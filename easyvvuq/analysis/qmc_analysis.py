@@ -167,7 +167,7 @@ class QMCAnalysis(BaseAnalysisElement):
             # our point estimate for the 1st and total order Sobol indices
             value_first = self._first_order(f_M2, f_M1, f_Ni[:, j])
             value_total = self._total_order(f_M2, f_M1, f_Ni[:, j])
-            #sobols computed from resampled data points
+            # sobols computed from resampled data points
             sobols_first = self._first_order(f_M2[r], f_M1[r], f_Ni[r, j])
             sobols_total = self._total_order(f_M2[r], f_M1[r], f_Ni[r, j])
 
