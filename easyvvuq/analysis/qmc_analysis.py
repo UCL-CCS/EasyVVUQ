@@ -5,6 +5,7 @@ https://en.wikipedia.org/wiki/Variance-based_sensitivity_analysis
 """
 import logging
 import numpy as np
+from scipy.stats import norm
 from easyvvuq import OutputType
 from .base import BaseAnalysisElement
 from easyvvuq.sampling import QMCSampler
@@ -157,33 +158,25 @@ class QMCAnalysis(BaseAnalysisElement):
         sobols_total_dict = {}
         conf_total_dict = {}
 
+        # code evaluations of input matrices M1, M2 and Ni, i = 1,...,n_params
+        # see reference above.
+        f_M2, f_M1, f_Ni = self._separate_output_values(samples, n_params, n_mc)
+        r = np.random.randint(n_mc, size=(n_mc, n_samples))
+
         for j, param_name in enumerate(self.sampler.vary.get_keys()):
-            # code evaluations of input matrices M1, M2 and Ni, i = 1,...,n_params
-            # see reference above.
-            f_M2, f_M1, f_Ni = self._separate_output_values(samples, n_params, n_mc)
             # our point estimate for the 1st and total order Sobol indices
             value_first = self._first_order(f_M2, f_M1, f_Ni[:, j])
             value_total = self._total_order(f_M2, f_M1, f_Ni[:, j])
-            # array for resampled estimates
-            sobols_first = np.zeros([n_samples, n_qoi])
-            sobols_total = np.zeros([n_samples, n_qoi])
-            for i in range(n_samples):
-                # resample, must be done on already seperated output due to
-                # the specific order in samples
-                idx = np.random.randint(0, n_mc - 1, n_mc)
-                f_M2_resample = f_M2[idx]
-                f_M1_resample = f_M1[idx]
-                f_Ni_resample = f_Ni[idx]
-                # recompute Sobol indices
-                sobols_first[i] = self._first_order(f_M2_resample, f_M1_resample,
-                                                    f_Ni_resample[:, j])
-                sobols_total[i] = self._total_order(f_M2_resample, f_M1_resample,
-                                                    f_Ni_resample[:, j])
-            # compute confidence intervals
+            #sobols computed from resampled data points
+            sobols_first = self._first_order(f_M2[r], f_M1[r], f_Ni[r, j])
+            sobols_total = self._total_order(f_M2[r], f_M1[r], f_Ni[r, j])
+
+            # compute confidence intervals based on percentiles
             _, low_first, high_first = confidence_interval(sobols_first, value_first,
                                                            alpha, pivotal=True)
             _, low_total, high_total = confidence_interval(sobols_total, value_total,
                                                            alpha, pivotal=True)
+
             # store results
             sobols_first_dict[param_name] = value_first
             conf_first_dict[param_name] = {'low': low_first, 'high': high_first}
