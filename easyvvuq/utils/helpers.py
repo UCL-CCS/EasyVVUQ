@@ -31,7 +31,7 @@ def multi_index_tuple_parser(lst):
     return result, contains_tuples
 
 
-def remove_end_of_file(filename, delimiter):
+def remove_start_of_file(filename, delimiter):
     """Overwrite a file leaving only the portion of it after the
     delimiter string.
     
@@ -48,10 +48,10 @@ def remove_end_of_file(filename, delimiter):
     remaining = []
     after_delimiter = False
     for line in lines:
-        if line.strip() == delimiter:
-            after_delimiter = True
         if after_delimiter:
             remaining.append(line)
+        if line.strip() == delimiter:
+            after_delimiter = True
     with open(filename, 'w') as fd:
         for line in remaining:
             fd.write(line)
