@@ -29,3 +29,29 @@ def multi_index_tuple_parser(lst):
             contains_tuples = False
         result.append(name)
     return result, contains_tuples
+
+
+def remove_end_of_file(filename, delimiter):
+    """Overwrite a file leaving only the portion of it after the
+    delimiter string.
+    
+    Parameters
+    ----------
+    filename : str
+       the name (and path) of the file to processs
+    
+    delimiter : str
+       the string after which the file is copied over
+    """
+    with open(filename, 'r') as fd:
+        lines = fd.readlines()
+    remaining = []
+    after_delimiter = False
+    for line in lines:
+        if line.strip() == delimiter:
+            after_delimiter = True
+        if after_delimiter:
+            remaining.append(line)
+    with open(filename, 'w') as fd:
+        for line in remaining:
+            fd.write(line)
