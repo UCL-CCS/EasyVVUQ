@@ -199,14 +199,6 @@ def ensemble_bootstrap(data, groupby=[], qoi_cols=[],
     return results
 
 
-class ResultsBoot(AnalysisResults):
-    """Bootstrap results class.
-    """
-
-    def to_pd(self):
-        return self.raw_data
-
-
 class EnsembleBoot(BaseAnalysisElement):
 
     def __init__(self, groupby=[], qoi_cols=[],
@@ -297,4 +289,4 @@ class EnsembleBoot(BaseAnalysisElement):
             pivotal=self.pivotal,
             stat_name=self.stat_name)
 
-        return ResultsBoot(results, data_frame)
+        return results
