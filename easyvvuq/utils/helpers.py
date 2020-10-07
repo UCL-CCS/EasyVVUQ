@@ -34,12 +34,12 @@ def multi_index_tuple_parser(lst):
 def remove_start_of_file(filename, delimiter):
     """Overwrite a file leaving only the portion of it after the
     delimiter string.
-    
+
     Parameters
     ----------
     filename : str
        the name (and path) of the file to processs
-    
+
     delimiter : str
        the string after which the file is copied over
     """

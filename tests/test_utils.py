@@ -39,4 +39,3 @@ def test_remove_start_of_file(tmp_path):
     remove_start_of_file(os.path.join(tmp_path, 'test.txt'), 'START')
     with open(os.path.join(tmp_path, 'test.txt'), 'r') as fd:
         assert(fd.read() == trimmed)
-    
