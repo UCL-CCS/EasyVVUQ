@@ -44,11 +44,9 @@ class SimpleCSV(BaseDecoder, decoder_name="csv"):
             raise RuntimeError(msg)
 
         if output_columns is None:
-            msg = (
-                f"output_columns must be specified for SimpleCSV. This should"
-                f"be the names of the output columns this decoder extracts"
-                f"from the target csv file."
-            )
+            msg = "output_columns must be specified for SimpleCSV. This should \
+                be the names of the output columns this decoder extracts \
+                from the target csv file."
             logging.error(msg)
             raise RuntimeError(msg)
 
