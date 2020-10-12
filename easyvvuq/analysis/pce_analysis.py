@@ -29,6 +29,18 @@ class PCEAnalysisResults(QMCAnalysisResults):
     def get_sobols_total_conf(self, qoi, input_):
         return [float('nan'), float('nan')]
 
+    def describe(self):
+        result = {}
+        for qoi in self.qoi_cols:
+            result[qoi] = {
+                'count': len(self.samples.axes[0]),
+                'mean': self.raw_data['statistical_moments'][qoi]['mean'],
+                'std': self.raw_data['statistical_moments'][qoi]['std'],
+                'var': self.raw_data['statistical_moments'][qoi]['var'],
+                '10%': self.raw_data['percentiles'][qoi]['p10'],
+                '90%': self.raw_data['percentiles'][qoi]['p90']
+            }
+
 
 class PCEAnalysis(BaseAnalysisElement):
 
