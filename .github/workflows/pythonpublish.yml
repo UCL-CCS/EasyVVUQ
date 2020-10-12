@@ -45,6 +45,7 @@ jobs:
         export PATH="$HOME/miniconda/bin:$PATH"
         conda install conda-build
         conda install anaconda-client
+        conda install numpy
         conda config --add channels conda-forge
         conda config --set channel_priority strict
         conda skeleton pypi easyvvuq

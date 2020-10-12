@@ -22,7 +22,7 @@ copyright = '2020, David W. Wright, Robin A. Richardson, Vytautas Jancauskas, Ja
 author = 'David W. Wright, Robin A. Richardson, Vytautas Jancauskas, Jalal Lakhlili'
 
 # The full version, including alpha/beta/rc tags
-release = '0.6'
+release = '0.7'
 
 
 # -- General configuration ---------------------------------------------------
@@ -56,11 +56,7 @@ exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 #
 html_favicon = '../images/favicon.ico'
 
-html_theme = 'msmb_theme'   
-
-import msmb_theme   
-
-html_theme_path = [msmb_theme.get_html_theme_path()]
+html_theme = 'alabaster'   
 
 html_sidebars = {
     '**': [
@@ -72,13 +68,10 @@ html_sidebars = {
 }
 
 html_theme_options = {
-#    "github_user": "UCL-CCS",
-#    "github_repo": "EasyVVUQ",
-#    "github_banner": True,
-#    "logo": "circle-logo.svg",
-#    "logo_name": True,
-#    "logo_text_align": "center",
-#    "description": "Verification, validation and uncertainty quantification for HPC simulations"
+    "github_user": "UCL-CCS",
+    "github_repo": "EasyVVUQ",
+    "github_banner": True,
+    "description": "Verification, validation and uncertainty quantification for HPC simulations"
 }
 
 # Add any paths that contain custom static files (such as style sheets) here,
@@ -86,4 +79,4 @@ html_theme_options = {
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ['_static']
 
-html_logo = "../images/easyvvuq_logo.png"
+html_logo = "../images/circle-logo.png"
