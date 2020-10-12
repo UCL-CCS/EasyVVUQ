@@ -31,7 +31,7 @@ class PCEAnalysisResults(QMCAnalysisResults):
 
     def describe(self):
         result = {}
-        for qoi in self.qoi_cols:
+        for qoi in self.qois:
             result[qoi] = {
                 'count': len(self.samples.axes[0]),
                 'mean': self.raw_data['statistical_moments'][qoi]['mean'],
