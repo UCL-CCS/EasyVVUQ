@@ -40,6 +40,7 @@ class PCEAnalysisResults(QMCAnalysisResults):
                 '10%': self.raw_data['percentiles'][qoi]['p10'],
                 '90%': self.raw_data['percentiles'][qoi]['p90']
             }
+        return pd.DataFrame(results)
 
 
 class PCEAnalysis(BaseAnalysisElement):
