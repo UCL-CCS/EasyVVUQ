@@ -36,10 +36,10 @@ __license__ = "LGPL"
 
 class SCAnalysisResults(AnalysisResults):
     def get_sobols_first(self, qoi, input_):
-        return 0.0
+        return self.raw_data['sobols_first'][qoi][input_][0]
 
     def get_sobols_total(self, qoi, input_):
-        return 0.0
+        return float('nan')
 
     def get_sobols_first_conf(self, qoi, input_):
         return [float('nan'), float('nan')]
@@ -230,7 +230,8 @@ class SCAnalysis(BaseAnalysisElement):
                     results['sobols_first'][qoi_k][param_name] = \
                         results['sobols'][qoi_k][(idx,)]
 
-            return SCAnalysisResults(raw_data=results)
+            return SCAnalysisResults(raw_data=results, samples=data_frame,
+                                     qois=qoi_cols, inputs=list(self.sampler.vary.get_keys()))
 
     def create_map(self, L):
         """
