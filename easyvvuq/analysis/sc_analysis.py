@@ -5,8 +5,10 @@ import pickle
 import copy
 from easyvvuq import OutputType
 from .base import BaseAnalysisElement
+from .results import AnalysisResults
 import logging
 from scipy.special import comb
+import pandas as pd
 
 __author__ = "Wouter Edeling"
 __copyright__ = """
@@ -30,6 +32,23 @@ __copyright__ = """
 
 """
 __license__ = "LGPL"
+
+
+class SCAnalysisResults(AnalysisResults):
+    def get_sobols_first(self, qoi, input_):
+        return 0.0
+
+    def get_sobols_total(self, qoi, input_):
+        return 0.0
+
+    def get_sobols_first_conf(self, qoi, input_):
+        return [float('nan'), float('nan')]
+
+    def get_sobols_total_conf(self, qoi, input_):
+        return [float('nan'), float('nan')]
+
+    def describe(self):
+        return pd.DataFrame({})
 
 
 class SCAnalysis(BaseAnalysisElement):
@@ -211,7 +230,7 @@ class SCAnalysis(BaseAnalysisElement):
                     results['sobols_first'][qoi_k][param_name] = \
                         results['sobols'][qoi_k][(idx,)]
 
-            return results
+            return SCAnalysisResults(raw_data=results)
 
     def create_map(self, L):
         """
