@@ -95,4 +95,3 @@ def test_describe(results):
               'std': 0.807805287287411,
               'var': 0.6525493821694965}
     })
-
