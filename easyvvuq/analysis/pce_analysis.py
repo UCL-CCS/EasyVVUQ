@@ -17,32 +17,32 @@ logger = logging.getLogger(__name__)
 class PCEAnalysisResults(QMCAnalysisResults):
     def get_sobols_first(self, qoi, input_):
         """Returns the first order sobol index for a given qoi wrt input variable.
-        
+
         Parameters
         ----------
         qoi : str
            Quantity of interest
         input_ : str
            Input variable
-        
+
         Returns
         -------
         float
             First order sobol index.
-        """        
+        """
         raw_dict = AnalysisResults._keys_to_tuples(self.raw_data['sobols_first'])
         return raw_dict[AnalysisResults._to_tuple(qoi)][input_][0]
 
     def get_sobols_total(self, qoi, input_):
         """Returns the total order sobol index for a given qoi wrt input variable.
-        
+
         Parameters
         ----------
         qoi : str
            Quantity of interest
         input_ : str
            Input variable
-        
+
         Returns
         -------
         float
@@ -57,7 +57,7 @@ class PCEAnalysisResults(QMCAnalysisResults):
         Returns
         -------
         list of floats
-            Will return a list with two nans, since this is 
+            Will return a list with two nans, since this is
         pandas way for handling missing values it seems.
         """
         return [float('nan'), float('nan')]
@@ -68,7 +68,7 @@ class PCEAnalysisResults(QMCAnalysisResults):
         Returns
         -------
         list of floats
-            Will return a list with two nans, since this is 
+            Will return a list with two nans, since this is
         pandas way for handling missing values it seems.
         """
         return [float('nan'), float('nan')]
