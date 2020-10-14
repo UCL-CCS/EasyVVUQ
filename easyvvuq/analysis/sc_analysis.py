@@ -48,7 +48,14 @@ class SCAnalysisResults(AnalysisResults):
         return [float('nan'), float('nan')]
 
     def describe(self):
-        return pd.DataFrame({})
+        result = {}
+        for qoi in self.qois:
+            result[qoi] = {
+                'mean': [self.raw_data['statistical_moments'][qoi]['mean']],
+                'var' : [self.raw_data['statistical_moments'][qoi]['var']],
+                'std' : [self.raw_data['statistical_moments'][qoi]['std']]
+            }
+        return pd.DataFrame(result)
 
 
 class SCAnalysis(BaseAnalysisElement):
