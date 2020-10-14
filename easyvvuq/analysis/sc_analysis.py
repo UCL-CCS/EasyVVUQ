@@ -36,7 +36,8 @@ __license__ = "LGPL"
 
 class SCAnalysisResults(AnalysisResults):
     def get_sobols_first(self, qoi, input_):
-        return self.raw_data['sobols_first'][qoi][input_][0]
+        raw_dict = AnalysisResults._keys_to_tuples(self.raw_data['sobols_first'])
+        return raw_dict[AnalysisResults._to_tuple(qoi)][input_][0]
 
     def get_sobols_total(self, qoi, input_):
         return float('nan')
@@ -51,9 +52,9 @@ class SCAnalysisResults(AnalysisResults):
         result = {}
         for qoi in self.qois:
             result[qoi] = {
-                'mean': [self.raw_data['statistical_moments'][qoi]['mean']],
-                'var' : [self.raw_data['statistical_moments'][qoi]['var']],
-                'std' : [self.raw_data['statistical_moments'][qoi]['std']]
+                'mean': self.raw_data['statistical_moments'][qoi]['mean'][0],
+                'var' : self.raw_data['statistical_moments'][qoi]['var'][0],
+                'std' : self.raw_data['statistical_moments'][qoi]['std'][0]
             }
         return pd.DataFrame(result)
 
