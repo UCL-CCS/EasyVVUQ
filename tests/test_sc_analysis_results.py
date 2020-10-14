@@ -94,4 +94,3 @@ def test_describe(results):
             'var': 0.6698796495365424
         }
     })
-
