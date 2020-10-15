@@ -128,7 +128,7 @@ my_campaign.apply_analysis(analysis)
 
 results = my_campaign.get_last_analysis()
 
-print(results['sobols_first'])
+print(results.sobols_first())
 
 print_exact_sobols()
 
