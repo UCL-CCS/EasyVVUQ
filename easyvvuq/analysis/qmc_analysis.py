@@ -11,7 +11,6 @@ from easyvvuq.sampling import QMCSampler
 from .results import AnalysisResults
 from easyvvuq.sampling import MCSampler
 from .ensemble_boot import confidence_interval
-import pandas as pd
 
 __author__ = 'Jalal Lakhlili'
 __license__ = "LGPL"

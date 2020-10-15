@@ -4,7 +4,6 @@ import numpy as np
 import pandas as pd
 from easyvvuq import OutputType
 from .base import BaseAnalysisElement
-from .results import AnalysisResults
 
 __copyright__ = """
 
