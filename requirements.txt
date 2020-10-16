@@ -1,6 +1,7 @@
 numpy
 pandas
 scipy
+wheel
 chaospy
 SALib
 pytest
