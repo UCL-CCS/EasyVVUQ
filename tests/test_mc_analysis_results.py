@@ -66,10 +66,10 @@ def results(data):
 
 def test_results(results):
     assert(isinstance(results, QMCAnalysisResults))
-    sobols_first_x1 = results.get_sobols_first('f', 'x1')
-    sobols_first_x2 = results.get_sobols_first('f', 'x2')
-    sobols_total_x1 = results.get_sobols_total('f', 'x1')
-    sobols_total_x2 = results.get_sobols_total('f', 'x2')
+    sobols_first_x1 = results._get_sobols_first('f', 'x1')
+    sobols_first_x2 = results._get_sobols_first('f', 'x2')
+    sobols_total_x1 = results._get_sobols_total('f', 'x1')
+    sobols_total_x2 = results._get_sobols_total('f', 'x2')
     assert(sobols_first_x1 == pytest.approx(0.55690589, 0.001))
     assert(sobols_first_x2 == pytest.approx(0.20727553, 0.001))
     assert(sobols_total_x1 == pytest.approx(0.81327937, 0.001))
@@ -77,16 +77,16 @@ def test_results(results):
 
 
 def test_results_conf(results):
-    sobols_first_x1_conf = results.get_sobols_first_conf('f', 'x1')
+    sobols_first_x1_conf = results._get_sobols_first_conf('f', 'x1')
     assert(sobols_first_x1_conf[0] == pytest.approx(0.14387, 0.001))
     assert(sobols_first_x1_conf[1] == pytest.approx(0.894288, 0.001))
-    sobols_first_x2_conf = results.get_sobols_first_conf('f', 'x2')
+    sobols_first_x2_conf = results._get_sobols_first_conf('f', 'x2')
     assert(sobols_first_x2_conf[0] == pytest.approx(-0.110633, 0.001))
     assert(sobols_first_x2_conf[1] == pytest.approx(0.467528, 0.001))
-    sobols_total_x1_conf = results.get_sobols_total_conf('f', 'x1')
+    sobols_total_x1_conf = results._get_sobols_total_conf('f', 'x1')
     assert(sobols_total_x1_conf[0] == pytest.approx(0.613689, 0.001))
     assert(sobols_total_x1_conf[1] == pytest.approx(1.018587, 0.001))
-    sobols_total_x2_conf = results.get_sobols_total_conf('f', 'x2')
+    sobols_total_x2_conf = results._get_sobols_total_conf('f', 'x2')
     assert(sobols_total_x2_conf[0] == pytest.approx(0.243612, 0.001))
     assert(sobols_total_x2_conf[1] == pytest.approx(0.492141, 0.001))
 

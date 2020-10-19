@@ -56,10 +56,10 @@ def results(data):
 
 def test_results(results):
     assert(isinstance(results, SCAnalysisResults))
-    sobols_first_x1 = results.get_sobols_first('f', 'x1')
-    sobols_first_x2 = results.get_sobols_first('f', 'x2')
-    sobols_total_x1 = results.get_sobols_total('f', 'x1')
-    sobols_total_x2 = results.get_sobols_total('f', 'x2')
+    sobols_first_x1 = results._get_sobols_first('f', 'x1')
+    sobols_first_x2 = results._get_sobols_first('f', 'x2')
+    sobols_total_x1 = results._get_sobols_total('f', 'x1')
+    sobols_total_x2 = results._get_sobols_total('f', 'x2')
     assert(sobols_first_x1 == pytest.approx(0.610242, 0.001))
     assert(sobols_first_x2 == pytest.approx(0.26096511, 0.001))
     assert(math.isnan(sobols_total_x1))
@@ -67,16 +67,16 @@ def test_results(results):
 
 
 def test_results_conf(results):
-    sobols_first_x1_conf = results.get_sobols_first_conf('f', 'x1')
+    sobols_first_x1_conf = results._get_sobols_first_conf('f', 'x1')
     assert(math.isnan(sobols_first_x1_conf[0]))
     assert(math.isnan(sobols_first_x1_conf[1]))
-    sobols_first_x2_conf = results.get_sobols_first_conf('f', 'x2')
+    sobols_first_x2_conf = results._get_sobols_first_conf('f', 'x2')
     assert(math.isnan(sobols_first_x2_conf[0]))
     assert(math.isnan(sobols_first_x2_conf[1]))
-    sobols_total_x1_conf = results.get_sobols_total_conf('f', 'x1')
+    sobols_total_x1_conf = results._get_sobols_total_conf('f', 'x1')
     assert(math.isnan(sobols_total_x1_conf[0]))
     assert(math.isnan(sobols_total_x1_conf[1]))
-    sobols_total_x2_conf = results.get_sobols_total_conf('f', 'x2')
+    sobols_total_x2_conf = results._get_sobols_total_conf('f', 'x2')
     assert(math.isnan(sobols_total_x2_conf[0]))
     assert(math.isnan(sobols_total_x2_conf[1]))
 
