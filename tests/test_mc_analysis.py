@@ -61,8 +61,8 @@ def results(data):
 def test_mc_analysis(results):
     # analytic Sobol indices
     ref_sobols = exact_sobols_g_func()
-    sobol_x1 = results.get_sobols_first('f', 'x1')
-    sobol_x2 = results.get_sobols_first('f', 'x2')
+    sobol_x1 = results._get_sobols_first('f', 'x1')
+    sobol_x2 = results._get_sobols_first('f', 'x2')
     assert sobol_x1 == pytest.approx(ref_sobols[0], abs=0.1)
     assert sobol_x2 == pytest.approx(ref_sobols[1], abs=0.1)
 
