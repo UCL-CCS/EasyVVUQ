@@ -15,7 +15,7 @@ logger = logging.getLogger(__name__)
 
 
 class PCEAnalysisResults(QMCAnalysisResults):
-    def get_sobols_first(self, qoi, input_):
+    def _get_sobols_first(self, qoi, input_):
         """Returns the first order sobol index for a given qoi wrt input variable.
 
         Parameters
@@ -33,7 +33,7 @@ class PCEAnalysisResults(QMCAnalysisResults):
         raw_dict = AnalysisResults._keys_to_tuples(self.raw_data['sobols_first'])
         return raw_dict[AnalysisResults._to_tuple(qoi)][input_][0]
 
-    def get_sobols_total(self, qoi, input_):
+    def _get_sobols_total(self, qoi, input_):
         """Returns the total order sobol index for a given qoi wrt input variable.
 
         Parameters
@@ -51,7 +51,7 @@ class PCEAnalysisResults(QMCAnalysisResults):
         raw_dict = AnalysisResults._keys_to_tuples(self.raw_data['sobols_total'])
         return raw_dict[AnalysisResults._to_tuple(qoi)][input_][0]
 
-    def get_sobols_first_conf(self, qoi, input_):
+    def _get_sobols_first_conf(self, qoi, input_):
         """Not implemented for this method.
 
         Returns
@@ -62,7 +62,7 @@ class PCEAnalysisResults(QMCAnalysisResults):
         """
         return [float('nan'), float('nan')]
 
-    def get_sobols_total_conf(self, qoi, input_):
+    def _get_sobols_total_conf(self, qoi, input_):
         """Not implemented for this method.
 
         Returns

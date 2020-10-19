@@ -19,20 +19,20 @@ logger = logging.getLogger(__name__)
 
 
 class QMCAnalysisResults(AnalysisResults):
-    def get_sobols_first(self, qoi, input_):
+    def _get_sobols_first(self, qoi, input_):
         raw_dict = AnalysisResults._keys_to_tuples(self.raw_data['sobols_first'])
         return raw_dict[AnalysisResults._to_tuple(qoi)][input_][0]
 
-    def get_sobols_total(self, qoi, input_):
+    def _get_sobols_total(self, qoi, input_):
         raw_dict = AnalysisResults._keys_to_tuples(self.raw_data['sobols_total'])
         return raw_dict[AnalysisResults._to_tuple(qoi)][input_][0]
 
-    def get_sobols_first_conf(self, qoi, input_):
+    def _get_sobols_first_conf(self, qoi, input_):
         raw_dict = AnalysisResults._keys_to_tuples(self.raw_data['conf_sobols_first'])
         return [raw_dict[AnalysisResults._to_tuple(qoi)][input_]['low'][0],
                 raw_dict[AnalysisResults._to_tuple(qoi)][input_]['high'][0]]
 
-    def get_sobols_total_conf(self, qoi, input_):
+    def _get_sobols_total_conf(self, qoi, input_):
         raw_dict = AnalysisResults._keys_to_tuples(self.raw_data['conf_sobols_total'])
         return [raw_dict[AnalysisResults._to_tuple(qoi)][input_]['low'][0],
                 raw_dict[AnalysisResults._to_tuple(qoi)][input_]['high'][0]]

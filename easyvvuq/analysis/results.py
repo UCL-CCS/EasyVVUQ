@@ -32,7 +32,7 @@ class AnalysisResults:
         self.qois = qois
         self.inputs = inputs
 
-    def get_sobols_first(self, qoi, input_):
+    def _get_sobols_first(self, qoi, input_):
         """Returns first order Sobol indices.
 
         Parameters
@@ -50,7 +50,7 @@ class AnalysisResults:
         """
         raise NotImplementedError
 
-    def get_sobols_total(self, qoi, input_):
+    def _get_sobols_total(self, qoi, input_):
         """Returns total order Sobol indices.
 
         Returns
@@ -59,7 +59,7 @@ class AnalysisResults:
         """
         raise NotImplementedError
 
-    def get_sobols_first_conf(self, qoi, input_):
+    def _get_sobols_first_conf(self, qoi, input_):
         """Returns confidence intervals for first order Sobol indices.
 
         Attributes
@@ -77,7 +77,7 @@ class AnalysisResults:
         """
         raise NotImplementedError
 
-    def get_sobols_total_conf(self, qoi, input_):
+    def _get_sobols_total_conf(self, qoi, input_):
         """Returns confidence intervals for total order Sobol indices.
 
         Attributes

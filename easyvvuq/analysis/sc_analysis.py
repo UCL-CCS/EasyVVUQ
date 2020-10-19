@@ -35,17 +35,17 @@ __license__ = "LGPL"
 
 
 class SCAnalysisResults(AnalysisResults):
-    def get_sobols_first(self, qoi, input_):
+    def _get_sobols_first(self, qoi, input_):
         raw_dict = AnalysisResults._keys_to_tuples(self.raw_data['sobols_first'])
         return raw_dict[AnalysisResults._to_tuple(qoi)][input_][0]
 
-    def get_sobols_total(self, qoi, input_):
+    def _get_sobols_total(self, qoi, input_):
         return float('nan')
 
-    def get_sobols_first_conf(self, qoi, input_):
+    def _get_sobols_first_conf(self, qoi, input_):
         return [float('nan'), float('nan')]
 
-    def get_sobols_total_conf(self, qoi, input_):
+    def _get_sobols_total_conf(self, qoi, input_):
         return [float('nan'), float('nan')]
 
     def describe(self):
