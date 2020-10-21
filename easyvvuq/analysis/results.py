@@ -32,6 +32,17 @@ class AnalysisResults:
         self.qois = qois
         self.inputs = inputs
 
+    def implemented(self):
+        """Returns a list of implemented functionality.
+        
+        Returns
+        -------
+        a list of str
+           names of types of analysis results that are implemented 
+           for this method
+        """
+        return []
+
     def _get_sobols_first(self, qoi, input_):
         """Returns first order Sobol indices.
 
