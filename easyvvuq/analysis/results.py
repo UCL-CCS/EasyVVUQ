@@ -26,11 +26,24 @@ class AnalysisResults:
         collated samples
     """
 
+    all_analysis_methods = ['sobols_first', 'sobols_total', 'describe']
+    implemented = []
+
     def __init__(self, raw_data=None, samples=None, qois=None, inputs=None):
         self.raw_data = raw_data
         self.samples = samples
         self.qois = qois
         self.inputs = inputs
+
+    def __getattr__(self, attr):
+        if attr in self.all_analysis_methods:
+            raise RuntimeError(
+                "analysis results method '{}' is not implement in '{}',\
+                 implemented methods are {}".format(
+                     attr, self.__class__.__name__, self.implemented))
+        else:
+            raise AttributeError(
+                "type object '{}' has no attribute '{}'".format(self.__class__.__name__, attr))
 
     def implemented(self):
         """Returns a list of implemented functionality.
