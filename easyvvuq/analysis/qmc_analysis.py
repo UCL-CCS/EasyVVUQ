@@ -19,6 +19,8 @@ logger = logging.getLogger(__name__)
 
 
 class QMCAnalysisResults(AnalysisResults):
+    implemented = ['sobols_first', 'sobols_total', 'describe']
+
     def _get_sobols_first(self, qoi, input_):
         raw_dict = AnalysisResults._keys_to_tuples(self.raw_data['sobols_first'])
         return raw_dict[AnalysisResults._to_tuple(qoi)][input_][0]

@@ -40,18 +40,18 @@ class AnalysisResults:
             raise RuntimeError(
                 "analysis results method '{}' is not implement in '{}',\
                  implemented methods are {}".format(
-                     attr, self.__class__.__name__, self.implemented))
+                    attr, self.__class__.__name__, self.implemented))
         else:
             raise AttributeError(
                 "type object '{}' has no attribute '{}'".format(self.__class__.__name__, attr))
 
     def implemented(self):
         """Returns a list of implemented functionality.
-        
+
         Returns
         -------
         a list of str
-           names of types of analysis results that are implemented 
+           names of types of analysis results that are implemented
            for this method
         """
         return []

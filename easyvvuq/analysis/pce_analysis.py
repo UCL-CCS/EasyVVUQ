@@ -15,6 +15,8 @@ logger = logging.getLogger(__name__)
 
 
 class PCEAnalysisResults(QMCAnalysisResults):
+    implemented = ['sobols_first', 'sobols_total', 'describe']
+
     def _get_sobols_first(self, qoi, input_):
         """Returns the first order sobol index for a given qoi wrt input variable.
 
