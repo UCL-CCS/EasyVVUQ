@@ -26,7 +26,7 @@ class AnalysisResults:
         collated samples
     """
 
-    all_analysis_methods = ['sobols_first', 'sobols_total', 'describe']
+    all_analysis_methods = []
     implemented = []
 
     def __init__(self, raw_data=None, samples=None, qois=None, inputs=None):
