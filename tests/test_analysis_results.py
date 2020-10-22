@@ -19,10 +19,10 @@ def test_to_tuple():
         AnalysisResults._to_tuple(3)
 
 
-def test_not_implemented():
-    results = AnalysisResults()
-    with pytest.raises(AttributeError):
-        results.testing()
-    with pytest.raises(RuntimeError, match=r".* {} .*".format(AnalysisResults.all_analysis_methods)):
-        results.sobols_first()
+# def test_not_implemented():
+#     results = AnalysisResults()
+#     with pytest.raises(AttributeError):
+#         results.testing()
+#     with pytest.raises(RuntimeError, match=r".* {} .*".format(AnalysisResults.all_analysis_methods)):
+#         results.sobols_first()
         
