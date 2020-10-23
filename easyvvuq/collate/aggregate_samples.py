@@ -78,6 +78,8 @@ class AggregateSamples(BaseCollationElement, collater_name="aggregate_samples"):
 
                 run_data = decoder.parse_sim_output(run_info=run_info)
 
+                assert(isinstance(run_data, dict))
+
                 if self.average:
                     run_data = pd.DataFrame(run_data.mean()).transpose()
 
