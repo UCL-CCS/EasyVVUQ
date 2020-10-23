@@ -243,6 +243,7 @@ class AppInfo:
             self,
             name=None,
             paramsspec=None,
+            decoderspec=None,
             encoder=None,
             decoder=None,
             collater=None):
@@ -252,6 +253,7 @@ class AppInfo:
         self.output_decoder = decoder
         self.collater = collater
         self.paramsspec = paramsspec
+        self.decoderspec = decoderspec
 
     @property
     def input_encoder(self):
@@ -323,6 +325,7 @@ class AppInfo:
             out_dict = {
                 'name': self.name,
                 'params': self.paramsspec,
+                'decoderspec' : self.decoderspec,
                 'input_encoder': self.input_encoder.serialize(),
                 'output_decoder': self.output_decoder.serialize(),
                 'collater': self.collater.serialize()

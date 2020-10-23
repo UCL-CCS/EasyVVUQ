@@ -332,7 +332,7 @@ class Campaign:
             logger.critical(message)
             raise RuntimeError(message)
 
-    def add_app(self, name=None, params=None,
+    def add_app(self, name=None, params=None, decoder_spec=None,
                 encoder=None, decoder=None, collater=None,
                 set_active=True):
         """Add an application to the CampaignDB.
