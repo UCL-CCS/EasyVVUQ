@@ -100,8 +100,8 @@ results = my_campaign.get_last_analysis()
 # Plot the moments and SC samples #
 ###################################
 
-mu = results['statistical_moments']['u']['mean']
-std = results['statistical_moments']['u']['std']
+mu = results.describe()['u']['mean']
+std = results.describe()['u']['std']
 
 print("mu", mu, ", std", std)
 

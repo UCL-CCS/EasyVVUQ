@@ -8,6 +8,7 @@ import numpy as np
 from easyvvuq import OutputType
 from .base import BaseAnalysisElement
 from easyvvuq.sampling import QMCSampler
+from .results import AnalysisResults
 from easyvvuq.sampling import MCSampler
 from .ensemble_boot import confidence_interval
 
@@ -17,8 +18,29 @@ __license__ = "LGPL"
 logger = logging.getLogger(__name__)
 
 
-class QMCAnalysis(BaseAnalysisElement):
+class QMCAnalysisResults(AnalysisResults):
+    implemented = ['sobols_first', 'sobols_total', 'describe']
 
+    def _get_sobols_first(self, qoi, input_):
+        raw_dict = AnalysisResults._keys_to_tuples(self.raw_data['sobols_first'])
+        return raw_dict[AnalysisResults._to_tuple(qoi)][input_][0]
+
+    def _get_sobols_total(self, qoi, input_):
+        raw_dict = AnalysisResults._keys_to_tuples(self.raw_data['sobols_total'])
+        return raw_dict[AnalysisResults._to_tuple(qoi)][input_][0]
+
+    def _get_sobols_first_conf(self, qoi, input_):
+        raw_dict = AnalysisResults._keys_to_tuples(self.raw_data['conf_sobols_first'])
+        return [raw_dict[AnalysisResults._to_tuple(qoi)][input_]['low'][0],
+                raw_dict[AnalysisResults._to_tuple(qoi)][input_]['high'][0]]
+
+    def _get_sobols_total_conf(self, qoi, input_):
+        raw_dict = AnalysisResults._keys_to_tuples(self.raw_data['conf_sobols_total'])
+        return [raw_dict[AnalysisResults._to_tuple(qoi)][input_]['low'][0],
+                raw_dict[AnalysisResults._to_tuple(qoi)][input_]['high'][0]]
+
+
+class QMCAnalysis(BaseAnalysisElement):
     def __init__(self, sampler, qoi_cols=None):
         """Analysis element for Quasi-Monte Carlo (QMC).
 
@@ -92,7 +114,8 @@ class QMCAnalysis(BaseAnalysisElement):
             results['conf_sobols_first'][k] = conf_first
             results['conf_sobols_total'][k] = conf_total
 
-        return results
+        return QMCAnalysisResults(raw_data=results, samples=data_frame,
+                                  qois=self.qoi_cols, inputs=list(self.sampler.vary.get_keys()))
 
     def get_samples(self, data_frame):
         """

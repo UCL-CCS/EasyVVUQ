@@ -2,13 +2,91 @@
 """
 import logging
 import chaospy as cp
+import pandas as pd
 from easyvvuq import OutputType
 from .base import BaseAnalysisElement
+from .results import AnalysisResults
+from .qmc_analysis import QMCAnalysisResults
 
 __author__ = 'Jalal Lakhlili'
 __license__ = "LGPL"
 
 logger = logging.getLogger(__name__)
+
+
+class PCEAnalysisResults(QMCAnalysisResults):
+    implemented = ['sobols_first', 'sobols_total', 'describe']
+
+    def _get_sobols_first(self, qoi, input_):
+        """Returns the first order sobol index for a given qoi wrt input variable.
+
+        Parameters
+        ----------
+        qoi : str
+           Quantity of interest
+        input_ : str
+           Input variable
+
+        Returns
+        -------
+        float
+            First order sobol index.
+        """
+        raw_dict = AnalysisResults._keys_to_tuples(self.raw_data['sobols_first'])
+        return raw_dict[AnalysisResults._to_tuple(qoi)][input_][0]
+
+    def _get_sobols_total(self, qoi, input_):
+        """Returns the total order sobol index for a given qoi wrt input variable.
+
+        Parameters
+        ----------
+        qoi : str
+           Quantity of interest
+        input_ : str
+           Input variable
+
+        Returns
+        -------
+        float
+            Total order sobol index.
+        """
+        raw_dict = AnalysisResults._keys_to_tuples(self.raw_data['sobols_total'])
+        return raw_dict[AnalysisResults._to_tuple(qoi)][input_][0]
+
+    def _get_sobols_first_conf(self, qoi, input_):
+        """Not implemented for this method.
+
+        Returns
+        -------
+        list of floats
+            Will return a list with two nans, since this is
+        pandas way for handling missing values it seems.
+        """
+        return [float('nan'), float('nan')]
+
+    def _get_sobols_total_conf(self, qoi, input_):
+        """Not implemented for this method.
+
+        Returns
+        -------
+        list of floats
+            Will return a list with two nans, since this is
+        pandas way for handling missing values it seems.
+        """
+        return [float('nan'), float('nan')]
+
+    def describe(self):
+        result = {}
+        for qoi in self.qois:
+            result[qoi] = {
+                'count': len(self.samples.axes[0]),
+                'mean': self.raw_data['statistical_moments'][qoi]['mean'][0],
+                'std': self.raw_data['statistical_moments'][qoi]['std'][0],
+                'var': self.raw_data['statistical_moments'][qoi]['var'][0],
+                '10%': self.raw_data['percentiles'][qoi]['p10'][0],
+                '90%': self.raw_data['percentiles'][qoi]['p90'][0]
+            }
+        return pd.DataFrame(result)
 
 
 class PCEAnalysis(BaseAnalysisElement):
@@ -155,5 +233,5 @@ class PCEAnalysis(BaseAnalysisElement):
             # Output distributions
             results['output_distributions'][k] = cp.QoI_Dist(
                 fit, self.sampler.distribution)
-
-        return results
+        return PCEAnalysisResults(raw_data=results, samples=data_frame,
+                                  qois=self.qoi_cols, inputs=list(self.sampler.vary.get_keys()))

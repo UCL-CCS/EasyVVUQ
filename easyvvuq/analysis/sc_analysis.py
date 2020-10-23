@@ -5,8 +5,10 @@ import pickle
 import copy
 from easyvvuq import OutputType
 from .base import BaseAnalysisElement
+from .results import AnalysisResults
 import logging
 from scipy.special import comb
+import pandas as pd
 
 __author__ = "Wouter Edeling"
 __copyright__ = """
@@ -30,6 +32,27 @@ __copyright__ = """
 
 """
 __license__ = "LGPL"
+
+
+class SCAnalysisResults(AnalysisResults):
+    implemented = ['sobols_first', 'describe']
+
+    def _get_sobols_first(self, qoi, input_):
+        raw_dict = AnalysisResults._keys_to_tuples(self.raw_data['sobols_first'])
+        return raw_dict[AnalysisResults._to_tuple(qoi)][input_][0]
+
+    def _get_sobols_first_conf(self, qoi, input_):
+        return [float('nan'), float('nan')]
+
+    def describe(self):
+        result = {}
+        for qoi in self.qois:
+            result[qoi] = {
+                'mean': self.raw_data['statistical_moments'][qoi]['mean'][0],
+                'var': self.raw_data['statistical_moments'][qoi]['var'][0],
+                'std': self.raw_data['statistical_moments'][qoi]['std'][0]
+            }
+        return pd.DataFrame(result)
 
 
 class SCAnalysis(BaseAnalysisElement):
@@ -211,7 +234,8 @@ class SCAnalysis(BaseAnalysisElement):
                     results['sobols_first'][qoi_k][param_name] = \
                         results['sobols'][qoi_k][(idx,)]
 
-            return results
+            return SCAnalysisResults(raw_data=results, samples=data_frame,
+                                     qois=qoi_cols, inputs=list(self.sampler.vary.get_keys()))
 
     def create_map(self, L):
         """
