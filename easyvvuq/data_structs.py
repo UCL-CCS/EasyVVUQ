@@ -212,25 +212,14 @@ class RunInfo:
 class AppInfo:
     """Handles information for particular application.
 
-    Parameters
-    ----------
-    name : str or None
-        Human readable application name.
-    paramsspec : ParamsSpecification or None
-        Description of possible parameter values.
-    encoder : :obj:`easyvvuq.encoders.base.BaseEncoder`
-        Encoder element for application.
-    decoder : :obj:`easyvvuq.decoders.base.BaseDecoder`
-        Decoder element for application.
-    collater : :obj:`easyvvuq.collation.base.BaseCollationElement`
-        Collater element for application.
-
     Attributes
     ----------
     name : str or None
         Human readable application name.
     paramsspec : ParamsSpecification or None
         Description of possible parameter values.
+    decoderspec : dict
+        Description of the output format of the decoder.
     input_encoder : :obj:`easyvvuq.encoders.base.BaseEncoder`
         Encoder element for application.
     output_decoder : :obj:`easyvvuq.decoders.base.BaseDecoder`
