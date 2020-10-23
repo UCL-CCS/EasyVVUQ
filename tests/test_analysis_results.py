@@ -26,4 +26,3 @@ def test_to_tuple():
 #     with pytest.raises(RuntimeError, match=r".* {} .*".format(
 #         AnalysisResults.all_analysis_methods)):
 #         results.sobols_first()
-        
