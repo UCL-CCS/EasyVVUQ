@@ -193,9 +193,9 @@ class CampaignDB(BaseCampaignDB):
 
         selected_app = selected[0]
 
-        decoder_spec = selected_app.decoderspec
-        if decoder_spec is not None:
-            decoder_spec = ast.literal_eval(selected_app.decoderspec)
+        decoderspec = selected_app.decoderspec
+        if decoderspec is not None:
+            decoderspec = ast.literal_eval(selected_app.decoderspec)
 
         app_dict = {
             'id': selected_app.id,
