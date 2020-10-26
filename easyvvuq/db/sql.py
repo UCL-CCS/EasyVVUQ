@@ -4,6 +4,7 @@ import os
 import json
 import logging
 import pandas as pd
+import ast
 from sqlalchemy import create_engine, Column, Integer, String, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
@@ -78,6 +79,7 @@ class AppTable(Base):
     output_decoder = Column(String)
     collater = Column(String)
     params = Column(String)
+    decoderspec = Column(String)
 
 
 class RunTable(Base):
@@ -191,13 +193,18 @@ class CampaignDB(BaseCampaignDB):
 
         selected_app = selected[0]
 
+        decoder_spec = selected_app.decoderspec
+        if decoder_spec is not None:
+            decoder_spec = ast.literal_eval(selected_app.decoderspec)
+
         app_dict = {
             'id': selected_app.id,
             'name': selected_app.name,
             'input_encoder': selected_app.input_encoder,
             'output_decoder': selected_app.output_decoder,
             'collater': selected_app.collater,
-            'params': ParamsSpecification.deserialize(selected_app.params)
+            'params': ParamsSpecification.deserialize(selected_app.params),
+            'decoderspec' : decoderspec
         }
 
         return app_dict

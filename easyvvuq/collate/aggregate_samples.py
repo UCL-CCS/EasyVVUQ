@@ -54,6 +54,8 @@ class AggregateSamples(BaseCollationElement, collater_name="aggregate_samples"):
             EasyVVUQ coordination object from which to get information on runs
             to be collated.
 
+        app_id : pass
+
         Returns
         -------
         `int`:
@@ -78,7 +80,12 @@ class AggregateSamples(BaseCollationElement, collater_name="aggregate_samples"):
 
                 run_data = decoder.parse_sim_output(run_info=run_info)
 
+                # Validates the decoder output
                 assert(isinstance(run_data, dict))
+                app_info = self.campaign.campaign_db.app(app_id)
+                if app_info['decoderspec'] is not None:
+                    v = Validator(app_info['decoderspec'])
+                    assert(v.validate(run_data))
 
                 if self.average:
                     run_data = pd.DataFrame(run_data.mean()).transpose()
