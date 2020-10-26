@@ -80,11 +80,11 @@ class PCEAnalysisResults(QMCAnalysisResults):
         for qoi in self.qois:
             result[qoi] = {
                 'count': len(self.samples.axes[0]),
-                'mean': self.raw_data['statistical_moments'][qoi]['mean'][0],
-                'std': self.raw_data['statistical_moments'][qoi]['std'][0],
-                'var': self.raw_data['statistical_moments'][qoi]['var'][0],
-                '10%': self.raw_data['percentiles'][qoi]['p10'][0],
-                '90%': self.raw_data['percentiles'][qoi]['p90'][0]
+                'mean': self.raw_data['statistical_moments'][qoi]['mean'],
+                'std': self.raw_data['statistical_moments'][qoi]['std'],
+                'var': self.raw_data['statistical_moments'][qoi]['var'],
+                '10%': self.raw_data['percentiles'][qoi]['p10'],
+                '90%': self.raw_data['percentiles'][qoi]['p90']
             }
         return pd.DataFrame(result)
 
