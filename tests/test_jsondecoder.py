@@ -33,6 +33,17 @@ def test_json_nested():
     assert(data['leaf3'] == [0.2, 0.3])
 
 
+def test_missing_column():
+    # Check if a RuntimeError is raised if a wrong column is specified
+    decoder = JSONDecoder(os.path.join('jsondecoder', 'nested.json'),
+                          [['root1', 'node1', 'abcd'], ['root1', 'leaf2'], 'leaf3'])
+    run_info = {'run_dir': 'tests'}
+    with pytest.raises(RuntimeError) as excinfo:
+        data = decoder.parse_sim_output(run_info)
+    # Check if the missing column is reported in the exception message
+    assert("['root1', 'node1', 'abcd']" in str(excinfo.value))
+    
+
 def test_get_restart_dict():
     decoder = JSONDecoder('nested.json',
                           [['root1', 'node1', 'leaf1'], ['root1', 'leaf2'], 'leaf3'])
