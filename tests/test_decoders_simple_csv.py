@@ -19,7 +19,6 @@ def test_get_restart_dict(decoder):
     restart_dict = decoder.get_restart_dict()
     assert(restart_dict['target_filename'] == 'test.csv')
     assert(restart_dict['output_columns'] == ['Step', 'Value'])
-    assert(restart_dict['header'] == 0)
 
 
 def test_sim_complete(decoder):
@@ -27,10 +26,6 @@ def test_sim_complete(decoder):
 
 
 def test_init_exceptions():
-    with pytest.raises(RuntimeError):
-        SimpleCSV(None, output_columns=['Step', 'Value'])
-    with pytest.raises(RuntimeError):
-        SimpleCSV('test.csv', None)
     with pytest.raises(RuntimeError):
         SimpleCSV('test.csv', [])
 
