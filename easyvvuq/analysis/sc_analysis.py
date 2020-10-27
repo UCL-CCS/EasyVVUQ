@@ -48,9 +48,9 @@ class SCAnalysisResults(AnalysisResults):
         result = {}
         for qoi in self.qois:
             result[qoi] = {
-                'mean': self.raw_data['statistical_moments'][qoi]['mean'][0],
-                'var': self.raw_data['statistical_moments'][qoi]['var'][0],
-                'std': self.raw_data['statistical_moments'][qoi]['std'][0]
+                'mean': self.raw_data['statistical_moments'][qoi]['mean'],
+                'var': self.raw_data['statistical_moments'][qoi]['var'],
+                'std': self.raw_data['statistical_moments'][qoi]['std']
             }
         return pd.DataFrame(result)
 
