@@ -97,10 +97,13 @@ class JSONDecoder(BaseDecoder, decoder_name="json"):
 
         data = []
         for col in self.output_columns:
-            if isinstance(col, str):
-                data.append((col, raw_data[col]))
-            elif isinstance(col, list):
-                data.append(('.'.join(col), get_value(raw_data, col)))
+            try:
+                if isinstance(col, str):
+                    data.append((col, raw_data[col]))
+                elif isinstance(col, list):
+                    data.append(('.'.join(col), get_value(raw_data, col)))
+            except KeyError:
+                raise RuntimeError("no such field: {} in this json file".format(col))
         return dict(data)
 
     def _get_raw_data(self, out_path):
