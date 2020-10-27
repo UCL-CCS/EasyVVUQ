@@ -92,15 +92,6 @@ class JSONDecoder(BaseDecoder, decoder_name="json"):
                 data = data[node]
             return data
 
-        def to_list(x):
-            if isinstance(x, list):
-                return x
-            else:
-                return [x]
-
-        def get_multi_index(col, lst):
-            return [((col, i), [x]) for i, x in enumerate(lst)]
-
         out_path = self._get_output_path(run_info, self.target_filename)
         raw_data = self._get_raw_data(out_path)
 
