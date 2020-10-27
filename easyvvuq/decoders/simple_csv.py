@@ -1,6 +1,6 @@
 import os
 import logging
-import pandas as pd
+import csv
 from easyvvuq import OutputType
 from .base import BaseDecoder
 
@@ -85,13 +85,28 @@ class SimpleCSV(BaseDecoder, decoder_name="csv"):
 
         out_path = self._get_output_path(run_info, self.target_filename)
 
-        data = pd.read_csv(
-            out_path,
-            usecols=self.output_columns,
-            sep=self.delimiter,
-            header=self.header)
+        if self.output_columns is None:
+            raise RuntimeError("you must specify column names for this decoder")
 
-        return data
+        results = {}
+        for column in self.output_columns:
+            results[column] = []
+
+        with open(out_path, 'r') as csvfile:
+            sample = csvfile.read(1024)
+            csvfile.seek(0)
+            if not csv.Sniffer().has_header(sample):
+                raise RuntimeError("csv files that don't have a header are not supported")
+            dialect = csv.Sniffer().sniff(sample)
+            reader = csv.DictReader(csvfile, dialect=dialect)
+            for row in reader:
+                for column in self.output_columns:
+                    try:
+                        results[column].append(float(row[column]))
+                    except ValueError:
+                        results[column].append(row[column])
+
+        return results
 
     def get_restart_dict(self):
         return {"target_filename": self.target_filename,
