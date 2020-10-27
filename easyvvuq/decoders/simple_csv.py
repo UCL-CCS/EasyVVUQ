@@ -32,23 +32,7 @@ logger = logging.Logger(__name__)
 
 class SimpleCSV(BaseDecoder, decoder_name="csv"):
 
-    def __init__(self, target_filename=None, output_columns=None, header=0,
-                 delimiter=","):
-
-        if target_filename is None:
-            msg = (
-                f"target_filename must be set for SimpleCSV. This should be"
-                f"the name of the output file this decoder acts on."
-            )
-            logging.error(msg)
-            raise RuntimeError(msg)
-
-        if output_columns is None:
-            msg = "output_columns must be specified for SimpleCSV. This should \
-                be the names of the output columns this decoder extracts \
-                from the target csv file."
-            logging.error(msg)
-            raise RuntimeError(msg)
+    def __init__(self, target_filename, output_columns):
 
         if len(output_columns) == 0:
             msg = "output_columns cannot be empty."
@@ -57,8 +41,6 @@ class SimpleCSV(BaseDecoder, decoder_name="csv"):
 
         self.target_filename = target_filename
         self.output_columns = output_columns
-        self.header = header
-        self.delimiter = delimiter
 
         self.output_type = OutputType('sample')
 
