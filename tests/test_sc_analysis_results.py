@@ -76,7 +76,7 @@ def test_full_results(results):
 
 
 def test_describe(results):
-    assert(results.describe().to_dict() == {
+    assert(results.describe().astype(float).to_dict() == {
         'f': {
             'mean': 0.9101117102420444,
             'std': 0.8184617581393419,
