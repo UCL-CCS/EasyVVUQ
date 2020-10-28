@@ -77,8 +77,7 @@ encoder = uq.encoders.GenericEncoder(
     delimiter='$',
     target_filename='sobol_in.json')
 decoder = uq.decoders.SimpleCSV(target_filename=output_filename,
-                                output_columns=output_columns,
-                                header=0)
+                                output_columns=output_columns)
 collater = uq.collate.AggregateSamples(average=False)
 
 # Add the SC app (automatically set as current app)

@@ -67,20 +67,12 @@ class SimpleCSV(BaseDecoder, decoder_name="csv"):
 
         out_path = self._get_output_path(run_info, self.target_filename)
 
-        if self.output_columns is None:
-            raise RuntimeError("you must specify column names for this decoder")
-
         results = {}
         for column in self.output_columns:
             results[column] = []
 
-        with open(out_path, 'r') as csvfile:
-            sample = csvfile.read(1024)
-            csvfile.seek(0)
-            if not csv.Sniffer().has_header(sample):
-                raise RuntimeError("csv files that don't have a header are not supported")
-            dialect = csv.Sniffer().sniff(sample)
-            reader = csv.DictReader(csvfile, dialect=dialect)
+        with open(out_path, 'r', newline='') as csvfile:
+            reader = csv.DictReader(csvfile)
             for row in reader:
                 for column in self.output_columns:
                     try:
