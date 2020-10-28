@@ -124,7 +124,7 @@ class QMCAnalysis(BaseAnalysisElement):
                         samples[k].append(data_frame[k]['Run_' + str(run_id)])
         return samples
 
-    def sobol_bootstrap(self, samples, alpha=0.05, n_bootstrap=1000):
+    def sobol_bootstrap(self, samples, alpha=0.05, n_bootstrap=100):
         """
         Computes the first order and total order Sobol indices using Saltelli's
         method. To assess the sampling inaccuracy, bootstrap confidence intervals
