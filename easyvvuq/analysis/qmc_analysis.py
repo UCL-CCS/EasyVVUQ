@@ -5,6 +5,7 @@ https://en.wikipedia.org/wiki/Variance-based_sensitivity_analysis
 """
 import logging
 import numpy as np
+import pandas as pd
 from scipy.stats import norm
 from easyvvuq import OutputType
 from .base import BaseAnalysisElement
@@ -64,7 +65,7 @@ class QMCAnalysis(BaseAnalysisElement):
             ['statistical_moments', 'percentiles', 'sobol_indices',
              'correlation_matrices', 'output_distributions']
         """
-        if data_frame.empty:
+        if type(data_frame) == pd.DataFrame and data_frame.empty:
             raise RuntimeError(
                 "No data in data frame passed to analyse element")
 
@@ -101,7 +102,7 @@ class QMCAnalysis(BaseAnalysisElement):
 
         Parameters
         ----------
-        data_frame : the EasyVVUQ Pandas dataframe.
+        data_frame : the EasyVVUQ Pandas or HDF5 dataframe.
 
         Returns
         -------
@@ -110,13 +111,20 @@ class QMCAnalysis(BaseAnalysisElement):
 
         """
         samples = {k: [] for k in self.qoi_cols}
-        for run_id in data_frame.run_id.unique():
+        if type(data_frame) == pd.DataFrame:
+            for run_id in data_frame.run_id.unique():
+                for k in self.qoi_cols:
+                    values = data_frame.loc[data_frame['run_id'] == run_id][k].values
+                    samples[k].append(values)
+        elif type(data_frame) == dict:
+            #dict is not sorted, make sure the runs are processed in ascending order
             for k in self.qoi_cols:
-                data = data_frame.loc[data_frame['run_id'] == run_id][k]
-                samples[k].append(data.values)
+                run_id_int = [int(run_id.split('Run_')[-1]) for run_id in data_frame[k].keys()]
+                for run_id in range(1, np.max(run_id_int) + 1):
+                        samples[k].append(data_frame[k]['Run_' + str(run_id)])
         return samples
 
-    def sobol_bootstrap(self, samples, alpha=0.05, n_samples=1000):
+    def sobol_bootstrap(self, samples, alpha=0.05, n_bootstrap=1000):
         """
         Computes the first order and total order Sobol indices using Saltelli's
         method. To assess the sampling inaccuracy, bootstrap confidence intervals
@@ -144,7 +152,7 @@ class QMCAnalysis(BaseAnalysisElement):
         assert len(samples) > 0
         assert alpha > 0.0
         assert alpha < 1.0
-        assert n_samples > 0
+        assert n_bootstrap > 0
 
         # convert to array
         samples = np.array(samples)
@@ -152,7 +160,7 @@ class QMCAnalysis(BaseAnalysisElement):
         # and the size of the QoI
         n_params = self.sampler.n_params
         n_mc = self.sampler.n_mc_samples
-        n_qoi = samples[0].size
+        # n_qoi = samples[0].size
         sobols_first_dict = {}
         conf_first_dict = {}
         sobols_total_dict = {}
@@ -161,12 +169,14 @@ class QMCAnalysis(BaseAnalysisElement):
         # code evaluations of input matrices M1, M2 and Ni, i = 1,...,n_params
         # see reference above.
         f_M2, f_M1, f_Ni = self._separate_output_values(samples, n_params, n_mc)
-        r = np.random.randint(n_mc, size=(n_mc, n_samples))
+        r = np.random.randint(n_mc, size=(n_mc, n_bootstrap))
 
         for j, param_name in enumerate(self.sampler.vary.get_keys()):
+
             # our point estimate for the 1st and total order Sobol indices
             value_first = self._first_order(f_M2, f_M1, f_Ni[:, j])
             value_total = self._total_order(f_M2, f_M1, f_Ni[:, j])
+
             # sobols computed from resampled data points
             sobols_first = self._first_order(f_M2[r], f_M1[r], f_Ni[r, j])
             sobols_total = self._total_order(f_M2[r], f_M1[r], f_Ni[r, j])
@@ -176,7 +186,7 @@ class QMCAnalysis(BaseAnalysisElement):
                                                            alpha, pivotal=True)
             _, low_total, high_total = confidence_interval(sobols_total, value_total,
                                                            alpha, pivotal=True)
-
+            print('e')
             # store results
             sobols_first_dict[param_name] = value_first
             conf_first_dict[param_name] = {'low': low_first, 'high': high_first}
@@ -228,6 +238,7 @@ class QMCAnalysis(BaseAnalysisElement):
 
         return f_M2, f_M1, f_Ni
 
+    # Adapted from SALib
     @staticmethod
     def _first_order(f_M2, f_M1, f_Ni):
         """Calculate first order sensitivity indices.
@@ -245,9 +256,12 @@ class QMCAnalysis(BaseAnalysisElement):
         -------
         A NumPy array of the n_params first-order Sobol indices.
         """
+        print('a')
         V = np.var(np.r_[f_M2, f_M1], axis=0)
+        print('b')
         return np.mean(f_M1 * (f_Ni - f_M2), axis=0) / (V + (V == 0)) * (V != 0)
 
+    # Adapted from SALib
     @staticmethod
     def _total_order(f_M2, f_M1, f_Ni):
         """Calculate total order sensitivity indices. See also:
