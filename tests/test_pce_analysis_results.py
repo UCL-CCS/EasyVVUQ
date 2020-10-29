@@ -87,11 +87,11 @@ def test_full_results(results):
 
 
 def test_describe(results):
-    assert(results.describe().astype(float).to_dict() == {
-        'f': {'10%': 0.009410762945528006,
-              '90%': 2.1708835276870935,
-              'count': 25.0,
-              'mean': 0.91011171024204,
-              'std': 0.807805287287411,
-              'var': 0.6525493821694965}
-    })
+    assert(results.describe().to_dict()['f'] == pytest.approx({
+        '10%': 0.009410762945528006,
+        '90%': 2.1708835276870935,
+        'count': 25.0,
+        'mean': 0.91011171024204,
+        'std': 0.807805287287411,
+        'var': 0.6525493821694965
+        }))
