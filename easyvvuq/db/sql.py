@@ -5,7 +5,7 @@ import json
 import logging
 import pandas as pd
 import ast
-from sqlalchemy import create_engine, Column, Integer, String, ForeignKey
+from sqlalchemy import create_engine, Column, Integer, String, Text, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import MetaData
@@ -93,6 +93,7 @@ class RunTable(Base):
     params = Column(String)
     status = Column(Integer)
     run_dir = Column(String)
+    result = Column(Text)
     campaign = Column(Integer, ForeignKey('campaign_info.id'))
     sampler = Column(Integer, ForeignKey('sampler.id'))
 
@@ -819,6 +820,32 @@ class CampaignDB(BaseCampaignDB):
 
         return self._get_campaign_info(campaign_name=campaign_name).runs_dir
 
+    def store_run_results(self, run_id, results):
+        """Stores the results from a given run in the database.
+
+        Parameters
+        ----------
+        run_id: int
+            ID of the run
+        results: dict
+            dictionary with the results (from the decoder)
+        """
+        pass
+
+    def get_results(self, app_id):
+        """Returns the results as a pandas DataFrame.
+
+        Parameters
+        ----------
+        app_id: int
+            ID of the app to return data for
+        
+        Returns
+        -------
+        pandas DataFrame constructed from the decoder output dictionaries
+        """
+        pass
+
     def append_collation_dataframe(self, df, app_id):
         """
         Append the data in dataframe 'df' to that already collated in the database
@@ -837,8 +864,8 @@ class CampaignDB(BaseCampaignDB):
         """
 
         if df.size == 0:
-            logging.warning(
-                f"Attempt to append empty dataframe to SQL collation table for app_id {app_id}.")
+           logging.warning(
+               f"Attempt to append empty dataframe to SQL collation table for app_id {app_id}.")
             return
 
         tablename = 'COLLATION_APP' + str(app_id)
