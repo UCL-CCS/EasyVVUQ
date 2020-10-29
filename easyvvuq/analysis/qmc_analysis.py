@@ -50,7 +50,7 @@ class QMCAnalysis(BaseAnalysisElement):
         """Version of this element"""
         return "0.2"
 
-    def analyse(self, data_frame):
+    def analyse(self, data_frame, **kwargs):
         """Perform QMC analysis on a given pandas DataFrame.
 
         Parameters
@@ -80,7 +80,7 @@ class QMCAnalysis(BaseAnalysisElement):
         }
 
         # Extract output values for each quantity of interest from Dataframe
-        samples = self.get_samples(data_frame)
+        samples = self.get_samples(data_frame, **kwargs)
 
         # Compute descriptive statistics for each quantity of interest
         for k in qoi_cols:
@@ -96,13 +96,13 @@ class QMCAnalysis(BaseAnalysisElement):
 
         return results
 
-    def get_samples(self, data_frame):
+    def get_samples(self, data_frame, **kwargs):
         """
         Converts the Pandas dataframe into a dictionary.
 
         Parameters
         ----------
-        data_frame : the EasyVVUQ Pandas or HDF5 dataframe.
+        data_frame : the EasyVVUQ Pandas or dictonary dataframe.
 
         Returns
         -------
@@ -114,17 +114,23 @@ class QMCAnalysis(BaseAnalysisElement):
         if type(data_frame) == pd.DataFrame:
             for run_id in data_frame.run_id.unique():
                 for k in self.qoi_cols:
-                    values = data_frame.loc[data_frame['run_id'] == run_id][k].values
+                    if 'output_index' in kwargs:
+                        values = data_frame.loc[data_frame['run_id'] == run_id][k].values[kwargs['output_index']]
+                    else:
+                        values = data_frame.loc[data_frame['run_id'] == run_id][k].values
                     samples[k].append(values)
         elif type(data_frame) == dict:
             #dict is not sorted, make sure the runs are processed in ascending order
             for k in self.qoi_cols:
                 run_id_int = [int(run_id.split('Run_')[-1]) for run_id in data_frame[k].keys()]
                 for run_id in range(1, np.max(run_id_int) + 1):
+                    if 'output_index' in kwargs:
+                        samples[k].append(data_frame[k]['Run_' + str(run_id)][kwargs['output_index']])                       
+                    else:
                         samples[k].append(data_frame[k]['Run_' + str(run_id)])
         return samples
 
-    def sobol_bootstrap(self, samples, alpha=0.05, n_bootstrap=100):
+    def sobol_bootstrap(self, samples, alpha=0.05, n_bootstrap=1000):
         """
         Computes the first order and total order Sobol indices using Saltelli's
         method. To assess the sampling inaccuracy, bootstrap confidence intervals
@@ -160,7 +166,7 @@ class QMCAnalysis(BaseAnalysisElement):
         # and the size of the QoI
         n_params = self.sampler.n_params
         n_mc = self.sampler.n_mc_samples
-        # n_qoi = samples[0].size
+        n_qoi = samples[0].size
         sobols_first_dict = {}
         conf_first_dict = {}
         sobols_total_dict = {}
@@ -178,15 +184,30 @@ class QMCAnalysis(BaseAnalysisElement):
             value_total = self._total_order(f_M2, f_M1, f_Ni[:, j])
 
             # sobols computed from resampled data points
-            sobols_first = self._first_order(f_M2[r], f_M1[r], f_Ni[r, j])
-            sobols_total = self._total_order(f_M2[r], f_M1[r], f_Ni[r, j])
+            if n_mc * n_bootstrap * n_qoi <= 10**7:
+                #this is a vectorized computation, Is fast, but f_M2[r] will be of size
+                #(n_mc, n_bootstrap, n_qoi), this can become too large and cause a crash, 
+                #especially when dealing with large QoI (n_qoi >> 1). So this is only done
+                #when n_mc * n_bootstrap * n_qoi <= 10**7
+                print("Vectorized bootstrapping")
+                sobols_first = self._first_order(f_M2[r], f_M1[r], f_Ni[r, j])
+                sobols_total = self._total_order(f_M2[r], f_M1[r], f_Ni[r, j])
+            else:
+                #array for resampled estimates
+                sobols_first = np.zeros([n_bootstrap, n_qoi])
+                sobols_total = np.zeros([n_bootstrap, n_qoi])
+                print("Sequential bootstrapping")
+                #non-vectorized implementation
+                for i in range(n_bootstrap):
+                    #resampled sample matrices of size (n_mc, n_qoi)
+                    sobols_first[i] = self._first_order(f_M2[r[i]], f_M1[r[i]], f_Ni[r[i], j])
+                    sobols_total[i] = self._total_order(f_M2[r[i]], f_M1[r[i]], f_Ni[r[i], j])
 
             # compute confidence intervals based on percentiles
             _, low_first, high_first = confidence_interval(sobols_first, value_first,
                                                            alpha, pivotal=True)
             _, low_total, high_total = confidence_interval(sobols_total, value_total,
                                                            alpha, pivotal=True)
-            print('e')
             # store results
             sobols_first_dict[param_name] = value_first
             conf_first_dict[param_name] = {'low': low_first, 'high': high_first}
@@ -256,9 +277,7 @@ class QMCAnalysis(BaseAnalysisElement):
         -------
         A NumPy array of the n_params first-order Sobol indices.
         """
-        print('a')
         V = np.var(np.r_[f_M2, f_M1], axis=0)
-        print('b')
         return np.mean(f_M1 * (f_Ni - f_M2), axis=0) / (V + (V == 0)) * (V != 0)
 
     # Adapted from SALib
