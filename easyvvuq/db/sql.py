@@ -830,7 +830,9 @@ class CampaignDB(BaseCampaignDB):
         results: dict
             dictionary with the results (from the decoder)
         """
-        pass
+        self.session.query().filter(RunTable.id == run_id).update(
+            {'results' : json.dumps(results)})
+        self.session.commit()
 
     def get_results(self, app_id):
         """Returns the results as a pandas DataFrame.
