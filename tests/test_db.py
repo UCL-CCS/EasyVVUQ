@@ -30,14 +30,14 @@ def app_info():
         "out_file": {
             "type": "string",
             "default": "output.csv"}}),
+        None,
         uq.encoders.GenericEncoder(
             template_fname='tests/cooling/cooling.template',
             delimiter='$',
             target_filename='cooling_in.json'),
         uq.decoders.SimpleCSV(
             target_filename='output.csv',
-            output_columns=["te"],
-            header=0),
+            output_columns=["te"]),
         uq.collate.AggregateSamples(average=False))
 
     return app_info
@@ -120,21 +120,26 @@ def test_version_check(campaign):
                            new_campaign=True, name='test3', info=info)
 
 
-def test_multi_index(tmp_path, app_info):
-    info = CampaignInfo(name='test_multi_index',
-                        campaign_dir_prefix=default_campaign_prefix,
-                        easyvvuq_version=uq.__version__,
-                        campaign_dir=str(tmp_path))
-    db = CampaignDB(location='sqlite:///{}/test_multi_index.sqlite'.format(tmp_path),
-                    new_campaign=True, name='test_multi_index', info=info)
-    db.add_app(app_info)
-    df = pd.DataFrame({('a', ''): [1, 2, 3], ('b', 0): [4, 5, 6], ('b', 1): [7, 8, 9]})
-    db.append_collation_dataframe(df, 'test')
-    df_ref = db.get_collation_dataframe('test')
-    assert((df.values == df_ref.values).all())
-    assert((df.columns == df_ref.columns).all())
-    df2 = pd.DataFrame({('a', ''): [10, 11, 12], ('b', 0): [13, 14, 15], ('b', 1): [16, 17, 18]})
-    db.append_collation_dataframe(df2, 'test')
-    df_ref = db.get_collation_dataframe('test')
-    assert((np.vstack((df.values, df2.values)) == df_ref.values).all())
-    assert((df2.columns == df_ref.columns).all())
+# def test_multi_index(tmp_path, app_info):
+#     info = CampaignInfo(name='test_multi_index',
+#                         campaign_dir_prefix=default_campaign_prefix,
+#                         easyvvuq_version=uq.__version__,
+#                         campaign_dir=str(tmp_path))
+#     db = CampaignDB(location='sqlite:///{}/test_multi_index.sqlite'.format(tmp_path),
+#                     new_campaign=True, name='test_multi_index', info=info)
+#     db.add_app(app_info)
+#     df = pd.DataFrame({('a', ''): [1, 2, 3], ('b', 0): [4, 5, 6], ('b', 1): [7, 8, 9]})
+#     db.append_collation_dataframe(df, 'test')
+#     df_ref = db.get_collation_dataframe('test')
+#     assert((df.values == df_ref.values).all())
+#     assert((df.columns == df_ref.columns).all())
+#     df2 = pd.DataFrame({('a', ''): [10, 11, 12], ('b', 0): [13, 14, 15], ('b', 1): [16, 17, 18]})
+#     db.append_collation_dataframe(df2, 'test')
+#     df_ref = db.get_collation_dataframe('test')
+#     assert((np.vstack((df.values, df2.values)) == df_ref.values).all())
+#     assert((df2.columns == df_ref.columns).all())
+
+
+def test_collation(campaign):
+    results = list(enumerate(campaign.runs()))
+    campaign.store_results(results)

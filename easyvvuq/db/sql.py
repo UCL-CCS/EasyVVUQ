@@ -93,7 +93,7 @@ class RunTable(Base):
     params = Column(String)
     status = Column(Integer)
     run_dir = Column(String)
-    result = Column(Text)
+    result = Column(String)
     campaign = Column(Integer, ForeignKey('campaign_info.id'))
     sampler = Column(Integer, ForeignKey('sampler.id'))
 
@@ -820,18 +820,22 @@ class CampaignDB(BaseCampaignDB):
 
         return self._get_campaign_info(campaign_name=campaign_name).runs_dir
 
-    def store_run_results(self, run_id, results):
+    def store_results(self, results):
         """Stores the results from a given run in the database.
 
         Parameters
         ----------
-        run_id: int
-            ID of the run
+        run_name: str
+            name of the run
         results: dict
             dictionary with the results (from the decoder)
         """
-        self.session.query().filter(RunTable.id == run_id).update(
-            {'results' : json.dumps(results)})
+        for run_name, result in results:
+            try:
+                self.session.query(RunTable).filter(RunTable.run_name == run_name).update(
+                    {'result' : json.dumps(result)})
+            except IndexError:
+                raise RuntimeError("no runs with name {} found".format(run_name))
         self.session.commit()
 
     def get_results(self, app_id):
@@ -846,5 +850,6 @@ class CampaignDB(BaseCampaignDB):
         -------
         pandas DataFrame constructed from the decoder output dictionaries
         """
-        self.session.query().filter(RunTable.app_id == app)
+        for row in self.session.query().filter(RunTable.app_id == app):
+            pass
 
