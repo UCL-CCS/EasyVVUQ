@@ -69,6 +69,16 @@ class QMCAnalysis(BaseAnalysisElement):
             raise RuntimeError(
                 "No data in data frame passed to analyse element")
 
+        # Extract output values for each quantity of interest from Dataframe
+        samples = self.get_samples(data_frame, **kwargs)
+        
+        return self.compute_results(samples)
+
+    def compute_results(self, samples):
+        """
+        
+        """
+        
         qoi_cols = self.qoi_cols
 
         results = {
@@ -78,9 +88,6 @@ class QMCAnalysis(BaseAnalysisElement):
             'conf_sobols_first': {k: {} for k in qoi_cols},
             'conf_sobols_total': {k: {} for k in qoi_cols}
         }
-
-        # Extract output values for each quantity of interest from Dataframe
-        samples = self.get_samples(data_frame, **kwargs)
 
         # Compute descriptive statistics for each quantity of interest
         for k in qoi_cols:
@@ -129,7 +136,35 @@ class QMCAnalysis(BaseAnalysisElement):
                     else:
                         samples[k].append(data_frame[k]['Run_' + str(run_id)])
         return samples
+    
+    def merge_campaigns(self, data_frames):
+        """
+        Merge the dataframes of multiple (Q)MC campaigns, and then compute the results.
+        Only use this if the same vary dict was used in the campaigns.
 
+        Parameters
+        ----------
+        data_frames : list of EasyVVUQ data frames
+
+        Returns
+        -------
+        results : the results dictionary computed from the merged sample sets
+
+        """
+
+        assert type(data_frames) is list
+
+        samples = {k: [] for k in self.qoi_cols}
+        #loop over all data frames
+        for data_frame in data_frames:
+            #convert each data frame into a dict
+            sample_dict = self.get_samples(data_frame)
+            #for each QoI in the dict, merge the lists of samples
+            for k in self.qoi_cols:
+                samples[k] += sample_dict[k]
+        #compute the results using the merged sample set
+        return self.compute_results(samples)
+                
     def sobol_bootstrap(self, samples, alpha=0.05, n_bootstrap=1000):
         """
         Computes the first order and total order Sobol indices using Saltelli's
@@ -165,7 +200,8 @@ class QMCAnalysis(BaseAnalysisElement):
         # the number of parameter and the number of MC samples in n_mc * (n_params + 2)
         # and the size of the QoI
         n_params = self.sampler.n_params
-        n_mc = self.sampler.n_mc_samples
+        # n_mc = self.sampler.n_mc_samples
+        n_mc = int(samples.shape[0]/(n_params + 2))
         n_qoi = samples[0].size
         sobols_first_dict = {}
         conf_first_dict = {}
