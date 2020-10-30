@@ -820,7 +820,7 @@ class CampaignDB(BaseCampaignDB):
 
         return self._get_campaign_info(campaign_name=campaign_name).runs_dir
 
-    def store_results(self, results):
+    def store_results(self, app_name, results):
         """Stores the results from a given run in the database.
 
         Parameters
@@ -830,10 +830,16 @@ class CampaignDB(BaseCampaignDB):
         results: dict
             dictionary with the results (from the decoder)
         """
+        try:
+            app_id = self.session.query(AppTable).filter(AppTable.name == app_name).all()[0].id
+        except IndexError:
+            raise RuntimeError("app with the name {} not found".format(app_name))
         for run_name, result in results:
             try:
-                self.session.query(RunTable).filter(RunTable.run_name == run_name).update(
-                    {'result' : json.dumps(result)})
+                self.session.query(RunTable).\
+                    filter(RunTable.run_name == run_name).\
+                    filter(RunTable.app == app_id).\
+                    update({'result' : json.dumps(result)})
             except IndexError:
                 raise RuntimeError("no runs with name {} found".format(run_name))
         self.session.commit()

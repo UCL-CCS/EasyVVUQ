@@ -142,4 +142,4 @@ def test_version_check(campaign):
 
 def test_collation(campaign):
     results = list(enumerate(campaign.runs()))
-    campaign.store_results(results)
+    campaign.store_results('test', results)
