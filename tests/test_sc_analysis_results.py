@@ -76,10 +76,8 @@ def test_full_results(results):
 
 
 def test_describe(results):
-    assert(results.describe().to_dict() == {
-        'f': {
-            'mean': 0.9101117102420444,
-            'std': 0.8184617581393419,
-            'var': 0.6698796495365424
-        }
-    })
+    assert(results.describe().to_dict()['f'] == pytest.approx({
+        'mean': 0.9101117102420444,
+        'std': 0.8184617581393419,
+        'var': 0.6698796495365424
+    }))

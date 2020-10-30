@@ -10,6 +10,6 @@ install:
   - pip install coveralls
 script:
   - py.test --pep8 easyvvuq/
-  - py.test --cov=easyvvuq/ --pep8 tests
+  - py.test --cov=easyvvuq/ --pep8 tests --ignore=tests/test_stochastic_collocation.py
 after_success:
   - coveralls

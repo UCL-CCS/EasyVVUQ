@@ -97,4 +97,4 @@ def test_full_results(results):
 
 
 def test_describe(results):
-    assert(json.loads(results.describe().to_json()) == json.loads(DESCRIBE_RESULTS))
+    assert(json.loads(results.describe().astype(float).to_json()) == json.loads(DESCRIBE_RESULTS))
