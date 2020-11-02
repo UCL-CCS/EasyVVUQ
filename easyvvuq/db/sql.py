@@ -844,7 +844,7 @@ class CampaignDB(BaseCampaignDB):
                 raise RuntimeError("no runs with name {} found".format(run_name))
         self.session.commit()
 
-    def get_results(self, app_id):
+    def get_results(self, app_name):
         """Returns the results as a pandas DataFrame.
 
         Parameters
@@ -856,6 +856,28 @@ class CampaignDB(BaseCampaignDB):
         -------
         pandas DataFrame constructed from the decoder output dictionaries
         """
-        for row in self.session.query().filter(RunTable.app_id == app):
-            pass
+        try:
+            app_id = self.session.query(AppTable).filter(AppTable.name == app_name).all()[0].id
+        except IndexError:
+            raise RuntimeError("app with the name {} not found".format(app_name))
+        pd_result = {}
+        for row in self.session.query(RunTable).filter(RunTable.app == app_id):
+            params = json.loads(row.params)
+            result = json.loads(row.result)
+            pd_dict = {**params, **result}
+            for key in pd_dict.keys():
+                if not isinstance(pd_dict[key], list):
+                    try:
+                        pd_result[(key, 0)].append(pd_dict[key])
+                    except KeyError:
+                        pd_result[(key, 0)] = [pd_dict[key]]
+                else:
+                    for i, elt in enumerate(pd_dict[key]):
+                        try:
+                            pd_result[(key, i)].append(pd_dict[key][i])
+                        except KeyError:
+                            pd_result[(key, i)] = [pd_dict[key][i]]
+        return pd.DataFrame(pd_result)
+                        
+                        
 

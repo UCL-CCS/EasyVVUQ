@@ -141,5 +141,7 @@ def test_version_check(campaign):
 
 
 def test_collation(campaign):
-    results = list(enumerate(campaign.runs()))
+    results = [(run[0], {'b' : i, 'c' : [i + 1, i + 2]}) for i, run in enumerate(campaign.runs())]
     campaign.store_results('test', results)
+    result = campaign.get_results('test')
+    assert(isinstance(result, pd.DataFrame))
