@@ -7,7 +7,6 @@ import json
 from easyvvuq import constants
 from easyvvuq.encoders import BaseEncoder
 from easyvvuq.decoders import BaseDecoder
-from easyvvuq.collate import BaseCollationElement
 import numpy
 
 __copyright__ = """

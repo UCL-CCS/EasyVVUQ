@@ -16,7 +16,6 @@ from easyvvuq import constants
 from easyvvuq.sampling.base import BaseSamplingElement
 from easyvvuq.encoders.base import BaseEncoder
 from easyvvuq.decoders.base import BaseDecoder
-from easyvvuq.collate.base import BaseCollationElement
 from easyvvuq import ParamsSpecification
 from easyvvuq.utils.helpers import multi_index_tuple_parser
 
