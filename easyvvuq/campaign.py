@@ -681,19 +681,27 @@ class Campaign:
         -------
 
         """
-
-        # Apply collation element
-        num_collated = self._active_app_collater.collate(self, self._active_app['id'])
-
-        if num_collated < 1:
-            logger.warning("No data collected during collation.")
-
-        # Log application of this collation element
-        info = {'num_collated': num_collated}
-        self.log_element_application(self._active_app_collater, info)
+        app_id = self._active_app['id']
+        decoder = self._active_app_decoder
+        processed_run_IDs = []
+        processed_run_results = []
+        for run_id, run_info in self.campaign_db.runs(
+                status=constants.Status.ENCODED, app_id=app_id):
+            # use decoder to check if run has completed (in general application-specific)
+            if decoder.sim_complete(run_info=run_info):
+                # get the output of the simulation from the decoder
+                run_data = decoder.parse_sim_output(run_info=run_info)
+                processed_run_IDs.append(run_id)
+                processed_run_results.append(run_data)
+        # update run statuses to "collated"
+        self.campaign_db.set_run_statuses(processed_run_IDs, constants.Status.COLLATED)
+        # add the results to the database
+        store_results(self._active_app_name, zip(processed_run_IDs, processed_run_results))
+        return len(processed_run_IDs)
 
     def clear_collation(self):
-        self.campaign_db.clear_collation(self._active_app['id'])
+        pass
+        #self.campaign_db.clear_collation(self._active_app['id'])
 
     def recollate(self):
         """Clears the current collation table, changes all COLLATED status runs
