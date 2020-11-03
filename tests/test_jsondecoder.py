@@ -14,6 +14,7 @@ def test_jsondecoder_basic():
     assert(data['v'][:3] == [0.014841768890619278, 0.014779693447053432, 0.014733896590769291])
     assert(data['v'][-3:] == [0.0010381652973592281, 0.0010054642334580421, 0.0009733123588375747])
 
+
 def test_jsondecoder_scalars_only():
     # like test_jsondecoder_basics, but with only scalar quantities
     decoder = JSONDecoder(os.path.join('jsondecoder', 'fredrik.json'), ['cfrac', 'we'])
@@ -42,7 +43,7 @@ def test_missing_column():
         data = decoder.parse_sim_output(run_info)
     # Check if the missing column is reported in the exception message
     assert("['root1', 'node1', 'abcd']" in str(excinfo.value))
-    
+
 
 def test_get_restart_dict():
     decoder = JSONDecoder('nested.json',

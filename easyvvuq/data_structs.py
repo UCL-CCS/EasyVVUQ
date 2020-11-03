@@ -313,7 +313,7 @@ class AppInfo:
             out_dict = {
                 'name': self.name,
                 'params': self.paramsspec,
-                'decoderspec' : self.decoderspec,
+                'decoderspec': self.decoderspec,
                 'input_encoder': self.input_encoder.serialize(),
                 'output_decoder': self.output_decoder.serialize(),
                 'collater': self.collater.serialize()

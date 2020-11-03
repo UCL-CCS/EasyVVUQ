@@ -204,7 +204,7 @@ class CampaignDB(BaseCampaignDB):
             'output_decoder': selected_app.output_decoder,
             'collater': selected_app.collater,
             'params': ParamsSpecification.deserialize(selected_app.params),
-            'decoderspec' : decoderspec
+            'decoderspec': decoderspec
         }
 
         return app_dict
@@ -838,7 +838,7 @@ class CampaignDB(BaseCampaignDB):
                 self.session.query(RunTable).\
                     filter(RunTable.run_name == run_name).\
                     filter(RunTable.app == app_id).\
-                    update({'result' : json.dumps(result)})
+                    update({'result': json.dumps(result)})
             except IndexError:
                 raise RuntimeError("no runs with name {} found".format(run_name))
         self.session.commit()
@@ -850,7 +850,7 @@ class CampaignDB(BaseCampaignDB):
         ----------
         app_id: int
             ID of the app to return data for
-        
+
         Returns
         -------
         pandas DataFrame constructed from the decoder output dictionaries
@@ -877,6 +877,3 @@ class CampaignDB(BaseCampaignDB):
                         except KeyError:
                             pd_result[(key, i)] = [pd_dict[key][i]]
         return pd.DataFrame(pd_result)
-                        
-                        
-

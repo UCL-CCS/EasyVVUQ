@@ -121,11 +121,10 @@ def test_version_check(campaign):
 
 
 def test_collation(campaign):
-    results = [(run[0], {'b' : i, 'c' : [i + 1, i + 2]}) for i, run in enumerate(campaign.runs())]
+    results = [(run[0], {'b': i, 'c': [i + 1, i + 2]}) for i, run in enumerate(campaign.runs())]
     campaign.store_results('test', results)
     result = campaign.get_results('test')
     assert(isinstance(result, pd.DataFrame))
     assert(list(result.columns) == [('a', 0), ('b', 0), ('c', 0), ('c', 1)])
     assert(list(result.iloc[100].values) == [1, 100, 101, 102])
     assert(result.count()[0] == 1010)
-
