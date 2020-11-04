@@ -223,8 +223,6 @@ class AppInfo:
         Encoder element for application.
     output_decoder : :obj:`easyvvuq.decoders.base.BaseDecoder`
         Decoder element for application.
-    collater : :obj:`easyvvuq.collation.base.BaseCollationElement`
-        Collater element for application.
     """
 
     def __init__(
@@ -233,13 +231,11 @@ class AppInfo:
             paramsspec=None,
             decoderspec=None,
             encoder=None,
-            decoder=None,
-            collater=None):
+            decoder=None):
 
         self.name = name
         self.input_encoder = encoder
         self.output_decoder = decoder
-        self.collater = collater
         self.paramsspec = paramsspec
         self.decoderspec = decoderspec
 
@@ -269,24 +265,6 @@ class AppInfo:
 
         self._output_decoder = decoder
 
-    @property
-    def collater(self):
-        return self._collater
-
-    @collater.setter
-    def collater(self, collater):
-        if collater is None:
-            msg = "A 'collater' must be provided for this App (cannot be None)."
-            logging.error(msg)
-            raise Exception(msg)
-
-        if not isinstance(collater, BaseCollationElement):
-            msg = "Provided 'collater' must be derived from type BaseCollationElement"
-            logging.error(msg)
-            raise Exception(msg)
-
-        self._collater = collater
-
     def to_dict(self, flatten=False):
         """Convert to a dictionary (optionally flatten to single level)
 
@@ -315,8 +293,7 @@ class AppInfo:
                 'params': self.paramsspec,
                 'decoderspec': self.decoderspec,
                 'input_encoder': self.input_encoder.serialize(),
-                'output_decoder': self.output_decoder.serialize(),
-                'collater': self.collater.serialize()
+                'output_decoder': self.output_decoder.serialize()
             }
 
         return out_dict
