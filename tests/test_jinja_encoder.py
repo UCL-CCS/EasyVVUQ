@@ -130,14 +130,11 @@ def test_jinjaencoder(tmpdir):
                            target_filename='namoptions.001')
     decoder = uq.decoders.SimpleCSV(
         target_filename='results.csv',
-        output_columns=output_columns,
-        header=0)
-    collater = uq.collate.AggregateSamples(average=False)
+        output_columns=output_columns)
     my_campaign.add_app(name="dales",
                         params=params,
                         encoder=encoder,
-                        decoder=decoder,
-                        collater=collater)
+                        decoder=decoder)
     my_campaign.verify_all_runs = False  # to prevent errors on integer quantities
     my_campaign.set_sampler(my_sampler)
     my_campaign.draw_samples()
