@@ -860,8 +860,8 @@ class CampaignDB(BaseCampaignDB):
             raise RuntimeError("app with the name {} not found".format(app_name))
         pd_result = {}
         for row in self.session.query(RunTable).filter(RunTable.app == app_id):
-            params = json.loads(row.params)
-            params['run_id'] = row.id
+            params = {'run_id' : row.id}
+            params = {**params, **json.loads(row.params)}
             result = json.loads(row.result)
             pd_dict = {**params, **result}
             for key in pd_dict.keys():

@@ -37,8 +37,7 @@ def app_info():
             target_filename='cooling_in.json'),
         uq.decoders.SimpleCSV(
             target_filename='output.csv',
-            output_columns=["te"]),
-        uq.collate.AggregateSamples(average=False))
+            output_columns=["te"]))
 
     return app_info
 
@@ -125,6 +124,6 @@ def test_collation(campaign):
     campaign.store_results('test', results)
     result = campaign.get_results('test')
     assert(isinstance(result, pd.DataFrame))
-    assert(list(result.columns) == [('a', 0), ('b', 0), ('c', 0), ('c', 1)])
-    assert(list(result.iloc[100].values) == [1, 100, 101, 102])
+    assert(list(result.columns) == [('run_id', 0), ('a', 0), ('b', 0), ('c', 0), ('c', 1)])
+    assert(list(result.iloc[100].values) == [101, 1, 100, 101, 102])
     assert(result.count()[0] == 1010)
