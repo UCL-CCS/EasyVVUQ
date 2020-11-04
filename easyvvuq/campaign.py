@@ -8,7 +8,7 @@ import logging
 import tempfile
 import json
 import easyvvuq
-from easyvvuq import ParamsSpecification
+from easyvvuq import ParamsSpecification, constants
 from easyvvuq.constants import default_campaign_prefix, Status
 from easyvvuq.data_structs import RunInfo, CampaignInfo, AppInfo
 from easyvvuq.sampling import BaseSamplingElement
@@ -333,8 +333,7 @@ class Campaign:
             raise RuntimeError(message)
 
     def add_app(self, name=None, params=None, decoderspec=None,
-                encoder=None, decoder=None, collater=None,
-                set_active=True):
+                encoder=None, decoder=None, set_active=True):
         """Add an application to the CampaignDB.
 
         Parameters
@@ -348,8 +347,6 @@ class Campaign:
         decoder : :obj:`easyvvuq.decoders.base.BaseDecoder`
             Decoder element to convert application run output into data for
             VVUQ analysis.
-        collater : obj:`easyvvuq.collate.base.BaseCollationElement`
-            Collation element for this app.
         set_active: bool
             Should the added app be set to be the currently active app?
 
@@ -367,8 +364,7 @@ class Campaign:
             paramsspec=paramsspec,
             decoderspec=decoderspec,
             encoder=encoder,
-            decoder=decoder,
-            collater=collater
+            decoder=decoder
         )
 
         self.campaign_db.add_app(app)
@@ -396,8 +392,7 @@ class Campaign:
 
         # Resurrect the app encoder, decoder and collation elements
         (self._active_app_encoder,
-         self._active_app_decoder,
-         self._active_app_collater) = self.campaign_db.resurrect_app(app_name)
+         self._active_app_decoder) = self.campaign_db.resurrect_app(app_name)
 
     def set_sampler(self, sampler):
         """Set active sampler.
@@ -696,7 +691,7 @@ class Campaign:
         # update run statuses to "collated"
         self.campaign_db.set_run_statuses(processed_run_IDs, constants.Status.COLLATED)
         # add the results to the database
-        store_results(self._active_app_name, zip(processed_run_IDs, processed_run_results))
+        self.campaign_db.store_results(self._active_app_name, zip(processed_run_IDs, processed_run_results))
         return len(processed_run_IDs)
 
     def clear_collation(self):
@@ -729,7 +724,7 @@ class Campaign:
             pandas dataframe
 
         """
-        return self._active_app_collater.get_collated_dataframe(self, self._active_app['id'])
+        return self.campaign_db.get_results(self._active_app['name'])
 
     def apply_analysis(self, analysis):
         """Run the `analysis` element on the output of the last run collation.

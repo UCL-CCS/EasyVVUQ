@@ -323,8 +323,7 @@ class CampaignDB(BaseCampaignDB):
 
         encoder = BaseEncoder.deserialize(app_info['input_encoder'])
         decoder = BaseDecoder.deserialize(app_info['output_decoder'])
-        collater = BaseCollationElement.deserialize(app_info['collater'])
-        return encoder, decoder, collater
+        return encoder, decoder
 
     def add_runs(self, run_info_list=None, run_prefix='Run_', ensemble_prefix='Ensemble_'):
         """
@@ -862,6 +861,7 @@ class CampaignDB(BaseCampaignDB):
         pd_result = {}
         for row in self.session.query(RunTable).filter(RunTable.app == app_id):
             params = json.loads(row.params)
+            params['run_id'] = row.id
             result = json.loads(row.result)
             pd_dict = {**params, **result}
             for key in pd_dict.keys():
