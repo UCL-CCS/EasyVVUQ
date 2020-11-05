@@ -67,24 +67,20 @@ if __name__ == '__main__':      ### This is needed if you are using a local clus
     print(str, file=open('fusion.template','w'))
     """
 
-    # Create an encoder, decoder and collater for PCE test app
+    # Create an encoder, and decoder for PCE test app
     encoder = uq.encoders.GenericEncoder(template_fname='fusion.template',
                                          delimiter='$',
                                          target_filename='fusion_in.json')
 
 
     decoder = uq.decoders.SimpleCSV(target_filename="output.csv",
-                                    output_columns=["te", "ne", "rho", "rho_norm"],
-                                    header=0)
-
-    collater = uq.collate.AggregateSamples(average=False)
+                                    output_columns=["te", "ne", "rho", "rho_norm"],)
 
     # Add the app (automatically set as current app)
     my_campaign.add_app(name="fusion",
                         params=params,
                         encoder=encoder,
-                        decoder=decoder,
-                        collater=collater)
+                        decoder=decoder)
 
     time_end = time.time()
     print('Time for phase 1 = %.3f' % (time_end-time_start))

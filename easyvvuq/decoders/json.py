@@ -1,6 +1,5 @@
 import os
 import logging
-import pandas as pd
 from easyvvuq import OutputType
 from .base import BaseDecoder
 import json

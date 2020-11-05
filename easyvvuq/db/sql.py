@@ -5,7 +5,7 @@ import json
 import logging
 import pandas as pd
 import ast
-from sqlalchemy import create_engine, Column, Integer, String, Text, ForeignKey
+from sqlalchemy import create_engine, Column, Integer, String, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import MetaData
@@ -17,7 +17,6 @@ from easyvvuq.sampling.base import BaseSamplingElement
 from easyvvuq.encoders.base import BaseEncoder
 from easyvvuq.decoders.base import BaseDecoder
 from easyvvuq import ParamsSpecification
-from easyvvuq.utils.helpers import multi_index_tuple_parser
 
 __copyright__ = """
 
