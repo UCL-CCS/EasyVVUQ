@@ -78,14 +78,12 @@ if __name__ == '__main__':
         target_filename='sobol_in.json')
     decoder = uq.decoders.SimpleCSV(target_filename=output_filename,
                                     output_columns=output_columns)
-    collater = uq.collate.AggregateSamples(average=False)
 
     # Add the SC app (automatically set as current app)
     my_campaign.add_app(name="sc",
                         params=params,
                         encoder=encoder,
-                        decoder=decoder,
-                        collater=collater)
+                        decoder=decoder)
 
     # Create the sampler
     vary = {
