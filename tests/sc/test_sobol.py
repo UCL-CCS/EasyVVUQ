@@ -17,6 +17,7 @@ def print_exact_sobols():
     print('----------------------')
     print('Exact 1st-order Sobol indices: ', V_i / V)
 
+
 if __name__ == '__main__':
     import matplotlib.pyplot as plt
     plt.close('all')
