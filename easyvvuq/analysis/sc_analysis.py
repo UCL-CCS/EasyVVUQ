@@ -208,7 +208,7 @@ class SCAnalysis(BaseAnalysisElement):
         for run_id in data_frame[('run_id', 0)].unique():
             for k in qoi_cols:
                 values = data_frame.loc[data_frame[('run_id', 0)] == run_id][k].values
-                samples[k].append(values)
+                samples[k].append(values.flatten())
         self.samples = samples
         print('done')
 
