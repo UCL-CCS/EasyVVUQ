@@ -696,10 +696,6 @@ class Campaign:
                 processed_run_IDs, processed_run_results))
         return len(processed_run_IDs)
 
-    def clear_collation(self):
-        pass
-        # self.campaign_db.clear_collation(self._active_app['id'])
-
     def recollate(self):
         """Clears the current collation table, changes all COLLATED status runs
            back to ENCODED, then runs collate() again
