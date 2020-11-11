@@ -189,7 +189,19 @@ def test_cannonsim(tmpdir, campaign):
         "mass": cp.Uniform(5.0, 1.0)
     }
     sampler = uq.sampling.RandomSampler(vary=vary)
-    campaign(tmpdir, 'cannon', 'cannonsim', params, encoder, decoder, sampler, actions, stats, vary, 5, 1)
+    campaign(
+        tmpdir,
+        'cannon',
+        'cannonsim',
+        params,
+        encoder,
+        decoder,
+        sampler,
+        actions,
+        stats,
+        vary,
+        5,
+        1)
     # Make a sweep sampler
     sweep = {
         "angle": [0.1, 0.2, 0.3],
@@ -197,7 +209,19 @@ def test_cannonsim(tmpdir, campaign):
         "velocity": [10.0, 10.1, 10.2]
     }
     sampler = uq.sampling.BasicSweep(sweep=sweep)
-    campaign(tmpdir, 'cannonsim', 'cannonsim', params, encoder, decoder, sampler, actions, None, sweep, 5, 1)
+    campaign(
+        tmpdir,
+        'cannonsim',
+        'cannonsim',
+        params,
+        encoder,
+        decoder,
+        sampler,
+        actions,
+        None,
+        sweep,
+        5,
+        1)
 
 
 # def test_gauss(tmpdir, campaign):
