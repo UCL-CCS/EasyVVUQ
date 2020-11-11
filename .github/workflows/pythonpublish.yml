@@ -29,32 +29,3 @@ jobs:
       run: |
         python setup.py sdist bdist_wheel
         twine upload dist/*
-
-  deploy_conda:
-    needs:
-      deploy
-
-    runs-on: ubuntu-latest
-
-    steps:
-    - name: Deploy to Conda Cloud
-      run: |
-        sleep 5m
-        wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh
-        bash miniconda.sh -b -p $HOME/miniconda
-        export PATH="$HOME/miniconda/bin:$PATH"
-        conda install conda-build
-        conda install anaconda-client
-        conda install numpy
-        conda config --add channels conda-forge
-        conda config --set channel_priority strict
-        conda skeleton pypi easyvvuq
-        sed -i 's/dask_jobqueue/dask-jobqueue/g' easyvvuq/meta.yaml
-        sed -i '/^build:/a\
-          noarch: python' easyvvuq/meta.yaml
-        sed -i '/^    - kubernetes/a\
-            - python-kubernetes' easyvvuq/meta.yaml
-        yes | anaconda login --username ${{ secrets.CONDA_USERNAME }} --password ${{ secrets.CONDA_PASSWORD }}
-        conda config --set anaconda_upload yes
-        conda build easyvvuq
-        anaconda logout
