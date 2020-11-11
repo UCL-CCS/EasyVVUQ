@@ -113,7 +113,7 @@ class MCSampler(RandomSampler, sampler_name='mc_sampler'):
         self.xi_mc[(step - 1):self.max_num:step] = M_1
         # store N_i entries between M2 and M1
         for i in range(self.n_params):
-            N_i = np.array(M_2)
+            N_i = np.copy(M_2)
             # N_i = M2 with i-th colum from M1
             N_i[:, i] = M_1[:, i]
             self.xi_mc[(i + 1):self.max_num:step] = N_i

@@ -5,6 +5,8 @@ https://en.wikipedia.org/wiki/Variance-based_sensitivity_analysis
 """
 import logging
 import numpy as np
+import pandas as pd
+from scipy.stats import norm
 from easyvvuq import OutputType
 from .base import BaseAnalysisElement
 from easyvvuq.sampling import QMCSampler
@@ -70,7 +72,7 @@ class QMCAnalysis(BaseAnalysisElement):
         """Version of this element"""
         return "0.2"
 
-    def analyse(self, data_frame):
+    def analyse(self, data_frame, **kwargs):
         """Perform QMC analysis on a given pandas DataFrame.
 
         Parameters
@@ -85,10 +87,20 @@ class QMCAnalysis(BaseAnalysisElement):
             ['statistical_moments', 'percentiles', 'sobol_indices',
              'correlation_matrices', 'output_distributions']
         """
-        if data_frame.empty:
+        if type(data_frame) == pd.DataFrame and data_frame.empty:
             raise RuntimeError(
                 "No data in data frame passed to analyse element")
 
+        # Extract output values for each quantity of interest from Dataframe
+        samples = self.get_samples(data_frame, **kwargs)
+        
+        return self.compute_results(samples)
+
+    def compute_results(self, samples):
+        """
+        
+        """
+        
         qoi_cols = self.qoi_cols
 
         results = {
@@ -98,9 +110,6 @@ class QMCAnalysis(BaseAnalysisElement):
             'conf_sobols_first': {k: {} for k in qoi_cols},
             'conf_sobols_total': {k: {} for k in qoi_cols}
         }
-
-        # Extract output values for each quantity of interest from Dataframe
-        samples = self.get_samples(data_frame)
 
         # Compute descriptive statistics for each quantity of interest
         for k in qoi_cols:
@@ -117,13 +126,13 @@ class QMCAnalysis(BaseAnalysisElement):
         return QMCAnalysisResults(raw_data=results, samples=data_frame,
                                   qois=self.qoi_cols, inputs=list(self.sampler.vary.get_keys()))
 
-    def get_samples(self, data_frame):
+    def get_samples(self, data_frame, **kwargs):
         """
         Converts the Pandas dataframe into a dictionary.
 
         Parameters
         ----------
-        data_frame : the EasyVVUQ Pandas dataframe.
+        data_frame : the EasyVVUQ Pandas or dictonary dataframe.
 
         Returns
         -------
@@ -132,13 +141,54 @@ class QMCAnalysis(BaseAnalysisElement):
 
         """
         samples = {k: [] for k in self.qoi_cols}
-        for run_id in data_frame.run_id.unique():
+        if type(data_frame) == pd.DataFrame:
+            for run_id in data_frame.run_id.unique():
+                for k in self.qoi_cols:
+                    if 'output_index' in kwargs:
+                        values = data_frame.loc[data_frame['run_id'] == run_id][k].values[kwargs['output_index']]
+                    else:
+                        values = data_frame.loc[data_frame['run_id'] == run_id][k].values
+                    samples[k].append(values)
+        elif type(data_frame) == dict:
+            #dict is not sorted, make sure the runs are processed in ascending order
             for k in self.qoi_cols:
-                data = data_frame.loc[data_frame['run_id'] == run_id][k]
-                samples[k].append(data.values)
+                run_id_int = [int(run_id.split('Run_')[-1]) for run_id in data_frame[k].keys()]
+                for run_id in range(1, np.max(run_id_int) + 1):
+                    if 'output_index' in kwargs:
+                        samples[k].append(data_frame[k]['Run_' + str(run_id)][kwargs['output_index']])                       
+                    else:
+                        samples[k].append(data_frame[k]['Run_' + str(run_id)])
         return samples
+    
+    def merge_campaigns(self, data_frames):
+        """
+        Merge the dataframes of multiple (Q)MC campaigns, and then compute the results.
+        Only use this if the same vary dict was used in the campaigns.
 
-    def sobol_bootstrap(self, samples, alpha=0.05, n_samples=1000):
+        Parameters
+        ----------
+        data_frames : list of EasyVVUQ data frames
+
+        Returns
+        -------
+        results : the results dictionary computed from the merged sample sets
+
+        """
+
+        assert type(data_frames) is list
+
+        samples = {k: [] for k in self.qoi_cols}
+        #loop over all data frames
+        for data_frame in data_frames:
+            #convert each data frame into a dict
+            sample_dict = self.get_samples(data_frame)
+            #for each QoI in the dict, merge the lists of samples
+            for k in self.qoi_cols:
+                samples[k] += sample_dict[k]
+        #compute the results using the merged sample set
+        return self.compute_results(samples)
+                
+    def sobol_bootstrap(self, samples, alpha=0.05, n_bootstrap=1000):
         """
         Computes the first order and total order Sobol indices using Saltelli's
         method. To assess the sampling inaccuracy, bootstrap confidence intervals
@@ -166,43 +216,53 @@ class QMCAnalysis(BaseAnalysisElement):
         assert len(samples) > 0
         assert alpha > 0.0
         assert alpha < 1.0
-        assert n_samples > 0
+        assert n_bootstrap > 0
 
         # convert to array
         samples = np.array(samples)
         # the number of parameter and the number of MC samples in n_mc * (n_params + 2)
         # and the size of the QoI
         n_params = self.sampler.n_params
-        n_mc = self.sampler.n_mc_samples
+        # n_mc = self.sampler.n_mc_samples
+        n_mc = int(samples.shape[0]/(n_params + 2))
         n_qoi = samples[0].size
         sobols_first_dict = {}
         conf_first_dict = {}
         sobols_total_dict = {}
         conf_total_dict = {}
 
+        # code evaluations of input matrices M1, M2 and Ni, i = 1,...,n_params
+        # see reference above.
+        f_M2, f_M1, f_Ni = self._separate_output_values(samples, n_params, n_mc)
+        r = np.random.randint(n_mc, size=(n_mc, n_bootstrap))
+
         for j, param_name in enumerate(self.sampler.vary.get_keys()):
-            # code evaluations of input matrices M1, M2 and Ni, i = 1,...,n_params
-            # see reference above.
-            f_M2, f_M1, f_Ni = self._separate_output_values(samples, n_params, n_mc)
+
             # our point estimate for the 1st and total order Sobol indices
             value_first = self._first_order(f_M2, f_M1, f_Ni[:, j])
             value_total = self._total_order(f_M2, f_M1, f_Ni[:, j])
-            # array for resampled estimates
-            sobols_first = np.zeros([n_samples, n_qoi])
-            sobols_total = np.zeros([n_samples, n_qoi])
-            for i in range(n_samples):
-                # resample, must be done on already seperated output due to
-                # the specific order in samples
-                idx = np.random.randint(0, n_mc - 1, n_mc)
-                f_M2_resample = f_M2[idx]
-                f_M1_resample = f_M1[idx]
-                f_Ni_resample = f_Ni[idx]
-                # recompute Sobol indices
-                sobols_first[i] = self._first_order(f_M2_resample, f_M1_resample,
-                                                    f_Ni_resample[:, j])
-                sobols_total[i] = self._total_order(f_M2_resample, f_M1_resample,
-                                                    f_Ni_resample[:, j])
-            # compute confidence intervals
+
+            # sobols computed from resampled data points
+            if n_mc * n_bootstrap * n_qoi <= 10**7:
+                #this is a vectorized computation, Is fast, but f_M2[r] will be of size
+                #(n_mc, n_bootstrap, n_qoi), this can become too large and cause a crash, 
+                #especially when dealing with large QoI (n_qoi >> 1). So this is only done
+                #when n_mc * n_bootstrap * n_qoi <= 10**7
+                print("Vectorized bootstrapping")
+                sobols_first = self._first_order(f_M2[r], f_M1[r], f_Ni[r, j])
+                sobols_total = self._total_order(f_M2[r], f_M1[r], f_Ni[r, j])
+            else:
+                #array for resampled estimates
+                sobols_first = np.zeros([n_bootstrap, n_qoi])
+                sobols_total = np.zeros([n_bootstrap, n_qoi])
+                print("Sequential bootstrapping")
+                #non-vectorized implementation
+                for i in range(n_bootstrap):
+                    #resampled sample matrices of size (n_mc, n_qoi)
+                    sobols_first[i] = self._first_order(f_M2[r[i]], f_M1[r[i]], f_Ni[r[i], j])
+                    sobols_total[i] = self._total_order(f_M2[r[i]], f_M1[r[i]], f_Ni[r[i], j])
+
+            # compute confidence intervals based on percentiles
             _, low_first, high_first = confidence_interval(sobols_first, value_first,
                                                            alpha, pivotal=True)
             _, low_total, high_total = confidence_interval(sobols_total, value_total,
@@ -258,6 +318,7 @@ class QMCAnalysis(BaseAnalysisElement):
 
         return f_M2, f_M1, f_Ni
 
+    # Adapted from SALib
     @staticmethod
     def _first_order(f_M2, f_M1, f_Ni):
         """Calculate first order sensitivity indices.
@@ -278,6 +339,7 @@ class QMCAnalysis(BaseAnalysisElement):
         V = np.var(np.r_[f_M2, f_M1], axis=0)
         return np.mean(f_M1 * (f_Ni - f_M2), axis=0) / (V + (V == 0)) * (V != 0)
 
+    # Adapted from SALib
     @staticmethod
     def _total_order(f_M2, f_M1, f_Ni):
         """Calculate total order sensitivity indices. See also:
