@@ -280,10 +280,13 @@ def test_cannonsim(tmpdir, campaign):
 #         "mu": cp.Uniform(1.0, 100.0),
 #     }
 #     sampler = uq.sampling.RandomSampler(vary=vary)
-#     campaign(tmpdir, 'gauss', 'gauss', params, encoder, decoder, sampler, actions, stats, vary, 2, 2)
+#     campaign(tmpdir, 'gauss', 'gauss', params, encoder, decoder,
+#              sampler, actions, stats, vary, 2, 2)
 #     encoder = GaussEncoder(target_filename='gauss_in.json')
-#     campaign(tmpdir, 'gauss', 'gauss', params, encoder, decoder, sampler, actions, stats, vary, 2, 2)
-#     campaign(tmpdir, 'gauss', 'gauss', params, encoder_with_fixtures, decoder, sampler, actions, stats, vary, 2, 2)
+#     campaign(tmpdir, 'gauss', 'gauss', params, encoder, decoder,
+#              sampler, actions, stats, vary, 2, 2)
+#     campaign(tmpdir, 'gauss', 'gauss', params, encoder_with_fixtures, decoder,
+#              sampler, actions, stats, vary, 2, 2)
 
 
 def test_pce(tmpdir, campaign):
