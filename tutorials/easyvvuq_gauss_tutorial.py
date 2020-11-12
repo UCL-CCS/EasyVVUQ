@@ -86,6 +86,6 @@ my_campaign.collate()
 
 # 9. Run Analysis
 #     - Calculate bootstrap statistics for collated data
-stats = uq.analysis.EnsembleBoot(groupby=["mu"], qoi_cols=["Value"])
+stats = uq.analysis.EnsembleBoot(groupby=[("mu", 0)], qoi_cols=[("Value", 0)])
 my_campaign.apply_analysis(stats)
 print("stats:\n", my_campaign.get_last_analysis())
