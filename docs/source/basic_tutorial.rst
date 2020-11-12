@@ -232,25 +232,14 @@ and the columns to keep in the data for analysis::
 
     decoder = uq.decoders.SimpleCSV(
                 target_filename=out_file,
-                output_columns=['Step', 'Value'],
-                header=0)
-
-We will also need to bring the output data together in a single data structure for analysis.
-This is called *collation* in EasyVVUQ terminology.
-Here we use the *AggregateSamples* element to add the output from each *Decoder* to
-a summary `pandas.DataFrame` (the average option here means that rather than have
-data from each step in each run we use the mean to represent each one)::
-
-    collater = uq.collate.AggregateSamples(average=True)
+                output_columns=['Step', 'Value'])
 
 These choices are then added to the *Campaign*::
 
     my_campaign.add_app(name="gauss",
                         params=params,
                         encoder=encoder,
-                        decoder=decoder,
-                        collater=collater
-                        )
+                        decoder=decoder)
 
 Section 4: Specify Sampler
 --------------------------
