@@ -705,7 +705,6 @@ class Campaign:
 
         """
 
-        self.clear_collation()
         collated_run_ids = list(self.campaign_db.run_ids(status=Status.COLLATED))
         self.campaign_db.set_run_statuses(collated_run_ids, Status.ENCODED)
         self.collate()

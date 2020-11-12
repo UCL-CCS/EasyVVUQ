@@ -91,8 +91,7 @@ def test_recollate(tmpdir):
         target_filename='in.cannon')
     output_cols = ['Dist', 'lastvx', 'lastvy']
     decoder = uq.decoders.SimpleCSV(
-        target_filename='output.csv', output_columns=output_cols, header=0)
-    collater = uq.collate.AggregateSamples(average=False)
+        target_filename='output.csv', output_columns=output_cols)
 
     # Set up samplers
     vary = {
@@ -105,8 +104,7 @@ def test_recollate(tmpdir):
     my_campaign.add_app(name="cannon",
                         params=params,
                         encoder=encoder,
-                        decoder=decoder,
-                        collater=collater)
+                        decoder=decoder)
     my_campaign.set_app("cannon")
 
     my_campaign.set_sampler(sampler)
