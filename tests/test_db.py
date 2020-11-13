@@ -1,7 +1,7 @@
 import pytest
 import os.path
 import easyvvuq as uq
-from easyvvuq.constants import default_campaign_prefix
+from easyvvuq.constants import default_campaign_prefix, Status
 from easyvvuq.db.sql import CampaignDB
 from easyvvuq.data_structs import CampaignInfo, RunInfo, AppInfo
 from easyvvuq.constants import Status
@@ -122,6 +122,7 @@ def test_version_check(campaign):
 def test_collation(campaign):
     results = [(run[0], {'b': i, 'c': [i + 1, i + 2]}) for i, run in enumerate(campaign.runs())]
     campaign.store_results('test', results)
+    campaign.set_run_statuses([run[0] for run in campaign.runs()], Status.COLLATED)
     result = campaign.get_results('test')
     assert(isinstance(result, pd.DataFrame))
     assert(list(result.columns) == [('run_id', 0), ('a', 0), ('b', 0), ('c', 0), ('c', 1)])
