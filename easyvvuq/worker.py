@@ -67,7 +67,8 @@ class Worker:
         # Resurrect the app encoder and decoder elements
         self._active_app_name = app_name
         self._active_app = self.campaign_db.app(name=app_name)
-        self._active_app_encoder, self._active_app_decoder = self.campaign_db.resurrect_app(app_name)
+        self._active_app_encoder, self._active_app_decoder = self.campaign_db.resurrect_app(
+            app_name)
 
     def encode_runs(self, run_id_list):
         """
