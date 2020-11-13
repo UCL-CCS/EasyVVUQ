@@ -13,6 +13,7 @@ from easyvvuq.constants import default_campaign_prefix, Status
 from easyvvuq.data_structs import RunInfo, CampaignInfo, AppInfo
 from easyvvuq.sampling import BaseSamplingElement
 from easyvvuq.actions import ActionStatuses
+from cerberus import Validator
 
 __copyright__ = """
 
@@ -342,6 +343,9 @@ class Campaign:
             Name of the application.
         params : dict
             Description of the parameters to associate with the application.
+        decoderspec : dict
+            A Cerberus validation dictionary for the output of the decoder
+            if left None, will not be used.
         encoder : :obj:`easyvvuq.encoders.base.BaseEncoder`
             Encoder element to convert parameters into application run inputs.
         decoder : :obj:`easyvvuq.decoders.base.BaseDecoder`
@@ -686,6 +690,12 @@ class Campaign:
             if decoder.sim_complete(run_info=run_info):
                 # get the output of the simulation from the decoder
                 run_data = decoder.parse_sim_output(run_info=run_info)
+                if self.active_app['decoderspec'] is not None:
+                    v = Validator()
+                    v.schema = self.active_app['decoderspec']
+                    if not v.validate(run_data):
+                        raise RuntimeError(
+                            "the output of he decoder failed to validate: {}".format(run_data))
                 processed_run_IDs.append(run_id)
                 processed_run_results.append(run_data)
         # update run statuses to "collated"
