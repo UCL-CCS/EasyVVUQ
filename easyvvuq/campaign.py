@@ -690,9 +690,9 @@ class Campaign:
             if decoder.sim_complete(run_info=run_info):
                 # get the output of the simulation from the decoder
                 run_data = decoder.parse_sim_output(run_info=run_info)
-                if self.active_app['decoderspec'] is not None:
+                if self._active_app['decoderspec'] is not None:
                     v = Validator()
-                    v.schema = self.active_app['decoderspec']
+                    v.schema = self._active_app['decoderspec']
                     if not v.validate(run_data):
                         raise RuntimeError(
                             "the output of he decoder failed to validate: {}".format(run_data))
