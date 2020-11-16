@@ -188,17 +188,10 @@ class SCAnalysis(BaseAnalysisElement):
         print('Loading samples...')
         qoi_cols = self.qoi_cols
         samples = {k: [] for k in qoi_cols}
-        if isinstance(data_frame, pd.DataFrame):
-            for run_id in data_frame.run_id.unique():
-                for k in qoi_cols:
-                    values = data_frame.loc[data_frame['run_id'] == run_id][k].values
-                    samples[k].append(values)
-        elif isinstance(data_frame, dict):
-            # dict is not sorted, make sure the runs are processed in ascending order
-            for k in qoi_cols:
-                run_id_int = [int(run_id.split('Run_')[-1]) for run_id in data_frame[k].keys()]
-                for run_id in range(1, np.max(run_id_int) + 1):
-                    samples[k].append(data_frame[k]['Run_' + str(run_id)])
+        for run_id in data_frame.run_id.unique():
+              for k in qoi_cols:
+                  values = data_frame.loc[data_frame['run_id'] == run_id][k].values
+                  samples[k].append(values)
         self.samples = samples
         print('done')
 
