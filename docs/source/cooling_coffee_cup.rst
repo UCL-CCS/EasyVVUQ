@@ -69,12 +69,7 @@ In this example the GenericEncoder and SimpleCSV, both included in the core Easy
         target_filename='cooling_in.json')
 
     decoder = uq.decoders.SimpleCSV(target_filename="output.csv",
-                                output_columns=["te", "ti"],
-                                header=0)
-
-In this workflow all application runs will be analyzed as individual datapoints, so we set the collator to AggregateSamples without averaging. This element simply extracts information using the assigned decoder and adds it to a summary dataframe. ::
-
-    collater = uq.collate.AggregateSamples(average=False)
+                                output_columns=["te", "ti"])
 
 GenericEncoder performs simple text substitution into a supplied template, using a specified delimiter to identify where parameters should be placed.
 The template is shown below (\$ is used as the delimiter).
@@ -94,8 +89,7 @@ As can be inferred from its name SimpleCSV reads CVS files produced by the cooli
     my_campaign.add_app(name="cooling",
                         params=params,
                         encoder=encoder,
-                        decoder=decoder,
-                        collater=collater)
+                        decoder=decoder)
 
 The Sampler
 -----------
