@@ -221,15 +221,7 @@ application. ::
         target_filename='fusion_in.json')
 
     decoder = uq.decoders.SimpleCSV(target_filename="output.csv",
-                                output_columns=["te", "ne", "rho", "rho_norm"],
-                                header=0)
-
-In this workflow all application runs will be analyzed as individual
-data-points, so we set the collator to AggregateSamples without
-averaging. This element simply extracts information using the assigned
-decoder and adds it to a summary dataframe. ::
-
-    collater = uq.collate.AggregateSamples(average=False)
+                                output_columns=["te", "ne", "rho", "rho_norm"])
 
 GenericEncoder performs simple text substitution into a supplied
 template, using a specified delimiter to identify where parameters
@@ -269,8 +261,7 @@ created an encoder, decoder and parameter space definition for our
     my_campaign.add_app(name="fusion",
                         params=params,
                         encoder=encoder,
-                        decoder=decoder,
-                        collater=collater)
+                        decoder=decoder)
 
 The Sampler
 -----------
