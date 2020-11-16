@@ -52,11 +52,13 @@ Campaign
 --------
 
 EasyVVUQ workflows are coordinated by an object called a ``Campaign``.
-This contains a common database, the ``CampaignDB``, which contains information
-on the application(s) being analysed alongside the runs mandated by the sampling
-algorithm(s) employed.
-The `Campaign` handles all validation and is transfers information between
-each stage of the workflow.
+This contains a common database, the ``CampaignDB``, which contains
+information on the application(s) being analysed alongside the runs
+mandated by the sampling algorithm(s) employed. It also stores the
+decoded results of the simulations themseleves. The Database is the
+central location where all information about your campaign is
+kept. The `Campaign` handles all validation and is transfers
+information between each stage of the workflow.
 
 Elements
 --------
