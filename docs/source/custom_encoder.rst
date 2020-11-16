@@ -52,9 +52,23 @@ A custom decoder can be created in a very similar manner to the encoder: ::
         def parse_sim_output(self, run_info={}):
             # User code goes here (method must return a pandas dataframe)
 
-The two methods that must be implemented here are sim_complete(), which returns True if the
-simulation has completed (this is handled by the decoder because it is an application
-specific issue), and parse_sim_output(), which returns a pandas dataframe containing the desired
-output, distilled from the simulation output files.
+The two methods that must be implemented here are sim_complete(),
+which returns True if the simulation has completed (this is handled by
+the decoder because it is an application specific issue), and
+parse_sim_output(), which returns a dictionary containing the desired
+output, distilled from the simulation output files. This dictionary
+has to follow the following list of restrictions:
 
 
+1. Has to be one level deep.
+#. All keys are strings signifying output variable names.
+#. All the values are either numbers or lists of numbers. Use numbers
+   of scalar outputs and lists for vector outputs.
+
+.. code-block:: JSON
+
+  {
+    "f1" : 0.3,
+    "f2" : [0.2, 0.4],
+    "z" : 328
+  }
