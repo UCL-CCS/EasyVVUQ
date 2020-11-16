@@ -128,7 +128,7 @@ Calling my\_campaign.collate() at any stage causes the campaign to aggregate dec
 
 This collated data is stored in the campaign database. An analysis element, here PCEAnalysis, can then be applied to the campaign's collation result. ::
 
-    my_analysis = uq.analysis.PCEAnalysis(sampler=my_sampler, qoi_cols=["te", "ti"])
+    my_analysis = uq.analysis.PCEAnalysis(sampler=my_sampler, qoi_cols=["te"])
     my_campaign.apply_analysis(my_analysis)
 
 The output of this is dependent on the type of analysis element. ::
@@ -147,5 +147,5 @@ If you wish to use something other than PCE, it is simply a matter of changing t
 
 And the analysis can be done with: ::
 
-    my_analysis = uq.analysis.SCAnalysis(sampler=my_sampler, qoi_cols=["te", "ti"])
+    my_analysis = uq.analysis.SCAnalysis(sampler=my_sampler, qoi_cols=["te"])
     my_campaign.apply_analysis(my_analysis)
