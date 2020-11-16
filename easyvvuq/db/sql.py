@@ -4,6 +4,7 @@ import os
 import json
 import logging
 import pandas as pd
+import ast
 from sqlalchemy import create_engine, Column, Integer, String, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
@@ -15,9 +16,7 @@ from easyvvuq import constants
 from easyvvuq.sampling.base import BaseSamplingElement
 from easyvvuq.encoders.base import BaseEncoder
 from easyvvuq.decoders.base import BaseDecoder
-from easyvvuq.collate.base import BaseCollationElement
 from easyvvuq import ParamsSpecification
-from easyvvuq.utils.helpers import multi_index_tuple_parser
 
 __copyright__ = """
 
@@ -78,6 +77,7 @@ class AppTable(Base):
     output_decoder = Column(String)
     collater = Column(String)
     params = Column(String)
+    decoderspec = Column(String)
 
 
 class RunTable(Base):
@@ -91,6 +91,7 @@ class RunTable(Base):
     params = Column(String)
     status = Column(Integer)
     run_dir = Column(String)
+    result = Column(String)
     campaign = Column(Integer, ForeignKey('campaign_info.id'))
     sampler = Column(Integer, ForeignKey('sampler.id'))
 
@@ -191,13 +192,18 @@ class CampaignDB(BaseCampaignDB):
 
         selected_app = selected[0]
 
+        decoderspec = selected_app.decoderspec
+        if decoderspec is not None:
+            decoderspec = ast.literal_eval(selected_app.decoderspec)
+
         app_dict = {
             'id': selected_app.id,
             'name': selected_app.name,
             'input_encoder': selected_app.input_encoder,
             'output_decoder': selected_app.output_decoder,
             'collater': selected_app.collater,
-            'params': ParamsSpecification.deserialize(selected_app.params)
+            'params': ParamsSpecification.deserialize(selected_app.params),
+            'decoderspec': decoderspec
         }
 
         return app_dict
@@ -316,8 +322,7 @@ class CampaignDB(BaseCampaignDB):
 
         encoder = BaseEncoder.deserialize(app_info['input_encoder'])
         decoder = BaseDecoder.deserialize(app_info['output_decoder'])
-        collater = BaseCollationElement.deserialize(app_info['collater'])
-        return encoder, decoder, collater
+        return encoder, decoder
 
     def add_runs(self, run_info_list=None, run_prefix='Run_', ensemble_prefix='Ensemble_'):
         """
@@ -812,64 +817,64 @@ class CampaignDB(BaseCampaignDB):
 
         return self._get_campaign_info(campaign_name=campaign_name).runs_dir
 
-    def append_collation_dataframe(self, df, app_id):
-        """
-        Append the data in dataframe 'df' to that already collated in the database
-        for the specified app.
+    def store_results(self, app_name, results):
+        """Stores the results from a given run in the database.
 
         Parameters
         ----------
-        df: pandas dataframe
-            The dataframe whose contents need to be appended to the collation store
-        app_id: int
-            The id of the app in the sql database. Used to determine which collation
-            table is appended to.
-
-        Returns
-        -------
+        run_name: str
+            name of the run
+        results: dict
+            dictionary with the results (from the decoder)
         """
+        try:
+            app_id = self.session.query(AppTable).filter(AppTable.name == app_name).all()[0].id
+        except IndexError:
+            raise RuntimeError("app with the name {} not found".format(app_name))
+        for run_name, result in results:
+            try:
+                self.session.query(RunTable).\
+                    filter(RunTable.run_name == run_name).\
+                    filter(RunTable.app == app_id).\
+                    update({'result': json.dumps(result)})
+            except IndexError:
+                raise RuntimeError("no runs with name {} found".format(run_name))
+        self.session.commit()
 
-        if df.size == 0:
-            logging.warning(
-                f"Attempt to append empty dataframe to SQL collation table for app_id {app_id}.")
-            return
-
-        tablename = 'COLLATION_APP' + str(app_id)
-        df.to_sql(tablename, self.engine, if_exists='append')
-
-    def get_collation_dataframe(self, app_id):
-        """
-        Returns a dataframe containing the full collated results stored in this database
-        for the specified app.
-        i.e. the total of what was added with the append_collation_dataframe() method.
+    def get_results(self, app_name):
+        """Returns the results as a pandas DataFrame.
 
         Parameters
         ----------
         app_id: int
-            The id of the app in the sql database. Used to determine which collation
-            table is appended to.
+            ID of the app to return data for
 
         Returns
         -------
-        df: pandas dataframe
-            The dataframe with all contents that were appended to this database
+        pandas DataFrame constructed from the decoder output dictionaries
         """
-
-        tablename = 'COLLATION_APP' + str(app_id)
-        if tablename in self.engine.table_names():
-            query = "select * from " + tablename
-            df = pd.read_sql_query(query, self.engine.execution_options(sqlite_raw_colnames=True))
-            columns, multi = multi_index_tuple_parser(df.columns.values[1:])
-            if multi:
-                df = pd.DataFrame(df.values[:, 1:],
-                                  columns=pd.MultiIndex.from_tuples(columns))
-            return df
-        else:
-            return None
-
-    def clear_collation(self, app_id):
-        tablename = 'COLLATION_APP' + str(app_id)
-
-        if tablename in self.engine.table_names():
-            sqlcmd = text(f'DROP TABLE {tablename};')
-            self.engine.execute(sqlcmd)
+        try:
+            app_id = self.session.query(AppTable).filter(AppTable.name == app_name).all()[0].id
+        except IndexError:
+            raise RuntimeError("app with the name {} not found".format(app_name))
+        pd_result = {}
+        for row in self.session.query(RunTable).\
+                filter(RunTable.app == app_id).\
+                filter(RunTable.status == constants.Status.COLLATED):
+            params = {'run_id': row.id}
+            params = {**params, **json.loads(row.params)}
+            result = json.loads(row.result)
+            pd_dict = {**params, **result}
+            for key in pd_dict.keys():
+                if not isinstance(pd_dict[key], list):
+                    try:
+                        pd_result[(key, 0)].append(pd_dict[key])
+                    except KeyError:
+                        pd_result[(key, 0)] = [pd_dict[key]]
+                else:
+                    for i, elt in enumerate(pd_dict[key]):
+                        try:
+                            pd_result[(key, i)].append(pd_dict[key][i])
+                        except KeyError:
+                            pd_result[(key, i)] = [pd_dict[key][i]]
+        return pd.DataFrame(pd_result)

@@ -56,17 +56,13 @@ encoder = uq.encoders.GenericEncoder(template_fname='fusion.template',
 
 
 decoder = uq.decoders.SimpleCSV(target_filename="output.csv",
-                                output_columns=["te", "ne", "rho", "rho_norm"],
-                                header=0)
-
-collater = uq.collate.AggregateSamples(average=False)
+                                output_columns=["te", "ne", "rho", "rho_norm"])
 
 # Add the app (automatically set as current app)
 my_campaign.add_app(name="fusion",
                     params=params,
                     encoder=encoder,
-                    decoder=decoder,
-                    collater=collater)
+                    decoder=decoder)
 
 time_end = time.time()
 print('Time for phase 1 = %.3f' % (time_end-time_start))

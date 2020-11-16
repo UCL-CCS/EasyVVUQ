@@ -52,11 +52,13 @@ Campaign
 --------
 
 EasyVVUQ workflows are coordinated by an object called a ``Campaign``.
-This contains a common database, the ``CampaignDB``, which contains information
-on the application(s) being analysed alongside the runs mandated by the sampling
-algorithm(s) employed.
-The `Campaign` handles all validation and is transfers information between
-each stage of the workflow.
+This contains a common database, the ``CampaignDB``, which contains
+information on the application(s) being analysed alongside the runs
+mandated by the sampling algorithm(s) employed. It also stores the
+decoded results of the simulations themseleves. The Database is the
+central location where all information about your campaign is
+kept. The `Campaign` handles all validation and is transfers
+information between each stage of the workflow.
 
 Elements
 --------
@@ -106,16 +108,6 @@ The role of a ``Decoder`` is twofold, to record simulation completion in the
 ``CampaignDB`` and to extract the output information from the simulation runs.
 Similarly to an ``Encoder``, a ``Decoder`` is designed to be user extendable to 
 facilitate analysis of a wide range of applications. 
-
-.. _collation:
-
-Collation
----------
-
-``Collation`` elements gather ``Decoder`` output across multiple runs to provide a
-combined and generic expression of the simulation results for further analysis
-(for example the default is to bring together output from all simulation runs
-in a Pandas dataframe).
 
 .. _analysis:
 

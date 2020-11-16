@@ -30,17 +30,13 @@ def data():
         "x1": cp.Uniform(0.0, 1.0),
         "x2": cp.Uniform(0.0, 1.0)
     }
-    # Select the MC sampler
     sampler = uq.sampling.SCSampler(vary)
-    data = []
+    data = {('run_id', 0): [], ('x1', 0): [], ('x2', 0): [], ('f', 0): []}
     for run_id, sample in enumerate(sampler):
-        data.append({
-            'run_id': run_id,
-            'x1': sample['x1'],
-            'x2': sample['x2'],
-            'f': sobol_g_func([sample['x1'], sample['x2']], d=2)
-        })
-
+        data[('run_id', 0)].append(run_id)
+        data[('x1', 0)].append(sample['x1'])
+        data[('x2', 0)].append(sample['x2'])
+        data[('f', 0)].append(sobol_g_func([sample['x1'], sample['x2']], d=2))
     df = pd.DataFrame(data)
     return sampler, df
 

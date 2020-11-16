@@ -22,17 +22,13 @@ encoder = uq.encoders.GenericEncoder(
     target_filename='cooling_in.json')
 
 decoder = uq.decoders.SimpleCSV(target_filename="output.csv",
-                                output_columns=["te"],
-                                header=0)
-
-collater = uq.collate.AggregateSamples(average=False)
+                                output_columns=["te"])
 
 # Add the app (automatically set as current app)
 my_campaign.add_app(name="cooling",
                     params=params,
                     encoder=encoder,
-                    decoder=decoder,
-                    collater=collater)
+                    decoder=decoder)
 
 # Create the sampler
 vary = {

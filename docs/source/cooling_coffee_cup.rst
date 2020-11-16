@@ -69,12 +69,7 @@ In this example the GenericEncoder and SimpleCSV, both included in the core Easy
         target_filename='cooling_in.json')
 
     decoder = uq.decoders.SimpleCSV(target_filename="output.csv",
-                                output_columns=["te", "ti"],
-                                header=0)
-
-In this workflow all application runs will be analyzed as individual datapoints, so we set the collator to AggregateSamples without averaging. This element simply extracts information using the assigned decoder and adds it to a summary dataframe. ::
-
-    collater = uq.collate.AggregateSamples(average=False)
+                                output_columns=["te", "ti"])
 
 GenericEncoder performs simple text substitution into a supplied template, using a specified delimiter to identify where parameters should be placed.
 The template is shown below (\$ is used as the delimiter).
@@ -94,8 +89,7 @@ As can be inferred from its name SimpleCSV reads CVS files produced by the cooli
     my_campaign.add_app(name="cooling",
                         params=params,
                         encoder=encoder,
-                        decoder=decoder,
-                        collater=collater)
+                        decoder=decoder)
 
 The Sampler
 -----------
@@ -134,7 +128,7 @@ Calling my\_campaign.collate() at any stage causes the campaign to aggregate dec
 
 This collated data is stored in the campaign database. An analysis element, here PCEAnalysis, can then be applied to the campaign's collation result. ::
 
-    my_analysis = uq.analysis.PCEAnalysis(sampler=my_sampler, qoi_cols=["te", "ti"])
+    my_analysis = uq.analysis.PCEAnalysis(sampler=my_sampler, qoi_cols=["te"])
     my_campaign.apply_analysis(my_analysis)
 
 The output of this is dependent on the type of analysis element. ::
@@ -153,5 +147,5 @@ If you wish to use something other than PCE, it is simply a matter of changing t
 
 And the analysis can be done with: ::
 
-    my_analysis = uq.analysis.SCAnalysis(sampler=my_sampler, qoi_cols=["te", "ti"])
+    my_analysis = uq.analysis.SCAnalysis(sampler=my_sampler, qoi_cols=["te"])
     my_campaign.apply_analysis(my_analysis)

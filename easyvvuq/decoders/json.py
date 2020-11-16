@@ -1,6 +1,5 @@
 import os
 import logging
-import pandas as pd
 from easyvvuq import OutputType
 from .base import BaseDecoder
 import json
@@ -92,27 +91,19 @@ class JSONDecoder(BaseDecoder, decoder_name="json"):
                 data = data[node]
             return data
 
-        def to_list(x):
-            if isinstance(x, list):
-                return x
-            else:
-                return [x]
-
-        def get_multi_index(col, lst):
-            return [((col, i), [x]) for i, x in enumerate(lst)]
-
         out_path = self._get_output_path(run_info, self.target_filename)
         raw_data = self._get_raw_data(out_path)
 
         data = []
         for col in self.output_columns:
-            if isinstance(col, str):
-                data.append(get_multi_index(col, to_list(raw_data[col])))
-            elif isinstance(col, list):
-                data.append(get_multi_index('.'.join(col), to_list(get_value(raw_data, col))))
-        data = sum(data, [])
-        data = pd.DataFrame(dict(data))
-        return data
+            try:
+                if isinstance(col, str):
+                    data.append((col, raw_data[col]))
+                elif isinstance(col, list):
+                    data.append(('.'.join(col), get_value(raw_data, col)))
+            except KeyError:
+                raise RuntimeError("no such field: {} in this json file".format(col))
+        return dict(data)
 
     def _get_raw_data(self, out_path):
         with open(out_path) as fd:

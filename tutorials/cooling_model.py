@@ -25,22 +25,22 @@ def model(time, T_0, kappa, T_env):
     return temp
 # ...
 
+if __name__ == '__main__':
+    json_input = sys.argv[1]
+    with open(json_input, "r") as f:
+        inputs = json.load(f)
 
-json_input = sys.argv[1]
-with open(json_input, "r") as f:
-    inputs = json.load(f)
+    kappa = float(inputs['kappa'])
+    t_env = float(inputs['t_env'])
+    temp0 = float(inputs['T0'])
 
-kappa = float(inputs['kappa'])
-t_env = float(inputs['t_env'])
-temp0 = float(inputs['T0'])
+    t = np.linspace(0, 200, 150)
 
-t = np.linspace(0, 200, 150)
+    output_filename = inputs['out_file']
 
-output_filename = inputs['out_file']
+    te = model(t, temp0, kappa, t_env)
 
-te = model(t, temp0, kappa, t_env)
-
-# output csv file
-np.savetxt(output_filename, te,
-           delimiter=",", comments='',
-           header='te')
+    # output csv file
+    np.savetxt(output_filename, te,
+               delimiter=",", comments='',
+               header='te')

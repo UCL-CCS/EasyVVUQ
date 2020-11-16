@@ -160,7 +160,7 @@ class PCEAnalysis(BaseAnalysisElement):
         # Get the Polynomial
         P = self.sampler.P
 
-        # Get the PCE variante to use (Regression or Projection)
+        # Get the PCE variant to use (Regression or Projection)
         regression = self.sampler.regression
 
         # Compute nodes (and weights)
@@ -177,9 +177,9 @@ class PCEAnalysis(BaseAnalysisElement):
 
         # Extract output values for each quantity of interest from Dataframe
         samples = {k: [] for k in qoi_cols}
-        for run_id in data_frame.run_id.unique():
+        for run_id in data_frame[('run_id', 0)].unique():
             for k in qoi_cols:
-                data = data_frame.loc[data_frame['run_id'] == run_id][k]
+                data = data_frame.loc[data_frame[('run_id', 0)] == run_id][k]
                 samples[k].append(data.values)
 
         # Compute descriptive statistics for each quantity of interest

@@ -82,8 +82,7 @@ def setup_cannonsim_app():
         target_filename='in.cannon')
     decoder = uq.decoders.SimpleCSV(
         target_filename='output.csv', output_columns=[
-            'Dist', 'lastvx', 'lastvy'], header=0)
-    collater = uq.collate.AggregateSamples(average=False)
+            'Dist', 'lastvx', 'lastvy'])
 
     vary = {
         "gravity": cp.Uniform(9.8, 1.0),
@@ -93,7 +92,7 @@ def setup_cannonsim_app():
     cannon_action = uq.actions.ExecuteLocal("tests/cannonsim/bin/cannonsim in.cannon output.csv")
     cannon_stats = uq.analysis.BasicStats(qoi_cols=['Dist', 'lastvx', 'lastvy'])
 
-    return params, encoder, decoder, collater, cannon_sampler, cannon_action, cannon_stats
+    return params, encoder, decoder, cannon_sampler, cannon_action, cannon_stats
 
 
 def setup_cooling_app():
@@ -124,9 +123,7 @@ def setup_cooling_app():
         delimiter='$',
         target_filename='cooling_in.json')
     decoder = uq.decoders.SimpleCSV(target_filename=output_filename,
-                                    output_columns=output_columns,
-                                    header=0)
-    collater = uq.collate.AggregateSamples(average=False)
+                                    output_columns=output_columns)
 
     vary = {
         "kappa": cp.Uniform(0.025, 0.075),
@@ -136,7 +133,7 @@ def setup_cooling_app():
     cooling_action = uq.actions.ExecuteLocal("tests/cooling/cooling_model.py cooling_in.json")
     cooling_stats = uq.analysis.PCEAnalysis(sampler=cooling_sampler, qoi_cols=output_columns)
 
-    return params, encoder, decoder, collater, cooling_sampler, cooling_action, cooling_stats
+    return params, encoder, decoder, cooling_sampler, cooling_action, cooling_stats
 
 
 def test_multiapp(tmpdir):
@@ -144,25 +141,23 @@ def test_multiapp(tmpdir):
     my_campaign = uq.Campaign(name='multiapp', work_dir=tmpdir, db_location='sqlite:///')
 
     # Add the cannonsim app to the campaign
-    (params, encoder, decoder, collater, cannon_sampler,
+    (params, encoder, decoder, cannon_sampler,
      cannon_action, cannon_stats) = setup_cannonsim_app()
     my_campaign.add_app(name="cannonsim",
                         params=params,
                         encoder=encoder,
-                        decoder=decoder,
-                        collater=collater)
+                        decoder=decoder)
 
     my_campaign.set_app("cannonsim")
     my_campaign.set_sampler(cannon_sampler)
 
     # Add the cooling app to the campaign
-    (params, encoder, decoder, collater, cooling_sampler,
+    (params, encoder, decoder, cooling_sampler,
      cooling_action, cooling_stats) = setup_cooling_app()
     my_campaign.add_app(name="cooling",
                         params=params,
                         encoder=encoder,
-                        decoder=decoder,
-                        collater=collater)
+                        decoder=decoder)
 
     # Set campaign to cannonsim, apply sampler, draw all samples
     my_campaign.set_app("cannonsim")

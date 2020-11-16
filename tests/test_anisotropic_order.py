@@ -40,16 +40,13 @@ def test_anisotropic_order(tmpdir):
         delimiter='$',
         target_filename='ade_in.json')
     decoder = uq.decoders.SimpleCSV(target_filename=output_filename,
-                                    output_columns=output_columns,
-                                    header=0)
-    collater = uq.collate.AggregateSamples()
+                                    output_columns=output_columns)
 
     # Add the SC app (automatically set as current app)
     my_campaign.add_app(name="sc",
                         params=params,
                         encoder=encoder,
-                        decoder=decoder,
-                        collater=collater)
+                        decoder=decoder)
 
     # Create the sampler
     vary = {

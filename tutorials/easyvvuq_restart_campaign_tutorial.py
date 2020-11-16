@@ -51,16 +51,12 @@ encoder = uq.encoders.GenericEncoder(template_fname=template,
 
 decoder = uq.decoders.SimpleCSV(
             target_filename=out_file,
-            output_columns=['Step', 'Value'],
-            header=0)
-
-collater = uq.collate.AggregateSamples(average=True)
+            output_columns=['Step', 'Value'])
 
 my_campaign.add_app(name="gauss",
                     params=params,
                     encoder=encoder,
-                    decoder=decoder,
-                    collater=collater
+                    decoder=decoder
                     )
 
 # 4. Specify Sampler

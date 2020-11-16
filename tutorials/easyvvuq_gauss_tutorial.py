@@ -50,17 +50,12 @@ encoder = uq.encoders.GenericEncoder(template_fname=template,
 
 decoder = uq.decoders.SimpleCSV(
             target_filename=out_file,
-            output_columns=['Step', 'Value'],
-            header=0)
-
-collater = uq.collate.AggregateSamples(average=True)
+            output_columns=['Step', 'Value'])
 
 my_campaign.add_app(name="gauss",
                     params=params,
                     encoder=encoder,
-                    decoder=decoder,
-                    collater=collater
-                    )
+                    decoder=decoder)
 
 # 4. Specify Sampler
 #    -  vary the `mu` parameter only
@@ -91,6 +86,6 @@ my_campaign.collate()
 
 # 9. Run Analysis
 #     - Calculate bootstrap statistics for collated data
-stats = uq.analysis.EnsembleBoot(groupby=["mu"], qoi_cols=["Value"])
+stats = uq.analysis.EnsembleBoot(groupby=[("mu", 0)], qoi_cols=[("Value", 0)])
 my_campaign.apply_analysis(stats)
 print("stats:\n", my_campaign.get_last_analysis())
