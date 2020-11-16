@@ -66,7 +66,6 @@ def campaign():
         my_campaign = uq.Campaign(name=campaign_name, work_dir=work_dir, db_type=db_type)
         logging.debug("Serialized encoder: %s", str(encoder.serialize()))
         logging.debug("Serialized decoder: %s", str(decoder.serialize()))
-
         # Add the cannonsim app
         my_campaign.add_app(name=app_name,
                             params=params,

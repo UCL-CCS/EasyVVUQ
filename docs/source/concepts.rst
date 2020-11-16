@@ -107,16 +107,6 @@ The role of a ``Decoder`` is twofold, to record simulation completion in the
 Similarly to an ``Encoder``, a ``Decoder`` is designed to be user extendable to 
 facilitate analysis of a wide range of applications. 
 
-.. _collation:
-
-Collation
----------
-
-``Collation`` elements gather ``Decoder`` output across multiple runs to provide a
-combined and generic expression of the simulation results for further analysis
-(for example the default is to bring together output from all simulation runs
-in a Pandas dataframe).
-
 .. _analysis:
 
 Analysis
