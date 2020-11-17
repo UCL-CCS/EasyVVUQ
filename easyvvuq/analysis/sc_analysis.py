@@ -287,7 +287,6 @@ class SCAnalysis(BaseAnalysisElement):
         logging.debug('Creating multi-index map for level %d', L)
         # full tensor product
         if not self.sparse:
-            # l = (np.ones(N) * L).astype('int')
             l = (self.sampler.polynomial_order)
             # map_ = [{'l': l, 'X': x, 'f': k} for k, x in enumerate(self.xi_d)]
             k = 0
@@ -404,24 +403,6 @@ class SCAnalysis(BaseAnalysisElement):
                         error[tuple(l)].append(np.linalg.norm(hier_surplus, np.inf))
                 # compute mean error over all points in X_l
                 error[tuple(l)] = np.mean(error[tuple(l)])
-            # elif method == 'surplus_quad':
-            #     # collocation points of current level index l
-            #     X_l = [self.sampler.xi_1d[n][l[n]] for n in range(self.N)]
-            #     W_l = [self.sampler.wi_1d[n][l[n]] for n in range(self.N)]
-            #     X_l = np.array(list(product(*X_l)))
-            #     W_l = np.array(list(product(*W_l)))
-            #     # only consider new points, subtract the accepted points
-            #     X_l = setdiff2d(X_l, xi_d_accepted)
-            #     err = 0.0
-            #     for i in range(X_l.shape[0]):
-            #         xi = X_l[i]
-            #         wi = W_l[i]
-            #         # find the location of the current xi in the global grid
-            #         idx = np.where((xi == self.sampler.xi_d).all(axis=1))[0][0]
-            #         # hierarchical surplus error at xi
-            #         err += (samples[idx] - self.surrogate(qoi, xi)) * np.prod(wi)
-            #     # compute mean error over all points in X_l
-            #     error[tuple(l)] = np.linalg.norm(err)
            # compute the error based on quadrature of the mean
             elif method == 'mean':
                 # create a candidate set of multi indices by adding the current
@@ -483,22 +464,6 @@ class SCAnalysis(BaseAnalysisElement):
             self.mean_history.append(mean_f)
             self.std_history.append(var_f)
             logging.debug('done')
-
-        # self.L = np.max(np.sum(self.l_norm, axis = 1) - self.N + 1)
-        # self.xi_d = self.sampler.generate_grid(self.l_norm)
-        # self.run_id = []
-
-        # #names of the uncertain variables
-        # uncertain_vars = list(self.sampler.vary.get_keys())
-        # #loop over all samples in the data frame
-        # for run_id in data_frame["run_id"].unique():
-        #     #find the value of the input params at current run_id
-        #     xi = data_frame.loc[data_frame["run_id"] == run_id][uncertain_vars].values[0]
-        #     #see if this point is also in self.xi_d
-        #     idx = np.where((xi == self.xi_d).all(axis = 1))[0]
-        #     #if so, add run_id to self.run_id
-        #     if idx.size != 0:
-        #         self.run_id.append(run_id)
 
     def get_adaptation_errors(self):
         """
