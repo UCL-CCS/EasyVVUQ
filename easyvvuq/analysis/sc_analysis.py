@@ -86,7 +86,7 @@ class SCAnalysis(BaseAnalysisElement):
         None.
 
         """
-        print("Saving analysis state to %s" % filename)
+        logging.debug("Saving analysis state to %s" % filename)
         # make a copy of the state, and do not store the sampler as well
         state = copy.copy(self.__dict__)
         del state['sampler']
@@ -108,7 +108,7 @@ class SCAnalysis(BaseAnalysisElement):
         None.
 
         """
-        print("Loading analysis state from %s" % filename)
+        logging.debug("Loading analysis state from %s" % filename)
         file = open(filename, 'rb')
         state = pickle.load(file)
         for key in state.keys():
@@ -177,14 +177,14 @@ class SCAnalysis(BaseAnalysisElement):
         self.Map = {}
         self.surr_lm1 = {}
 
-        print('Computing collocation points and level indices...')
+        logging.debug('Computing collocation points and level indices...')
         for level in range(self.L_min, self.L + 1):
             self.Map[level] = self.create_map(level)
-        print('done.')
+        logging.debug('done.')
         self.clear_surr_lm1()
 
         # Extract output values for each quantity of interest from Dataframe
-        print('Loading samples...')
+        logging.debug('Loading samples...')
         qoi_cols = self.qoi_cols
         samples = {k: [] for k in qoi_cols}
         for run_id in data_frame[('run_id', 0)].unique():
@@ -192,7 +192,7 @@ class SCAnalysis(BaseAnalysisElement):
                 values = data_frame.loc[data_frame[('run_id', 0)] == run_id][k].values
                 samples[k].append(values.flatten())
         self.samples = samples
-        print('done')
+        logging.debug('done')
 
         # size of one code sample
         # TODO: change this to include QoI of different size
@@ -253,7 +253,7 @@ class SCAnalysis(BaseAnalysisElement):
             l_norm = self.l_norm
 
         comb_coef = {}
-        print('Computing combination coefficients...')
+        logging.debug('Computing combination coefficients...')
         for k in l_norm:
             coef = 0.0
             # for every k, subtract all multi indices
@@ -265,7 +265,7 @@ class SCAnalysis(BaseAnalysisElement):
                 if np.array_equal(z, z.astype(bool)):
                     coef += (-1)**(np.sum(z))
             comb_coef[tuple(k)] = coef
-        print('done')
+        logging.debug('done')
         return comb_coef
 
     def create_map(self, L):
@@ -349,7 +349,7 @@ class SCAnalysis(BaseAnalysisElement):
         None.
 
         """
-        print('Refining sampling plan...')
+        logging.debug('Refining sampling plan...')
         # load the code samples
         samples = []
         if isinstance(data_frame, pd.DataFrame):
@@ -450,16 +450,16 @@ class SCAnalysis(BaseAnalysisElement):
                 #error in var
                 error[tuple(l)] = np.linalg.norm(var_candidate_l - var_l, np.inf)
             else:
-                print('Specified refinement method %s not recognized' % method)
-                print('Accepted are surplus, mean or var')
+                logging.debug('Specified refinement method %s not recognized' % method)
+                logging.debug('Accepted are surplus, mean or var')
                 import sys
                 sys.exit()
 
         for key in error.keys():
-            print("Surplus error when l =", key, "=", error[key])
+            logging.debug("Surplus error when l =", key, "=", error[key])
         # find the admissble index with the largest error
         l_star = np.array(max(error, key=error.get)).reshape([1, self.N])
-        print('Selecting', l_star, 'for refinement.')
+        logging.debug('Selecting', l_star, 'for refinement.')
         # add max error to list
         self.adaptation_errors.append(max(error.values()))
 
@@ -477,12 +477,12 @@ class SCAnalysis(BaseAnalysisElement):
         # algorithmn
         if store_stats_history:
             # mean_f, var_f = self.get_moments(qoi)
-            print('Storing moments of iteration %d' % self.sampler.nadaptations)
+            logging.debug('Storing moments of iteration %d' % self.sampler.nadaptations)
             pce_coefs = self.SC2PCE(samples, verbose=True)
             mean_f, var_f = self.get_pce_stats(self.l_norm, pce_coefs, self.comb_coef)
             self.mean_history.append(mean_f)
             self.std_history.append(var_f)
-            print('done')
+            logging.debug('done')
 
         # self.L = np.max(np.sum(self.l_norm, axis = 1) - self.N + 1)
         # self.xi_d = self.sampler.generate_grid(self.l_norm)
@@ -535,7 +535,7 @@ class SCAnalysis(BaseAnalysisElement):
             include = np.arange(self.N)
 
         if self.sampler.dimension_adaptive:
-            print('Moving admissible indices to the accepted set...')
+            logging.debug('Moving admissible indices to the accepted set...')
             # make a backup of l_norm, such that undo_merge can revert back
             self.l_norm_backup = np.copy(self.l_norm)
             # merge admissible and accepted multi indices
@@ -557,7 +557,7 @@ class SCAnalysis(BaseAnalysisElement):
             idx = np.unique(merged_l, axis=0, return_index=True)[1]
             # return np.array([merged_l[i] for i in sorted(idx)])
             self.l_norm = np.array([merged_l[i] for i in sorted(idx)])
-            print('done')
+            logging.debug('done')
 
     def undo_merge(self):
         """
@@ -567,7 +567,7 @@ class SCAnalysis(BaseAnalysisElement):
         """
         if self.sampler.dimension_adaptive:
             self.l_norm = self.l_norm_backup
-            print('Restored old multi indices.')
+            logging.debug('Restored old multi indices.')
 
     def plot_stat_convergence(self):
         """
@@ -582,12 +582,12 @@ class SCAnalysis(BaseAnalysisElement):
 
         """
         if not self.dimension_adaptive:
-            print('Only works for the dimension adaptive sampler.')
+            logging.debug('Only works for the dimension adaptive sampler.')
             return
 
         K = len(self.mean_history)
         if K < 2:
-            print('Means from at least two refinements are required')
+            logging.debug('Means from at least two refinements are required')
             return
         else:
             differ_mean = np.zeros(K - 1)
@@ -805,14 +805,14 @@ class SCAnalysis(BaseAnalysisElement):
         - mean and variance of qoi (float (N_qoi,))
 
         """
-        print('Computing moments...')
+        logging.debug('Computing moments...')
         # compute mean
         mean_f = self.quadrature(qoi, combination_technique=combination_technique)
         # compute variance
         variance_samples = [(sample - mean_f)**2 for sample in self.samples[qoi]]
         var_f = self.quadrature(qoi, samples=variance_samples,
                                 combination_technique=combination_technique)
-        print('done')
+        logging.debug('done')
         return mean_f, var_f
 
     def sc_expansion(self, samples, x):
@@ -931,7 +931,7 @@ class SCAnalysis(BaseAnalysisElement):
                 Lm1 = self.L - 1
 
             if k in self.surr_lm1[L]:
-                #print('surrogate already computed')
+                #logging.debug('surrogate already computed')
                 surr_lm1 = self.surr_lm1[L][k]
             else:
                 surr_lm1 = self.sc_expansion_recursive(Lm1, samples, x=Map[k]['X'])
@@ -1151,7 +1151,7 @@ class SCAnalysis(BaseAnalysisElement):
             plt.tight_layout()
             plt.show()
         else:
-            print('Will only plot for N = 2 or N = 3.')
+            logging.debug('Will only plot for N = 2 or N = 3.')
 
     def SC2PCE(self, samples, verbose=True, **kwargs):
         """
@@ -1205,7 +1205,7 @@ class SCAnalysis(BaseAnalysisElement):
                 k_norm = list(product(*[np.arange(1, l[n] + 1) for n in range(self.N)]))
 
                 if verbose:
-                    print('Computing PCE coefficients %d / %d' % (count_l, l_norm.shape[0]))
+                    logging.debug('Computing PCE coefficients %d / %d' % (count_l, l_norm.shape[0]))
 
                 for k in k_norm:
                     # product of the PCE basis function or order k - 1 and all
@@ -1272,7 +1272,7 @@ class SCAnalysis(BaseAnalysisElement):
                 pce_coefs[tuple(l)] = self.pce_coefs[tuple(l)]
             count_l += 1
 
-        print('done')
+        logging.debug('done')
         return pce_coefs
 
     def get_pce_stats(self, l_norm, pce_coefs, comb_coef):
@@ -1364,7 +1364,7 @@ class SCAnalysis(BaseAnalysisElement):
             var[tuple(k)] = var_k**2
             D = D + var[tuple(k)]
 
-        print('Computing Sobol indices...')
+        logging.debug('Computing Sobol indices...')
         # Universe = (0, 1, ..., N - 1)
         U = np.arange(self.N)
 
@@ -1409,7 +1409,7 @@ class SCAnalysis(BaseAnalysisElement):
                     if all_gt_one:
                         k.append(l)
 
-            print('Multi indices of dimension u =', u, 'are', k)
+            logging.debug('Multi indices of dimension u =', u, 'are', k)
             # the partial variance of u is the sum of all variances index by k
             for k_u in k:
                 D_u[u] = D_u[u] + var[tuple(k_u)]
@@ -1417,7 +1417,7 @@ class SCAnalysis(BaseAnalysisElement):
             # normalize D_u by total variance D to get the Sobol index
             S_u[u] = D_u[u] / D
 
-        print('done')
+        logging.debug('done')
         return mean, D, D_u, S_u
 
     # Start SC specific methods
@@ -1506,7 +1506,7 @@ class SCAnalysis(BaseAnalysisElement):
         -------
         Either the first order or all Sobol indices of qoi
         """
-        print('Computing Sobol indices...')
+        logging.debug('Computing Sobol indices...')
         # multi indices
         U = np.arange(self.N)
 
@@ -1571,7 +1571,7 @@ class SCAnalysis(BaseAnalysisElement):
             # compute Sobol index, only include points where D > 0
             # sobol[u] = D_u[u][idx_gt0]/D[idx_gt0]
             sobol[u] = D_u[u] / D
-        print('done.')
+        logging.debug('done.')
         return sobol, D_u
 
     def get_confidence_intervals(self, qoi, n_samples, conf=0.9,
@@ -1597,7 +1597,7 @@ class SCAnalysis(BaseAnalysisElement):
 
         # ake sure conf is in [0, 1]
         if conf < 0.0 or conf > 1.0:
-            print('conf must be specified within [0, 1]')
+            logging.debug('conf must be specified within [0, 1]')
             return
         # lower bound = alpha, upper bound = 1 - alpha
         alpha = 0.5 * (1.0 - conf)
@@ -1615,14 +1615,14 @@ class SCAnalysis(BaseAnalysisElement):
 
             # sample the surrogate n_samples times
             surr_samples = np.zeros([n_samples, self.N_qoi])
-            print(
+            logging.debug(
                 'Sampling surrogate %d times to compute %.2f %% confidence intervals' %
                 (n_samples, conf * 100))
             for i in range(n_samples):
                 surr_samples[i, :] = self.surrogate(qoi, xi_mc[i])
                 if np.mod(i, 10) == 0:
-                    print('%d of %d' % (i + 1, n_samples))
-            print('done')
+                    logging.debug('%d of %d' % (i + 1, n_samples))
+            logging.debug('done')
         # TODO: implement bootstrap
         # else:
         #     samples = analysis.get_sample_array(qoi)
@@ -1687,11 +1687,11 @@ class SCAnalysis(BaseAnalysisElement):
         CV_out = np.mean(CV_out[idx])
         blowup = CV_out / CV_in
 
-        print('-----------------')
-        print('Mean CV input = %.4f %%' % (100 * CV_in, ))
-        print('Mean CV output = %.4f %%' % (100 * CV_out, ))
-        print('Uncertainty blowup factor = %.4f/%.4f = %.4f' % (CV_out, CV_in, blowup))
-        print('-----------------')
+        logging.debug('-----------------')
+        logging.debug('Mean CV input = %.4f %%' % (100 * CV_in, ))
+        logging.debug('Mean CV output = %.4f %%' % (100 * CV_out, ))
+        logging.debug('Uncertainty blowup factor = %.4f/%.4f = %.4f' % (CV_out, CV_in, blowup))
+        logging.debug('-----------------')
 
         return blowup
 
