@@ -6,9 +6,8 @@ import copy
 from easyvvuq import OutputType
 from .base import BaseAnalysisElement
 import logging
-from scipy.special import comb
+# from scipy.special import comb
 import pandas as pd
-from numba import jit
 
 __author__ = "Wouter Edeling"
 __copyright__ = """
