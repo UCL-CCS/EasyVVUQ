@@ -340,7 +340,7 @@ class SCAnalysis(BaseAnalysisElement):
         - method (string) : name of the refinement error, default is 'surplus'.
           In this case the error is based on the hierarchical surplus, which is
           an interpolation based error. Other possibilities are 'mean' and 'var',
-          in which case the error is based on the difference in the mean or 
+          in which case the error is based on the difference in the mean or
           variance between the current estimate and the estimate obtained
           when a particular candidate direction is added.
 
