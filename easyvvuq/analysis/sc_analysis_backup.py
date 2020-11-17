@@ -107,7 +107,7 @@ class SCAnalysis(BaseAnalysisElement):
         None.
 
         """
-        print("Saving analysis state to %s" % filename)
+        logging.debug("Saving analysis state to %s" % filename)
         # make a copy of the state, and do not store the sampler as well
         state = copy.copy(self.__dict__)
         del state['sampler']
@@ -129,7 +129,7 @@ class SCAnalysis(BaseAnalysisElement):
         None.
 
         """
-        print("Loading analysis state from %s" % filename)
+        logging.debug("Loading analysis state from %s" % filename)
         file = open(filename, 'rb')
         state = pickle.load(file)
         for key in state.keys():
@@ -195,14 +195,14 @@ class SCAnalysis(BaseAnalysisElement):
         self.Map = {}
         self.surr_lm1 = {}
 
-        print('Computing collocation points and level indices...')
+        logging.debug('Computing collocation points and level indices...')
         for level in range(self.L_min, self.L + 1):
             self.Map[level] = self.create_map(level)
-        print('done.')
+        logging.debug('done.')
         self.clear_surr_lm1()
 
         # Extract output values for each quantity of interest from Dataframe
-        print('Loading samples...')
+        logging.debug('Loading samples...')
         qoi_cols = self.qoi_cols
         samples = {k: [] for k in qoi_cols}
         for run_id in data_frame.run_id.unique():
@@ -210,7 +210,7 @@ class SCAnalysis(BaseAnalysisElement):
                 values = data_frame.loc[data_frame['run_id'] == run_id][k].values
                 samples[k].append(values)
         self.samples = samples
-        print('done')
+        logging.debug('done')
 
         # size of one code sample
         self.N_qoi = self.samples[qoi_cols[0]][0].size
@@ -332,10 +332,10 @@ class SCAnalysis(BaseAnalysisElement):
             # compute mean error over all points in X_l
             error[tuple(l)] = np.mean(error[tuple(l)])
         for key in error.keys():
-            print("Surplus error when l =", key, "=", error[key])
+            logging.debug("Surplus error when l =", key, "=", error[key])
         # find the admissble index with the largest error
         l_star = np.array(max(error, key=error.get)).reshape([1, self.N])
-        print('Selecting', l_star, 'for refinement.')
+        logging.debug('Selecting', l_star, 'for refinement.')
         # add max error to list
         self.adaptation_errors.append(max(error.values()))
 
@@ -385,12 +385,12 @@ class SCAnalysis(BaseAnalysisElement):
 
         """
         if not self.dimension_adaptive:
-            print('Only works for the dimension adaptive sampler.')
+            logging.debug('Only works for the dimension adaptive sampler.')
             return
 
         K = len(self.mean_history)
         if K < 2:
-            print('Means from at least two refinements are required')
+            logging.debug('Means from at least two refinements are required')
             return
         else:
             differ = np.zeros(K - 1)
@@ -564,13 +564,13 @@ class SCAnalysis(BaseAnalysisElement):
         - mean and variance of qoi (float (N_qoi,))
 
         """
-        print('Computing moments...')
+        logging.debug('Computing moments...')
         # compute mean
         mean_f = self.quadrature(qoi)
         # compute variance
         variance_samples = [(sample - mean_f)**2 for sample in self.samples[qoi]]
         var_f = self.quadrature(qoi, samples=variance_samples)
-        print('done')
+        logging.debug('done')
         return mean_f, var_f
 
     def sc_expansion(self, L, samples, x):
@@ -635,7 +635,7 @@ class SCAnalysis(BaseAnalysisElement):
                 Lm1 = self.L - 1
 
             if k in self.surr_lm1[L]:
-                #print('surrogate already computed')
+                #logging.debug('surrogate already computed')
                 surr_lm1 = self.surr_lm1[L][k]
             else:
                 surr_lm1 = self.sc_expansion(Lm1, samples, x=Map[k]['X'])
@@ -800,7 +800,7 @@ class SCAnalysis(BaseAnalysisElement):
             plt.tight_layout()
             plt.show()
         else:
-            print('Will only plot for N = 2 or N = 3.')
+            logging.debug('Will only plot for N = 2 or N = 3.')
 
     # Start SC specific methods
 
@@ -893,7 +893,7 @@ class SCAnalysis(BaseAnalysisElement):
         -------
         Either the first order or all Sobol indices of qoi
         """
-        print('Computing Sobol indices...')
+        logging.debug('Computing Sobol indices...')
         # multi indices
         U = np.arange(self.N)
 
@@ -949,7 +949,7 @@ class SCAnalysis(BaseAnalysisElement):
             # compute Sobol index, only include points where D > 0
             # sobol[u] = D_u[u][idx_gt0]/D[idx_gt0]
             sobol[u] = D_u[u] / D
-        print('done.')
+        logging.debug('done.')
         return sobol
 
 
