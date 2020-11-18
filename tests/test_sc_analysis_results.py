@@ -68,7 +68,10 @@ def test_results_conf(results):
 
 
 def test_full_results(results):
-    pass
+    with pytest.raises(RuntimeError):
+        results.sobols_first('z')
+    with pytest.raises(RuntimeError):
+        results.sobols_first('f', 'y')
 
 
 def test_describe(results):

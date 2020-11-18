@@ -144,9 +144,9 @@ class AnalysisResults:
         a dictionary or an array
         """
         assert(not ((qoi is None) and (input_ is not None)))
-        if qoi is not in self.qois:
+        if qoi not in self.qois:
             raise RuntimeError('no such qoi in this analysis')
-        if input_ is not in self.inputs:
+        if input_ not in self.inputs:
             raise RuntimeError('no such input variable in this analysis')
         try:
             if input_ is None:
@@ -183,9 +183,9 @@ class AnalysisResults:
         a dictionary or an array
         """
         assert(not ((qoi is None) and (input_ is not None)))
-        if qoi is not in self.qois:
+        if qoi not in self.qois:
             raise RuntimeError('no such qoi in this analysis')
-        if input_ is not in self.inputs:
+        if input_ not in self.inputs:
             raise RuntimeError('no such input variable in this analysis')
         if input_ is None:
             if qoi is None:
