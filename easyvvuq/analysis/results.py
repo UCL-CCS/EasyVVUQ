@@ -133,7 +133,7 @@ class AnalysisResults:
         a dictionary or an array
 
         """
-        assert(not ((qoi is None) and (input is not None)))
+        assert(not ((qoi is None) and (input_ is not None)))
         if input_ is None:
             if qoi is None:
                 return dict([(qoi_, dict([(in_, self._get_sobols_first(qoi_, in_))
@@ -158,7 +158,7 @@ class AnalysisResults:
         -------
         a dictionary or an array
         """
-        assert(not ((qoi is None) and (input is not None)))
+        assert(not ((qoi is None) and (input_ is not None)))
         if input_ is None:
             if qoi is None:
                 return dict([(qoi_, dict([(in_, self._get_sobols_total(qoi_, in_))
