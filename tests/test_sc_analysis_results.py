@@ -70,6 +70,14 @@ def test_full_results(results):
         results.sobols_first('z')
     with pytest.raises(RuntimeError):
         results.sobols_first('f', 'y')
+    with pytest.raises(AssertionError):
+        results.sobols_first(None, 'x1')
+    assert(results.sobols_first()['f']['x1'][0] == 0.6102419965318732)
+    assert(results.sobols_first()['f']['x2'][0] == 0.2609651061314295)
+    assert(results.sobols_first('f')['x1'][0] == 0.6102419965318732)
+    assert(results.sobols_first('f')['x2'][0] == 0.2609651061314295)
+    assert(results.sobols_first('f', 'x1')[0] == 0.6102419965318732)
+    assert(results.sobols_first('f', 'x2')[0] == 0.2609651061314295)
 
 
 def test_describe(results):
