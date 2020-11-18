@@ -59,12 +59,8 @@ def test_results(results):
 
 
 def test_results_conf(results):
-    sobols_first_x1_conf = results._get_sobols_first_conf('f', 'x1')
-    assert(math.isnan(sobols_first_x1_conf[0]))
-    assert(math.isnan(sobols_first_x1_conf[1]))
-    sobols_first_x2_conf = results._get_sobols_first_conf('f', 'x2')
-    assert(math.isnan(sobols_first_x2_conf[0]))
-    assert(math.isnan(sobols_first_x2_conf[1]))
+    with pytest.raises(NotImplementedError):
+        results._get_sobols_first_conf('f', 'x1')
 
 
 def test_full_results(results):
