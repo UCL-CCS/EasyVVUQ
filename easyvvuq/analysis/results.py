@@ -124,6 +124,11 @@ class AnalysisResults:
 
         Parameters
         ----------
+        qoi: str
+            the name of the quantity of interest or None
+
+        input_: str
+            the name of the input parameter or None
         
         Examples
         --------
@@ -131,25 +136,34 @@ class AnalysisResults:
         Returns
         -------
         a dictionary or an array
-
         """
         assert(not ((qoi is None) and (input_ is not None)))
-        if input_ is None:
-            if qoi is None:
-                return dict([(qoi_, dict([(in_, self._get_sobols_first(qoi_, in_))
-                                          for in_ in self.inputs]))
-                             for qoi_ in self.qois])
+        try:
+            if input_ is None:
+                if qoi is None:
+                    return dict([(qoi_, dict([(in_, self._get_sobols_first(qoi_, in_))
+                                              for in_ in self.inputs]))
+                                 for qoi_ in self.qois])
+                else:
+                    return dict([(in_, self._get_sobols_first(qoi, in_))
+                                 for in_ in self.inputs])
             else:
-                return dict([(in_, self._get_sobols_first(qoi, in_))
-                             for in_ in self.inputs])
-        else:
-            return self._get_sobols_first(qoi, input_)
+                return self._get_sobols_first(qoi, input_)
+        except NotImplementedError:
+            raise RuntimeError(
+                'first order sobol index reporting not implemented in this analysis method')
 
     def sobols_total(self, qoi=None, input_=None):
         """Returns total order sensitivity indices.
 
         Parameters
         ----------
+        qoi: str
+            the name of the quantity of interest or None
+
+        input_: str
+            the name of the input parameter or None
+
 
         Examples
         --------
