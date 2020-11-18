@@ -56,6 +56,8 @@ def test_results(results):
     sobols_first_x2 = results._get_sobols_first('f', 'x2')
     assert(sobols_first_x1 == pytest.approx(0.610242, 0.001))
     assert(sobols_first_x2 == pytest.approx(0.26096511, 0.001))
+    with pytest.raises(NotImplementedError):
+        results.sobols_total()
 
 
 def test_results_conf(results):
