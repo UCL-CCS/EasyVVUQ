@@ -13,16 +13,13 @@ params = {
     "out_file": {"type": "string", "default": "output.csv"}
 }
 
-# Create an encoder, decoder and collater for PCE test app
+# Create encoder and decoder
 encoder = uq.encoders.GenericEncoder(
     template_fname='cooling.template',
     delimiter='$',
     target_filename='cooling_in.json')
 
-decoder = uq.decoders.SimpleCSV(target_filename="output.csv",
-                                output_columns=["te"])
-
-collater = uq.collate.AggregateSamples(average=False)
+decoder = uq.decoders.SimpleCSV(target_filename="output.csv", output_columns=["te"])
 
 # Add the app (automatically set as current app)
 my_campaign.add_app(name="cooling",
@@ -35,8 +32,7 @@ vary = {
     "kappa": cp.Uniform(0.025, 0.075),
     "t_env": cp.Uniform(15, 25)
 }
-my_sampler = uq.sampling.PCESampler(vary=vary,
-                                    polynomial_order=3)
+my_sampler = uq.sampling.PCESampler(vary=vary, polynomial_order=3)
 
 # Associate the sampler with the campaign
 my_campaign.set_sampler(my_sampler)
@@ -52,12 +48,11 @@ my_campaign.apply_for_each_run_dir(uq.actions.ExecuteLocal(cmd, interpret='pytho
 my_campaign.collate()
 
 # Post-processing analysis
-my_analysis = uq.analysis.PCEAnalysis(sampler=my_sampler,
-                                          qoi_cols=["te"])
+my_analysis = uq.analysis.PCEAnalysis(sampler=my_sampler, qoi_cols=["te"])
 my_campaign.apply_analysis(my_analysis)
 
-# Get Descriptive Statistics
+# Get some descriptive statistics
 results = my_campaign.get_last_analysis()
-stats = results['statistical_moments']['te']
-per = results['percentiles']['te']
-sobols = results['sobols_first']['te']
+mean = results.describe()['te']['mean'][0]
+p10 = results.describe()['te']['10%']
+p90 = results.describe()['te']['90%']
