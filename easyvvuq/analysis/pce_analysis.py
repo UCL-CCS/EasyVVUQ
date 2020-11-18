@@ -35,6 +35,24 @@ class PCEAnalysisResults(QMCAnalysisResults):
         raw_dict = AnalysisResults._keys_to_tuples(self.raw_data['sobols_first'])
         return raw_dict[AnalysisResults._to_tuple(qoi)][input_][0]
 
+    def _get_sobols_second(self, qoi, input_):
+        """Returns the second order sobol index for a given qoi wrt input variable.
+
+        Parameters
+        ----------
+        qoi : str
+           Quantity of interest
+        input_ : str
+           Input variable
+
+        Returns
+        -------
+        float
+            Second order sobol index.
+        """
+        raw_dict = AnalysisResults._keys_to_tuples(self.raw_data['sobols_second'])
+        return raw_dict[AnalysisResults._to_tuple(qoi)][input_][0]
+
     def _get_sobols_total(self, qoi, input_):
         """Returns the total order sobol index for a given qoi wrt input variable.
 
