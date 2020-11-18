@@ -162,7 +162,7 @@ class AnalysisResults:
             df[qoi] = rows
         return pd.DataFrame(df).T
 
-    def sobols_total(self):
+    def sobols_total(self, qoi=None, input_=None):
         """Creates a pandas DataFrame with the total order sensitivity indices.
 
         The row indices are of the form (qoi, i) where qoi is the name
@@ -189,20 +189,30 @@ class AnalysisResults:
         -------
         a pandas DataFrame
         """
-        df = {}
-        for qoi in self.qois:
-            qoi = AnalysisResults._to_tuple(qoi)
-            rows = {}
-            for input_ in self.inputs:
-                key = AnalysisResults._to_tuple(input_)
-                key_1 = key + ('low',)
-                key_2 = key + ('est',)
-                key_3 = key + ('high',)
-                rows[key_1] = self._get_sobols_total_conf(qoi, input_)[0]
-                rows[key_2] = self._get_sobols_total(qoi, input_)
-                rows[key_3] = self._get_sobols_total_conf(qoi, input_)[1]
-            df[qoi] = rows
-        return pd.DataFrame(df).T
+        if qoi is None:
+            if input_ is None:
+                # df = {}
+                # for qoi in self.qois:
+                #     qoi = AnalysisResults._to_tuple(qoi)
+                #     rows = {}
+                #     for input_ in self.inputs:
+                #         key = AnalysisResults._to_tuple(input_)
+                #         key_1 = key + ('low',)
+                #         key_2 = key + ('est',)
+                #         key_3 = key + ('high',)
+                #         rows[key_1] = self._get_sobols_total_conf(qoi, input_)[0]
+                #         rows[key_2] = self._get_sobols_total(qoi, input_)
+                #         rows[key_3] = self._get_sobols_total_conf(qoi, input_)[1]
+                #     df[qoi] = rows
+                # return pd.DataFrame(df).T
+                return dict([(qoi_, dict([(in_, self._get_sobols_total(qoi_, in_))
+                                          for in_ in self.inputs]))
+                             for qoi_ in self.qois])
+            else:
+                return dict([(in_, self._get_sobols_total(qoi, in_)) for in_ in self.inputs])
+        else:
+            return self._get_sobols_total(qoi, input_)
+                    
 
     def surrogate(self):
         """Returns the surrogate model as a function from parameter dictionary
