@@ -119,97 +119,54 @@ class AnalysisResults:
         """
         raise NotImplementedError
 
-    def sobols_first(self):
-        """Creates a pandas DataFrame with the first order sensitivity
-        indices.
+    def sobols_first(self, qoi=None, input_=None):
+        """Return first order sensitivity indices.
 
-        The row indices are of the form (qoi, i) where qoi is the name
-        of the quantity of interest and i is the coordinate index
-        (will be zero for scalar qois).
-
-        The columns indices are of the form (input, i, {low, est,
-        high}) where input is the name of the input variable, i is the
-        coordinate provided it is a vector quantitty and the last
-        element of the 3-tuple is a string which specifies whether it
-        is the estimator value for the first order sensitivity index
-        or lower or higher 95% confidence interval values.
-
+        Parameters
+        ----------
+        
         Examples
         --------
-        >>> results.sobols_first()
-                   x1                           x2
-                    0                            0
-                  est      high      low       est      high       low
-        f 0  0.556906  0.894288  0.14387  0.207276  0.467528 -0.110633
 
         Returns
         -------
-        a pandas DataFrame
+        a dictionary or an array
 
         """
-        df = {}
-        for qoi in self.qois:
-            qoi = AnalysisResults._to_tuple(qoi)
-            rows = {}
-            for input_ in self.inputs:
-                key = AnalysisResults._to_tuple(input_)
-                key_1 = key + ('low',)
-                key_2 = key + ('est',)
-                key_3 = key + ('high',)
-                rows[key_1] = self._get_sobols_first_conf(qoi, input_)[0]
-                rows[key_2] = self._get_sobols_first(qoi, input_)
-                rows[key_3] = self._get_sobols_first_conf(qoi, input_)[1]
-            df[qoi] = rows
-        return pd.DataFrame(df).T
+        assert(not ((qoi is None) and (input is not None)))
+        if input_ is None:
+            if qoi is None:
+                return dict([(qoi_, dict([(in_, self._get_sobols_first(qoi_, in_))
+                                          for in_ in self.inputs]))
+                             for qoi_ in self.qois])
+            else:
+                return dict([(in_, self._get_sobols_first(qoi, in_))
+                             for in_ in self.inputs])
+        else:
+            return self._get_sobols_first(qoi, input_)
 
     def sobols_total(self, qoi=None, input_=None):
-        """Creates a pandas DataFrame with the total order sensitivity indices.
+        """Returns total order sensitivity indices.
 
-        The row indices are of the form (qoi, i) where qoi is the name
-        of the quantity of interest and i is the coordinate index
-        (will be zero for scalar qois).
-
-        The columns indices are of the form (input, i, {low, est,
-        high}) where input is the name of the input variable, i is the
-        coordinate provided it is a vector quantitty and the last
-        element of the 3-tuple is a string which specifies whether it
-        is the estimator value for the first order sensitivity index
-        or lower or higher 95% confidence interval values.
+        Parameters
+        ----------
 
         Examples
         --------
-        >>> results.sobols_total()
-                   x1                            x2
-                    0                             0
-                  est      high       low       est      high       low
-        f 0  0.813279  1.018587  0.613689  0.380496  0.492141  0.243612
-
 
         Returns
         -------
-        a pandas DataFrame
+        a dictionary or an array
         """
-        if qoi is None:
-            if input_ is None:
-                # df = {}
-                # for qoi in self.qois:
-                #     qoi = AnalysisResults._to_tuple(qoi)
-                #     rows = {}
-                #     for input_ in self.inputs:
-                #         key = AnalysisResults._to_tuple(input_)
-                #         key_1 = key + ('low',)
-                #         key_2 = key + ('est',)
-                #         key_3 = key + ('high',)
-                #         rows[key_1] = self._get_sobols_total_conf(qoi, input_)[0]
-                #         rows[key_2] = self._get_sobols_total(qoi, input_)
-                #         rows[key_3] = self._get_sobols_total_conf(qoi, input_)[1]
-                #     df[qoi] = rows
-                # return pd.DataFrame(df).T
+        assert(not ((qoi is None) and (input is not None)))
+        if input_ is None:
+            if qoi is None:
                 return dict([(qoi_, dict([(in_, self._get_sobols_total(qoi_, in_))
                                           for in_ in self.inputs]))
                              for qoi_ in self.qois])
             else:
-                return dict([(in_, self._get_sobols_total(qoi, in_)) for in_ in self.inputs])
+                return dict([(in_, self._get_sobols_total(qoi, in_))
+                             for in_ in self.inputs])
         else:
             return self._get_sobols_total(qoi, input_)
                     
