@@ -63,6 +63,29 @@ def data_vectors():
 
 
 @pytest.fixture
+def data_vectors_2():
+    np.random.seed(10000000)
+    vary = {
+        "x1": cp.J(cp.Uniform(0.0, 1.0), cp.Uniform(0.0, 1.0)),
+        "x2": cp.Uniform(0.0, 1.0)
+    }
+    sampler = uq.sampling.SCSampler(vary)
+    data = {('run_id', 0): [], ('x1', 0): [], ('x1', 1): [], ('x2', 0): [],
+            ('g', 0): [], ('g', 1): [], ('g', 2): []}
+    for run_id, sample in enumerate(sampler):
+        import pdb; pdb.set_trace()
+        data[('run_id', 0)].append(run_id)
+        data[('x1', 0)].append(sample['x1'][0])
+        data[('x1', 1)].append(sample['x1'][1])
+        data[('x2', 0)].append(sample['x2'])
+        data[('g', 0)].append(sample['x1'])
+        data[('g', 1)].append(sample['x2'])
+        data[('g', 2)].append(sample['x1'] + sample['x2'])
+    df = pd.DataFrame(data)
+    return sampler, df
+
+
+@pytest.fixture
 def results(data):
     # Post-processing analysis
     sampler, df = data
@@ -77,7 +100,16 @@ def results_vectors(data_vectors):
     sampler, df = data_vectors
     analysis = uq.analysis.SCAnalysis(sampler=sampler, qoi_cols=[('g', 0), ('g', 1), ('g', 2)])
     results = analysis.analyse(df)
-    return results    
+    return results
+
+
+@pytest.fixture
+def results_vectors_2(data_vectors_2):
+    # Post-processing analysis
+    sampler, df = data_vectors
+    analysis = uq.analysis.SCAnalysis(sampler=sampler, qoi_cols=[('g', 0), ('g', 1), ('g', 2)])
+    results = analysis.analyse(df)
+    return results
 
 
 def test_results(results):

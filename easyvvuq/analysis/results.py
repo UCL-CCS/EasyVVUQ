@@ -167,6 +167,47 @@ class AnalysisResults:
             raise RuntimeError(
                 'first order sobol index reporting not implemented in this analysis method')
 
+    def sobols_second(self, qoi=None, input_=None):
+        """Return second order sensitivity indices.
+
+        Parameters
+        ----------
+        qoi: str or tuple
+            The name of the quantity of interest or None.
+            Use a tuple of the form (qoi, index) where index is integer
+            that means the coordinate index of a vector qoi.
+
+        input_: str
+            The name of the input parameter or None.
+        
+        Examples
+        --------
+
+        Returns
+        -------
+        a dictionary or an array
+        """
+        assert(not ((qoi is None) and (input_ is not None)))
+        if (qoi is not None) and (qoi not in self.qois):
+            raise RuntimeError('no such qoi in this analysis')
+        if (input_ is not None) and (input_ not in self.inputs):
+            raise RuntimeError('no such input variable in this analysis')
+        try:
+            if input_ is None:
+                if qoi is None:
+                    return dict([(qoi_, dict([(in_, self._get_sobols_second(qoi_, in_))
+                                              for in_ in self.inputs]))
+                                 for qoi_ in self.qois])
+                else:
+                    return dict([(in_, self._get_sobols_second(qoi, in_))
+                                 for in_ in self.inputs])
+            else:
+                return self._get_sobols_second(qoi, input_)
+        except NotImplementedError:
+            raise RuntimeError(
+                'second order sobol index reporting not implemented in this analysis method')
+
+
     def sobols_total(self, qoi=None, input_=None):
         """Returns total order sensitivity indices.
 
