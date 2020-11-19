@@ -119,6 +119,47 @@ class AnalysisResults:
         """
         raise NotImplementedError
 
+    def _get_sobols_general(self, getter, qoi=None, input_=None):
+        """A generic method for getting sobol indices.
+
+        Parameters
+        ----------
+        getter: function
+             Method that takes a AnalysisResults instance and returns
+             a Sobol index of some kind. For example _get_bonols_first.
+
+        qoi: str or tuple
+            The name of the quantity of interest or None.
+            Use a tuple of the form (qoi, index) where index is integer
+            that means the coordinate index of a vector qoi.
+
+        input_: str
+            The name of the input parameter or None.
+
+        Returns
+        -------
+        a dictionary or an array
+        """
+        assert(not ((qoi is None) and (input_ is not None)))
+        if (qoi is not None) and (qoi not in self.qois):
+            raise RuntimeError('no such qoi in this analysis')
+        if (input_ is not None) and (input_ not in self.inputs):
+            raise RuntimeError('no such input variable in this analysis')
+        try:
+            if input_ is None:
+                if qoi is None:
+                    return dict([(qoi_, dict([(in_, getter(qoi_, in_))
+                                              for in_ in self.inputs]))
+                                 for qoi_ in self.qois])
+                else:
+                    return dict([(in_, getter(qoi, in_))
+                                 for in_ in self.inputs])
+            else:
+                return getter(qoi, input_)
+        except NotImplementedError:
+            raise RuntimeError(
+                'this kind of sobol index reporting not implemented in this analysis method')
+
     def sobols_first(self, qoi=None, input_=None):
         """Return first order sensitivity indices.
 
@@ -147,26 +188,8 @@ class AnalysisResults:
         -------
         a dictionary or an array
         """
-        assert(not ((qoi is None) and (input_ is not None)))
-        if (qoi is not None) and (qoi not in self.qois):
-            raise RuntimeError('no such qoi in this analysis')
-        if (input_ is not None) and (input_ not in self.inputs):
-            raise RuntimeError('no such input variable in this analysis')
-        try:
-            if input_ is None:
-                if qoi is None:
-                    return dict([(qoi_, dict([(in_, self._get_sobols_first(qoi_, in_))
-                                              for in_ in self.inputs]))
-                                 for qoi_ in self.qois])
-                else:
-                    return dict([(in_, self._get_sobols_first(qoi, in_))
-                                 for in_ in self.inputs])
-            else:
-                return self._get_sobols_first(qoi, input_)
-        except NotImplementedError:
-            raise RuntimeError(
-                'first order sobol index reporting not implemented in this analysis method')
-
+        return self._get_sobols_general(self._get_sobols_first, qoi, input_)
+        
     def sobols_second(self, qoi=None, input_=None):
         """Return second order sensitivity indices.
 
@@ -187,26 +210,7 @@ class AnalysisResults:
         -------
         a dictionary or an array
         """
-        assert(not ((qoi is None) and (input_ is not None)))
-        if (qoi is not None) and (qoi not in self.qois):
-            raise RuntimeError('no such qoi in this analysis')
-        if (input_ is not None) and (input_ not in self.inputs):
-            raise RuntimeError('no such input variable in this analysis')
-        try:
-            if input_ is None:
-                if qoi is None:
-                    return dict([(qoi_, dict([(in_, self._get_sobols_second(qoi_, in_))
-                                              for in_ in self.inputs]))
-                                 for qoi_ in self.qois])
-                else:
-                    return dict([(in_, self._get_sobols_second(qoi, in_))
-                                 for in_ in self.inputs])
-            else:
-                return self._get_sobols_second(qoi, input_)
-        except NotImplementedError:
-            raise RuntimeError(
-                'second order sobol index reporting not implemented in this analysis method')
-
+        return self._get_sobols_general(self._get_sobols_second, qoi, input_)
 
     def sobols_total(self, qoi=None, input_=None):
         """Returns total order sensitivity indices.
@@ -229,22 +233,7 @@ class AnalysisResults:
         -------
         a dictionary or an array
         """
-        assert(not ((qoi is None) and (input_ is not None)))
-        if (qoi is not None) and (qoi not in self.qois):
-            raise RuntimeError('no such qoi in this analysis')
-        if (input_ is not None) and (input_ not in self.inputs):
-            raise RuntimeError('no such input variable in this analysis')
-        if input_ is None:
-            if qoi is None:
-                return dict([(qoi_, dict([(in_, self._get_sobols_total(qoi_, in_))
-                                          for in_ in self.inputs]))
-                             for qoi_ in self.qois])
-            else:
-                return dict([(in_, self._get_sobols_total(qoi, in_))
-                             for in_ in self.inputs])
-        else:
-            return self._get_sobols_total(qoi, input_)
-                    
+        return self._get_sobols_general(self._get_sobols_total, qoi, input_)    
 
     def surrogate(self):
         """Returns the surrogate model as a function from parameter dictionary

@@ -122,8 +122,8 @@ def test_results(results):
     sobols_total_x2 = results._get_sobols_total('f', 'x2')
     assert(sobols_first_x1 == pytest.approx(0.62644867, 0.001))
     assert(sobols_first_x2 == pytest.approx(0.26789576, 0.001))
-    #assert(sobols_second_x1 == pytest.approx([0., 0.10565556], 0.001))
-    #assert(sobols_second_x2 == pytest.approx([0.10565556, 0.], 0.001))
+    assert(sobols_second_x1 == {'x1': 0.0, 'x2': 0.10565556484738273})
+    assert(sobols_second_x2 == {'x1': 0.10565556484738273, 'x2': 0.0})
     assert(sobols_total_x1 == pytest.approx(0.73210424, 0.001))
     assert(sobols_total_x2 == pytest.approx(0.37355133, 0.001))
 
