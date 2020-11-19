@@ -71,28 +71,6 @@ class PCEAnalysisResults(QMCAnalysisResults):
         raw_dict = AnalysisResults._keys_to_tuples(self.raw_data['sobols_total'])
         return raw_dict[AnalysisResults._to_tuple(qoi)][input_][0]
 
-    def _get_sobols_first_conf(self, qoi, input_):
-        """Not implemented for this method.
-
-        Returns
-        -------
-        list of floats
-            Will return a list with two nans, since this is
-        pandas way for handling missing values it seems.
-        """
-        return [float('nan'), float('nan')]
-
-    def _get_sobols_total_conf(self, qoi, input_):
-        """Not implemented for this method.
-
-        Returns
-        -------
-        list of floats
-            Will return a list with two nans, since this is
-        pandas way for handling missing values it seems.
-        """
-        return [float('nan'), float('nan')]
-
     def describe(self):
         result = {}
         for qoi in self.qois:

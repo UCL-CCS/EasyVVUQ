@@ -125,4 +125,3 @@ def test_vectors(results_vectors):
     assert(results_vectors.sobols_first(('g', 1), 'x2') == pytest.approx(1.0))
     assert(results_vectors.sobols_first(('g', 2), 'x1') == pytest.approx(0.5))
     assert(results_vectors.sobols_first(('g', 2), 'x2') == pytest.approx(0.5))
-
