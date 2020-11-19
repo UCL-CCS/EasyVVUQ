@@ -124,11 +124,13 @@ class AnalysisResults:
 
         Parameters
         ----------
-        qoi: str
-            the name of the quantity of interest or None
+        qoi: str or tuple
+            The name of the quantity of interest or None.
+            Use a tuple of the form (qoi, index) where index is integer
+            that means the coordinate index of a vector qoi.
 
         input_: str
-            the name of the input parameter or None
+            The name of the input parameter or None.
         
         Examples
         --------
@@ -138,6 +140,8 @@ class AnalysisResults:
         {'x1': array([0.610242]), 'x2': array([0.26096511])}
         >>> results.sobols_first('f', 'x1')
         array([0.610242])
+        >>> results_vectors.sobols_first(('g', 2))
+        {'x1': array([0.5]), 'x2': array([0.5])}
 
         Returns
         -------
@@ -168,11 +172,13 @@ class AnalysisResults:
 
         Parameters
         ----------
-        qoi: str
-            the name of the quantity of interest or None
+        qoi: str or tuple
+            The name of the quantity of interest or None.
+            Use a tuple of the form (qoi, index) where index is integer
+            that means the coordinate index of a vector qoi.
 
         input_: str
-            the name of the input parameter or None
+            The name of the input parameter or None.
 
 
         Examples
