@@ -53,8 +53,6 @@ class PCEAnalysisResults(QMCAnalysisResults):
         raw_dict = AnalysisResults._keys_to_tuples(self.raw_data['sobols_second'])
         return dict([(in_, raw_dict[AnalysisResults._to_tuple(qoi)][input_][0][i][0][0])
                      for i, in_ in enumerate(self.inputs)])
-        return dict(list(zip(
-            self.inputs, raw_dict[AnalysisResults._to_tuple(qoi)][input_][0])))
 
     def _get_sobols_total(self, qoi, input_):
         """Returns the total order sobol index for a given qoi wrt input variable.
