@@ -33,7 +33,7 @@ class PCEAnalysisResults(QMCAnalysisResults):
             First order sobol index.
         """
         raw_dict = AnalysisResults._keys_to_tuples(self.raw_data['sobols_first'])
-        return raw_dict[AnalysisResults._to_tuple(qoi)][input_][0]
+        return raw_dict[AnalysisResults._to_tuple(qoi)][input_][0][0]
 
     def _get_sobols_second(self, qoi, input_):
         """Returns the second order sobol index for a given qoi wrt input variable.
@@ -51,7 +51,8 @@ class PCEAnalysisResults(QMCAnalysisResults):
             Second order sobol index.
         """
         raw_dict = AnalysisResults._keys_to_tuples(self.raw_data['sobols_second'])
-        return raw_dict[AnalysisResults._to_tuple(qoi)][input_][0]
+        return dict([(in_, raw_dict[AnalysisResults._to_tuple(qoi)][input_][0][i][0][0])
+                     for i, in_ in enumerate(self.inputs)])
 
     def _get_sobols_total(self, qoi, input_):
         """Returns the total order sobol index for a given qoi wrt input variable.
@@ -69,29 +70,7 @@ class PCEAnalysisResults(QMCAnalysisResults):
             Total order sobol index.
         """
         raw_dict = AnalysisResults._keys_to_tuples(self.raw_data['sobols_total'])
-        return raw_dict[AnalysisResults._to_tuple(qoi)][input_][0]
-
-    def _get_sobols_first_conf(self, qoi, input_):
-        """Not implemented for this method.
-
-        Returns
-        -------
-        list of floats
-            Will return a list with two nans, since this is
-        pandas way for handling missing values it seems.
-        """
-        return [float('nan'), float('nan')]
-
-    def _get_sobols_total_conf(self, qoi, input_):
-        """Not implemented for this method.
-
-        Returns
-        -------
-        list of floats
-            Will return a list with two nans, since this is
-        pandas way for handling missing values it seems.
-        """
-        return [float('nan'), float('nan')]
+        return raw_dict[AnalysisResults._to_tuple(qoi)][input_][0][0]
 
     def describe(self):
         result = {}
