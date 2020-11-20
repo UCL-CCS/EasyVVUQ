@@ -92,8 +92,8 @@ def test_results_conf(results):
 
 
 def test_full_results(results):
-    assert(results.sobols_first().shape == (1, 6))
-    assert(results.sobols_total().shape == (1, 6))
+    assert(results.sobols_first() == {'f': {'x1': 0.5569058947880715, 'x2': 0.20727553481694053}})
+    assert(results.sobols_total() == {'f': {'x1': 0.8132793654841785, 'x2': 0.3804962894947435}})
 
 
 def test_describe(results):
