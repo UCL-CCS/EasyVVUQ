@@ -62,6 +62,7 @@ def data_vectors():
     df = pd.DataFrame(data)
     return sampler, df
 
+
 @pytest.fixture
 def results(data):
     # Post-processing analysis

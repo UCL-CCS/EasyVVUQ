@@ -172,7 +172,7 @@ class AnalysisResults:
 
         input_: str
             The name of the input parameter or None.
-        
+
         Examples
         --------
         >>> results.sobols_first()
@@ -189,7 +189,7 @@ class AnalysisResults:
         a dictionary or an array
         """
         return self._get_sobols_general(self._get_sobols_first, qoi, input_)
-        
+
     def sobols_second(self, qoi=None, input_=None):
         """Return second order sensitivity indices.
 
@@ -202,7 +202,7 @@ class AnalysisResults:
 
         input_: str
             The name of the input parameter or None.
-        
+
         Examples
         --------
 
@@ -233,7 +233,7 @@ class AnalysisResults:
         -------
         a dictionary or an array
         """
-        return self._get_sobols_general(self._get_sobols_total, qoi, input_)    
+        return self._get_sobols_general(self._get_sobols_total, qoi, input_)
 
     def surrogate(self):
         """Returns the surrogate model as a function from parameter dictionary
