@@ -578,6 +578,7 @@ class Campaign:
 
         Returns
         -------
+        a list with run ids
 
         """
 
@@ -602,6 +603,7 @@ class Campaign:
 
             run_ids.append(run_id)
         self.campaign_db.set_run_statuses(run_ids, Status.ENCODED)
+        return run_ids
 
     def get_campaign_runs_dir(self):
         """Get the runs directory from the CampaignDB.
