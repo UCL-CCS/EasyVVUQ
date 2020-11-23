@@ -74,6 +74,24 @@ class AnalysisResults:
         """
         raise NotImplementedError
 
+    def _get_sobols_second(self, qoi, input_):
+        """Returns second order Sobol indices.
+
+        Parameters
+        ----------
+        qoi - str or tuple
+           Quantity of interest or if a tuple quantity of interest plus
+        coordinate index (for cases where qoi is vector valued.
+
+        input_ - str
+           Input variable name.
+
+        Returns
+        -------
+        a pandas DataFrame
+        """
+        raise NotImplementedError
+
     def _get_sobols_total(self, qoi, input_):
         """Returns total order Sobol indices.
 
