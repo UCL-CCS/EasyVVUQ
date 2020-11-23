@@ -701,7 +701,7 @@ class Campaign:
                 processed_run_IDs.append(run_id)
                 processed_run_results.append(run_data)
         # update run statuses to "collated"
-        self.campaign_db.set_run_statuses(processed_run_IDs, constants.Status.COLLATED)
+        # self.campaign_db.set_run_statuses(processed_run_IDs, constants.Status.COLLATED)
         # add the results to the database
         self.campaign_db.store_results(
             self._active_app_name, zip(
