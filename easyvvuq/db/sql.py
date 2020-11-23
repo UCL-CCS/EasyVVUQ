@@ -836,7 +836,7 @@ class CampaignDB(BaseCampaignDB):
                 self.session.query(RunTable).\
                     filter(RunTable.run_name == run_name).\
                     filter(RunTable.app == app_id).\
-                    update({'result': json.dumps(result)})
+                    update({'result': json.dumps(result), 'status': constants.Status.COLLATED})
             except IndexError:
                 raise RuntimeError("no runs with name {} found".format(run_name))
         self.session.commit()
