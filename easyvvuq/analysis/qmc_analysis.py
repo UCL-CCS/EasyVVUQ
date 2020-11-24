@@ -135,9 +135,9 @@ class QMCAnalysis(BaseAnalysisElement):
 
         """
         samples = {k: [] for k in self.qoi_cols}
-        for run_id in data_frame.run_id.unique():
+        for run_id in data_frame[('run_id', 0)].unique():
             for k in self.qoi_cols:
-                data = data_frame.loc[data_frame['run_id'] == run_id][k]
+                data = data_frame.loc[data_frame[('run_id', 0)] == run_id][k]
                 samples[k].append(data.values)
         return samples
 
