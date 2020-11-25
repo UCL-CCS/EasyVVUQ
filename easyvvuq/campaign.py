@@ -616,6 +616,16 @@ class Campaign:
         """
         return self.campaign_db.runs_dir()
 
+    def relocate(self, new_path):
+        """Relocate the campaign by specifying a new path where campaign is located.
+        
+        Parameters
+        ----------
+        new_path: str
+            new runs directory
+        """
+        self.campaign_db.relocate(new_path)
+
     def call_for_each_run(self, fn, status=Status.ENCODED):
 
         # Loop through all runs in this campaign with the specified status,
