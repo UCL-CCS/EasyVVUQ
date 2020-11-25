@@ -120,11 +120,12 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
             self._nodes = cp.generate_samples(order=self._n_samples,
                                         domain=self.distribution,
                                         rule=self.rule)
+            self._weights = None
 
         # Projection variante (Pseudo-spectral method)
         else:
             # Nodes and weights for the integration
-            self._nodes, _ = cp.generate_quadrature(order=polynomial_order,
+            self._nodes, self._weights = cp.generate_quadrature(order=polynomial_order,
                                               dist=self.distribution,
                                               rule=self.rule,
                                               sparse=sparse,

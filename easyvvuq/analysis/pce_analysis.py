@@ -154,23 +154,11 @@ class PCEAnalysis(BaseAnalysisElement):
                    'output_distributions': {},
                    }
 
-        # Get the Polynomial
+        # Get sampler informations
         P = self.sampler.P
-
-        # Get the PCE variant to use (Regression or Projection)
+        nodes = self.sampler._nodes
+        weights = self.sampler._weights
         regression = self.sampler.regression
-
-        # Compute nodes (and weights)
-        if regression:
-            nodes = cp.generate_samples(order=self.sampler.n_samples,
-                                        domain=self.sampler.distribution,
-                                        rule=self.sampler.rule)
-        else:
-            nodes, weights = cp.generate_quadrature(order=self.sampler.polynomial_order,
-                                                    dist=self.sampler.distribution,
-                                                    rule=self.sampler.rule,
-                                                    sparse=self.sampler.quad_sparse,
-                                                    growth=self.sampler.quad_growth)
 
         # Extract output values for each quantity of interest from Dataframe
         samples = {k: [] for k in qoi_cols}
