@@ -48,7 +48,7 @@ def campaign(tmpdir):
     decoder = uq.decoders.SimpleCSV(
         target_filename='output.csv', output_columns=[
             'Dist', 'lastvx', 'lastvy'])
-    campaign = uq.Campaign(name='test')
+    campaign = uq.Campaign(name='test', work_dir=tmpdir)
     campaign.add_app(name='test', params=params, encoder=encoder, decoder=decoder)
     campaign.set_app('test')
     action = uq.actions.ExecuteLocal("tests/cannonsim/bin/cannonsim in.cannon output.csv")
@@ -68,4 +68,8 @@ def campaign(tmpdir):
     return campaign
 
 def test_relocate_campaign(campaign):
-    pass
+    runs = campaign.campaign_db.runs()
+    runs_dir = campaign.campaign_db.runs_dir()
+    for run in runs:
+        assert(run[1]['run_dir'].startswith(runs_dir))
+    
