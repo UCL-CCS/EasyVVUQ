@@ -112,8 +112,7 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
         # Regression variante (Point collocation method)
         if regression:
             # Change the default rule
-            if rule == "G":
-                self.rule = "M"
+            if rule == "G": self.rule = "M"
 
             # Generates samples
             self._n_samples = 2 * len(self.P)
@@ -126,10 +125,10 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
         else:
             # Nodes and weights for the integration
             self._nodes, self._weights = cp.generate_quadrature(order=polynomial_order,
-                                              dist=self.distribution,
-                                              rule=self.rule,
-                                              sparse=sparse,
-                                              growth=self.quad_growth)
+                                                                dist=self.distribution,
+                                                                rule=self.rule,
+                                                                sparse=sparse,
+                                                                growth=self.quad_growth)
             # Number of samples
             self._n_samples = len(self._nodes[0])
 
@@ -173,10 +172,8 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
     def __next__(self):
         if self.count < self._n_samples:
             run_dict = {}
-            ipar = 0
-            for param_name in self.vary.get_keys():
-                run_dict[param_name] = self._nodes[ipar][self.count]
-                ipar += 1
+            for i, param_name in enumerate(self.vary.vary_dict()):
+                run_dict[param_name] = self._nodes[i][self.count]
             self.count += 1
             return run_dict
         else:
