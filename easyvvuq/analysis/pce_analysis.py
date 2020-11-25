@@ -33,7 +33,7 @@ class PCEAnalysisResults(QMCAnalysisResults):
             First order sobol index.
         """
         raw_dict = AnalysisResults._keys_to_tuples(self.raw_data['sobols_first'])
-        return raw_dict[AnalysisResults._to_tuple(qoi)][input_][0][0]
+        return raw_dict[AnalysisResults._to_tuple(qoi)][input_]
 
     def _get_sobols_second(self, qoi, input_):
         """Returns the second order sobol index for a given qoi wrt input variable.
@@ -51,8 +51,8 @@ class PCEAnalysisResults(QMCAnalysisResults):
             Second order sobol index.
         """
         raw_dict = AnalysisResults._keys_to_tuples(self.raw_data['sobols_second'])
-        return dict([(in_, raw_dict[AnalysisResults._to_tuple(qoi)][input_][0][i][0][0])
-                     for i, in_ in enumerate(self.inputs)])
+        return dict([(in_, raw_dict[AnalysisResults._to_tuple(qoi)][input_][i])
+                     for i, in_ in enumerate(self.inputs) if in_ != input_])
 
     def _get_sobols_total(self, qoi, input_):
         """Returns the total order sobol index for a given qoi wrt input variable.
@@ -70,7 +70,7 @@ class PCEAnalysisResults(QMCAnalysisResults):
             Total order sobol index.
         """
         raw_dict = AnalysisResults._keys_to_tuples(self.raw_data['sobols_total'])
-        return raw_dict[AnalysisResults._to_tuple(qoi)][input_][0][0]
+        return raw_dict[AnalysisResults._to_tuple(qoi)][input_]
 
     def describe(self):
         result = {}
@@ -118,7 +118,7 @@ class PCEAnalysis(BaseAnalysisElement):
 
     def element_version(self):
         """Version of this element for logging purposes"""
-        return "0.5"
+        return "0.6"
 
     def analyse(self, data_frame=None):
         """Perform PCE analysis on input `data_frame`.
@@ -177,16 +177,13 @@ class PCEAnalysis(BaseAnalysisElement):
         for run_id in data_frame[('run_id', 0)].unique():
             for k in qoi_cols:
                 data = data_frame.loc[data_frame[('run_id', 0)] == run_id][k]
-                samples[k].append(data.values)
+                samples[k].append(data.values.flatten())
 
         # Compute descriptive statistics for each quantity of interest
         for k in qoi_cols:
             # Approximation solver
             if regression:
-                if samples[k][0].dtype == object:
-                    for i in range(self.sampler.count):
-                        samples[k][i] = samples[k][i].astype("float64")
-                fit = cp.fit_regression(P, nodes, samples[k], "T")
+                fit = cp.fit_regression(P, nodes, samples[k])
             else:
                 fit = cp.fit_quadrature(P, nodes, weights, samples[k])
 
@@ -198,7 +195,7 @@ class PCEAnalysis(BaseAnalysisElement):
                                                  'var': var,
                                                  'std': std}
 
-            # Percentiles (Pxx)
+            # Percentiles: 10% and 90%
             P10 = cp.Perc(fit, 10, self.sampler.distribution)
             P90 = cp.Perc(fit, 90, self.sampler.distribution)
             results['percentiles'][k] = {'p10': P10, 'p90': P90}
@@ -210,15 +207,11 @@ class PCEAnalysis(BaseAnalysisElement):
             sobols_first_dict = {}
             sobols_second_dict = {}
             sobols_total_dict = {}
-            ipar = 0
-            i = 0
-            for param_name in self.sampler.vary.get_keys():
-                j = self.sampler.params_size[ipar]
-                sobols_first_dict[param_name] = sobols_first_narr[i:i + j]
-                sobols_second_dict[param_name] = sobols_second_narr[i:i + j]
-                sobols_total_dict[param_name] = sobols_total_narr[i:i + j]
-                i += j
-                ipar += 1
+            for i, param_name in enumerate(self.sampler.vary.vary_dict):
+                sobols_first_dict[param_name] = sobols_first_narr[i]
+                sobols_second_dict[param_name] = sobols_second_narr[i]
+                sobols_total_dict[param_name] = sobols_total_narr[i]
+
             results['sobols_first'][k] = sobols_first_dict
             results['sobols_second'][k] = sobols_second_dict
             results['sobols_total'][k] = sobols_total_dict
@@ -230,5 +223,6 @@ class PCEAnalysis(BaseAnalysisElement):
             # Output distributions
             results['output_distributions'][k] = cp.QoI_Dist(
                 fit, self.sampler.distribution)
+
         return PCEAnalysisResults(raw_data=results, samples=data_frame,
                                   qois=self.qoi_cols, inputs=list(self.sampler.vary.get_keys()))

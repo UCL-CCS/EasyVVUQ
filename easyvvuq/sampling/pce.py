@@ -89,7 +89,6 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
 
         # List of the probability distributions of uncertain parameters
         params_distribution = list(vary.values())
-        self.params_size = [len(d) for d in params_distribution]
 
         # Multivariate distribution
         self.distribution = cp.J(*params_distribution)
@@ -118,32 +117,20 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
 
             # Generates samples
             self._n_samples = 2 * len(self.P)
-            nodes = cp.generate_samples(order=self._n_samples,
+            self._nodes = cp.generate_samples(order=self._n_samples,
                                         domain=self.distribution,
                                         rule=self.rule)
 
         # Projection variante (Pseudo-spectral method)
         else:
             # Nodes and weights for the integration
-            nodes, _ = cp.generate_quadrature(order=polynomial_order,
+            self._nodes, _ = cp.generate_quadrature(order=polynomial_order,
                                               dist=self.distribution,
                                               rule=self.rule,
                                               sparse=sparse,
                                               growth=self.quad_growth)
             # Number of samples
-            self._n_samples = len(nodes[0])
-
-        # Reorganize nodes according to params type: scalar (float, integer) or list
-        self._nodes = []
-        ipar = 0
-        for j in self.params_size:
-            # Scalar
-            if j == 1:
-                self._nodes.append(nodes[ipar:ipar + 1].flatten())
-            # List
-            else:
-                self._nodes.append(nodes[ipar:ipar + j].T.tolist())
-            ipar += j
+            self._n_samples = len(self._nodes[0])
 
         # Fast forward to specified count, if possible
         self.count = 0
@@ -157,7 +144,7 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
                 self.__next__()
 
     def element_version(self):
-        return "0.5"
+        return "0.6"
 
     def is_finite(self):
         return True
