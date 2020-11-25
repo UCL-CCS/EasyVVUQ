@@ -1,5 +1,6 @@
 import easyvvuq as uq
 import chaospy as cp
+import os
 import pytest
 
 @pytest.fixture
@@ -75,4 +76,6 @@ def test_relocate_campaign(campaign):
     with pytest.raises(RuntimeError):
         campaign.relocate('/test/test')
     campaign.campaign_db.relocate('/test/test', 'test')
+    for run in campaign.campaign_db.runs():
+        assert(run[1]['run_dir'] == os.path.join('/test/test', 'runs', run[0]))
     
