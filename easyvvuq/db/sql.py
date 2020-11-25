@@ -878,3 +878,13 @@ class CampaignDB(BaseCampaignDB):
                         except KeyError:
                             pd_result[(key, i)] = [pd_dict[key][i]]
         return pd.DataFrame(pd_result)
+
+    def relocate(self, new_path):
+        """Update all runs in the db with the new campaign path.
+        
+        Parameters
+        ----------
+        new_path: str
+            new runs directory
+        """
+        pass
