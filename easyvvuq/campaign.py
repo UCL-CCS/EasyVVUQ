@@ -624,6 +624,8 @@ class Campaign:
         new_path: str
             new runs directory
         """
+        if not os.path.exists(new_path):
+            raise RuntimeError("specified directory does not exist: {}".format(new_path))
         self.campaign_db.relocate(new_path)
 
     def call_for_each_run(self, fn, status=Status.ENCODED):
