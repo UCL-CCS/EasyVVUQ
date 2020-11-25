@@ -879,12 +879,22 @@ class CampaignDB(BaseCampaignDB):
                             pd_result[(key, i)] = [pd_dict[key][i]]
         return pd.DataFrame(pd_result)
 
-    def relocate(self, new_path):
+    def relocate(self, new_path, app_id):
         """Update all runs in the db with the new campaign path.
         
         Parameters
         ----------
         new_path: str
             new runs directory
+        app_id: str
+            name of the app to use for updating
         """
-        pass
+        for run in self.runs(app_id=app_id):
+            path, run_dir = os.path.split(run[1]['run_dir'])
+            path, runs_dir = os.path.split(path)
+            new_path = os.path.join(new_path, runs_dir, run_dir)
+            self.session.query(RunTable).\
+                filter(RunTable.run_name == run_name).\
+                filter(RunTable.app == app_id).\
+                update({'run_dir': new_path})
+

@@ -74,4 +74,5 @@ def test_relocate_campaign(campaign):
         assert(run[1]['run_dir'].startswith(runs_dir))
     with pytest.raises(RuntimeError):
         campaign.relocate('/test/test')
+    campaign.campaign_db.relocate('/test/test', 'test')
     
