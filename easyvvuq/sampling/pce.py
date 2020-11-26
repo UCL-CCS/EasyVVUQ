@@ -112,13 +112,14 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
         # Regression variante (Point collocation method)
         if regression:
             # Change the default rule
-            if rule == "G": self.rule = "M"
+            if rule == "G":
+                self.rule = "M"
 
             # Generates samples
             self._n_samples = 2 * len(self.P)
             self._nodes = cp.generate_samples(order=self._n_samples,
-                                        domain=self.distribution,
-                                        rule=self.rule)
+                                              domain=self.distribution,
+                                              rule=self.rule)
             self._weights = None
 
         # Projection variante (Pseudo-spectral method)
