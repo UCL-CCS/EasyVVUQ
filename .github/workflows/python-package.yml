@@ -28,6 +28,10 @@ jobs:
         python -m pip install --upgrade pip
         python -m pip install flake8 pytest
         if [ -f requirements.txt ]; then pip install --use-feature=2020-resolver -r requirements.txt; fi
+        python setup.py develop
+        python setup.py build_cannonsim
+        pip install pytest-cov
+        pip install coveralls
     - name: Lint with flake8
       run: |
         # stop the build if there are Python syntax errors or undefined names
@@ -37,3 +41,4 @@ jobs:
     - name: Test with pytest
       run: |
         py.test --pep8 easyvvuq/
+        py.test --cov=easyvvuq/ --pep8 tests
