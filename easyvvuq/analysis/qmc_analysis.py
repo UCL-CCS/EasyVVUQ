@@ -135,9 +135,9 @@ class QMCAnalysis(BaseAnalysisElement):
 
         """
         samples = {k: [] for k in self.qoi_cols}
-        for run_id in data_frame[('run_id', 0)].unique():
+        for run_id in data_frame['run_id'].squeeze().unique():
             for k in self.qoi_cols:
-                data = data_frame.loc[data_frame[('run_id', 0)] == run_id][k]
+                data = data_frame.loc[data_frame['run_id'].squeeze() == run_id][k]
                 samples[k].append(data.values)
         return samples
 
@@ -248,7 +248,7 @@ class QMCAnalysis(BaseAnalysisElement):
 
         """
         evaluations = np.array(samples)
-
+        
         shape = (n_mc_samples, n_params) + evaluations[0].shape
         step = n_params + 2
         f_Ni = np.zeros(shape)
