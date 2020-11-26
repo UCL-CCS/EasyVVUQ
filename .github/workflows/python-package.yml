@@ -40,5 +40,5 @@ jobs:
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
     - name: Test with pytest
       run: |
-        py.test --pep8 easyvvuq/
-        py.test --cov=easyvvuq/ --pep8 tests
+        pytest --pep8 easyvvuq/
+        pytest --cov=easyvvuq/ --pep8 tests/
