@@ -379,6 +379,11 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
 
         print('%d new points added' % new_points.shape[0])
 
+        #keep track of the number of points added per iteration
+        if not hasattr(self, 'n_new_points'):
+            self.n_new_points = []
+        self.n_new_points.append(new_points.shape[0])
+
         #update the number of samples
         self._number_of_samples += new_points.shape[0]
 
