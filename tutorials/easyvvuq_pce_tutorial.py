@@ -53,6 +53,6 @@ my_campaign.apply_analysis(my_analysis)
 
 # Get some descriptive statistics
 results = my_campaign.get_last_analysis()
-mean = results.describe()['te']['mean'][0]
+mean = results.describe()['te']['mean']
 p10 = results.describe()['te']['10%']
 p90 = results.describe()['te']['90%']
