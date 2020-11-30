@@ -614,7 +614,19 @@ class Campaign:
             Path in which the runs information will be written.
 
         """
-        return self.campaign_db.runs_dir()
+        return self.campaign_db.runs_dir(self.campaign_name)
+
+    def relocate(self, new_path):
+        """Relocate the campaign by specifying a new path where campaign is located.
+
+        Parameters
+        ----------
+        new_path: str
+            new runs directory
+        """
+        if not os.path.exists(new_path):
+            raise RuntimeError("specified directory does not exist: {}".format(new_path))
+        self.campaign_db.relocate(new_path, self._active_app_name)
 
     def call_for_each_run(self, fn, status=Status.ENCODED):
 
