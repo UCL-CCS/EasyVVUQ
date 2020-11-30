@@ -4,6 +4,8 @@ branch = True
 omit =
      tests/*
      easyvvuq/_version.py
+     setup.py
+     versioneer.py
 
 [report]
 # Regexes for lines to exclude from consideration
