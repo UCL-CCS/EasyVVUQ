@@ -614,11 +614,11 @@ class Campaign:
             Path in which the runs information will be written.
 
         """
-        return self.campaign_db.runs_dir(self._active_app)
+        return self.campaign_db.runs_dir(self.campaign_name)
 
     def relocate(self, new_path):
         """Relocate the campaign by specifying a new path where campaign is located.
-
+        
         Parameters
         ----------
         new_path: str

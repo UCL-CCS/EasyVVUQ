@@ -513,7 +513,7 @@ class CampaignDB(BaseCampaignDB):
             sqlalchemy query for campaign with this name
 
         """
-
+        assert(isinstance(campaign_name, str) or campaign_name is None)
         query = self.session.query(CampaignTable)
 
         if campaign_name is None:
@@ -881,7 +881,7 @@ class CampaignDB(BaseCampaignDB):
 
     def relocate(self, new_path, app_name):
         """Update all runs in the db with the new campaign path.
-
+        
         Parameters
         ----------
         new_path: str
@@ -899,3 +899,4 @@ class CampaignDB(BaseCampaignDB):
                 filter(RunTable.app == app_info['id']).\
                 update({'run_dir': new_path_})
         self.session.commit()
+
