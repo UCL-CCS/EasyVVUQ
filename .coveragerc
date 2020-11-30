@@ -2,7 +2,8 @@
 [run]
 branch = True
 omit =
-    easyvvuq/_version.py
+     tests/*
+     easyvvuq/_version.py
 
 [report]
 # Regexes for lines to exclude from consideration
