@@ -618,7 +618,7 @@ class Campaign:
 
     def relocate(self, new_path):
         """Relocate the campaign by specifying a new path where campaign is located.
-        
+
         Parameters
         ----------
         new_path: str

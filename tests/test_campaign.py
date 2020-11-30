@@ -3,6 +3,7 @@ import chaospy as cp
 import os
 import pytest
 
+
 @pytest.fixture
 def campaign(tmpdir):
     params = {
@@ -68,6 +69,7 @@ def campaign(tmpdir):
     campaign.apply_for_each_run_dir(action)
     return campaign
 
+
 def test_relocate_campaign(campaign, tmpdir):
     runs = campaign.campaign_db.runs()
     runs_dir = campaign.campaign_db.runs_dir()
@@ -78,4 +80,3 @@ def test_relocate_campaign(campaign, tmpdir):
     campaign.relocate(tmpdir)
     for run in campaign.campaign_db.runs():
         assert(run[1]['run_dir'] == os.path.join(tmpdir, 'runs', run[0]))
-    
