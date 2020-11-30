@@ -68,14 +68,14 @@ def campaign(tmpdir):
     campaign.apply_for_each_run_dir(action)
     return campaign
 
-def test_relocate_campaign(campaign):
+def test_relocate_campaign(campaign, tmpdir):
     runs = campaign.campaign_db.runs()
     runs_dir = campaign.campaign_db.runs_dir()
     for run in runs:
         assert(run[1]['run_dir'].startswith(runs_dir))
     with pytest.raises(RuntimeError):
         campaign.relocate('/test/test')
-    campaign.campaign_db.relocate('/test/test', 'test')
+    campaign.relocate(tmpdir)
     for run in campaign.campaign_db.runs():
-        assert(run[1]['run_dir'] == os.path.join('/test/test', 'runs', run[0]))
+        assert(run[1]['run_dir'] == os.path.join(tmpdir, 'runs', run[0]))
     
