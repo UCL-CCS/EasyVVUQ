@@ -76,7 +76,7 @@ def results(data):
 def results_vectors(data_vectors):
     # Post-processing analysis
     sampler, df = data_vectors
-    analysis = uq.analysis.SCAnalysis(sampler=sampler, qoi_cols=[('g', 0), ('g', 1), ('g', 2)])
+    analysis = uq.analysis.PCEAnalysis(sampler=sampler, qoi_cols=[('g', 0), ('g', 1), ('g', 2)])
     results = analysis.analyse(df)
     return results
 
@@ -113,11 +113,12 @@ def test_full_results(results):
 
 
 def test_describe(results):
-    assert(results.describe().to_dict()['f'] == pytest.approx({
+    ref = {
         '10%': 0.009410762945528006,
         '90%': 2.1708835276870935,
         'count': 25.0,
         'mean': 0.91011171024204,
         'std': 0.807805287287411,
         'var': 0.6525493821694965
-    }))
+    }
+    assert(results.describe()['f', 0].to_dict() == pytest.approx(ref))

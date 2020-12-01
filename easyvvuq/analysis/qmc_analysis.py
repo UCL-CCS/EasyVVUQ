@@ -248,7 +248,7 @@ class QMCAnalysis(BaseAnalysisElement):
 
         """
         evaluations = np.array(samples)
-        
+
         shape = (n_mc_samples, n_params) + evaluations[0].shape
         step = n_params + 2
         f_Ni = np.zeros(shape)

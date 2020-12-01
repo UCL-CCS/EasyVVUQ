@@ -73,16 +73,33 @@ class PCEAnalysisResults(QMCAnalysisResults):
         return raw_dict[AnalysisResults._to_tuple(qoi)][input_]
 
     def describe(self):
+        """Returns descriptive statistics, similar to pandas describe.
+
+        Examples
+        --------
+
+
+        Returns
+        -------
+        pandas DataFrame with descriptive statistics
+        """
         result = {}
         for qoi in self.qois:
-            result[qoi] = {
-                'count': len(self.samples.axes[0]),
-                'mean': self.raw_data['statistical_moments'][qoi]['mean'],
-                'std': self.raw_data['statistical_moments'][qoi]['std'],
-                'var': self.raw_data['statistical_moments'][qoi]['var'],
-                '10%': self.raw_data['percentiles'][qoi]['p10'],
-                '90%': self.raw_data['percentiles'][qoi]['p90']
-            }
+            count = len(self.samples.axes[0])
+            mean = self.raw_data['statistical_moments'][qoi]['mean']
+            std = self.raw_data['statistical_moments'][qoi]['std']
+            var = self.raw_data['statistical_moments'][qoi]['var']
+            p10 = self.raw_data['percentiles'][qoi]['p10']
+            p90 = self.raw_data['percentiles'][qoi]['p90']
+            for i, _ in enumerate(mean):
+                result[(qoi, i)] = {
+                    'count': count,
+                    'mean': mean[i],
+                    'std': std[i],
+                    'var': var[i],
+                    '10%': p10[i],
+                    '90%': p90[i]
+                }
         return pd.DataFrame(result)
 
 
