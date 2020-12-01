@@ -78,9 +78,9 @@ interest to you see the examples below ::
     >>> results.sobols_first('f', 'x1')
     array([0.610242])
 
-If, say, `f` is one your qois and `x1` and `x2` are your input variables you can get the first order sobol indices for
-both all qois and all inputs by calling `results.sobols_first()`, you can get sobol indices for `f` by calling 
-`results.sobols_first(f)` and you can get the index for one of the quantities by calling `results.sobols_first(f, x2)`.
-Also implemented in some of the classes are `results.sobols_second()` and `results.sobols_total()` which work in a similar way.
+If, say, ``f`` is one your qois and ``x1` and ``x2`` are your input variables you can get the first order sobol indices for
+both all qois and all inputs by calling ``results.sobols_first()``, you can get sobol indices for ``f`` by calling 
+``results.sobols_first(f)`` and you can get the index for one of the quantities by calling ``results.sobols_first(f, x2)``.
+Also implemented in some of the classes are ``results.sobols_second()`` and ``results.sobols_total()`` which work in a similar way.
 
 You can get descriptive statistcs by calling ``results.describe()``.
