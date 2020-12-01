@@ -1,12 +1,15 @@
 .. _workflow_changes:
 
+Workflow Changes
+================
+
 Recently (today is 01.12.2020) there have been some changes in the workflow of EasyVVUQ 
 which means that some existing workflows will need to be altered. There are many changes, 
 in fact, but here we will only concentrate on the changes that mean you will have to change 
 your existing scripts. I will try to summarise them here.
 
 No More Collaters
-=================
+-----------------
 
 You don't need to explicitly create a collater anymore. The code that imports collaters will
 fail with an import error. The rest did not change. You still need to call ``campaign.collate()``
@@ -29,7 +32,7 @@ would then become
                         collater=collater)
  
 Decoders Must Return Dictionaries
-=================================
+---------------------------------
  
 Decoders are now required to return dictionaries. These dictionaries must contain qoi's as keys 
 and the values can be either flow or lists. In case the values are lists the qoi will be interpreted 
@@ -58,7 +61,7 @@ Each time the decoder output is read it will be checked using this specification
 debugging and validation purposes.
 
 Analysys Classes Return an AnalysisResults Instance
-===================================================
+---------------------------------------------------
 
 In an effort to provide a consistent interface to the users all classes must return the results in the same
 way. The idea is that the users would not need to modify their code if they want to swap the analysis method
