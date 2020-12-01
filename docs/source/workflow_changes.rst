@@ -83,4 +83,4 @@ both all qois and all inputs by calling `results.sobols_first()`, you can get so
 `results.sobols_first(f)` and you can get the index for one of the quantities by calling `results.sobols_first(f, x2)`.
 Also implemented in some of the classes are `results.sobols_second()` and `results.sobols_total()` which work in a similar way.
 
-You can get descriptive statistcs by calling `results.describe()`.
+You can get descriptive statistcs by calling ``results.describe()``.
