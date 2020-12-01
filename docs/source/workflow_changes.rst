@@ -28,8 +28,7 @@ would then become
     my_campaign.add_app(name="gauss",
                         params=params,
                         encoder=encoder,
-                        decoder=decoder,
-                        collater=collater)
+                        decoder=decoder)
  
 Decoders Must Return Dictionaries
 ---------------------------------
