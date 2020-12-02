@@ -100,18 +100,19 @@ use the following validator ::
                      collater=collater)
                     
 Each time the decoder output is read it will be checked using this specification. This can be used for 
-debugging and validation purposes.
+debugging and validation purposes. For more information for how to write the validator please consult
+the Cerberus project website.
 
 Analysis Classes Return an AnalysisResults Instance
 ---------------------------------------------------
 
-In an effort to provide a consistent interface to the users all classes must return the results in the same
+In an effort to provide a consistent interface to the user, all classes must return the results in the same
 way. The idea is that the users would not need to modify their code if they want to swap the analysis method
-for another one. Of course this is to some extent not possible because different analysis methods have different
+for another one. Of course, this is to some extent not possible because different analysis methods have different
 capabilities in terms of what information they can provide. But we must strive for a consistent interface
 as much as possible. So from now on when you call ``campaign.get_last_analysis()`` or when you use the ``analyse()``
-method of an analysis class explicitly it will return an instance of AnalysisResults. In order to get values of
-interest to you see the examples below ::
+method of an analysis class explicitly it will return an instance of ``AnalysisResults``. In order to get sobol 
+indices from this object see the example: ::
 
     >>> results = campaign.get_last_analysis()
     >>> results.sobols_first()
@@ -121,9 +122,11 @@ interest to you see the examples below ::
     >>> results.sobols_first('f', 'x1')
     array([0.610242])
 
-If, say, ``f`` is one your qois and ``x1`` and ``x2`` are your input variables you can get the first order sobol indices for
-both all qois and all inputs by calling ``results.sobols_first()``, you can get sobol indices for ``f`` by calling 
+If ``f`` is one your qois and ``x1`` and ``x2`` are your input variables you can get the first order sobol indices for
+all qois and all inputs by calling ``results.sobols_first()``, you can get sobol indices for ``f`` by calling 
 ``results.sobols_first(f)`` and you can get the index for one of the quantities by calling ``results.sobols_first(f, x2)``.
 Also implemented in some of the classes are ``results.sobols_second()`` and ``results.sobols_total()`` which work in a similar way.
+Where make sense the classes will also provide a ``surrogate()`` method which will return an object that will act
+as a surrogate for your simulation.
 
 You can get descriptive statistcs by calling ``results.describe()``.
