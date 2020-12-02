@@ -65,8 +65,8 @@ Here is a valid example of such a DataFrame. ::
     23     23  0.953090  0.769235  0.953090  0.769235  1.722325
     24     24  0.953090  0.953090  0.953090  0.953090  1.906180
 
-It has two input variables ``x1`` and ``x2`` and one vector valued qoi `g` with three elements.
-Any scalar is treated as a vector with one element. This is mainly of interest for people
+It has two input variables ``x1`` and ``x2`` and one vector valued qoi (quantity of interest) 
+`g` with three elements. Any scalar is treated as a vector with one element. This is mainly of interest for people
 developing analysis classes but probably useful to know to users too. If you want to access
 the columns of the qoi you can do so (assuming ``df`` is collation result) ``df[g]`` would
 return a data frame with the three columns that make up ``g``. You can also call ``df[g, 1]`` to
@@ -77,16 +77,16 @@ Decoders Must Return Dictionaries
 ---------------------------------
  
 Decoders are now required to return dictionaries. These dictionaries must contain qoi's as keys 
-and the values can be either flow or lists. In case the values are lists the qoi will be interpreted 
-as a vector. In fact, internally, all qois are now treated as vectors. This is done for consistency
-reasons. So if your simulation returns a single scalar value it will be treated as a vector in one
-dimension. An example of a valid dictionary that could be returned by a decoder could be ::
+and the values can be either float or lists. In case the values are lists the qoi will be interpreted 
+as a vector. If your simulation produces more complex output you need to pre-process it to fit into this format.
+An example of a valid dictionary that could be returned by a decoder could be ::
 
     {'y1': 3.14, 'y2': [1, 2]}
 
-You can also enfore checking the output of your decoders using Cerberus. To this end you need to create
-a validation dictionary in the Cerberus format. You then need to specify this when calling ``add_app`` 
-on a campaign. For example, using the output above ::
+You can also enforce checking the output of your decoders using `Cerberus <https://docs.python-cerberus.org/en/stable/>`_. 
+To this end you need to create a validation dictionary in the Cerberus format. You then need to specify this when 
+calling ``add_app`` on a campaign. For example, if the ouput of the decoder is the dictionary above, you can
+use the following validator ::
 
     validator = {
         'y1' : {'type': 'float', 'required': True}, 
@@ -102,7 +102,7 @@ on a campaign. For example, using the output above ::
 Each time the decoder output is read it will be checked using this specification. This can be used for 
 debugging and validation purposes.
 
-Analysys Classes Return an AnalysisResults Instance
+Analysis Classes Return an AnalysisResults Instance
 ---------------------------------------------------
 
 In an effort to provide a consistent interface to the users all classes must return the results in the same
