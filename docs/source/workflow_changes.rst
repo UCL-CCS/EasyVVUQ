@@ -23,13 +23,56 @@ specify a collater when adding an app to a campaign. So, for example ::
 
 
 
-would then become 
+would now become 
 ::
     my_campaign.add_app(name="gauss",
                         params=params,
                         encoder=encoder,
                         decoder=decoder)
- 
+                        
+The call to ``campaign.get_collation_result()`` will return a pandas DataFrame as before. The resulting
+DataFrame is now `multi-indexed <https://pandas.pydata.org/pandas-docs/stable/user_guide/advanced.html>`_. 
+The main difference here would be that each column is treated as if holding a vector argument. This is
+probably best illustrated with an example.
+
+Here is a valid example of such a DataFrame. ::
+
+       run_id        x1        x2         g                    
+            0         0         0         0         1         2
+    0       0  0.046910  0.046910  0.046910  0.046910  0.093820
+    1       1  0.046910  0.230765  0.046910  0.230765  0.277675
+    2       2  0.046910  0.500000  0.046910  0.500000  0.546910
+    3       3  0.046910  0.769235  0.046910  0.769235  0.816145
+    4       4  0.046910  0.953090  0.046910  0.953090  1.000000
+    5       5  0.230765  0.046910  0.230765  0.046910  0.277675
+    6       6  0.230765  0.230765  0.230765  0.230765  0.461531
+    7       7  0.230765  0.500000  0.230765  0.500000  0.730765
+    8       8  0.230765  0.769235  0.230765  0.769235  1.000000
+    9       9  0.230765  0.953090  0.230765  0.953090  1.183855
+    10     10  0.500000  0.046910  0.500000  0.046910  0.546910
+    11     11  0.500000  0.230765  0.500000  0.230765  0.730765
+    12     12  0.500000  0.500000  0.500000  0.500000  1.000000
+    13     13  0.500000  0.769235  0.500000  0.769235  1.269235
+    14     14  0.500000  0.953090  0.500000  0.953090  1.453090
+    15     15  0.769235  0.046910  0.769235  0.046910  0.816145
+    16     16  0.769235  0.230765  0.769235  0.230765  1.000000
+    17     17  0.769235  0.500000  0.769235  0.500000  1.269235
+    18     18  0.769235  0.769235  0.769235  0.769235  1.538469
+    19     19  0.769235  0.953090  0.769235  0.953090  1.722325
+    20     20  0.953090  0.046910  0.953090  0.046910  1.000000
+    21     21  0.953090  0.230765  0.953090  0.230765  1.183855
+    22     22  0.953090  0.500000  0.953090  0.500000  1.453090
+    23     23  0.953090  0.769235  0.953090  0.769235  1.722325
+    24     24  0.953090  0.953090  0.953090  0.953090  1.906180
+
+It has two input variables ``x1`` and ``x2`` and one vector valued qoi `g` with three elements.
+Any scalar is treated as a vector with one element. This is mainly of interest for people
+developing analysis classes but probably useful to know to users too. If you want to access
+the columns of the qoi you can do so (assuming ``df`` is collation result) ``df[g]`` would
+return a data frame with the three columns that make up ``g``. You can also call ``df[g, 1]`` to
+get a particular element. In which case it will return a corresponding column (second one in this 
+case).
+
 Decoders Must Return Dictionaries
 ---------------------------------
  
