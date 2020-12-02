@@ -96,8 +96,7 @@ use the following validator ::
                      params=params,
                      encoder=encoder,
                      decoder=decoder,
-                     decoderspec=validator,
-                     collater=collater)
+                     decoderspec=validator)
                     
 Each time the decoder output is read it will be checked using this specification. This can be used for 
 debugging and validation purposes. For more information for how to write the validator please consult
