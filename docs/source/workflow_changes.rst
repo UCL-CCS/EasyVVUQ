@@ -3,10 +3,10 @@
 Workflow Changes
 ================
 
-Recently (today is 01.12.2020) there have been some changes in the workflow of EasyVVUQ 
-which means that some existing workflows will need to be altered. There are many changes, 
-in fact, but here we will only concentrate on the changes that mean you will have to change 
-your existing scripts. I will try to summarise them here.
+Recently (since release v0.7.3) there have been some changes in the workflow of EasyVVUQ 
+which means that some existing scripts that use EasyVVUQ will need to be altered. There are 
+many changes, in fact, but here we will only concentrate on the changes that mean you will 
+have to change your existing scripts. I will try to summarise them below.
 
 No More Collaters
 -----------------
