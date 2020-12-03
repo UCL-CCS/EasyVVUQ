@@ -266,38 +266,27 @@ class AnalysisResults:
         """
         raise NotImplementedError
 
-    def describe(self, groupby=None, qoi_cols=[], percentiles=[0.1, 0.5, 0.9]):
+    def describe(self, qoi=None, statistic=None):
         """Returns descriptive statistics.
 
-        Examples
-        --------
-        >>> results.moments()
-                   run_id          x1          x2           f
-        count  400.000000  400.000000  400.000000  400.000000
-        mean   199.500000    0.466909    0.469184    1.018103
-        std    115.614301    0.290085    0.292512    0.775780
-        min      0.000000    0.005779    0.003853    0.017025
-        25%     99.750000    0.208518    0.201850    0.351034
-        50%    199.500000    0.471223    0.449555    0.882288
-        75%    299.250000    0.724372    0.686953    1.548116
-        max    399.000000    0.984971    0.998398    3.152954
-
-        Returns
-        -------
-        a pandas DataFrame with descriptive statistics
         """
-        assert(not self.samples.empty)
-        if groupby:
-            grouped_data = self.samples.groupby(groupby)
-            results = grouped_data.describe(percentiles=percentiles)
-            if qoi_cols:
-                results = results[qoi_cols]
-        else:
-            if qoi_cols:
-                results = self.samples[qoi_cols].describe()
-            else:
-                results = self.samples.describe()
-        return results
+        statistics = ['mean', 'var', 'std', '10%', '90%', 'min', 'max', 'median']
+        result = {}
+        if (qoi is not None) and (statistic is not None):
+            for qoi in self.qois:
+                for statistic in statistics:
+                    try:
+                        value = self._describe(qoi, statistic)
+                        assert(isinstance(value, np.ndarray))
+                        for i, x in enumerate(value):
+                            try:
+                                result[(qoi, i)][statistic] = x
+                            except KeyError:
+                                result[(qoi, i)] = {statistic: x}
+                    except NotImplementedError:
+                        raise RuntimeError(
+                            "this statistic ({}) is not reported by this analysis class".format(statistic))
+        return pd.DataFrame(results)
 
     @staticmethod
     def _keys_to_tuples(dictionary):

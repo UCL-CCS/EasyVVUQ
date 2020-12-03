@@ -72,7 +72,7 @@ class PCEAnalysisResults(QMCAnalysisResults):
         raw_dict = AnalysisResults._keys_to_tuples(self.raw_data['sobols_total'])
         return raw_dict[AnalysisResults._to_tuple(qoi)][input_]
 
-    def describe(self):
+    def _describe(self, qoi, statistic):
         """Returns descriptive statistics, similar to pandas describe.
 
         Examples
