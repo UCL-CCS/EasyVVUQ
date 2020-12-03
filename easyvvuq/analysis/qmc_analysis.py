@@ -42,6 +42,9 @@ class QMCAnalysisResults(AnalysisResults):
         return [raw_dict[AnalysisResults._to_tuple(qoi)][input_]['low'][0],
                 raw_dict[AnalysisResults._to_tuple(qoi)][input_]['high'][0]]
 
+    def _describe(self, qoi, statistic):
+        import pdb; pdb.set_trace()
+
 
 class QMCAnalysis(BaseAnalysisElement):
     def __init__(self, sampler, qoi_cols=None):
