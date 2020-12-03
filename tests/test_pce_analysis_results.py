@@ -51,7 +51,7 @@ def data_vectors():
     }
     sampler = uq.sampling.PCESampler(vary)
     data = {('run_id', 0): [], ('x1', 0): [], ('x2', 0): [],
-            ('g', 0): [], ('g', 1): [], ('g', 2): []}
+            ('g', 0): [], ('g', 1): [], ('g', 2): [], ('h', 0): [], ('h', 1): []}
     for run_id, sample in enumerate(sampler):
         data[('run_id', 0)].append(run_id)
         data[('x1', 0)].append(sample['x1'])
@@ -59,6 +59,8 @@ def data_vectors():
         data[('g', 0)].append(sample['x1'])
         data[('g', 1)].append(sample['x2'])
         data[('g', 2)].append(sample['x1'] + sample['x2'])
+        data[('h', 0)].append(sample['x1'] * sample['x2'])
+        data[('h', 1)].append(sample['x1'] ** sample['x2'])
     df = pd.DataFrame(data)
     return sampler, df
 
@@ -76,7 +78,7 @@ def results(data):
 def results_vectors(data_vectors):
     # Post-processing analysis
     sampler, df = data_vectors
-    analysis = uq.analysis.PCEAnalysis(sampler=sampler, qoi_cols=['g'])
+    analysis = uq.analysis.PCEAnalysis(sampler=sampler, qoi_cols=['g', 'h'])
     results = analysis.analyse(df)
     return results
 

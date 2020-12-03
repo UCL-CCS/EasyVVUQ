@@ -272,21 +272,30 @@ class AnalysisResults:
 
         """
         statistics = ['mean', 'var', 'std', '10%', '90%', 'min', 'max', 'median']
+        qois = self.qois
+        if qoi is not None:
+            qois = [qoi]
+        if statistic is not None:
+            statistics = [statistic]
         result = {}
-        if (qoi is not None) and (statistic is not None):
-            for qoi in self.qois:
+        for qoi in qois:
+            for statistic_ in statistics:
                 try:
-                    value = self._describe(qoi, statistic)
+                    value = self._describe(qoi, statistic_)
                     assert(isinstance(value, np.ndarray))
                     for i, x in enumerate(value):
                         try:
-                            result[(qoi, i)][statistic] = x
+                            result[(qoi, i)][statistic_] = x
                         except KeyError:
-                            result[(qoi, i)] = {statistic: x}
+                            result[(qoi, i)] = {statistic_: x}
                 except NotImplementedError:
-                    raise RuntimeError(
-                        "this statistic ({}) is not reported by this analysis class".format(statistic))
-        return pd.DataFrame(result)
+                    if statistic is not None:
+                        raise RuntimeError(
+                            "this statistic ({}) is not reported by this analysis class".format(statistic))
+        if qois is not None and statistic is not None:
+            return pd.DataFrame(result)[qoi].loc[statistic].values
+        else:
+            return pd.DataFrame(result)
 
     @staticmethod
     def _keys_to_tuples(dictionary):
