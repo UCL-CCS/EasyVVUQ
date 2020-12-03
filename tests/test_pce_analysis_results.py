@@ -115,14 +115,26 @@ def test_full_results(results):
 
 
 def test_describe(results_vectors):
-    #import pdb; pdb.set_trace()
-    ref = {
-        '10%': 0.009410762945528006,
-        '90%': 2.1708835276870935,
-        'count': 25.0,
-        'mean': 0.91011171024204,
-        'std': 0.807805287287411,
-        'var': 0.6525493821694965
-    }
-    assert(results.describe()['f', 0].to_dict() == pytest.approx(ref))
-
+    assert(
+        results_vectors.describe()[
+            ('g',
+             1)].to_dict() == {
+            'mean': 0.5000000000000001,
+            'var': 0.08333333333333348,
+            'std': 0.28867513459481314,
+            '10%': 0.09946223131463872,
+            '90%': 0.8994171166439805,
+            'min': 4.677810565448583e-06,
+            'max': 0.9998733762740958})
+    assert(
+        results_vectors.describe('g').to_dict()[
+            ('g',
+             1)] == {
+            'mean': 0.5000000000000001,
+            'var': 0.08333333333333348,
+            'std': 0.28867513459481314,
+            '10%': 0.09946223131463872,
+            '90%': 0.8994171166439805,
+            'min': 4.677810565448583e-06,
+            'max': 0.9998733762740958})
+    assert(isinstance(results_vectors.describe('g', 'min'), np.ndarray))

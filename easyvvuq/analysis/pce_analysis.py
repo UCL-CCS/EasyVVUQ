@@ -85,9 +85,11 @@ class PCEAnalysisResults(QMCAnalysisResults):
         pandas DataFrame with descriptive statistics
         """
         if statistic == 'min':
-            return np.array([v.lower[0] for _, v in enumerate(self.raw_data['output_distributions'][qoi])])
+            return np.array([v.lower[0] for _, v in enumerate(
+                self.raw_data['output_distributions'][qoi])])
         elif statistic == 'max':
-            return np.array([v.upper[0] for _, v in enumerate(self.raw_data['output_distributions'][qoi])])
+            return np.array([v.upper[0] for _, v in enumerate(
+                self.raw_data['output_distributions'][qoi])])
         elif statistic == '10%':
             return self.raw_data['percentiles'][qoi]['p10']
         elif statistic == '90%':
