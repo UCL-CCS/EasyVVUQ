@@ -3,6 +3,7 @@
 import logging
 import chaospy as cp
 import pandas as pd
+import numpy as np
 from easyvvuq import OutputType
 from .base import BaseAnalysisElement
 from .results import AnalysisResults
@@ -83,24 +84,19 @@ class PCEAnalysisResults(QMCAnalysisResults):
         -------
         pandas DataFrame with descriptive statistics
         """
-        result = {}
-        for qoi in self.qois:
-            count = len(self.samples.axes[0])
-            mean = self.raw_data['statistical_moments'][qoi]['mean']
-            std = self.raw_data['statistical_moments'][qoi]['std']
-            var = self.raw_data['statistical_moments'][qoi]['var']
-            p10 = self.raw_data['percentiles'][qoi]['p10']
-            p90 = self.raw_data['percentiles'][qoi]['p90']
-            for i, _ in enumerate(mean):
-                result[(qoi, i)] = {
-                    'count': count,
-                    'mean': mean[i],
-                    'std': std[i],
-                    'var': var[i],
-                    '10%': p10[i],
-                    '90%': p90[i]
-                }
-        return pd.DataFrame(result)
+        if statistic == 'min':
+            return np.array([v.lower[0] for _, v in enumerate(self.raw_data['output_distributions'][qoi])])
+        elif statistic == 'max':
+            return np.array([v.upper[0] for _, v in enumerate(self.raw_data['output_distributions'][qoi])])
+        elif statistic == '10%':
+            return self.raw_data['percentiles'][qoi]['p10']
+        elif statistic == '90%':
+            return self.raw_data['percentiles'][qoi]['p90']
+        else:
+            try:
+                return self.raw_data['statistical_moments'][qoi][statistic]
+            except KeyError:
+                raise NotImplementedError
 
 
 class PCEAnalysis(BaseAnalysisElement):

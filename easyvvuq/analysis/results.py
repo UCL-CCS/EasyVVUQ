@@ -12,6 +12,7 @@ Examples
 """
 
 import pandas as pd
+import numpy as np
 
 
 class AnalysisResults:
@@ -274,19 +275,18 @@ class AnalysisResults:
         result = {}
         if (qoi is not None) and (statistic is not None):
             for qoi in self.qois:
-                for statistic in statistics:
-                    try:
-                        value = self._describe(qoi, statistic)
-                        assert(isinstance(value, np.ndarray))
-                        for i, x in enumerate(value):
-                            try:
-                                result[(qoi, i)][statistic] = x
-                            except KeyError:
-                                result[(qoi, i)] = {statistic: x}
-                    except NotImplementedError:
-                        raise RuntimeError(
-                            "this statistic ({}) is not reported by this analysis class".format(statistic))
-        return pd.DataFrame(results)
+                try:
+                    value = self._describe(qoi, statistic)
+                    assert(isinstance(value, np.ndarray))
+                    for i, x in enumerate(value):
+                        try:
+                            result[(qoi, i)][statistic] = x
+                        except KeyError:
+                            result[(qoi, i)] = {statistic: x}
+                except NotImplementedError:
+                    raise RuntimeError(
+                        "this statistic ({}) is not reported by this analysis class".format(statistic))
+        return pd.DataFrame(result)
 
     @staticmethod
     def _keys_to_tuples(dictionary):

@@ -49,7 +49,7 @@ def data_vectors():
         "x1": cp.Uniform(0.0, 1.0),
         "x2": cp.Uniform(0.0, 1.0)
     }
-    sampler = uq.sampling.SCSampler(vary)
+    sampler = uq.sampling.PCESampler(vary)
     data = {('run_id', 0): [], ('x1', 0): [], ('x2', 0): [],
             ('g', 0): [], ('g', 1): [], ('g', 2): []}
     for run_id, sample in enumerate(sampler):
@@ -76,7 +76,7 @@ def results(data):
 def results_vectors(data_vectors):
     # Post-processing analysis
     sampler, df = data_vectors
-    analysis = uq.analysis.PCEAnalysis(sampler=sampler, qoi_cols=[('g', 0), ('g', 1), ('g', 2)])
+    analysis = uq.analysis.PCEAnalysis(sampler=sampler, qoi_cols=['g'])
     results = analysis.analyse(df)
     return results
 
@@ -112,7 +112,8 @@ def test_full_results(results):
     assert(results.sobols_first('f', 'x2')[0] == pytest.approx(0.2678957617817755))
 
 
-def test_describe(results):
+def test_describe(results_vectors):
+    #import pdb; pdb.set_trace()
     ref = {
         '10%': 0.009410762945528006,
         '90%': 2.1708835276870935,
@@ -122,3 +123,4 @@ def test_describe(results):
         'var': 0.6525493821694965
     }
     assert(results.describe()['f', 0].to_dict() == pytest.approx(ref))
+
