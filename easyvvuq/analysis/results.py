@@ -270,7 +270,46 @@ class AnalysisResults:
     def describe(self, qoi=None, statistic=None):
         """Returns descriptive statistics.
 
+        Examples
+        --------
+        >>> results.describe()
+                     g                             h          
+                     0         1         2         0         1
+        mean  0.500000  0.500000  1.000000  0.250000  0.693787
+        var   0.083333  0.083333  0.166667  0.048611  0.068236
+        std   0.288675  0.288675  0.408248  0.220479  0.261220
+        10%   0.100897  0.099462  0.441589  0.019049  0.276504
+        90%   0.896960  0.899417  1.544624  0.584600  0.974707
+        min   0.000041  0.000005  0.016687  0.000016 -0.008642
+        max   0.999998  0.999873  1.993517  0.985350  1.024599
+
+        >>> result.describe('h')
+                     h          
+                     0         1
+        mean  0.250000  0.693787
+        var   0.048611  0.068236
+        std   0.220479  0.261220
+        10%   0.019049  0.276504
+        90%   0.584600  0.974707
+        min   0.000016 -0.008642
+        max   0.985350  1.024599
+
+        >>> results.describe('h', 'var')
+        array([0.04861111, 0.06823568])
+        
+        Parameters
+        ----------
+        qoi: str or None
+            if not None it is the name of the quantity of interest
+        statistic: str or None
+            if not None it is the name of the statistic, currently supported ones
+            are: ['mean', 'var', 'std', '10%', '90%', 'min', 'max', 'median']
+
+        Returns
+        -------
+        pandas DataFrame or a numpy array
         """
+        assert(not ((qoi is None) and (statistic is not None)))
         statistics = ['mean', 'var', 'std', '10%', '90%', 'min', 'max', 'median']
         qois = self.qois
         if qoi is not None:
