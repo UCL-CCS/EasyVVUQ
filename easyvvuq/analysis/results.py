@@ -273,7 +273,7 @@ class AnalysisResults:
         Examples
         --------
         >>> results.describe()
-                     g                             h          
+                     g                             h
                      0         1         2         0         1
         mean  0.500000  0.500000  1.000000  0.250000  0.693787
         var   0.083333  0.083333  0.166667  0.048611  0.068236
@@ -284,7 +284,7 @@ class AnalysisResults:
         max   0.999998  0.999873  1.993517  0.985350  1.024599
 
         >>> result.describe('h')
-                     h          
+                     h
                      0         1
         mean  0.250000  0.693787
         var   0.048611  0.068236
@@ -296,7 +296,7 @@ class AnalysisResults:
 
         >>> results.describe('h', 'var')
         array([0.04861111, 0.06823568])
-        
+
         Parameters
         ----------
         qoi: str or None

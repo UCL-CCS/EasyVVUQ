@@ -49,6 +49,7 @@ class SCAnalysisResults(AnalysisResults):
         else:
             raise NotImplementedError
 
+
 class SCAnalysis(BaseAnalysisElement):
 
     def __init__(self, sampler=None, qoi_cols=None):
