@@ -49,9 +49,9 @@ def data_vectors():
         "x1": cp.Uniform(0.0, 1.0),
         "x2": cp.Uniform(0.0, 1.0)
     }
-    sampler = uq.sampling.SCSampler(vary)
+    sampler = uq.sampling.PCESampler(vary)
     data = {('run_id', 0): [], ('x1', 0): [], ('x2', 0): [],
-            ('g', 0): [], ('g', 1): [], ('g', 2): []}
+            ('g', 0): [], ('g', 1): [], ('g', 2): [], ('h', 0): [], ('h', 1): []}
     for run_id, sample in enumerate(sampler):
         data[('run_id', 0)].append(run_id)
         data[('x1', 0)].append(sample['x1'])
@@ -59,6 +59,8 @@ def data_vectors():
         data[('g', 0)].append(sample['x1'])
         data[('g', 1)].append(sample['x2'])
         data[('g', 2)].append(sample['x1'] + sample['x2'])
+        data[('h', 0)].append(sample['x1'] * sample['x2'])
+        data[('h', 1)].append(sample['x1'] ** sample['x2'])
     df = pd.DataFrame(data)
     return sampler, df
 
@@ -76,7 +78,7 @@ def results(data):
 def results_vectors(data_vectors):
     # Post-processing analysis
     sampler, df = data_vectors
-    analysis = uq.analysis.PCEAnalysis(sampler=sampler, qoi_cols=[('g', 0), ('g', 1), ('g', 2)])
+    analysis = uq.analysis.PCEAnalysis(sampler=sampler, qoi_cols=['g', 'h'])
     results = analysis.analyse(df)
     return results
 
@@ -112,13 +114,27 @@ def test_full_results(results):
     assert(results.sobols_first('f', 'x2')[0] == pytest.approx(0.2678957617817755))
 
 
-def test_describe(results):
-    ref = {
-        '10%': 0.009410762945528006,
-        '90%': 2.1708835276870935,
-        'count': 25.0,
-        'mean': 0.91011171024204,
-        'std': 0.807805287287411,
-        'var': 0.6525493821694965
-    }
-    assert(results.describe()['f', 0].to_dict() == pytest.approx(ref))
+def test_describe(results_vectors):
+    assert(
+        results_vectors.describe()[
+            ('g',
+             1)].to_dict() == {
+            'mean': 0.5000000000000001,
+            'var': 0.08333333333333348,
+            'std': 0.28867513459481314,
+            '10%': 0.09946223131463872,
+            '90%': 0.8994171166439805,
+            'min': 4.677810565448583e-06,
+            'max': 0.9998733762740958})
+    assert(
+        results_vectors.describe('g').to_dict()[
+            ('g',
+             1)] == {
+            'mean': 0.5000000000000001,
+            'var': 0.08333333333333348,
+            'std': 0.28867513459481314,
+            '10%': 0.09946223131463872,
+            '90%': 0.8994171166439805,
+            'min': 4.677810565448583e-06,
+            'max': 0.9998733762740958})
+    assert(isinstance(results_vectors.describe('g', 'min'), np.ndarray))

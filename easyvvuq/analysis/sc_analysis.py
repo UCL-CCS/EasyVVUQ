@@ -43,15 +43,11 @@ class SCAnalysisResults(AnalysisResults):
         except TypeError:
             return np.array(result)
 
-    def describe(self):
-        result = {}
-        for qoi in self.qois:
-            result[qoi] = {
-                'mean': self.raw_data['statistical_moments'][qoi]['mean'],
-                'var': self.raw_data['statistical_moments'][qoi]['var'],
-                'std': self.raw_data['statistical_moments'][qoi]['std']
-            }
-        return pd.DataFrame(result)
+    def _describe(self, qoi, statistic):
+        if statistic in ['mean', 'var', 'std']:
+            return self.raw_data['statistical_moments'][qoi][statistic]
+        else:
+            raise NotImplementedError
 
 
 class SCAnalysis(BaseAnalysisElement):

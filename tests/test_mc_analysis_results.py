@@ -42,10 +42,42 @@ def data():
 
 
 @pytest.fixture
+def data_vectors():
+    np.random.seed(10000000)
+    vary = {
+        "x1": cp.Uniform(0.0, 1.0),
+        "x2": cp.Uniform(0.0, 1.0)
+    }
+    sampler = uq.sampling.MCSampler(vary, n_mc_samples=100)
+    data = {('run_id', 0): [], ('x1', 0): [], ('x2', 0): [],
+            ('g', 0): [], ('g', 1): [], ('g', 2): [], ('h', 0): [], ('h', 1): []}
+    for run_id, sample in enumerate(sampler):
+        data[('run_id', 0)].append(run_id)
+        data[('x1', 0)].append(sample['x1'])
+        data[('x2', 0)].append(sample['x2'])
+        data[('g', 0)].append(sample['x1'])
+        data[('g', 1)].append(sample['x2'])
+        data[('g', 2)].append(sample['x1'] + sample['x2'])
+        data[('h', 0)].append(sample['x1'] * sample['x2'])
+        data[('h', 1)].append(sample['x1'] ** sample['x2'])
+    df = pd.DataFrame(data)
+    return sampler, df
+
+
+@pytest.fixture
 def results(data):
     # Post-processing analysis
     mc_sampler, df = data
     analysis = uq.analysis.QMCAnalysis(sampler=mc_sampler, qoi_cols=['f'])
+    results = analysis.analyse(df)
+    return results
+
+
+@pytest.fixture
+def results_vectors(data_vectors):
+    # Post-processing analysis
+    mc_sampler, df = data_vectors
+    analysis = uq.analysis.QMCAnalysis(sampler=mc_sampler, qoi_cols=['g', 'h'])
     results = analysis.analyse(df)
     return results
 
@@ -80,3 +112,21 @@ def test_results_conf(results):
 def test_full_results(results):
     assert(results.sobols_first() == {'f': {'x1': 0.5569058947880715, 'x2': 0.20727553481694053}})
     assert(results.sobols_total() == {'f': {'x1': 0.8132793654841785, 'x2': 0.3804962894947435}})
+
+
+def test_describe(results_vectors):
+    assert(
+        results_vectors.describe()[
+            ('g',
+             1)].to_dict() == {
+            'mean': 0.4691844466934421,
+            'var': 0.08534945020531205,
+            'std': 0.29214628220347433})
+    assert(
+        results_vectors.describe('h')[
+            ('h',
+             1)].to_dict() == {
+            'mean': 0.6873389710989142,
+            'var': 0.07501266456861228,
+            'std': 0.27388440000958847})
+    assert(isinstance(results_vectors.describe('h', 'std'), np.ndarray))
