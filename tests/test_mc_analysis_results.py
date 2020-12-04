@@ -115,18 +115,10 @@ def test_full_results(results):
 
 
 def test_describe(results_vectors):
-    assert(
-        results_vectors.describe()[
-            ('g',
-             1)].to_dict() == {
-            'mean': 0.4691844466934421,
-            'var': 0.08534945020531205,
-            'std': 0.29214628220347433})
-    assert(
-        results_vectors.describe('h')[
-            ('h',
-             1)].to_dict() == {
-            'mean': 0.6873389710989142,
-            'var': 0.07501266456861228,
-            'std': 0.27388440000958847})
+    assert(results_vectors.describe()[('g', 1)].to_dict() == {'mean': 0.4691844466934421, 'var': 0.08534945020531205, 'std': 0.29214628220347433})
+    assert(results_vectors.describe('h')[('h', 1)].to_dict() == {'mean': 0.6873389710989142, 'var': 0.07501266456861228, 'std': 0.27388440000958847})
     assert(isinstance(results_vectors.describe('h', 'std'), np.ndarray))
+
+
+def test_plotting(results_vectors):
+    results_vectors.plot_sobols_first('h', ['x1', 'x2'])

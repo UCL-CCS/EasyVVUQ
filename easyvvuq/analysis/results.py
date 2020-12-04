@@ -273,7 +273,7 @@ class AnalysisResults:
         Examples
         --------
         >>> results.describe()
-                     g                             h
+                     g                             h          
                      0         1         2         0         1
         mean  0.500000  0.500000  1.000000  0.250000  0.693787
         var   0.083333  0.083333  0.166667  0.048611  0.068236
@@ -284,7 +284,7 @@ class AnalysisResults:
         max   0.999998  0.999873  1.993517  0.985350  1.024599
 
         >>> result.describe('h')
-                     h
+                     h          
                      0         1
         mean  0.250000  0.693787
         var   0.048611  0.068236
@@ -296,7 +296,7 @@ class AnalysisResults:
 
         >>> results.describe('h', 'var')
         array([0.04861111, 0.06823568])
-
+        
         Parameters
         ----------
         qoi: str or None
@@ -335,6 +335,35 @@ class AnalysisResults:
             return pd.DataFrame(result)[qoi].loc[statistic].values
         else:
             return pd.DataFrame(result)
+
+    def plot_sobols_first(self, qoi, inputs, filename=None):
+        """Plot first order sobol indices.
+
+        Parameters
+        ----------
+        qoi - str
+        inputs - list of str
+        """
+        for input_ in inputs:
+            assert(input_ in self.inputs)
+        import matplotlib.pyplot as plt
+        points = None
+        for input_ in inputs:
+            if points is None:
+                indices = self.sobols_first(qoi, input_)
+                if len(indices) < 2:
+                    raise RuntimeError('this method is only implemented for vector qois')
+                xs = list(range(len(indices)))
+                points = [indices]
+            else:
+                points.append(points[-1] + self.sobols_first(qoi, input_))
+        points = [np.zeros(len(xs)), *points, np.ones(len(xs))]
+        input_iter = iter(inputs + ['higher orders'])
+        for p1, p2 in zip(points[:-1], points[1:]):
+            plt.fill_between(xs, p1, p2, label=next(input_iter))
+        plt.legend()
+        if filename is None:
+            plt.show()
 
     @staticmethod
     def _keys_to_tuples(dictionary):
