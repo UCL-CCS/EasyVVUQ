@@ -41,7 +41,7 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
                  count=0,
                  growth=False,
                  sparse=False,
-                 midpoint_level1=False,
+                 midpoint_level1=True,
                  dimension_adaptive=False):
         """
         Create the sampler for the Stochastic Collocation method.
@@ -72,7 +72,7 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
         # List of the probability distributions of uncertain parameters
         params_distribution = list(self.vary.get_values())
         # N = number of uncertain parameters
-        N = len(params_distribution)
+        self.N = len(params_distribution)
 
         logging.debug("param dist {}".format(params_distribution))
 
@@ -82,7 +82,7 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
         # The quadrature information: order, rule and sparsity
         if isinstance(polynomial_order, int):
             print('Received integer polynomial order, assuming isotropic grid')
-            self.polynomial_order = [polynomial_order for i in range(N)]
+            self.polynomial_order = [polynomial_order for i in range(self.N)]
         else:
             self.polynomial_order = polynomial_order
 
@@ -98,6 +98,7 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
         self.quad_sparse = sparse
         self.growth = growth
         self.params_distribution = params_distribution
+        self.check_max_quad_level()
 
         # determine if a nested sparse grid is used
         if self.sparse is True and self.growth is True and \
@@ -111,12 +112,10 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
             self.nested = False
 
         # L = level of (sparse) grid
-        L = np.max(self.polynomial_order)
-        self.L = L
-        self.N = N
+        self.L = np.max(self.polynomial_order)
 
         # compute the 1D collocation points (and quad weights)
-        self.compute_1D_points_weights(L, N)
+        self.compute_1D_points_weights(self.L, self.N)
 
         # compute N-dimensional collocation points
         if not self.sparse:
@@ -130,7 +129,7 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
         else:
 
             # simplex set of multi indices
-            multi_idx = self.compute_sparse_multi_idx(L, N)
+            multi_idx = self.compute_sparse_multi_idx(self.L, self.N)
 
             # create sparse grid of dimension N and level q using the 1d
             #rules in self.xi_1d
@@ -139,18 +138,6 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
         self._n_samples = self.xi_d.shape[0]
 
         self.count = 0
-
-        # This gives an error when storting and loading campaigns in the
-        # dimension adaptive setting - seems not required anyway - commented it
-        # Fast forward to specified count, if possible
-        # if self.count >= self._n_samples:
-        #     msg = (f"Attempt to start sampler fastforwarded to count {self.count}, "
-        #            f"but sampler only has {self._n_samples} samples, therefore"
-        #            f"this sampler will not provide any more samples.")
-        #     logging.warning(msg)
-        # else:
-        #     for i in range(count):
-        #         self.__next__()
 
     def compute_1D_points_weights(self, L, N):
         """
@@ -183,23 +170,83 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
                 j = 1
 
             for n in range(N):
+                # check if input is discrete uniform, in which case the
+                # rule and growth flag must be modified
+                if isinstance(self.params_distribution[n], cp.DiscreteUniform):
+                    rule = "discrete"
+                else:
+                    rule = self.quad_rule
+
                 for i in range(L):
                     xi_i, wi_i = cp.generate_quadrature(i + j,
                                                         self.params_distribution[n],
-                                                        rule=self.quad_rule,
+                                                        rule=rule,
                                                         growth=self.growth)
-
                     self.xi_1d[n][i + 1] = xi_i[0]
                     self.wi_1d[n][i + 1] = wi_i
         else:
             for n in range(N):
+                # check if input is discrete uniform, in which case the
+                # rule flag must be modified
+                if isinstance(self.params_distribution[n], cp.DiscreteUniform):
+                    rule = "discrete"
+                else:
+                    rule = self.quad_rule
+
                 xi_i, wi_i = cp.generate_quadrature(self.polynomial_order[n],
                                                     self.params_distribution[n],
-                                                    rule=self.quad_rule,
+                                                    rule=rule,
                                                     growth=self.growth)
 
                 self.xi_1d[n][self.polynomial_order[n]] = xi_i[0]
                 self.wi_1d[n][self.polynomial_order[n]] = wi_i
+
+    def check_max_quad_level(self):
+        """
+
+        If a discrete variable is specified, there is the possibility of
+        non unique collocation points if the quadrature order is high enough.
+        This subroutine prevents that.
+
+        NOTE: Only detects cp.DiscreteUniform thus far
+
+        The max quad orders are stores in self.max_quad_order
+
+        Returns
+        -------
+        None
+
+        """
+        # assume no maximum by default
+        self.max_level = np.ones(self.N) * 1000
+        for n in range(self.N):
+
+            # if a discrete uniform is specified check max order
+            if isinstance(self.params_distribution[n], cp.DiscreteUniform):
+
+                # if level one of the sparse grid is a midpoint rule, generate
+                # the quadrature with order 0 (1 quad point). Else set order at
+                # level 1 to 1
+                if self.midpoint_level1:
+                    j = 0
+                else:
+                    j = 1
+
+                number_of_points = 0
+                for order in range(1000):
+                    xi_i, wi_i = cp.generate_quadrature(order + j,
+                                                        self.params_distribution[n],
+                                                        growth=self.growth)
+                    # if the quadrature points no longer grow with the quad order,
+                    # then the max order has been reached
+                    if xi_i.size == number_of_points:
+                        break
+                    number_of_points = xi_i.size
+
+                print("Input %d is discrete, setting max quadrature order to %d"
+                      % (n, order - 1))
+                # level 1 = order 0 etc
+                self.max_level[n] = order
 
     def next_level_sparse_grid(self):
         """
@@ -303,10 +350,15 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
         print('done')
 
         self.admissible_idx = np.array(admissible_idx)
+        # make sure that all entries of each index are <= the max quadrature order
+        # The max quad order can be low for discrete input variables
+        idx = np.where((self.admissible_idx <= self.max_level).all(axis=1))[0]
+        self.admissible_idx = self.admissible_idx[idx]
         print('Admissible multi-indices:\n', self.admissible_idx)
 
         # determine the maximum level L of the new index set L = |l| - N + 1
-        self.L = np.max(np.sum(self.admissible_idx, axis=1) - self.N + 1)
+        # self.L = np.max(np.sum(self.admissible_idx, axis=1) - self.N + 1)
+        self.L = np.max(self.admissible_idx)
         # recompute the 1D weights and collocation points
         self.compute_1D_points_weights(self.L, self.N)
         # compute collocation grid based on the admissible level indices
@@ -315,6 +367,11 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
         new_points = setdiff2d(admissible_grid, self.xi_d)
 
         print('%d new points added' % new_points.shape[0])
+
+        # keep track of the number of points added per iteration
+        if not hasattr(self, 'n_new_points'):
+            self.n_new_points = []
+        self.n_new_points.append(new_points.shape[0])
 
         # update the number of samples
         self._n_samples += new_points.shape[0]
@@ -327,7 +384,7 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
         self.nadaptations += 1
 
     def element_version(self):
-        return "0.5"
+        return "0.6"
 
     def is_finite(self):
         return True
