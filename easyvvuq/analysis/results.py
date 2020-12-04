@@ -356,11 +356,11 @@ class AnalysisResults:
                 xs = list(range(len(indices)))
                 points = [indices]
             else:
-                points.append(points[-1] + self.sobols_first(qoi, input_))
-        points = [np.zeros(len(xs)), *points, np.ones(len(xs))]
-        input_iter = iter(inputs + ['higher orders'])
-        for p1, p2 in zip(points[:-1], points[1:]):
-            plt.fill_between(xs, p1, p2, label=next(input_iter))
+                points.append(self.sobols_first(qoi, input_))
+        #points = [np.zeros(len(xs)), *points, np.ones(len(xs))]
+        input_iter = iter(inputs)
+        for p, label in zip(points, inputs):
+            plt.plot(p, label=label)
         plt.legend()
         if filename is None:
             plt.show()
