@@ -361,6 +361,8 @@ class AnalysisResults:
         """
         if qoi not in self.qois:
             raise RuntimeError("no such qoi - {}".format(qoi))
+        if inputs is None:
+            inputs = self.inputs
         for input_ in inputs:
             if not input_ in self.inputs:
                 raise RuntimeError("no such input variable - {}".format(input_))

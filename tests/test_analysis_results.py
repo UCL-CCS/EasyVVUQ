@@ -1,4 +1,6 @@
 from easyvvuq.analysis.results import AnalysisResults
+import os
+import itertools
 import numpy as np
 import pytest
 
@@ -19,9 +21,11 @@ def test_to_tuple():
     with pytest.raises(RuntimeError):
         AnalysisResults._to_tuple(3)
 
-
-def test_plotting():
+@pytest.mark.parametrize('withdots,ylabel,xlabel,dpi',
+                    itertools.product([True, False], ['Si', None], ['T', None], [10, 100]))
+def test_plotting(tmp_path, withdots, ylabel, xlabel, dpi):
     results = AnalysisResults()
+    results.qois = ['t']
     kappa = np.array([0.19726384, 0.98001541, 0.97884984, 0.97760245, 0.97626742,
        0.97483855, 0.97330924, 0.97167242, 0.96992063, 0.9680459 ,
        0.96603977, 0.96389328, 0.96159695, 0.95914077, 0.95651411,
@@ -85,4 +89,5 @@ def test_plotting():
     test_data = {'kappa': kappa, 't_env': t_env}
     results.sobols_first = lambda qoi, input_: test_data[input_]
     results.inputs = ['kappa', 't_env']
-    results.plot_sobols_first('t', ['kappa', 't_env'], filename='test.svg')
+    results.plot_sobols_first('t', ['kappa', 't_env'], withdots, ylabel, xlabel, filename=os.path.join(tmp_path, 'test.png'), dpi=dpi)
+    assert(os.path.exists(os.path.join(tmp_path, 'test.png')))
