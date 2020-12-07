@@ -85,4 +85,4 @@ def test_plotting():
     test_data = {'kappa': kappa, 't_env': t_env}
     results.sobols_first = lambda qoi, input_: test_data[input_]
     results.inputs = ['kappa', 't_env']
-    results.plot_sobols_first('h', ['kappa', 't_env'])
+    results.plot_sobols_first('t', ['kappa', 't_env'], filename='test.svg')

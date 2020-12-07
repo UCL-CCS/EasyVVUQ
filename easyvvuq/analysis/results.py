@@ -13,6 +13,7 @@ Examples
 
 import pandas as pd
 import numpy as np
+import itertools
 
 
 class AnalysisResults:
@@ -336,17 +337,39 @@ class AnalysisResults:
         else:
             return pd.DataFrame(result)
 
-    def plot_sobols_first(self, qoi, inputs, filename=None):
+    def plot_sobols_first(self, qoi, inputs=None, withdots=False,
+                          ylabel=None, xlabel=None, filename=None,
+                          dpi=None):
         """Plot first order sobol indices.
 
         Parameters
         ----------
         qoi - str
-        inputs - list of str
+            a vector quantity of interest for which sobol indices will be plotted
+        inputs - list of str or None
+            list of inputs to plot if None will use all input variables
+        withdots - bool
+            if True will add shapes on top of the lines in the plot for visual clarity
+        ylabel - str or None
+            if None will use "First ORder Sobol Index"
+        xlabel - str or None
+            if None will use the name of the qoi
+        filename - str or None
+            if None will try to open a plotting window on-screen, otherwise will write the plot to this file, with the type determined by the extension specified
+        dpi - int
+            dots per inch, quality of the image if a raster format was chosen
         """
+        if qoi not in self.qois:
+            raise RuntimeError("no such qoi - {}".format(qoi))
         for input_ in inputs:
-            assert(input_ in self.inputs)
+            if not input_ in self.inputs:
+                raise RuntimeError("no such input variable - {}".format(input_))
         import matplotlib.pyplot as plt
+        if withdots:
+            styles = itertools.cycle(['-o', '-v', '-^', '-<', '->', '-8', '-s',
+                                      '-p', '-*', '-h', '-H', '-D', '-d', '-P', '-X'])
+        else:
+            styles = itertools.cycle(['-'])
         points = None
         for input_ in inputs:
             if points is None:
@@ -357,13 +380,20 @@ class AnalysisResults:
                 points = [indices]
             else:
                 points.append(self.sobols_first(qoi, input_))
-        #points = [np.zeros(len(xs)), *points, np.ones(len(xs))]
         input_iter = iter(inputs)
         for p, label in zip(points, inputs):
-            plt.plot(p, label=label)
+            plt.plot(p, next(styles), label=label)
+        plt.grid(True)
+        plt.ylabel('First Order Sobol Index')
+        if xlabel is None:
+            plt.xlabel(qoi)
+        else:
+            plt.xlabel(xlabel)
         plt.legend()
         if filename is None:
             plt.show()
+        else:
+            plt.savefig(filename, dpi=dpi)
 
     @staticmethod
     def _keys_to_tuples(dictionary):
