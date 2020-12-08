@@ -274,7 +274,7 @@ class AnalysisResults:
         Examples
         --------
         >>> results.describe()
-                     g                             h          
+                     g                             h
                      0         1         2         0         1
         mean  0.500000  0.500000  1.000000  0.250000  0.693787
         var   0.083333  0.083333  0.166667  0.048611  0.068236
@@ -285,7 +285,7 @@ class AnalysisResults:
         max   0.999998  0.999873  1.993517  0.985350  1.024599
 
         >>> result.describe('h')
-                     h          
+                     h
                      0         1
         mean  0.250000  0.693787
         var   0.048611  0.068236
@@ -297,7 +297,7 @@ class AnalysisResults:
 
         >>> results.describe('h', 'var')
         array([0.04861111, 0.06823568])
-        
+
         Parameters
         ----------
         qoi: str or None
@@ -364,7 +364,7 @@ class AnalysisResults:
         if inputs is None:
             inputs = self.inputs
         for input_ in inputs:
-            if not input_ in self.inputs:
+            if input_ not in self.inputs:
                 raise RuntimeError("no such input variable - {}".format(input_))
         import matplotlib.pyplot as plt
         if withdots:
@@ -396,6 +396,20 @@ class AnalysisResults:
             plt.show()
         else:
             plt.savefig(filename, dpi=dpi)
+
+
+    def plot_describe(self, qoi):
+        if qoi not in self.qois:
+            raise RuntimeError("no such qoi - {}".format(qoi))
+        import matplotlib.pyplot as plt
+        xs = np.arange(len(self.describe(qoi, 'mean')))
+        plt.grid(True)
+        plt.fill_between(xs, self.describe(qoi, 'min'), self.describe(qoi, 'max'), label='min-max')
+        plt.fill_between(xs, self.describe(qoi, 'mean') - self.describe(qoi, 'std'), self.describe(qoi, 'mean') + self.describe(qoi, 'std'), label='std')
+        plt.plot(self.describe(qoi, 'mean'), label='mean')
+        plt.legend()
+        plt.show()
+
 
     @staticmethod
     def _keys_to_tuples(dictionary):
