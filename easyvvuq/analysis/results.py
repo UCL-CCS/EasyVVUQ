@@ -412,7 +412,8 @@ class AnalysisResults:
         alpha: float
             transparency amount
         filename: str or None
-            if None will try to open a plotting window on-screen, otherwise will write the plot to this file, with the type determined by the extension specified
+            if None will try to open a plotting window on-screen, otherwise will
+            write the plot to this file, with the type determined by the extension specified
         dpi: int
             dots per inch, quality of the image if a raster format was chosen
         """

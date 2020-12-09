@@ -97,7 +97,9 @@ def test_plotting(tmp_path, withdots, ylabel, xlabel, dpi):
     assert(os.path.exists(os.path.join(tmp_path, 'test.png')))
 
 
-def test_plotting():
+@pytest.mark.parametrize('ylabel,xlabel,dpi',
+                         itertools.product(['y', None], ['T', None], [10, 100]))
+def test_plotting_moments(tmp_path, ylabel, xlabel, dpi):
     results = AnalysisResults()
     results.qois = ['t']
     data = np.random.normal(np.arange(100), np.arange(100), size=(100, 100))
@@ -113,4 +115,5 @@ def test_plotting():
             return data.max(axis=0)
     results.describe = describe
     results.inputs = ['kappa', 't_env']
-    results.plot_moments('t')
+    results.plot_moments('t', ylabel, xlabel, filename=os.path.join(tmp_path, 'test.png'), dpi=dpi)
+    assert(os.path.exists(os.path.join(tmp_path, 'test.png')))
