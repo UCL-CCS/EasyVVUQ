@@ -378,11 +378,9 @@ class AnalysisResults:
                 indices = self.sobols_first(qoi, input_)
                 if len(indices) < 2:
                     raise RuntimeError('this method is only implemented for vector qois')
-                xs = list(range(len(indices)))
                 points = [indices]
             else:
                 points.append(self.sobols_first(qoi, input_))
-        input_iter = iter(inputs)
         for p, label in zip(points, inputs):
             plt.plot(p, next(styles), label=label)
         plt.grid(True)
@@ -398,7 +396,7 @@ class AnalysisResults:
             plt.savefig(filename, dpi=dpi)
 
 
-    def plot_describe(self, qoi):
+    def plot_moments(self, qoi):
         if qoi not in self.qois:
             raise RuntimeError("no such qoi - {}".format(qoi))
         import matplotlib.pyplot as plt
