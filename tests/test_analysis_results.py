@@ -96,10 +96,12 @@ def test_plotting(tmp_path, withdots, ylabel, xlabel, dpi):
             tmp_path, 'test.png'), dpi=dpi)
     assert(os.path.exists(os.path.join(tmp_path, 'test.png')))
 
+
 def test_plotting():
     results = AnalysisResults()
     results.qois = ['t']
     data = np.random.normal(np.arange(100), np.arange(100), size=(100, 100))
+
     def describe(qoi, stat):
         if stat == 'mean':
             return data.mean(axis=0)
@@ -112,4 +114,3 @@ def test_plotting():
     results.describe = describe
     results.inputs = ['kappa', 't_env']
     results.plot_moments('t')
-    

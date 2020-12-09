@@ -398,7 +398,6 @@ class AnalysisResults:
         else:
             plt.savefig(filename, dpi=dpi)
 
-
     def plot_moments(self, qoi, ylabel=None, xlabel=None, alpha=0.5, filename=None, dpi=None):
         """Plot statistical moments for this analysis.
 
@@ -421,8 +420,13 @@ class AnalysisResults:
             raise RuntimeError("no such qoi - {}".format(qoi))
         import matplotlib.pyplot as plt
         xs = np.arange(len(self.describe(qoi, 'mean')))
-        plt.fill_between(xs, self.describe(qoi, 'min'), self.describe(qoi, 'max'), label='min-max', alpha=alpha)
-        plt.fill_between(xs, self.describe(qoi, 'mean') - self.describe(qoi, 'std'), self.describe(qoi, 'mean') + self.describe(qoi, 'std'), label='std', alpha=alpha)
+        plt.fill_between(
+            xs, self.describe(
+                qoi, 'min'), self.describe(
+                qoi, 'max'), label='min-max', alpha=alpha)
+        plt.fill_between(xs, self.describe(qoi, 'mean') -
+                         self.describe(qoi, 'std'), self.describe(qoi, 'mean') +
+                         self.describe(qoi, 'std'), label='std', alpha=alpha)
         plt.plot(self.describe(qoi, 'mean'), label='mean')
         plt.grid(True)
         if ylabel is None:
@@ -432,14 +436,12 @@ class AnalysisResults:
         if xlabel is None:
             plt.xlabel(qoi)
         else:
-            plt.xlabel(xlabel)        
+            plt.xlabel(xlabel)
         plt.legend()
         if filename is None:
             plt.show()
         else:
             plt.savefig(filename, dpi=dpi)
-
-
 
     @staticmethod
     def _keys_to_tuples(dictionary):
