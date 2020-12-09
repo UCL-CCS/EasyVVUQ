@@ -111,5 +111,5 @@ def test_plotting():
             return data.max(axis=0)
     results.describe = describe
     results.inputs = ['kappa', 't_env']
-    #results.plot_moments('t')
+    results.plot_moments('t')
     

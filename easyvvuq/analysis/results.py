@@ -344,19 +344,19 @@ class AnalysisResults:
 
         Parameters
         ----------
-        qoi - str
+        qoi: str
             a vector quantity of interest for which sobol indices will be plotted
-        inputs - list of str or None
+        inputs: list of str or None
             list of inputs to plot if None will use all input variables
-        withdots - bool
+        withdots: bool
             if True will add shapes on top of the lines in the plot for visual clarity
-        ylabel - str or None
-            if None will use "First ORder Sobol Index"
-        xlabel - str or None
+        ylabel: str or None
+            if None will use "First Order Sobol Index"
+        xlabel: str or None
             if None will use the name of the qoi
-        filename - str or None
+        filename: str or None
             if None will try to open a plotting window on-screen, otherwise will write the plot to this file, with the type determined by the extension specified
-        dpi - int
+        dpi: int
             dots per inch, quality of the image if a raster format was chosen
         """
         if qoi not in self.qois:
@@ -384,7 +384,10 @@ class AnalysisResults:
         for p, label in zip(points, inputs):
             plt.plot(p, next(styles), label=label)
         plt.grid(True)
-        plt.ylabel('First Order Sobol Index')
+        if ylabel is None:
+            plt.ylabel('First Order Sobol Index')
+        else:
+            plt.ylabel(ylabel)
         if xlabel is None:
             plt.xlabel(qoi)
         else:
@@ -396,17 +399,46 @@ class AnalysisResults:
             plt.savefig(filename, dpi=dpi)
 
 
-    def plot_moments(self, qoi):
+    def plot_moments(self, qoi, ylabel=None, xlabel=None, alpha=0.5, filename=None, dpi=None):
+        """Plot statistical moments for this analysis.
+
+        Parameters
+        ----------
+        qoi: str
+            a vector quantity of interest for which sobol indices will be plotted
+        ylabel: str or None
+            if None will use "Values"
+        xlabel: str or None
+            if None will use the name of the qoi
+        alpha: float
+            transparency amount
+        filename: str or None
+            if None will try to open a plotting window on-screen, otherwise will write the plot to this file, with the type determined by the extension specified
+        dpi: int
+            dots per inch, quality of the image if a raster format was chosen
+        """
         if qoi not in self.qois:
             raise RuntimeError("no such qoi - {}".format(qoi))
         import matplotlib.pyplot as plt
         xs = np.arange(len(self.describe(qoi, 'mean')))
-        plt.grid(True)
-        plt.fill_between(xs, self.describe(qoi, 'min'), self.describe(qoi, 'max'), label='min-max')
-        plt.fill_between(xs, self.describe(qoi, 'mean') - self.describe(qoi, 'std'), self.describe(qoi, 'mean') + self.describe(qoi, 'std'), label='std')
+        plt.fill_between(xs, self.describe(qoi, 'min'), self.describe(qoi, 'max'), label='min-max', alpha=alpha)
+        plt.fill_between(xs, self.describe(qoi, 'mean') - self.describe(qoi, 'std'), self.describe(qoi, 'mean') + self.describe(qoi, 'std'), label='std', alpha=alpha)
         plt.plot(self.describe(qoi, 'mean'), label='mean')
+        plt.grid(True)
+        if ylabel is None:
+            plt.ylabel("Value")
+        else:
+            plt.ylabel(ylabel)
+        if xlabel is None:
+            plt.xlabel(qoi)
+        else:
+            plt.xlabel(xlabel)        
         plt.legend()
-        plt.show()
+        if filename is None:
+            plt.show()
+        else:
+            plt.savefig(filename, dpi=dpi)
+
 
 
     @staticmethod
