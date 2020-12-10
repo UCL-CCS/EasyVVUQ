@@ -50,7 +50,6 @@ class GenericEncoder(BaseEncoder, encoder_name="generic_template"):
         self.target_filename = target_filename
         self.template_fname = template_fname
 
-
     def encode(self, params={}, target_dir=''):
         """Substitutes `params` into a template application input, saves in
         `target_dir`

@@ -48,7 +48,6 @@ class JinjaEncoder(BaseEncoder, encoder_name="jinja_template"):
         self.template_fname = template_fname
         self.fixture_support = True
 
-
     def encode(self, params={}, target_dir='', fixtures=None):
         """Substitutes `params` into a template application input, saves in
         `target_dir`
