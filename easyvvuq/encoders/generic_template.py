@@ -43,24 +43,12 @@ class GenericEncoder(BaseEncoder, encoder_name="generic_template"):
 
     """
 
-    def __init__(self, template_fname=None, delimiter='$',
+    def __init__(self, template_fname, delimiter='$',
                  target_filename="app_input.txt"):
 
         self.encoder_delimiter = delimiter
         self.target_filename = target_filename
         self.template_fname = template_fname
-
-        # Check that user has specified the file to use as template
-        if template_fname is None:
-            msg = ("GenericEncoder must be given 'template_fname' - the "
-                   "location of a file containing the template text.")
-            logging.error(msg)
-            raise RuntimeError(msg)
-
-        with open(template_fname, 'r') as template_file:
-            template_txt = template_file.read()
-            self.template = get_custom_template(
-                template_txt, custom_delimiter=self.encoder_delimiter)
 
     def encode(self, params={}, target_dir=''):
         """Substitutes `params` into a template application input, saves in
@@ -73,6 +61,15 @@ class GenericEncoder(BaseEncoder, encoder_name="generic_template"):
         target_dir    : str
             Path to directory where application input will be written.
         """
+
+        try:
+            with open(self.template_fname, 'r') as template_file:
+                template_txt = template_file.read()
+                self.template = get_custom_template(
+                    template_txt, custom_delimiter=self.encoder_delimiter)
+        except FileNotFoundError:
+            raise RuntimeError(
+                "the template file specified ({}) does not exist".format(self.template_fname))
 
         if not target_dir:
             raise RuntimeError('No target directory specified to encoder')

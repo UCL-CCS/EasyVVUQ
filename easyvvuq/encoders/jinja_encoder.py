@@ -41,24 +41,12 @@ class JinjaEncoder(BaseEncoder, encoder_name="jinja_template"):
 
     """
 
-    def __init__(self, template_fname=None,
+    def __init__(self, template_fname,
                  target_filename="app_input.txt"):
 
         self.target_filename = target_filename
         self.template_fname = template_fname
-
         self.fixture_support = True
-
-        # Check that user has specified the file to use as template
-        if template_fname is None:
-            msg = ("JinjaEncoder must be given 'template_fname' - the "
-                   "location of a file containing the template text.")
-            logging.error(msg)
-            raise RuntimeError(msg)
-
-        with open(template_fname, 'r') as template_file:
-            template_txt = template_file.read()
-            self.template = Template(template_txt)
 
     def encode(self, params={}, target_dir='', fixtures=None):
         """Substitutes `params` into a template application input, saves in
@@ -79,6 +67,14 @@ class JinjaEncoder(BaseEncoder, encoder_name="jinja_template"):
                                                            target_dir)
         else:
             local_params = params
+
+        try:
+            with open(self.template_fname, 'r') as template_file:
+                template_txt = template_file.read()
+                self.template = Template(template_txt)
+        except FileNotFoundError:
+            raise RuntimeError(
+                "the template file specified ({}) does not exist".format(self.template_fname))
 
         if not target_dir:
             raise RuntimeError('No target directory specified to encoder')
