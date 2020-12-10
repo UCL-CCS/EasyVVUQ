@@ -64,13 +64,13 @@ class GenericEncoder(BaseEncoder, encoder_name="generic_template"):
         """
 
         try:
-            with open(template_fname, 'r') as template_file:
+            with open(self.template_fname, 'r') as template_file:
                 template_txt = template_file.read()
                 self.template = get_custom_template(
                     template_txt, custom_delimiter=self.encoder_delimiter)
         except FileNotFoundError:
             raise RuntimeError(
-                "the template file specified ({}) does not exist".format(template_fname))
+                "the template file specified ({}) does not exist".format(self.template_fname))
 
         if not target_dir:
             raise RuntimeError('No target directory specified to encoder')
