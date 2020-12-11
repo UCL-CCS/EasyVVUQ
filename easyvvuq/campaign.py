@@ -327,29 +327,35 @@ class Campaign:
 
         with open(state_filename, "r") as infile:
             input_json = json.load(infile)
-        try:
-            self.db_location = relocate['db_location']
-        except (KeyError, TypeError):
-            self.db_location = input_json["db_location"]
+        self.db_location = input_json["db_location"]
         self.db_type = input_json["db_type"]
         self._active_app_name = input_json["active_app"]
-        try:
+        self.campaign_name = input_json["campaign_name"]
+        self._campaign_dir = input_json["campaign_dir"]
+        self._log = input_json["log"]
+
+        if relocate is not None:
+            assert(isinstance(relocate, dict))
+            try:
+                self.db_location = relocate['db_location']
+            except KeyError:
+                pass
             try:
                 self.work_dir = os.path.realpath(os.path.expanduser(relocate['work_dir']))
             except KeyError:
-                raise RuntimeError('you must specify a work_dir when relocating')
-            self._campaign_dir = relocate['campaign_dir']
-        except KeyError:
-            self._campaign_dir = input_json["campaign_dir"]
-        self.campaign_name = input_json["campaign_name"]
-        self._log = input_json["log"]
+                raise RuntimeError('please specify work_dir when relocating')
+            try:
+                self._campaign_dir = relocate['campaign_dir']
+            except KeyError:
+                raise RuntimeError('please specify campaign_dir when relocating')
+            self.relocate(self.campaign_dir)
+
 
         if not os.path.exists(self.campaign_dir):
             message = (f"Campaign directory in state_file {state_filename}"
                        f" ({self.campaign_dir}) does not exist.")
             logger.critical(message)
             raise RuntimeError(message)
-        self.relocate(self.campaign_dir)
 
     def add_app(self, name=None, params=None, decoderspec=None,
                 encoder=None, decoder=None, set_active=True):
