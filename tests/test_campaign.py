@@ -122,6 +122,7 @@ def test_relocate_full(tmp_path):
     campaign.add_app(name='test_app', params=params, encoder=encoder, decoder=decoder)
     campaign.set_app('test_app')
     campaign.set_sampler(sampler)
+    campaign.draw_samples()
     campaign.populate_runs_dir()
     campaign.apply_for_each_run_dir(actions)
     campaign.collate()
@@ -129,3 +130,8 @@ def test_relocate_full(tmp_path):
     os.mkdir(os.path.join(tmp_path, 'relocation'))
     shutil.copytree(campaign.campaign_dir, os.path.join(tmp_path, 'relocation/'), dirs_exist_ok=True)
     relocated = uq.Campaign(state_file=os.path.join(tmp_path, "state.json"), relocate={'work_dir': tmp_path, 'campaign_dir': 'relocation'})
+    assert(relocated.campaign_dir == os.path.join(tmp_path, 'relocation'))
+    assert(relocated.work_dir == str(tmp_path))
+    for run in relocated.campaign_db.runs():
+        assert(run[1]['run_dir'] == os.path.join(tmp_path, 'relocation', 'runs', run[0]))
+    relocated.recollate()
