@@ -350,7 +350,6 @@ class Campaign:
                 raise RuntimeError('please specify campaign_dir when relocating')
             self.relocate(self.campaign_dir)
 
-
         if not os.path.exists(self.campaign_dir):
             message = (f"Campaign directory in state_file {state_filename}"
                        f" ({self.campaign_dir}) does not exist.")
