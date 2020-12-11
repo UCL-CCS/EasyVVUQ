@@ -46,7 +46,8 @@ class Campaign:
 
     The Campaign functions as as state machine for the VVUQ workflows. It uses a
     database (CampaignDB) to store information on both the target application
-    and the VVUQ algorithms being employed.
+    and the VVUQ algorithms being employed. It also collects data from the simulations
+    and can be used to store and resume your state.
 
     Notes
     -----
@@ -67,8 +68,10 @@ class Campaign:
         Path to working directory - used to store campaign directory.
     state_file : :obj:`str`, optional
         Path to serialised state - used to initialise the Campaign.
-    change_work_dir: str or None
-        If not None will relocate the campaign to this directory, has to be used with state_file
+    relocate: dict or None
+            Relocation dictionary. If specified will try to relocate the campaign according
+        to the information within the dictionary, dictionary format: {'work_dir': str,
+        'campaign_dir': str, 'db_location': str}. The parameter db_location is optional.
     change_to_state : bool, optional, default=False
         Should we change to the directory containing any specified `state_file`
         in order to make relative paths work.
@@ -244,6 +247,11 @@ class Campaign:
         ----------
         state_file : str
             Path to the file containing the campaign state.
+        relocate: dict or None
+            Relocation dictionary. If specified will try to relocate the campaign according
+        to the information within the dictionary, dictionary format: {'work_dir': str,
+        'campaign_dir': str, 'db_location': str}. The parameter db_location is optional.
+
 
         Returns
         -------
@@ -319,6 +327,10 @@ class Campaign:
         ----------
         state_filename : str
             Name of file from which to load the state
+        relocate: dict or None
+            Relocation dictionary. If specified will try to relocate the campaign according
+        to the information within the dictionary, dictionary format: {'work_dir': str,
+        'campaign_dir': str, 'db_location': str}. The parameter db_location is optional.
 
         Returns
         -------
