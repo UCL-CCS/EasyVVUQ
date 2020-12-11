@@ -128,8 +128,19 @@ def test_relocate_full(tmp_path):
     campaign.collate()
     campaign.save_state(os.path.join(tmp_path, "state.json"))
     os.mkdir(os.path.join(tmp_path, 'relocation'))
-    shutil.copytree(campaign.campaign_dir, os.path.join(tmp_path, 'relocation/'), dirs_exist_ok=True)
-    relocated = uq.Campaign(state_file=os.path.join(tmp_path, "state.json"), relocate={'work_dir': tmp_path, 'campaign_dir': 'relocation'})
+    shutil.copytree(
+        campaign.campaign_dir,
+        os.path.join(
+            tmp_path,
+            'relocation/'),
+        dirs_exist_ok=True)
+    relocated = uq.Campaign(
+        state_file=os.path.join(
+            tmp_path,
+            "state.json"),
+        relocate={
+            'work_dir': tmp_path,
+            'campaign_dir': 'relocation'})
     assert(relocated.campaign_dir == os.path.join(tmp_path, 'relocation'))
     assert(relocated.work_dir == str(tmp_path))
     for run in relocated.campaign_db.runs():
