@@ -164,6 +164,7 @@ class Campaign:
                 state_file, relocate=relocate)
             if change_to_state:
                 os.chdir(self._state_dir)
+            self.relocate(self.campaign_dir)
         else:
             self.init_fresh(name, db_type, db_location, self.work_dir)
             self._state_dir = None
@@ -360,7 +361,6 @@ class Campaign:
                 self._campaign_dir = relocate['campaign_dir']
             except KeyError:
                 raise RuntimeError('please specify campaign_dir when relocating')
-            self.relocate(self.campaign_dir)
 
         if not os.path.exists(self.campaign_dir):
             message = (f"Campaign directory in state_file {state_filename}"
