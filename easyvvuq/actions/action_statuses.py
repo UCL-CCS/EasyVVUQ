@@ -1,5 +1,5 @@
 import time
-import threading
+from concurrent.futures import ThreadPoolExecutor
 
 __copyright__ = """
 
@@ -37,60 +37,35 @@ class ActionStatuses:
 
     """
 
-    def __init__(self, statuses, batch_size, poll_sleep_time=1):
+    def __init__(self, statuses, batch_size=8, poll_sleep_time=1):
         self.ready = list(statuses)
         self.active = []
         self.finished = []
         self.failed = []
         self.batch_size = batch_size
         self.poll_sleep_time = poll_sleep_time
-        self._stats = {
-            'ready': len(self.ready),
-            'active': 0,
-            'finished': 0,
-            'failed': 0
-        }
-        polling_thread = threading.Thread(target=self.poll)
-        polling_thread.start()
+        self.pool = ThreadPoolExecutor(batch_size)
 
-    def poll(self):
-        """Iterate over active actions, finalize finished ones,
-        sort finished actions into finished and failed. An action
-        is considered finished if it has finished executed and reports
-        success. It is considered failed if it has reported failure and
-        is considered active (running) otherwise.
+    def job_handler(self, status):
+        """Will handle the execution of this action status.
+        
+        Parameters
+        ----------
+        status: ActionStatus
+            ActionStatus of an action to be executed.
         """
-        while True:
-            ready_ = []
-            for status in self.ready:
-                if len(self.active) < self.batch_size:
-                    status.start()
-                    self.active.append(status)
-                    self._stats['active'] += 1
-                    self._stats['ready'] -= 1
-                else:
-                    ready_.append(status)
-            self.ready = ready_
-            active_ = []
-            for status in self.active:
-                if status.finished():
-                    self._stats['active'] -= 1
-                    if status.succeeded():
-                        self._stats['finished'] += 1
-                        status.finalise()
-                        self.finished.append(status)
-                    else:
-                        self._stats['failed'] += 1
-                        self.failed.append(status)
-                else:
-                    active_.append(status)
-            self.active = active_
-            if (not active_) and (not ready_):
-                break
-            else:
-                time.sleep(self.poll_sleep_time)
+        status.start()
+        while not status.finished():
+            time.sleep(self.poll_sleep_time)
+        if status.succeeded():
+            status.finalise()
+            return True
+        else:
+            return False
 
-    def progress(self):
-        """Return the number of active, finished and failed jobs.
+    def start(self):
+        """Start the actions.
         """
-        return self._stats
+        self.actions = [self.pool.submit(self.job_handler(status)) for status in statuses]
+        return self.actions
+            "
