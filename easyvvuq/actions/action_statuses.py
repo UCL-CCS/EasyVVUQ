@@ -38,11 +38,7 @@ class ActionStatuses:
     """
 
     def __init__(self, statuses, batch_size=8, poll_sleep_time=1):
-        self.ready = list(statuses)
-        self.active = []
-        self.finished = []
-        self.failed = []
-        self.batch_size = batch_size
+        self.actions = list(statuses)
         self.poll_sleep_time = poll_sleep_time
         self.pool = ThreadPoolExecutor(batch_size)
 
@@ -65,7 +61,33 @@ class ActionStatuses:
 
     def start(self):
         """Start the actions.
+
+        Returns
+        -------
+        A list of Python futures represending action execution.
         """
         self.actions = [self.pool.submit(self.job_handler(status)) for status in statuses]
         return self.actions
-            "
+
+    def progress(self):
+        """Some basic stats about the action statuses status.
+
+        Returns
+        -------
+        A dictionary with four keys - 'ready', 'active' and 'finished', 'failed'.
+        """
+        ready = 0
+        running = 0
+        done = 0
+        failed = 0
+        for action in self.actions:
+            if action.running():
+                running += 1
+            elif action.done():
+                if not action.result():
+                    failed += 1
+                else:
+                    done += 1
+            else:
+                ready += 1
+        return {'ready': ready, 'active': running, 'finished': done, 'failed': failed}
