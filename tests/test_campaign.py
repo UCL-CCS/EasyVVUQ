@@ -127,13 +127,11 @@ def test_relocate_full(tmp_path):
     campaign.apply_for_each_run_dir(actions)
     campaign.collate()
     campaign.save_state(os.path.join(tmp_path, "state.json"))
-    os.mkdir(os.path.join(tmp_path, 'relocation'))
     shutil.copytree(
         campaign.campaign_dir,
         os.path.join(
             tmp_path,
-            'relocation/'),
-        dirs_exist_ok=True)
+            'relocation/'))
     relocated = uq.Campaign(
         state_file=os.path.join(
             tmp_path,
