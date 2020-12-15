@@ -46,7 +46,8 @@ class Campaign:
 
     The Campaign functions as as state machine for the VVUQ workflows. It uses a
     database (CampaignDB) to store information on both the target application
-    and the VVUQ algorithms being employed.
+    and the VVUQ algorithms being employed. It also collects data from the simulations
+    and can be used to store and resume your state.
 
     Notes
     -----
@@ -67,6 +68,10 @@ class Campaign:
         Path to working directory - used to store campaign directory.
     state_file : :obj:`str`, optional
         Path to serialised state - used to initialise the Campaign.
+    relocate: dict or None
+            Relocation dictionary. If specified will try to relocate the campaign according
+        to the information within the dictionary, dictionary format: {'work_dir': str,
+        'campaign_dir': str, 'db_location': str}. The parameter db_location is optional.
     change_to_state : bool, optional, default=False
         Should we change to the directory containing any specified `state_file`
         in order to make relative paths work.
@@ -120,9 +125,14 @@ class Campaign:
             db_location=None,
             work_dir="./",
             state_file=None,
+            relocate=None,
             change_to_state=False,
             verify_all_runs=True
     ):
+        if relocate is not None and state_file is None:
+            raise RuntimeError('please use relocate with a state_file')
+
+        self._relocate_dict = relocate
 
         self.work_dir = os.path.realpath(os.path.expanduser(work_dir))
         self.verify_all_runs = verify_all_runs
@@ -150,9 +160,11 @@ class Campaign:
         # Load campaign from state_file, if provided. Else make a fresh new
         # campaign with a new campaign database
         if state_file is not None:
-            self._state_dir = self.init_from_state_file(state_file)
+            self._state_dir = self.init_from_state_file(
+                state_file, relocate=relocate)
             if change_to_state:
                 os.chdir(self._state_dir)
+            self.relocate(self.campaign_dir)
         else:
             self.init_fresh(name, db_type, db_location, self.work_dir)
             self._state_dir = None
@@ -229,13 +241,18 @@ class Campaign:
         self.campaign_name = name
         self.campaign_id = self.campaign_db.get_campaign_id(self.campaign_name)
 
-    def init_from_state_file(self, state_file):
+    def init_from_state_file(self, state_file, relocate=None):
         """Load campaign state from file.
 
         Parameters
         ----------
         state_file : str
             Path to the file containing the campaign state.
+        relocate: dict or None
+            Relocation dictionary. If specified will try to relocate the campaign according
+        to the information within the dictionary, dictionary format: {'work_dir': str,
+        'campaign_dir': str, 'db_location': str}. The parameter db_location is optional.
+
 
         Returns
         -------
@@ -258,7 +275,7 @@ class Campaign:
         state_dir = os.path.dirname(full_state_path)
 
         logger.info(f"Loading campaign from state file '{full_state_path}'")
-        self.load_state(full_state_path)
+        self.load_state(full_state_path, relocate)
 
         if self.db_type == 'sql':
             from .db.sql import CampaignDB
@@ -304,13 +321,17 @@ class Campaign:
         with open(state_filename, "w") as outfile:
             json.dump(output_json, outfile, indent=4)
 
-    def load_state(self, state_filename):
+    def load_state(self, state_filename, relocate=None):
         """Load up a Campaign state from the specified JSON file
 
         Parameters
         ----------
         state_filename : str
             Name of file from which to load the state
+        relocate: dict or None
+            Relocation dictionary. If specified will try to relocate the campaign according
+        to the information within the dictionary, dictionary format: {'work_dir': str,
+        'campaign_dir': str, 'db_location': str}. The parameter db_location is optional.
 
         Returns
         -------
@@ -319,13 +340,27 @@ class Campaign:
 
         with open(state_filename, "r") as infile:
             input_json = json.load(infile)
-
         self.db_location = input_json["db_location"]
         self.db_type = input_json["db_type"]
         self._active_app_name = input_json["active_app"]
         self.campaign_name = input_json["campaign_name"]
         self._campaign_dir = input_json["campaign_dir"]
         self._log = input_json["log"]
+
+        if relocate is not None:
+            assert(isinstance(relocate, dict))
+            try:
+                self.db_location = relocate['db_location']
+            except KeyError:
+                pass
+            try:
+                self.work_dir = os.path.realpath(os.path.expanduser(relocate['work_dir']))
+            except KeyError:
+                raise RuntimeError('please specify work_dir when relocating')
+            try:
+                self._campaign_dir = relocate['campaign_dir']
+            except KeyError:
+                raise RuntimeError('please specify campaign_dir when relocating')
 
         if not os.path.exists(self.campaign_dir):
             message = (f"Campaign directory in state_file {state_filename}"
@@ -616,7 +651,7 @@ class Campaign:
         """
         return self.campaign_db.runs_dir(self.campaign_name)
 
-    def relocate(self, new_path):
+    def relocate(self, campaign_dir):
         """Relocate the campaign by specifying a new path where campaign is located.
 
         Parameters
@@ -624,9 +659,9 @@ class Campaign:
         new_path: str
             new runs directory
         """
-        if not os.path.exists(new_path):
-            raise RuntimeError("specified directory does not exist: {}".format(new_path))
-        self.campaign_db.relocate(new_path, self._active_app_name)
+        if not os.path.exists(campaign_dir):
+            raise RuntimeError("specified directory does not exist: {}".format(campaign_dir))
+        self.campaign_db.relocate(campaign_dir, self._active_app_name)
 
     def call_for_each_run(self, fn, status=Status.ENCODED):
 
