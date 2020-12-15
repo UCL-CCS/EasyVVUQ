@@ -13,6 +13,7 @@ def test_action_status_kubernetes():
     status2.succeeded.return_value = False
     status3.succeeded.return_value = True
     statuses = ActionStatuses([status1, status2, status3], 3)
+    statuses.start()
     time.sleep(1)
     stats = statuses.progress()
     assert(stats['active'] == 1)
