@@ -20,7 +20,8 @@ VARY = {
         [uq.decoders.SimpleCSV(
             target_filename='output.csv',
             output_columns=['te'])],
-        [(uq.sampling.PCESampler(vary=VARY, polynomial_order=3), uq.analysis.PCEAnalysis)]))
+        [(uq.sampling.PCESampler(vary=VARY, polynomial_order=3), uq.analysis.PCEAnalysis),
+         (uq.sampling.SCSampler(vary=VARY), uq.analysis.SCAnalysis)]))
 def test_full_campaign(tmp_path, encoder, decoder, sampler_analysis):
     params = {
         "temp_init": {
