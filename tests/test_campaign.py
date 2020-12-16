@@ -84,7 +84,7 @@ def test_relocate_campaign(campaign, tmpdir):
 
 
 def test_relocate_full(tmp_path):
-    campaign = uq.Campaign(name='test', work_dir=tmp_path, db_location='sqlite:///:memory:')
+    campaign = uq.Campaign(name='test', work_dir=tmp_path)
     params = {
         "temp_init": {
             "type": "float",
