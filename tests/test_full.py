@@ -20,7 +20,8 @@ import tempfile
             target_filename='output.json',
             output_columns=['te'])],
         [(uq.sampling.PCESampler, uq.analysis.PCEAnalysis),
-         (uq.sampling.SCSampler, uq.analysis.SCAnalysis)]))
+         (uq.sampling.SCSampler, uq.analysis.SCAnalysis),
+         (lambda vary: uq.sampling.QMCSampler(vary, 25), uq.analysis.QMCAnalysis)]))
 def test_full_campaign(encoder, decoder, sampler_analysis):
     with tempfile.TemporaryDirectory() as tmp_path:
         params = {
