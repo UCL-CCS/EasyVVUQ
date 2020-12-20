@@ -338,7 +338,7 @@ class AnalysisResults:
             return pd.DataFrame(result)
 
     def plot_sobols_first(self, qoi, inputs=None, withdots=False,
-                          ylabel=None, xlabel=None, filename=None,
+                          ylabel=None, xlabel=None, xs=None, filename=None,
                           dpi=None):
         """Plot first order sobol indices.
 
@@ -354,6 +354,8 @@ class AnalysisResults:
             if None will use "First Order Sobol Index"
         xlabel: str or None
             if None will use the name of the qoi
+        xs : list or None
+            x-axis coordiante if None will use numpy arange
         filename: str or None
             if None will try to open a plotting window on-screen, otherwise will write the plot to this file, with the type determined by the extension specified
         dpi: int
@@ -367,6 +369,11 @@ class AnalysisResults:
             if input_ not in self.inputs:
                 raise RuntimeError("no such input variable - {}".format(input_))
         import matplotlib.pyplot as plt
+        if xs is None:
+            xs = np.arange(len(self.describe(qoi, 'mean')))
+        else:
+            if len(xs) != len(self.describe(qoi, 'mean')):
+                raise RuntimeError("wrong size - {}".format(xs))
         if withdots:
             styles = itertools.cycle(['-o', '-v', '-^', '-<', '->', '-8', '-s',
                                       '-p', '-*', '-h', '-H', '-D', '-d', '-P', '-X'])
@@ -382,14 +389,14 @@ class AnalysisResults:
             else:
                 points.append(self.sobols_first(qoi, input_))
         for p, label in zip(points, inputs):
-            plt.plot(p, next(styles), label=label)
+            plt.plot(xs, p, next(styles), label=label)
         plt.grid(True)
         if ylabel is None:
             plt.ylabel('First Order Sobol Index')
         else:
             plt.ylabel(ylabel)
         if xlabel is None:
-            plt.xlabel(qoi)
+            plt.xlabel("xs")
         else:
             plt.xlabel(xlabel)
         plt.legend()
@@ -398,7 +405,7 @@ class AnalysisResults:
         else:
             plt.savefig(filename, dpi=dpi)
 
-    def plot_moments(self, qoi, ylabel=None, xlabel=None, alpha=0.5, filename=None, dpi=None):
+    def plot_moments(self, qoi, ylabel=None, xs=None, xlabel=None, alpha=0.5, filename=None, dpi=None):
         """Plot statistical moments for this analysis.
 
         Parameters
@@ -409,6 +416,8 @@ class AnalysisResults:
             if None will use "Values"
         xlabel: str or None
             if None will use the name of the qoi
+        xs : list or None
+            x-axis coordiante if None will use numpy arange
         alpha: float
             transparency amount
         filename: str or None
@@ -420,7 +429,11 @@ class AnalysisResults:
         if qoi not in self.qois:
             raise RuntimeError("no such qoi - {}".format(qoi))
         import matplotlib.pyplot as plt
-        xs = np.arange(len(self.describe(qoi, 'mean')))
+        if xs is None:
+            xs = np.arange(len(self.describe(qoi, 'mean')))
+        else:
+            if len(xs) != len(self.describe(qoi, 'mean')):
+                raise RuntimeError("wrong size - {}".format(xs))
         plt.fill_between(
             xs, self.describe(
                 qoi, 'min'), self.describe(
@@ -428,14 +441,14 @@ class AnalysisResults:
         plt.fill_between(xs, self.describe(qoi, 'mean') -
                          self.describe(qoi, 'std'), self.describe(qoi, 'mean') +
                          self.describe(qoi, 'std'), label='std', alpha=alpha)
-        plt.plot(self.describe(qoi, 'mean'), label='mean')
+        plt.plot(xs, self.describe(qoi, 'mean'), label='mean')
         plt.grid(True)
         if ylabel is None:
-            plt.ylabel("Value")
+            plt.ylabel(qoi)
         else:
             plt.ylabel(ylabel)
         if xlabel is None:
-            plt.xlabel(qoi)
+            plt.xlabel("xs")
         else:
             plt.xlabel(xlabel)
         plt.legend()

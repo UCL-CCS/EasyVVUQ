@@ -1,6 +1,7 @@
 import os
 import easyvvuq as uq
 import chaospy as cp
+import numpy as np
 
 # Set up a fresh campaign called "coffee_pce"
 my_campaign = uq.Campaign(name='coffee_pce')
@@ -53,6 +54,10 @@ my_campaign.apply_analysis(my_analysis)
 
 # Get some descriptive statistics
 results = my_campaign.get_last_analysis()
-mean = results.describe()['te']['mean']
-p10 = results.describe()['te']['10%']
-p90 = results.describe()['te']['90%']
+mean = results.describe("te", "mean")
+var =results.describe("te", "var")
+
+# Plots
+t = np.linspace(0, 200, 150)
+results.plot_moments(qoi="te", ylabel="Temperature", xlabel="Time", xs=t, alpha=0.2)
+results.plot_sobols_first(qoi="te", xlabel="Time", xs=t)
