@@ -175,8 +175,6 @@ class CampaignDB(BaseCampaignDB):
         """
 
         if name is None:
-            logging.warning('No app name provided so using first app '
-                            'in database')
             selected = self.session.query(AppTable).all()
         else:
             selected = self.session.query(AppTable).filter_by(name=name).all()
@@ -890,14 +888,14 @@ class CampaignDB(BaseCampaignDB):
         campaign_name: str
             name of the campaign
         """
-        
-        app_info = self.app(app_name)
-        for run in self.runs(app_id=app_info['id']):
-            path, run_dir = os.path.split(run[1]['run_dir'])
-            path, runs_dir = os.path.split(path)
-            new_path_ = os.path.join(new_path, runs_dir, run_dir)
-            self.session.query(RunTable).\
-                filter(RunTable.run_name == run[0]).\
-                filter(RunTable.app == app_info['id']).\
-                update({'run_dir': new_path_})
+        campaign_id = self.get_campaign_id(campaign_name)
+        for app_info in self.app():
+            for run in self.runs(app_id=app_info['id']):
+                path, run_dir = os.path.split(run[1]['run_dir'])
+                path, runs_dir = os.path.split(path)
+                new_path_ = os.path.join(new_path, runs_dir, run_dir)
+                self.session.query(RunTable).\
+                    filter(RunTable.run_name == run[0]).\
+                    filter(RunTable.app == app_info['id']).\
+                    update({'run_dir': new_path_})
         self.session.commit()
