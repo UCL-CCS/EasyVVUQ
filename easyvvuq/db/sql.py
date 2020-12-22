@@ -889,7 +889,7 @@ class CampaignDB(BaseCampaignDB):
         """
         campaign_id = self.get_campaign_id(campaign_name)
         campaign_info = self.session.query(CampaignTable).\
-            filter(CampaignTable.id == campaign.id).first()
+            filter(CampaignTable.id == campaign_id).first()
         path, runs_dir = os.path.split(campaign_info['runs_dir'])
         self.session.query(CampaignTable).\
             filter(CampaignTable.id == campaign_id).\
