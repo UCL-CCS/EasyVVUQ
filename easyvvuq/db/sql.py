@@ -893,7 +893,8 @@ class CampaignDB(BaseCampaignDB):
         path, runs_dir = os.path.split(campaign_info.runs_dir)
         self.session.query(CampaignTable).\
             filter(CampaignTable.id == campaign_id).\
-            update({'campaign_dir': new_path, 'runs_dir': os.path.join(new_path, runs_dir)})
+            update({'campaign_dir': str(new_path),
+                    'runs_dir': str(os.path.join(new_path, runs_dir))})
         for app_info in self.session.query(AppTable):
             for run in self.runs(app_id=app_info.id):
                 path, run_dir = os.path.split(run[1]['run_dir'])
