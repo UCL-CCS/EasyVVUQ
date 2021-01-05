@@ -386,7 +386,7 @@ class CampaignDB(BaseCampaignDB):
             'sampler': run_row.sampler,
             'campaign': run_row.campaign,
             'app': run_row.app,
-            'result' : run_row.result,
+            'result': run_row.result,
             'run_dir': run_row.run_dir
         }
 
