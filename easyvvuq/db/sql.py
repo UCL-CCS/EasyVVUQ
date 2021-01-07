@@ -175,8 +175,6 @@ class CampaignDB(BaseCampaignDB):
         """
 
         if name is None:
-            logging.warning('No app name provided so using first app '
-                            'in database')
             selected = self.session.query(AppTable).all()
         else:
             selected = self.session.query(AppTable).filter_by(name=name).all()
@@ -388,7 +386,7 @@ class CampaignDB(BaseCampaignDB):
             'sampler': run_row.sampler,
             'campaign': run_row.campaign,
             'app': run_row.app,
-            'result' : run_row.result,
+            'result': run_row.result,
             'run_dir': run_row.run_dir
         }
 
@@ -475,7 +473,6 @@ class CampaignDB(BaseCampaignDB):
             A list of run names run names (format is usually: prefix + int)
         status: enum(Status)
             The new status all listed runs should now have
-
         Returns
         -------
 
@@ -880,23 +877,32 @@ class CampaignDB(BaseCampaignDB):
                             pd_result[(key, i)] = [pd_dict[key][i]]
         return pd.DataFrame(pd_result)
 
-    def relocate(self, new_path, app_name):
+    def relocate(self, new_path, campaign_name):
         """Update all runs in the db with the new campaign path.
 
         Parameters
         ----------
         new_path: str
             new runs directory
-        app_name: str
-            name of the app to use for updating
+        campaign_name: str
+            name of the campaign
         """
-        app_info = self.app(app_name)
-        for run in self.runs(app_id=app_info['id']):
-            path, run_dir = os.path.split(run[1]['run_dir'])
-            path, runs_dir = os.path.split(path)
-            new_path_ = os.path.join(new_path, runs_dir, run_dir)
-            self.session.query(RunTable).\
-                filter(RunTable.run_name == run[0]).\
-                filter(RunTable.app == app_info['id']).\
-                update({'run_dir': new_path_})
+        campaign_id = self.get_campaign_id(campaign_name)
+        campaign_info = self.session.query(CampaignTable).\
+            filter(CampaignTable.id == campaign_id).first()
+        path, runs_dir = os.path.split(campaign_info.runs_dir)
+        self.session.query(CampaignTable).\
+            filter(CampaignTable.id == campaign_id).\
+            update({'campaign_dir': str(new_path),
+                    'runs_dir': str(os.path.join(new_path, runs_dir))})
+        for app_info in self.session.query(AppTable):
+            for run in self.runs(app_id=app_info.id):
+                path, run_dir = os.path.split(run[1]['run_dir'])
+                path, runs_dir = os.path.split(path)
+                new_path_ = os.path.join(new_path, runs_dir, run_dir)
+                self.session.query(RunTable).\
+                    filter(RunTable.campaign == campaign_id).\
+                    filter(RunTable.run_name == run[0]).\
+                    filter(RunTable.app == app_info.id).\
+                    update({'run_dir': new_path_})
         self.session.commit()

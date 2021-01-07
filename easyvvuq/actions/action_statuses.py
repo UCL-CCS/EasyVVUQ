@@ -45,7 +45,7 @@ class ActionStatuses:
 
     def job_handler(self, status):
         """Will handle the execution of this action status.
-        
+
         Parameters
         ----------
         status: ActionStatus
