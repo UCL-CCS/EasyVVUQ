@@ -661,7 +661,7 @@ class Campaign:
         """
         if not os.path.exists(campaign_dir):
             raise RuntimeError("specified directory does not exist: {}".format(campaign_dir))
-        self.campaign_db.relocate(campaign_dir, self._active_app_name)
+        self.campaign_db.relocate(campaign_dir, self.campaign_name)
 
     def call_for_each_run(self, fn, status=Status.ENCODED):
 

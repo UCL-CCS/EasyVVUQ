@@ -3,6 +3,7 @@ import chaospy as cp
 import os
 import pytest
 import shutil
+from easyvvuq.db.sql import CampaignTable
 
 
 @pytest.fixture
@@ -143,4 +144,7 @@ def test_relocate_full(tmp_path):
     assert(relocated.work_dir == str(tmp_path))
     for run in relocated.campaign_db.runs():
         assert(run[1]['run_dir'] == os.path.join(tmp_path, 'relocation', 'runs', run[0]))
+    campaign_table = campaign.campaign_db.session.query(CampaignTable).first()
+    assert(campaign_table.campaign_dir == os.path.join(tmp_path, 'relocation'))
+    assert(campaign_table.runs_dir == os.path.join(tmp_path, 'relocation', 'runs'))
     relocated.recollate()
