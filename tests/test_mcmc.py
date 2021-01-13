@@ -3,6 +3,8 @@ import easyvvuq as uq
 import numpy as np
 import chaospy as cp
 
+HOME = os.path.abspath(os.path.dirname(__file__))
+
 def test_mcmc(tmp_path):
     campaign = uq.Campaign(name="mcmc", work_dir=tmp_path)
     params = {
