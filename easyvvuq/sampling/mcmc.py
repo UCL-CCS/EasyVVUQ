@@ -4,8 +4,10 @@ import chaospy as cp
 
 
 class MCMCSampler(BaseSamplingElement, sampler_name='mcmc_sampler'):
-    def __init__(self, vary):
+    def __init__(self, vary, x, y, qoi):
         self.vary = Vary(vary)
+        self.prev = prev
+        self.qoi = qoi
 
     def element_version(self):
         return "0.1"
@@ -17,10 +19,10 @@ class MCMCSampler(BaseSamplingElement, sampler_name='mcmc_sampler'):
         return 1
 
     def __next__(self):
-        return 0.0
+        y = self.vary.p
 
     def is_restartable(self):
         return True
 
     def get_restart_dict(self):
-        return {"vary" : self.vary.serialize()}
+        return {"vary": self.vary.serialize(), "prev": self.prev, "qoi": qoi}
