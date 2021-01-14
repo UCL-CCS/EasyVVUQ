@@ -16,4 +16,9 @@ def test_mcmc(tmp_path):
         template_fname=HOME + "ronsenbrock.template", delimiter="$", target_filename="input.json")
     decoder = uq.decoders.JSONDecoder("input.json", ["value"])
     campaign.add_app(name="mcmc", params=params, encoder=encoder, decoder=decoder)
-    
+    b = 1.0
+    vary = {
+        "x1": cp.Normal(0.0, b ** 2),
+        "x2": cp.Normal(0.0, b ** 2)
+    }
+    sampler = uq.sampling.MCMCSampler()
