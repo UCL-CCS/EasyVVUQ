@@ -21,4 +21,11 @@ def test_mcmc(tmp_path):
         "x1": cp.Normal(0.0, b ** 2),
         "x2": cp.Normal(0.0, b ** 2)
     }
-    sampler = uq.sampling.MCMCSampler()
+    vary_init = {
+        "x1": 0.0,
+        "x2": 0.0
+    }
+    sampler = uq.sampling.MCMCSampler(vary_init)
+    campaign.set_sampler(sampler)
+    campaign.draw_samples()
+    campaign.populate_runs_dir()
