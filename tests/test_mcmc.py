@@ -10,11 +10,11 @@ def test_mcmc(tmp_path):
     params = {
         "x1": {"type": "float", "min": -5.0, "max": 5.0, "default": 0.0},
         "x2": {"type": "float", "min": -5.0, "max": 5.0, "default": 0.0},
-        "outfile": {"type": "string", "default": "output.json"}
+        "out_file": {"type": "string", "default": "output.json"}
     }
     encoder = uq.encoders.GenericEncoder(
-        template_fname=HOME + "ronsenbrock.template", delimiter="$", target_filename="input.json")
-    decoder = uq.decoders.JSONDecoder("input.json", ["value"])
+        template_fname=os.path.abspath("tutorials/rosenbrock.template"), delimiter="$", target_filename="input.json")
+    decoder = uq.decoders.JSONDecoder("output.json", ["value"])
     campaign.add_app(name="mcmc", params=params, encoder=encoder, decoder=decoder)
     b = 1.0
     vary = {
@@ -27,5 +27,11 @@ def test_mcmc(tmp_path):
     }
     sampler = uq.sampling.MCMCSampler(vary_init)
     campaign.set_sampler(sampler)
-    campaign.draw_samples()
-    campaign.populate_runs_dir()
+    action = uq.actions.ExecuteLocal("tutorials/rosenbrock.py input.json")
+    for _ in range(100):
+        campaign.draw_samples(1)
+        campaign.populate_runs_dir()
+        campaign.apply_for_each_run_dir(action)
+        campaign.collate()
+        result = campaign.get_collation_result()
+
