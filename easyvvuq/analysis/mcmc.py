@@ -10,7 +10,25 @@ from .qmc_analysis import QMCAnalysisResults
 
 
 class MCMCAnalysisResults(AnalysisResults):
-    pass
+    def __init__(self, dist):
+        self.dist = dist
+
+    def get_distribution(self):
+        return self.dist
 
 class MCMCAnalysis(BaseAnalysisElement):
-    pass
+    def __init__(self, sampler, qoi=None):
+        self.sampler = sampler
+        self.qoi = qoi
+
+    def element_name(self):
+        """Name for this element"""
+        return "MCMCAnalysis"
+
+    def element_version(self):
+        """Version of this element"""
+        return "0.1"
+
+    def analyse(self, data_frame):
+        cols = self.sampler.inputs
+        return MCMCAnalysisResults(dist)
