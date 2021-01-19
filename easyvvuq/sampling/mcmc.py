@@ -26,10 +26,10 @@ class MCMCSampler(BaseSamplingElement, sampler_name='mcmc_sampler'):
         else:
             return self.x
 
-    def update(self, x, y, f_x, f_y, q_xy, q_yx):
-        self.x = x
+    def update(self, y, f_y, q_xy, q_yx):
+        self.x = self.y
         self.y = y
-        self.f_x = f_x
+        self.f_x = self.f_x
         self.f_y = f_y
         self.q_xy = q_xy
         self.q_yx = q_yx
