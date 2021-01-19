@@ -2,13 +2,103 @@
 """
 import logging
 import chaospy as cp
+import pandas as pd
+import numpy as np
 from easyvvuq import OutputType
 from .base import BaseAnalysisElement
+from .results import AnalysisResults
+from .qmc_analysis import QMCAnalysisResults
 
 __author__ = 'Jalal Lakhlili'
 __license__ = "LGPL"
 
 logger = logging.getLogger(__name__)
+
+
+class PCEAnalysisResults(QMCAnalysisResults):
+    implemented = ['sobols_first', 'sobols_total', 'describe']
+
+    def _get_sobols_first(self, qoi, input_):
+        """Returns the first order sobol index for a given qoi wrt input variable.
+
+        Parameters
+        ----------
+        qoi : str
+           Quantity of interest
+        input_ : str
+           Input variable
+
+        Returns
+        -------
+        float
+            First order sobol index.
+        """
+        raw_dict = AnalysisResults._keys_to_tuples(self.raw_data['sobols_first'])
+        return raw_dict[AnalysisResults._to_tuple(qoi)][input_]
+
+    def _get_sobols_second(self, qoi, input_):
+        """Returns the second order sobol index for a given qoi wrt input variable.
+
+        Parameters
+        ----------
+        qoi : str
+           Quantity of interest
+        input_ : str
+           Input variable
+
+        Returns
+        -------
+        float
+            Second order sobol index.
+        """
+        raw_dict = AnalysisResults._keys_to_tuples(self.raw_data['sobols_second'])
+        return dict([(in_, raw_dict[AnalysisResults._to_tuple(qoi)][input_][i])
+                     for i, in_ in enumerate(self.inputs) if in_ != input_])
+
+    def _get_sobols_total(self, qoi, input_):
+        """Returns the total order sobol index for a given qoi wrt input variable.
+
+        Parameters
+        ----------
+        qoi : str
+           Quantity of interest
+        input_ : str
+           Input variable
+
+        Returns
+        -------
+        float
+            Total order sobol index.
+        """
+        raw_dict = AnalysisResults._keys_to_tuples(self.raw_data['sobols_total'])
+        return raw_dict[AnalysisResults._to_tuple(qoi)][input_]
+
+    def _describe(self, qoi, statistic):
+        """Returns descriptive statistics, similar to pandas describe.
+
+        Examples
+        --------
+
+
+        Returns
+        -------
+        pandas DataFrame with descriptive statistics
+        """
+        if statistic == 'min':
+            return np.array([v.lower[0] for _, v in enumerate(
+                self.raw_data['output_distributions'][qoi])])
+        elif statistic == 'max':
+            return np.array([v.upper[0] for _, v in enumerate(
+                self.raw_data['output_distributions'][qoi])])
+        elif statistic == '10%':
+            return self.raw_data['percentiles'][qoi]['p10']
+        elif statistic == '90%':
+            return self.raw_data['percentiles'][qoi]['p90']
+        else:
+            try:
+                return self.raw_data['statistical_moments'][qoi][statistic]
+            except KeyError:
+                raise NotImplementedError
 
 
 class PCEAnalysis(BaseAnalysisElement):
@@ -43,7 +133,7 @@ class PCEAnalysis(BaseAnalysisElement):
 
     def element_version(self):
         """Version of this element for logging purposes"""
-        return "0.5"
+        return "0.6"
 
     def analyse(self, data_frame=None):
         """Perform PCE analysis on input `data_frame`.
@@ -79,39 +169,24 @@ class PCEAnalysis(BaseAnalysisElement):
                    'output_distributions': {},
                    }
 
-        # Get the Polynomial
+        # Get sampler informations
         P = self.sampler.P
-
-        # Get the PCE variante to use (Regression or Projection)
+        nodes = self.sampler._nodes
+        weights = self.sampler._weights
         regression = self.sampler.regression
-
-        # Compute nodes (and weights)
-        if regression:
-            nodes = cp.generate_samples(order=self.sampler.n_samples,
-                                        domain=self.sampler.distribution,
-                                        rule=self.sampler.rule)
-        else:
-            nodes, weights = cp.generate_quadrature(order=self.sampler.polynomial_order,
-                                                    dist=self.sampler.distribution,
-                                                    rule=self.sampler.rule,
-                                                    sparse=self.sampler.quad_sparse,
-                                                    growth=self.sampler.quad_growth)
 
         # Extract output values for each quantity of interest from Dataframe
         samples = {k: [] for k in qoi_cols}
-        for run_id in data_frame.run_id.unique():
+        for run_id in data_frame[('run_id', 0)].unique():
             for k in qoi_cols:
-                data = data_frame.loc[data_frame['run_id'] == run_id][k]
-                samples[k].append(data.values)
+                data = data_frame.loc[data_frame[('run_id', 0)] == run_id][k]
+                samples[k].append(data.values.flatten())
 
         # Compute descriptive statistics for each quantity of interest
         for k in qoi_cols:
             # Approximation solver
             if regression:
-                if samples[k][0].dtype == object:
-                    for i in range(self.sampler.count):
-                        samples[k][i] = samples[k][i].astype("float64")
-                fit = cp.fit_regression(P, nodes, samples[k], "T")
+                fit = cp.fit_regression(P, nodes, samples[k])
             else:
                 fit = cp.fit_quadrature(P, nodes, weights, samples[k])
 
@@ -123,7 +198,7 @@ class PCEAnalysis(BaseAnalysisElement):
                                                  'var': var,
                                                  'std': std}
 
-            # Percentiles (Pxx)
+            # Percentiles: 10% and 90%
             P10 = cp.Perc(fit, 10, self.sampler.distribution)
             P90 = cp.Perc(fit, 90, self.sampler.distribution)
             results['percentiles'][k] = {'p10': P10, 'p90': P90}
@@ -135,15 +210,11 @@ class PCEAnalysis(BaseAnalysisElement):
             sobols_first_dict = {}
             sobols_second_dict = {}
             sobols_total_dict = {}
-            ipar = 0
-            i = 0
-            for param_name in self.sampler.vary.get_keys():
-                j = self.sampler.params_size[ipar]
-                sobols_first_dict[param_name] = sobols_first_narr[i:i + j]
-                sobols_second_dict[param_name] = sobols_second_narr[i:i + j]
-                sobols_total_dict[param_name] = sobols_total_narr[i:i + j]
-                i += j
-                ipar += 1
+            for i, param_name in enumerate(self.sampler.vary.vary_dict):
+                sobols_first_dict[param_name] = sobols_first_narr[i]
+                sobols_second_dict[param_name] = sobols_second_narr[i]
+                sobols_total_dict[param_name] = sobols_total_narr[i]
+
             results['sobols_first'][k] = sobols_first_dict
             results['sobols_second'][k] = sobols_second_dict
             results['sobols_total'][k] = sobols_total_dict
@@ -156,4 +227,5 @@ class PCEAnalysis(BaseAnalysisElement):
             results['output_distributions'][k] = cp.QoI_Dist(
                 fit, self.sampler.distribution)
 
-        return results
+        return PCEAnalysisResults(raw_data=results, samples=data_frame,
+                                  qois=self.qoi_cols, inputs=list(self.sampler.vary.get_keys()))

@@ -26,6 +26,7 @@ class ReplicaSampler(BaseSamplingElement, sampler_name='replica_sampler'):
     ensemble_col : string
         a parameter name for the ensemble id
     """
+
     def __init__(self, sampler, ensemble_col='ensemble'):
         if not sampler.is_finite():
             raise RuntimeError("Replica sampler only works with finite samplers")
@@ -36,7 +37,6 @@ class ReplicaSampler(BaseSamplingElement, sampler_name='replica_sampler'):
             self.history.append(sample)
         self.size = len(self.history)
         self.cycle = cycle(self.history)
-        self.ensemble = 0
         self.counter = 0
 
     def is_finite(self):
@@ -50,12 +50,8 @@ class ReplicaSampler(BaseSamplingElement, sampler_name='replica_sampler'):
 
     def __next__(self):
         params = dict(next(self.cycle))
-        if self.counter < self.size - 1:
-            self.counter += 1
-        else:
-            self.counter = 0
-            self.ensemble += 1
-        params[self.ensemble_col] = self.ensemble
+        params[self.ensemble_col] = self.counter
+        self.counter = (self.counter + 1) % self.size
         return params
 
     def is_restartable(self):

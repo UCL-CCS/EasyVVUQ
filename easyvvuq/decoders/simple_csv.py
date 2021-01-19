@@ -1,6 +1,6 @@
 import os
 import logging
-import pandas as pd
+import csv
 from easyvvuq import OutputType
 from .base import BaseDecoder
 
@@ -32,25 +32,7 @@ logger = logging.Logger(__name__)
 
 class SimpleCSV(BaseDecoder, decoder_name="csv"):
 
-    def __init__(self, target_filename=None, output_columns=None, header=0,
-                 delimiter=","):
-
-        if target_filename is None:
-            msg = (
-                f"target_filename must be set for SimpleCSV. This should be"
-                f"the name of the output file this decoder acts on."
-            )
-            logging.error(msg)
-            raise RuntimeError(msg)
-
-        if output_columns is None:
-            msg = (
-                f"output_columns must be specified for SimpleCSV. This should"
-                f"be the names of the output columns this decoder extracts"
-                f"from the target csv file."
-            )
-            logging.error(msg)
-            raise RuntimeError(msg)
+    def __init__(self, target_filename, output_columns):
 
         if len(output_columns) == 0:
             msg = "output_columns cannot be empty."
@@ -59,8 +41,6 @@ class SimpleCSV(BaseDecoder, decoder_name="csv"):
 
         self.target_filename = target_filename
         self.output_columns = output_columns
-        self.header = header
-        self.delimiter = delimiter
 
         self.output_type = OutputType('sample')
 
@@ -87,19 +67,26 @@ class SimpleCSV(BaseDecoder, decoder_name="csv"):
 
         out_path = self._get_output_path(run_info, self.target_filename)
 
-        data = pd.read_csv(
-            out_path,
-            usecols=self.output_columns,
-            sep=self.delimiter,
-            header=self.header)
+        results = {}
+        for column in self.output_columns:
+            results[column] = []
 
-        return data
+        with open(out_path, 'r', newline='') as csvfile:
+            reader = csv.DictReader(csvfile)
+            for row in reader:
+                for column in self.output_columns:
+                    try:
+                        results[column].append(float(row[column]))
+                    except ValueError:
+                        results[column].append(row[column])
+                    except KeyError:
+                        raise RuntimeError('column not found in the csv file: {}'.format(column))
+
+        return results
 
     def get_restart_dict(self):
         return {"target_filename": self.target_filename,
-                "output_columns": self.output_columns,
-                "header": self.header,
-                "delimiter": self.delimiter}
+                "output_columns": self.output_columns}
 
     def element_version(self):
         return "0.1"

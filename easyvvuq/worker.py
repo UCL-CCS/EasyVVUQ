@@ -51,11 +51,9 @@ class Worker:
 
         if self.db_type == 'sql':
             from .db.sql import CampaignDB
-        elif self.db_type == 'json':
-            from .db.json import CampaignDB
         else:
             message = (f"Invalid 'db_type' {self.db_type}. Supported types "
-                       f"are 'sql' or 'json'.")
+                       f"are: 'sql'.")
             logger.critical(message)
             raise RuntimeError(message)
 
@@ -69,9 +67,8 @@ class Worker:
         # Resurrect the app encoder and decoder elements
         self._active_app_name = app_name
         self._active_app = self.campaign_db.app(name=app_name)
-        (self._active_app_encoder,
-         self._active_app_decoder,
-         self._active_app_collater) = self.campaign_db.resurrect_app(app_name)
+        self._active_app_encoder, self._active_app_decoder = self.campaign_db.resurrect_app(
+            app_name)
 
     def encode_runs(self, run_id_list):
         """
@@ -86,6 +83,7 @@ class Worker:
 
         # Loop through all runs in the run_id_list
         runs_dir = self.campaign_db.runs_dir()
+
         for run_id in run_id_list:
 
             run_data = self.campaign_db.run(run_id)

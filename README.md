@@ -1,4 +1,4 @@
-<img align="left" width="75" height="75" src="https://easyvvuq.readthedocs.io/en/latest/_static/circle-logo.svg" alt="EasyVVUQ icon">
+<img align="left" width="75" height="75" src="https://github.com/UCL-CCS/EasyVVUQ/blob/dev/docs/images/circle-logo.svg" alt="EasyVVUQ icon">
 
 # EasyVVUQ
 
@@ -69,7 +69,10 @@ Documentation, including a basic tutorial, is avalable [here](https://easyvvuq.r
 
 ## Citing EasyVVUQ
 
-Richardson, R A, Wright, D W, Edeling, W, Jancauskas, V, Lakhlili, J and Coveney, P V. 
+> Richardson, R A, Wright, D W, Edeling, W, Jancauskas, V, Lakhlili, J and Coveney, P V. 
 2020 EasyVVUQ: A Library for Verification, Validation and Uncertainty Quantification in High Performance Computing. 
 Journal of Open Research Software, 8: 11.
-[DOI: 10.5334/jors.303](https://doi.org/10.5334/jors.303).
+> [DOI: 10.5334/jors.303](https://doi.org/10.5334/jors.303).
+
+> Wright, D.W., Richardson, R.A., Edeling, W., Lakhlili, J., Sinclair, R.C., Jancauskas, V., Suleimenova, D., Bosak, B., Kulczewski, M., Piontek, T., Kopta, P., Chirca, I., Arabnejad, H., Luk, O.O., Hoenen, O., Weglarz, J., Crommelin, D., Groen, D. and Coveney, P.V. (2020), Building Confidence in Simulation: Applications of EasyVVUQ. Adv. Theory Simul., 3: 1900246.
+> [DOI: 10.1002/adts.201900246](https://doi.org/10.1002/adts.201900246).

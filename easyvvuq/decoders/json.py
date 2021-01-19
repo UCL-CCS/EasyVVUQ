@@ -1,6 +1,5 @@
 import os
 import logging
-import pandas as pd
 from easyvvuq import OutputType
 from .base import BaseDecoder
 import json
@@ -38,18 +37,20 @@ class JSONDecoder(BaseDecoder, decoder_name="json"):
 
         if target_filename is None:
             msg = (
-                f"target_filename must be set for JSONDecoder. This should be"
-                f"the name of the output file this decoder acts on."
+                f"target_filename must be set for {self.decoder_name.upper()}Decoder. "
+                f"This should be the name of the output file this decoder "
+                f"acts on."
             )
             logging.error(msg)
             raise RuntimeError(msg)
 
         if output_columns is None:
             msg = (
-                f"output_columns must be specified for JSONDecoder. This should"
-                f"be the names of the output fields this decoder extracts"
-                f"from the target json file. For nested values use arrays"
-                f"e.g. ['root', 'node', 'field'] where field is the leaf"
+                f"output_columns must be specified for "
+                f"{self.decoder_name.upper()}Decoder. This should "
+                f"be the names of the output fields this decoder extracts "
+                f"from the target json file. For nested values use arrays "
+                f"e.g. ['root', 'node', 'field'] where field is the leaf "
                 f"that contains the value you need."
             )
             logging.error(msg)
@@ -90,29 +91,23 @@ class JSONDecoder(BaseDecoder, decoder_name="json"):
                 data = data[node]
             return data
 
-        def to_list(x):
-            if isinstance(x, list):
-                return x
-            else:
-                return [x]
-
-        def get_multi_index(col, lst):
-            return [((col, i), [x]) for i, x in enumerate(lst)]
-
         out_path = self._get_output_path(run_info, self.target_filename)
-
-        with open(out_path) as fd:
-            raw_data = json.load(fd)
+        raw_data = self._get_raw_data(out_path)
 
         data = []
         for col in self.output_columns:
-            if isinstance(col, str):
-                data.append(get_multi_index(col, to_list(raw_data[col])))
-            elif isinstance(col, list):
-                data.append(get_multi_index('.'.join(col), to_list(get_value(raw_data, col))))
-        data = sum(data, [])
-        data = pd.DataFrame(dict(data))
-        return data
+            try:
+                if isinstance(col, str):
+                    data.append((col, raw_data[col]))
+                elif isinstance(col, list):
+                    data.append(('.'.join(col), get_value(raw_data, col)))
+            except KeyError:
+                raise RuntimeError("no such field: {} in this json file".format(col))
+        return dict(data)
+
+    def _get_raw_data(self, out_path):
+        with open(out_path) as fd:
+            return json.load(fd)
 
     def get_restart_dict(self):
         return {"target_filename": self.target_filename,

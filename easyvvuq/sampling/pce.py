@@ -89,7 +89,6 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
 
         # List of the probability distributions of uncertain parameters
         params_distribution = list(vary.values())
-        self.params_size = [len(d) for d in params_distribution]
 
         # Multivariate distribution
         self.distribution = cp.J(*params_distribution)
@@ -104,7 +103,7 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
         # Clenshaw-Curtis should be nested if sparse (#139 chaospy issue)
         self.quad_growth = growth
         cc = ['c', 'C', 'clenshaw_curtis', 'Clenshaw_Curtis']
-        if sparse and quadrature_rule in cc:
+        if sparse and rule in cc:
             self.quad_growth = True
 
         # To determinate the PCE vrainte to use
@@ -118,32 +117,21 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
 
             # Generates samples
             self._n_samples = 2 * len(self.P)
-            nodes = cp.generate_samples(order=self._n_samples,
-                                        domain=self.distribution,
-                                        rule=self.rule)
+            self._nodes = cp.generate_samples(order=self._n_samples,
+                                              domain=self.distribution,
+                                              rule=self.rule)
+            self._weights = None
 
         # Projection variante (Pseudo-spectral method)
         else:
             # Nodes and weights for the integration
-            nodes, _ = cp.generate_quadrature(order=polynomial_order,
-                                              dist=self.distribution,
-                                              rule=self.rule,
-                                              sparse=sparse,
-                                              growth=self.quad_growth)
+            self._nodes, self._weights = cp.generate_quadrature(order=polynomial_order,
+                                                                dist=self.distribution,
+                                                                rule=self.rule,
+                                                                sparse=sparse,
+                                                                growth=self.quad_growth)
             # Number of samples
-            self._n_samples = len(nodes[0])
-
-        # Reorganize nodes according to params type: scalar (float, integer) or list
-        self._nodes = []
-        ipar = 0
-        for j in self.params_size:
-            # Scalar
-            if j == 1:
-                self._nodes.append(nodes[ipar:ipar + 1].flatten())
-            # List
-            else:
-                self._nodes.append(nodes[ipar:ipar + j].T.tolist())
-            ipar += j
+            self._n_samples = len(self._nodes[0])
 
         # Fast forward to specified count, if possible
         self.count = 0
@@ -157,7 +145,7 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
                 self.__next__()
 
     def element_version(self):
-        return "0.5"
+        return "0.6"
 
     def is_finite(self):
         return True
@@ -185,10 +173,8 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
     def __next__(self):
         if self.count < self._n_samples:
             run_dict = {}
-            ipar = 0
-            for param_name in self.vary.get_keys():
-                run_dict[param_name] = self._nodes[ipar][self.count]
-                ipar += 1
+            for i, param_name in enumerate(self.vary.vary_dict):
+                run_dict[param_name] = self._nodes[i][self.count]
             self.count += 1
             return run_dict
         else:

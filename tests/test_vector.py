@@ -5,8 +5,8 @@ import sys
 import pytest
 import logging
 from pprint import pformat, pprint
-from gauss.encoder_gauss import GaussEncoder
-from gauss.decoder_gauss import GaussDecoder
+from .gauss.encoder_gauss import GaussEncoder
+from .gauss.decoder_gauss import GaussDecoder
 from easyvvuq.decoders.json import JSONDecoder
 
 __copyright__ = """
@@ -72,19 +72,15 @@ def test_gauss_vector_sc(tmpdir):
 
     encoder = uq.encoders.GenericEncoder(template_fname='tests/gauss/gauss.template',
                                          target_filename='gauss_in.json')
-   # decoder = JSONDecoder(target_filename='output.csv.json', output_columns=['numbers'])
     decoder = uq.decoders.SimpleCSV(target_filename="output.csv",
-                                    output_columns=["numbers"],
-                                    header=0)
-    collater = uq.collate.AggregateSamples(average=False)
+                                    output_columns=["numbers"])
     actions = uq.actions.ExecuteLocal("tests/gauss/gauss_json.py gauss_in.json")
     sampler = uq.sampling.SCSampler(vary=vary, polynomial_order=4)
     my_campaign = uq.Campaign(name='gauss_vector', work_dir=tmpdir)
     my_campaign.add_app(name="gauss_vector",
                         params=params,
                         encoder=encoder,
-                        decoder=decoder,
-                        collater=collater)
+                        decoder=decoder)
     my_campaign.set_sampler(sampler)
     my_campaign.draw_samples()
     my_campaign.populate_runs_dir()
@@ -92,7 +88,7 @@ def test_gauss_vector_sc(tmpdir):
     my_campaign.collate()
 
     data = my_campaign.get_collation_result()
-    print("===== DATA:\n ",data)
+    print("===== DATA:\n ", data)
     analysis = uq.analysis.SCAnalysis(sampler=sampler, qoi_cols=["numbers"])
     my_campaign.apply_analysis(analysis)
     results = my_campaign.get_last_analysis()
@@ -135,17 +131,14 @@ def test_gauss_vector_pce(tmpdir):
                                          target_filename='gauss_in.json')
     #decoder = JSONDecoder(target_filename='output.csv.json', output_columns=['numbers'])
     decoder = uq.decoders.SimpleCSV(target_filename="output.csv",
-                                    output_columns=["numbers"],
-                                    header=0)
-    collater = uq.collate.AggregateSamples(average=False)
+                                    output_columns=["numbers"])
     actions = uq.actions.ExecuteLocal("tests/gauss/gauss_json.py gauss_in.json")
     sampler = uq.sampling.PCESampler(vary=vary, polynomial_order=4)
     my_campaign = uq.Campaign(name='gauss_vector', work_dir=tmpdir)
     my_campaign.add_app(name="gauss_vector",
                         params=params,
                         encoder=encoder,
-                        decoder=decoder,
-                        collater=collater)
+                        decoder=decoder)
     my_campaign.set_sampler(sampler)
     my_campaign.draw_samples()
     my_campaign.populate_runs_dir()
@@ -153,11 +146,12 @@ def test_gauss_vector_pce(tmpdir):
     my_campaign.collate()
 
     data = my_campaign.get_collation_result()
-    print("===== DATA:\n ",data)
+    print("===== DATA:\n ", data)
     analysis = uq.analysis.PCEAnalysis(sampler=sampler, qoi_cols=["numbers"])
     my_campaign.apply_analysis(analysis)
     results = my_campaign.get_last_analysis()
 
+
 if __name__ == "__main__":
-    #test_gauss_vector_pce("/tmp")
+    # test_gauss_vector_pce("/tmp")
     test_gauss_vector_sc("/tmp")

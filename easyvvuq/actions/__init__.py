@@ -1,5 +1,8 @@
 from .base import BaseAction
-from .execute_local import ExecuteLocal
+from .execute_local import ExecuteLocal, ExecuteLocalV2
+from .execute_kubernetes import ExecuteKubernetes
+from .execute_slurm import ExecuteSLURM
+from .action_statuses import ActionStatuses
 
 __copyright__ = """
 

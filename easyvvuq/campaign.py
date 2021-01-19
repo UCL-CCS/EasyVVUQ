@@ -8,10 +8,12 @@ import logging
 import tempfile
 import json
 import easyvvuq
-from easyvvuq import ParamsSpecification
+from easyvvuq import ParamsSpecification, constants
 from easyvvuq.constants import default_campaign_prefix, Status
 from easyvvuq.data_structs import RunInfo, CampaignInfo, AppInfo
 from easyvvuq.sampling import BaseSamplingElement
+from easyvvuq.actions import ActionStatuses
+from cerberus import Validator
 
 __copyright__ = """
 
@@ -44,7 +46,8 @@ class Campaign:
 
     The Campaign functions as as state machine for the VVUQ workflows. It uses a
     database (CampaignDB) to store information on both the target application
-    and the VVUQ algorithms being employed.
+    and the VVUQ algorithms being employed. It also collects data from the simulations
+    and can be used to store and resume your state.
 
     Notes
     -----
@@ -65,6 +68,10 @@ class Campaign:
         Path to working directory - used to store campaign directory.
     state_file : :obj:`str`, optional
         Path to serialised state - used to initialise the Campaign.
+    relocate: dict or None
+            Relocation dictionary. If specified will try to relocate the campaign according
+        to the information within the dictionary, dictionary format: {'work_dir': str,
+        'campaign_dir': str, 'db_location': str}. The parameter db_location is optional.
     change_to_state : bool, optional, default=False
         Should we change to the directory containing any specified `state_file`
         in order to make relative paths work.
@@ -118,9 +125,14 @@ class Campaign:
             db_location=None,
             work_dir="./",
             state_file=None,
+            relocate=None,
             change_to_state=False,
             verify_all_runs=True
     ):
+        if relocate is not None and state_file is None:
+            raise RuntimeError('please use relocate with a state_file')
+
+        self._relocate_dict = relocate
 
         self.work_dir = os.path.realpath(os.path.expanduser(work_dir))
         self.verify_all_runs = verify_all_runs
@@ -148,9 +160,11 @@ class Campaign:
         # Load campaign from state_file, if provided. Else make a fresh new
         # campaign with a new campaign database
         if state_file is not None:
-            self._state_dir = self.init_from_state_file(state_file)
+            self._state_dir = self.init_from_state_file(
+                state_file, relocate=relocate)
             if change_to_state:
                 os.chdir(self._state_dir)
+            self.relocate(self.campaign_dir)
         else:
             self.init_fresh(name, db_type, db_location, self.work_dir)
             self._state_dir = None
@@ -227,13 +241,18 @@ class Campaign:
         self.campaign_name = name
         self.campaign_id = self.campaign_db.get_campaign_id(self.campaign_name)
 
-    def init_from_state_file(self, state_file):
+    def init_from_state_file(self, state_file, relocate=None):
         """Load campaign state from file.
 
         Parameters
         ----------
         state_file : str
             Path to the file containing the campaign state.
+        relocate: dict or None
+            Relocation dictionary. If specified will try to relocate the campaign according
+        to the information within the dictionary, dictionary format: {'work_dir': str,
+        'campaign_dir': str, 'db_location': str}. The parameter db_location is optional.
+
 
         Returns
         -------
@@ -256,7 +275,7 @@ class Campaign:
         state_dir = os.path.dirname(full_state_path)
 
         logger.info(f"Loading campaign from state file '{full_state_path}'")
-        self.load_state(full_state_path)
+        self.load_state(full_state_path, relocate)
 
         if self.db_type == 'sql':
             from .db.sql import CampaignDB
@@ -302,13 +321,17 @@ class Campaign:
         with open(state_filename, "w") as outfile:
             json.dump(output_json, outfile, indent=4)
 
-    def load_state(self, state_filename):
+    def load_state(self, state_filename, relocate=None):
         """Load up a Campaign state from the specified JSON file
 
         Parameters
         ----------
         state_filename : str
             Name of file from which to load the state
+        relocate: dict or None
+            Relocation dictionary. If specified will try to relocate the campaign according
+        to the information within the dictionary, dictionary format: {'work_dir': str,
+        'campaign_dir': str, 'db_location': str}. The parameter db_location is optional.
 
         Returns
         -------
@@ -317,7 +340,6 @@ class Campaign:
 
         with open(state_filename, "r") as infile:
             input_json = json.load(infile)
-
         self.db_location = input_json["db_location"]
         self.db_type = input_json["db_type"]
         self._active_app_name = input_json["active_app"]
@@ -325,15 +347,29 @@ class Campaign:
         self._campaign_dir = input_json["campaign_dir"]
         self._log = input_json["log"]
 
+        if relocate is not None:
+            assert(isinstance(relocate, dict))
+            try:
+                self.db_location = relocate['db_location']
+            except KeyError:
+                pass
+            try:
+                self.work_dir = os.path.realpath(os.path.expanduser(relocate['work_dir']))
+            except KeyError:
+                raise RuntimeError('please specify work_dir when relocating')
+            try:
+                self._campaign_dir = relocate['campaign_dir']
+            except KeyError:
+                raise RuntimeError('please specify campaign_dir when relocating')
+
         if not os.path.exists(self.campaign_dir):
             message = (f"Campaign directory in state_file {state_filename}"
                        f" ({self.campaign_dir}) does not exist.")
             logger.critical(message)
             raise RuntimeError(message)
 
-    def add_app(self, name=None, params=None,
-                encoder=None, decoder=None, collater=None,
-                set_active=True):
+    def add_app(self, name=None, params=None, decoderspec=None,
+                encoder=None, decoder=None, set_active=True):
         """Add an application to the CampaignDB.
 
         Parameters
@@ -342,13 +378,14 @@ class Campaign:
             Name of the application.
         params : dict
             Description of the parameters to associate with the application.
+        decoderspec : dict
+            A Cerberus validation dictionary for the output of the decoder
+            if left None, will not be used.
         encoder : :obj:`easyvvuq.encoders.base.BaseEncoder`
             Encoder element to convert parameters into application run inputs.
         decoder : :obj:`easyvvuq.decoders.base.BaseDecoder`
             Decoder element to convert application run output into data for
             VVUQ analysis.
-        collater : obj:`easyvvuq.collate.base.BaseCollationElement`
-            Collation element for this app.
         set_active: bool
             Should the added app be set to be the currently active app?
 
@@ -364,9 +401,9 @@ class Campaign:
         app = AppInfo(
             name=name,
             paramsspec=paramsspec,
+            decoderspec=decoderspec,
             encoder=encoder,
-            decoder=decoder,
-            collater=collater
+            decoder=decoder
         )
 
         self.campaign_db.add_app(app)
@@ -394,8 +431,7 @@ class Campaign:
 
         # Resurrect the app encoder, decoder and collation elements
         (self._active_app_encoder,
-         self._active_app_decoder,
-         self._active_app_collater) = self.campaign_db.resurrect_app(app_name)
+         self._active_app_decoder) = self.campaign_db.resurrect_app(app_name)
 
     def set_sampler(self, sampler):
         """Set active sampler.
@@ -577,6 +613,7 @@ class Campaign:
 
         Returns
         -------
+        a list with run ids
 
         """
 
@@ -601,6 +638,7 @@ class Campaign:
 
             run_ids.append(run_id)
         self.campaign_db.set_run_statuses(run_ids, Status.ENCODED)
+        return run_ids
 
     def get_campaign_runs_dir(self):
         """Get the runs directory from the CampaignDB.
@@ -611,7 +649,19 @@ class Campaign:
             Path in which the runs information will be written.
 
         """
-        return self.campaign_db.runs_dir()
+        return self.campaign_db.runs_dir(self.campaign_name)
+
+    def relocate(self, campaign_dir):
+        """Relocate the campaign by specifying a new path where campaign is located.
+
+        Parameters
+        ----------
+        new_path: str
+            new runs directory
+        """
+        if not os.path.exists(campaign_dir):
+            raise RuntimeError("specified directory does not exist: {}".format(campaign_dir))
+        self.campaign_db.relocate(campaign_dir, self.campaign_name)
 
     def call_for_each_run(self, fn, status=Status.ENCODED):
 
@@ -620,7 +670,7 @@ class Campaign:
         for run_id, run_data in self.campaign_db.runs(status=status, app_id=self._active_app['id']):
             fn(run_id, run_data)
 
-    def apply_for_each_run_dir(self, action, status=Status.ENCODED):
+    def apply_for_each_run_dir(self, action, status=Status.ENCODED, batch_size=1):
         """
         For each run in this Campaign's run list, apply the specified action
         (an object of type Action)
@@ -630,16 +680,45 @@ class Campaign:
         action : the action to be applied to each run directory
             The function to be applied to each run directory. func() will
             be called with the run directory path as its only argument.
+        status : Status
+            Will apply the action only to those runs whose status is as specified
 
         Returns
         -------
+        action_statuses: ActionStatuses
+            An object containing ActionStatus instances to track action execution
         """
 
         # Loop through all runs in this campaign with status ENCODED, and
         # run the specified action on each run's dir
+        assert(isinstance(status, Status))
+        action_statuses = []
         for run_id, run_data in self.campaign_db.runs(status=status, app_id=self._active_app['id']):
-            logger.info("Applying " + action.__module__ + " to " + run_data['run_dir'])
-            action.act_on_dir(run_data['run_dir'])
+            action_statuses.append(action.act_on_dir(run_data['run_dir']))
+        return ActionStatuses(action_statuses, batch_size=batch_size)
+
+    def sample_and_apply(self, nsamples, action, batch_size):
+        """This will draw samples, populated the runs directories and run the specified action.
+        This is a convenience method.
+
+        Parameters
+        ----------
+        nsamples : int
+            number of samples to draw
+        action : BaseAction
+            an action to be executed
+        batch_size : int
+            number of actions to be executed at the same time
+
+        Returns
+        -------
+        action_statuses: ActionStatuses
+            An object containing ActionStatus instances to track action execution
+        """
+        self.draw_samples(nsamples)
+        self.populate_runs_dir()
+        action_statuses = self.apply_for_each_run_dir(action, batch_size=batch_size)
+        return action_statuses
 
     def collate(self):
         """Combine the output from all runs associated with the current app.
@@ -650,19 +729,31 @@ class Campaign:
         -------
 
         """
-
-        # Apply collation element
-        num_collated = self._active_app_collater.collate(self, self._active_app['id'])
-
-        if num_collated < 1:
-            logger.warning("No data collected during collation.")
-
-        # Log application of this collation element
-        info = {'num_collated': num_collated}
-        self.log_element_application(self._active_app_collater, info)
-
-    def clear_collation(self):
-        self.campaign_db.clear_collation(self._active_app['id'])
+        app_id = self._active_app['id']
+        decoder = self._active_app_decoder
+        processed_run_IDs = []
+        processed_run_results = []
+        for run_id, run_info in self.campaign_db.runs(
+                status=constants.Status.ENCODED, app_id=app_id):
+            # use decoder to check if run has completed (in general application-specific)
+            if decoder.sim_complete(run_info=run_info):
+                # get the output of the simulation from the decoder
+                run_data = decoder.parse_sim_output(run_info=run_info)
+                if self._active_app['decoderspec'] is not None:
+                    v = Validator()
+                    v.schema = self._active_app['decoderspec']
+                    if not v.validate(run_data):
+                        raise RuntimeError(
+                            "the output of he decoder failed to validate: {}".format(run_data))
+                processed_run_IDs.append(run_id)
+                processed_run_results.append(run_data)
+        # update run statuses to "collated"
+        # self.campaign_db.set_run_statuses(processed_run_IDs, constants.Status.COLLATED)
+        # add the results to the database
+        self.campaign_db.store_results(
+            self._active_app_name, zip(
+                processed_run_IDs, processed_run_results))
+        return len(processed_run_IDs)
 
     def recollate(self):
         """Clears the current collation table, changes all COLLATED status runs
@@ -673,7 +764,6 @@ class Campaign:
 
         """
 
-        self.clear_collation()
         collated_run_ids = list(self.campaign_db.run_ids(status=Status.COLLATED))
         self.campaign_db.set_run_statuses(collated_run_ids, Status.ENCODED)
         self.collate()
@@ -690,7 +780,7 @@ class Campaign:
             pandas dataframe
 
         """
-        return self._active_app_collater.get_collated_dataframe(self, self._active_app['id'])
+        return self.campaign_db.get_results(self._active_app['name'])
 
     def apply_analysis(self, analysis):
         """Run the `analysis` element on the output of the last run collation.

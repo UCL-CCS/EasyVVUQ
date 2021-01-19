@@ -68,10 +68,9 @@ class GaussDecoder(BaseDecoder, decoder_name="gauss"):
 
         out_path = self._get_output_path(run_info, self.target_filename)
 
-        data = pd.read_csv(out_path, names=['Step', 'Value'],
-                           header=0, index_col=0)
+        data = pd.read_csv(out_path, header=0, index_col=False)
 
-        return data
+        return data.to_dict()
 
     def get_restart_dict(self):
         return {"target_filename": self.target_filename}

@@ -1,0 +1,6 @@
+{
+    "grid_size" : 10,
+    "n" : 20,
+    "duration" : 28,
+    "mortality" : 0.1
+}

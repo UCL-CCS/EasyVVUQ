@@ -5,8 +5,10 @@ import pickle
 import copy
 from easyvvuq import OutputType
 from .base import BaseAnalysisElement
+from .results import AnalysisResults
 import logging
 from scipy.special import comb
+import pandas as pd
 
 __author__ = "Wouter Edeling"
 __copyright__ = """
@@ -30,6 +32,22 @@ __copyright__ = """
 
 """
 __license__ = "LGPL"
+
+
+class SCAnalysisResults(AnalysisResults):
+    def _get_sobols_first(self, qoi, input_):
+        raw_dict = AnalysisResults._keys_to_tuples(self.raw_data['sobols_first'])
+        result = raw_dict[AnalysisResults._to_tuple(qoi)][input_][0]
+        try:
+            return np.array([float(result)])
+        except TypeError:
+            return np.array(result)
+
+    def _describe(self, qoi, statistic):
+        if statistic in ['mean', 'var', 'std']:
+            return self.raw_data['statistical_moments'][qoi][statistic]
+        else:
+            raise NotImplementedError
 
 
 class SCAnalysis(BaseAnalysisElement):
@@ -85,7 +103,7 @@ class SCAnalysis(BaseAnalysisElement):
 
         """
         print("Saving analysis state to %s" % filename)
-        #make a copy of the state, and do not store the sampler as well
+        # make a copy of the state, and do not store the sampler as well
         state = copy.copy(self.__dict__)
         del state['sampler']
         file = open(filename, 'wb')
@@ -138,7 +156,7 @@ class SCAnalysis(BaseAnalysisElement):
 
         # the number of uncertain parameters
         self.N = self.sampler.N
-        #tensor grid
+        # tensor grid
         self.xi_d = self.sampler.xi_d
         # the maximum level (quad order) of the (sparse) grid
         self.L = self.sampler.L
@@ -152,10 +170,10 @@ class SCAnalysis(BaseAnalysisElement):
         # For sparse grid: one or more levels
         else:
             self.L_min = 1
-            #multi indices (stored in l_norm) for isotropic sparse grid or
-            #dimension-adaptive grid before the 1st refinement.
-            #If dimension_adaptive and number_of_adaptations > 0: l_norm
-            #is computed in self.adaptation_metric
+            # multi indices (stored in l_norm) for isotropic sparse grid or
+            # dimension-adaptive grid before the 1st refinement.
+            # If dimension_adaptive and number_of_adaptations > 0: l_norm
+            # is computed in self.adaptation_metric
             if not self.dimension_adaptive or self.sampler.number_of_adaptations == 0:
                 # the maximum level (quad order) of the (sparse) grid
                 self.l_norm = self.sampler.compute_sparse_multi_idx(self.L, self.N)
@@ -182,10 +200,10 @@ class SCAnalysis(BaseAnalysisElement):
         print('Loading samples...')
         qoi_cols = self.qoi_cols
         samples = {k: [] for k in qoi_cols}
-        for run_id in data_frame.run_id.unique():
+        for run_id in data_frame[('run_id', 0)].unique():
             for k in qoi_cols:
-                values = data_frame.loc[data_frame['run_id'] == run_id][k].values
-                samples[k].append(values)
+                values = data_frame.loc[data_frame[('run_id', 0)] == run_id][k].values
+                samples[k].append(values.flatten())
         self.samples = samples
         print('done')
 
@@ -211,7 +229,8 @@ class SCAnalysis(BaseAnalysisElement):
                     results['sobols_first'][qoi_k][param_name] = \
                         results['sobols'][qoi_k][(idx,)]
 
-            return results
+            return SCAnalysisResults(raw_data=results, samples=data_frame,
+                                     qois=qoi_cols, inputs=list(self.sampler.vary.get_keys()))
 
     def create_map(self, L):
         """
@@ -281,48 +300,48 @@ class SCAnalysis(BaseAnalysisElement):
         None.
 
         """
-        #load the code samples
+        # load the code samples
         samples = []
         for run_id in data_frame.run_id.unique():
             values = data_frame.loc[data_frame['run_id'] == run_id][qoi].values
             samples.append(values)
 
-        #the currently accepted grid points
+        # the currently accepted grid points
         xi_d_accepted = self.sampler.generate_grid(self.l_norm)
 
-        #compute the hierarchical surplus based error for every admissible l
+        # compute the hierarchical surplus based error for every admissible l
         error = {}
         for l in self.sampler.admissible_idx:
             error[tuple(l)] = []
             # collocation points of current level index l
             X_l = [self.sampler.xi_1d[n][l[n]] for n in range(self.N)]
             X_l = np.array(list(product(*X_l)))
-            #only consider new points, subtract the accepted points
+            # only consider new points, subtract the accepted points
             X_l = setdiff2d(X_l, xi_d_accepted)
             for xi in X_l:
-                #find the location of the current xi in the global grid
+                # find the location of the current xi in the global grid
                 idx = np.where((xi == self.sampler.xi_d).all(axis=1))[0][0]
-                #hierarchical surplus error at xi
+                # hierarchical surplus error at xi
                 hier_surplus = samples[idx] - self.surrogate(qoi, xi)
                 error[tuple(l)].append(np.linalg.norm(hier_surplus, np.inf))
-            #compute mean error over all points in X_l
+            # compute mean error over all points in X_l
             error[tuple(l)] = np.mean(error[tuple(l)])
         for key in error.keys():
             print("Surplus error when l =", key, "=", error[key])
-        #find the admissble index with the largest error
+        # find the admissble index with the largest error
         l_star = np.array(max(error, key=error.get)).reshape([1, self.N])
         print('Selecting', l_star, 'for refinement.')
-        #add max error to list
+        # add max error to list
         self.adaptation_errors.append(max(error.values()))
 
-        #add l_star to the current accepted level indices
+        # add l_star to the current accepted level indices
         self.l_norm = np.concatenate((self.l_norm, l_star))
-        #if someone executes this function twice for some reason,
-        #remove the duplicate l_star entry. Keep order unaltered
+        # if someone executes this function twice for some reason,
+        # remove the duplicate l_star entry. Keep order unaltered
         idx = np.unique(self.l_norm, axis=0, return_index=True)[1]
         self.l_norm = self.l_norm[idx]
 
-        #peform the analyse step, but do not compute moments and Sobols
+        # peform the analyse step, but do not compute moments and Sobols
         self.analyse(data_frame, compute_results=False)
 
         if store_mean_history:
@@ -442,14 +461,14 @@ class SCAnalysis(BaseAnalysisElement):
         if samples is None:
             samples = self.samples[qoi]
 
-        #quadrature Q
+        # quadrature Q
         Q = 0.0
 
-        #loop over l
+        # loop over l
         for l in self.l_norm:
 
-            #for sum(l) < L, combination technique formula shows that weights
-            #are zero
+            # for sum(l) < L, combination technique formula shows that weights
+            # are zero
             if np.sum(l) >= self.L:
 
                 # compute the tensor product of parameter and weight values
@@ -461,7 +480,7 @@ class SCAnalysis(BaseAnalysisElement):
                 W_k = np.prod(W_k, axis=1)
                 W_k = W_k.reshape([W_k.shape[0], 1])
 
-                #scaling factor of combination technique
+                # scaling factor of combination technique
                 scaling_factor = (-1)**(self.L + self.N - np.sum(l) - 1) * \
                     comb(self.N - 1, np.sum(l) - self.L)
                 W_k *= scaling_factor
@@ -603,11 +622,11 @@ class SCAnalysis(BaseAnalysisElement):
             # Recursively computed.
 
             if self.sparse:
-                #In case of sparse grid: level = sum(l) - N + 1
-                #so prev level is sum(l) - N
+                # In case of sparse grid: level = sum(l) - N + 1
+                # so prev level is sum(l) - N
                 Lm1 = np.sum(l) - self.N
             else:
-                #previous level of full tensor grid = L - 1, will yield a zero
+                # previous level of full tensor grid = L - 1, will yield a zero
                 Lm1 = self.L - 1
 
             if k in self.surr_lm1[L]:
@@ -745,7 +764,7 @@ class SCAnalysis(BaseAnalysisElement):
         ax = fig.add_subplot(111, ylabel='max quadrature order',
                              title='Number of refinements = %d'
                              % self.sampler.number_of_adaptations)
-        #find max quad order for every parameter
+        # find max quad order for every parameter
         adapt_measure = np.max(self.l_norm, axis=0)
         ax.bar(range(adapt_measure.size), height=adapt_measure)
         params = list(self.sampler.vary.get_keys())

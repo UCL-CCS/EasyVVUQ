@@ -4,7 +4,6 @@ import os
 import sys
 import pytest
 from pprint import pprint
-import subprocess
 
 __copyright__ = """
 
@@ -89,15 +88,13 @@ def test_empty_collate(tmpdir):
         target_filename='in.cannon')
     decoder = uq.decoders.SimpleCSV(
         target_filename='output.csv', output_columns=[
-            'Dist', 'lastvx', 'lastvy'], header=0)
-    collater = uq.collate.AggregateSamples(average=False)
+            'Dist', 'lastvx', 'lastvy'])
 
     # Add the cannonsim app
     my_campaign.add_app(name="cannonsim",
                         params=params,
                         encoder=encoder,
-                        decoder=decoder,
-                        collater=collater)
+                        decoder=decoder)
 
     # Set the active app to be cannonsim (this is redundant when only one app
     # has been added)

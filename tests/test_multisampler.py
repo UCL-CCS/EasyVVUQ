@@ -4,7 +4,6 @@ import os
 import sys
 import pytest
 from pprint import pprint
-import subprocess
 
 __copyright__ = """
 
@@ -39,10 +38,10 @@ if not os.path.exists("tests/cannonsim/bin/cannonsim"):
 CANNONSIM_PATH = os.path.realpath(os.path.expanduser("tests/cannonsim/bin/cannonsim"))
 
 
-def test_multisampler(db_type, tmpdir):
+def test_multisampler(tmpdir):
 
     # Set up a fresh campaign called "cannon"
-    my_campaign = uq.Campaign(name='cannon', db_type=db_type, work_dir=tmpdir)
+    my_campaign = uq.Campaign(name='cannon', db_type='sql', work_dir=tmpdir)
 
     # Define parameter space for the cannonsim app
     params = {
@@ -89,15 +88,13 @@ def test_multisampler(db_type, tmpdir):
         target_filename='in.cannon')
     decoder = uq.decoders.SimpleCSV(
         target_filename='output.csv', output_columns=[
-            'Dist', 'lastvx', 'lastvy'], header=0)
-    collater = uq.collate.AggregateSamples(average=False)
+            'Dist', 'lastvx', 'lastvy'])
 
     # Add the cannonsim app
     my_campaign.add_app(name="cannonsim",
                         params=params,
                         encoder=encoder,
-                        decoder=decoder,
-                        collater=collater)
+                        decoder=decoder)
 
     # Set the active app to be cannonsim (this is redundant when only one app
     # has been added)
@@ -164,5 +161,4 @@ def test_multisampler(db_type, tmpdir):
 
 
 if __name__ == "__main__":
-    test_multisampler('sql', '/tmp/')
-    test_multisampler('json', '/tmp/')
+    test_multisampler('/tmp')

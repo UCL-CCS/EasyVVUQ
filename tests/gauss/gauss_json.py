@@ -66,7 +66,7 @@ numbers_out = np.array(list(enumerate(numbers)))
 #np.savetxt(output_filename, numbers_out, fmt=fmt, header=header)
 
 #json_output = {'numbers': list(numbers)}
-#with open(output_filename + '.json', 'wt') as json_fp:
+# with open(output_filename + '.json', 'wt') as json_fp:
 #    json.dump(json_output, json_fp)
 
 # output csv file
