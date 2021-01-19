@@ -17,10 +17,6 @@ def test_mcmc(tmp_path):
     decoder = uq.decoders.JSONDecoder("output.json", ["value"])
     campaign.add_app(name="mcmc", params=params, encoder=encoder, decoder=decoder)
     b = 1.0
-    vary = {
-        "x1": cp.Normal(0.0, b ** 2),
-        "x2": cp.Normal(0.0, b ** 2)
-    }
     vary_init = {
         "x1": 0.0,
         "x2": 0.0
@@ -28,10 +24,18 @@ def test_mcmc(tmp_path):
     sampler = uq.sampling.MCMCSampler(vary_init)
     campaign.set_sampler(sampler)
     action = uq.actions.ExecuteLocal("tutorials/rosenbrock.py input.json")
+    qoi = 'value'
+    def get_q_xy(x, y):
+        pass
+    def get_q_yx(x, y):
+        pass
     for _ in range(100):
         campaign.draw_samples(1)
         campaign.populate_runs_dir()
         campaign.apply_for_each_run_dir(action)
         campaign.collate()
         result = campaign.get_collation_result()
-
+        last_row = result.iloc[-1]
+        y = dict((key, last_row[key][0]) for key in vary_init.keys())
+        sampler.update(y, last_row[qoi][0], q_xy, q_yx)
+        
