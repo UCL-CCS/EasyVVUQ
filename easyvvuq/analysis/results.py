@@ -369,11 +369,6 @@ class AnalysisResults:
             if input_ not in self.inputs:
                 raise RuntimeError("no such input variable - {}".format(input_))
         import matplotlib.pyplot as plt
-        if xs is None:
-            xs = np.arange(len(self.describe(qoi, 'mean')))
-        else:
-            if len(xs) != len(self.describe(qoi, 'mean')):
-                raise RuntimeError("wrong size - {}".format(xs))
         if withdots:
             styles = itertools.cycle(['-o', '-v', '-^', '-<', '->', '-8', '-s',
                                       '-p', '-*', '-h', '-H', '-D', '-d', '-P', '-X'])
@@ -388,6 +383,8 @@ class AnalysisResults:
                 points = [indices]
             else:
                 points.append(self.sobols_first(qoi, input_))
+        if xs is None:
+            xs = np.arange(1, len(points[0])+1)
         for p, label in zip(points, inputs):
             plt.plot(xs, p, next(styles), label=label)
         plt.grid(True)
@@ -430,10 +427,7 @@ class AnalysisResults:
             raise RuntimeError("no such qoi - {}".format(qoi))
         import matplotlib.pyplot as plt
         if xs is None:
-            xs = np.arange(len(self.describe(qoi, 'mean')))
-        else:
-            if len(xs) != len(self.describe(qoi, 'mean')):
-                raise RuntimeError("wrong size - {}".format(xs))
+            xs = np.arange(1, len(self.describe(qoi, 'mean'))+1)
         plt.fill_between(
             xs, self.describe(
                 qoi, 'min'), self.describe(
