@@ -38,4 +38,4 @@ class MCMCSampler(BaseSamplingElement, sampler_name='mcmc_sampler'):
         return True
 
     def get_restart_dict(self):
-        return {}
+        return {"init": self.x}
