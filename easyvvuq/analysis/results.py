@@ -180,9 +180,6 @@ class AnalysisResults:
             raise RuntimeError(
                 'this kind of sobol index reporting not implemented in this analysis method')
 
-    def _describe(self, qoi, statistic):
-            raise NotImplementedError
-
     def sobols_first(self, qoi=None, input_=None):
         """Return first order sensitivity indices.
 
