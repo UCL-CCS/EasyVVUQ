@@ -37,7 +37,7 @@ __license__ = "LGPL"
 class SCAnalysisResults(AnalysisResults):
     def _get_sobols_first(self, qoi, input_):
         raw_dict = AnalysisResults._keys_to_tuples(self.raw_data['sobols_first'])
-        result = raw_dict[AnalysisResults._to_tuple(qoi)][input_][0]
+        result = raw_dict[AnalysisResults._to_tuple(qoi)][input_]
         try:
             return np.array([float(result)])
         except TypeError:
@@ -186,19 +186,8 @@ class SCAnalysis(BaseAnalysisElement):
 
         # 1d weights and points per level
         self.xi_1d = self.sampler.xi_1d
-        self.wi_1d = self.compute_SC_weights(rule=self.sampler.quad_rule)
-
-        # # per level, map a unique index k to all (level multi indices, colloc points)
-        # # combinations. Will differ for sparse or full tensor grids.
-        # # All interpolation/quadrature subroutines loop over the entries in Map
-        # self.Map = {}
-        # self.surr_lm1 = {}
-
-        # logging.debug('Computing collocation points and level indices...')
-        # for level in range(self.L_min, self.L + 1):
-        #     self.Map[level] = self.create_map(level)
-        # logging.debug('done.')
-        # self.clear_surr_lm1()
+        # self.wi_1d = self.compute_SC_weights(rule=self.sampler.quad_rule)
+        self.wi_1d = self.sampler.wi_1d
 
         # Extract output values for each quantity of interest from Dataframe
         print('Loading samples...')
@@ -220,7 +209,8 @@ class SCAnalysis(BaseAnalysisElement):
         self.init_interpolation = True
 
         # TODO: same pce coefs must be computed for every qoi
-        self.pce_coefs = self.SC2PCE(samples[qoi_cols[0]])
+        if self.sparse:
+            self.pce_coefs = self.SC2PCE(samples[qoi_cols[0]])
 
         # Compute descriptive statistics for each quantity of interest
         results = {'statistical_moments': {},
@@ -285,52 +275,6 @@ class SCAnalysis(BaseAnalysisElement):
         logging.debug('done')
         return comb_coef
 
-    # def create_map(self, L):
-    #     """
-    #     Create a map from a unique integer k to each
-    #     (level multi index l, collocation point X) combination. Also
-    #     compute the index of X (f) in the global (sparse) grid xi_d
-
-    #     Parameters
-    #     ----------
-    #     - N (int) = number of parameters
-    #     - L (int) = max level of grid
-
-    #     Returns
-    #     --------
-    #     - Map: a dict for level L containing k, l, X, and f
-    #     """
-    #     # unique index
-    #     logging.debug('Creating multi-index map for level %d', L)
-    #     # full tensor product
-    #     if not self.sparse:
-    #         # l = (np.ones(N) * L).astype('int')
-    #         l = (self.sampler.polynomial_order)
-    #         # map_ = [{'l': l, 'X': x, 'f': k} for k, x in enumerate(self.xi_d)]
-    #         k = 0
-    #         map_ = {}
-    #         for x in self.xi_d:
-    #             map_[k] = {'l': l, 'X': x, 'f': k}
-    #             k += 1
-    #     # sparse grid
-    #     else:
-    #         # all sparse grid multi indices l
-    #         # l_norm_le_L = self.sampler.compute_sparse_multi_idx(L, N)
-    #         idx_le_L = np.where(np.sum(self.l_norm, axis=1) - self.N + 1 <= L)
-    #         l_norm_le_L = self.l_norm[idx_le_L]
-    #         k = 0
-    #         map_ = {}
-    #         # loop over all multi indices
-    #         for l in l_norm_le_L:
-    #             # colloc point of current level index l
-    #             X_l = [self.xi_1d[n][l[n]] for n in range(self.N)]
-    #             X_l = np.array(list(product(*X_l)))
-    #             for x in X_l:
-    #                 j = np.where((x == self.xi_d).all(axis=1))[0][0]
-    #                 map_[k] = {'l': l, 'X': x, 'f': j}
-    #                 k += 1
-    #     logging.debug('done.')
-    #     return map_
 
     def adapt_dimension(self, qoi, data_frame, store_stats_history=True,
                         method='surplus', **kwargs):
@@ -546,7 +490,7 @@ class SCAnalysis(BaseAnalysisElement):
         plt.tight_layout()
         plt.show()
 
-    def surrogate(self, qoi, x, L=None, recursive=False):
+    def surrogate(self, qoi, x, L=None):
         """
         Use sc_expansion UQP as a surrogate
 
@@ -555,8 +499,6 @@ class SCAnalysis(BaseAnalysisElement):
         - qoi (str): name of the qoi
         - x (array): location at which to evaluate the surrogate
         - L (int): level of the (sparse) grid, default = self.L
-        - recursive (boolean): use the recursive implementation of the
-          SC expansion, default = False.
 
         Returns
         -------
@@ -566,12 +508,9 @@ class SCAnalysis(BaseAnalysisElement):
         if L is None:
             L = self.L
 
-        if not recursive:
-            return self.sc_expansion(self.samples[qoi], x=x)
-        else:
-            return self.sc_expansion_recursive(L, self.samples[qoi], x=x)
+        return self.sc_expansion(self.samples[qoi], x=x)
 
-    def quadrature(self, qoi, samples=None, combination_technique=True):
+    def quadrature(self, qoi, samples=None):
         """
         Computes a (Smolyak) quadrature
 
@@ -583,22 +522,13 @@ class SCAnalysis(BaseAnalysisElement):
           by setting samples = self.samples. To compute the variance,
           set samples = (self.samples - mean)**2
 
-        - combination_technique: compute the (sparse) grid quadrature by
-          using the general combination technique, default = True. If False,
-          the quadrature is computed by a brute force expansion of quadrature
-          difference formulas, which is inefficient in high dimensions.
-
         Returns: the quadrature of qoi
         -------
         """
         if samples is None:
             samples = self.samples[qoi]
 
-        if combination_technique:
-            return self.combination_technique(qoi, samples)
-        else:
-            # brute force quad computation
-            return np.array([self.compute_Q_diff(l, samples) for l in self.l_norm]).sum(axis=0)
+        return self.combination_technique(qoi, samples)
 
     def combination_technique(self, qoi, samples=None, **kwargs):
         """
@@ -661,60 +591,7 @@ class SCAnalysis(BaseAnalysisElement):
 
         return Q
 
-    # def compute_Q_diff(self, l, samples):
-    #     """
-    #     Brute force computation of quadrature difference operators \Delta_l
-    #     Note: superseded by combination_technique. Becomes slow though
-    #     for a large number of parameters.
-    #     =======================================================================
-    #     For every multi index l = (l1, l2, ..., ld), Smolyak sums over
-    #     tensor products difference quadrature rules:
-    #     (Q^1_{l1} - Q^1_{l1-1}) X ... X (Q^1_{lN) - Q^1_{lN-1})
-    #     Below this product is expanded into individual tensor products, each
-    #     of which is then computed as:
-    #     Q^1_{k1} X ... X Q^1_{kN} = sum...sum w_{k1}*...*w_{kN}*f(x_{k1},...,x_{kN})
-    #     =======================================================================
-    #     Parameters
-    #     - l : multi index of quadrature orders
-    #     - samples: array of samples to use in the quadrature
-
-    #     Returns: value of the difference operator
-    #     """
-
-    #     # expand the multi-index indices of the tensor product
-    #     # (Q^1_{i1} - Q^1_{i1-1}) X ... X (Q^1_{id) - Q^1_{id-1})
-    #     diff_idx = np.array(list(product(*[[k, -(k - 1)] for k in l])))
-
-    #     # Delta will be the sum of all expanded tensor products
-    #     # Q^1_{k1} X ... X Q^1_{kd} = sum...sum w_{k1}*...*w_{kN}*f(x_{k1},...,x_{kd})
-    #     Delta = 0.0
-
-    #     # each diff contains the level indices of to a single
-    #     # Q^1_{k1} X ... X Q^1_{kN} product
-    #     for diff in diff_idx:
-    #         # if any Q^1_{ki} is below the minimim level, Q^1_{ki} is defined
-    #         # as zero: do not compute this Q^1_{k1} X ... X Q^1_{kN} product
-    #         if not (np.abs(diff) < self.l_norm_min).any():
-
-    #             # compute the tensor product of parameter and weight values
-    #             X_k = [self.xi_1d[n][np.abs(diff)[n]] for n in range(self.N)]
-    #             W_k = [self.wi_1d[n][np.abs(diff)[n]] for n in range(self.N)]
-
-    #             X_k = np.array(list(product(*X_k)))
-    #             W_k = np.array(list(product(*W_k)))
-    #             W_k = np.prod(W_k, axis=1)
-    #             W_k = W_k.reshape([W_k.shape[0], 1])
-
-    #             # find corresponding code values
-    #             f_k = np.array([samples[np.where((x == self.xi_d).all(axis=1))[0][0]] for x in X_k])
-
-    #             # quadrature of Q^1_{k1} X ... X Q^1_{kN} product
-    #             Q_prod = np.sum(f_k * W_k, axis=0).T
-    #             Delta += np.sign(np.prod(diff)) * Q_prod
-
-    #     return Delta
-
-    def get_moments(self, qoi, combination_technique=True):
+    def get_moments(self, qoi):
         """
         Parameters
         ----------
@@ -727,11 +604,10 @@ class SCAnalysis(BaseAnalysisElement):
         """
         logging.debug('Computing moments...')
         # compute mean
-        mean_f = self.quadrature(qoi, combination_technique=combination_technique)
+        mean_f = self.quadrature(qoi)
         # compute variance
         variance_samples = [(sample - mean_f)**2 for sample in self.samples[qoi]]
-        var_f = self.quadrature(qoi, samples=variance_samples,
-                                combination_technique=combination_technique)
+        var_f = self.quadrature(qoi, samples=variance_samples)
         logging.debug('done')
         return mean_f, var_f
 
@@ -789,168 +665,6 @@ class SCAnalysis(BaseAnalysisElement):
 
         return surr
 
-    # def sc_expansion_recursive(self, L, samples, x):
-    #     """
-    #     --------------------------------------------
-    #     Recursive implementation of the SC expansion.
-    #     --------------------------------------------
-
-    #     Can perform interpolation for both full and sparse grids.
-
-    #     For a qoi q, it computes the following tensor product:
-
-    #     $\\approx \\sum_{l in \\Lambda} \\Delta_{l}[q](x)$
-
-    #     where $\\Delta_{l}$ is the difference at x between surrogates / quadratues
-    #     of level L and L-1. See e.g.:
-
-    #     Dimitrios Loukrezis et. al., "Assessing the Performance of Leja and
-    #     Clenshaw-Curtis Collocation for Computational Electromagnetics with
-    #     Random Input Data."
-
-    #     Parameters
-    #     ----------
-
-    #     - x (float (N,)): location in stochastic space at which to eval the surrogate
-    #     - L (int): max level of the surrogate
-
-    #     Returns
-    #     -------
-
-    #     surr (float, (N_qoi,)): the interpolated value of qoi at x
-    #     """
-
-    #     # for L < L_min the surrogate is defined as zero
-    #     if L < self.L_min:
-    #         return 0.0
-
-    #     surr = np.zeros(self.N_qoi)
-
-    #     # contains the level multi-indices (l), colloc points x and samples
-    #     # indices f of the (sparse) grid
-    #     Map = self.Map[L]
-
-    #     for k in Map.keys():
-
-    #         # the current code samples
-    #         q_k = samples[Map[k]['f']]
-
-    #         # the current level multi index (l_1,...,l_N)
-    #         l = Map[k]['l']
-
-    #         # the hierarchical surplus (s_k) between the code output q_k and the
-    #         # previous surrogate of level L-1 evaluated at the same location.
-    #         # Recursively computed.
-
-    #         if self.sparse:
-    #             # In case of sparse grid: level = sum(l) - N + 1
-    #             # so prev level is sum(l) - N
-    #             Lm1 = np.sum(l) - self.N
-    #         else:
-    #             # previous level of full tensor grid = L - 1, will yield a zero
-    #             Lm1 = self.L - 1
-
-    #         if k in self.surr_lm1[L]:
-    #             #logging.debug('surrogate already computed')
-    #             surr_lm1 = self.surr_lm1[L][k]
-    #         else:
-    #             surr_lm1 = self.sc_expansion_recursive(Lm1, samples, x=Map[k]['X'])
-    #             self.surr_lm1[L][k] = surr_lm1
-
-    #         s_k = q_k - surr_lm1
-
-    #         # indices of current collocation point (Map[k]['X'][n]),
-    #         # in corresponding 1d colloc points (self.xi_1d[n][l[n]])
-    #         # These are the j of the 1D lagrange polynomials l_j(x), see
-    #         # lagrange_poly subroutine
-    #         idx = [(self.xi_1d[n][l[n]] == Map[k]['X'][n]).nonzero()[0][0] for n in range(self.N)]
-    #         # interpolate
-    #         # add values of Lagrange polynomials at x
-    #         weight = [lagrange_poly(x[n], self.xi_1d[n][l[n]], idx[n]) for n in range(self.N)]
-    #         # Delta is the interpolation of the hierarchical surplus
-    #         surr += s_k * np.prod(weight)
-
-    #     return surr
-
-    # def clear_surr_lm1(self):
-    #     """
-    #     Clears the interpolation results in surr_lm1[ID].
-
-    #     surr_lm1 is a dictionary used to store surrogate results at
-    #     previous level (l-1). Used to avoid recomputing the surrogate
-    #     in the recursive sc_expansion subroutine.
-
-    #     surr_lm1[l][k] stores the interpolation results
-    #     of level l-1 at collocation point X_k
-
-    #     Parameters
-    #     ----------
-    #     - ID (str): either 'interpolate' or 'quadrature'
-
-    #     """
-    #     self.surr_lm1 = {}
-    #     for level in range(self.L_min, self.L + 1):
-    #         self.surr_lm1[level] = {}
-
-    def compute_SC_weights(self, rule):
-        """
-        Computes the 1D quadrature weights w_j of the SC expansion:
-
-            w_j = int L_j(x)p(x) dx                             (1)
-
-        Here L_j is a Lagrange polynomial of the SC expansion.
-
-        Parameters
-        ----------
-        - rule ("str"): chaospy quadrature rule used to compute (1),
-
-
-        Returns
-        -------
-        - wi_1d (dict): wi_1d[n][l] gives an array
-          of quadrature weigths for the n-th parameter at level l.
-
-          IMPORTANT:
-          If rule is the same as the rule used to compute the SC
-          collocation points, these weights will equal the weights
-          computed by chaospy, since L_j(x_k) = 1 when j=k and 0
-          for the rest. This is the default setting.
-        """
-
-        # no need to recompute weights
-        if rule == self.sampler.quadrature_rule:
-            return self.sampler.wi_1d
-        # recompute weights - generally not used
-        else:
-            wi_1d = {}
-
-            params = self.sampler.params_distribution
-
-            for n in range(self.N):
-                # 1d weights for n-th parameter
-                wi_1d[n] = {}
-                # loop over all level of collocation method
-                for level in range(1, self.L + 1):
-                    # current SC nodes over dimension n and level
-                    xi_1d = self.xi_1d[n][level]
-                    wi_1d[n][level] = np.zeros(xi_1d.size)
-
-                    # generate a quadrature rule to compute the SC weights
-                    xi_quad, wi_quad = cp.generate_quadrature(level, params[n], rule=rule)
-                    xi_quad = xi_quad[0]
-
-                    # compute integral of the lagrange polynomial through xi_1d, weighted
-                    # by the input distributions:
-                    # w_j = int L_j(xi) p(xi) dxi j = 1,..,xi_1d.size
-                    for j in range(xi_1d.size):
-                        # values of L_i(xi_quad)
-                        lagrange_quad = np.zeros(xi_quad.size)
-                        for i in range(xi_quad.size):
-                            lagrange_quad[i] = lagrange_poly(xi_quad[i], xi_1d, j)
-                        # quadrature
-                        wi_1d[n][level][j] = np.sum(lagrange_quad * wi_quad)
-
-            return wi_1d
 
     def get_sample_array(self, qoi):
         """
