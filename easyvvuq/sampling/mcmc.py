@@ -39,3 +39,30 @@ class MCMCSampler(BaseSamplingElement, sampler_name='mcmc_sampler'):
 
     def get_restart_dict(self):
         return {"init": self.x}
+
+    def mcmc_sampling(self, campaign, init, q_xy, q_yx, iterations=100):
+        """Performs the MCMC sampling procedure on the campaign.
+
+        Parameters
+        ----------
+        campaign: Campaign
+            campaign instance
+        init: dict
+            Initial input parameter values. A dictionary where keys are input parameter names and
+            values are initial values for those parameters.
+        q_xy: function
+            A python function that takes as inputs two dictionaries and returns a float.
+        q_yx: function
+            A python function that takes as inputs two dictionaries and returns a float.
+        iterations: int
+            Number of iterations.
+        """
+        for _ in range(iterations):
+            campaign.draw_samples(1)
+            campaign.populate_runs_dir()
+            campaign.apply_for_each_run_dir(action)
+            campaign.collate()
+            result = campaign.get_collation_result()
+            last_row = result.iloc[-1]
+            y = dict((key, last_row[key][0]) for key in init.keys())
+            self.update(y, last_row[qoi][0], q_xy(self.x, y), q_yx(self.x, y))

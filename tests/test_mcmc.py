@@ -29,13 +29,4 @@ def test_mcmc(tmp_path):
         pass
     def get_q_yx(x, y):
         pass
-    for _ in range(100):
-        campaign.draw_samples(1)
-        campaign.populate_runs_dir()
-        campaign.apply_for_each_run_dir(action)
-        campaign.collate()
-        result = campaign.get_collation_result()
-        last_row = result.iloc[-1]
-        y = dict((key, last_row[key][0]) for key in vary_init.keys())
-        sampler.update(y, last_row[qoi][0], get_q_xy(sampler.x, y), get_q_yx(sampler.x, y))
-        
+    sampler.mcmc_sampling(campaign, vary_init, get_q_xy, get_q_yx)
