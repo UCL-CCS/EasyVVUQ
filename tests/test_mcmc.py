@@ -37,5 +37,5 @@ def test_mcmc(tmp_path):
         result = campaign.get_collation_result()
         last_row = result.iloc[-1]
         y = dict((key, last_row[key][0]) for key in vary_init.keys())
-        sampler.update(y, last_row[qoi][0], q_xy, q_yx)
+        sampler.update(y, last_row[qoi][0], get_q_xy(sampler.x, y), get_q_yx(sampler.x, y))
         
