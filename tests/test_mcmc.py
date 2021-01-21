@@ -16,17 +16,13 @@ def test_mcmc(tmp_path):
         template_fname=os.path.abspath("tutorials/rosenbrock.template"), delimiter="$", target_filename="input.json")
     decoder = uq.decoders.JSONDecoder("output.json", ["value"])
     campaign.add_app(name="mcmc", params=params, encoder=encoder, decoder=decoder)
-    b = 1.0
     vary_init = {
         "x1": 0.0,
         "x2": 0.0
     }
-    sampler = uq.sampling.MCMCSampler(vary_init)
+    def q(x, b=1.0):
+        return cp.J(cp.Normal(x['x1'], b), cp.Normal(x['x2'], b))
+    sampler = uq.sampling.MCMCSampler(vary_init, q, 'value')
     campaign.set_sampler(sampler)
     action = uq.actions.ExecuteLocal("tutorials/rosenbrock.py input.json")
-    qoi = 'value'
-    def get_q_xy(x, y):
-        pass
-    def get_q_yx(x, y):
-        pass
-    sampler.mcmc_sampling(campaign, vary_init, get_q_xy, get_q_yx)
+    sampler.mcmc_sampling(campaign)
