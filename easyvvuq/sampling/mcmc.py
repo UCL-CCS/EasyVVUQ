@@ -4,6 +4,16 @@ import chaospy as cp
 
 
 class MCMCSampler(BaseSamplingElement, sampler_name='mcmc_sampler'):
+    """A Metropolis-Hastings MCMC Sampler.
+
+    Parameters
+    ----------
+    init: dict
+       Initial values for each input parameter. Of the form {'input1': value, ...}
+    q: function
+       A function of one argument X (dictionary) that returns the proposal distribution conditional on 
+    the X.
+    """
     def __init__(self, init, q):
         self.x = init
         self.q = q
@@ -16,7 +26,7 @@ class MCMCSampler(BaseSamplingElement, sampler_name='mcmc_sampler'):
 
     def __next__(self):
         y = {}
-        y_ = self.q(self.x[key]).sample()
+        y_ = self.q(self.x).sample()
         for i, key in enumerate(self.x.keys()):
             y[key] = y_[i]
         return y
