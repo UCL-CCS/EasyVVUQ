@@ -4,12 +4,9 @@ import chaospy as cp
 
 
 class MCMCSampler(BaseSamplingElement, sampler_name='mcmc_sampler'):
-    def __init__(self, init):
+    def __init__(self, init, q):
         self.x = init
-        self.f_y = None
-        self.f_x = None
-        self.q_xy = None
-        self.q_yx = None
+        self.q = q
 
     def element_version(self):
         return "0.1"
@@ -18,21 +15,18 @@ class MCMCSampler(BaseSamplingElement, sampler_name='mcmc_sampler'):
         return False
 
     def __next__(self):
-        if self.f_x is None:
-            return self.x
-        r = min(1.0, (self.f_y / self.f_x) * (self.q_xy / self.q_yx))
-        if np.random.random() < r:
-            return self.y
-        else:
-            return self.x
+        y = {}
+        for key in self.x.keys():
+            y[key] = self.q(self.x[key]).sample()[0]
+        return y
 
-    def update(self, y, f_y, q_xy, q_yx):
-        self.x = self.y
-        self.y = y
-        self.f_x = self.f_x
-        self.f_y = f_y
-        self.q_xy = q_xy
-        self.q_yx = q_yx
+    def update(self, y, f_y, q):
+        r = min(1.0, (self.f_y / self.f_x) * q)
+        if np.random.random() < r:
+            self.x = self.y
+            self.y = y
+            self.f_x = self.f_x
+            self.f_y = f_y
 
     def is_restartable(self):
         return True
