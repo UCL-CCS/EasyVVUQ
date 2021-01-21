@@ -2,18 +2,18 @@ import os
 import easyvvuq as uq
 import numpy as np
 import chaospy as cp
+import pytest
+import logging
 
-
-def exact_sobols_poly_model():
-    """
-    Exact Sobol indices for the polynomial test model
-    """
-    S_i = np.zeros(d)
-
+def exact_sobols_g_func(d=2, a=[0.0, 0.5, 3.0, 9.0, 99.0]):
+    # for the Sobol g function, the exact (1st-order)
+    # Sobol indices are known analytically
+    V_i = np.zeros(d)
     for i in range(d):
-        S_i[i] = 5**-(i + 1) / ((6 / 5)**d - 1)
-
-    return S_i
+        V_i[i] = 1.0 / (3.0 * (1 + a[i])**2)
+    V = np.prod(1 + V_i) - 1
+    logging.debug('Exact 1st-order Sobol indices: ', V_i / V)
+    return V_i / V
 
 
 # number of unknown variables
@@ -25,10 +25,10 @@ __license__ = "LGPL"
 HOME = os.path.abspath(os.path.dirname(__file__))
 
 
-# An EasyVVUQ campaign on sobol_model.py. Takes the polynomial order as input
-def run_campaign(poly_order, work_dir='/tmp'):
+@pytest.fixture
+def sparse_campaign():
     # Set up a fresh campaign called "sc"
-    my_campaign = uq.Campaign(name='sc', work_dir=work_dir)
+    campaign = uq.Campaign(name='sc', work_dir='/tmp')
 
     # Define parameter space
     params = {
@@ -75,16 +75,13 @@ def run_campaign(poly_order, work_dir='/tmp'):
         delimiter='$',
         target_filename='poly_in.json')
     decoder = uq.decoders.SimpleCSV(target_filename=output_filename,
-                                    output_columns=output_columns,
-                                    header=0)
-    collater = uq.collate.AggregateSamples(average=False)
+                                    output_columns=output_columns)
 
     # Add the SC app (automatically set as current app)
-    my_campaign.add_app(name="sc",
+    campaign.add_app(name="sc",
                         params=params,
                         encoder=encoder,
-                        decoder=decoder,
-                        collater=collater)
+                        decoder=decoder)
 
     # Create the sampler
     vary = {
@@ -93,53 +90,60 @@ def run_campaign(poly_order, work_dir='/tmp'):
 
     # To use 'next_level_sparse_grid' below, we must select a nested
     # sparse grid here
-    my_sampler = uq.sampling.SCSampler(vary=vary, polynomial_order=poly_order,
+    sampler = uq.sampling.SCSampler(vary=vary, polynomial_order=5,
                                        quadrature_rule="C", sparse=True,
                                        growth=True)
 
     # Associate the sampler with the campaign
-    my_campaign.set_sampler(my_sampler)
+    campaign.set_sampler(sampler)
 
-    print('Number of samples:', my_sampler._number_of_samples)
+    print('Number of samples:', sampler.n_samples)
 
     # Will draw all (of the finite set of samples)
-    my_campaign.draw_samples()
-    my_campaign.populate_runs_dir()
+    campaign.draw_samples()
+    campaign.populate_runs_dir()
 
     # Use this instead to run the samples using EasyVVUQ on the localhost
-    my_campaign.apply_for_each_run_dir(uq.actions.ExecuteLocal(
-        "tests/sc/poly_model.py poly_in.json"))
+    campaign.apply_for_each_run_dir(uq.actions.ExecuteLocal(
+        "tests/sc/sobol_model.py poly_in.json"))
 
-    my_campaign.collate()
+    campaign.collate()
 
     # Post-processing analysis
-    analysis = uq.analysis.SCAnalysis(sampler=my_sampler, qoi_cols=output_columns)
-    my_campaign.apply_analysis(analysis)
-    results = my_campaign.get_last_analysis()
+    analysis = uq.analysis.SCAnalysis(sampler=sampler, qoi_cols=output_columns)
+    campaign.apply_analysis(analysis)
+    results = campaign.get_last_analysis()
 
-    # update the sparse grid to the next level
-    my_sampler.next_level_sparse_grid()
+    n_adaptations = 1
 
-    # draw the new samples
-    my_campaign.draw_samples()
-    my_campaign.populate_runs_dir()
+    for i in range(n_adaptations):
+        # update the sparse grid to the next level
+        sampler.next_level_sparse_grid()
+    
+        # draw the new samples
+        campaign.draw_samples()
+        campaign.populate_runs_dir()
+    
+        campaign.apply_for_each_run_dir(uq.actions.ExecuteLocal(
+            "tests/sc/sobol_model.py poly_in.json"))
+    
+        campaign.collate()
 
-    my_campaign.apply_for_each_run_dir(uq.actions.ExecuteLocal(
-        "tests/sc/poly_model.py poly_in.json"))
+    campaign.apply_analysis(analysis)
+    results = campaign.get_last_analysis()
 
-    my_campaign.collate()
-    my_campaign.apply_analysis(analysis)
-    results = my_campaign.get_last_analysis()
+    return sampler, analysis, results
 
+def test_results(sparse_campaign):
+    
+    sampler, analysis, results = sparse_campaign
+    ref_sobols = exact_sobols_g_func()
+    
+    print(analysis.l_norm)
+    
     # check the computed Sobol indices against the analytical result
     for i in range(ref_sobols.size):
+        computed_sobols = results._get_sobols_first('f', 'x%d' % (i+1))
+        print(computed_sobols)
         print('Exact Sobol indices order %d = %.4f' % (i + 1, ref_sobols[i]))
-    print('Computed Sobol indices', results['sobols']['f'])
-
-
-if __name__ == '__main__':
-
-    # analytic Sobol indices
-    ref_sobols = exact_sobols_poly_model()
-
-    run_campaign(poly_order=2)
+    

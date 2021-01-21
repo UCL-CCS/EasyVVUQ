@@ -172,3 +172,6 @@ def test_results(adaptive_campaign):
     f_at_x = poly_model(x)
     surrogate_at_x = analysis.surrogate('f', x)
     assert(f_at_x == pytest.approx(surrogate_at_x, abs=0.01))
+    
+    #check uncertainty magnification factor
+    assert(analysis.get_uncertainty_amplification('f') == pytest.approx(0.8048, abs=1e-4))
