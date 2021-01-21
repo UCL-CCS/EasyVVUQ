@@ -243,7 +243,7 @@ class SCAnalysis(BaseAnalysisElement):
                 for idx, param_name in enumerate(self.sampler.vary.get_keys()):
                     results['sobols_first'][qoi_k][param_name] = \
                         results['sobols'][qoi_k][(idx,)]
-                        
+
         return SCAnalysisResults(raw_data=results, samples=data_frame,
                                  qois=qoi_cols, inputs=list(self.sampler.vary.get_keys()))
 
@@ -274,7 +274,6 @@ class SCAnalysis(BaseAnalysisElement):
             comb_coef[tuple(k)] = coef
         logging.debug('done')
         return comb_coef
-
 
     def adapt_dimension(self, qoi, data_frame, store_stats_history=True,
                         method='surplus', **kwargs):
@@ -399,7 +398,7 @@ class SCAnalysis(BaseAnalysisElement):
                 sys.exit()
 
         for key in error.keys():
-            logging.debug("Surplus error when l = %s is %s" %(key, error[key]))
+            logging.debug("Surplus error when l = %s is %s" % (key, error[key]))
         # find the admissble index with the largest error
         l_star = np.array(max(error, key=error.get)).reshape([1, self.N])
         logging.debug('Selecting %s for refinement.' % l_star)
@@ -664,7 +663,6 @@ class SCAnalysis(BaseAnalysisElement):
                 surr += self.comb_coef[tuple(l)] * samples[idx] * np.prod(weight)
 
         return surr
-
 
     def get_sample_array(self, qoi):
         """
@@ -1204,7 +1202,7 @@ class SCAnalysis(BaseAnalysisElement):
             sobol[u] = D_u[u] / D
         print('done.')
         return sobol
-    
+
     def get_uncertainty_amplification(self, qoi):
         """
         Computes a measure that signifies the ratio of output to input
@@ -1247,6 +1245,7 @@ class SCAnalysis(BaseAnalysisElement):
         print('-----------------')
 
         return blowup
+
 
 def powerset(iterable):
     """

@@ -264,7 +264,7 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
 
         # update level of sparse grid
         L = np.max(self.polynomial_order) + 1
-        self.L  = L
+        self.L = L
         self.polynomial_order = [p + 1 for p in self.polynomial_order]
 
         print('Moving grid from level %d to level %d' % (L - 1, L))

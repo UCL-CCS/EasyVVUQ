@@ -5,6 +5,7 @@ import chaospy as cp
 import pytest
 import logging
 
+
 def exact_sobols_g_func(d=2, a=[0.0, 0.5, 3.0, 9.0, 99.0]):
     # for the Sobol g function, the exact (1st-order)
     # Sobol indices are known analytically
@@ -42,26 +43,6 @@ def sparse_campaign():
             "min": 0.0,
             "max": 1.0,
             "default": 0.5},
-        "x3": {
-            "type": "float",
-            "min": 0.0,
-            "max": 1.0,
-            "default": 0.5},
-        "x4": {
-            "type": "float",
-            "min": 0.0,
-            "max": 1.0,
-            "default": 0.5},
-        "x5": {
-            "type": "float",
-            "min": 0.0,
-            "max": 1.0,
-            "default": 0.5},
-        "x6": {
-            "type": "float",
-            "min": 0.0,
-            "max": 1.0,
-            "default": 0.5},
         "out_file": {
             "type": "string",
             "default": "output.csv"}}
@@ -79,9 +60,9 @@ def sparse_campaign():
 
     # Add the SC app (automatically set as current app)
     campaign.add_app(name="sc",
-                        params=params,
-                        encoder=encoder,
-                        decoder=decoder)
+                     params=params,
+                     encoder=encoder,
+                     decoder=decoder)
 
     # Create the sampler
     vary = {
@@ -91,8 +72,8 @@ def sparse_campaign():
     # To use 'next_level_sparse_grid' below, we must select a nested
     # sparse grid here
     sampler = uq.sampling.SCSampler(vary=vary, polynomial_order=5,
-                                       quadrature_rule="C", sparse=True,
-                                       growth=True)
+                                    quadrature_rule="C", sparse=True,
+                                    growth=True)
 
     # Associate the sampler with the campaign
     campaign.set_sampler(sampler)
@@ -119,14 +100,14 @@ def sparse_campaign():
     for i in range(n_adaptations):
         # update the sparse grid to the next level
         sampler.next_level_sparse_grid()
-    
+
         # draw the new samples
         campaign.draw_samples()
         campaign.populate_runs_dir()
-    
+
         campaign.apply_for_each_run_dir(uq.actions.ExecuteLocal(
             "tests/sc/sobol_model.py poly_in.json"))
-    
+
         campaign.collate()
 
     campaign.apply_analysis(analysis)
@@ -134,16 +115,31 @@ def sparse_campaign():
 
     return sampler, analysis, results
 
+
+def test_next_level_sparse_grid(sparse_campaign):
+    """
+    Check if the isotropic refinement worked propoerly (sampler.next_level_sparse_grid)
+    """
+    sampler, analysis, _ = sparse_campaign
+    # we started with a level 5 grid, check if the grid is now level 6
+    assert(np.array_equal(analysis.l_norm, np.array([[1, 1], [1, 2], [1, 3], [1, 4], [1, 5], [1, 6],
+                                                     [2, 1], [2, 2], [2, 3], [2, 4], [2, 5], [3, 1],
+                                                     [3, 2], [3, 3], [3, 4], [4, 1], [4, 2], [4, 3],
+                                                     [5, 1], [5, 2], [6, 1]])))
+    # check if the grid has the right size
+    assert(sampler.xi_d.shape[0] == 145)
+
+
 def test_results(sparse_campaign):
-    
-    sampler, analysis, results = sparse_campaign
+    """
+    Check if the results were computed correctly
+    """
+    _, _, results = sparse_campaign
     ref_sobols = exact_sobols_g_func()
-    
-    print(analysis.l_norm)
-    
+
     # check the computed Sobol indices against the analytical result
     for i in range(ref_sobols.size):
-        computed_sobols = results._get_sobols_first('f', 'x%d' % (i+1))
-        print(computed_sobols)
-        print('Exact Sobol indices order %d = %.4f' % (i + 1, ref_sobols[i]))
-    
+        computed_sobol = results._get_sobols_first('f', 'x%d' % (i + 1))
+        print('Exact Sobol indices x%d = %.4f' % (i + 1, ref_sobols[i]))
+        print('Computed Sobol indices x%d = %.4f' % (i + 1, computed_sobol))
+        assert(ref_sobols[i] == pytest.approx(computed_sobol, abs=0.01))
