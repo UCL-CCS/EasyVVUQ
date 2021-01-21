@@ -17,8 +17,8 @@ class MCMCSampler(BaseSamplingElement, sampler_name='mcmc_sampler'):
        Name of the quantity of interest
     """
     def __init__(self, init, q, qoi):
-        self.init = init
-        self.x = init
+        self.init = dict(init)
+        self.x = dict(init)
         self.f_x = None
         self.q = q
         self.qoi = qoi
@@ -34,25 +34,17 @@ class MCMCSampler(BaseSamplingElement, sampler_name='mcmc_sampler'):
             return self.x
         y = {}
         y_ = self.q(self.x).sample()
-        for i, key in enumerate(self.x.keys()):
+        for i, key in enumerate(self.init.keys()):
             y[key] = y_[i]
         return y
-
-    def update(self, y, f_y, q):
-        r = min(1.0, (self.f_y / self.f_x) * q)
-        if np.random.random() < r:
-            self.x = self.y
-            self.y = y
-            self.f_x = self.f_x
-            self.f_y = f_y
 
     def is_restartable(self):
         return True
 
     def get_restart_dict(self):
-        return {"init": self.x}
+        return {"init": self.init}
 
-    def mcmc_sampling(self, campaign, iterations=100):
+    def mcmc_sampling(self, campaign, action, iterations=100):
         """Performs the MCMC sampling procedure on the campaign.
 
         Parameters
@@ -61,6 +53,10 @@ class MCMCSampler(BaseSamplingElement, sampler_name='mcmc_sampler'):
             campaign instance
         iterations: int
             Number of iterations.
+
+        Returns
+        -------
+        list of rejected run ids, for testing purposes mainly
         """
         ignored_runs = []
         for _ in range(iterations):
@@ -70,17 +66,18 @@ class MCMCSampler(BaseSamplingElement, sampler_name='mcmc_sampler'):
             campaign.collate()
             result = campaign.get_collation_result()
             last_row = result.iloc[-1]
-            y = dict((key, last_row[key][0]) for key in init.keys())
+            y = dict((key, last_row[key][0]) for key in self.init.keys())
             if self.f_x is None:
                 self.f_x = last_row[self.qoi][0]
             else:
                 f_y = last_row[self.qoi][0]
-                q_xy = self.q(self.y).pdf([self.x[key] for key in self.init.keys()])
+                q_xy = self.q(y).pdf([self.x[key] for key in self.init.keys()])
                 q_yx = self.q(self.x).pdf([y[key] for key in self.init.keys()])
                 r = min(1.0, (f_y / self.f_x) * (q_xy / q_yx))
                 if r < np.random.random():
                     self.x = y
                     self.f_x = f_y
                 else:
-                    ignored_runs.append(last_row['id'])
-        self.campaign.ignore_runs(ignored_runs)
+                    ignored_runs.append(last_row['run_id'][0])
+        campaign.ignore_runs(ignored_runs)
+        return ignored_runs
