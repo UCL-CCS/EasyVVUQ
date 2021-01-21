@@ -20,9 +20,9 @@ def test_mcmc(tmp_path):
         "x1": 0.0,
         "x2": 0.0
     }
-    def q(x, b=1.0):
+    def q(x, b=0.1):
         return cp.J(cp.Normal(x['x1'], b), cp.Normal(x['x2'], b))
     sampler = uq.sampling.MCMCSampler(vary_init, q, 'value')
     campaign.set_sampler(sampler)
     action = uq.actions.ExecuteLocal("tutorials/rosenbrock.py input.json")
-    sampler.mcmc_sampling(campaign)
+    sampler.mcmc_sampling(campaign, action)
