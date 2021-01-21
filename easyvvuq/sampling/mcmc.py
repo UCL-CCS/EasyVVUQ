@@ -16,8 +16,9 @@ class MCMCSampler(BaseSamplingElement, sampler_name='mcmc_sampler'):
 
     def __next__(self):
         y = {}
-        for key in self.x.keys():
-            y[key] = self.q(self.x[key]).sample()[0]
+        y_ = self.q(self.x[key]).sample()
+        for i, key in enumerate(self.x.keys()):
+            y[key] = y_[i]
         return y
 
     def update(self, y, f_y, q):
