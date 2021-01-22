@@ -74,8 +74,8 @@ class MCMCSampler(BaseSamplingElement, sampler_name='mcmc_sampler'):
                 q_xy = self.q(y).pdf([self.x[key] for key in self.init.keys()])
                 q_yx = self.q(self.x).pdf([y[key] for key in self.init.keys()])
                 r = min(1.0, (f_y / self.f_x) * (q_xy / q_yx))
-                if r < np.random.random():
-                    self.x = y
+                if np.random.random() < r:
+                    self.x = dict(y)
                     self.f_x = f_y
                 else:
                     ignored_runs.append(last_row['run_id'][0])
