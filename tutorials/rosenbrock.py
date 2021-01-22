@@ -16,4 +16,4 @@ if __name__ == '__main__':
     output_filename = inputs['outfile']
     y = (1.0 - x1) ** 2 + 100.0 * (x2 - x1 ** 2) ** 2
     with open(output_filename, 'w') as fd:
-        json.dump({'value': y}, fd)
+        json.dump({'value': -y}, fd)

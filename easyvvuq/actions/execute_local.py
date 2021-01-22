@@ -95,6 +95,15 @@ class ExecuteLocal(BaseAction):
         return ActionStatusLocal()
 
 
+class ExecutePython(BaseAction):
+    def __init__(self, function):
+        self.function = function
+
+    def act_on_dir(self, target_dir):
+        self.function(target_dir)
+        return ActionStatusLocal()
+
+
 class ActionStatusLocalV2():
     def __init__(self, full_cmd, target_dir):
         self.full_cmd = full_cmd
