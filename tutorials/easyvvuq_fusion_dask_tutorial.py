@@ -138,7 +138,8 @@ if __name__ == '__main__':      ### This is needed if you are using a local clus
     my_campaign.apply_for_each_run_dir(uq.actions.ExecuteLocal(cmd, interpret='python3'), client)
 
     client.close()
-#    client.shutdown()
+    if not args.local:
+        client.shutdown()
 
     time_end = time.time()
     print('Time for phase 4 = %.3f' % (time_end-time_start))
