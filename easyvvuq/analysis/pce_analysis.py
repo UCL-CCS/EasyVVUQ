@@ -201,7 +201,7 @@ class PCEAnalysis(BaseAnalysisElement):
                                                  'std': std}
 
             # Percentiles: 10%, 50% and 90%
-            P10, P50, P90 = cp.Perc(fit, [10, 50, 90], self.sampler.distribution)
+            P10, P50, P90 = cp.Perc(fit, [10, 50, 90], self.sampler.distribution).squeeze()
             results['percentiles'][k] = {'p10': P10, 'p50': P50, 'p90': P90}
 
             # Sensitivity Analysis: First, Second and Total Sobol indices
