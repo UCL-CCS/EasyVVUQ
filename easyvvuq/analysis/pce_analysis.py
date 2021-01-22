@@ -178,11 +178,15 @@ class PCEAnalysis(BaseAnalysisElement):
         regression = self.sampler.regression
 
         # Extract output values for each quantity of interest from Dataframe
+#        samples = {k: [] for k in qoi_cols}
+#        for run_id in data_frame[('run_id', 0)].unique():
+#            for k in qoi_cols:
+#                data = data_frame.loc[data_frame[('run_id', 0)] == run_id][k]
+#                samples[k].append(data.values.flatten())
+
         samples = {k: [] for k in qoi_cols}
-        for run_id in data_frame[('run_id', 0)].unique():
-            for k in qoi_cols:
-                data = data_frame.loc[data_frame[('run_id', 0)] == run_id][k]
-                samples[k].append(data.values.flatten())
+        for k in qoi_cols:
+            samples[k] = data_frame[k].values
 
         # Compute descriptive statistics for each quantity of interest
         for k in qoi_cols:
