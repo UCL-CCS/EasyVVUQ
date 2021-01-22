@@ -180,7 +180,7 @@ plt.figure()
 for k1 in results.sobols_second()['te'].keys():
     for k2 in results.sobols_second()['te'][k1].keys():
         plt.plot(rho, results.sobols_second()['te'][k1][k2], label=k1+'/'+k2)
-plt.legend(loc=0)
+plt.legend(loc=0, ncol=2)
 plt.xlabel('rho [m]')
 plt.ylabel('sobols_second')
 plt.title(my_campaign.campaign_dir+'\n');
