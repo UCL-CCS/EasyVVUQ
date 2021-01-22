@@ -79,5 +79,5 @@ class MCMCSampler(BaseSamplingElement, sampler_name='mcmc_sampler'):
                     self.f_x = f_y
                 else:
                     ignored_runs.append(last_row['run_id'][0])
-        campaign.ignore_runs(ignored_runs)
+        #campaign.ignore_runs(ignored_runs)
         return ignored_runs
