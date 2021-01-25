@@ -10,12 +10,13 @@ from .qmc_analysis import QMCAnalysisResults
 
 
 class MCMCAnalysisResults(AnalysisResults):
-    def __init__(self, dist, samples):
-        self.dist = dist
+    def __init__(self, samples):
         self.samples = samples
 
-    def get_distribution(self):
-        return self.dist
+    def distribution(self):
+        dist = cp.GaussianKDE(self.samples.values)
+        return dist
+
 
 class MCMCAnalysis(BaseAnalysisElement):
     def __init__(self, sampler, qoi=None):
@@ -30,8 +31,7 @@ class MCMCAnalysis(BaseAnalysisElement):
         """Version of this element"""
         return "0.1"
 
-    def analyse(self, data_frame):
-        data = data[frame][self.sampler.inputs]
-        value = data[frame][self.sampler.qoi]
-        dist = cp.J(*[cp.SampleDist(row.values) for _, row in data.iterrows()])
-        return MCMCAnalysisResults(dist, df[self.sampler.inputs + [self.sampler.qoi]])
+    def analyse(self, df):
+        data = df[self.sampler.inputs]
+        value = df[self.sampler.qoi]
+        return MCMCAnalysisResults(df[self.sampler.inputs])

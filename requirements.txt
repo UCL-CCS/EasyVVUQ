@@ -2,7 +2,7 @@ numpy
 pandas
 scipy
 wheel
-chaospy==3.3.6
+chaospy==4.2.3
 SALib
 pytest
 pytest-pep8
