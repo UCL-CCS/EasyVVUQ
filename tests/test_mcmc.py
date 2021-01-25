@@ -3,6 +3,7 @@ import easyvvuq as uq
 import numpy as np
 import chaospy as cp
 import json
+import matplotlib.pyplot as plt
 
 HOME = os.path.abspath(os.path.dirname(__file__))
 
@@ -34,11 +35,12 @@ def test_mcmc(tmp_path):
         "x1": -3.0,
         "x2": 2.0
     }
-    def q(x, b=1.0):
+    def q(x, b=0.1):
         return cp.J(cp.Normal(x['x1'], b), cp.Normal(x['x2'], b))
     sampler = uq.sampling.MCMCSampler(vary_init, q, 'value')
     campaign.set_sampler(sampler)
     #action = uq.actions.ExecuteLocal("tutorials/rosenbrock.py input.json")
     action = uq.actions.ExecutePython(rosenbrock)
-    ignored = sampler.mcmc_sampling(campaign, action, 200)
-
+    ignored = sampler.mcmc_sampling(campaign, action, 100)
+    df = campaign.get_collation_result()
+    import pdb; pdb.set_trace()

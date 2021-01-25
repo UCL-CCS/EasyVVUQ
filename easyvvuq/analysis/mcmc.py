@@ -10,8 +10,9 @@ from .qmc_analysis import QMCAnalysisResults
 
 
 class MCMCAnalysisResults(AnalysisResults):
-    def __init__(self, dist):
+    def __init__(self, dist, samples):
         self.dist = dist
+        self.samples = samples
 
     def get_distribution(self):
         return self.dist
@@ -30,5 +31,7 @@ class MCMCAnalysis(BaseAnalysisElement):
         return "0.1"
 
     def analyse(self, data_frame):
-        cols = self.sampler.inputs
-        return MCMCAnalysisResults(dist)
+        data = data[frame][self.sampler.inputs]
+        value = data[frame][self.sampler.qoi]
+        dist = cp.J(*[cp.SampleDist(row.values) for _, row in data.iterrows()])
+        return MCMCAnalysisResults(dist, df[self.sampler.inputs + [self.sampler.qoi]])

@@ -16,8 +16,10 @@ class MCMCSampler(BaseSamplingElement, sampler_name='mcmc_sampler'):
     qoi: str
        Name of the quantity of interest
     """
-    def __init__(self, init, q, qoi):
+    def __init__(self, init, q, qoi, n_chains=1):
         self.init = dict(init)
+        self.inputs = list(self.init.keys())
+        self.n_chains = n_chains
         self.x = dict(init)
         self.f_x = None
         self.q = q
@@ -51,6 +53,8 @@ class MCMCSampler(BaseSamplingElement, sampler_name='mcmc_sampler'):
         ----------
         campaign: Campaign
             campaign instance
+        action: BaseAction
+            An action to be executed for each sample.
         iterations: int
             Number of iterations.
 
@@ -79,5 +83,5 @@ class MCMCSampler(BaseSamplingElement, sampler_name='mcmc_sampler'):
                     self.f_x = f_y
                 else:
                     ignored_runs.append(last_row['run_id'][0])
-        #campaign.ignore_runs(ignored_runs)
+        campaign.ignore_runs(ignored_runs)
         return ignored_runs
