@@ -10,12 +10,11 @@ from .qmc_analysis import QMCAnalysisResults
 
 
 class MCMCAnalysisResults(AnalysisResults):
-    def __init__(self, samples):
+    def __init__(self, samples, qoi):
         self.samples = samples
 
     def distribution(self):
-        dist = cp.GaussianKDE(self.samples.values)
-        return dist
+        raise NotImplementedError
 
 
 class MCMCAnalysis(BaseAnalysisElement):
@@ -32,6 +31,6 @@ class MCMCAnalysis(BaseAnalysisElement):
         return "0.1"
 
     def analyse(self, df):
-        data = df[self.sampler.inputs]
-        value = df[self.sampler.qoi]
-        return MCMCAnalysisResults(df[self.sampler.inputs])
+        samples = df[self.sampler.inputs]
+        qoi = df[self.sampler.qoi]
+        return MCMCAnalysisResults(samples, qoi)
