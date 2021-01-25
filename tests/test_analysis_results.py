@@ -87,13 +87,12 @@ def test_plotting(tmp_path, withdots, ylabel, xlabel, dpi):
                       0.99700435, 0.99722148, 0.99742294, 0.99760985, 0.99778327,
                       0.99794416, 0.99809341, 0.99823187, 0.99836031, 0.99847945,
                       0.99858996, 0.99869246, 0.99878754, 0.99887573, 0.99895751])
-    xs = np.linspace(0, 200, 150)
     test_data = {'kappa': kappa, 't_env': t_env}
     results.sobols_first = lambda qoi, input_: test_data[input_]
     results.inputs = ['kappa', 't_env']
     results.plot_sobols_first(
         't', [
-            'kappa', 't_env'], withdots, ylabel, xlabel, xs, filename=os.path.join(
+            'kappa', 't_env'], withdots, ylabel, xlabel, filename=os.path.join(
             tmp_path, 'test.png'), dpi=dpi)
     assert(os.path.exists(os.path.join(tmp_path, 'test.png')))
 

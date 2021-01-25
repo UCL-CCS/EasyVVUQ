@@ -59,5 +59,5 @@ var =results.describe("te", "var")
 
 # Plots
 t = np.linspace(0, 200, 150)
-results.plot_moments(qoi="te", ylabel="Temperature", xlabel="Time", xs=t, alpha=0.2)
-results.plot_sobols_first(qoi="te", xlabel="Time", xs=t)
+results.plot_moments(qoi="te", ylabel="Temperature", xlabel="Time", alpha=0.2)
+results.plot_sobols_first(qoi="te", xlabel="Time")
