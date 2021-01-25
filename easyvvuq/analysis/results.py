@@ -338,8 +338,8 @@ class AnalysisResults:
             return pd.DataFrame(result)
 
     def plot_sobols_first(self, qoi, inputs=None, withdots=False,
-                          ylabel=None, xlabel=None, xs=None, filename=None,
-                          dpi=None):
+                          ylabel=None, xlabel=None, filename=None,
+                          dpi=None, ax=None):
         """Plot first order sobol indices.
 
         Parameters
@@ -354,12 +354,17 @@ class AnalysisResults:
             if None will use "First Order Sobol Index"
         xlabel: str or None
             if None will use the name of the qoi
-        xs : list or None
-            x-axis coordiante if None will use numpy arange
         filename: str or None
             if None will try to open a plotting window on-screen, otherwise will write the plot to this file, with the type determined by the extension specified
         dpi: int
             dots per inch, quality of the image if a raster format was chosen
+        ax: matplotlib axes object, default None
+            if None, plots to a new axes, otherwise plot to existing axes ax
+
+        Returns
+        -------
+        matplotlib axes object
+            the actual axes plotted to
         """
         if qoi not in self.qois:
             raise RuntimeError("no such qoi - {}".format(qoi))
@@ -383,26 +388,29 @@ class AnalysisResults:
                 points = [indices]
             else:
                 points.append(self.sobols_first(qoi, input_))
-        if xs is None:
-            xs = np.arange(1, len(points[0])+1)
+        if ax is None:
+            fig, ax = plt.subplots()
+        else:
+            fig = ax.get_figure()
         for p, label in zip(points, inputs):
-            plt.plot(xs, p, next(styles), label=label)
-        plt.grid(True)
+            ax.plot(p, next(styles), label=label)
+        ax.grid(True)
         if ylabel is None:
-            plt.ylabel('First Order Sobol Index')
+            ax.set_ylabel('First Order Sobol Index')
         else:
-            plt.ylabel(ylabel)
+            ax.set_ylabel(ylabel)
         if xlabel is None:
-            plt.xlabel("xs")
+            ax.set_xlabel(qoi)
         else:
-            plt.xlabel(xlabel)
-        plt.legend()
+            ax.set_xlabel(xlabel)
+        ax.legend()
         if filename is None:
-            plt.show()
+            fig.show()
         else:
-            plt.savefig(filename, dpi=dpi)
+            fig.savefig(filename, dpi=dpi)
+        return ax
 
-    def plot_moments(self, qoi, ylabel=None, xs=None, xlabel=None, alpha=0.5, filename=None, dpi=None):
+    def plot_moments(self, qoi, ylabel=None, xlabel=None, alpha=0.5, filename=None, dpi=None, ax=None):
         """Plot statistical moments for this analysis.
 
         Parameters
@@ -413,8 +421,6 @@ class AnalysisResults:
             if None will use "Values"
         xlabel: str or None
             if None will use the name of the qoi
-        xs : list or None
-            x-axis coordiante if None will use numpy arange
         alpha: float
             transparency amount
         filename: str or None
@@ -422,34 +428,45 @@ class AnalysisResults:
             write the plot to this file, with the type determined by the extension specified
         dpi: int
             dots per inch, quality of the image if a raster format was chosen
+        ax: matplotlib axes object, default None
+            if None, plots to a new axes, otherwise plot to existing axes ax
+
+        Returns
+        -------
+        matplotlib axes object
+            the actual axes plotted to
         """
         if qoi not in self.qois:
             raise RuntimeError("no such qoi - {}".format(qoi))
         import matplotlib.pyplot as plt
-        if xs is None:
-            xs = np.arange(1, len(self.describe(qoi, 'mean'))+1)
-        plt.fill_between(
+        if ax is None:
+            fig, ax = plt.subplots()
+        else:
+            fig = ax.get_figure()
+        xs = np.arange(len(self.describe(qoi, 'mean')))
+        ax.fill_between(
             xs, self.describe(
                 qoi, 'min'), self.describe(
                 qoi, 'max'), label='min-max', alpha=alpha)
-        plt.fill_between(xs, self.describe(qoi, 'mean') -
-                         self.describe(qoi, 'std'), self.describe(qoi, 'mean') +
-                         self.describe(qoi, 'std'), label='std', alpha=alpha)
-        plt.plot(xs, self.describe(qoi, 'mean'), label='mean')
-        plt.grid(True)
+        ax.fill_between(xs, self.describe(qoi, 'mean') -
+                        self.describe(qoi, 'std'), self.describe(qoi, 'mean') +
+                        self.describe(qoi, 'std'), label='std', alpha=alpha)
+        ax.plot(self.describe(qoi, 'mean'), label='mean')
+        ax.grid(True)
         if ylabel is None:
-            plt.ylabel(qoi)
+            ax.set_ylabel("Value")
         else:
-            plt.ylabel(ylabel)
+            ax.set_ylabel(ylabel)
         if xlabel is None:
-            plt.xlabel("xs")
+            ax.set_xlabel(qoi)
         else:
-            plt.xlabel(xlabel)
-        plt.legend()
+            ax.set_xlabel(xlabel)
+        ax.legend()
         if filename is None:
-            plt.show()
+            fig.show()
         else:
-            plt.savefig(filename, dpi=dpi)
+            fig.savefig(filename, dpi=dpi)
+        return ax
 
     @staticmethod
     def _keys_to_tuples(dictionary):
