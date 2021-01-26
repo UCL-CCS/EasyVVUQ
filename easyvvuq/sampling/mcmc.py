@@ -37,7 +37,7 @@ class MCMCSampler(BaseSamplingElement, sampler_name='mcmc_sampler'):
         y = {}
         y_ = self.q(self.x).sample()
         for i, key in enumerate(self.init.keys()):
-            y[key] = y_[i]
+            y[key] = y_[i][0]
         return y
 
     def is_restartable(self):
