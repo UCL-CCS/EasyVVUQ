@@ -62,7 +62,7 @@ def campaign(tmpdir):
         "angle": cp.Uniform(0.0, 1.0),
         "height": cp.Uniform(2.0, 10.0),
         "velocity": cp.Normal(10.0, 1.0),
-        "mass": cp.Uniform(5.0, 1.0)
+        "mass": cp.Uniform(1.0, 5.0)
     }
     sampler = uq.sampling.RandomSampler(vary=vary)
     campaign.set_sampler(sampler)

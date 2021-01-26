@@ -95,7 +95,7 @@ def test_recollate(tmpdir):
 
     # Set up samplers
     vary = {
-        "gravity": cp.Uniform(9.8, 1.0),
+        "gravity": cp.Uniform(1.0, 9.8),
         "mass": cp.Uniform(2.0, 10.0),
     }
     sampler = uq.sampling.RandomSampler(vary=vary, max_num=num_samples)
