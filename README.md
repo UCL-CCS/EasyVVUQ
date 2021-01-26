@@ -13,8 +13,8 @@ The aim of this library is to facilitate verification, validation and
 uncertainty quantification (VVUQ) for a wide variety of
 simulations.
 
-The easiest way to get started is to follow the example outlined in
-this [Google Colaboratory](https://colab.research.google.com/drive/1qD07_Ry2lOB9-Is6Z2mQG0vVWskNBHjr).
+The easiest way to get started is to follow the tutorials in our
+[Binder](https://mybinder.org/v2/gh/UCL-CCS/EasyVVUQ/dev?filepath=tutorials).
 
 Development was funded by the EU Horizon 2020 project [VECMA](http://www.vecma.eu/).
 
