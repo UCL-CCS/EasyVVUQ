@@ -114,7 +114,7 @@ def test_multisampler(tmpdir):
     sampler2 = uq.sampling.BasicSweep(sweep=sweep2)
 
     vary = {
-        "gravity": cp.Uniform(9.8, 1.0),
+        "gravity": cp.Uniform(1.0, 9.8),
         "mass": cp.Uniform(2.0, 10.0),
     }
     sampler3 = uq.sampling.RandomSampler(vary=vary, max_num=5)

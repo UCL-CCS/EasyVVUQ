@@ -85,7 +85,7 @@ def setup_cannonsim_app():
             'Dist', 'lastvx', 'lastvy'])
 
     vary = {
-        "gravity": cp.Uniform(9.8, 1.0),
+        "gravity": cp.Uniform(1.0, 9.8),
         "mass": cp.Uniform(2.0, 10.0),
     }
     cannon_sampler = uq.sampling.RandomSampler(vary=vary, max_num=5)
