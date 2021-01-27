@@ -1,3 +1,4 @@
+import easyvvuq as uq
 from .base import BaseSamplingElement, Vary
 import numpy as np
 import chaospy as cp
@@ -83,5 +84,8 @@ class MCMCSampler(BaseSamplingElement, sampler_name='mcmc_sampler'):
                     self.f_x = f_y
                 else:
                     ignored_runs.append(last_row['run_id'][0])
-        campaign.ignore_runs(ignored_runs)
+        for run_id in ignored_runs:
+            campaign.campaign_db.session.query(uq.db.sql.RunTable).\
+                filter(uq.db.sql.RunTable.id == run_id).\
+                update({'status': uq.constants.Status.IGNORED})
         return ignored_runs

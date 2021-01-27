@@ -36,8 +36,9 @@ def test_mcmc(tmp_path):
         "x1": -3.0,
         "x2": 2.0
     }
-    def q(x, b=0.1):
+    def q(x, b=1):
         return cp.J(cp.Normal(x['x1'], b), cp.Normal(x['x2'], b))
+    np.random.seed(1969)
     sampler = uq.sampling.MCMCSampler(vary_init, q, 'value')
     campaign.set_sampler(sampler)
     action = uq.actions.ExecutePython(rosenbrock)
@@ -46,4 +47,5 @@ def test_mcmc(tmp_path):
     analysis = uq.analysis.MCMCAnalysis(sampler, 'value')
     result = analysis.analyse(df)
     distribution = result.distribution()
+    import pdb; pdb.set_trace()
 
