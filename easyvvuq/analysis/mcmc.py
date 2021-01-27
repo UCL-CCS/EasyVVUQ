@@ -12,9 +12,10 @@ from .qmc_analysis import QMCAnalysisResults
 class MCMCAnalysisResults(AnalysisResults):
     def __init__(self, samples, qoi):
         self.samples = samples
+        self.qoi = qoi
 
     def distribution(self):
-        raise NotImplementedError
+        return cp.GaussianKDE(self.samples.values.T)
 
 
 class MCMCAnalysis(BaseAnalysisElement):
