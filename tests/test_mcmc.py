@@ -45,5 +45,5 @@ def test_mcmc(tmp_path):
     df = campaign.get_collation_result()
     analysis = uq.analysis.MCMCAnalysis(sampler, 'value')
     result = analysis.analyse(df)
-
+    distribution = result.distribution()
 

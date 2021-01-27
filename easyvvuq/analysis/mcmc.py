@@ -10,15 +10,37 @@ from .qmc_analysis import QMCAnalysisResults
 
 
 class MCMCAnalysisResults(AnalysisResults):
+    """The analysis results class for MCMC.
+
+    Parameters
+    ----------
+    samples: ndarray of shape (nsamples, ndim)
+    qoi: ndarray of shape (nsamples, 1)
+    """
     def __init__(self, samples, qoi):
         self.samples = samples
         self.qoi = qoi
 
     def distribution(self):
+        """Returns the KDE estimation of the distribution.
+
+        Returns
+        -------
+        ChaosPy distribution
+        """
         return cp.GaussianKDE(self.samples.values.T)
 
 
 class MCMCAnalysis(BaseAnalysisElement):
+    """The analysis part of the MCMC method in EasyVVUQ
+
+    Parameters
+    ----------
+    sampler: MCMCSampler
+       an instance of MCMCSampler used to generate MCMC samples
+    qoi: str
+       name of the qoi
+    """
     def __init__(self, sampler, qoi=None):
         self.sampler = sampler
         self.qoi = qoi
