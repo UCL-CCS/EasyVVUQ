@@ -142,7 +142,8 @@ if __name__ == '__main__':      ### This is needed if you are using a local clus
     print("B")
 
     client.close()
-#    client.shutdown()
+    if not args.local:
+        client.shutdown()
     print("C")
 
     time_end = time.time()
