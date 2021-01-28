@@ -19,7 +19,7 @@ def rosenbrock(directory):
     output_filename = os.path.join(directory, inputs['outfile'])
     y = (1.0 - x1) ** 2 + 100.0 * (x2 - x1 ** 2) ** 2
     with open(output_filename, 'w') as fd:
-        json.dump({'value': -y}, fd)
+        json.dump({'value': 3000.0 - y}, fd)
 
 def test_mcmc(tmp_path):
     campaign = uq.Campaign(name="mcmc", work_dir=tmp_path)
