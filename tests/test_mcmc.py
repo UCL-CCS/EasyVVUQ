@@ -33,8 +33,8 @@ def test_mcmc(tmp_path):
     decoder = uq.decoders.JSONDecoder("output.json", ["value"])
     campaign.add_app(name="mcmc", params=params, encoder=encoder, decoder=decoder)
     vary_init = {
-        "x1": -3.0,
-        "x2": 2.0
+        "x1": [-3.0],
+        "x2": [2.0]
     }
     def q(x, b=1):
         return cp.J(cp.Normal(x['x1'], b), cp.Normal(x['x2'], b))

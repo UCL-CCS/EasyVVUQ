@@ -22,7 +22,7 @@ class MCMCSampler(BaseSamplingElement, sampler_name='mcmc_sampler'):
         self.inputs = list(self.init.keys())
         self.n_chains = n_chains
         self.x = []
-        for chain in self.n_chains:
+        for chain in range(self.n_chains):
             self.x.append(dict([(key, self.init[key][chain]) for key in self.inputs]))
         self.f_x = [None] * n_chains
         self.q = q
