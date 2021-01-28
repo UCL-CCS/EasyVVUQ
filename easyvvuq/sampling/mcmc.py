@@ -24,6 +24,7 @@ class MCMCSampler(BaseSamplingElement, sampler_name='mcmc_sampler'):
         self.x = []
         for chain in range(self.n_chains):
             self.x.append(dict([(key, self.init[key][chain]) for key in self.inputs]))
+            self.x[chain]['chain_id'] = chain
         self.f_x = [None] * n_chains
         self.q = q
         self.qoi = qoi
@@ -37,11 +38,15 @@ class MCMCSampler(BaseSamplingElement, sampler_name='mcmc_sampler'):
 
     def __next__(self):
         if self.f_x[self.current_chain] is None:
-            return self.x[self.current_chain]
+            try:
+                return self.x[self.current_chain]
+            finally:
+                self.current_chain = (self.current_chain + 1) % self.n_chains
         y = {}
         y_ = self.q(self.x[self.current_chain]).sample()
         for i, key in enumerate(self.inputs):
             y[key] = y_[i][0]
+        y['chain_id'] = self.current_chain
         self.current_chain = (self.current_chain + 1) % self.n_chains
         return y
 

@@ -26,20 +26,21 @@ def test_mcmc(tmp_path):
     params = {
         "x1": {"type": "float", "default": 0.0},
         "x2": {"type": "float", "default": 0.0},
-        "out_file": {"type": "string", "default": "output.json"}
+        "out_file": {"type": "string", "default": "output.json"},
+        "chain_id": {"type": "integer", "default": 0}
     }
     encoder = uq.encoders.GenericEncoder(
         template_fname=os.path.abspath("tutorials/rosenbrock.template"), delimiter="$", target_filename="input.json")
     decoder = uq.decoders.JSONDecoder("output.json", ["value"])
     campaign.add_app(name="mcmc", params=params, encoder=encoder, decoder=decoder)
     vary_init = {
-        "x1": [-3.0],
-        "x2": [2.0]
+        "x1": [-3.0, 0.0, 1.0, 4.0, 0.1],
+        "x2": [2.0, 0.0, 4.0, 1.0, 0.2]
     }
     def q(x, b=1):
         return cp.J(cp.Normal(x['x1'], b), cp.Normal(x['x2'], b))
     np.random.seed(1969)
-    sampler = uq.sampling.MCMCSampler(vary_init, q, 'value')
+    sampler = uq.sampling.MCMCSampler(vary_init, q, 'value', 5)
     campaign.set_sampler(sampler)
     action = uq.actions.ExecutePython(rosenbrock)
     ignored = sampler.mcmc_sampling(campaign, action, 200)
@@ -47,5 +48,5 @@ def test_mcmc(tmp_path):
     analysis = uq.analysis.MCMCAnalysis(sampler, 'value')
     result = analysis.analyse(df)
     distribution = result.distribution()
-    import pdb; pdb.set_trace()
+    #import pdb; pdb.set_trace()
 
