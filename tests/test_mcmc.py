@@ -48,5 +48,7 @@ def test_mcmc(tmp_path):
     analysis = uq.analysis.MCMCAnalysis(sampler, 'value')
     result = analysis.analyse(df)
     distribution = result.distribution()
-    #import pdb; pdb.set_trace()
+    assert(len(ignored) == 111)
+    assert(len(df) == 5 * 200 - len(ignored))
+
 

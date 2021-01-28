@@ -20,6 +20,10 @@ class MCMCSampler(BaseSamplingElement, sampler_name='mcmc_sampler'):
     def __init__(self, init, q, qoi, n_chains=1):
         self.init = dict(init)
         self.inputs = list(self.init.keys())
+        for input_ in self.inputs:
+            if len(self.init[input_]) != n_chains:
+                raise RuntimeError("The init dictionary must contains the same number \
+                                    of values for each input as there are chains.")
         self.n_chains = n_chains
         self.x = []
         for chain in range(self.n_chains):
