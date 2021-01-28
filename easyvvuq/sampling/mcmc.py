@@ -42,7 +42,7 @@ class MCMCSampler(BaseSamplingElement, sampler_name='mcmc_sampler'):
         y_ = self.q(self.x[self.current_chain]).sample()
         for i, key in enumerate(self.inputs):
             y[key] = y_[i][0]
-        self.current_chain = (self.current_chain + 1) % self.current_chain
+        self.current_chain = (self.current_chain + 1) % self.n_chains
         return y
 
     def is_restartable(self):
@@ -76,6 +76,7 @@ class MCMCSampler(BaseSamplingElement, sampler_name='mcmc_sampler'):
             result = campaign.get_collation_result()
             last_rows = result.iloc[-self.n_chains:]
             for chain_id, last_row in enumerate(last_rows.iterrows()):
+                last_row = last_row[1]
                 y = dict([(key, last_row[key][0]) for key in self.inputs])
                 if self.f_x[chain_id] is None:
                     self.f_x[chain_id] = last_row[self.qoi][0]
