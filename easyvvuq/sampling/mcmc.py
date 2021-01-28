@@ -21,10 +21,13 @@ class MCMCSampler(BaseSamplingElement, sampler_name='mcmc_sampler'):
         self.init = dict(init)
         self.inputs = list(self.init.keys())
         self.n_chains = n_chains
-        self.x = dict(init)
-        self.f_x = None
+        self.x = []
+        for chain in self.n_chains:
+            self.x.append(dict([(key, self.init[key][chain]) for key in self.inputs]))
+        self.f_x = [None] * n_chains
         self.q = q
         self.qoi = qoi
+        self.current_chain = 0
 
     def element_version(self):
         return "0.1"
@@ -33,12 +36,13 @@ class MCMCSampler(BaseSamplingElement, sampler_name='mcmc_sampler'):
         return False
 
     def __next__(self):
-        if self.f_x is None:
-            return self.x
+        if self.f_x[self.current_chain] is None:
+            return self.x[self.current_chain]
         y = {}
-        y_ = self.q(self.x).sample()
-        for i, key in enumerate(self.init.keys()):
+        y_ = self.q(self.x[self.current_chain]).sample()
+        for i, key in enumerate(self.inputs):
             y[key] = y_[i][0]
+        self.current_chain = (self.current_chain + 1) % self.current_chain
         return y
 
     def is_restartable(self):
@@ -65,25 +69,26 @@ class MCMCSampler(BaseSamplingElement, sampler_name='mcmc_sampler'):
         """
         ignored_runs = []
         for _ in range(iterations):
-            campaign.draw_samples(1)
+            campaign.draw_samples(self.n_chains)
             campaign.populate_runs_dir()
             campaign.apply_for_each_run_dir(action)
             campaign.collate()
             result = campaign.get_collation_result()
-            last_row = result.iloc[-1]
-            y = dict((key, last_row[key][0]) for key in self.init.keys())
-            if self.f_x is None:
-                self.f_x = last_row[self.qoi][0]
-            else:
-                f_y = last_row[self.qoi][0]
-                q_xy = self.q(y).pdf([self.x[key] for key in self.init.keys()])
-                q_yx = self.q(self.x).pdf([y[key] for key in self.init.keys()])
-                r = min(1.0, (f_y / self.f_x) * (q_xy / q_yx))
-                if np.random.random() < r:
-                    self.x = dict(y)
-                    self.f_x = f_y
+            last_rows = result.iloc[-self.n_chains:]
+            for chain_id, last_row in enumerate(last_rows.iterrows()):
+                y = dict((key, last_row[key][0]) for key in self.inputs)
+                if self.f_x[chain_id] is None:
+                    self.f_x[chain_id] = last_row[self.qoi][0]
                 else:
-                    ignored_runs.append(last_row['run_id'][0])
+                    f_y = last_row[self.qoi][0]
+                    q_xy = self.q(y).pdf([self.x[chain_id][key] for key in self.inputs])
+                    q_yx = self.q(self.x[chain_id]).pdf([y[key] for key in self.inputs])
+                    r = min(1.0, (f_y / self.f_x[chain_id]) * (q_xy / q_yx))
+                    if np.random.random() < r:
+                        self.x[chain_id] = dict(y)
+                        self.f_x[chain_id] = f_y
+                    else:
+                        ignored_runs.append(last_row['run_id'][0])
         for run_id in ignored_runs:
             campaign.campaign_db.session.query(uq.db.sql.RunTable).\
                 filter(uq.db.sql.RunTable.id == run_id).\
