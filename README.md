@@ -7,13 +7,14 @@
 [![Documentation Status](https://readthedocs.org/projects/easyvvuq/badge/?version=latest)](https://easyvvuq.readthedocs.io/)
 [![Coverage Status](https://coveralls.io/repos/github/UCL-CCS/EasyVVUQ/badge.svg?branch=dev&service=github)](https://coveralls.io/github/UCL-CCS/EasyVVUQ?branch=dev)
 [![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/3796/badge)](https://bestpractices.coreinfrastructure.org/projects/3796)
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/UCL-CCS/EasyVVUQ/dev?filepath=tutorials)
 
 The aim of this library is to facilitate verification, validation and 
 uncertainty quantification (VVUQ) for a wide variety of
 simulations.
 
-The easiest way to get started is to follow the example outlined in
-this [Google Colaboratory](https://colab.research.google.com/drive/1qD07_Ry2lOB9-Is6Z2mQG0vVWskNBHjr).
+The easiest way to get started is to follow the tutorials in our
+[Binder](https://mybinder.org/v2/gh/UCL-CCS/EasyVVUQ/dev?filepath=tutorials).
 
 Development was funded by the EU Horizon 2020 project [VECMA](http://www.vecma.eu/).
 

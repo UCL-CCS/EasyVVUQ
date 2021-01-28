@@ -107,7 +107,7 @@ def test_worker(tmpdir):
         "angle": cp.Uniform(0.0, 1.0),
         "height": cp.DiscreteUniform(0, 100),
         "velocity": cp.Normal(10.0, 1.0),
-        "mass": cp.Uniform(5.0, 1.0)
+        "mass": cp.Uniform(1.0, 5.0)
     }
     sampler1 = uq.sampling.RandomSampler(vary=vary)
 
