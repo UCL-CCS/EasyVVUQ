@@ -90,10 +90,14 @@ class PCEAnalysisResults(QMCAnalysisResults):
         elif statistic == 'max':
             return np.array([v.upper[0] for _, v in enumerate(
                 self.raw_data['output_distributions'][qoi])])
+        elif statistic == '1%':
+            return self.raw_data['percentiles'][qoi]['p01']
         elif statistic == '10%':
             return self.raw_data['percentiles'][qoi]['p10']
         elif statistic == '90%':
             return self.raw_data['percentiles'][qoi]['p90']
+        elif statistic == '99%':
+            return self.raw_data['percentiles'][qoi]['p99']
         elif statistic == 'median':
             return self.raw_data['percentiles'][qoi]['p50']
         else:
@@ -205,8 +209,8 @@ class PCEAnalysis(BaseAnalysisElement):
                                                  'std': std}
 
             # Percentiles: 10%, 50% and 90%
-            P10, P50, P90 = cp.Perc(fit, [10, 50, 90], self.sampler.distribution).squeeze()
-            results['percentiles'][k] = {'p10': P10, 'p50': P50, 'p90': P90}
+            P01, P10, P50, P90, P99 = cp.Perc(fit, [1, 10, 50, 90, 99], self.sampler.distribution).squeeze()
+            results['percentiles'][k] = {'p01': P01, 'p10': P10, 'p50': P50, 'p90': P90, 'p99': P99}
 
             # Sensitivity Analysis: First, Second and Total Sobol indices
             sobols_first_narr = cp.Sens_m(fit, self.sampler.distribution)
