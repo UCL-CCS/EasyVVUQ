@@ -410,7 +410,15 @@ class AnalysisResults:
             fig.savefig(filename, dpi=dpi)
         return ax
 
-    def plot_moments(self, qoi, ylabel=None, xlabel=None, alpha=0.5, filename=None, dpi=None, ax=None):
+    def plot_moments(
+            self,
+            qoi,
+            ylabel=None,
+            xlabel=None,
+            alpha=0.5,
+            filename=None,
+            dpi=None,
+            ax=None):
         """Plot statistical moments for this analysis.
 
         Parameters

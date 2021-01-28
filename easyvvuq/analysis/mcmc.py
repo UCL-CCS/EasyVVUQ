@@ -13,6 +13,7 @@ class MCMCAnalysisResults(AnalysisResults):
     samples: ndarray of shape (nsamples, ndim)
     qoi: ndarray of shape (nsamples, 1)
     """
+
     def __init__(self, samples, qoi):
         self.samples = samples
         self.qoi = qoi
@@ -37,6 +38,7 @@ class MCMCAnalysis(BaseAnalysisElement):
     qoi: str
        name of the qoi
     """
+
     def __init__(self, sampler, qoi=None):
         self.sampler = sampler
         self.qoi = qoi
