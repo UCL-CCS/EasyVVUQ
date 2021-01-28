@@ -311,7 +311,7 @@ class AnalysisResults:
         pandas DataFrame or a numpy array
         """
         assert(not ((qoi is None) and (statistic is not None)))
-        statistics = ['mean', 'var', 'std', '10%', '90%', 'min', 'max', 'median']
+        statistics = ['mean', 'var', 'std', '1%', '10%', '90%', '99%', 'min', 'max', 'median']
         qois = self.qois
         if qoi is not None:
             qois = [qoi]
