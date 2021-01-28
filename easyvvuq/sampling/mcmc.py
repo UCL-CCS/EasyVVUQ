@@ -76,7 +76,7 @@ class MCMCSampler(BaseSamplingElement, sampler_name='mcmc_sampler'):
             result = campaign.get_collation_result()
             last_rows = result.iloc[-self.n_chains:]
             for chain_id, last_row in enumerate(last_rows.iterrows()):
-                y = dict((key, last_row[key][0]) for key in self.inputs)
+                y = dict([(key, last_row[key][0]) for key in self.inputs])
                 if self.f_x[chain_id] is None:
                     self.f_x[chain_id] = last_row[self.qoi][0]
                 else:
