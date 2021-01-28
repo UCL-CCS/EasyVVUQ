@@ -8,7 +8,6 @@ import sys
 
 HOME = os.path.abspath(os.path.dirname(__file__))
 
-
 def rosenbrock(directory):
     json_input = os.path.join(directory, 'input.json')
     if not os.path.isfile(json_input):
@@ -20,8 +19,7 @@ def rosenbrock(directory):
     output_filename = os.path.join(directory, inputs['outfile'])
     y = (1.0 - x1) ** 2 + 100.0 * (x2 - x1 ** 2) ** 2
     with open(output_filename, 'w') as fd:
-        json.dump({'value': 3000.0 - y}, fd)
-
+        json.dump({'value': 300.0 - y}, fd)
 
 def test_mcmc(tmp_path):
     campaign = uq.Campaign(name="mcmc", work_dir=tmp_path)
@@ -31,15 +29,14 @@ def test_mcmc(tmp_path):
         "out_file": {"type": "string", "default": "output.json"},
         "chain_id": {"type": "integer", "default": 0}
     }
-    encoder = uq.encoders.GenericEncoder(template_fname=os.path.abspath(
-        "tutorials/rosenbrock.template"), delimiter="$", target_filename="input.json")
+    encoder = uq.encoders.GenericEncoder(
+        template_fname=os.path.abspath("tutorials/rosenbrock.template"), delimiter="$", target_filename="input.json")
     decoder = uq.decoders.JSONDecoder("output.json", ["value"])
     campaign.add_app(name="mcmc", params=params, encoder=encoder, decoder=decoder)
     vary_init = {
-        "x1": [-3.0, 0.0, 1.0, 4.0, 0.1],
-        "x2": [2.0, 0.0, 4.0, 1.0, 0.2]
+        "x1": [-1.0, 0.0, 1.0, 0.5, 0.1],
+        "x2": [1.0, 0.0, 0.5, 1.0, 0.2]
     }
-
     def q(x, b=1):
         return cp.J(cp.Normal(x['x1'], b), cp.Normal(x['x2'], b))
     np.random.seed(1969)
@@ -51,5 +48,7 @@ def test_mcmc(tmp_path):
     analysis = uq.analysis.MCMCAnalysis(sampler, 'value')
     result = analysis.analyse(df)
     distribution = result.distribution()
-    assert(len(ignored) == 111)
+    assert(len(ignored) == 576)
     assert(len(df) == 5 * 200 - len(ignored))
+
+
