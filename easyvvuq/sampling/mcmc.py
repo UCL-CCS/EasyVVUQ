@@ -12,11 +12,12 @@ class MCMCSampler(BaseSamplingElement, sampler_name='mcmc_sampler'):
     init: dict
        Initial values for each input parameter. Of the form {'input1': value, ...}
     q: function
-       A function of one argument X (dictionary) that returns the proposal distribution conditional on 
+       A function of one argument X (dictionary) that returns the proposal distribution conditional on
     the X.
     qoi: str
        Name of the quantity of interest
     """
+
     def __init__(self, init, q, qoi, n_chains=1):
         self.init = dict(init)
         self.inputs = list(self.init.keys())
