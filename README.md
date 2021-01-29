@@ -17,11 +17,15 @@ of that simulation using a variety of statistical method on a variety of computi
 that might be available to you. All of this is to be achieved using a minimal amount of set-up
 overhead and, if possible, without leaving the safety of your laptop.
 
-Available methods:
+Available analysis and sampling methods:
 
 * Polynomial Chaos Expansion
 * Stochastic Collocation
 * Markov-Chain Monte Carlo
+
+EasyVVUQ also supports building surrogate models using:
+
+* Gaussian Processes
 
 Supported computing resources:
 
