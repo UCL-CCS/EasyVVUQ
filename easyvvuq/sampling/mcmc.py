@@ -1,7 +1,6 @@
 import easyvvuq as uq
-from .base import BaseSamplingElement, Vary
+from .base import BaseSamplingElement
 import numpy as np
-import chaospy as cp
 
 
 class MCMCSampler(BaseSamplingElement, sampler_name='mcmc_sampler'):
