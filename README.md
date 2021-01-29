@@ -15,7 +15,9 @@ simulations. We want you to be able to take your existing simulation,
 no matter what programming language or platform, and allow you to sample the parameter space
 of that simulation using a variety of statistical method on a variety of computing resources
 that might be available to you. All of this is to be achieved using a minimal amount of set-up
-overhead and, if possible, without leaving the safety of your laptop.
+overhead. EasyVVUQ is especially suitable for cases where the simulation is computationally expensive, 
+you want to use several resources or the runs are very large and bookkeeping is prohibitively
+complex. It coordinates execution using an efficient back-end database and all the work is resumable.
 
 Available analysis and sampling methods:
 
