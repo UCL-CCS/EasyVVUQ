@@ -12,6 +12,7 @@ from .random import RandomSampler
 from .stochastic_collocation import SCSampler
 from .pce import PCESampler
 from .qmc import QMCSampler
+from .mcmc import MCMCSampler
 from .sweep import BasicSweep
 from .sampler_of_samplers import MultiSampler
 from .quasirandom import LHCSampler

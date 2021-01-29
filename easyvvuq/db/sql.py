@@ -465,7 +465,7 @@ class CampaignDB(BaseCampaignDB):
 
     def set_run_statuses(self, run_name_list, status):
         """
-        Set the specified 'status' (enum) for all runs in the list run_ID_list
+        Set the specified 'status' (enum) for all runs in the list run_name_list
 
         Parameters
         ----------
