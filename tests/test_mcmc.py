@@ -48,7 +48,7 @@ def test_mcmc(tmp_path):
     action = uq.actions.ExecutePython(rosenbrock)
     ignored = []
     for _ in range(200):
-        campaign.draw_samples()
+        runs = campaign.draw_samples()
         campaign.populate_runs_dir()
         campaign.apply_for_each_run_dir(action)
         campaign.collate()
