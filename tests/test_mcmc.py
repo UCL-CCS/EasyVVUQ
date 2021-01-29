@@ -43,7 +43,13 @@ def test_mcmc(tmp_path):
     sampler = uq.sampling.MCMCSampler(vary_init, q, 'value', 5)
     campaign.set_sampler(sampler)
     action = uq.actions.ExecutePython(rosenbrock)
-    ignored = sampler.mcmc_sampling(campaign, action, 200)
+    ignored = []
+    for _ in range(200):
+        campaign.draw_samples()
+        campaign.populate_runs_dir()
+        campaign.apply_for_each_run_dir(action)
+        campaign.collate()
+        ignored += sampler.update(campaign)
     df = campaign.get_collation_result()
     analysis = uq.analysis.MCMCAnalysis(sampler, 'value')
     result = analysis.analyse(df)
