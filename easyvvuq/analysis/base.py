@@ -1,4 +1,4 @@
-"""Provides base class for all analysis elements.
+"""Provides a base class for all analysis elements.
 """
 from .. import BaseElement
 
@@ -38,23 +38,41 @@ class BaseAnalysisElement(BaseElement):
 
         Parameters
         ----------
-        data_frame : :obj:`pandas.DataFrame`
+        data_frame : pandas DataFrame
             Input data for analysis.
 
         Returns
         -------
-
+        AnalysisResults instance
         """
         raise NotImplementedError
 
     def element_category(self):
-        """Element type for logging and verification"""
+        """Element type for logging and verification.
+        
+        Returns
+        -------
+        str
+            Element category.
+        """
         return "analysis"
 
     def element_name(self):
-        """Name for this element for logging purposes"""
+        """Name for this element for logging purposes.
+        
+        Returns
+        -------
+        str
+            Element name.
+        """
         raise NotImplementedError
 
     def element_version(self):
-        """Version of this element for logging purposes"""
+        """Version of this element for logging purposes.
+        
+        Returns
+        -------
+        str
+            Element version.
+        """
         raise NotImplementedError
