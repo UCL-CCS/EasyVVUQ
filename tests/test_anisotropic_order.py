@@ -36,7 +36,7 @@ def test_anisotropic_order(tmpdir):
 
     # Create an encoder, decoder and collation element
     encoder = uq.encoders.GenericEncoder(
-        template_fname='./sc/sc.template',
+        template_fname='tests/sc/sc.template',
         delimiter='$',
         target_filename='ade_in.json')
     decoder = uq.decoders.SimpleCSV(target_filename=output_filename,
@@ -67,7 +67,7 @@ def test_anisotropic_order(tmpdir):
 
     #   Use this instead to run the samples using EasyVVUQ on the localhost
     my_campaign.apply_for_each_run_dir(uq.actions.ExecuteLocal(
-        "./sc/sc_model.py ade_in.json"))
+        "tests/sc/sc_model.py ade_in.json"))
 
     my_campaign.collate()
 
