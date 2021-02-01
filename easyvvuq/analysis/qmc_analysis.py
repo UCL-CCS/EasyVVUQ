@@ -150,7 +150,7 @@ class QMCAnalysis(BaseAnalysisElement):
         -------
         dict : 
             A dictionary with the QoI names as keys. 
-        Each element is a list of code evaluations.
+            Each element is a list of code evaluations.
         """
         samples = {k: [] for k in self.qoi_cols}
         for run_id in data_frame['run_id'].squeeze().unique():
