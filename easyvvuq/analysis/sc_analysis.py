@@ -235,7 +235,7 @@ class SCAnalysis(BaseAnalysisElement):
         if compute_Sobols:
             for qoi_k in qoi_cols:
                 if not self.sparse:
-                    results['sobols'][qoi_k], _ = self.get_sobol_indices(qoi_k, 'first_order')
+                    results['sobols'][qoi_k] = self.get_sobol_indices(qoi_k, 'first_order')
                 else:
                     _, _, _, results['sobols'][qoi_k] = self.get_pce_sobol_indices(
                         qoi_k, 'first_order')
