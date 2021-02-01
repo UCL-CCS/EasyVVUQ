@@ -1,6 +1,6 @@
 """Analysis element for Quasi-Monte Carlo (QMC) sensitivity analysis.
 
-Please refer to the article below for further references.
+Please refer to the article below for the basic approach used here.
 https://en.wikipedia.org/wiki/Variance-based_sensitivity_analysis
 """
 import logging
@@ -19,8 +19,9 @@ logger = logging.getLogger(__name__)
 
 
 class QMCAnalysisResults(AnalysisResults):
-    implemented = ['sobols_first', 'sobols_total', 'describe']
-
+    """Analysis results for the QMCAnalysis Method. Refer to the AnalysisResults base class
+    documentation for details on using it.
+    """
     def _get_sobols_first(self, qoi, input_):
         raw_dict = AnalysisResults._keys_to_tuples(self.raw_data['sobols_first'])
         return raw_dict[AnalysisResults._to_tuple(qoi)][input_][0]
@@ -58,7 +59,7 @@ class QMCAnalysis(BaseAnalysisElement):
         sampler : easyvvuq.sampling.qmc.QMCSampler
             Sampler used to initiate the QMC analysis
         qoi_cols : list or None
-            Column names for quantities of interest (for which analysis is
+            Column names for quantities of interest (for which analysis is to be
             performed).
         """
         if not isinstance(sampler, QMCSampler) and not isinstance(sampler, MCSampler):
@@ -72,11 +73,23 @@ class QMCAnalysis(BaseAnalysisElement):
         self.sampler = sampler
 
     def element_name(self):
-        """Name for this element"""
+        """Name for this element.
+        
+        Return
+        ------
+        str:
+            "QMC_Analysis" 
+        """
         return "QMC_Analysis"
 
     def element_version(self):
-        """Version of this element"""
+        """Version of this element.
+        
+        Return
+        ------
+        str:
+            Element version.
+        """
         return "0.2"
 
     def analyse(self, data_frame):
@@ -89,10 +102,8 @@ class QMCAnalysis(BaseAnalysisElement):
 
         Returns
         -------
-        dict:
-            Contains analysis results in sub-dicts with keys -
-            ['statistical_moments', 'percentiles', 'sobol_indices',
-             'correlation_matrices', 'output_distributions']
+        easyvvuq.analysis.qmc.QMCAnalysisResults
+            AnalysisResults object for QMC.
         """
         if data_frame.empty:
             raise RuntimeError(
@@ -132,11 +143,13 @@ class QMCAnalysis(BaseAnalysisElement):
 
         Parameters
         ----------
-        data_frame : the EasyVVUQ Pandas dataframe.
+        data_frame : pandas DataFrame
+            the EasyVVUQ Pandas dataframe from collation.
 
         Returns
         -------
-        samples : A dictionary with the QoI names as keys. Each samples[qoi_name]
+        dict : 
+            A dictionary with the QoI names as keys. Each samples[qoi_name]
         is a list of code evaluations.
 
         """
