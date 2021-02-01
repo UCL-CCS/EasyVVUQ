@@ -11,7 +11,28 @@
 
 The aim of this library is to facilitate verification, validation and 
 uncertainty quantification (VVUQ) for a wide variety of
-simulations.
+simulations. We want you to be able to take your existing simulation,
+no matter what programming language or platform, and allow you to sample the parameter space
+of that simulation using a variety of statistical method on a variety of computing resources
+that might be available to you. All of this is to be achieved using a minimal amount of set-up
+overhead. EasyVVUQ is especially suitable for cases where the simulation is computationally expensive, 
+you want to use several resources or the runs are very large and bookkeeping is prohibitively
+complex. It coordinates execution using an efficient back-end database and all the work is resumable.
+
+Available analysis and sampling methods:
+
+* Polynomial Chaos Expansion
+* Stochastic Collocation
+* Markov-Chain Monte Carlo
+
+EasyVVUQ also supports building surrogate models using:
+
+* Gaussian Processes
+
+Supported computing resources:
+
+* Traditional clusters
+* Kubernetes clusters
 
 The easiest way to get started is to follow the tutorials in our
 [Binder](https://mybinder.org/v2/gh/UCL-CCS/EasyVVUQ/dev?filepath=tutorials).

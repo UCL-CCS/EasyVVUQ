@@ -391,7 +391,7 @@ class AnalysisResults:
             else:
                 points.append(self.sobols_first(qoi, input_))
         if xvalues is None:
-            xvalues =  np.arange(len(points[0]))
+            xvalues = np.arange(len(points[0]))
         if ax is None:
             fig, ax = plt.subplots()
         else:
@@ -414,7 +414,16 @@ class AnalysisResults:
             fig.savefig(filename, dpi=dpi)
         return ax
 
-    def plot_moments(self, qoi, ylabel=None, xlabel=None, xvalues=None, alpha=0.5, filename=None, dpi=None, ax=None):
+    def plot_moments(
+            self,
+            qoi,
+            ylabel=None,
+            xlabel=None,
+            xvalues=None,
+            alpha=0.5,
+            filename=None,
+            dpi=None,
+            ax=None):
         """Plot statistical moments for this analysis.
 
         Parameters
