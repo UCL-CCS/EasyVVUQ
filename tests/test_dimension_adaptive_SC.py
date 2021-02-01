@@ -151,7 +151,14 @@ def test_comb_coef(adaptive_campaign):
                                                         [2, 1, 1], [2, 2, 1]]))
     assert(coefs == {(1, 1, 1): 0.0, (1, 2, 1): -1.0,
                      (1, 3, 1): 1.0, (2, 1, 1): 0.0, (2, 2, 1): 1.0})
+    
+def test_comb_coef(adaptive_campaign):
+    """
 
+    """
+    _, analysis, _ = adaptive_campaign
+    assert(np.array_equal(analysis.adaptation_errors,
+                          np.array([0.19032304687500004, 0.0033058593749999976, 0.0033058593749999976])))
 
 def test_results(adaptive_campaign):
     """
