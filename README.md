@@ -23,7 +23,7 @@ Available analysis and sampling methods:
 
 * [Polynomial Chaos Expansion](https://mybinder.org/v2/gh/UCL-CCS/EasyVVUQ/f59ace52f6e97594111269312dcf03b3b034c9b0)
 * Stochastic Collocation
-* Markov-Chain Monte Carlo
+* [Markov-Chain Monte Carlo](https://mybinder.org/v2/gh/UCL-CCS/EasyVVUQ/f59ace52f6e97594111269312dcf03b3b034c9b0)
 
 EasyVVUQ also supports building surrogate models using:
 
