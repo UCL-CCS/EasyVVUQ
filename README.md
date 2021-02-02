@@ -21,7 +21,7 @@ complex. It coordinates execution using an efficient back-end database and all t
 
 Available analysis and sampling methods:
 
-* Polynomial Chaos Expansion
+* [Polynomial Chaos Expansion](https://mybinder.org/v2/gh/UCL-CCS/EasyVVUQ/f59ace52f6e97594111269312dcf03b3b034c9b0)
 * Stochastic Collocation
 * Markov-Chain Monte Carlo
 
