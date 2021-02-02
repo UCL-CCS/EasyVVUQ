@@ -29,7 +29,7 @@ class GaussianProcessSurrogate(BaseAnalysisElement):
         """Version of this element for logging purposes"""
         return "0.1"
 
-    def analyse(self, data_frame=None):
+    def analyse(self, data_frame=None, **kwargs):
         """Perform the basis stats analysis on the input `data_frame`.
 
         Analysis is based on `pandas.Dataframe.describe` and results in
@@ -41,17 +41,19 @@ class GaussianProcessSurrogate(BaseAnalysisElement):
 
         Parameters
         ----------
-        data_frame : :obj:`pandas.DataFrame`
+        data_frame : pandas.DataFrame
             Summary data produced through collation of simulation output.
+        kwargs : keyword arguments
+            These arguments will be passed to sklearn's GaussianProcessRegressor
 
         Returns
         -------
-        :obj:`pandas.DataFrame`
-            Basic statistic for selected columns and groupings of data.
+        easyvvuq.analysis.gp.GaussianProcessSurrogateResults
+           GaussianProcessSurrogateResults instance
         """
         x = data_frame[self.attr_cols].values
         y = data_frame[self.target_cols].values
 
-        gp = GaussianProcessRegressor()
+        gp = GaussianProcessRegressor(**kwargs)
         gp.fit(x, y)
         return gp
