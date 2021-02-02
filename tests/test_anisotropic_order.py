@@ -56,7 +56,7 @@ def test_anisotropic_order(tmpdir):
 
     # different orders for the 2 parameters
     sampler = uq.sampling.SCSampler(vary=vary, polynomial_order=[2, 5],
-                                       quadrature_rule="G")
+                                    quadrature_rule="G")
 
     # Associate the sampler with the campaign
     my_campaign.set_sampler(sampler)

@@ -102,6 +102,8 @@ def adaptive_campaign():
         analysis.adapt_dimension('f', data_frame)
 
         campaign.apply_analysis(analysis)
+    print(analysis.l_norm)
+    print(sampler.admissible_idx)
 
     results = campaign.get_last_analysis()
 
@@ -114,8 +116,13 @@ def test_look_ahead(adaptive_campaign):
     """
     sampler, _, _ = adaptive_campaign
     # check if the correct candidate dimensions for the next iteration are selected
-    assert(np.array_equal(sampler.admissible_idx, np.array([[3, 1, 1], [2, 2, 1],
-                                                            [1, 3, 1], [1, 1, 2]])))
+    admissible_idx = np.array([[3, 1, 1], [2, 2, 1], [1, 3, 1], [1, 1, 2]])
+    # Note: the order is not important and may change between different Python versions.
+    # This is because the order is not preserved in the setdiff2d subroutine of the
+    # analysis class.
+    for idx in admissible_idx:
+        assert(idx in sampler.admissible_idx)
+
     # check if the right number of new samples were computed during the 1st 3 iterations
     assert(sampler.n_new_points == [6, 2, 6])
 
@@ -151,14 +158,16 @@ def test_comb_coef(adaptive_campaign):
                                                         [2, 1, 1], [2, 2, 1]]))
     assert(coefs == {(1, 1, 1): 0.0, (1, 2, 1): -1.0,
                      (1, 3, 1): 1.0, (2, 1, 1): 0.0, (2, 2, 1): 1.0})
-    
+
+
 def test_error(adaptive_campaign):
     """
 
     """
     _, analysis, _ = adaptive_campaign
-    assert(np.array_equal(analysis.adaptation_errors,
-                          np.array([0.19032304687500004, 0.0033058593749999976, 0.0033058593749999976])))
+    assert(np.array_equal(analysis.adaptation_errors, np.array(
+        [0.19032304687500004, 0.0033058593749999976, 0.0033058593749999976])))
+
 
 def test_results(adaptive_campaign):
     """
