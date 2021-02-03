@@ -481,7 +481,7 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
 
 def setdiff2d(X, Y):
     """
-    Computes the difference of two 2D arrays X \ Y
+    Computes the difference of two 2D arrays X and Y
 
     Parameters
     ----------

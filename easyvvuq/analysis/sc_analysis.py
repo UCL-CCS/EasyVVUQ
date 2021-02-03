@@ -7,7 +7,7 @@ from easyvvuq import OutputType
 from .base import BaseAnalysisElement
 from .results import AnalysisResults
 import logging
-from scipy.special import comb
+# from scipy.special import comb
 import pandas as pd
 
 __author__ = "Wouter Edeling"
@@ -503,9 +503,6 @@ class SCAnalysis(BaseAnalysisElement):
         -------
         the interpolated value of qoi at x (float, (N_qoi,))
         """
-
-        if L is None:
-            L = self.L
 
         return self.sc_expansion(self.samples[qoi], x=x)
 
@@ -1305,7 +1302,7 @@ def lagrange_poly(x, x_i, j):
 
 def setdiff2d(X, Y):
     """
-    Computes the difference of two 2D arrays X \ Y
+    Computes the difference of two 2D arrays X and Y
 
     Parameters
     ----------
