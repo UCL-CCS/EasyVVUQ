@@ -21,7 +21,7 @@ complex. It coordinates execution using an efficient back-end database and all t
 
 Available analysis and sampling methods:
 
-* [Polynomial Chaos Expansion](https://mybinder.org/v2/gh/UCL-CCS/EasyVVUQ/f59ace52f6e97594111269312dcf03b3b034c9b0)
+* [Polynomial Chaos Expansion](https://gesis.mybinder.org/binder/v2/gh/UCL-CCS/EasyVVUQ/f59ace52f6e97594111269312dcf03b3b034c9b0?filepath=tutorials%2Feasyvvuq_fusion_tutorial.ipynb)
 * [Stochastic Collocation](https://mybinder.org/v2/gh/UCL-CCS/EasyVVUQ/e6c540cb1ed2eef67c1b5676e5297f2c97eb6fc7?filepath=tutorials%2Fdimension_adaptive_tutorial.ipynb)
 * [Markov-Chain Monte Carlo](https://mybinder.org/v2/gh/UCL-CCS/EasyVVUQ/f59ace52f6e97594111269312dcf03b3b034c9b0)
 
