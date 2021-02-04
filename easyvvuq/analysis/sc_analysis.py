@@ -398,10 +398,12 @@ class SCAnalysis(BaseAnalysisElement):
                 sys.exit()
 
         for key in error.keys():
-            logging.debug("Surplus error when l = %s is %s" % (key, error[key]))
+            # logging.debug("Surplus error when l = %s is %s" % (key, error[key]))
+            print("Refinement error for l = %s is %s" % (key, error[key]))
         # find the admissble index with the largest error
         l_star = np.array(max(error, key=error.get)).reshape([1, self.N])
-        logging.debug('Selecting %s for refinement.' % l_star)
+        # logging.debug('Selecting %s for refinement.' % l_star)
+        print('Selecting %s for refinement.' % l_star)
         # add max error to list
         self.adaptation_errors.append(max(error.values()))
 
