@@ -315,13 +315,14 @@ class SCAnalysis(BaseAnalysisElement):
         if isinstance(data_frame, pd.DataFrame):
             for run_id in data_frame[('run_id', 0)].unique():
                 values = data_frame.loc[data_frame[('run_id', 0)] == run_id][qoi].values
-                samples.append(values)
-        elif isinstance(data_frame, dict):
-            # dict is not sorted, make sure the runs are processed in ascending order
-            run_id_int = [int(run_id.split('Run_')[-1]) for run_id in data_frame[qoi].keys()]
-            for run_id in range(1, np.max(run_id_int) + 1):
-                values = data_frame[qoi]['Run_' + str(run_id)]
-                samples.append(values)
+                samples.append(values.flatten())
+
+        # elif isinstance(data_frame, dict):
+        #     # dict is not sorted, make sure the runs are processed in ascending order
+        #     run_id_int = [int(run_id.split('Run_')[-1]) for run_id in data_frame[qoi].keys()]
+        #     for run_id in range(1, np.max(run_id_int) + 1):
+        #         values = data_frame[qoi]['Run_' + str(run_id)]
+        #         samples.append(values)
 
         # if the refinement error is based upon on quadrature, compute the
         # mean of the current setup, to be used as a reference
@@ -334,8 +335,8 @@ class SCAnalysis(BaseAnalysisElement):
             all_idx = np.concatenate((self.l_norm, self.sampler.admissible_idx))
             self.xi_1d = self.sampler.xi_1d
             self.wi_1d = self.sampler.wi_1d
-            self.pce_coefs = self.SC2PCE(samples, l_norm=all_idx,
-                                         xi_d=self.sampler.xi_d, verbose=True)
+            self.pce_coefs = self.SC2PCE(samples, verbose=True, l_norm=all_idx,
+                                         xi_d=self.sampler.xi_d)
             _, var_l = self.get_pce_stats(self.l_norm, self.pce_coefs, self.comb_coef)
 
         # the currently accepted grid points
@@ -427,6 +428,65 @@ class SCAnalysis(BaseAnalysisElement):
             self.mean_history.append(mean_f)
             self.std_history.append(var_f)
             logging.debug('done')
+
+    def merge_accepted_and_admissible(self, level=0, **kwargs):
+        """
+        In the case of the dimension-adaptive sampler, there are 2 sets of
+        quadrature multi indices. There are the accepted indices that are actually
+        used in the analysis, and the admissible indices, of which some might
+        move to the accepted set in subsequent iterations. This subroutine merges
+        the two sets of multi indices by moving all admissible to the set of
+        accepted indices.
+        Do this at the end, when no more refinements will be executed. The
+        samples related to the admissble indices are already computed, although
+        not used in the analysis. By executing this subroutine at very end, all
+        computed samples are used during the final postprocessing stage. Execute
+        campaign.apply_analysis to let the new set of indices take effect.
+        If further refinements are executed after all via sampler.look_ahead, the
+        number of new admissible samples to be computed can be very high,
+        especially in high dimensions. It is possible to undo the merge via
+        analysis.undo_merge before new refinements are made. Execute
+        campaign.apply_analysis again to let the old set of indices take effect.
+        """
+
+        if 'include' in kwargs:
+            include = kwargs['include']
+        else:
+            include = np.arange(self.N)
+
+        if self.sampler.dimension_adaptive:
+            print('Moving admissible indices to the accepted set...')
+            # make a backup of l_norm, such that undo_merge can revert back
+            self.l_norm_backup = np.copy(self.l_norm)
+            # merge admissible and accepted multi indices
+            if level == 0:
+                merged_l = np.concatenate((self.l_norm, self.sampler.admissible_idx))
+            else:
+                admissible_idx = []
+                count = 0
+                for l in self.sampler.admissible_idx:
+                    L = np.sum(l) - self.N + 1
+                    tmp = np.where(l == L)[0]
+                    if L <= level and np.in1d(tmp, include)[0]:
+                        admissible_idx.append(l)
+                        count += 1
+                admissible_idx = np.array(admissible_idx).reshape([count, self.N])
+                merged_l = np.concatenate((self.l_norm, admissible_idx))
+            # make sure final result contains only unique indices and store
+            #results in l_norm
+            idx = np.unique(merged_l, axis=0, return_index=True)[1]
+            # return np.array([merged_l[i] for i in sorted(idx)])
+            self.l_norm = np.array([merged_l[i] for i in sorted(idx)])
+            print('done')
+
+    def undo_merge(self):
+        """
+        This reverses the effect of the merge_accepted_and_admissble subroutine.
+        Execute if further refinement are required after all.
+        """
+        if self.sampler.dimension_adaptive:
+            self.l_norm = self.l_norm_backup
+            print('Restored old multi indices.')
 
     def get_adaptation_errors(self):
         """

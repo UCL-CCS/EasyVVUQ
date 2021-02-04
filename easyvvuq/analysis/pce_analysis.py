@@ -1,5 +1,5 @@
 """Analysis element for polynomial chaos expansion (PCE). We use ChaosPy
-under the hood for this functionality. 
+under the hood for this functionality.
 """
 import logging
 import chaospy as cp
@@ -137,7 +137,7 @@ class PCEAnalysis(BaseAnalysisElement):
 
     def element_name(self):
         """Name for this element for logging purposes.
-        
+
         Returns
         -------
         str
@@ -147,7 +147,7 @@ class PCEAnalysis(BaseAnalysisElement):
 
     def element_version(self):
         """Version of this element for logging purposes.
-        
+
         Returns
         -------
         str

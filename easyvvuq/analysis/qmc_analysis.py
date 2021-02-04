@@ -22,6 +22,7 @@ class QMCAnalysisResults(AnalysisResults):
     """Analysis results for the QMCAnalysis Method. Refer to the AnalysisResults base class
     documentation for details on using it.
     """
+
     def _get_sobols_first(self, qoi, input_):
         raw_dict = AnalysisResults._keys_to_tuples(self.raw_data['sobols_first'])
         return raw_dict[AnalysisResults._to_tuple(qoi)][input_][0]
@@ -74,17 +75,17 @@ class QMCAnalysis(BaseAnalysisElement):
 
     def element_name(self):
         """Name for this element.
-        
+
         Return
         ------
         str:
-            "QMC_Analysis" 
+            "QMC_Analysis"
         """
         return "QMC_Analysis"
 
     def element_version(self):
         """Version of this element.
-        
+
         Return
         ------
         str:
@@ -148,8 +149,8 @@ class QMCAnalysis(BaseAnalysisElement):
 
         Returns
         -------
-        dict : 
-            A dictionary with the QoI names as keys. 
+        dict :
+            A dictionary with the QoI names as keys.
             Each element is a list of code evaluations.
         """
         samples = {k: [] for k in self.qoi_cols}

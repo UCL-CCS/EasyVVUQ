@@ -49,7 +49,7 @@ class BaseAnalysisElement(BaseElement):
 
     def element_category(self):
         """Element type for logging and verification.
-        
+
         Returns
         -------
         str
@@ -59,7 +59,7 @@ class BaseAnalysisElement(BaseElement):
 
     def element_name(self):
         """Name for this element for logging purposes.
-        
+
         Returns
         -------
         str
@@ -69,7 +69,7 @@ class BaseAnalysisElement(BaseElement):
 
     def element_version(self):
         """Version of this element for logging purposes.
-        
+
         Returns
         -------
         str
