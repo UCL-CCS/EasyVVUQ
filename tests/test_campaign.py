@@ -72,6 +72,11 @@ def campaign(tmpdir):
     return campaign
 
 
+def test_no_input_state(tmp_path):
+    with pytest.raises(RuntimeError):
+        uq.Campaign(name='test', work_dir=tmp_path, relocate=True)
+
+
 def test_relocate_campaign(campaign, tmpdir):
     runs = campaign.campaign_db.runs()
     runs_dir = campaign.campaign_db.runs_dir()
