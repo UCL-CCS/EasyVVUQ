@@ -11,10 +11,10 @@ if __name__ == '__main__':
     json_input = sys.argv[1]
     with open(json_input, 'r') as fd:
         inputs = json.load(fd)
-    theta1 = inputs['theta1']
-    theta2 = inputs['theta2']
-    theta3 = inputs['theta3']
-    theta4 = inputs['theta4']
+    theta1 = inputs['theta1'] * np.pi * 2
+    theta2 = inputs['theta2'] * np.pi * 2
+    theta3 = inputs['theta3'] * np.pi * 2
+    theta4 = inputs['theta4'] * np.pi * 2
     L1 = inputs['L1']
     L2 = inputs['L2']
     L3 = inputs['L3']
@@ -28,5 +28,5 @@ if __name__ == '__main__':
         L4 * np.sin(theta1 + theta2 + theta3 + theta4)
     y = np.sqrt(u * u + v * v)
     with open(outfile, 'w') as fd:
-        json.dump(fd, {'distance' : y})
+        json.dump({'distance' : y}, fd)
     
