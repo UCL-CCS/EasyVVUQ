@@ -1,3 +1,4 @@
+import pickle
 from .base import BaseSamplingElement, Vary
 import numpy as np
 
@@ -33,6 +34,7 @@ class RandomSampler(BaseSamplingElement, sampler_name="random_sampler"):
         self.vary = Vary(vary)
         self.count = count
         self.max_num = max_num
+        self.xi_d = []
 
     def element_version(self):
         return "0.1"
@@ -49,15 +51,32 @@ class RandomSampler(BaseSamplingElement, sampler_name="random_sampler"):
                 raise StopIteration
 
         run_dict = {}
+        param = np.zeros(len(self.vary.get_keys()))
+        idx = 0
         for param_name, dist in self.vary.get_items():
             sample = dist.sample(1)[0]
+            param[idx] = sample
+            idx += 1
             #convert integers to float, e.g 2 --> 2.0
             if type(sample) == np.dtype(int).type:
                 sample = np.float(sample)
             run_dict[param_name] = sample
 
+        self.xi_d.append(param)
         self.count += 1
         return run_dict
+
+    def save_state(self, filename):
+        print("Saving sampler state to %s" % filename)
+        file = open(filename, 'wb')
+        pickle.dump(self.__dict__, file)
+        file.close()
+
+    def load_state(self, filename):
+        print("Loading sampler state from %s" % filename)
+        file = open(filename, 'rb')
+        self.__dict__ = pickle.load(file)
+        file.close()
 
     def is_restartable(self):
         return True
