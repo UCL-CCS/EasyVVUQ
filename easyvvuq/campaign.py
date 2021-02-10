@@ -58,7 +58,13 @@ class Campaign:
     Parameters
     ----------
     name : :obj:`str`, optional
-        Description of `param1`.
+    params : dict
+        Description of the parameters to associate with the application.
+    encoder : :obj:`easyvvuq.encoders.base.BaseEncoder`
+        Encoder element to convert parameters into application run inputs.
+    decoder : :obj:`easyvvuq.decoders.base.BaseDecoder`
+        Decoder element to convert application run output into data for
+        VVUQ analysis.
     db_type : str, default="sql"
         Type of database to use for CampaignDB.
     db_location : :obj:`str`, optional
@@ -121,6 +127,9 @@ class Campaign:
     def __init__(
             self,
             name=None,
+            params=None,
+            encoder=None,
+            decoder=None,
             db_type="sql",
             db_location=None,
             work_dir="./",
@@ -168,6 +177,9 @@ class Campaign:
         else:
             self.init_fresh(name, db_type, db_location, self.work_dir)
             self._state_dir = None
+
+        if (params is not None) and (encoder is not None) and (decoder is not None):
+            self.add_app(name=name, params=params, encoder=encoder, decoder=decoder)
 
     @property
     def campaign_dir(self):
@@ -697,7 +709,7 @@ class Campaign:
             action_statuses.append(action.act_on_dir(run_data['run_dir']))
         return ActionStatuses(action_statuses, batch_size=batch_size)
 
-    def sample_and_apply(self, nsamples, action, batch_size):
+    def sample_and_apply(self, action, batch_size=8, nsamples=0):
         """This will draw samples, populated the runs directories and run the specified action.
         This is a convenience method.
 
