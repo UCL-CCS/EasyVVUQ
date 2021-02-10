@@ -792,7 +792,7 @@ class Campaign:
             pandas dataframe
 
         """
-        return self.campaign_db.get_results(self._active_app['name'])
+        return self.campaign_db.get_results(self._active_app['name'], self._active_sampler_id)
 
     def apply_analysis(self, analysis):
         """Run the `analysis` element on the output of the last run collation.
