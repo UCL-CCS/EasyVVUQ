@@ -753,7 +753,7 @@ class Campaign:
         self.campaign_db.store_results(
             self._active_app_name, zip(
                 processed_run_IDs, processed_run_results))
-        return len(processed_run_IDs)
+        return self.get_collation_result()
 
     def recollate(self):
         """Clears the current collation table, changes all COLLATED status runs
@@ -801,6 +801,21 @@ class Campaign:
 
         # Log application of this analysis element
         self.log_element_application(analysis, None)
+
+    def analyse(self, **kwargs):
+        """If available will call an appropriate analysis class on the collation result.
+
+        Parameters
+        ----------
+        **kwargs - dict
+           Argument to the analysis class constructor (after sampler).
+        """
+        collation_result = self.collate()
+        try:
+            analysis = self._active_sampler.analysis_class(sampler=self._active_sampler, **kwargs)
+            return analysis.analyse(collation_result)
+        except NotImplementedError:
+            raise RuntimeError("This sampler does not have a corresponding analysis class")
 
     def get_last_analysis(self):
         """

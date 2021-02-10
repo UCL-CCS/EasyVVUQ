@@ -139,6 +139,13 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
 
         self.count = 0
 
+    @property
+    def analysis_class(self):
+        """Return a corresponding analysis class.
+        """
+        from easyvvuq.analysis import SCAnalysis
+        return SCAnalysis
+
     def compute_1D_points_weights(self, L, N):
         """
         Computes 1D collocation points and quad weights,

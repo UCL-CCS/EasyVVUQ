@@ -92,6 +92,10 @@ class BaseSamplingElement(BaseElement):
         """
         raise NotImplementedError
 
+    @property
+    def analysis_class(self):
+        raise NotImplementedError
+
     @staticmethod
     def deserialize(serialized_sampler):
         """Deserialize a sampler element.
