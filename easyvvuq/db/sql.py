@@ -839,7 +839,7 @@ class CampaignDB(BaseCampaignDB):
                 raise RuntimeError("no runs with name {} found".format(run_name))
         self.session.commit()
 
-    def get_results(self, app_name, sampler_id=None):
+    def get_results(self, app_name, sampler_id):
         """Returns the results as a pandas DataFrame.
 
         Parameters
