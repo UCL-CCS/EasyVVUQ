@@ -337,6 +337,14 @@ class AnalysisResults:
         else:
             return pd.DataFrame(result)
 
+    def plot_sobols_treemap(self, qoi):
+        """Plot sobols first and second order indices in a hierarchical treemap format.
+        """
+        if qoi not in self.qois:
+            raise RuntimeError("no such qoi - {}".format(qoi))
+        import matplotlib.pyplot as plt
+        import squarify
+
     def plot_sobols_first(self, qoi, inputs=None, withdots=False,
                           ylabel=None, xlabel=None, xvalues=None,
                           filename=None, dpi=None, ax=None):
