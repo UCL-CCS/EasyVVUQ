@@ -1,10 +1,13 @@
 import easyvvuq as uq
 import chaospy as cp
 import os
+import logging
 import pytest
 import shutil
 from easyvvuq.db.sql import CampaignTable
 
+TEST_PATH = os.path.dirname(os.path.realpath(__file__))
+LOGGER = logging.getLogger(__name__)
 
 @pytest.fixture
 def campaign(tmpdir):
@@ -46,7 +49,7 @@ def campaign(tmpdir):
             "default": 10.0}
     }
     encoder = uq.encoders.GenericEncoder(
-        template_fname='tests/cannonsim/test_input/cannonsim.template',
+        template_fname=f'{TEST_PATH}/cannonsim/test_input/cannonsim.template',
         delimiter='#',
         target_filename='in.cannon')
     decoder = uq.decoders.SimpleCSV(
@@ -55,7 +58,7 @@ def campaign(tmpdir):
     campaign = uq.Campaign(name='test', work_dir=tmpdir)
     campaign.add_app(name='test', params=params, encoder=encoder, decoder=decoder)
     campaign.set_app('test')
-    action = uq.actions.ExecuteLocal("tests/cannonsim/bin/cannonsim in.cannon output.csv")
+    action = uq.actions.ExecuteLocal(f"{TEST_PATH}/cannonsim/bin/cannonsim in.cannon output.csv")
     stats = uq.analysis.BasicStats(qoi_cols=['Dist', 'lastvx', 'lastvy'])
     # Make a random sampler
     vary = {
@@ -70,6 +73,75 @@ def campaign(tmpdir):
     campaign.populate_runs_dir()
     campaign.apply_for_each_run_dir(action)
     return campaign
+
+
+def test_no_input_state(tmp_path):
+    with pytest.raises(RuntimeError):
+        uq.Campaign(name='test', work_dir=tmp_path, relocate={})
+
+
+def test_invalid_db_type(tmp_path):
+    with pytest.raises(RuntimeError):
+        uq.Campaign(name='test', work_dir=tmp_path, db_type='pen&paper')
+
+
+def test_invalid_sampler(tmp_path):
+    with pytest.raises(Exception):
+        our_campaign = uq.Campaign(name='test', work_dir=tmp_path)
+        our_campaign.set_sampler('not_a_sampler')
+
+
+def test_premature_run_addition(tmp_path):
+    with pytest.raises(Exception):
+        our_campaign = uq.Campaign(name='test', work_dir=tmp_path)
+        # Requires an active app to be set
+        our_campaign.add_runs([])
+
+
+def test_none_run_addition(tmp_path):
+    with pytest.raises(Exception):
+        our_campaign = uq.Campaign(name='test', work_dir=tmp_path)
+        # Requires an active app to be set
+        our_campaign.add_runs([None])
+
+
+def test_premature_get_last_analysis(caplog, tmp_path):
+    with caplog.at_level(logging.WARNING):
+        our_campaign = uq.Campaign(name='test', work_dir=tmp_path)
+        result = our_campaign.get_last_analysis()
+
+    assert 'No last analysis output available.' in caplog.text
+    assert result is None
+
+
+def test_string(campaign):
+    target_str = (f"db_location = {campaign.db_location}\n"
+                  f"active_sampler_id = 1\n"
+                  f"campaign_name = test\n"
+                  f"campaign_dir = {campaign.campaign_dir}\n"
+                  f"campaign_id = 1\n"
+                  "log = [{'element': {'name': 'random_sampler', 'version': '0.1', 'category': 'sampling'}, "
+                  "'info': {'num_added': 100, 'replicas': 1}}]\n")
+
+    assert str(campaign) == target_str
+
+
+def test_get_active_sampler(tmp_path):
+    camp = uq.Campaign(name='test', work_dir=tmp_path)
+    vary = {
+        "angle": cp.Uniform(0.0, 1.0),
+        "height": cp.Uniform(2.0, 10.0),
+        "velocity": cp.Normal(10.0, 1.0),
+        "mass": cp.Uniform(1.0, 5.0)
+    }
+    sampler = uq.sampling.RandomSampler(vary=vary)
+    camp.set_sampler(sampler)
+
+    assert camp.get_active_sampler() == sampler
+
+
+def test_get_active_app(campaign):
+    assert campaign.get_active_app() == campaign._active_app
 
 
 def test_relocate_campaign(campaign, tmpdir):

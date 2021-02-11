@@ -22,7 +22,7 @@ copyright = '2020, David W. Wright, Robin A. Richardson, Vytautas Jancauskas, Ja
 author = 'David W. Wright, Robin A. Richardson, Vytautas Jancauskas, Jalal Lakhlili'
 
 # The full version, including alpha/beta/rc tags
-release = '0.7'
+release = '0.8'
 
 
 # -- General configuration ---------------------------------------------------
