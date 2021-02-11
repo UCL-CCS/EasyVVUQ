@@ -357,6 +357,7 @@ class AnalysisResults:
         else:
             fig = ax.get_figure()
         fig.set_size_inches(figsize)
+        ax.set_title("Decomposition of {} variance".format(qoi))
         squarify.plot(sizes=values, label=keys, color=colors, alpha=0.6, ax=ax, pad=True)
 
     def plot_sobols_first(self, qoi, inputs=None, withdots=False,
