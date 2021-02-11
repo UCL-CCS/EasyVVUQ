@@ -337,13 +337,27 @@ class AnalysisResults:
         else:
             return pd.DataFrame(result)
 
-    def plot_sobols_treemap(self, qoi):
+    def plot_sobols_treemap(self, qoi, figsize=(10,10), ax=None):
         """Plot sobols first and second order indices in a hierarchical treemap format.
         """
         if qoi not in self.qois:
             raise RuntimeError("no such qoi - {}".format(qoi))
         import matplotlib.pyplot as plt
         import squarify
+        sobols_first = self.sobols_first(qoi)
+        keys = list(sobols_first.keys())
+        values = [value[0] for value in list(sobols_first.values())]
+        keys = ["{}\n{:.5f}".format(key, value) for key, value in zip(keys, values)]
+        keys.append("higher orders\n{:.5f}".format(1.0 - sum(values)))
+        values.append(1.0 - sum(values))
+        colors = ['blue', 'orange', 'green', 'red', 'purple',
+                  'brown', 'pink', 'gray', 'olive', 'cyan']
+        if ax is None:
+            fig, ax = plt.subplots()
+        else:
+            fig = ax.get_figure()
+        fig.set_size_inches(figsize)
+        squarify.plot(sizes=values, label=keys, color=colors, alpha=0.6, ax=ax, pad=True)
 
     def plot_sobols_first(self, qoi, inputs=None, withdots=False,
                           ylabel=None, xlabel=None, xvalues=None,
