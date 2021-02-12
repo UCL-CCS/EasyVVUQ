@@ -103,7 +103,7 @@ class SCAnalysis(BaseAnalysisElement):
         None.
 
         """
-        print("Saving analysis state to %s" % filename)
+        logging.debug("Saving analysis state to %s" % filename)
         # make a copy of the state, and do not store the sampler as well
         state = copy.copy(self.__dict__)
         del state['sampler']
@@ -125,7 +125,7 @@ class SCAnalysis(BaseAnalysisElement):
         None.
 
         """
-        print("Loading analysis state from %s" % filename)
+        logging.debug("Loading analysis state from %s" % filename)
         file = open(filename, 'rb')
         state = pickle.load(file)
         for key in state.keys():
@@ -190,7 +190,7 @@ class SCAnalysis(BaseAnalysisElement):
         self.wi_1d = self.sampler.wi_1d
 
         # Extract output values for each quantity of interest from Dataframe
-        print('Loading samples...')
+        logging.debug('Loading samples...')
         qoi_cols = self.qoi_cols
         samples = {k: [] for k in qoi_cols}
         for run_id in data_frame[('run_id', 0)].unique():
@@ -198,7 +198,7 @@ class SCAnalysis(BaseAnalysisElement):
                 values = data_frame.loc[data_frame[('run_id', 0)] == run_id][k].values
                 samples[k].append(values.flatten())
         self.samples = samples
-        print('done')
+        logging.debug('done')
 
         # size of one code sample
         # TODO: change this to include QoI of different size
@@ -400,11 +400,11 @@ class SCAnalysis(BaseAnalysisElement):
 
         for key in error.keys():
             # logging.debug("Surplus error when l = %s is %s" % (key, error[key]))
-            print("Refinement error for l = %s is %s" % (key, error[key]))
+            logging.debug("Refinement error for l = %s is %s" % (key, error[key]))
         # find the admissble index with the largest error
         l_star = np.array(max(error, key=error.get)).reshape([1, self.N])
         # logging.debug('Selecting %s for refinement.' % l_star)
-        print('Selecting %s for refinement.' % l_star)
+        logging.debug('Selecting %s for refinement.' % l_star)
         # add max error to list
         self.adaptation_errors.append(max(error.values()))
 
@@ -455,7 +455,7 @@ class SCAnalysis(BaseAnalysisElement):
             include = np.arange(self.N)
 
         if self.sampler.dimension_adaptive:
-            print('Moving admissible indices to the accepted set...')
+            logging.debug('Moving admissible indices to the accepted set...')
             # make a backup of l_norm, such that undo_merge can revert back
             self.l_norm_backup = np.copy(self.l_norm)
             # merge admissible and accepted multi indices
@@ -477,7 +477,7 @@ class SCAnalysis(BaseAnalysisElement):
             idx = np.unique(merged_l, axis=0, return_index=True)[1]
             # return np.array([merged_l[i] for i in sorted(idx)])
             self.l_norm = np.array([merged_l[i] for i in sorted(idx)])
-            print('done')
+            logging.debug('done')
 
     def undo_merge(self):
         """
@@ -486,7 +486,7 @@ class SCAnalysis(BaseAnalysisElement):
         """
         if self.sampler.dimension_adaptive:
             self.l_norm = self.l_norm_backup
-            print('Restored old multi indices.')
+            logging.debug('Restored old multi indices.')
 
     def get_adaptation_errors(self):
         """
@@ -843,7 +843,7 @@ class SCAnalysis(BaseAnalysisElement):
             plt.tight_layout()
             plt.show()
         else:
-            print('Will only plot for N = 2 or N = 3.')
+            logging.debug('Will only plot for N = 2 or N = 3.')
 
     def SC2PCE(self, samples, verbose=True, **kwargs):
         """
@@ -1203,7 +1203,7 @@ class SCAnalysis(BaseAnalysisElement):
         -------
         Either the first order or all Sobol indices of qoi
         """
-        print('Computing Sobol indices...')
+        logging.debug('Computing Sobol indices...')
         # multi indices
         U = np.arange(self.N)
 
@@ -1259,7 +1259,7 @@ class SCAnalysis(BaseAnalysisElement):
             # compute Sobol index, only include points where D > 0
             # sobol[u] = D_u[u][idx_gt0]/D[idx_gt0]
             sobol[u] = D_u[u] / D
-        print('done.')
+        logging.debug('done.')
         return sobol
 
     def get_uncertainty_amplification(self, qoi):
@@ -1297,11 +1297,11 @@ class SCAnalysis(BaseAnalysisElement):
         CV_out = np.mean(CV_out[idx])
         blowup = CV_out / CV_in
 
-        print('-----------------')
-        print('Mean CV input = %.4f %%' % (100 * CV_in, ))
-        print('Mean CV output = %.4f %%' % (100 * CV_out, ))
-        print('Uncertainty amplification factor = %.4f/%.4f = %.4f' % (CV_out, CV_in, blowup))
-        print('-----------------')
+        logging.debug('-----------------')
+        logging.debug('Mean CV input = %.4f %%' % (100 * CV_in, ))
+        logging.debug('Mean CV output = %.4f %%' % (100 * CV_out, ))
+        logging.debug('Uncertainty amplification factor = %.4f/%.4f = %.4f' % (CV_out, CV_in, blowup))
+        logging.debug('-----------------')
 
         return blowup
 
