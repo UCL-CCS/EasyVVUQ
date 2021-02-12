@@ -81,7 +81,7 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
 
         # The quadrature information: order, rule and sparsity
         if isinstance(polynomial_order, int):
-            print('Received integer polynomial order, assuming isotropic grid')
+            logging.debug('Received integer polynomial order, assuming isotropic grid')
             self.polynomial_order = [polynomial_order for i in range(self.N)]
         else:
             self.polynomial_order = polynomial_order
@@ -250,7 +250,7 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
                         break
                     number_of_points = xi_i.size
 
-                print("Input %d is discrete, setting max quadrature order to %d"
+                logging.debug("Input %d is discrete, setting max quadrature order to %d"
                       % (n, order - 1))
                 # level 1 = order 0 etc
                 self.max_level[n] = order
@@ -274,7 +274,7 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
         self.L = L
         self.polynomial_order = [p + 1 for p in self.polynomial_order]
 
-        print('Moving grid from level %d to level %d' % (L - 1, L))
+        logging.debug('Moving grid from level %d to level %d' % (L - 1, L))
 
         # compute all multi indices
         multi_idx = self.compute_sparse_multi_idx(L, self.N)
@@ -291,7 +291,7 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
         # find the new points unique to the new grid
         new_points = setdiff2d(new_grid, self.xi_d)
 
-        print('%d new points added' % new_points.shape[0])
+        logging.debug('%d new points added' % new_points.shape[0])
 
         # update the number of samples
         self._n_samples += new_points.shape[0]
@@ -322,7 +322,7 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
 
         """
         if not self.dimension_adaptive:
-            print('Dimension adaptivity is not selected')
+            logging.debug('Dimension adaptivity is not selected')
             return
 
         # compute all forward neighbors for every l in current_multi_idx
@@ -339,7 +339,7 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
         forward_neighbor = setdiff2d(forward_neighbor, current_multi_idx)
         # make sure the final candidates are admissible (all backward neighbors
         # must be in the current multi indices)
-        print('Computing admissible levels...')
+        logging.debug('Computing admissible levels...')
         admissible_idx = []
         for l in forward_neighbor:
             admissible = True
@@ -355,14 +355,14 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
             # if all backward neighbors are in the current index set: l is admissible
             if admissible:
                 admissible_idx.append(l)
-        print('done')
+        logging.debug('done')
 
         self.admissible_idx = np.array(admissible_idx)
         # make sure that all entries of each index are <= the max quadrature order
         # The max quad order can be low for discrete input variables
         idx = np.where((self.admissible_idx <= self.max_level).all(axis=1))[0]
         self.admissible_idx = self.admissible_idx[idx]
-        print('Admissible multi-indices:\n', self.admissible_idx)
+        logging.debug('Admissible multi-indices:\n', self.admissible_idx)
 
         # determine the maximum level L of the new index set L = |l| - N + 1
         # self.L = np.max(np.sum(self.admissible_idx, axis=1) - self.N + 1)
@@ -374,7 +374,7 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
         # remove collocation points which have already been computed
         new_points = setdiff2d(admissible_grid, self.xi_d)
 
-        print('%d new points added' % new_points.shape[0])
+        logging.debug('%d new points added' % new_points.shape[0])
 
         # keep track of the number of points added per iteration
         if not hasattr(self, 'n_new_points'):
@@ -440,13 +440,13 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
             "dimension_adaptive": self.dimension_adaptive}
 
     def save_state(self, filename):
-        print("Saving sampler state to %s" % filename)
+        logging.debug("Saving sampler state to %s" % filename)
         file = open(filename, 'wb')
         pickle.dump(self.__dict__, file)
         file.close()
 
     def load_state(self, filename):
-        print("Loading sampler state from %s" % filename)
+        logging.debug("Loading sampler state from %s" % filename)
         file = open(filename, 'rb')
         self.__dict__ = pickle.load(file)
         file.close()
