@@ -3,7 +3,6 @@ import chaospy as cp
 import os
 import sys
 import pytest
-import logging
 
 __copyright__ = """
 
@@ -169,11 +168,6 @@ def test_multiapp(tmpdir):
     campaign.set_sampler(cooling_sampler)
     campaign.draw_samples()
 
-    # Logging.Debug the list of runs now in the campaign db
-    logging.debug("List of runs added:")
-    logging.debug(campaign.list_runs())
-    logging.debug("---")
-
     # Populate the runs dirs for runs belonging to the cannonsim app
     campaign.set_app("cannonsim")
     campaign.populate_runs_dir()
@@ -190,9 +184,6 @@ def test_multiapp(tmpdir):
     campaign.set_app("cooling")
     campaign.apply_for_each_run_dir(cooling_action)
 
-    logging.debug("Runs list after encoding and execution:")
-    logging.debug(campaign.list_runs())
-
     # Collate cannon results
     campaign.set_app("cannonsim")
     campaign.collate()
@@ -201,30 +192,17 @@ def test_multiapp(tmpdir):
     campaign.set_app("cooling")
     campaign.collate()
 
-    logging.debug("Runs list after collation:")
-    logging.debug(campaign.list_runs())
-
     campaign.set_app("cannonsim")
-    logging.debug("cannonsim data:", campaign.get_collation_result())
 
     campaign.set_app("cooling")
-    logging.debug("cooling data:", campaign.get_collation_result())
 
     # Apply analysis for cannon app
     campaign.set_app("cannonsim")
     campaign.apply_analysis(cannon_stats)
-    logging.debug("cannon stats:\n", campaign.get_last_analysis())
 
     # Apply analysis for cooling app
     campaign.set_app("cooling")
     campaign.apply_analysis(cooling_stats)
-    logging.debug("cooling stats:\n", campaign.get_last_analysis())
-
-    # Logging.Debug the campaign log
-    logging.debug(campaign._log)
-
-    logging.debug("All completed?", campaign.all_complete())
-
 
 if __name__ == "__main__":
     test_multiapp("/tmp/")
