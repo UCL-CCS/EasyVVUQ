@@ -445,13 +445,15 @@ class Campaign:
         (self._active_app_encoder,
          self._active_app_decoder) = self.campaign_db.resurrect_app(app_name)
 
-    def set_sampler(self, sampler):
+    def set_sampler(self, sampler, update=False):
         """Set active sampler.
 
         Parameters
         ----------
-        sampler : `easyvvuq.sampling.base.BaseSamplingElement`
+        sampler : easyvvuq.sampling.base.BaseSamplingElement
             Sampler that will be used to create runs for the current campaign.
+        update : bool
+            If set to True it will not add the sampler to the database, just change it as the active sampler.
 
         Returns
         -------
@@ -463,9 +465,11 @@ class Campaign:
             raise Exception(msg)
 
         self._active_sampler = sampler
-        self._active_sampler_id = self.campaign_db.add_sampler(sampler)
-        sampler.sampler_id = self._active_sampler_id
-        self.campaign_db.set_sampler(self.campaign_id, self._active_sampler_id)
+        if not update:
+            self._active_sampler_id = self.campaign_db.add_sampler(sampler)
+            sampler.sampler_id = self._active_sampler_id
+        self._active_sampler_id = self._active_sampler.sampler_id
+        self.campaign_db.set_sampler(self.campaign_id, self._active_sampler.sampler_id)
 
     def add_runs(self, runs):
         """Add a new run to the queue.

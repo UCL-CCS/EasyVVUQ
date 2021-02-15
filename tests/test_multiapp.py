@@ -198,10 +198,12 @@ def test_multiapp(tmpdir):
 
     # Apply analysis for cannon app
     campaign.set_app("cannonsim")
+    campaign.set_sampler(cannon_sampler, True)
     campaign.apply_analysis(cannon_stats)
 
     # Apply analysis for cooling app
     campaign.set_app("cooling")
+    campaign.set_sampler(cooling_sampler, True)
     campaign.apply_analysis(cooling_stats)
 
 if __name__ == "__main__":
