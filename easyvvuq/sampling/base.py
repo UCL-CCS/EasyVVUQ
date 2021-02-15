@@ -96,6 +96,17 @@ class BaseSamplingElement(BaseElement):
     def analysis_class(self):
         raise NotImplementedError
 
+    @property
+    def sampler_id(self):
+        try:
+            return self._sampler_id
+        except AttributeError:
+            raise RuntimeError('this sampler does not have an id assigned, run set_sampler first')
+
+    @sampler_id.setter
+    def sampler_id(self, val):
+        self._sampler_id = val
+
     @staticmethod
     def deserialize(serialized_sampler):
         """Deserialize a sampler element.

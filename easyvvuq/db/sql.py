@@ -858,10 +858,11 @@ class CampaignDB(BaseCampaignDB):
         except IndexError:
             raise RuntimeError("app with the name {} not found".format(app_name))
         pd_result = {}
-        for row in self.session.query(RunTable).\
-                filter(RunTable.app == app_id).\
-                filter(RunTable.sampler == sampler_id).\
-                filter(RunTable.status == constants.Status.COLLATED):
+        query = self.session.query(RunTable).\
+            filter(RunTable.app == app_id).\
+            filter(RunTable.sampler == sampler_id).\
+            filter(RunTable.status == constants.Status.COLLATED)
+        for row in query:
             params = {'run_id': row.id}
             params = {**params, **json.loads(row.params)}
             result = json.loads(row.result)

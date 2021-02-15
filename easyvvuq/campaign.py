@@ -464,6 +464,7 @@ class Campaign:
 
         self._active_sampler = sampler
         self._active_sampler_id = self.campaign_db.add_sampler(sampler)
+        sampler.sampler_id = self._active_sampler_id
         self.campaign_db.set_sampler(self.campaign_id, self._active_sampler_id)
 
     def add_runs(self, runs):
