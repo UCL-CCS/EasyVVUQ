@@ -1300,7 +1300,9 @@ class SCAnalysis(BaseAnalysisElement):
         logging.debug('-----------------')
         logging.debug('Mean CV input = %.4f %%' % (100 * CV_in, ))
         logging.debug('Mean CV output = %.4f %%' % (100 * CV_out, ))
-        logging.debug('Uncertainty amplification factor = %.4f/%.4f = %.4f' % (CV_out, CV_in, blowup))
+        logging.debug(
+            'Uncertainty amplification factor = %.4f/%.4f = %.4f' %
+            (CV_out, CV_in, blowup))
         logging.debug('-----------------')
 
         return blowup

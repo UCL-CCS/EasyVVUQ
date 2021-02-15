@@ -251,7 +251,7 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
                     number_of_points = xi_i.size
 
                 logging.debug("Input %d is discrete, setting max quadrature order to %d"
-                      % (n, order - 1))
+                              % (n, order - 1))
                 # level 1 = order 0 etc
                 self.max_level[n] = order
 

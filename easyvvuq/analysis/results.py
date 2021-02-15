@@ -337,7 +337,7 @@ class AnalysisResults:
         else:
             return pd.DataFrame(result)
 
-    def plot_sobols_treemap(self, qoi, figsize=(10,10), ax=None, filename=None, dpi=None):
+    def plot_sobols_treemap(self, qoi, figsize=(10, 10), ax=None, filename=None, dpi=None):
         """Plot sobols first and second order indices in a hierarchical treemap format.
 
         Parameters

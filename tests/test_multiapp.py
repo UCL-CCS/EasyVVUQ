@@ -143,9 +143,9 @@ def test_multiapp(tmpdir):
     (params, encoder, decoder, cannon_sampler,
      cannon_action, cannon_stats) = setup_cannonsim_app()
     campaign.add_app(name="cannonsim",
-                        params=params,
-                        encoder=encoder,
-                        decoder=decoder)
+                     params=params,
+                     encoder=encoder,
+                     decoder=decoder)
 
     campaign.set_app("cannonsim")
     campaign.set_sampler(cannon_sampler)
@@ -154,9 +154,9 @@ def test_multiapp(tmpdir):
     (params, encoder, decoder, cooling_sampler,
      cooling_action, cooling_stats) = setup_cooling_app()
     campaign.add_app(name="cooling",
-                        params=params,
-                        encoder=encoder,
-                        decoder=decoder)
+                     params=params,
+                     encoder=encoder,
+                     decoder=decoder)
 
     # Set campaign to cannonsim, apply sampler, draw all samples
     campaign.set_app("cannonsim")
@@ -205,6 +205,7 @@ def test_multiapp(tmpdir):
     campaign.set_app("cooling")
     campaign.set_sampler(cooling_sampler, True)
     campaign.apply_analysis(cooling_stats)
+
 
 if __name__ == "__main__":
     test_multiapp("/tmp/")

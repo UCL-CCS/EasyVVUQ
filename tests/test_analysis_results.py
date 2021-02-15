@@ -123,6 +123,7 @@ def test_plotting_sobols_tree(tmp_path):
     results = AnalysisResults()
     results.qois = ['g1']
     results.inputs = ['a', 'b', 'c', 'd']
+
     def sobols_first(qoi):
         return {'a': np.array([0.1]), 'b': np.array([0.2]),
                 'c': np.array([0.3]), 'd': np.array([0.3])}
