@@ -362,8 +362,9 @@ class AnalysisResults:
         keys = list(sobols_first.keys())
         values = [value[0] for value in list(sobols_first.values())]
         keys = ["{}\n{:.5f}".format(key, value) for key, value in zip(keys, values)]
-        keys.append("higher orders\n{:.5f}".format(1.0 - sum(values)))
-        values.append(1.0 - sum(values))
+        if sum(values) < 1.0:
+            keys.append("higher orders\n{:.5f}".format(1.0 - sum(values)))
+            values.append(1.0 - sum(values))
         colors = mcd.XKCD_COLORS
         if ax is None:
             fig, ax = plt.subplots()
