@@ -450,9 +450,7 @@ class AnalysisResults:
         else:
             ax.set_xlabel(xlabel)
         ax.legend()
-        if filename is None:
-            fig.show()
-        else:
+        if filename is not None:
             fig.savefig(filename, dpi=dpi)
         return ax
 
@@ -520,9 +518,7 @@ class AnalysisResults:
         else:
             ax.set_xlabel(xlabel)
         ax.legend()
-        if filename is None:
-            fig.show()
-        else:
+        if filename is not None:
             fig.savefig(filename, dpi=dpi)
         return ax
 
