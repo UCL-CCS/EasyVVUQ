@@ -97,9 +97,9 @@ def test_plotting(tmp_path, withdots, ylabel, xlabel, dpi):
     assert(os.path.exists(os.path.join(tmp_path, 'test.png')))
 
 
-@pytest.mark.parametrize('ylabel,xlabel,dpi',
-                         itertools.product(['y', None], ['T', None], [10, 100]))
-def test_plotting_moments(tmp_path, ylabel, xlabel, dpi):
+@pytest.mark.parametrize('ylabel,xlabel,dpi,minmax_quantiles',
+                         itertools.product(['y', None], ['T', None], [10, 100], [True, False]))
+def test_plotting_moments(tmp_path, ylabel, xlabel, dpi, minmax_quantiles):
     results = AnalysisResults()
     results.qois = ['t']
     data = np.random.normal(np.arange(100), np.arange(100), size=(100, 100))
@@ -109,13 +109,13 @@ def test_plotting_moments(tmp_path, ylabel, xlabel, dpi):
             return data.mean(axis=0)
         elif stat == 'std':
             return data.std(axis=0)
-        elif stat == 'min':
+        elif stat == '1%':
             return data.min(axis=0)
-        elif stat == 'max':
+        elif stat == '99%':
             return data.max(axis=0)
     results.describe = describe
     results.inputs = ['kappa', 't_env']
-    results.plot_moments('t', ylabel, xlabel, filename=os.path.join(tmp_path, 'test.png'), dpi=dpi)
+    results.plot_moments('t', ylabel, xlabel, minmax_quantiles=minmax_quantiles, filename=os.path.join(tmp_path, 'test.png'), dpi=dpi)
     assert(os.path.exists(os.path.join(tmp_path, 'test.png')))
 
 
