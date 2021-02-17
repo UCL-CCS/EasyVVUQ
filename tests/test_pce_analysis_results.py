@@ -122,9 +122,11 @@ def test_describe(results_vectors):
             'mean': pytest.approx(0.5000000000000001, 0.001),
             'var': pytest.approx(0.08333333333333348, 0.001),
             'std': pytest.approx(0.28867513459481314, 0.001),
+            '1%': pytest.approx(0.00918264783704714, 0.001),
             '10%': pytest.approx(0.09946223131463872, 0.001),
             'median': pytest.approx(0.49494477064098824, 0.001),
             '90%': pytest.approx(0.9004983440179313, 0.001),
+            '99%': pytest.approx(0.9905999521854744, 0.001),
             'min': pytest.approx(-0.775685017772766, 0.001),
             'max': pytest.approx(1.775781592068878, 0.001)})
     assert(
@@ -134,9 +136,11 @@ def test_describe(results_vectors):
             'mean': pytest.approx(0.5000000000000001, 0.001),
             'var': pytest.approx(0.08333333333333348, 0.001),
             'std': pytest.approx(0.28867513459481314, 0.001),
+            '1%': pytest.approx(0.00918264783704714, 0.001),
             '10%': pytest.approx(0.09946223131463872, 0.001),
             'median': pytest.approx(0.49494477064098824, 0.001),
             '90%': pytest.approx(0.9004983440179313, 0.001),
+            '99%': pytest.approx(0.9905999521854744, 0.001),
             'min': pytest.approx(-0.7756850177727665, 0.001),
             'max': pytest.approx(1.775781592068878, 0.001)})
     assert(isinstance(results_vectors.describe('g', 'min'), np.ndarray))
