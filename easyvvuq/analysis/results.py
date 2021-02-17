@@ -438,8 +438,11 @@ class AnalysisResults:
             fig, ax = plt.subplots()
         else:
             fig = ax.get_figure()
+        higher = np.array([1.0] * len(points[0]))
         for p, label in zip(points, inputs):
+            higher -= p
             ax.plot(xvalues, p, next(styles), label=label)
+        ax.plot(xvalues, higher, next(styles), label='higher orders')
         ax.grid(True)
         if ylabel is None:
             ax.set_ylabel('First Order Sobol Index')
@@ -508,6 +511,8 @@ class AnalysisResults:
                         self.describe(qoi, 'std'), self.describe(qoi, 'mean') +
                         self.describe(qoi, 'std'), label='std', alpha=alpha)
         ax.plot(xvalues, self.describe(qoi, 'mean'), label='mean')
+        ax.plot(xvalues, self.describe(qoi, '1%'), '--', label='1%', color='black')
+        ax.plot(xvalues, self.describe(qoi, '99%'), '--', label='99%', color='black')
         ax.grid(True)
         if ylabel is None:
             ax.set_ylabel(qoi)
