@@ -28,3 +28,4 @@ def test_action_status_kubernetes():
     status1.succeeded.return_value = True
     status2.succeeded.return_value = True
     status3.succeeded.return_value = True
+    statuses.wait(1)

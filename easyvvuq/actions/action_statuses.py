@@ -92,3 +92,14 @@ class ActionStatuses:
             else:
                 ready += 1
         return {'ready': ready, 'active': running, 'finished': done, 'failed': failed}
+
+    def wait(self, poll_interval=10):
+        """A command that will automatically poll job statuses. For use in scripts.
+        
+        Parameters
+        ----------
+        poll_interval: int
+           Polling interval in seconds.
+        """
+        while self.progress()['ready'] > 0:
+            time.sleep(poll_interval)
