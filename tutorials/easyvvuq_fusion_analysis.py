@@ -7,18 +7,62 @@ import time
 import numpy as np
 import matplotlib.pylab as plt
 
+def sobols(P, coefficients):
+    A = np.array(P.coefficients)!=0
+    multi_indices = np.array([P.exponents[A[:,i]].sum(axis=0) for i in range(A.shape[1])])
+    sobol_mask = multi_indices != 0
+    _, index = np.unique(sobol_mask, axis=0, return_index=True)
+    index = np.sort(index)
+    sobol_idx_bool = sobol_mask[index]
+    sobol_idx_bool = np.delete(sobol_idx_bool, [0], axis=0)
+    n_sobol_available = sobol_idx_bool.shape[0]
+    if len(coefficients.shape) == 1:
+        n_out = 1
+    else:
+        n_out = coefficients.shape[1]
+    n_coeffs = coefficients.shape[0]
+    sobol_poly_idx = np.zeros([n_coeffs, n_sobol_available])
+    for i_sobol in range(n_sobol_available):
+        sobol_poly_idx[:, i_sobol] = np.all(sobol_mask == sobol_idx_bool[i_sobol], axis=1)
+    sobol = np.zeros([n_sobol_available, n_out])
+    for i_sobol in range(n_sobol_available):
+        sobol[i_sobol] = np.sum(np.square(coefficients[sobol_poly_idx[:, i_sobol] == 1]), axis=0)
+    idx_sort_descend_1st = np.argsort(sobol[:, 0], axis=0)[::-1]
+    sobol = sobol[idx_sort_descend_1st, :]
+    sobol_idx_bool = sobol_idx_bool[idx_sort_descend_1st]
+    sobol_idx = [0 for _ in range(sobol_idx_bool.shape[0])]
+    for i_sobol in range(sobol_idx_bool.shape[0]):
+        sobol_idx[i_sobol] = np.array([i for i, x in enumerate(sobol_idx_bool[i_sobol, :]) if x])
+    var = ((coefficients[1:]**2).sum(axis=0))
+    sobol = sobol / var
+    return sobol, sobol_idx, sobol_idx_bool
+
+
 # Read an old campaign
+time_start = time.time()
 old_campaign = uq.Campaign(state_file="campaign_state.json", work_dir=".")
+time_end = time.time()
+print('Time for phase 1 = %.3f' % (time_end-time_start))
+
+time_start = time.time()
 results_df = old_campaign.get_collation_result()
+time_end = time.time()
+print('Time for phase 2 = %.3f' % (time_end-time_start))
 
 # Post-processing analysis
-analysis = uq.analysis.PCEAnalysis(sampler=old_campaign.get_active_sampler(), qoi_cols=["te", "ne", "rho", "rho_norm"])
+time_start = time.time()
+analysis = uq.analysis.PCEAnalysis(sampler=old_campaign.get_active_sampler(), qoi_cols=["te", "ne", "rho", "rho_norm"], sampling=True)
 old_campaign.apply_analysis(analysis)
+time_end = time.time()
+print('Time for phase 3 = %.3f' % (time_end-time_start))
 
 # Get Descriptive Statistics
+time_start = time.time()
 results = old_campaign.get_last_analysis()
 rho = results.describe('rho', 'mean')
 rho_norm = results.describe('rho_norm', 'mean')
+time_end = time.time()
+print('Time for phase 4 = %.3f' % (time_end-time_start))
 
 plt.ion()
 
@@ -105,3 +149,48 @@ for i in [np.maximum(0, np.int(i-1)) for i in np.linspace(0,1,5) * rho_norm.shap
     plt.xlabel('Te [eV]')
     plt.title('Distributions for rho_norm = %0.4f' % (rho_norm[i]))
     plt.savefig('distribution_function_rho_norm=%0.4f.png' % (rho_norm[i]))
+
+
+# Compare new and old ways of calculating statistical quantities
+sobol, sobol_idx, _ = sobols(old_campaign.get_active_sampler().P, results.raw_data['Fourier_coefficients']['te'])
+
+varied = [_ for _ in analysis.sampler.vary.get_keys()]
+S1 = {_: np.zeros(sobol.shape[-1]) for _ in varied}
+ST = {_: np.zeros(sobol.shape[-1]) for _ in varied}
+S2 = {_ : {__: np.zeros(sobol.shape[-1]) for __ in varied} for _ in varied}
+for v in varied: del S2[v][v]
+for n, si in enumerate(sobol_idx):
+    if len(si) == 1:
+        v = varied[si[0]]
+        S1[v] = sobol[n]
+    elif len(si) == 2:
+        v1 = varied[si[0]]
+        v2 = varied[si[1]]
+        S2[v1][v2] = sobol[n]
+        S2[v2][v1] = sobol[n]
+    for i in si:
+        ST[varied[i]] += sobol[n]
+
+plt.figure()
+plt.plot(rho, results.describe('te', 'mean') - results.raw_data['Fourier_coefficients']['te'][0], label='Difference in mean')
+plt.plot(rho, results.describe('te', 'std') - np.sqrt(np.sum(results.raw_data['Fourier_coefficients']['te'][1:]**2, axis=0)), label='Difference in std')
+plt.legend(loc=0)
+plt.xlabel('rho [m]')
+plt.title('Comparison between chaospy sampling\nand fourier coefficients evaluations')
+plt.savefig('Difference_in_mean_and_std.png')
+
+
+plt.figure()
+for k in S1.keys():
+    plt.plot(rho, results.sobols_first()['te'][k] - S1[k], label='Difference in sobol firsts %s' % (k))
+for k1 in S2.keys():
+    for k2 in S2[k1].keys():
+        plt.plot(rho, results.sobols_second()['te'][k1][k2] - S2[k1][k2], label='Difference in sobol seconds %s/%s' % (k1, k2))
+for k in S1.keys():
+    plt.plot(rho, results.sobols_total()['te'][k] - ST[k], label='Difference in sobol totals %s' % (k))
+plt.legend(loc=0, ncol=3, fontsize=4)
+plt.xlabel('rho [m]')
+plt.ylabel('sobols')
+plt.title('Comparison between chaospy sampling\nand fourier coefficients evaluations')
+plt.savefig('Difference_in_sobols.png')
+
