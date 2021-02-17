@@ -1,0 +1,35 @@
+#!/usr/bin/env python3
+
+import sys
+import json
+import pandas as pd
+
+
+def sir(S0, I0, beta, gamma, iterations):
+    S = S0
+    I = I0
+    R = 0
+    for t_ in range(iterations):
+        N = float(S + I + R)
+        S -= (beta * S * I) / N
+        I += ((beta * S * I) / N - gamma * I)
+        R += gamma * I
+        r0 = (beta * S) / gamma
+        yield {'S': S, 'I': I, 'R': R, 'r0': r0, 't': t_ + 1}
+
+if __name__ == '__main__':
+    json_input = sys.argv[1]
+    with open(json_input, "r") as f:
+        inputs = json.load(f)
+
+    S0 = float(inputs['S0'])
+    I0 = float(inputs['I0'])
+    beta = float(inputs['beta'])
+    gamma = float(inputs['gamma'])
+    iterations = int(inputs['iterations'])
+    output_filename = inputs['outfile']
+
+    data = pd.DataFrame(list(sir(S0, I0, beta, gamma, iterations)))
+
+    # output csv file
+    data.to_csv(output_filename, index=False)

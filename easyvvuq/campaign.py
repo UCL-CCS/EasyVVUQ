@@ -58,7 +58,13 @@ class Campaign:
     Parameters
     ----------
     name : :obj:`str`, optional
-        Description of `param1`.
+    params : dict
+        Description of the parameters to associate with the application.
+    encoder : :obj:`easyvvuq.encoders.base.BaseEncoder`
+        Encoder element to convert parameters into application run inputs.
+    decoder : :obj:`easyvvuq.decoders.base.BaseDecoder`
+        Decoder element to convert application run output into data for
+        VVUQ analysis.
     db_type : str, default="sql"
         Type of database to use for CampaignDB.
     db_location : :obj:`str`, optional
@@ -121,6 +127,9 @@ class Campaign:
     def __init__(
             self,
             name=None,
+            params=None,
+            encoder=None,
+            decoder=None,
             db_type="sql",
             db_location=None,
             work_dir="./",
@@ -168,6 +177,9 @@ class Campaign:
         else:
             self.init_fresh(name, db_type, db_location, self.work_dir)
             self._state_dir = None
+
+        if (params is not None) and (encoder is not None) and (decoder is not None):
+            self.add_app(name=name, params=params, encoder=encoder, decoder=decoder)
 
     @property
     def campaign_dir(self):
@@ -433,13 +445,15 @@ class Campaign:
         (self._active_app_encoder,
          self._active_app_decoder) = self.campaign_db.resurrect_app(app_name)
 
-    def set_sampler(self, sampler):
+    def set_sampler(self, sampler, update=False):
         """Set active sampler.
 
         Parameters
         ----------
-        sampler : `easyvvuq.sampling.base.BaseSamplingElement`
+        sampler : easyvvuq.sampling.base.BaseSamplingElement
             Sampler that will be used to create runs for the current campaign.
+        update : bool
+            If set to True it will not add the sampler to the database, just change it as the active sampler.
 
         Returns
         -------
@@ -451,8 +465,11 @@ class Campaign:
             raise Exception(msg)
 
         self._active_sampler = sampler
-        self._active_sampler_id = self.campaign_db.add_sampler(sampler)
-        self.campaign_db.set_sampler(self.campaign_id, self._active_sampler_id)
+        if not update:
+            self._active_sampler_id = self.campaign_db.add_sampler(sampler)
+            sampler.sampler_id = self._active_sampler_id
+        self._active_sampler_id = self._active_sampler.sampler_id
+        self.campaign_db.set_sampler(self.campaign_id, self._active_sampler.sampler_id)
 
     def add_runs(self, runs):
         """Add a new run to the queue.
@@ -697,7 +714,7 @@ class Campaign:
             action_statuses.append(action.act_on_dir(run_data['run_dir']))
         return ActionStatuses(action_statuses, batch_size=batch_size)
 
-    def sample_and_apply(self, nsamples, action, batch_size):
+    def sample_and_apply(self, action, batch_size=8, nsamples=0):
         """This will draw samples, populated the runs directories and run the specified action.
         This is a convenience method.
 
@@ -753,7 +770,7 @@ class Campaign:
         self.campaign_db.store_results(
             self._active_app_name, zip(
                 processed_run_IDs, processed_run_results))
-        return len(processed_run_IDs)
+        return self.get_collation_result()
 
     def recollate(self):
         """Clears the current collation table, changes all COLLATED status runs
@@ -780,7 +797,7 @@ class Campaign:
             pandas dataframe
 
         """
-        return self.campaign_db.get_results(self._active_app['name'])
+        return self.campaign_db.get_results(self._active_app['name'], self._active_sampler_id)
 
     def apply_analysis(self, analysis):
         """Run the `analysis` element on the output of the last run collation.
@@ -798,9 +815,23 @@ class Campaign:
 
         # Apply analysis element to most recent collation result
         self.last_analysis = analysis.analyse(data_frame=self.get_collation_result())
-
         # Log application of this analysis element
         self.log_element_application(analysis, None)
+
+    def analyse(self, **kwargs):
+        """If available will call an appropriate analysis class on the collation result.
+
+        Parameters
+        ----------
+        **kwargs - dict
+           Argument to the analysis class constructor (after sampler).
+        """
+        collation_result = self.collate()
+        try:
+            analysis = self._active_sampler.analysis_class(sampler=self._active_sampler, **kwargs)
+            return analysis.analyse(collation_result)
+        except NotImplementedError:
+            raise RuntimeError("This sampler does not have a corresponding analysis class")
 
     def get_last_analysis(self):
         """
