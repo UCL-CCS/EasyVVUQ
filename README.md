@@ -19,7 +19,7 @@ overhead. EasyVVUQ is especially suitable for cases where the simulation is comp
 you want to use heterogeneous computing resources or the runs are very large and bookkeeping is prohibitively
 complex. It coordinates execution using an efficient back-end database and all the work is resumable.
 
-Basic concepts are introduced [here](https://mybinder.org/v2/gh/UCL-CCS/EasyVVUQ/a6852d6c5ba36f15579e601d7a8d074505f31084?filepath=tutorials%2Fbasic_tutorial.ipynb).
+Basic concepts are introduced [here](https://mybinder.org/v2/gh/UCL-CCS/EasyVVUQ/a6852d6c5ba36f15579e601d7a8d074505f31084?filepath=tutorials%2Fbasic_tutorial.ipynb) and [here](https://mybinder.org/v2/gh/UCL-CCS/EasyVVUQ/74d6a9f4b0eecc754918de2f3795395d35ac4875?filepath=tutorials%2Fvector_qoi_tutorial.ipynb).
 
 Available analysis and sampling methods:
 
