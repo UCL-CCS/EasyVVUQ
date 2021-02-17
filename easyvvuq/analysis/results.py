@@ -510,7 +510,7 @@ class AnalysisResults:
         ax.fill_between(xvalues, self.describe(qoi, 'mean') -
                         self.describe(qoi, 'std'), self.describe(qoi, 'mean') +
                         self.describe(qoi, 'std'), label='std', alpha=alpha)
-        ax.plot(xvalues, self.describe(qoi, 'mean'), label='mean')
+        ax.plot(xvalues, self.describe(qoi, 'mean'), '-', label='mean')
         ax.plot(xvalues, self.describe(qoi, '1%'), '--', label='1%', color='black')
         ax.plot(xvalues, self.describe(qoi, '99%'), '--', label='99%', color='black')
         ax.grid(True)
