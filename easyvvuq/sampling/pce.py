@@ -170,6 +170,13 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
     def is_restartable(self):
         return True
 
+    @property
+    def analysis_class(self):
+        """Return a corresponding analysis class.
+        """
+        from easyvvuq.analysis import PCEAnalysis
+        return PCEAnalysis
+
     def __next__(self):
         if self.count < self._n_samples:
             run_dict = {}

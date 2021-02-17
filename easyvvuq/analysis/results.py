@@ -337,6 +337,48 @@ class AnalysisResults:
         else:
             return pd.DataFrame(result)
 
+    def plot_sobols_treemap(self, qoi, figsize=(10, 10), ax=None, filename=None, dpi=None):
+        """Plot sobols first and second order indices in a hierarchical treemap format.
+
+        Parameters
+        ----------
+        qoi: str
+           Name of the quantity of interest.
+        figsize: tuple
+           A tuple with two integers representing figure size in inches.
+        ax: matplotlib
+           Matplotlib axis to plot on.
+        filename: str
+           Filename to write the plot to. If left None will display to screen.
+        dpi: int
+           Dots per inches. Only used when writing to file.
+        """
+        if qoi not in self.qois:
+            raise RuntimeError("no such qoi - {}".format(qoi))
+        import matplotlib.pyplot as plt
+        import matplotlib._color_data as mcd
+        import squarify
+        sobols_first = self.sobols_first(qoi)
+        keys = list(sobols_first.keys())
+        values = [value[0] for value in list(sobols_first.values())]
+        keys = ["{}\n{:.5f}".format(key, value) for key, value in zip(keys, values)]
+        if sum(values) < 1.0:
+            keys.append("higher orders\n{:.5f}".format(1.0 - sum(values)))
+            values.append(1.0 - sum(values))
+        colors = mcd.XKCD_COLORS
+        if ax is None:
+            fig, ax = plt.subplots()
+        else:
+            fig = ax.get_figure()
+        fig.set_size_inches(figsize)
+        ax.set_title("Decomposition of {} variance".format(qoi))
+        squarify.plot(sizes=values, label=keys, color=colors, ax=ax, pad=True)
+        ax.axis('off')
+        if filename is None:
+            fig.show()
+        else:
+            fig.savefig(filename, dpi=dpi)
+
     def plot_sobols_first(self, qoi, inputs=None, withdots=False,
                           ylabel=None, xlabel=None, xvalues=None,
                           filename=None, dpi=None, ax=None):

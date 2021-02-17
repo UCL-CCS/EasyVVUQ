@@ -123,7 +123,7 @@ def test_collation(campaign):
     results = [(run[0], {'b': i, 'c': [i + 1, i + 2]}) for i, run in enumerate(campaign.runs())]
     campaign.store_results('test', results)
     campaign.set_run_statuses([run[0] for run in campaign.runs()], Status.COLLATED)
-    result = campaign.get_results('test')
+    result = campaign.get_results('test', 1)
     assert(isinstance(result, pd.DataFrame))
     assert(list(result.columns) == [('run_id', 0), ('a', 0), ('b', 0), ('c', 0), ('c', 1)])
     assert(list(result.iloc[100].values) == [101, 1, 100, 101, 102])
@@ -306,5 +306,5 @@ def test_mv_collation(tmp_path, app_info):
     campaign.add_app(app_info)
     results = [('Run_1', mv_data), ('Run_2', mv_data)]
     campaign.store_results('test', results)
-    assert(not campaign.get_results('test').empty)
+    assert(not campaign.get_results('test', 1).empty)
     return campaign

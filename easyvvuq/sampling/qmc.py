@@ -122,6 +122,13 @@ class QMCSampler(BaseSamplingElement, sampler_name="QMC_sampler"):
         """
         return True
 
+    @property
+    def analysis_class(self):
+        """Return a corresponding analysis class.
+        """
+        from easyvvuq.analysis import QMCAnalysis
+        return QMCAnalysis
+
     def __next__(self):
         if self.count < self.n_samples:
             run_dict = {}
