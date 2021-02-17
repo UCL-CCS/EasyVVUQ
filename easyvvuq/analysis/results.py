@@ -438,8 +438,11 @@ class AnalysisResults:
             fig, ax = plt.subplots()
         else:
             fig = ax.get_figure()
+        higher = np.array([1.0] * len(points[0]))
         for p, label in zip(points, inputs):
+            higher -= p
             ax.plot(xvalues, p, next(styles), label=label)
+        ax.plot(xvalues, higher, next(styles), label='higher orders')
         ax.grid(True)
         if ylabel is None:
             ax.set_ylabel('First Order Sobol Index')
@@ -450,9 +453,7 @@ class AnalysisResults:
         else:
             ax.set_xlabel(xlabel)
         ax.legend()
-        if filename is None:
-            fig.show()
-        else:
+        if filename is not None:
             fig.savefig(filename, dpi=dpi)
         return ax
 
@@ -462,7 +463,7 @@ class AnalysisResults:
             ylabel=None,
             xlabel=None,
             xvalues=None,
-            alpha=0.5,
+            alpha=0.2,
             filename=None,
             dpi=None,
             ax=None):
@@ -502,14 +503,16 @@ class AnalysisResults:
             fig = ax.get_figure()
         if xvalues is None:
             xvalues = np.arange(len(self.describe(qoi, 'mean')))
-        ax.fill_between(
-            xvalues, self.describe(
-                qoi, 'min'), self.describe(
-                qoi, 'max'), label='min-max', alpha=alpha)
+#        ax.fill_between(
+#            xvalues, self.describe(
+#                qoi, 'min'), self.describe(
+#                qoi, 'max'), label='min-max', alpha=alpha)
         ax.fill_between(xvalues, self.describe(qoi, 'mean') -
                         self.describe(qoi, 'std'), self.describe(qoi, 'mean') +
                         self.describe(qoi, 'std'), label='std', alpha=alpha)
         ax.plot(xvalues, self.describe(qoi, 'mean'), label='mean')
+        ax.plot(xvalues, self.describe(qoi, '1%'), '--', label='1%', color='black')
+        ax.plot(xvalues, self.describe(qoi, '99%'), '--', label='99%', color='black')
         ax.grid(True)
         if ylabel is None:
             ax.set_ylabel(qoi)
@@ -520,9 +523,7 @@ class AnalysisResults:
         else:
             ax.set_xlabel(xlabel)
         ax.legend()
-        if filename is None:
-            fig.show()
-        else:
+        if filename is not None:
             fig.savefig(filename, dpi=dpi)
         return ax
 

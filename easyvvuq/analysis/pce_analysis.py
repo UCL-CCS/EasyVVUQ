@@ -255,7 +255,7 @@ class PCEAnalysis(BaseAnalysisElement):
             results['fit'][k] = fit
             results['Fourier_coefficients'][k] = fc
 
-            # Percentiles: 10%, 50% and 90%
+            # Percentiles: 1%, 10%, 50%, 90% and 99%
             P01, P10, P50, P90, P99 = cp.Perc(fit, [1, 10, 50, 90, 99], self.sampler.distribution).squeeze()
             results['percentiles'][k] = {'p01': P01, 'p10': P10, 'p50': P50, 'p90': P90, 'p99': P99}
 

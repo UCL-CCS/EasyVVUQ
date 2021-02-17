@@ -109,9 +109,9 @@ def test_plotting_moments(tmp_path, ylabel, xlabel, dpi):
             return data.mean(axis=0)
         elif stat == 'std':
             return data.std(axis=0)
-        elif stat == 'min':
+        elif stat == '1%':
             return data.min(axis=0)
-        elif stat == 'max':
+        elif stat == '99%':
             return data.max(axis=0)
     results.describe = describe
     results.inputs = ['kappa', 't_env']
