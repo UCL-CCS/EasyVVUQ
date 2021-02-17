@@ -465,7 +465,6 @@ class AnalysisResults:
             xvalues=None,
             alpha=0.2,
             filename=None,
-            minmax_quantiles=False,
             dpi=None,
             ax=None):
         """Plot statistical moments for this analysis.
@@ -512,9 +511,8 @@ class AnalysisResults:
                         self.describe(qoi, 'std'), self.describe(qoi, 'mean') +
                         self.describe(qoi, 'std'), label='std', alpha=alpha)
         ax.plot(xvalues, self.describe(qoi, 'mean'), label='mean')
-        if minmax_quantiles:
-            ax.plot(xvalues, self.describe(qoi, '1%'), '--', label='1%', color='black')
-            ax.plot(xvalues, self.describe(qoi, '99%'), '--', label='99%', color='black')
+        ax.plot(xvalues, self.describe(qoi, '1%'), '--', label='1%', color='black')
+        ax.plot(xvalues, self.describe(qoi, '99%'), '--', label='99%', color='black')
         ax.grid(True)
         if ylabel is None:
             ax.set_ylabel(qoi)
