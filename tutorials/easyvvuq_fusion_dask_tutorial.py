@@ -67,14 +67,14 @@ if __name__ == '__main__':      ### This is needed if you are using a local clus
     print(str, file=open('fusion.template','w'))
     """
 
-    # Create an encoder, and decoder for PCE test app
+    # Create an encoder and decoder for PCE test app
     encoder = uq.encoders.GenericEncoder(template_fname='fusion.template',
                                          delimiter='$',
                                          target_filename='fusion_in.json')
 
 
     decoder = uq.decoders.SimpleCSV(target_filename="output.csv",
-                                    output_columns=["te", "ne", "rho", "rho_norm"],)
+                                    output_columns=["te", "ne", "rho", "rho_norm"])
 
     # Add the app (automatically set as current app)
     my_campaign.add_app(name="fusion",
@@ -106,7 +106,7 @@ if __name__ == '__main__':      ### This is needed if you are using a local clus
     """
 
     # Associate a sampler with the campaign
-    my_campaign.set_sampler(uq.sampling.PCESampler(vary=vary, polynomial_order=3))
+    my_campaign.set_sampler(uq.sampling.PCESampler(vary=vary, polynomial_order=2))
 
     # Will draw all (of the finite set of samples)
     my_campaign.draw_samples()
@@ -116,6 +116,7 @@ if __name__ == '__main__':      ### This is needed if you are using a local clus
     print('Time for phase 2 = %.3f' % (time_end-time_start))
     time_start = time.time()
 
+    # Create and populate the run directories
     my_campaign.populate_runs_dir()
 
     time_end = time.time()
@@ -133,18 +134,25 @@ if __name__ == '__main__':      ### This is needed if you are using a local clus
         client = Client(cluster)
     print(client)
 
+    # Run the cases
+    print("A")
     cwd = os.getcwd().replace(' ', '\ ')      # deal with ' ' in the path
     cmd = f"{cwd}/fusion_model.py fusion_in.json"
     my_campaign.apply_for_each_run_dir(uq.actions.ExecuteLocal(cmd, interpret='python3'), client)
+    print("B")
 
     client.close()
-#    client.shutdown()
+    if not args.local:
+        client.shutdown()
+    print("C")
 
     time_end = time.time()
     print('Time for phase 4 = %.3f' % (time_end-time_start))
     time_start = time.time()
 
+    # Collate the results
     my_campaign.collate()
+    results_df = my_campaign.get_collation_result()
 
     time_end = time.time()
     print('Time for phase 5 = %.3f' % (time_end-time_start))
@@ -223,17 +231,31 @@ if __name__ == '__main__':      ### This is needed if you are using a local clus
     plt.title(my_campaign.campaign_dir)
     plt.savefig('sobols_total.png')
 
-    # plot the distributions
-    plt.figure()
-    for i, D in enumerate(results.raw_data['output_distributions']['te']):
-        _Te = np.linspace(D.lower[0], D.upper[0], 101)
-        _DF = D.pdf(_Te)
-        plt.loglog(_Te, _DF, 'b-', alpha=0.25)
-        plt.loglog(results.describe('te', 'mean')[i], np.interp(results.describe('te', 'mean')[i], _Te, _DF), 'bo')
-        plt.loglog(results.describe('te', 'mean')[i]-results.describe('te', 'std')[i], np.interp(results.describe('te', 'mean')[i]-results.describe('te', 'std')[i], _Te, _DF), 'b*')
-        plt.loglog(results.describe('te', 'mean')[i]+results.describe('te', 'std')[i], np.interp(results.describe('te', 'mean')[i]+results.describe('te', 'std')[i], _Te, _DF), 'b*')
-        plt.loglog(results.describe('te', '10%')[i],  np.interp(results.describe('te', '10%')[i], _Te, _DF), 'b+')
-        plt.loglog(results.describe('te', '90%')[i],  np.interp(results.describe('te', '90%')[i], _Te, _DF), 'b+')
-    plt.xlabel('Te')
-    plt.ylabel('distribution function')
-    plt.savefig('distribution_functions.png')
+    ### Commented out because we get "GaussianKDE()) has dangling dependencies" error messages
+    # # plot the distributions
+    # plt.figure()
+    # for i, D in enumerate(results.raw_data['output_distributions']['te']):
+    #     _Te = np.linspace(D.lower[0], D.upper[0], 101)
+    #     _DF = D.pdf(_Te)
+    #     plt.loglog(_Te, _DF, 'b-', alpha=0.25)
+    #     plt.loglog(results.describe('te', 'mean')[i], np.interp(results.describe('te', 'mean')[i], _Te, _DF), 'bo')
+    #     plt.loglog(results.describe('te', 'mean')[i]-results.describe('te', 'std')[i], np.interp(results.describe('te', 'mean')[i]-results.describe('te', 'std')[i], _Te, _DF), 'b*')
+    #     plt.loglog(results.describe('te', 'mean')[i]+results.describe('te', 'std')[i], np.interp(results.describe('te', 'mean')[i]+results.describe('te', 'std')[i], _Te, _DF), 'b*')
+    #     plt.loglog(results.describe('te', '10%')[i],  np.interp(results.describe('te', '10%')[i], _Te, _DF), 'b+')
+    #     plt.loglog(results.describe('te', '90%')[i],  np.interp(results.describe('te', '90%')[i], _Te, _DF), 'b+')
+    # plt.xlabel('Te')
+    # plt.ylabel('distribution function')
+    # plt.savefig('distribution_functions.png')
+
+    te_dist = results.raw_data['output_distributions']['te']
+    for i in [0]:
+        plt.figure()
+        plt.hist(results_df.te[i], density=True, bins=50, label='histogram of raw samples', alpha=0.25)
+        if hasattr(te_dist, 'samples'):
+            plt.hist(te_dist.samples[i], density=True, bins=50, label='histogram of kde samples', alpha=0.25)
+        t1 = te_dist[i]
+        plt.plot(np.linspace(t1.lower, t1.upper), t1.pdf(np.linspace(t1.lower,t1.upper)), label='PDF')
+        plt.legend(loc=0)
+        plt.xlabel('Te [eV]')
+        plt.title('Distributions for rho_norm = %0.4f' % (rho_norm[i]))
+        plt.savefig('distribution_function_rho_norm=%0.4f.png' % (rho_norm[i]))

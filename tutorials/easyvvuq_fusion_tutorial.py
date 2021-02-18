@@ -49,7 +49,7 @@ str += '}'
 print(str, file=open('fusion.template','w'))
 """
 
-# Create an encoder, decoder and collater for PCE test app
+# Create an encoder and decoder for PCE test app
 encoder = uq.encoders.GenericEncoder(template_fname='fusion.template',
                                      delimiter='$',
                                      target_filename='fusion_in.json')
@@ -88,7 +88,7 @@ vary = {
 """
 
 # Associate a sampler with the campaign
-my_campaign.set_sampler(uq.sampling.PCESampler(vary=vary, polynomial_order=3))
+my_campaign.set_sampler(uq.sampling.PCESampler(vary=vary, polynomial_order=2))
 
 # Will draw all (of the finite set of samples)
 my_campaign.draw_samples()
@@ -116,6 +116,7 @@ time_start = time.time()
 
 # Collate the results
 my_campaign.collate()
+results_df = my_campaign.get_collation_result()
 
 time_end = time.time()
 print('Time for phase 5 = %.3f' % (time_end-time_start))
@@ -195,18 +196,31 @@ plt.ylabel('sobols_total')
 plt.title(my_campaign.campaign_dir)
 plt.savefig('sobols_total.png')
 
-# plot the distributions
-plt.figure()
-for i, D in enumerate(results.raw_data['output_distributions']['te']):
-    _Te = np.linspace(D.lower[0], D.upper[0], 101)
-    _DF = D.pdf(_Te)
-    plt.loglog(_Te, _DF, 'b-', alpha=0.25)
-    plt.loglog(results.describe('te', 'mean')[i], np.interp(results.describe('te', 'mean')[i], _Te, _DF), 'bo')
-    plt.loglog(results.describe('te', 'mean')[i]-results.describe('te', 'std')[i], np.interp(results.describe('te', 'mean')[i]-results.describe('te', 'std')[i], _Te, _DF), 'b*')
-    plt.loglog(results.describe('te', 'mean')[i]+results.describe('te', 'std')[i], np.interp(results.describe('te', 'mean')[i]+results.describe('te', 'std')[i], _Te, _DF), 'b*')
-    plt.loglog(results.describe('te', '10%')[i],  np.interp(results.describe('te', '10%')[i], _Te, _DF), 'b+')
-    plt.loglog(results.describe('te', '90%')[i],  np.interp(results.describe('te', '90%')[i], _Te, _DF), 'b+')
-plt.xlabel('Te')
-plt.ylabel('distribution function')
-plt.savefig('distribution_functions.png')
+### Commented out because we get "GaussianKDE()) has dangling dependencies" error messages
+# # plot the distributions
+# plt.figure()
+# for i, D in enumerate(results.raw_data['output_distributions']['te']):
+#     _Te = np.linspace(D.lower[0], D.upper[0], 101)
+#     _DF = D.pdf(_Te)
+#     plt.loglog(_Te, _DF, 'b-', alpha=0.25)
+#     plt.loglog(results.describe('te', 'mean')[i], np.interp(results.describe('te', 'mean')[i], _Te, _DF), 'bo')
+#     plt.loglog(results.describe('te', 'mean')[i]-results.describe('te', 'std')[i], np.interp(results.describe('te', 'mean')[i]-results.describe('te', 'std')[i], _Te, _DF), 'b*')
+#     plt.loglog(results.describe('te', 'mean')[i]+results.describe('te', 'std')[i], np.interp(results.describe('te', 'mean')[i]+results.describe('te', 'std')[i], _Te, _DF), 'b*')
+#     plt.loglog(results.describe('te', '10%')[i],  np.interp(results.describe('te', '10%')[i], _Te, _DF), 'b+')
+#     plt.loglog(results.describe('te', '90%')[i],  np.interp(results.describe('te', '90%')[i], _Te, _DF), 'b+')
+# plt.xlabel('Te')
+# plt.ylabel('distribution function')
+# plt.savefig('distribution_functions.png')
 
+te_dist = results.raw_data['output_distributions']['te']
+for i in [0]:
+    plt.figure()
+    plt.hist(results_df.te[i], density=True, bins=50, label='histogram of raw samples', alpha=0.25)
+    if hasattr(te_dist, 'samples'):
+        plt.hist(te_dist.samples[i], density=True, bins=50, label='histogram of kde samples', alpha=0.25)
+    t1 = te_dist[i]
+    plt.plot(np.linspace(t1.lower, t1.upper), t1.pdf(np.linspace(t1.lower,t1.upper)), label='PDF')
+    plt.legend(loc=0)
+    plt.xlabel('Te [eV]')
+    plt.title('Distributions for rho_norm = %0.4f' % (rho_norm[i]))
+    plt.savefig('distribution_function_rho_norm=%0.4f.png' % (rho_norm[i]))
