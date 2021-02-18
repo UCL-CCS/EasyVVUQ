@@ -179,20 +179,36 @@ class ExecuteKubernetes(BaseAction):
         An output file name for the output of the simulation.
     """
 
-    def __init__(self, pod_config, input_file_names, output_file_name):
+    def __init__(self, image, command, input_file_names, output_file_name):
         if os.name == 'nt':
             msg = ('Local execution is provided for testing on Posix systems'
                    'only. We detect you are using Windows.')
             logger.error(msg)
             raise NotImplementedError(msg)
-        with open(pod_config, 'r') as fd:
-            self.dep = yaml.load(fd, Loader=yaml.BaseLoader)
+        #with open(pod_config, 'r') as fd:
+        #    self.dep = yaml.load(fd, Loader=yaml.BaseLoader)
+        #import pdb; pdb.set_trace()
+        pod_name = str(uuid.uuid4())
+        container_name = str(uuid.uuid4())
+        self.dep = {'apiVersion': 'v1', 'kind': 'Pod', 'metadata': {'name': pod_name},
+                    'spec': {
+                        'restartPolicy': 'Never',
+                        'containers': [
+                            {
+                                'name': container_name,
+                                'image': image,
+                                'command': ['/bin/sh', '-c'],
+                                'args': [command]
+                            }
+                        ]
+                    }
+                    }
         self.input_file_names = input_file_names
         self.output_file_name = output_file_name
         config.load_kube_config()
-        c = Configuration()
-        c.assert_hostname = False
-        Configuration.set_default(c)
+        #c = Configuration()
+        #c.assert_hostname = False
+        #Configuration.set_default(c)
         self.core_v1 = core_v1_api.CoreV1Api()
 
     def act_on_dir(self, target_dir):
