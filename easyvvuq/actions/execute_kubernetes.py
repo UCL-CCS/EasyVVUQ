@@ -184,7 +184,7 @@ class ExecuteKubernetes(BaseAction):
                    'only. We detect you are using Windows.')
             logger.error(msg)
             raise NotImplementedError(msg)
-        #with open(pod_config, 'r') as fd:
+        # with open(pod_config, 'r') as fd:
         #    self.dep = yaml.load(fd, Loader=yaml.BaseLoader)
         #import pdb; pdb.set_trace()
         pod_name = str(uuid.uuid4())
@@ -200,14 +200,14 @@ class ExecuteKubernetes(BaseAction):
                                 'args': [command]
                             }
                         ]
-                    }
-                    }
+        }
+        }
         self.input_file_names = input_file_names
         self.output_file_name = output_file_name
         config.load_kube_config()
         #c = Configuration()
         #c.assert_hostname = False
-        #Configuration.set_default(c)
+        # Configuration.set_default(c)
         self.core_v1 = core_v1_api.CoreV1Api()
 
     def act_on_dir(self, target_dir):

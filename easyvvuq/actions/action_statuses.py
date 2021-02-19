@@ -95,7 +95,7 @@ class ActionStatuses:
 
     def wait(self, poll_interval=10):
         """A command that will automatically poll job statuses. For use in scripts.
-        
+
         Parameters
         ----------
         poll_interval: int
