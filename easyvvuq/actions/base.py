@@ -23,8 +23,6 @@ __copyright__ = """
 """
 __license__ = "LGPL"
 
-import easyvvuq as uq
-
 class BaseAction:
     """
     Baseclass for all EasyVVUQ Actions.
