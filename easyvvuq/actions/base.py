@@ -23,12 +23,22 @@ __copyright__ = """
 """
 __license__ = "LGPL"
 
+import easyvvuq as uq
 
 class BaseAction:
     """
     Baseclass for all EasyVVUQ Actions.
 
     """
+    @property
+    def campaign(self):
+        return self._campaign
+
+    @campaign.setter
+    def campaign(self, campaign):
+        if not isinstance(campaign, uq.Campaign):
+            raise RuntimeError('must be an instance of the Campaign object')
+        self._campaign = campaign
 
     def act_on_dir(self, target_dir):
         """
