@@ -36,8 +36,6 @@ class BaseAction:
 
     @campaign.setter
     def campaign(self, campaign):
-        if not isinstance(campaign, uq.Campaign):
-            raise RuntimeError('must be an instance of the Campaign object')
         self._campaign = campaign
 
     def act_on_dir(self, target_dir):
