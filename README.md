@@ -25,6 +25,7 @@ Available analysis and sampling methods:
 
 * Polynomial Chaos Expansion
 * Stochastic Collocation
+* Monte Carlo Sensitivity Analysis
 * Markov-Chain Monte Carlo
 
 EasyVVUQ also supports building surrogate models using:
