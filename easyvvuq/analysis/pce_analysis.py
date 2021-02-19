@@ -179,8 +179,8 @@ class PCEAnalysis(BaseAnalysisElement):
         def sobols(P, coefficients):
             """ Utility routine to calculate sobols based on coefficients
             """
-            A = np.array(P.coefficients)!=0
-            multi_indices = np.array([P.exponents[A[:,i]].sum(axis=0) for i in range(A.shape[1])])
+            A = np.array(P.coefficients) != 0
+            multi_indices = np.array([P.exponents[A[:, i]].sum(axis=0) for i in range(A.shape[1])])
             sobol_mask = multi_indices != 0
             _, index = np.unique(sobol_mask, axis=0, return_index=True)
             index = np.sort(index)
@@ -197,13 +197,15 @@ class PCEAnalysis(BaseAnalysisElement):
                 sobol_poly_idx[:, i_sobol] = np.all(sobol_mask == sobol_idx_bool[i_sobol], axis=1)
             sobol = np.zeros([n_sobol_available, n_out])
             for i_sobol in range(n_sobol_available):
-                sobol[i_sobol] = np.sum(np.square(coefficients[sobol_poly_idx[:, i_sobol] == 1]), axis=0)
+                sobol[i_sobol] = np.sum(
+                    np.square(coefficients[sobol_poly_idx[:, i_sobol] == 1]), axis=0)
             idx_sort_descend_1st = np.argsort(sobol[:, 0], axis=0)[::-1]
             sobol = sobol[idx_sort_descend_1st, :]
             sobol_idx_bool = sobol_idx_bool[idx_sort_descend_1st]
             sobol_idx = [0 for _ in range(sobol_idx_bool.shape[0])]
             for i_sobol in range(sobol_idx_bool.shape[0]):
-                sobol_idx[i_sobol] = np.array([i for i, x in enumerate(sobol_idx_bool[i_sobol, :]) if x])
+                sobol_idx[i_sobol] = np.array(
+                    [i for i, x in enumerate(sobol_idx_bool[i_sobol, :]) if x])
             var = ((coefficients[1:]**2).sum(axis=0))
             sobol = sobol / var
             return sobol, sobol_idx, sobol_idx_bool
@@ -256,7 +258,8 @@ class PCEAnalysis(BaseAnalysisElement):
             results['Fourier_coefficients'][k] = fc
 
             # Percentiles: 1%, 10%, 50%, 90% and 99%
-            P01, P10, P50, P90, P99 = cp.Perc(fit, [1, 10, 50, 90, 99], self.sampler.distribution).squeeze()
+            P01, P10, P50, P90, P99 = cp.Perc(
+                fit, [1, 10, 50, 90, 99], self.sampler.distribution).squeeze()
             results['percentiles'][k] = {'p01': P01, 'p10': P10, 'p50': P50, 'p90': P90, 'p99': P99}
 
             if self.sampling:  # use chaospy's sampling method

@@ -22,12 +22,11 @@ Examples
 
 import os
 import logging
-import yaml
 import uuid
 import copy
 from kubernetes.client.api import core_v1_api
 from kubernetes import config
-from kubernetes.client import Configuration, V1ConfigMap, V1ObjectMeta
+from kubernetes.client import V1ConfigMap, V1ObjectMeta
 from . import BaseAction
 
 __copyright__ = """
@@ -179,20 +178,36 @@ class ExecuteKubernetes(BaseAction):
         An output file name for the output of the simulation.
     """
 
-    def __init__(self, pod_config, input_file_names, output_file_name):
+    def __init__(self, image, command, input_file_names=None, output_file_name=None):
         if os.name == 'nt':
             msg = ('Local execution is provided for testing on Posix systems'
                    'only. We detect you are using Windows.')
             logger.error(msg)
             raise NotImplementedError(msg)
-        with open(pod_config, 'r') as fd:
-            self.dep = yaml.load(fd, Loader=yaml.BaseLoader)
+        # with open(pod_config, 'r') as fd:
+        #    self.dep = yaml.load(fd, Loader=yaml.BaseLoader)
+        #import pdb; pdb.set_trace()
+        pod_name = str(uuid.uuid4())
+        container_name = str(uuid.uuid4())
+        self.dep = {'apiVersion': 'v1', 'kind': 'Pod', 'metadata': {'name': pod_name},
+                    'spec': {
+                        'restartPolicy': 'Never',
+                        'containers': [
+                            {
+                                'name': container_name,
+                                'image': image,
+                                'command': ['/bin/sh', '-c'],
+                                'args': [command]
+                            }
+                        ]
+        }
+        }
         self.input_file_names = input_file_names
         self.output_file_name = output_file_name
         config.load_kube_config()
-        c = Configuration()
-        c.assert_hostname = False
-        Configuration.set_default(c)
+        #c = Configuration()
+        #c.assert_hostname = False
+        # Configuration.set_default(c)
         self.core_v1 = core_v1_api.CoreV1Api()
 
     def act_on_dir(self, target_dir):
@@ -201,6 +216,11 @@ class ExecuteKubernetes(BaseAction):
         target_dir : str
             Directory in which to execute simulation.
         """
+        # this is suboptimal and a better interface is needed to get those filenames
+        if self.input_file_names is None:
+            self.input_file_names = [self.campaign._active_app_encoder.target_filename]
+        if self.output_file_name is None:
+            self.output_file_name = self.campaign._active_app_decoder.target_filename
         file_names = [(os.path.join(target_dir, input_file_name), str(uuid.uuid4()))
                       for input_file_name in self.input_file_names]
         dep = copy.deepcopy(self.dep)

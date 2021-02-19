@@ -29,6 +29,13 @@ class BaseAction:
     Baseclass for all EasyVVUQ Actions.
 
     """
+    @property
+    def campaign(self):
+        return self._campaign
+
+    @campaign.setter
+    def campaign(self, campaign):
+        self._campaign = campaign
 
     def act_on_dir(self, target_dir):
         """
