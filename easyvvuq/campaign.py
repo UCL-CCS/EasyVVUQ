@@ -709,6 +709,7 @@ class Campaign:
         # Loop through all runs in this campaign with status ENCODED, and
         # run the specified action on each run's dir
         assert(isinstance(status, Status))
+        action.campaign = self
         action_statuses = []
         for run_id, run_data in self.campaign_db.runs(status=status, app_id=self._active_app['id']):
             action_statuses.append(action.act_on_dir(run_data['run_dir']))

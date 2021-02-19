@@ -179,7 +179,7 @@ class ExecuteKubernetes(BaseAction):
         An output file name for the output of the simulation.
     """
 
-    def __init__(self, image, command, input_file_names, output_file_name):
+    def __init__(self, image, command, input_file_names=None, output_file_name=None):
         if os.name == 'nt':
             msg = ('Local execution is provided for testing on Posix systems'
                    'only. We detect you are using Windows.')
@@ -217,6 +217,11 @@ class ExecuteKubernetes(BaseAction):
         target_dir : str
             Directory in which to execute simulation.
         """
+        # this is suboptimal and a better interface is needed to get those filenames
+        if self.input_file_names is None:
+            self.input_file_names = [self.campaign._active_app_encoder.target_filename]
+        if self.output_file_name is None:
+            self.output_file_name = self.campaign._active_app_decoder.target_filename
         file_names = [(os.path.join(target_dir, input_file_name), str(uuid.uuid4()))
                       for input_file_name in self.input_file_names]
         dep = copy.deepcopy(self.dep)
