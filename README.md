@@ -34,7 +34,7 @@ EasyVVUQ also supports building surrogate models using:
 Supported computing resources:
 
 * Traditional clusters
-* Kubernetes clusters
+* [Kubernetes clusters](https://mybinder.org/v2/gh/UCL-CCS/EasyVVUQ/a9195fa1423d731ed996c9a5e34bb1256c6a0d5b?filepath=tutorials%2Fkubernetes_tutorial.ipynb)
 
 The easiest way to get started is to follow the tutorials in our
 [Binder](https://mybinder.org/v2/gh/UCL-CCS/EasyVVUQ/dev?filepath=tutorials).
