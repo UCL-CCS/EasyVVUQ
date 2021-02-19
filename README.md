@@ -30,6 +30,8 @@ Available analysis and sampling methods:
 
 EasyVVUQ also supports building surrogate models using:
 
+* Polynomial Chaos Expansion
+* Stochastic Collocation
 * Gaussian Processes
 
 Supported computing resources:
