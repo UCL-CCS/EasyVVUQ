@@ -11,9 +11,16 @@
 
 The aim of EasyVVUQ is to facilitate verification, validation and 
 uncertainty quantification (VVUQ) for a wide variety of
-simulations. While very convenient for simple cases, EasyVVUQ is particularly well suited in situations where the simulation is computationally expensive, 
+simulations. While very convenient for simple cases, EasyVVUQ is particularly well suited in situations where the simulations are computationally expensive, 
 heterogeneous computing resources are necessary, the sampling space is very large or book-keeping is prohibitively
 complex. It coordinates execution using an efficient database, it is fault tolerant and all progress can be saved.
+
+Here are some examples of questions EasyVVUQ can answer about your code:
+
+ * Given the uncertainties in input parameters, what is the distribution of the output?
+ * What percentage of the output variance each input parameter contributes?
+
+It also lets you construct surrogate models that are cheaper to evaluate than the complete simulation.
 
 Basic concepts are introduced [here](https://mybinder.org/v2/gh/UCL-CCS/EasyVVUQ/a6852d6c5ba36f15579e601d7a8d074505f31084?filepath=tutorials%2Fbasic_tutorial.ipynb) and [here](https://mybinder.org/v2/gh/UCL-CCS/EasyVVUQ/74d6a9f4b0eecc754918de2f3795395d35ac4875?filepath=tutorials%2Fvector_qoi_tutorial.ipynb).
 
