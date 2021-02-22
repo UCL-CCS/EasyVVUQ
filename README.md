@@ -9,11 +9,11 @@
 [![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/3796/badge)](https://bestpractices.coreinfrastructure.org/projects/3796)
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/UCL-CCS/EasyVVUQ/dev?filepath=tutorials)
 
-The aim of this library is to facilitate verification, validation and 
+The aim of EasyVVUQ is to facilitate verification, validation and 
 uncertainty quantification (VVUQ) for a wide variety of
-simulations. EasyVVUQ is particularly well suited for cases where the simulation is computationally expensive, 
-you want to use heterogeneous computing resources or the sampling space is very large and book-keeping is prohibitively
-complex. It coordinates execution using an efficient back-end database, it is fault tolerant and all progress can be saved.
+simulations. While very convenient for simple cases, EasyVVUQ is particularly well suited in situations where the simulation is computationally expensive, 
+heterogeneous computing resources are necessary, the sampling space is very large or book-keeping is prohibitively
+complex. It coordinates execution using an efficient database, it is fault tolerant and all progress can be saved.
 
 Basic concepts are introduced [here](https://mybinder.org/v2/gh/UCL-CCS/EasyVVUQ/a6852d6c5ba36f15579e601d7a8d074505f31084?filepath=tutorials%2Fbasic_tutorial.ipynb) and [here](https://mybinder.org/v2/gh/UCL-CCS/EasyVVUQ/74d6a9f4b0eecc754918de2f3795395d35ac4875?filepath=tutorials%2Fvector_qoi_tutorial.ipynb).
 
