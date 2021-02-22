@@ -11,13 +11,9 @@
 
 The aim of this library is to facilitate verification, validation and 
 uncertainty quantification (VVUQ) for a wide variety of
-simulations. We want you to be able to take your existing simulation,
-no matter what programming language or platform, and allow you to sample the parameter space
-of that simulation using a variety of statistical method on a variety of computing resources
-that might be available to you. All of this is to be achieved using a minimal amount of set-up
-overhead. EasyVVUQ is especially suitable for cases where the simulation is computationally expensive, 
-you want to use heterogeneous computing resources or the runs are very large and bookkeeping is prohibitively
-complex. It coordinates execution using an efficient back-end database and all the work is resumable.
+simulations. EasyVVUQ is particularly well suited for cases where the simulation is computationally expensive, 
+you want to use heterogeneous computing resources or the sampling space is very large and book-keeping is prohibitively
+complex. It coordinates execution using an efficient back-end database, it is fault tolerant and all progress can be saved.
 
 Basic concepts are introduced [here](https://mybinder.org/v2/gh/UCL-CCS/EasyVVUQ/a6852d6c5ba36f15579e601d7a8d074505f31084?filepath=tutorials%2Fbasic_tutorial.ipynb) and [here](https://mybinder.org/v2/gh/UCL-CCS/EasyVVUQ/74d6a9f4b0eecc754918de2f3795395d35ac4875?filepath=tutorials%2Fvector_qoi_tutorial.ipynb).
 
