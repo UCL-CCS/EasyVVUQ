@@ -25,7 +25,8 @@ class MCMCSampler(BaseSamplingElement, sampler_name='mcmc_sampler'):
        parameter when given a sample array.
     """
 
-    def __init__(self, init, q, qoi, n_chains=1, replica_col=None, estimator=None):
+    def __init__(self, init, q, qoi, n_chains=1, n_replicas=1,
+                 replica_col=None, estimator=None):
         self.init = dict(init)
         self.inputs = list(self.init.keys())
         for input_ in self.inputs:
@@ -42,6 +43,10 @@ class MCMCSampler(BaseSamplingElement, sampler_name='mcmc_sampler'):
             self.x[chain]['chain_id'] = chain
         self.f_x = [None] * n_chains
         self.stop = False
+        if n_replicas != 1:
+            assert(replica_col is not None)
+            assert(estimator is not None)
+        self.n_replicas = n_replicas
         self.replica_col = replica_col
         self.estimator = estimator
 
@@ -98,7 +103,7 @@ class MCMCSampler(BaseSamplingElement, sampler_name='mcmc_sampler'):
         """
         self.stop = False
         result = campaign.get_collation_result()
-        last_rows = result.iloc[-self.n_chains:]
+        last_rows = result.iloc[-self.n_chains * self.n_replicas:]
         ignored_runs = []
         for chain_id, last_row in enumerate(last_rows.iterrows()):
             last_row = last_row[1]
