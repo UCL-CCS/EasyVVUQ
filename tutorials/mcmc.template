@@ -1,1 +1,1 @@
-{"a" : $a, "b" : $b, "c" : $c, "d" : $d, "outfile": $outfile}
+{"a" : $a, "b" : $b, "c" : $c, "d" : $d, "outfile": "$outfile"}

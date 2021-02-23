@@ -15,9 +15,17 @@ class MCMCSampler(BaseSamplingElement, sampler_name='mcmc_sampler'):
     the X.
     qoi: str
        Name of the quantity of interest
+    n_chains: int
+       Number of MCMC chains to run in paralle.
+    replica_col: str or None
+       Name of the replica_id column when used with ReplicaSampler. 
+       None when ReplicaSampler is not used.
+    estimator: function
+       To be used with replica_col argument. Outputs an estimate of some 
+       parameter when given a sample array.
     """
 
-    def __init__(self, init, q, qoi, n_chains=1):
+    def __init__(self, init, q, qoi, n_chains=1, replica_col=None, estimator=None):
         self.init = dict(init)
         self.inputs = list(self.init.keys())
         for input_ in self.inputs:
@@ -34,6 +42,8 @@ class MCMCSampler(BaseSamplingElement, sampler_name='mcmc_sampler'):
             self.x[chain]['chain_id'] = chain
         self.f_x = [None] * n_chains
         self.stop = False
+        self.replica_col = replica_col
+        self.estimator = estimator
 
     def element_version(self):
         return "0.1"
