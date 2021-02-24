@@ -5,7 +5,6 @@ Will take a CSV file with an appropriate header and will output it row by row.
 """
 
 from .base import BaseSamplingElement
-import json
 import csv
 
 __license__ = "LGPL"
