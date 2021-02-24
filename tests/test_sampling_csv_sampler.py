@@ -1,6 +1,7 @@
 import pytest
 from easyvvuq.sampling import CSVSampler
 
+
 def test_csv_sampler():
     with pytest.raises(RuntimeError):
         CSVSampler('tests/simple_csv/test.cs')

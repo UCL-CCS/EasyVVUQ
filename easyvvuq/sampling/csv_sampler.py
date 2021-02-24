@@ -10,6 +10,7 @@ import csv
 
 __license__ = "LGPL"
 
+
 class CSVSampler(BaseSamplingElement, sampler_name="csv_sampler"):
 
     def __init__(self, filename, counter=0):
