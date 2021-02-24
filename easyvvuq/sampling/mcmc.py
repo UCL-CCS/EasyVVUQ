@@ -131,6 +131,7 @@ class MCMCSampler(BaseSamplingElement, sampler_name='mcmc_sampler'):
             campaign.campaign_db.session.query(uq.db.sql.RunTable).\
                 filter(uq.db.sql.RunTable.id == run_id).\
                 update({'status': uq.constants.Status.IGNORED})
+        campaign.campaign_db.session.commit()
         self.acceptance_ratios.append(float(len(ignored_runs)) /
                                       (self.n_chains * self.n_replicas))
         return ignored_runs

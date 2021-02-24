@@ -27,11 +27,12 @@ class ReplicaSampler(BaseSamplingElement, sampler_name='replica_sampler'):
         a parameter name for the replica id
     """
 
-    def __init__(self, sampler, replica_col='replica_id'):
+    def __init__(self, sampler, replica_col='replica_id', replicas=0):
         if not sampler.is_finite():
             raise RuntimeError("Replica sampler only works with finite samplers")
         self.sampler = sampler
         self.replica_col = replica_col
+        self.replicas = replicas
         self.history = []
         for sample in sampler:
             self.history.append(sample)
@@ -40,13 +41,19 @@ class ReplicaSampler(BaseSamplingElement, sampler_name='replica_sampler'):
         self.counter = 0
 
     def is_finite(self):
-        return False
+        if self.replicas == 0:
+            return False
+        else:
+            return True
 
     def element_version(self):
         return '0.1'
 
     def n_samples(self):
-        raise RuntimeError("You can't get the number of samples in an infinite sampler")
+        if self.replicas == 0:
+            raise RuntimeError("You can't get the number of samples in an infinite sampler")
+        else:
+            return self.replicas * self.sampler.n_samples()
 
     def __next__(self):
         params = dict(next(self.cycle))
