@@ -25,8 +25,8 @@ class MCMCSampler(BaseSamplingElement, sampler_name='mcmc_sampler'):
        parameter when given a sample array.
     """
 
-    def __init__(self, init, q, qoi, n_chains=1, n_replicas=1,
-                 replica_col=None, estimator=None):
+    def __init__(self, init, q, qoi, n_chains=1, likelihood=lambda x: x[0],
+                 n_replicas=1, replica_col=None, estimator=None):
         self.init = dict(init)
         self.inputs = list(self.init.keys())
         for input_ in self.inputs:
@@ -46,9 +46,11 @@ class MCMCSampler(BaseSamplingElement, sampler_name='mcmc_sampler'):
         if n_replicas != 1:
             assert(replica_col is not None)
             assert(estimator is not None)
+        self.likelihood = likelihood
         self.n_replicas = n_replicas
         self.replica_col = replica_col
         self.estimator = estimator
+        self.acceptance_ratios = []
 
     def element_version(self):
         return "0.1"
@@ -103,15 +105,20 @@ class MCMCSampler(BaseSamplingElement, sampler_name='mcmc_sampler'):
         """
         self.stop = False
         result = campaign.get_collation_result()
+        # Get the results of the last MCMC step this will have the number
+        # of chains times the number of replicas rows.
         last_rows = result.iloc[-self.n_chains * self.n_replicas:]
+        # This will depend on whether MCMC is used with the ReplicaSampler.
+        if self.replica_col is not None:
+            last_rows = last_rows.groupby(('replica_id', 0)).apply(self.estimator)
         ignored_runs = []
         for chain_id, last_row in enumerate(last_rows.iterrows()):
             last_row = last_row[1]
             y = dict([(key, last_row[key][0]) for key in self.inputs])
             if self.f_x[chain_id] is None:
-                self.f_x[chain_id] = last_row[self.qoi][0]
+                self.f_x[chain_id] = self.likelihood(last_row[self.qoi].values)
             else:
-                f_y = last_row[self.qoi][0]
+                f_y = self.likelihood(last_row[self.qoi].values)
                 q_xy = self.q(y).pdf([self.x[chain_id][key] for key in self.inputs])
                 q_yx = self.q(self.x[chain_id]).pdf([y[key] for key in self.inputs])
                 r = min(1.0, (f_y / self.f_x[chain_id]) * (q_xy / q_yx))
@@ -124,4 +131,6 @@ class MCMCSampler(BaseSamplingElement, sampler_name='mcmc_sampler'):
             campaign.campaign_db.session.query(uq.db.sql.RunTable).\
                 filter(uq.db.sql.RunTable.id == run_id).\
                 update({'status': uq.constants.Status.IGNORED})
+        self.acceptance_ratios.append(float(len(ignored_runs)) /
+                                      (self.n_chains * self.n_replicas))
         return ignored_runs
