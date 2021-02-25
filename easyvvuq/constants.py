@@ -56,3 +56,4 @@ class Status(IntEnum):
     ENCODED = 2
     COLLATED = 3
     IGNORED = 4
+    INVALID = 5

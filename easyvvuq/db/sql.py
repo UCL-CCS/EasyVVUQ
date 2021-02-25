@@ -839,7 +839,7 @@ class CampaignDB(BaseCampaignDB):
                 raise RuntimeError("no runs with name {} found".format(run_name))
         self.session.commit()
 
-    def get_results(self, app_name, sampler_id):
+    def get_results(self, app_name, sampler_id, status=constants.Status.COLLATED):
         """Returns the results as a pandas DataFrame.
 
         Parameters
@@ -861,7 +861,7 @@ class CampaignDB(BaseCampaignDB):
         query = self.session.query(RunTable).\
             filter(RunTable.app == app_id).\
             filter(RunTable.sampler == sampler_id).\
-            filter(RunTable.status == constants.Status.COLLATED)
+            filter(RunTable.status == status)
         for row in query:
             params = {'run_id': row.id}
             params = {**params, **json.loads(row.params)}
