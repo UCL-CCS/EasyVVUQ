@@ -25,16 +25,23 @@ class ReplicaSampler(BaseSamplingElement, sampler_name='replica_sampler'):
 
     replica_col : string
         a parameter name for the replica id
+    seed_col : string
+        a parameter name for the input parameter that specifies the RNG seed
+    replicas : int
+        number of replicas, if zero will result in an infinite sampler
     """
 
-    def __init__(self, sampler, replica_col='replica_id', replicas=0):
+    def __init__(self, sampler, replica_col='replica_id', seed_col=None, replicas=0):
         if not sampler.is_finite():
             raise RuntimeError("Replica sampler only works with finite samplers")
         self.sampler = sampler
         self.replica_col = replica_col
         self.replicas = replicas
+        self.reset()
+
+    def reset(self):
         self.history = []
-        for sample in sampler:
+        for sample in self.sampler:
             self.history.append(sample)
         self.size = len(self.history)
         self.cycle = cycle(self.history)
@@ -60,6 +67,10 @@ class ReplicaSampler(BaseSamplingElement, sampler_name='replica_sampler'):
         params[self.replica_col] = self.counter
         self.counter = (self.counter + 1) % self.size
         return params
+
+    def update(self, campaign):
+        self.sampler.update(campaign)
+        self.reset()
 
     def is_restartable(self):
         return False
