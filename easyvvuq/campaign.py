@@ -181,6 +181,8 @@ class Campaign:
         if (params is not None) and (encoder is not None) and (decoder is not None):
             self.add_app(name=name, params=params, encoder=encoder, decoder=decoder)
 
+        self.collation = 0
+
     @property
     def campaign_dir(self):
         """Get the path in which to load/save files related to the campaign.
@@ -471,7 +473,7 @@ class Campaign:
         self._active_sampler_id = self._active_sampler.sampler_id
         self.campaign_db.set_sampler(self.campaign_id, self._active_sampler.sampler_id)
 
-    def add_runs(self, runs, mark_invalid=False):
+    def add_runs(self, runs, mark_invalid=False, collation=0):
         """Add a new run to the queue.
 
         Parameters
@@ -523,7 +525,7 @@ class Campaign:
 
             run_info_list.append(run_info)
 
-        self.campaign_db.add_runs(run_info_list)
+        self.campaign_db.add_runs(run_info_list, collation=collation)
 
     def add_default_run(self):
         """
@@ -582,12 +584,14 @@ class Campaign:
         for new_run in self._active_sampler:
 
             list_of_runs = [new_run for i in range(replicas)]
-            self.add_runs(list_of_runs, mark_invalid)
+            self.add_runs(list_of_runs, mark_invalid, self.collation)
 
             num_added += 1
 
             if num_samples != 0 and num_added >= num_samples:
                 break
+
+        self.collation += 1
 
         # Write sampler's new state to database
         self.campaign_db.update_sampler(self._active_sampler_id, self._active_sampler)
@@ -801,30 +805,46 @@ class Campaign:
         self.campaign_db.set_run_statuses(collated_run_ids, Status.ENCODED)
         self.collate()
 
-    def get_collation_result(self):
+    def get_collation_result(self, last_collation=False):
         """
         Return dataframe containing all collated results
 
         Parameters
         ----------
+        last_collation : bool
+            Will only return the result of the last collation.
 
         Returns
         -------
             pandas dataframe
 
         """
-        return self.campaign_db.get_results(self._active_app['name'], self._active_sampler_id)
+        if last_collation:
+            collation = self.collation - 1
+        else:
+            collation = -1
+        return self.campaign_db.get_results(self._active_app['name'], self._active_sampler_id,
+                                            status=constants.Status.COLLATED, collation=collation)
 
-    def get_invalid_runs(self):
+    def get_invalid_runs(self, last_collation=False):
         """
         Return dataframe containing all results marked as INVALID.
+
+        Parameters
+        ----------
+        last_collation : bool
+            Will only return the result of the last collation.
         
         Returns
         -------
             pandas DataFrame
         """
+        if last_collation:
+            collation = self.collation - 1
+        else:
+            collation = -1
         return self.campaign_db.get_results(self._active_app['name'], self._active_sampler_id,
-                                            status=constants.INVALID)
+                                            status=constants.Status.INVALID, collation=collation)
 
     def apply_analysis(self, analysis):
         """Run the `analysis` element on the output of the last run collation.

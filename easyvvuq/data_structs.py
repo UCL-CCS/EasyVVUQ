@@ -158,6 +158,8 @@ class RunInfo:
         self.params = params
         self.status = status
 
+        self.collation = 0
+
     def to_dict(self, flatten=False):
         """Convert to a dictionary (optionally flatten to single level)
 
@@ -190,6 +192,7 @@ class RunInfo:
                 'campaign': self.campaign,
                 'sampler': self.sample,
                 'app': self.app,
+                'collation': self.collation,
             }
 
         else:
@@ -203,6 +206,7 @@ class RunInfo:
                 'campaign': self.campaign,
                 'sampler': self.sample,
                 'app': self.app,
+                'collation': self.collation,
             }
 
         return out_dict

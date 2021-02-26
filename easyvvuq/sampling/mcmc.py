@@ -26,7 +26,7 @@ class MCMCSampler(BaseSamplingElement, sampler_name='mcmc_sampler'):
     """
 
     def __init__(self, init, q, qoi, n_chains=1, likelihood=lambda x: x[0],
-                 n_replicas=1, replica_col=None, estimator=None):
+                 n_replicas=1, replica_col=None, estimator=None, minimum_probability=0.0):
         self.init = dict(init)
         self.inputs = list(self.init.keys())
         for input_ in self.inputs:
@@ -46,10 +46,11 @@ class MCMCSampler(BaseSamplingElement, sampler_name='mcmc_sampler'):
         if n_replicas != 1:
             assert(replica_col is not None)
             assert(estimator is not None)
-        self.likelihood = likelihood
+        self.likelihood = lambda x: np.exp(likelihood(x))
         self.n_replicas = n_replicas
         self.replica_col = replica_col
         self.estimator = estimator
+        self.minimum_probability = minimum_probability
         self.acceptance_ratios = []
 
     def element_version(self):
@@ -59,7 +60,7 @@ class MCMCSampler(BaseSamplingElement, sampler_name='mcmc_sampler'):
         return True
 
     def n_samples(self):
-        return self.n_chains
+        return self.n_chains * self.n_replicas
 
     def __iter__(self):
         self.current_chain = 0
@@ -104,29 +105,40 @@ class MCMCSampler(BaseSamplingElement, sampler_name='mcmc_sampler'):
         list of rejected run ids, for testing purposes mainly
         """
         self.stop = False
-        result = campaign.get_collation_result()
+        result = campaign.get_collation_result(last_collation=True)
+        invalid = campaign.get_invalid_runs(last_collation=True)
+        import pdb; pdb.set_trace()
+        assert(len(result) + len(invalid) == self.n_samples())
         # Get the results of the last MCMC step this will have the number
         # of chains times the number of replicas rows.
-        last_rows = result.iloc[-self.n_chains * self.n_replicas:]
+        #last_rows = result.iloc[-self.n_chains * self.n_replicas:]
         # This will depend on whether MCMC is used with the ReplicaSampler.
-        if self.replica_col is not None:
-            last_rows = last_rows.groupby(('replica_id', 0)).apply(self.estimator)
+        if (self.replica_col is not None) and (len(result) > 0):
+            result = result.groupby(('replica_id', 0)).apply(self.estimator)
+        if (self.replica_col is not None) and (len(invalid) > 0):
+            invalid = invalid.groupby(('replica_id', 0)).apply(lambda x: x.mean())
+        assert(len(result) + len(invalid) == self.n_chains)
         ignored_runs = []
-        for chain_id, last_row in enumerate(last_rows.iterrows()):
-            last_row = last_row[1]
-            y = dict([(key, last_row[key][0]) for key in self.inputs])
+        # process normal runs
+        for row in result.iterrows():
+            row = row[1]
+            chain_id = int(row['chain_id'].values[0])
+            y = dict([(key, row[key][0]) for key in self.inputs])
             if self.f_x[chain_id] is None:
-                self.f_x[chain_id] = self.likelihood(last_row[self.qoi].values)
+                self.f_x[chain_id] = self.likelihood(row[self.qoi].values)
             else:
-                f_y = self.likelihood(last_row[self.qoi].values)
+                f_y = self.likelihood(row[self.qoi].values)
                 q_xy = self.q(y).pdf([self.x[chain_id][key] for key in self.inputs])
                 q_yx = self.q(self.x[chain_id]).pdf([y[key] for key in self.inputs])
-                r = min(1.0, (f_y / self.f_x[chain_id]) * (q_xy / q_yx))
+                r = max(min(1.0, (f_y / self.f_x[chain_id]) * (q_xy / q_yx)), 0.0)
                 if np.random.random() < r:
                     self.x[chain_id] = dict(y)
                     self.f_x[chain_id] = f_y
                 else:
-                    ignored_runs.append(last_row['run_id'][0])
+                    ignored_runs.append(row['run_id'][0])
+        for row in invalid.iterrows():
+            row = row[1]
+            ignored_runs.append(row['run_id'][0])
         for run_id in ignored_runs:
             campaign.campaign_db.session.query(uq.db.sql.RunTable).\
                 filter(uq.db.sql.RunTable.id == run_id).\
