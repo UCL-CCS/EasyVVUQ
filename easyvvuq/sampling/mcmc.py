@@ -138,7 +138,10 @@ class MCMCSampler(BaseSamplingElement, sampler_name='mcmc_sampler'):
                 f_y = self.likelihood(row[self.qoi].values)
                 q_xy = self.q(y).pdf([self.x[chain_id][key] for key in self.inputs])
                 q_yx = self.q(self.x[chain_id]).pdf([y[key] for key in self.inputs])
-                r = min(1.0, (f_y / self.f_x[chain_id]) * (q_xy / q_yx))
+                if self.f_x[chain_id] * q_yx == 0.0:
+                    r = 1.0
+                else:
+                    r = min(1.0, (f_y / self.f_x[chain_id]) * (q_xy / q_yx))
                 if np.random.random() < r:
                     self.x[chain_id] = dict(y)
                     self.f_x[chain_id] = f_y

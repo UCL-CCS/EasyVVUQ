@@ -7,6 +7,7 @@ import json
 from easyvvuq import constants
 from easyvvuq.encoders import BaseEncoder
 from easyvvuq.decoders import BaseDecoder
+from easyvvuq.utils.helpers import easyvvuq_serialize, easyvvuq_deserialize
 import numpy
 
 __copyright__ = """
@@ -296,8 +297,8 @@ class AppInfo:
                 'name': self.name,
                 'params': self.paramsspec,
                 'decoderspec': self.decoderspec,
-                'input_encoder': self.input_encoder.serialize(),
-                'output_decoder': self.output_decoder.serialize()
+                'input_encoder': easyvvuq_serialize(self.input_encoder),
+                'output_decoder': easyvvuq_serialize(self.output_decoder)
             }
 
         return out_dict

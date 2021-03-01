@@ -17,6 +17,8 @@ from easyvvuq.sampling.base import BaseSamplingElement
 from easyvvuq.encoders.base import BaseEncoder
 from easyvvuq.decoders.base import BaseDecoder
 from easyvvuq import ParamsSpecification
+from easyvvuq.utils.helpers import easyvvuq_serialize, easyvvuq_deserialize
+
 
 __copyright__ = """
 
@@ -250,7 +252,7 @@ class CampaignDB(BaseCampaignDB):
         -------
 
         """
-        db_entry = SamplerTable(sampler=sampler_element.serialize())
+        db_entry = SamplerTable(sampler=easyvvuq_serialize(sampler_element))
 
         self.session.add(db_entry)
         self.session.commit()
@@ -275,7 +277,7 @@ class CampaignDB(BaseCampaignDB):
         """
 
         selected = self.session.query(SamplerTable).get(sampler_id)
-        selected.sampler = sampler_element.serialize()
+        selected.sampler = easyvvuq_serialize(sampler_element)
         self.session.commit()
 
     def resurrect_sampler(self, sampler_id):
@@ -296,7 +298,7 @@ class CampaignDB(BaseCampaignDB):
         """
 
         serialized_sampler = self.session.query(SamplerTable).get(sampler_id).sampler
-        sampler = BaseSamplingElement.deserialize(serialized_sampler)
+        sampler = easyvvuq_deserialize(serialized_sampler.encode('utf-8'))
         return sampler
 
     def resurrect_app(self, app_name):
@@ -319,8 +321,8 @@ class CampaignDB(BaseCampaignDB):
 
         app_info = self.app(app_name)
 
-        encoder = BaseEncoder.deserialize(app_info['input_encoder'])
-        decoder = BaseDecoder.deserialize(app_info['output_decoder'])
+        encoder = easyvvuq_deserialize(app_info['input_encoder'])
+        decoder = easyvvuq_deserialize(app_info['output_decoder'])
         return encoder, decoder
 
     def add_runs(self, run_info_list=None, run_prefix='Run_', ensemble_prefix='Ensemble_', collation=0):
