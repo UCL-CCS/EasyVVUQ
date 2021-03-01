@@ -107,20 +107,18 @@ class MCMCSampler(BaseSamplingElement, sampler_name='mcmc_sampler'):
         self.stop = False
         result = campaign.get_collation_result(last_collation=True)
         invalid = campaign.get_invalid_runs(last_collation=True)
-        import pdb; pdb.set_trace()
-        assert(len(result) + len(invalid) == self.n_samples())
-        # Get the results of the last MCMC step this will have the number
-        # of chains times the number of replicas rows.
-        #last_rows = result.iloc[-self.n_chains * self.n_replicas:]
-        # This will depend on whether MCMC is used with the ReplicaSampler.
         if (self.replica_col is not None) and (len(result) > 0):
-            result = result.groupby(('replica_id', 0)).apply(self.estimator)
+            result_grouped = result.groupby(('replica_id', 0)).apply(self.estimator)
+        else:
+            result_grouped = result
         if (self.replica_col is not None) and (len(invalid) > 0):
-            invalid = invalid.groupby(('replica_id', 0)).apply(lambda x: x.mean())
-        assert(len(result) + len(invalid) == self.n_chains)
+            invalid_grouped = invalid.groupby(('replica_id', 0)).apply(lambda x: x.mean())
+        else:
+            invalid_grouped = invalid
+        ignored_chains = []
         ignored_runs = []
         # process normal runs
-        for row in result.iterrows():
+        for row in result_grouped.iterrows():
             row = row[1]
             chain_id = int(row['chain_id'].values[0])
             y = dict([(key, row[key][0]) for key in self.inputs])
@@ -130,20 +128,21 @@ class MCMCSampler(BaseSamplingElement, sampler_name='mcmc_sampler'):
                 f_y = self.likelihood(row[self.qoi].values)
                 q_xy = self.q(y).pdf([self.x[chain_id][key] for key in self.inputs])
                 q_yx = self.q(self.x[chain_id]).pdf([y[key] for key in self.inputs])
-                r = max(min(1.0, (f_y / self.f_x[chain_id]) * (q_xy / q_yx)), 0.0)
+                r = min(1.0, (f_y / self.f_x[chain_id]) * (q_xy / q_yx))
                 if np.random.random() < r:
                     self.x[chain_id] = dict(y)
                     self.f_x[chain_id] = f_y
                 else:
-                    ignored_runs.append(row['run_id'][0])
-        for row in invalid.iterrows():
+                    ignored_chains.append(chain_id)
+        for row in invalid_grouped.iterrows():
             row = row[1]
-            ignored_runs.append(row['run_id'][0])
+            ignored_chains.append(chain_id)
+        for chain_id in ignored_chains:
+            ignored_runs += list(result.loc[result[('chain_id', 0)] == chain_id]['run_id'].values)
+        ignored_runs = [run[0] for run in ignored_runs]
         for run_id in ignored_runs:
             campaign.campaign_db.session.query(uq.db.sql.RunTable).\
-                filter(uq.db.sql.RunTable.id == run_id).\
+                filter(uq.db.sql.RunTable.id == int(run_id)).\
                 update({'status': uq.constants.Status.IGNORED})
         campaign.campaign_db.session.commit()
-        self.acceptance_ratios.append(float(len(ignored_runs)) /
-                                      (self.n_chains * self.n_replicas))
         return ignored_runs

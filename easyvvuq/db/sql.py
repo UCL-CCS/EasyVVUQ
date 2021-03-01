@@ -868,6 +868,7 @@ class CampaignDB(BaseCampaignDB):
             query = query.filter(RunTable.collation == collation)
         for row in query:
             params = {'run_id': row.id}
+            params['collation'] = collation
             params = {**params, **json.loads(row.params)}
             result = json.loads(row.result)
             pd_dict = {**params, **result}
@@ -914,3 +915,4 @@ class CampaignDB(BaseCampaignDB):
                     filter(RunTable.app == app_info.id).\
                     update({'run_dir': new_path_})
         self.session.commit()
+
