@@ -92,6 +92,16 @@ class MCMCSampler(BaseSamplingElement, sampler_name='mcmc_sampler'):
     def get_restart_dict(self):
         return {"init": self.init}
 
+    def isaccepted(self):
+        """Chain jump acceptance predicate. Metropolis-Hastings rule here.
+        
+        Returns
+        -------
+        bool
+            True if the new position is accepted, False otherwise.
+        """
+        
+
     def update(self, campaign):
         """Performs the MCMC sampling procedure on the campaign.
 
@@ -108,11 +118,11 @@ class MCMCSampler(BaseSamplingElement, sampler_name='mcmc_sampler'):
         result = campaign.get_collation_result(last_collation=True)
         invalid = campaign.get_invalid_runs(last_collation=True)
         if (self.replica_col is not None) and (len(result) > 0):
-            result_grouped = result.groupby(('replica_id', 0)).apply(self.estimator)
+            result_grouped = result.groupby(('chain_id', 0)).apply(self.estimator)
         else:
             result_grouped = result
         if (self.replica_col is not None) and (len(invalid) > 0):
-            invalid_grouped = invalid.groupby(('replica_id', 0)).apply(lambda x: x.mean())
+            invalid_grouped = invalid.groupby(('chain_id', 0)).apply(lambda x: x.mean())
         else:
             invalid_grouped = invalid
         ignored_chains = []
@@ -136,9 +146,17 @@ class MCMCSampler(BaseSamplingElement, sampler_name='mcmc_sampler'):
                     ignored_chains.append(chain_id)
         for row in invalid_grouped.iterrows():
             row = row[1]
+            chain_id = int(row['chain_id'].values[0])
             ignored_chains.append(chain_id)
         for chain_id in ignored_chains:
-            ignored_runs += list(result.loc[result[('chain_id', 0)] == chain_id]['run_id'].values)
+            try:
+                ignored_runs += list(result.loc[result[('chain_id', 0)] == chain_id]['run_id'].values)
+            except KeyError:
+                pass
+            try:
+                ignored_runs += list(invalid.loc[invalid[('chain_id', 0)] == chain_id]['run_id'].values)
+            except KeyError:
+                pass
         ignored_runs = [run[0] for run in ignored_runs]
         for run_id in ignored_runs:
             campaign.campaign_db.session.query(uq.db.sql.RunTable).\
