@@ -73,4 +73,4 @@ class ReplicaSampler(BaseSamplingElement, sampler_name='replica_sampler'):
         self.reset()
 
     def is_restartable(self):
-        return False
+        return True
