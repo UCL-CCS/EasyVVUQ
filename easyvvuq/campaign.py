@@ -581,9 +581,11 @@ class Campaign:
             raise RuntimeError(msg)
 
         num_added = 0
+        new_runs = []
         for new_run in self._active_sampler:
 
             list_of_runs = [new_run for i in range(replicas)]
+            new_runs += list_of_runs
             self.add_runs(list_of_runs, mark_invalid, self.collation)
 
             num_added += 1
@@ -599,6 +601,7 @@ class Campaign:
         # Log application of this sampling element
         self.log_element_application(self._active_sampler,
                                      {"num_added": num_added, "replicas": replicas})
+        return new_runs
 
     def list_runs(self, sampler=None, campaign=None, status=None):
         """Get list of runs in the CampaignDB.
