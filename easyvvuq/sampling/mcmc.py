@@ -167,3 +167,8 @@ class MCMCSampler(BaseSamplingElement, sampler_name='mcmc_sampler'):
                 update({'status': uq.constants.Status.IGNORED})
         campaign.campaign_db.session.commit()
         return ignored_runs
+
+    @property
+    def analysis_class(self):
+        from easyvvuq.analysis import MCMCAnalysis
+        return MCMCAnalysis
