@@ -26,7 +26,7 @@ class MCMCSampler(BaseSamplingElement, sampler_name='mcmc_sampler'):
     """
 
     def __init__(self, init, q, qoi, n_chains=1, likelihood=lambda x: x[0],
-                 n_replicas=1, ensemble_col=None, estimator=None):
+                 n_replicas=1, ensemble_col='ensemble_col', estimator=None):
         self.init = dict(init)
         self.inputs = list(self.init.keys())
         for input_ in self.inputs:
