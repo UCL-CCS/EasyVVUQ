@@ -102,21 +102,21 @@ class MCMCSampler(BaseSamplingElement, sampler_name='mcmc_sampler'):
         """
         
 
-    def update(self, campaign):
+    def update(self, result, invalid):
         """Performs the MCMC sampling procedure on the campaign.
 
         Parameters
         ----------
-        campaign: Campaign
-            campaign instance
+        result: pandas DataFrame
+            run information from previous iteration (same as collation DataFrame)
+        invalid: pandas DataFrame
+            invalid run information (runs that cannot be executed for some reason)
 
         Returns
         -------
-        list of rejected run ids, for testing purposes mainly
+        list of rejected run ids
         """
         self.stop = False
-        result = campaign.get_collation_result(last_iteration=True)
-        invalid = campaign.get_invalid_runs(last_iteration=True)
         if (self.ensemble_col is not None) and (len(result) > 0):
             result_grouped = result.groupby(('chain_id', 0)).apply(self.estimator)
         else:
@@ -162,11 +162,6 @@ class MCMCSampler(BaseSamplingElement, sampler_name='mcmc_sampler'):
                 pass
         ignored_runs = [run[0] for run in ignored_runs]
         self.iteration += 1
-        for run_id in ignored_runs:
-            campaign.campaign_db.session.query(uq.db.sql.RunTable).\
-                filter(uq.db.sql.RunTable.id == int(run_id)).\
-                update({'status': uq.constants.Status.IGNORED})
-        campaign.campaign_db.session.commit()
         return ignored_runs
 
     @property

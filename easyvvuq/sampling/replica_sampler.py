@@ -68,9 +68,9 @@ class ReplicaSampler(BaseSamplingElement, sampler_name='replica_sampler'):
         self.counter = (self.counter + 1) % self.size
         return params
 
-    def update(self, campaign):
-        self.sampler.update(campaign)
+    def update(self, result, invalid):
         self.reset()
+        return self.sampler.update(result, invalid)
 
     def is_restartable(self):
         return True
@@ -81,3 +81,7 @@ class ReplicaSampler(BaseSamplingElement, sampler_name='replica_sampler'):
     @property
     def iteration(self):
         return self.sampler.iteration
+
+    @property
+    def analysis_class(self):
+        return self.sampler.analysis_class

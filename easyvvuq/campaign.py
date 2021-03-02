@@ -13,6 +13,7 @@ from easyvvuq.constants import default_campaign_prefix, Status
 from easyvvuq.data_structs import RunInfo, CampaignInfo, AppInfo
 from easyvvuq.sampling import BaseSamplingElement
 from easyvvuq.actions import ActionStatuses
+import easyvvuq.db.sql as db
 from cerberus import Validator
 
 __copyright__ = """
@@ -757,6 +758,42 @@ class Campaign:
         self.populate_runs_dir()
         action_statuses = self.apply_for_each_run_dir(action, batch_size=batch_size)
         return action_statuses
+
+    def iterate(self, action, batch_size=8, nsamples=0, mark_invalid=False):
+        """This is the equivalent of sample_and_apply for methods that rely on the output of the
+        previous sampling stage (primarily MCMC).
+
+        Parameters
+        ----------
+        nsamples : int
+            number of samples to draw
+        action : BaseAction
+            an action to be executed
+        batch_size : int
+            number of actions to be executed at the same time
+        mark_invalid : bool
+            Mark runs that go outside the specified input parameter range as INVALID.
+
+        Yields
+        ------
+        action_statuses: ActionStatuses
+            An object containing ActionStatus instances to track action execution
+        """
+        while True:
+            self.draw_samples(nsamples, mark_invalid=mark_invalid)
+            self.populate_runs_dir()
+            action_statuses = self.apply_for_each_run_dir(action, batch_size=batch_size)
+            yield action_statuses
+            self.collate()
+            result = self.get_collation_result(last_iteration=True)
+            invalid = self.get_invalid_runs(last_iteration=True)
+            ignored_runs = self._active_sampler.update(result, invalid)
+            for run_id in ignored_runs:
+                self.campaign_db.session.query(db.RunTable).\
+                    filter(db.RunTable.id == int(run_id)).\
+                    update({'status': constants.Status.IGNORED})
+            self.campaign_db.session.commit()
+
 
     def collate(self):
         """Combine the output from all runs associated with the current app.
