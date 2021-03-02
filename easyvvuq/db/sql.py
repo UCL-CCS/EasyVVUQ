@@ -96,7 +96,7 @@ class RunTable(Base):
     result = Column(String, default="{}")
     campaign = Column(Integer, ForeignKey('campaign_info.id'))
     sampler = Column(Integer, ForeignKey('sampler.id'))
-    collation = Column(Integer)
+    iteration = Column(Integer)
 
 
 class SamplerTable(Base):
@@ -325,7 +325,7 @@ class CampaignDB(BaseCampaignDB):
         decoder = easyvvuq_deserialize(app_info['output_decoder'])
         return encoder, decoder
 
-    def add_runs(self, run_info_list=None, run_prefix='Run_', ensemble_prefix='Ensemble_', collation=0):
+    def add_runs(self, run_info_list=None, run_prefix='Run_', ensemble_prefix='Ensemble_', iteration=0):
         """
         Add list of runs to the `runs` table in the database.
 
@@ -350,7 +350,7 @@ class CampaignDB(BaseCampaignDB):
             run_info.ensemble_name = f"{ensemble_prefix}{self._next_ensemble}"
             run_info.run_name = f"{run_prefix}{self._next_run}"
             run_info.run_dir = os.path.join(runs_dir, run_info.run_name)
-            run_info.collation = collation
+            run_info.iteration = iteration
 
             run = RunTable(**run_info.to_dict(flatten=True))
             self.session.add(run)
@@ -843,7 +843,7 @@ class CampaignDB(BaseCampaignDB):
                 raise RuntimeError("no runs with name {} found".format(run_name))
         self.session.commit()
 
-    def get_results(self, app_name, sampler_id, status=constants.Status.COLLATED, collation=-1):
+    def get_results(self, app_name, sampler_id, status=constants.Status.COLLATED, iteration=-1):
         """Returns the results as a pandas DataFrame.
 
         Parameters
@@ -866,11 +866,12 @@ class CampaignDB(BaseCampaignDB):
             filter(RunTable.app == app_id).\
             filter(RunTable.sampler == sampler_id).\
             filter(RunTable.status == status)
-        if collation >= 0:
-            query = query.filter(RunTable.collation == collation)
+        # if only a specific iteration is requested filter it out
+        if iteration >= 0:
+            query = query.filter(RunTable.iteration == iteration)
         for row in query:
             params = {'run_id': row.id}
-            params['collation'] = collation
+            params['iteration'] = row.iteration
             params = {**params, **json.loads(row.params)}
             result = json.loads(row.result)
             pd_dict = {**params, **result}

@@ -52,6 +52,7 @@ class MCMCSampler(BaseSamplingElement, sampler_name='mcmc_sampler'):
         self.estimator = estimator
         self.minimum_probability = minimum_probability
         self.acceptance_ratios = []
+        self.iteration = 0
 
     def element_version(self):
         return "0.1"
@@ -161,6 +162,7 @@ class MCMCSampler(BaseSamplingElement, sampler_name='mcmc_sampler'):
             except KeyError:
                 pass
         ignored_runs = [run[0] for run in ignored_runs]
+        self.iteration += 1
         for run_id in ignored_runs:
             campaign.campaign_db.session.query(uq.db.sql.RunTable).\
                 filter(uq.db.sql.RunTable.id == int(run_id)).\
