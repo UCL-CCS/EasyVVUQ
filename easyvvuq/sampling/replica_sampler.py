@@ -85,3 +85,11 @@ class ReplicaSampler(BaseSamplingElement, sampler_name='replica_sampler'):
     @property
     def analysis_class(self):
         return self.sampler.analysis_class
+
+    @property
+    def inputs(self):
+        return self.sampler.inputs
+
+    @property
+    def qoi(self):
+        return self.sampler.qoi
