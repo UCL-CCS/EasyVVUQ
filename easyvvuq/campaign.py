@@ -471,7 +471,7 @@ class Campaign:
         self._active_sampler_id = self._active_sampler.sampler_id
         self.campaign_db.set_sampler(self.campaign_id, self._active_sampler.sampler_id)
 
-    def add_runs(self, runs, mark_invalid=False, iteration=0):
+    def add_runs(self, runs, mark_invalid=False):
         """Add a new run to the queue.
 
         Parameters
@@ -523,7 +523,7 @@ class Campaign:
 
             run_info_list.append(run_info)
 
-        self.campaign_db.add_runs(run_info_list, iteration=iteration)
+        self.campaign_db.add_runs(run_info_list, iteration=self._active_sampler.iteration)
 
     def add_default_run(self):
         """
@@ -584,7 +584,7 @@ class Campaign:
 
             list_of_runs = [new_run for i in range(replicas)]
             new_runs += list_of_runs
-            self.add_runs(list_of_runs, mark_invalid, self._active_sampler.iteration)
+            self.add_runs(list_of_runs, mark_invalid)
 
             num_added += 1
 

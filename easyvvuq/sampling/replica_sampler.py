@@ -77,3 +77,7 @@ class ReplicaSampler(BaseSamplingElement, sampler_name='replica_sampler'):
 
     def get_restart_dict(self):
         return {}
+
+    @property
+    def iteration(self):
+        return self.sampler.iteration
