@@ -31,7 +31,7 @@ class ReplicaSampler(BaseSamplingElement, sampler_name='replica_sampler'):
         number of replicas, if zero will result in an infinite sampler
     """
 
-    def __init__(self, sampler, replica_col='replica_id', seed_col=None, replicas=0):
+    def __init__(self, sampler, replica_col='ensemble_id', seed_col=None, replicas=0):
         if not sampler.is_finite():
             raise RuntimeError("Replica sampler only works with finite samplers")
         self.sampler = sampler

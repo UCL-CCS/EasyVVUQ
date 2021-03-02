@@ -17,8 +17,8 @@ class MCMCSampler(BaseSamplingElement, sampler_name='mcmc_sampler'):
        Name of the quantity of interest
     n_chains: int
        Number of MCMC chains to run in paralle.
-    replica_col: str or None
-       Name of the replica_id column when used with ReplicaSampler. 
+    ensemble_col: str or None
+       Name of the ensemble_id column when used with ReplicaSampler. 
        None when ReplicaSampler is not used.
     estimator: function
        To be used with replica_col argument. Outputs an estimate of some 
@@ -26,7 +26,7 @@ class MCMCSampler(BaseSamplingElement, sampler_name='mcmc_sampler'):
     """
 
     def __init__(self, init, q, qoi, n_chains=1, likelihood=lambda x: x[0],
-                 n_replicas=1, replica_col=None, estimator=None):
+                 n_replicas=1, ensemble_col=None, estimator=None):
         self.init = dict(init)
         self.inputs = list(self.init.keys())
         for input_ in self.inputs:
@@ -44,11 +44,11 @@ class MCMCSampler(BaseSamplingElement, sampler_name='mcmc_sampler'):
         self.f_x = [None] * n_chains
         self.stop = False
         if n_replicas != 1:
-            assert(replica_col is not None)
+            assert(ensemble_col is not None)
             assert(estimator is not None)
         self.likelihood = lambda x: np.exp(likelihood(x))
         self.n_replicas = n_replicas
-        self.replica_col = replica_col
+        self.ensemble_col = ensemble_col
         self.estimator = estimator
         self.acceptance_ratios = []
         self.iteration = 0
@@ -117,11 +117,11 @@ class MCMCSampler(BaseSamplingElement, sampler_name='mcmc_sampler'):
         self.stop = False
         result = campaign.get_collation_result(last_iteration=True)
         invalid = campaign.get_invalid_runs(last_iteration=True)
-        if (self.replica_col is not None) and (len(result) > 0):
+        if (self.ensemble_col is not None) and (len(result) > 0):
             result_grouped = result.groupby(('chain_id', 0)).apply(self.estimator)
         else:
             result_grouped = result
-        if (self.replica_col is not None) and (len(invalid) > 0):
+        if (self.ensemble_col is not None) and (len(invalid) > 0):
             invalid_grouped = invalid.groupby(('chain_id', 0)).apply(lambda x: x.mean())
         else:
             invalid_grouped = invalid
