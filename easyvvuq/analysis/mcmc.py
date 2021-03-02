@@ -19,17 +19,25 @@ class MCMCAnalysisResults(AnalysisResults):
     def __init__(self, chains):
         self.chains = chains
 
-    def plot_hist(self, input_parameter, chain, skip=0):
+    def plot_hist(self, input_parameter, chain=None, skip=0, merge=True):
         import matplotlib.pyplot as plt
-        plt.hist(self.chains[chain][input_parameter].iloc[skip:], 20)
+        input_parameter = (input_parameter, 0)
+        if merge:
+            chain_keys = list(self.chains.keys())
+            df = self.chains[chain_keys[0]][input_parameter].iloc[skip:]
+            for chain in chain_keys[1:]:
+                df.append(self.chains[chain][input_parameter].iloc[skip:])
+            plt.hist(df, 20)
+        else:
+            plt.hist(self.chains[chain][input_parameter].iloc[skip:], 20)
 
-    def plot_chain(self, input_parameter, chain=None):
+    def plot_chains(self, input_parameter, chain=None):
         import matplotlib.pyplot as plt
         if chain is None:
             for chain in self.chains:
-                plt.plot(self.chains[chain][input_parameter])
+                plt.plot(self.chains[chain][(input_parameter, 0)])
         else:
-            plt.plot(self.chains[chain][input_parameter])
+            plt.plot(self.chains[chain][(input_parameter, 0)])
 
 
 class MCMCAnalysis(BaseAnalysisElement):
