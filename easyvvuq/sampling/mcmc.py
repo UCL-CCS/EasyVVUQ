@@ -67,6 +67,13 @@ class MCMCSampler(BaseSamplingElement, sampler_name='mcmc_sampler'):
         return self
 
     def __next__(self):
+        """Returns next MCMC sample.
+
+        Returns
+        -------
+        dict
+           A dictionary where keys are input variables names and values are input values.
+        """
         if self.stop:
             raise StopIteration
         if self.f_x[self.current_chain] is None:
@@ -166,5 +173,11 @@ class MCMCSampler(BaseSamplingElement, sampler_name='mcmc_sampler'):
 
     @property
     def analysis_class(self):
+        """Returns a corresponding analysis class for this sampler.
+
+        Returns
+        -------
+        class
+        """
         from easyvvuq.analysis import MCMCAnalysis
         return MCMCAnalysis
