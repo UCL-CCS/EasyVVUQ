@@ -116,8 +116,8 @@ class MCMCSampler(BaseSamplingElement, sampler_name='mcmc_sampler'):
         list of rejected run ids, for testing purposes mainly
         """
         self.stop = False
-        result = campaign.get_collation_result(last_collation=True)
-        invalid = campaign.get_invalid_runs(last_collation=True)
+        result = campaign.get_collation_result(last_iteration=True)
+        invalid = campaign.get_invalid_runs(last_iteration=True)
         if (self.replica_col is not None) and (len(result) > 0):
             result_grouped = result.groupby(('chain_id', 0)).apply(self.estimator)
         else:
