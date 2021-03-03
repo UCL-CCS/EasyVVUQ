@@ -26,7 +26,7 @@ class MCMCSampler(BaseSamplingElement, sampler_name='mcmc_sampler'):
     """
 
     def __init__(self, init, q, qoi, n_chains=1, likelihood=lambda x: x[0],
-                 n_replicas=1, ensemble_col='ensemble_col', estimator=None):
+                 ensemble_col='ensemble_col', estimator=None):
         self.init = dict(init)
         self.inputs = list(self.init.keys())
         for input_ in self.inputs:
@@ -43,11 +43,8 @@ class MCMCSampler(BaseSamplingElement, sampler_name='mcmc_sampler'):
             self.x[chain]['chain_id'] = chain
         self.f_x = [None] * n_chains
         self.stop = False
-        if n_replicas != 1:
-            assert(ensemble_col is not None)
-            assert(estimator is not None)
         self.likelihood = lambda x: np.exp(likelihood(x))
-        self.n_replicas = n_replicas
+        self.n_replicas = None
         self.ensemble_col = ensemble_col
         self.estimator = estimator
         self.acceptance_ratios = []
@@ -60,7 +57,7 @@ class MCMCSampler(BaseSamplingElement, sampler_name='mcmc_sampler'):
         return True
 
     def n_samples(self):
-        return self.n_chains * self.n_replicas
+        return self.n_chains
 
     def __iter__(self):
         self.current_chain = 0
@@ -148,7 +145,7 @@ class MCMCSampler(BaseSamplingElement, sampler_name='mcmc_sampler'):
                 if self.f_x[chain_id] == 0.0:
                     r = 1.0
                 else:
-                    r = min(1.0, (f_y / self.f_x[chain_id]) * (q_xy / q_yx))
+                    r = min(1.0, (f_y / self.f_x[chain_id])) # * (q_xy / q_yx))
                 if np.random.random() < r:
                     self.x[chain_id] = dict(y)
                     self.f_x[chain_id] = f_y

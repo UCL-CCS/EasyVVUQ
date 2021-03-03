@@ -87,9 +87,9 @@ class RunTable(Base):
     """
     __tablename__ = 'run'
     id = Column(Integer, primary_key=True)
-    run_name = Column(String, index=True)
+    run_name = Column(String)
     ensemble_name = Column(String)
-    app = Column(Integer, ForeignKey('app.id'), index=True)
+    app = Column(Integer, ForeignKey('app.id'))
     params = Column(String)
     status = Column(Integer)
     run_dir = Column(String)

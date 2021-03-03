@@ -37,6 +37,7 @@ class ReplicaSampler(BaseSamplingElement, sampler_name='replica_sampler'):
         self.sampler = sampler
         self.replica_col = replica_col
         self.replicas = replicas
+        self.sampler.n_replicas = replicas
         self.reset()
 
     def reset(self):
@@ -46,6 +47,7 @@ class ReplicaSampler(BaseSamplingElement, sampler_name='replica_sampler'):
         self.size = len(self.history)
         self.cycle = cycle(self.history)
         self.counter = 0
+        self.total_counter = self.replicas * self.sampler.n_samples()
 
     def is_finite(self):
         if self.replicas == 0:
@@ -66,6 +68,9 @@ class ReplicaSampler(BaseSamplingElement, sampler_name='replica_sampler'):
         params = dict(next(self.cycle))
         params[self.replica_col] = self.counter
         self.counter = (self.counter + 1) % self.size
+        self.total_counter -= 1
+        if self.total_counter == 0:
+            raise StopIteration
         return params
 
     def update(self, result, invalid):
