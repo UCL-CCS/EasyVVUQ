@@ -87,9 +87,9 @@ class RunTable(Base):
     """
     __tablename__ = 'run'
     id = Column(Integer, primary_key=True)
-    run_name = Column(String)
+    run_name = Column(String, index=True)
     ensemble_name = Column(String)
-    app = Column(Integer, ForeignKey('app.id'))
+    app = Column(Integer, ForeignKey('app.id'), index=True)
     params = Column(String)
     status = Column(Integer)
     run_dir = Column(String)
@@ -836,8 +836,7 @@ class CampaignDB(BaseCampaignDB):
         for run_name, result in results:
             try:
                 self.session.query(RunTable).\
-                    filter(RunTable.run_name == run_name).\
-                    filter(RunTable.app == app_id).\
+                    filter(RunTable.run_name == run_name, RunTable.app == app_id).\
                     update({'result': json.dumps(result), 'status': constants.Status.COLLATED})
             except IndexError:
                 raise RuntimeError("no runs with name {} found".format(run_name))
