@@ -17,16 +17,12 @@ class MCMCSampler(BaseSamplingElement, sampler_name='mcmc_sampler'):
        Name of the quantity of interest
     n_chains: int
        Number of MCMC chains to run in paralle.
-    ensemble_col: str or None
-       Name of the ensemble_id column when used with ReplicaSampler. 
-       None when ReplicaSampler is not used.
     estimator: function
        To be used with replica_col argument. Outputs an estimate of some 
        parameter when given a sample array.
     """
 
-    def __init__(self, init, q, qoi, n_chains=1, likelihood=lambda x: x[0],
-                 ensemble_col='ensemble_col', estimator=None):
+    def __init__(self, init, q, qoi, n_chains=1, likelihood=lambda x: x[0], estimator=None):
         self.init = dict(init)
         self.inputs = list(self.init.keys())
         for input_ in self.inputs:
@@ -45,7 +41,6 @@ class MCMCSampler(BaseSamplingElement, sampler_name='mcmc_sampler'):
         self.stop = False
         self.likelihood = lambda x: np.exp(likelihood(x))
         self.n_replicas = None
-        self.ensemble_col = ensemble_col
         self.estimator = estimator
         self.acceptance_ratios = []
         self.iteration = 0
@@ -111,11 +106,11 @@ class MCMCSampler(BaseSamplingElement, sampler_name='mcmc_sampler'):
         list of rejected run ids
         """
         self.stop = False
-        if (self.ensemble_col is not None) and (len(result) > 0):
+        if (self.estimator is not None) and (len(result) > 0):
             result_grouped = result.groupby(('chain_id', 0)).apply(self.estimator)
         else:
             result_grouped = result
-        if (self.ensemble_col is not None) and (len(invalid) > 0):
+        if (self.estimator is not None) and (len(invalid) > 0):
             invalid_grouped = invalid.groupby(('chain_id', 0)).apply(lambda x: x.mean())
         else:
             invalid_grouped = invalid
