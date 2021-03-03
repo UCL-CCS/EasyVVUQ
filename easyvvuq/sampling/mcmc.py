@@ -96,16 +96,6 @@ class MCMCSampler(BaseSamplingElement, sampler_name='mcmc_sampler'):
     def get_restart_dict(self):
         return {"init": self.init}
 
-    def isaccepted(self):
-        """Chain jump acceptance predicate. Metropolis-Hastings rule here.
-        
-        Returns
-        -------
-        bool
-            True if the new position is accepted, False otherwise.
-        """
-        
-
     def update(self, result, invalid):
         """Performs the MCMC sampling procedure on the campaign.
 
@@ -145,7 +135,7 @@ class MCMCSampler(BaseSamplingElement, sampler_name='mcmc_sampler'):
                 if self.f_x[chain_id] == 0.0:
                     r = 1.0
                 else:
-                    r = min(1.0, (f_y / self.f_x[chain_id])) # * (q_xy / q_yx))
+                    r = min(1.0, (f_y / self.f_x[chain_id]) * (q_xy / q_yx))
                 if np.random.random() < r:
                     self.x[chain_id] = dict(y)
                     self.f_x[chain_id] = f_y
