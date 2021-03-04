@@ -2,10 +2,11 @@ numpy
 pandas
 scipy
 wheel
-chaospy==4.2.3
+chaospy==4.2.4
 SALib
 pytest
 pytest-pep8
+pytest-benchmark
 SQLAlchemy
 jsonpickle
 cerberus
