@@ -33,5 +33,5 @@ jobs:
     - name: Store benchmark result
       uses: rhysd/github-action-benchmark@v1
       with:
-	tool: 'pytest'
-    	output-file-path: benchmark-output.json
+        tool: 'pytest'
+        output-file-path: benchmark-output.json
