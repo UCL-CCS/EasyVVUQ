@@ -13,6 +13,7 @@ from easyvvuq.constants import default_campaign_prefix, Status
 from easyvvuq.data_structs import RunInfo, CampaignInfo, AppInfo
 from easyvvuq.sampling import BaseSamplingElement
 from easyvvuq.actions import ActionStatuses
+import easyvvuq.db.sql as db
 from cerberus import Validator
 
 __copyright__ = """
@@ -173,7 +174,7 @@ class Campaign:
                 state_file, relocate=relocate)
             if change_to_state:
                 os.chdir(self._state_dir)
-            self.relocate(self.campaign_dir)
+            #self.relocate(self.campaign_dir)
         else:
             self.init_fresh(name, db_type, db_location, self.work_dir)
             self._state_dir = None
@@ -471,7 +472,7 @@ class Campaign:
         self._active_sampler_id = self._active_sampler.sampler_id
         self.campaign_db.set_sampler(self.campaign_id, self._active_sampler.sampler_id)
 
-    def add_runs(self, runs):
+    def add_runs(self, runs, mark_invalid=False):
         """Add a new run to the queue.
 
         Parameters
@@ -479,6 +480,8 @@ class Campaign:
         runs : list of dicts
             Each dict defines the value of each model parameter listed in
             `self.params_info` for a run to be added to `self.runs`
+        mark_invalid : bool
+            Will mark runs that fail verification as invalid (but will not raise an exception)
 
         Returns
         -------
@@ -502,17 +505,26 @@ class Campaign:
                 raise Exception(msg)
 
             # Verify and complete run with missing/default param values
-            new_run = app_default_params.process_run(new_run, verify=self.verify_all_runs)
+            status = Status.NEW
+            try:
+                new_run = app_default_params.process_run(new_run, verify=self.verify_all_runs)
+            except RuntimeError:
+                if mark_invalid:
+                    new_run = app_default_params.process_run(new_run, verify=False)
+                    status = Status.INVALID
+                else:
+                    raise
 
             # Add to run queue
             run_info = RunInfo(app=self._active_app['id'],
                                params=new_run,
                                sample=self._active_sampler_id,
-                               campaign=self.campaign_id)
+                               campaign=self.campaign_id,
+                               status=status)
 
             run_info_list.append(run_info)
 
-        self.campaign_db.add_runs(run_info_list)
+        self.campaign_db.add_runs(run_info_list, iteration=self._active_sampler.iteration)
 
     def add_default_run(self):
         """
@@ -523,7 +535,7 @@ class Campaign:
         new_run = {}
         self.add_runs([new_run])
 
-    def draw_samples(self, num_samples=0, replicas=1):
+    def draw_samples(self, num_samples=0, replicas=1, mark_invalid=False):
         """Draws `num_samples` sets of parameters from the currently set
         sampler, resulting in `num_samples` * `replicas` new runs added to the
         runs list. If `num_samples` is 0 (its default value) then
@@ -545,6 +557,10 @@ class Campaign:
                 Number of replica runs to create with each set of parameters.
                 Default is 1 - so only a single run added for each set of
                 parameters.
+        mark_invalid : bool
+           If True will mark runs that go outside valid parameter range as INVALID.
+           This is useful for MCMC style methods where you want those runs to evaluate
+           to low probabilities.
 
         Returns
         -------
@@ -564,10 +580,12 @@ class Campaign:
             raise RuntimeError(msg)
 
         num_added = 0
+        new_runs = []
         for new_run in self._active_sampler:
 
             list_of_runs = [new_run for i in range(replicas)]
-            self.add_runs(list_of_runs)
+            new_runs += list_of_runs
+            self.add_runs(list_of_runs, mark_invalid)
 
             num_added += 1
 
@@ -580,6 +598,7 @@ class Campaign:
         # Log application of this sampling element
         self.log_element_application(self._active_sampler,
                                      {"num_added": num_added, "replicas": replicas})
+        return new_runs
 
     def list_runs(self, sampler=None, campaign=None, status=None):
         """Get list of runs in the CampaignDB.
@@ -715,7 +734,7 @@ class Campaign:
             action_statuses.append(action.act_on_dir(run_data['run_dir']))
         return ActionStatuses(action_statuses, batch_size=batch_size)
 
-    def sample_and_apply(self, action, batch_size=8, nsamples=0):
+    def sample_and_apply(self, action, batch_size=8, nsamples=0, mark_invalid=False):
         """This will draw samples, populated the runs directories and run the specified action.
         This is a convenience method.
 
@@ -727,21 +746,57 @@ class Campaign:
             an action to be executed
         batch_size : int
             number of actions to be executed at the same time
+        mark_invalid : bool
+            Mark runs that go outside the specified input parameter range as INVALID.
 
         Returns
         -------
         action_statuses: ActionStatuses
             An object containing ActionStatus instances to track action execution
         """
-        self.draw_samples(nsamples)
+        self.draw_samples(nsamples, mark_invalid=mark_invalid)
         self.populate_runs_dir()
         action_statuses = self.apply_for_each_run_dir(action, batch_size=batch_size)
         return action_statuses
 
+    def iterate(self, action, batch_size=8, nsamples=0, mark_invalid=False):
+        """This is the equivalent of sample_and_apply for methods that rely on the output of the
+        previous sampling stage (primarily MCMC).
+
+        Parameters
+        ----------
+        nsamples : int
+            number of samples to draw
+        action : BaseAction
+            an action to be executed
+        batch_size : int
+            number of actions to be executed at the same time
+        mark_invalid : bool
+            Mark runs that go outside the specified input parameter range as INVALID.
+
+        Yields
+        ------
+        action_statuses: ActionStatuses
+            An object containing ActionStatus instances to track action execution
+        """
+        while True:
+            self.draw_samples(nsamples, mark_invalid=mark_invalid)
+            self.populate_runs_dir()
+            action_statuses = self.apply_for_each_run_dir(action, batch_size=batch_size)
+            yield action_statuses
+            self.collate()
+            result = self.get_collation_result(last_iteration=True)
+            invalid = self.get_invalid_runs(last_iteration=True)
+            ignored_runs = self._active_sampler.update(result, invalid)
+            for run_id in ignored_runs:
+                self.campaign_db.session.query(db.RunTable).\
+                    filter(db.RunTable.id == int(run_id)).\
+                    update({'status': constants.Status.IGNORED})
+            self.campaign_db.session.commit()
+
+
     def collate(self):
         """Combine the output from all runs associated with the current app.
-
-        Uses the collation element held in `self._active_app_collater`.
 
         Returns
         -------
@@ -786,19 +841,46 @@ class Campaign:
         self.campaign_db.set_run_statuses(collated_run_ids, Status.ENCODED)
         self.collate()
 
-    def get_collation_result(self):
+    def get_collation_result(self, last_iteration=False):
         """
         Return dataframe containing all collated results
 
         Parameters
         ----------
+        last_collation : bool
+            Will only return the result of the last collation.
 
         Returns
         -------
             pandas dataframe
 
         """
-        return self.campaign_db.get_results(self._active_app['name'], self._active_sampler_id)
+        if last_iteration:
+            iteration = self._active_sampler.iteration - 1
+        else:
+            iteration = -1
+        return self.campaign_db.get_results(self._active_app['name'], self._active_sampler_id,
+                                            status=constants.Status.COLLATED, iteration=iteration)
+
+    def get_invalid_runs(self, last_iteration=False):
+        """
+        Return dataframe containing all results marked as INVALID.
+
+        Parameters
+        ----------
+        last_collation : bool
+            Will only return the result of the last collation.
+        
+        Returns
+        -------
+            pandas DataFrame
+        """
+        if last_iteration:
+            iteration = self._active_sampler.iteration - 1
+        else:
+            iteration = -1
+        return self.campaign_db.get_results(self._active_app['name'], self._active_sampler_id,
+                                            status=constants.Status.INVALID, iteration=iteration)
 
     def apply_analysis(self, analysis):
         """Run the `analysis` element on the output of the last run collation.

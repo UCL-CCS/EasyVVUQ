@@ -7,6 +7,7 @@ import json
 from easyvvuq import constants
 from easyvvuq.encoders import BaseEncoder
 from easyvvuq.decoders import BaseDecoder
+from easyvvuq.utils.helpers import easyvvuq_serialize
 import numpy
 
 __copyright__ = """
@@ -158,6 +159,8 @@ class RunInfo:
         self.params = params
         self.status = status
 
+        self.iteration = 0
+
     def to_dict(self, flatten=False):
         """Convert to a dictionary (optionally flatten to single level)
 
@@ -190,6 +193,7 @@ class RunInfo:
                 'campaign': self.campaign,
                 'sampler': self.sample,
                 'app': self.app,
+                'iteration': self.iteration,
             }
 
         else:
@@ -203,6 +207,7 @@ class RunInfo:
                 'campaign': self.campaign,
                 'sampler': self.sample,
                 'app': self.app,
+                'iteration': self.iteration,
             }
 
         return out_dict
@@ -292,8 +297,8 @@ class AppInfo:
                 'name': self.name,
                 'params': self.paramsspec,
                 'decoderspec': self.decoderspec,
-                'input_encoder': self.input_encoder.serialize(),
-                'output_decoder': self.output_decoder.serialize()
+                'input_encoder': easyvvuq_serialize(self.input_encoder),
+                'output_decoder': easyvvuq_serialize(self.output_decoder)
             }
 
         return out_dict

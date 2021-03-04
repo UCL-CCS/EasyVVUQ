@@ -41,6 +41,8 @@ class BaseSamplingElement(BaseElement):
 
     """
 
+    iteration = 0
+
     def __init_subclass__(cls, sampler_name, **kwargs):
         """
         Catch any new samplers (all samplers must inherit from

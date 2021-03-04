@@ -13,10 +13,9 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import text
 from .base import BaseCampaignDB
 from easyvvuq import constants
-from easyvvuq.sampling.base import BaseSamplingElement
-from easyvvuq.encoders.base import BaseEncoder
-from easyvvuq.decoders.base import BaseDecoder
 from easyvvuq import ParamsSpecification
+from easyvvuq.utils.helpers import easyvvuq_serialize, easyvvuq_deserialize
+
 
 __copyright__ = """
 
@@ -91,9 +90,10 @@ class RunTable(Base):
     params = Column(String)
     status = Column(Integer)
     run_dir = Column(String)
-    result = Column(String)
+    result = Column(String, default="{}")
     campaign = Column(Integer, ForeignKey('campaign_info.id'))
     sampler = Column(Integer, ForeignKey('sampler.id'))
+    iteration = Column(Integer)
 
 
 class SamplerTable(Base):
@@ -249,7 +249,7 @@ class CampaignDB(BaseCampaignDB):
         -------
 
         """
-        db_entry = SamplerTable(sampler=sampler_element.serialize())
+        db_entry = SamplerTable(sampler=easyvvuq_serialize(sampler_element))
 
         self.session.add(db_entry)
         self.session.commit()
@@ -274,7 +274,7 @@ class CampaignDB(BaseCampaignDB):
         """
 
         selected = self.session.query(SamplerTable).get(sampler_id)
-        selected.sampler = sampler_element.serialize()
+        selected.sampler = easyvvuq_serialize(sampler_element)
         self.session.commit()
 
     def resurrect_sampler(self, sampler_id):
@@ -295,7 +295,7 @@ class CampaignDB(BaseCampaignDB):
         """
 
         serialized_sampler = self.session.query(SamplerTable).get(sampler_id).sampler
-        sampler = BaseSamplingElement.deserialize(serialized_sampler)
+        sampler = easyvvuq_deserialize(serialized_sampler.encode('utf-8'))
         return sampler
 
     def resurrect_app(self, app_name):
@@ -318,11 +318,11 @@ class CampaignDB(BaseCampaignDB):
 
         app_info = self.app(app_name)
 
-        encoder = BaseEncoder.deserialize(app_info['input_encoder'])
-        decoder = BaseDecoder.deserialize(app_info['output_decoder'])
+        encoder = easyvvuq_deserialize(app_info['input_encoder'])
+        decoder = easyvvuq_deserialize(app_info['output_decoder'])
         return encoder, decoder
 
-    def add_runs(self, run_info_list=None, run_prefix='Run_', ensemble_prefix='Ensemble_'):
+    def add_runs(self, run_info_list=None, run_prefix='Run_', ensemble_prefix='Ensemble_', iteration=0):
         """
         Add list of runs to the `runs` table in the database.
 
@@ -347,6 +347,7 @@ class CampaignDB(BaseCampaignDB):
             run_info.ensemble_name = f"{ensemble_prefix}{self._next_ensemble}"
             run_info.run_name = f"{run_prefix}{self._next_run}"
             run_info.run_dir = os.path.join(runs_dir, run_info.run_name)
+            run_info.iteration = iteration
 
             run = RunTable(**run_info.to_dict(flatten=True))
             self.session.add(run)
@@ -832,14 +833,13 @@ class CampaignDB(BaseCampaignDB):
         for run_name, result in results:
             try:
                 self.session.query(RunTable).\
-                    filter(RunTable.run_name == run_name).\
-                    filter(RunTable.app == app_id).\
+                    filter(RunTable.run_name == run_name, RunTable.app == app_id).\
                     update({'result': json.dumps(result), 'status': constants.Status.COLLATED})
             except IndexError:
                 raise RuntimeError("no runs with name {} found".format(run_name))
         self.session.commit()
 
-    def get_results(self, app_name, sampler_id):
+    def get_results(self, app_name, sampler_id, status=constants.Status.COLLATED, iteration=-1):
         """Returns the results as a pandas DataFrame.
 
         Parameters
@@ -861,9 +861,13 @@ class CampaignDB(BaseCampaignDB):
         query = self.session.query(RunTable).\
             filter(RunTable.app == app_id).\
             filter(RunTable.sampler == sampler_id).\
-            filter(RunTable.status == constants.Status.COLLATED)
+            filter(RunTable.status == status)
+        # if only a specific iteration is requested filter it out
+        if iteration >= 0:
+            query = query.filter(RunTable.iteration == iteration)
         for row in query:
             params = {'run_id': row.id}
+            params['iteration'] = row.iteration
             params = {**params, **json.loads(row.params)}
             result = json.loads(row.result)
             pd_dict = {**params, **result}
@@ -910,3 +914,4 @@ class CampaignDB(BaseCampaignDB):
                     filter(RunTable.app == app_info.id).\
                     update({'run_dir': new_path_})
         self.session.commit()
+

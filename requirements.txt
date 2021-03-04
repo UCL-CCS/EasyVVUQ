@@ -17,3 +17,4 @@ jinja2
 kubernetes
 autopep8
 squarify
+dill
