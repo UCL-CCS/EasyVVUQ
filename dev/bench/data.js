@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1614884970923,
+  "lastUpdate": 1614885859493,
   "repoUrl": "https://github.com/UCL-CCS/EasyVVUQ",
   "entries": {
     "Benchmark": [
@@ -131,6 +131,51 @@ window.BENCHMARK_DATA = {
             "unit": "iter/sec",
             "range": "stddev: 0",
             "extra": "mean: 858.3440760000087 msec\nrounds: 1"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "unaudio@gmail.com",
+            "name": "Vytautas Jancauskas",
+            "username": "orbitfold"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "7f2d20af60dfd51274df1e0ebcc3f4f6c5a9c77a",
+          "message": "Merge pull request #322 from UCL-CCS/dpc/new/dask-tutorial\n\nadd the dask tutorial planned for the tutorial paper",
+          "timestamp": "2021-03-04T20:22:15+01:00",
+          "tree_id": "193b7ad0884832ca90d514fd04b0d4c241b06532",
+          "url": "https://github.com/UCL-CCS/EasyVVUQ/commit/7f2d20af60dfd51274df1e0ebcc3f4f6c5a9c77a"
+        },
+        "date": 1614885858772,
+        "tool": "pytest",
+        "benches": [
+          {
+            "name": "tests/test_db_benchmark.py::test_db_benchmark_draw",
+            "value": 0.022678142412989977,
+            "unit": "iter/sec",
+            "range": "stddev: 0",
+            "extra": "mean: 44.095322350000004 sec\nrounds: 1"
+          },
+          {
+            "name": "tests/test_db_benchmark.py::test_db_benchmark_store_results",
+            "value": 0.17422262669313612,
+            "unit": "iter/sec",
+            "range": "stddev: 0",
+            "extra": "mean: 5.739782593000001 sec\nrounds: 1"
+          },
+          {
+            "name": "tests/test_db_benchmark.py::test_db_benchmark_get_collation_result",
+            "value": 1.1828587812923106,
+            "unit": "iter/sec",
+            "range": "stddev: 0",
+            "extra": "mean: 845.4094569999882 msec\nrounds: 1"
           }
         ]
       }
