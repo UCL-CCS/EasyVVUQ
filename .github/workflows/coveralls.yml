@@ -36,5 +36,5 @@ jobs:
       env: 
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
-        pytest --cov=.
+        pytest --skip-benchmark --cov=. tests/
         coveralls --service=github
