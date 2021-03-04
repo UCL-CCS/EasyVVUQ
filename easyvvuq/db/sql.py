@@ -13,9 +13,6 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import text
 from .base import BaseCampaignDB
 from easyvvuq import constants
-from easyvvuq.sampling.base import BaseSamplingElement
-from easyvvuq.encoders.base import BaseEncoder
-from easyvvuq.decoders.base import BaseDecoder
 from easyvvuq import ParamsSpecification
 from easyvvuq.utils.helpers import easyvvuq_serialize, easyvvuq_deserialize
 

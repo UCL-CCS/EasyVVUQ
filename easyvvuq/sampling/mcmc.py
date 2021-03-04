@@ -1,4 +1,3 @@
-import easyvvuq as uq
 from .base import BaseSamplingElement
 import numpy as np
 

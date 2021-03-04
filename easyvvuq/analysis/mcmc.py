@@ -1,6 +1,5 @@
 """Analysis element for Markov Chain Monte Carlo (MCMC).
 """
-import chaospy as cp
 import pandas as pd
 from .base import BaseAnalysisElement
 from .results import AnalysisResults
