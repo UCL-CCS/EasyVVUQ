@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1614866894560,
+  "lastUpdate": 1614868905877,
   "repoUrl": "https://github.com/UCL-CCS/EasyVVUQ",
   "entries": {
     "Benchmark": [
@@ -45,6 +45,51 @@ window.BENCHMARK_DATA = {
             "unit": "iter/sec",
             "range": "stddev: 0",
             "extra": "mean: 834.3068519999974 msec\nrounds: 1"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "unaudio@gmail.com",
+            "name": "Vytautas Jancauskas",
+            "username": "orbitfold"
+          },
+          "committer": {
+            "email": "unaudio@gmail.com",
+            "name": "Vytautas Jancauskas",
+            "username": "orbitfold"
+          },
+          "distinct": true,
+          "id": "caf20a4cbcd8e736f242d4ff0b77eb70f5ba0b6f",
+          "message": "set run_name as index",
+          "timestamp": "2021-03-04T15:39:14+01:00",
+          "tree_id": "ca84d056735f7f957aaa0a1842cb97137e80ab1b",
+          "url": "https://github.com/UCL-CCS/EasyVVUQ/commit/caf20a4cbcd8e736f242d4ff0b77eb70f5ba0b6f"
+        },
+        "date": 1614868904991,
+        "tool": "pytest",
+        "benches": [
+          {
+            "name": "tests/test_db_benchmark.py::test_db_benchmark_draw",
+            "value": 0.01870826160772363,
+            "unit": "iter/sec",
+            "range": "stddev: 0",
+            "extra": "mean: 53.4523207430002 sec\nrounds: 1"
+          },
+          {
+            "name": "tests/test_db_benchmark.py::test_db_benchmark_store_results",
+            "value": 0.1382887083272835,
+            "unit": "iter/sec",
+            "range": "stddev: 0",
+            "extra": "mean: 7.2312483939999765 sec\nrounds: 1"
+          },
+          {
+            "name": "tests/test_db_benchmark.py::test_db_benchmark_get_collation_result",
+            "value": 0.9460002097961505,
+            "unit": "iter/sec",
+            "range": "stddev: 0",
+            "extra": "mean: 1.0570822180002324 sec\nrounds: 1"
           }
         ]
       }
