@@ -27,7 +27,7 @@ jobs:
         if [ -f requirements.txt ]; then pip install --use-feature=2020-resolver -r requirements.txt; fi
         python setup.py develop
         pip install pytest-benchmark
-    - name: Test with pytest
+    - name: Benchmark with pytest
       run: |
         pytest tests/test_db_benchmark.py --benchmark-json benchmark-output.json
     - name: Store benchmark result
