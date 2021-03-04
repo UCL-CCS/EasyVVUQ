@@ -35,3 +35,5 @@ jobs:
       with:
         tool: 'pytest'
         output-file-path: output.json
+        github-token: ${{ secrets.PERSONAL_GITHUB_TOKEN }}
+        auto-push: true
