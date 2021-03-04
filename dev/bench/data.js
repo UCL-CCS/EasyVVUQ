@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1614868905877,
+  "lastUpdate": 1614884970923,
   "repoUrl": "https://github.com/UCL-CCS/EasyVVUQ",
   "entries": {
     "Benchmark": [
@@ -90,6 +90,47 @@ window.BENCHMARK_DATA = {
             "unit": "iter/sec",
             "range": "stddev: 0",
             "extra": "mean: 1.0570822180002324 sec\nrounds: 1"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "name": "UCL-CCS",
+            "username": "UCL-CCS"
+          },
+          "committer": {
+            "name": "UCL-CCS",
+            "username": "UCL-CCS"
+          },
+          "id": "6263ce8a737dbcafd9e61b0fc2bce4e8f0d240c9",
+          "message": "add the dask tutorial planned for the tutorial paper",
+          "timestamp": "2021-03-04T18:41:21Z",
+          "url": "https://github.com/UCL-CCS/EasyVVUQ/pull/322/commits/6263ce8a737dbcafd9e61b0fc2bce4e8f0d240c9"
+        },
+        "date": 1614884970220,
+        "tool": "pytest",
+        "benches": [
+          {
+            "name": "tests/test_db_benchmark.py::test_db_benchmark_draw",
+            "value": 0.022253955598358473,
+            "unit": "iter/sec",
+            "range": "stddev: 0",
+            "extra": "mean: 44.935831546 sec\nrounds: 1"
+          },
+          {
+            "name": "tests/test_db_benchmark.py::test_db_benchmark_store_results",
+            "value": 0.1630773432298923,
+            "unit": "iter/sec",
+            "range": "stddev: 0",
+            "extra": "mean: 6.132059672999986 sec\nrounds: 1"
+          },
+          {
+            "name": "tests/test_db_benchmark.py::test_db_benchmark_get_collation_result",
+            "value": 1.165033962440943,
+            "unit": "iter/sec",
+            "range": "stddev: 0",
+            "extra": "mean: 858.3440760000087 msec\nrounds: 1"
           }
         ]
       }
