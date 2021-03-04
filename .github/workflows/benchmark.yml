@@ -29,9 +29,9 @@ jobs:
         pip install pytest-benchmark
     - name: Benchmark with pytest
       run: |
-        pytest tests/test_db_benchmark.py --benchmark-json benchmark-output.json
+        pytest tests/test_db_benchmark.py --benchmark-json output.json
     - name: Store benchmark result
       uses: rhysd/github-action-benchmark@v1
       with:
         tool: 'pytest'
-        output-file-path: benchmark-output.json
+        output-file-path: output.json

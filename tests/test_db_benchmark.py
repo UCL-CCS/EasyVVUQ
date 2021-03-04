@@ -37,7 +37,6 @@ def fake_results():
 def test_db_benchmark_store_results(benchmark):
     iterator = fake_results()
     results = []
-    pass
     for _ in range(6000):
         results.append(next(iterator))
     benchmark.pedantic(pytest.shared.campaign_db.store_results,
