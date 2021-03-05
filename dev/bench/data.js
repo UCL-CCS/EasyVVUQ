@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1614885859493,
+  "lastUpdate": 1614934944122,
   "repoUrl": "https://github.com/UCL-CCS/EasyVVUQ",
   "entries": {
     "Benchmark": [
@@ -176,6 +176,51 @@ window.BENCHMARK_DATA = {
             "unit": "iter/sec",
             "range": "stddev: 0",
             "extra": "mean: 845.4094569999882 msec\nrounds: 1"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "unaudio@gmail.com",
+            "name": "Vytautas Jancauskas",
+            "username": "orbitfold"
+          },
+          "committer": {
+            "email": "unaudio@gmail.com",
+            "name": "Vytautas Jancauskas",
+            "username": "orbitfold"
+          },
+          "distinct": true,
+          "id": "b283acdcead665b72ed9ab1d985b0417f996e394",
+          "message": "Merge branch 'dev' of https://github.com/UCL-CCS/EasyVVUQ into dev",
+          "timestamp": "2021-03-05T09:59:32+01:00",
+          "tree_id": "f5bda884643c2d1b2888028e5a5d75a48490e5f0",
+          "url": "https://github.com/UCL-CCS/EasyVVUQ/commit/b283acdcead665b72ed9ab1d985b0417f996e394"
+        },
+        "date": 1614934943653,
+        "tool": "pytest",
+        "benches": [
+          {
+            "name": "tests/test_db_benchmark.py::test_db_benchmark_draw",
+            "value": 295.66591029235803,
+            "unit": "iter/sec",
+            "range": "stddev: 0.00022657908656646526",
+            "extra": "mean: 3.3821958000203267 msec\nrounds: 5"
+          },
+          {
+            "name": "tests/test_db_benchmark.py::test_db_benchmark_store_results",
+            "value": 0.18257114339414374,
+            "unit": "iter/sec",
+            "range": "stddev: 0.03398831417935775",
+            "extra": "mean: 5.477316849800024 sec\nrounds: 5"
+          },
+          {
+            "name": "tests/test_db_benchmark.py::test_db_benchmark_get_collation_result",
+            "value": 1.2440403222031855,
+            "unit": "iter/sec",
+            "range": "stddev: 0.0426174673486918",
+            "extra": "mean: 803.832465999983 msec\nrounds: 5"
           }
         ]
       }
