@@ -64,15 +64,12 @@ def campaign():
                   actions, stats, vary, num_samples=0, replicas=1, db_type='sql',
                   call_fn=None):
         my_campaign = uq.Campaign(name=campaign_name, work_dir=work_dir, db_type=db_type)
-        logging.debug("Serialized encoder: %s", str(encoder.serialize()))
-        logging.debug("Serialized decoder: %s", str(decoder.serialize()))
         # Add the cannonsim app
         my_campaign.add_app(name=app_name,
                             params=params,
                             encoder=encoder,
                             decoder=decoder)
         my_campaign.set_app(app_name)
-        logging.debug("Serialized sampler: %s", str(sampler.serialize()))
         # Set the campaign to use this sampler
         my_campaign.set_sampler(sampler)
         # Draw 5 samples
@@ -125,7 +122,6 @@ def campaign():
             reloaded_campaign.apply_analysis(stats)
             logging.debug("stats:\n %s", str(reloaded_campaign.get_last_analysis()))
         # Print the campaign log
-        logging.debug(pformat(reloaded_campaign._log))
         logging.debug("All completed? %s", str(reloaded_campaign.all_complete()))
     return _campaign
 
