@@ -126,8 +126,6 @@ def test_recollate(tmpdir):
     my_campaign.rerun(['Run_2', 'Run_3', 'Run_4'])
     my_campaign.apply_for_each_run_dir(actions)
 
-    pprint(my_campaign._log)
-
 
 if __name__ == "__main__":
     test_recollate('/tmp/')
