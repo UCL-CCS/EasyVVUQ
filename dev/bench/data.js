@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1614957999535,
+  "lastUpdate": 1614960052080,
   "repoUrl": "https://github.com/UCL-CCS/EasyVVUQ",
   "entries": {
     "Benchmark": [
@@ -1396,6 +1396,72 @@ window.BENCHMARK_DATA = {
             "unit": "iter/sec",
             "range": "stddev: 0.04400720987046884",
             "extra": "mean: 1.2946110815999987 sec\nrounds: 5"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "unaudio@gmail.com",
+            "name": "Vytautas Jancauskas",
+            "username": "orbitfold"
+          },
+          "committer": {
+            "email": "unaudio@gmail.com",
+            "name": "Vytautas Jancauskas",
+            "username": "orbitfold"
+          },
+          "distinct": true,
+          "id": "c0eb4e34a326e852fbe4421e7a905e77252048c7",
+          "message": "cache increase",
+          "timestamp": "2021-03-05T16:53:37+01:00",
+          "tree_id": "59d17f6ed0c5907d4855b21e8df65d18ce5eed30",
+          "url": "https://github.com/UCL-CCS/EasyVVUQ/commit/c0eb4e34a326e852fbe4421e7a905e77252048c7"
+        },
+        "date": 1614960051619,
+        "tool": "pytest",
+        "benches": [
+          {
+            "name": "tests/test_db_benchmark.py::test_draw",
+            "value": 0.07052010012835516,
+            "unit": "iter/sec",
+            "range": "stddev: 0.049886292383725994",
+            "extra": "mean: 14.180354227799992 sec\nrounds: 5"
+          },
+          {
+            "name": "tests/test_db_benchmark.py::test_store_results",
+            "value": 0.1027637358916464,
+            "unit": "iter/sec",
+            "range": "stddev: 0.00928165097023449",
+            "extra": "mean: 9.731059223599999 sec\nrounds: 5"
+          },
+          {
+            "name": "tests/test_db_benchmark.py::test_get_collation_result",
+            "value": 0.7101015010422368,
+            "unit": "iter/sec",
+            "range": "stddev: 0.036449310631203984",
+            "extra": "mean: 1.4082493819999968 sec\nrounds: 5"
+          },
+          {
+            "name": "tests/test_db_benchmark.py::test_draw_add",
+            "value": 0.0706937017739991,
+            "unit": "iter/sec",
+            "range": "stddev: 0.05175387932884715",
+            "extra": "mean: 14.145531707999998 sec\nrounds: 5"
+          },
+          {
+            "name": "tests/test_db_benchmark.py::test_store_results_add",
+            "value": 0.10313708451082568,
+            "unit": "iter/sec",
+            "range": "stddev: 0.0075150829522477305",
+            "extra": "mean: 9.69583350879999 sec\nrounds: 5"
+          },
+          {
+            "name": "tests/test_db_benchmark.py::test_get_collation_result_add",
+            "value": 0.7060545183049204,
+            "unit": "iter/sec",
+            "range": "stddev: 0.03752226822125744",
+            "extra": "mean: 1.4163212246000172 sec\nrounds: 5"
           }
         ]
       }
