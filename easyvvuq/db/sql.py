@@ -108,6 +108,7 @@ def set_sqlite_pragma(dbapi_connection, connection_record):
     cursor = dbapi_connection.cursor()
     cursor.execute("PRAGMA synchronous = OFF")
     cursor.execute("PRAGMA journal_mode = OFF")
+    cursor.execute("PRAGMA cache_size = 1000000")
     cursor.close()
 
 class CampaignDB(BaseCampaignDB):
