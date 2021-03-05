@@ -91,7 +91,7 @@ class RunTable(Base):
     result = Column(String, default="{}")
     campaign = Column(Integer, ForeignKey('campaign_info.id'))
     sampler = Column(Integer, ForeignKey('sampler.id'))
-    iteration = Column(Integer)
+    iteration = Column(Integer, default=0)
 
 
 class SamplerTable(Base):

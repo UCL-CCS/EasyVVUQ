@@ -135,10 +135,6 @@ class RunInfo:
             campaign=None,
             status=constants.Status.NEW):
 
-        check_reference(campaign, run_name, ref_type='campaign')
-        check_reference(sample, run_name, ref_type='sampler')
-        check_reference(app, run_name, ref_type='app')
-
         self.campaign = campaign
         self.sample = sample
         self.app = app
@@ -147,7 +143,6 @@ class RunInfo:
 
         if not params:
             message = f'No run configuration specified for run {run_name}'
-            logger.critical(message)
             raise RuntimeError(message)
 
         self.params = params

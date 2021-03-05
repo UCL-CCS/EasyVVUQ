@@ -52,7 +52,7 @@ def campaign(tmp_path, app_info):
     campaign = CampaignDB(location='sqlite:///{}/test.sqlite'.format(tmp_path),
                           new_campaign=True, name='test', info=info)
     campaign.tmp_path = str(tmp_path)
-    runs = [RunInfo('run', 'test', '.', 1, {'a': 1}, 1, 1) for _ in range(1010)]
+    runs = [RunInfo('run', '.', 1, {'a': 1}, 1, 1) for _ in range(1010)]
     run_names = ['Run_{}'.format(i) for i in range(1, 1011)]
     campaign.add_runs(runs)
     campaign.add_app(app_info)
@@ -300,7 +300,7 @@ def test_mv_collation(tmp_path, app_info):
     campaign = CampaignDB(location='sqlite:///{}/test.sqlite'.format(tmp_path),
                           new_campaign=True, name='test', info=info)
     campaign.tmp_path = str(tmp_path)
-    runs = [RunInfo('run', 'test', '.', 1, params, 1, 1)]
+    runs = [RunInfo('run', '.', 1, params, 1, 1)]
     run_names = ['Run_1']
     campaign.add_runs(runs)
     campaign.add_app(app_info)

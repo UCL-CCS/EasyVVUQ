@@ -151,7 +151,6 @@ class Campaign:
         self._campaign_dir = None
         self.db_location = db_location
         self.db_type = db_type
-        self._log = []
 
         self.campaign_id = None
         self.campaign_db = None
@@ -329,7 +328,6 @@ class Campaign:
             "active_app": self._active_app_name,
             "campaign_name": self.campaign_name,
             "campaign_dir": self._campaign_dir,
-            "log": self._log
         }
         with open(state_filename, "w") as outfile:
             json.dump(output_json, outfile, indent=4)
@@ -358,7 +356,6 @@ class Campaign:
         self._active_app_name = input_json["active_app"]
         self.campaign_name = input_json["campaign_name"]
         self._campaign_dir = input_json["campaign_dir"]
-        self._log = input_json["log"]
 
         if relocate is not None:
             assert(isinstance(relocate, dict))
@@ -595,10 +592,6 @@ class Campaign:
 
         # Write sampler's new state to database
         self.campaign_db.update_sampler(self._active_sampler_id, self._active_sampler)
-
-        # Log application of this sampling element
-        self.log_element_application(self._active_sampler,
-                                     {"num_added": num_added, "replicas": replicas})
         return new_runs
 
     def list_runs(self, sampler=None, campaign=None, status=None):
@@ -899,8 +892,6 @@ class Campaign:
 
         # Apply analysis element to most recent collation result
         self.last_analysis = analysis.analyse(data_frame=self.get_collation_result())
-        # Log application of this analysis element
-        self.log_element_application(analysis, None)
 
     def analyse(self, **kwargs):
         """If available will call an appropriate analysis class on the collation result.
@@ -938,35 +929,7 @@ class Campaign:
                 f"active_sampler_id = {self._active_sampler_id}\n"
                 f"campaign_name = {self.campaign_name}\n"
                 f"campaign_dir = {self.campaign_dir}\n"
-                f"campaign_id = {self.campaign_id}\n"
-                f"log = {self._log}\n")
-
-    def log_element_application(self, element, further_info):
-        """Add an entry to the campaign log for the given element.
-
-        The `further_info` dictionary adds detail to the log. The `further_info`
-        dict should give specific information about this element's application,
-        where suitable.
-
-        Parameters
-        ----------
-        element
-        further_info
-
-        Returns
-        -------
-
-        """
-
-        log_entry = {
-            "element": {
-                "name": element.element_name(),
-                "version": element.element_version(),
-                "category": element.element_category()
-            },
-            "info": further_info
-        }
-        self._log.append(log_entry)
+                f"campaign_id = {self.campaign_id}\n")
 
     def get_active_sampler(self):
         """ Return the active sampler element in use by this campaign.

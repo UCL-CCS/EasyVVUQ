@@ -97,10 +97,6 @@ class QMCSampler(BaseSamplingElement, sampler_name="QMC_sampler"):
             for _ in range(count):
                 self.__next__()
 
-    def element_version(self):
-        """Version number for the sampler."""
-        return "0.2"
-
     def is_finite(self):
         """Can this sampler produce only a finite number of samples."""
         return True
@@ -116,11 +112,6 @@ class QMCSampler(BaseSamplingElement, sampler_name="QMC_sampler"):
         for the Monte Carlo method.
         """
         return self._n_samples
-
-    def is_restartable(self):
-        """Can this sampler be resumed.
-        """
-        return True
 
     @property
     def analysis_class(self):
@@ -140,12 +131,3 @@ class QMCSampler(BaseSamplingElement, sampler_name="QMC_sampler"):
             return run_dict
         else:
             raise StopIteration
-
-    def get_restart_dict(self):
-        """This information is used to restart the sampler.
-        """
-        return {
-            "vary": self.vary.serialize(),
-            "count": self.count,
-            "n_mc_samples": self.n_mc_samples
-        }

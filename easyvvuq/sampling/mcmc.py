@@ -44,9 +44,6 @@ class MCMCSampler(BaseSamplingElement, sampler_name='mcmc_sampler'):
         self.acceptance_ratios = []
         self.iteration = 0
 
-    def element_version(self):
-        return "0.1"
-
     def is_finite(self):
         return True
 
@@ -83,12 +80,6 @@ class MCMCSampler(BaseSamplingElement, sampler_name='mcmc_sampler'):
         if self.current_chain == 0:
             self.stop = True
         return y
-
-    def is_restartable(self):
-        return True
-
-    def get_restart_dict(self):
-        return {"init": self.init}
 
     def update(self, result, invalid):
         """Performs the MCMC sampling procedure on the campaign.

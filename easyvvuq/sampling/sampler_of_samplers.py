@@ -64,9 +64,6 @@ class MultiSampler(BaseSamplingElement, sampler_name="multisampler"):
             except StopIteration:
                 logger.warning("Multisampler constructed, but has no samples left to draw.")
 
-    def element_version(self):
-        return "0.1"
-
     def is_finite(self):
         return True
 
@@ -90,9 +87,3 @@ class MultiSampler(BaseSamplingElement, sampler_name="multisampler"):
 
         self.count += 1
         return run_dict
-
-    def is_restartable(self):
-        return True
-
-    def get_restart_dict(self):
-        return {'serialized_list_of_samplers': self.serialized_list_of_samplers}

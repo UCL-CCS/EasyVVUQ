@@ -55,9 +55,6 @@ class ReplicaSampler(BaseSamplingElement, sampler_name='replica_sampler'):
         else:
             return True
 
-    def element_version(self):
-        return '0.1'
-
     def n_samples(self):
         if self.replicas == 0:
             raise RuntimeError("You can't get the number of samples in an infinite sampler")
@@ -65,23 +62,17 @@ class ReplicaSampler(BaseSamplingElement, sampler_name='replica_sampler'):
             return self.replicas * self.sampler.n_samples()
 
     def __next__(self):
+        self.total_counter -= 1
+        if self.total_counter < 0:
+            raise StopIteration
         params = dict(next(self.cycle))
         params[self.replica_col] = self.counter
         self.counter = (self.counter + 1) % self.size
-        self.total_counter -= 1
-        if self.total_counter == 0:
-            raise StopIteration
         return params
 
     def update(self, result, invalid):
         self.reset()
         return self.sampler.update(result, invalid)
-
-    def is_restartable(self):
-        return True
-
-    def get_restart_dict(self):
-        return {}
 
     @property
     def iteration(self):

@@ -27,9 +27,6 @@ class CSVSampler(BaseSamplingElement, sampler_name="csv_sampler"):
         except FileNotFoundError:
             raise RuntimeError("CSV file you specified ({}) does not exist".format(filename))
 
-    def element_version(self):
-        return "0.1"
-
     def is_finite(self):
         return True
 
@@ -49,9 +46,3 @@ class CSVSampler(BaseSamplingElement, sampler_name="csv_sampler"):
                 self.counter += 1
             else:
                 raise StopIteration
-
-    def is_restartable(self):
-        return True
-
-    def get_restart_dict(self):
-        return {"filename": self.filename, "counter": self.counter}

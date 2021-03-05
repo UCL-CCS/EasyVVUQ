@@ -125,6 +125,3 @@ class MCSampler(RandomSampler, sampler_name='mc_sampler'):
         """
         from easyvvuq.analysis import QMCAnalysis
         return QMCAnalysis
-
-    def get_restart_dict(self):
-        return {"vary": self.vary.serialize(), "n_mc_samples": self.n_mc_samples}
