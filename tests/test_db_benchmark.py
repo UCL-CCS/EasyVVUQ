@@ -47,7 +47,7 @@ def test_get_collation_result(benchmark):
 
 @pytest.mark.dependency(depends=['test_get_collation_result'])
 def test_draw_add(benchmark):
-    benchmark(campaign.draw_samples, 8000)
+    benchmark(pytest.shared.draw_samples, 8000)
 
 @pytest.mark.dependency(depends=['test_draw_add'])
 def test_store_results_add(benchmark):
