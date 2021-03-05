@@ -348,7 +348,6 @@ class CampaignDB(BaseCampaignDB):
             run_info.run_name = f"{run_prefix}{self._next_run}"
             run_info.run_dir = os.path.join(runs_dir, run_info.run_name)
             run_info.iteration = iteration
-
             run = RunTable(**run_info.to_dict(flatten=True))
             self.session.add(run)
             self._next_run += 1

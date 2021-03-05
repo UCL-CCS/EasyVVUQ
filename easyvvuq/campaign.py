@@ -585,12 +585,13 @@ class Campaign:
 
             list_of_runs = [new_run for i in range(replicas)]
             new_runs += list_of_runs
-            self.add_runs(list_of_runs, mark_invalid)
 
             num_added += 1
 
             if num_samples != 0 and num_added >= num_samples:
                 break
+
+        self.add_runs(new_runs, mark_invalid)
 
         # Write sampler's new state to database
         self.campaign_db.update_sampler(self._active_sampler_id, self._active_sampler)
