@@ -37,7 +37,7 @@ def fake_results():
 def test_store_results(benchmark):
     iterator = fake_results()
     results = []
-    for _ in range(8000):
+    for _ in range(10000):
         results.append(next(iterator))
     benchmark(pytest.shared.campaign_db.store_results, pytest.shared._active_app_name, results)
 
@@ -53,7 +53,7 @@ def test_draw_add(benchmark):
 def test_store_results_add(benchmark):
     iterator = fake_results()
     results = []
-    for _ in range(8000):
+    for _ in range(10000):
         results.append(next(iterator))
     benchmark(pytest.shared.campaign_db.store_results, pytest.shared._active_app_name, results)
     
