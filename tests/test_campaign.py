@@ -121,10 +121,7 @@ def test_string(campaign):
         f"active_sampler_id = 1\n"
         f"campaign_name = test\n"
         f"campaign_dir = {campaign.campaign_dir}\n"
-        f"campaign_id = 1\n"
-        "log = [{'element': {'name': 'random_sampler', 'version': '0.1', 'category': 'sampling'}, "
-        "'info': {'num_added': 100, 'replicas': 1}}]\n")
-
+        f"campaign_id = 1\n")
     assert str(campaign) == target_str
 
 
