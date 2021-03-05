@@ -103,8 +103,6 @@ class RunInfo:
     ----------
     run_name : str
         Human readable name of the run.
-    ensemble_name: str
-        Human readable name of the ensemble this run belongs to.
     app : None or int
         ID of the associated application.
     params : None or dict
@@ -124,15 +122,12 @@ class RunInfo:
         ID of the associated application.
     run_name : str
         Human readable name of the run.
-    ensemble_name: str
-        Human readable name of the ensemble this run belongs to.
     status : enum(Status)
     """
 
     def __init__(
             self,
             run_name=None,
-            ensemble_name=None,
             run_dir=None,
             app=None,
             params=None,
@@ -148,7 +143,6 @@ class RunInfo:
         self.sample = sample
         self.app = app
         self.run_name = run_name
-        self.ensemble_name = ensemble_name
         self.run_dir = run_dir
 
         if not params:
@@ -186,7 +180,6 @@ class RunInfo:
 
             out_dict = {
                 'run_name': self.run_name,
-                'ensemble_name': self.ensemble_name,
                 'run_dir': self.run_dir,
                 'params': json.dumps(self.params, default=convert_nonserializable),
                 'status': constants.Status(self.status),
@@ -200,7 +193,6 @@ class RunInfo:
 
             out_dict = {
                 'run_name': self.run_name,
-                'ensemble_name': self.ensemble_name,
                 'run_dir': self.run_dir,
                 'params': self.params,
                 'status': constants.Status(self.status),
