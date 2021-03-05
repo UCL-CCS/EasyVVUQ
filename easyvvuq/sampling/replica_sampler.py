@@ -62,9 +62,10 @@ class ReplicaSampler(BaseSamplingElement, sampler_name='replica_sampler'):
             return self.replicas * self.sampler.n_samples()
 
     def __next__(self):
-        self.total_counter -= 1
-        if self.total_counter < 0:
-            raise StopIteration
+        if self.replicas != 0:
+            self.total_counter -= 1
+            if self.total_counter < 0:
+                raise StopIteration
         params = dict(next(self.cycle))
         params[self.replica_col] = self.counter
         self.counter = (self.counter + 1) % self.size

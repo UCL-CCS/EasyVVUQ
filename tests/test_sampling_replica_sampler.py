@@ -18,10 +18,6 @@ def test_is_finite(replica_sampler):
     assert(not replica_sampler.is_finite())
 
 
-def test_element_version(replica_sampler):
-    assert(replica_sampler.element_version() == '0.1')
-
-
 def test_n_samples(replica_sampler):
     with pytest.raises(RuntimeError):
         replica_sampler.n_samples()
