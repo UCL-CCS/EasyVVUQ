@@ -14,5 +14,4 @@ def test_csv_sampler():
     assert(counter == 10)
     assert(sampler.n_samples() == 10)
     assert(sampler.is_finite())
-    assert(sampler.is_restartable())
-    assert(sampler.get_restart_dict() == {"filename": "tests/simple_csv/test.csv", "counter": 10})
+
