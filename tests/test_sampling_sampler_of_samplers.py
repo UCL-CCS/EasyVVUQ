@@ -26,10 +26,6 @@ def test_init_exceptions():
         MultiSampler()
 
 
-def test_element_version(multi_sampler):
-    assert(isinstance(multi_sampler.element_version(), str))
-
-
 def test_is_finite(multi_sampler):
     assert(multi_sampler.is_finite())
 
@@ -57,11 +53,3 @@ def test_iterator():
     sampler2.__next__.side_effect = popper(values2)
     sampler1.is_finite.return_value = True
     sampler2.is_finite.return_value = True
-
-
-def test_is_restartable(multi_sampler):
-    assert(multi_sampler.is_restartable())
-
-
-def test_get_restart_dict(multi_sampler):
-    assert(isinstance(multi_sampler.get_restart_dict(), dict))
