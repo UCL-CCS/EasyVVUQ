@@ -7,7 +7,7 @@ def pytest_namespace():
     return {'shared': None}
 
 @pytest.mark.dependency()
-def test_db_benchmark_draw(benchmark):
+def test_draw(benchmark):
     params = {
         "S0": {"type": "float", "default": 997}, 
         "I0": {"type": "float", "default": 3}, 
@@ -24,8 +24,8 @@ def test_db_benchmark_draw(benchmark):
         "beta": cp.Uniform(0.15, 0.25),
         "gamma": cp.Normal(0.04, 0.001),
     }
-    campaign.set_sampler(uq.sampling.MCSampler(vary=vary, n_mc_samples=2000))
-    benchmark(campaign.draw_samples)
+    campaign.set_sampler(uq.sampling.MCSampler(vary=vary, n_mc_samples=4000))
+    benchmark(campaign.draw_samples, 8000)
 
 def fake_results():
     counter = 1
@@ -33,14 +33,30 @@ def fake_results():
         yield ('Run_{}'.format(counter), {'values': list(np.random.random(size=100))})
         counter += 1
 
-@pytest.mark.dependency(depends=['test_db_benchmark_draw'])
-def test_db_benchmark_store_results(benchmark):
+@pytest.mark.dependency(depends=['test_draw'])
+def test_store_results(benchmark):
     iterator = fake_results()
     results = []
-    for _ in range(6000):
+    for _ in range(8000):
         results.append(next(iterator))
     benchmark(pytest.shared.campaign_db.store_results, pytest.shared._active_app_name, results)
 
-@pytest.mark.dependency(depends=['test_db_benchmark_store_results'])
-def test_db_benchmark_get_collation_result(benchmark):
+@pytest.mark.dependency(depends=['test_store_results'])
+def test_get_collation_result(benchmark):
+    benchmark(pytest.shared.get_collation_result)
+
+@pytest.mark.dependency(depends=['test_get_collation_result'])
+def test_draw_add(benchmark):
+    benchmark(campaign.draw_samples, 8000)
+
+@pytest.mark.dependency(depends=['test_draw_add'])
+def test_store_results_add(benchmark):
+    iterator = fake_results()
+    results = []
+    for _ in range(8000):
+        results.append(next(iterator))
+    benchmark(pytest.shared.campaign_db.store_results, pytest.shared._active_app_name, results)
+    
+@pytest.mark.dependency(depends=['test_store_results_add'])
+def test_get_collation_result_add(benchmark):
     benchmark(pytest.shared.get_collation_result)
