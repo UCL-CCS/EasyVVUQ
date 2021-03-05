@@ -132,9 +132,6 @@ def test_empty_collate(tmpdir):
     # Attempt to collate() again, now that the runs have been executed. If Issue 163 is not
     # fixed then an error will occur here.
     my_campaign.collate()
-    print("data:", my_campaign.get_collation_result())
-
-    pprint(my_campaign._log)
 
 
 if __name__ == "__main__":
