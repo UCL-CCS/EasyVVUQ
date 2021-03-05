@@ -3,7 +3,6 @@ import chaospy as cp
 import os
 import sys
 import pytest
-from pprint import pprint
 
 __copyright__ = """
 
@@ -132,32 +131,18 @@ def test_multisampler(tmpdir):
     # Draw all samples
     my_campaign.draw_samples()
 
-    # Print the list of runs now in the campaign db
-    print("List of runs added:")
-    pprint(my_campaign.list_runs())
-    print("---")
 
     # Encode and execute.
     my_campaign.populate_runs_dir()
     my_campaign.apply_for_each_run_dir(
         uq.actions.ExecuteLocal("tests/cannonsim/bin/cannonsim in.cannon output.csv"))
 
-    print("Runs list after encoding and execution:")
-    pprint(my_campaign.list_runs())
-
     # Collate all data into one pandas data frame
     my_campaign.collate()
-    print("data:", my_campaign.get_collation_result())
 
     # Create a BasicStats analysis element and apply it to the campaign
     stats = uq.analysis.BasicStats(qoi_cols=['Dist', 'lastvx', 'lastvy'])
     my_campaign.apply_analysis(stats)
-    print("stats:\n", my_campaign.get_last_analysis())
-
-    # Print the campaign log
-    pprint(my_campaign._log)
-
-    print("All completed?", my_campaign.all_complete())
 
 
 if __name__ == "__main__":
