@@ -25,7 +25,7 @@ def test_db_benchmark_draw(benchmark):
         "gamma": cp.Normal(0.04, 0.001),
     }
     campaign.set_sampler(uq.sampling.MCSampler(vary=vary, n_mc_samples=2000))
-    benchmark.pedantic(campaign.draw_samples, iterations=1, rounds=1)
+    benchmark(campaign.draw_samples)
 
 def fake_results():
     counter = 1
@@ -39,9 +39,8 @@ def test_db_benchmark_store_results(benchmark):
     results = []
     for _ in range(6000):
         results.append(next(iterator))
-    benchmark.pedantic(pytest.shared.campaign_db.store_results,
-                       args=(pytest.shared._active_app_name, results), iterations=1, rounds=1)
+    benchmark(pytest.shared.campaign_db.store_results, pytest.shared._active_app_name, results)
 
 @pytest.mark.dependency(depends=['test_db_benchmark_store_results'])
 def test_db_benchmark_get_collation_result(benchmark):
-    benchmark.pedantic(pytest.shared.get_collation_result, iterations=1, rounds=1)
+    benchmark(pytest.shared.get_collation_result)
