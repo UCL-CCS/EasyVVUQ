@@ -24,8 +24,8 @@ def test_draw(benchmark):
         "beta": cp.Uniform(0.15, 0.25),
         "gamma": cp.Normal(0.04, 0.001),
     }
-    campaign.set_sampler(uq.sampling.MCSampler(vary=vary, n_mc_samples=4000))
-    benchmark(campaign.draw_samples, 8000)
+    campaign.set_sampler(uq.sampling.RandomSampler(vary=vary))
+    benchmark(campaign.draw_samples, 10000)
 
 def fake_results():
     counter = 1
@@ -47,7 +47,7 @@ def test_get_collation_result(benchmark):
 
 @pytest.mark.dependency(depends=['test_get_collation_result'])
 def test_draw_add(benchmark):
-    benchmark(pytest.shared.draw_samples, 8000)
+    benchmark(pytest.shared.draw_samples, 10000)
 
 @pytest.mark.dependency(depends=['test_draw_add'])
 def test_store_results_add(benchmark):
