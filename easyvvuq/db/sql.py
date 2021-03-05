@@ -11,6 +11,8 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy import MetaData
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import text
+from sqlalchemy.engine import Engine
+from sqlalchemy import event
 from .base import BaseCampaignDB
 from easyvvuq import constants
 from easyvvuq import ParamsSpecification
@@ -101,6 +103,12 @@ class SamplerTable(Base):
     id = Column(Integer, primary_key=True)
     sampler = Column(String)
 
+@event.listens_for(Engine, "connect")
+def set_sqlite_pragma(dbapi_connection, connection_record):
+    cursor = dbapi_connection.cursor()
+    cursor.execute("PRAGMA synchronous = OFF")
+    cursor.execute("PRAGMA journal_mode = OFF")
+    cursor.close()
 
 class CampaignDB(BaseCampaignDB):
 
@@ -110,11 +118,6 @@ class CampaignDB(BaseCampaignDB):
             self.engine = create_engine(location)
         else:
             self.engine = create_engine('sqlite://')
-
-        connection = self.engine.raw_connection()
-        cursor = connection.cursor()
-        cursor.execute("PRAGMA synchronous = OFF")
-        cursor.execute("PRAGMA journal_mode = OFF")
 
         session_maker = sessionmaker(bind=self.engine)
 
