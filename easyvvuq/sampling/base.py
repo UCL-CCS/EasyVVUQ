@@ -106,6 +106,7 @@ class BaseSamplingElement(BaseElement):
     def sampler_id(self, val):
         self._sampler_id = val
 
+
 class Vary:
     def __init__(self, vary_dict):
         if vary_dict is None:

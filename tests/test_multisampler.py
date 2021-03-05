@@ -131,7 +131,6 @@ def test_multisampler(tmpdir):
     # Draw all samples
     my_campaign.draw_samples()
 
-
     # Encode and execute.
     my_campaign.populate_runs_dir()
     my_campaign.apply_for_each_run_dir(

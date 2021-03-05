@@ -14,4 +14,3 @@ def test_csv_sampler():
     assert(counter == 10)
     assert(sampler.n_samples() == 10)
     assert(sampler.is_finite())
-

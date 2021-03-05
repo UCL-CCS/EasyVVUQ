@@ -153,7 +153,6 @@ def test_worker(tmpdir):
     # you that 'nothing has been collated' or something to that effect.
     ####
 
-
     # Collate all data into one pandas data frame
     my_campaign.collate()
 

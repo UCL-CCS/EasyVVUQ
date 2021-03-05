@@ -900,4 +900,3 @@ class CampaignDB(BaseCampaignDB):
                     filter(RunTable.app == app_info.id).\
                     update({'run_dir': new_path_})
         self.session.commit()
-

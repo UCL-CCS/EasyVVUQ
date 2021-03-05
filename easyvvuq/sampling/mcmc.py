@@ -17,7 +17,7 @@ class MCMCSampler(BaseSamplingElement, sampler_name='mcmc_sampler'):
     n_chains: int
        Number of MCMC chains to run in paralle.
     estimator: function
-       To be used with replica_col argument. Outputs an estimate of some 
+       To be used with replica_col argument. Outputs an estimate of some
        parameter when given a sample array.
     """
 
@@ -132,11 +132,13 @@ class MCMCSampler(BaseSamplingElement, sampler_name='mcmc_sampler'):
             ignored_chains.append(chain_id)
         for chain_id in ignored_chains:
             try:
-                ignored_runs += list(result.loc[result[('chain_id', 0)] == chain_id]['run_id'].values)
+                ignored_runs += list(result.loc[result[('chain_id', 0)]
+                                                == chain_id]['run_id'].values)
             except KeyError:
                 pass
             try:
-                ignored_runs += list(invalid.loc[invalid[('chain_id', 0)] == chain_id]['run_id'].values)
+                ignored_runs += list(invalid.loc[invalid[('chain_id', 0)]
+                                                 == chain_id]['run_id'].values)
             except KeyError:
                 pass
         ignored_runs = [run[0] for run in ignored_runs]

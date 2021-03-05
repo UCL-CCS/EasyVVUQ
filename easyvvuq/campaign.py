@@ -173,7 +173,7 @@ class Campaign:
                 state_file, relocate=relocate)
             if change_to_state:
                 os.chdir(self._state_dir)
-            #self.relocate(self.campaign_dir)
+            # self.relocate(self.campaign_dir)
         else:
             self.init_fresh(name, db_type, db_location, self.work_dir)
             self._state_dir = None
@@ -788,7 +788,6 @@ class Campaign:
                     update({'status': constants.Status.IGNORED})
             self.campaign_db.session.commit()
 
-
     def collate(self):
         """Combine the output from all runs associated with the current app.
 
@@ -864,7 +863,7 @@ class Campaign:
         ----------
         last_collation : bool
             Will only return the result of the last collation.
-        
+
         Returns
         -------
             pandas DataFrame
