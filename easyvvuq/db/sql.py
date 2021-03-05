@@ -57,8 +57,8 @@ class CampaignTable(Base):
     """
     __tablename__ = 'campaign_info'
     id = Column(Integer, primary_key=True)
-    name = Column(String(32))
-    easyvvuq_version = Column(String(32))
+    name = Column(String)
+    easyvvuq_version = Column(String)
     campaign_dir_prefix = Column(String)
     campaign_dir = Column(String)
     runs_dir = Column(String)
@@ -70,7 +70,7 @@ class AppTable(Base):
     """
     __tablename__ = 'app'
     id = Column(Integer, primary_key=True)
-    name = Column(String(32))
+    name = Column(String)
     input_encoder = Column(String)
     output_decoder = Column(String)
     collater = Column(String)
@@ -83,7 +83,7 @@ class RunTable(Base):
     """
     __tablename__ = 'run'
     id = Column(Integer, primary_key=True)
-    run_name = Column(String(32), index=True)
+    run_name = Column(String, index=True)
     app = Column(Integer, ForeignKey('app.id'))
     params = Column(String)
     status = Column(Integer)
@@ -110,6 +110,10 @@ class CampaignDB(BaseCampaignDB):
             self.engine = create_engine(location)
         else:
             self.engine = create_engine('sqlite://')
+
+        connection = engine.raw_connection()
+        cursor = connection.cursor()
+        cursor.execute("PRAGMA synchronous = OFF")
 
         session_maker = sessionmaker(bind=self.engine)
 
