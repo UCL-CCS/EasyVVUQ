@@ -114,6 +114,7 @@ class CampaignDB(BaseCampaignDB):
         connection = self.engine.raw_connection()
         cursor = connection.cursor()
         cursor.execute("PRAGMA synchronous = OFF")
+        cursor.execute("PRAGMA journal_mode = OFF")
 
         session_maker = sessionmaker(bind=self.engine)
 
