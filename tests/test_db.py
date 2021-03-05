@@ -52,7 +52,7 @@ def campaign(tmp_path, app_info):
     campaign = CampaignDB(location='sqlite:///{}/test.sqlite'.format(tmp_path),
                           new_campaign=True, name='test', info=info)
     campaign.tmp_path = str(tmp_path)
-    runs = [RunInfo('run', 'test', '.', 1, {'a': 1}, 1, 1) for _ in range(1010)]
+    runs = [RunInfo('run', '.', 1, {'a': 1}, 1, 1) for _ in range(1010)]
     run_names = ['Run_{}'.format(i) for i in range(1, 1011)]
     campaign.add_runs(runs)
     campaign.add_app(app_info)
@@ -125,7 +125,8 @@ def test_collation(campaign):
     campaign.set_run_statuses([run[0] for run in campaign.runs()], Status.COLLATED)
     result = campaign.get_results('test', 1)
     assert(isinstance(result, pd.DataFrame))
-    assert(list(result.columns) == [('run_id', 0), ('iteration', 0), ('a', 0), ('b', 0), ('c', 0), ('c', 1)])
+    assert(list(result.columns) == [('run_id', 0), ('iteration', 0),
+                                    ('a', 0), ('b', 0), ('c', 0), ('c', 1)])
     assert(list(result.iloc[100].values) == [101, 0, 1, 100, 101, 102])
     assert(result.count()[0] == 1010)
 
@@ -300,7 +301,7 @@ def test_mv_collation(tmp_path, app_info):
     campaign = CampaignDB(location='sqlite:///{}/test.sqlite'.format(tmp_path),
                           new_campaign=True, name='test', info=info)
     campaign.tmp_path = str(tmp_path)
-    runs = [RunInfo('run', 'test', '.', 1, params, 1, 1)]
+    runs = [RunInfo('run', '.', 1, params, 1, 1)]
     run_names = ['Run_1']
     campaign.add_runs(runs)
     campaign.add_app(app_info)

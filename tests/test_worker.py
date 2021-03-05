@@ -4,7 +4,6 @@ import os
 import sys
 import pytest
 from easyvvuq.constants import default_campaign_prefix, Status
-from pprint import pprint
 import subprocess
 
 __copyright__ = """
@@ -111,18 +110,11 @@ def test_worker(tmpdir):
     }
     sampler1 = uq.sampling.RandomSampler(vary=vary)
 
-    print("Serialized sampler:", sampler1.serialize())
-
     # Set the campaign to use this sampler
     my_campaign.set_sampler(sampler1)
 
     # Draw 5 samples
     my_campaign.draw_samples(num_samples=5)
-
-    # Print the list of runs now in the campaign db
-    print("List of runs added:")
-    pprint(my_campaign.list_runs())
-    print("---")
 
     # User defined function
     def encode_and_execute_cannonsim(run_id, run_data):
@@ -161,26 +153,16 @@ def test_worker(tmpdir):
     # you that 'nothing has been collated' or something to that effect.
     ####
 
-    print("Runs list after encoding and execution:")
-    pprint(my_campaign.list_runs())
-
     # Collate all data into one pandas data frame
     my_campaign.collate()
-    print("data:", my_campaign.get_collation_result())
 
     # Create a BasicStats analysis element and apply it to the campaign
     stats = uq.analysis.BasicStats(qoi_cols=['Dist', 'lastvx', 'lastvy'])
     my_campaign.apply_analysis(stats)
-    print("stats:\n", my_campaign.get_last_analysis())
 
     bootstrap = uq.analysis.EnsembleBoot(groupby=['Dist'], qoi_cols=['lastv'])
     with pytest.raises(RuntimeError, match=r".* lastv"):
         my_campaign.apply_analysis(bootstrap)
-
-    # Print the campaign log
-    pprint(my_campaign._log)
-
-    print("All completed?", my_campaign.all_complete())
 
 
 if __name__ == "__main__":

@@ -21,7 +21,7 @@ def easyvvuq_serialize(obj):
 
 def easyvvuq_deserialize(s):
     """Takes a serialized objected and reconstructs it.
-    
+
     Parameters
     ----------
     s: str
@@ -32,7 +32,7 @@ def easyvvuq_deserialize(s):
     obj:
         A previously serialized Python object.
     """
-    if type(s) is bytes:
+    if isinstance(s, bytes):
         return dill.loads(base64.b64decode(s))
     else:
         return dill.loads(base64.b64decode(s.encode('utf-8')))

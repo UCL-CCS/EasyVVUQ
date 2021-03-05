@@ -11,7 +11,7 @@ class MCMCAnalysisResults(AnalysisResults):
     Parameters
     ----------
     chains: list
-        A list of 
+        A list of
     qoi: ndarray of shape (nsamples, 1)
     """
 

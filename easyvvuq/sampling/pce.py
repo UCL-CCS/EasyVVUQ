@@ -144,9 +144,6 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
             for i in range(count):
                 self.__next__()
 
-    def element_version(self):
-        return "0.6"
-
     def is_finite(self):
         return True
 
@@ -167,9 +164,6 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
         """
         return self._n_samples
 
-    def is_restartable(self):
-        return True
-
     @property
     def analysis_class(self):
         """Return a corresponding analysis class.
@@ -186,12 +180,3 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
             return run_dict
         else:
             raise StopIteration
-
-    def get_restart_dict(self):
-        return {"vary": self.vary.serialize(),
-                "count": self.count,
-                "polynomial_order": self.polynomial_order,
-                "regression": self.regression,
-                "rule": self.rule,
-                "sparse": self.quad_sparse,
-                "growth": self.quad_growth}

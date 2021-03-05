@@ -50,7 +50,6 @@ class DBInfoTable(Base):
     __tablename__ = 'db_info'
     id = Column(Integer, primary_key=True)
     next_run = Column(Integer)
-    next_ensemble = Column(Integer)
 
 
 class CampaignTable(Base):
@@ -85,7 +84,6 @@ class RunTable(Base):
     __tablename__ = 'run'
     id = Column(Integer, primary_key=True)
     run_name = Column(String, index=True)
-    ensemble_name = Column(String)
     app = Column(Integer, ForeignKey('app.id'))
     params = Column(String)
     status = Column(Integer)
@@ -93,7 +91,7 @@ class RunTable(Base):
     result = Column(String, default="{}")
     campaign = Column(Integer, ForeignKey('campaign_info.id'))
     sampler = Column(Integer, ForeignKey('sampler.id'))
-    iteration = Column(Integer)
+    iteration = Column(Integer, default=0)
 
 
 class SamplerTable(Base):
@@ -139,13 +137,9 @@ class CampaignDB(BaseCampaignDB):
                                    ' version of EasyVVUQ!')
 
             self._next_run = 1
-            self._next_ensemble = 1
 
             self.session.add(CampaignTable(**info.to_dict(flatten=True)))
-            self.session.add(
-                DBInfoTable(
-                    next_run=self._next_run,
-                    next_ensemble=self._next_ensemble))
+            self.session.add(DBInfoTable(next_run=self._next_run))
             self.session.commit()
         else:
             info = self.session.query(
@@ -155,7 +149,6 @@ class CampaignDB(BaseCampaignDB):
 
             db_info = self.session.query(DBInfoTable).first()
             self._next_run = db_info.next_run
-            self._next_ensemble = db_info.next_ensemble
 
     def app(self, name=None):
         """
@@ -322,7 +315,7 @@ class CampaignDB(BaseCampaignDB):
         decoder = easyvvuq_deserialize(app_info['output_decoder'])
         return encoder, decoder
 
-    def add_runs(self, run_info_list=None, run_prefix='Run_', ensemble_prefix='Ensemble_', iteration=0):
+    def add_runs(self, run_info_list=None, run_prefix='Run_', iteration=0):
         """
         Add list of runs to the `runs` table in the database.
 
@@ -333,8 +326,6 @@ class CampaignDB(BaseCampaignDB):
             EasyVVUQ workflow is this RunTable), campaign (id number), sample, app
         run_prefix: str
             Prefix for run id
-        ensemble_prefix: str
-            Prefix for ensemble id
 
         Returns
         -------
@@ -344,19 +335,16 @@ class CampaignDB(BaseCampaignDB):
         # Add all runs to RunTable
         runs_dir = self.runs_dir()
         for run_info in run_info_list:
-            run_info.ensemble_name = f"{ensemble_prefix}{self._next_ensemble}"
             run_info.run_name = f"{run_prefix}{self._next_run}"
             run_info.run_dir = os.path.join(runs_dir, run_info.run_name)
             run_info.iteration = iteration
             run = RunTable(**run_info.to_dict(flatten=True))
             self.session.add(run)
             self._next_run += 1
-        self._next_ensemble += 1
 
         # Update run and ensemble counters in db
         db_info = self.session.query(DBInfoTable).first()
         db_info.next_run = self._next_run
-        db_info.next_ensemble = self._next_ensemble
 
         self.session.commit()
 
@@ -380,7 +368,6 @@ class CampaignDB(BaseCampaignDB):
 
         run_info = {
             'run_name': run_row.run_name,
-            'ensemble_name': run_row.ensemble_name,
             'params': json.loads(run_row.params),
             'status': constants.Status(run_row.status),
             'sampler': run_row.sampler,
@@ -913,4 +900,3 @@ class CampaignDB(BaseCampaignDB):
                     filter(RunTable.app == app_info.id).\
                     update({'run_dir': new_path_})
         self.session.commit()
-

@@ -176,6 +176,7 @@ def mv_data():
             'time',
             'resulting_force'])
 
+
 @pytest.fixture
 def mv_data_fail():
     return SimpleCSV(
