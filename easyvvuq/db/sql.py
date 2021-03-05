@@ -111,7 +111,7 @@ class CampaignDB(BaseCampaignDB):
         else:
             self.engine = create_engine('sqlite://')
 
-        connection = engine.raw_connection()
+        connection = self.engine.raw_connection()
         cursor = connection.cursor()
         cursor.execute("PRAGMA synchronous = OFF")
 
