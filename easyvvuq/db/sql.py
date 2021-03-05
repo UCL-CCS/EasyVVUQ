@@ -57,8 +57,8 @@ class CampaignTable(Base):
     """
     __tablename__ = 'campaign_info'
     id = Column(Integer, primary_key=True)
-    name = Column(String)
-    easyvvuq_version = Column(String)
+    name = Column(String(32))
+    easyvvuq_version = Column(String(32))
     campaign_dir_prefix = Column(String)
     campaign_dir = Column(String)
     runs_dir = Column(String)
@@ -70,7 +70,7 @@ class AppTable(Base):
     """
     __tablename__ = 'app'
     id = Column(Integer, primary_key=True)
-    name = Column(String)
+    name = Column(String(32))
     input_encoder = Column(String)
     output_decoder = Column(String)
     collater = Column(String)
@@ -83,7 +83,7 @@ class RunTable(Base):
     """
     __tablename__ = 'run'
     id = Column(Integer, primary_key=True)
-    run_name = Column(String, index=True)
+    run_name = Column(String(32), index=True)
     app = Column(Integer, ForeignKey('app.id'))
     params = Column(String)
     status = Column(Integer)
