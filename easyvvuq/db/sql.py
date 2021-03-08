@@ -41,6 +41,8 @@ __copyright__ = """
 """
 __license__ = "LGPL"
 
+COMMIT_RATE = 50000
+
 logger = logging.getLogger(__name__)
 
 Base = declarative_base()
@@ -108,8 +110,6 @@ def set_sqlite_pragma(dbapi_connection, connection_record):
     cursor = dbapi_connection.cursor()
     cursor.execute("PRAGMA synchronous = OFF")
     cursor.execute("PRAGMA journal_mode = OFF")
-    cursor.execute("PRAGMA cache_size = 1000000")
-    cursor.execute("PRAGMA temp_store = MEMORY")
     cursor.close()
 
 class CampaignDB(BaseCampaignDB):
@@ -344,6 +344,7 @@ class CampaignDB(BaseCampaignDB):
 
         # Add all runs to RunTable
         runs_dir = self.runs_dir()
+        commit_counter = 0
         for run_info in run_info_list:
             run_info.run_name = f"{run_prefix}{self._next_run}"
             run_info.run_dir = os.path.join(runs_dir, run_info.run_name)
@@ -351,6 +352,9 @@ class CampaignDB(BaseCampaignDB):
             run = RunTable(**run_info.to_dict(flatten=True))
             self.session.add(run)
             self._next_run += 1
+            commit_counter += 1
+            if commit_counter % COMMIT_RATE == 0:
+                self.session.commit()
 
         # Update run and ensemble counters in db
         db_info = self.session.query(DBInfoTable).first()
@@ -826,11 +830,15 @@ class CampaignDB(BaseCampaignDB):
             app_id = self.session.query(AppTable).filter(AppTable.name == app_name).all()[0].id
         except IndexError:
             raise RuntimeError("app with the name {} not found".format(app_name))
+        commit_counter = 0
         for run_name, result in results:
             try:
                 self.session.query(RunTable).\
                     filter(RunTable.run_name == run_name, RunTable.app == app_id).\
                     update({'result': json.dumps(result), 'status': constants.Status.COLLATED})
+                commit_counter += 1
+                if commit_counter % COMMIT_RATE == 0:
+                    self.session.commit()
             except IndexError:
                 raise RuntimeError("no runs with name {} found".format(run_name))
         self.session.commit()
