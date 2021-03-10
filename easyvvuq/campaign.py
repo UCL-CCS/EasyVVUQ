@@ -728,6 +728,51 @@ class Campaign:
             action_statuses.append(action.act_on_dir(run_data['run_dir']))
         return ActionStatuses(action_statuses, batch_size=batch_size)
 
+    def execute(self, action, batch_size=8, nsamples=0, mark_invalid=False):
+        """This will draw samples and execute the action on those samples.
+        
+        Parameters
+        ----------
+        nsamples : int
+            Number of samples to draw.
+        action : BaseAction
+            An action to be executed.
+        batch_size : int
+            Number of actions to be executed at the same time.
+        mark_invalid : bool
+            Mark runs that go outside the specified input parameter range as INVALID.
+        """
+        self.draw_samples(nsamples, mark_invalid=mark_invalid)
+        action_statuses = self.apply_for_each_sample(action, status=Status.ENCODED, batch_size=batch_size)
+        return action_statuses
+
+    def apply_for_each_sample(action, status=Status.ENCODED, batch_size=batch_size):
+        """
+        For each run in this Campaign's run list, apply the specified action
+        (an object of type Action)
+
+        Parameters
+        ----------
+        action : the action to be applied to each run directory
+            The function to be applied to each run directory. func() will
+            be called with the run directory path as its only argument.
+        status : Status
+            Will apply the action only to those runs whose status is as specified
+
+        Returns
+        -------
+        action_statuses: ActionStatuses
+            An object containing ActionStatus instances to track action execution
+        """
+
+        # Loop through all runs in this campaign with status ENCODED, and
+        # run the specified action on each run's dir
+        action.campaign = self
+        action_statuses = []
+        for run_id, run_data in self.campaign_db.runs(status=status, app_id=self._active_app['id']):
+            action_statuses.append(action.evaluate(json.loads(run_data['params'])))
+        return ActionStatuses(action_statuses, batch_size=batch_size)
+        
     def sample_and_apply(self, action, batch_size=8, nsamples=0, mark_invalid=False):
         """This will draw samples, populated the runs directories and run the specified action.
         This is a convenience method.

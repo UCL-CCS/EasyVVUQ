@@ -843,6 +843,33 @@ class CampaignDB(BaseCampaignDB):
                 raise RuntimeError("no runs with name {} found".format(run_name))
         self.session.commit()
 
+    def store_results_gen(self, app_name, results):
+        """A generator for storing the results from a given run in the database.
+
+        Parameters
+        ----------
+        run_name: str
+            name of the run
+        results: dict
+            dictionary with the results (from the decoder)
+        """
+        try:
+            app_id = self.session.query(AppTable).filter(AppTable.name == app_name).all()[0].id
+        except IndexError:
+            raise RuntimeError("app with the name {} not found".format(app_name))
+        commit_counter = 0
+        for run_name, result in results:
+            try:
+                self.session.query(RunTable).\
+                    filter(RunTable.run_name == run_name, RunTable.app == app_id).\
+                    update({'result': json.dumps(result), 'status': constants.Status.COLLATED})
+                commit_counter += 1
+                if commit_counter % COMMIT_RATE == 0:
+                    self.session.commit()
+            except IndexError:
+                raise RuntimeError("no runs with name {} found".format(run_name))
+        self.session.commit()
+
     def get_results(self, app_name, sampler_id, status=constants.Status.COLLATED, iteration=-1):
         """Returns the results as a pandas DataFrame.
 
