@@ -75,9 +75,9 @@ class ExecuteLocal(BaseAction):
 
 
 class ExecutePython():
-    def __init__(self, function, params):
+    def __init__(self, function):
         self.function = function
-        self.params = params
+        self.params = None
         self.result = None
 
     def start(self):

@@ -655,35 +655,6 @@ class Campaign:
             raise RuntimeError("specified directory does not exist: {}".format(campaign_dir))
         self.campaign_db.relocate(campaign_dir, self.campaign_name)
 
-
-    def apply_for_each_run_dir(self, action, status=Status.ENCODED, batch_size=1):
-        """
-        For each run in this Campaign's run list, apply the specified action
-        (an object of type Action)
-
-        Parameters
-        ----------
-        action : the action to be applied to each run directory
-            The function to be applied to each run directory. func() will
-            be called with the run directory path as its only argument.
-        status : Status
-            Will apply the action only to those runs whose status is as specified
-
-        Returns
-        -------
-        action_statuses: ActionStatuses
-            An object containing ActionStatus instances to track action execution
-        """
-
-        # Loop through all runs in this campaign with status ENCODED, and
-        # run the specified action on each run's dir
-        assert(isinstance(status, Status))
-        action.campaign = self
-        action_statuses = []
-        for run_id, run_data in self.campaign_db.runs(status=status, app_id=self._active_app['id']):
-            action_statuses.append(action.act_on_dir(run_data['run_dir']))
-        return ActionStatuses(action_statuses, batch_size=batch_size)
-
     def execute(self, action, max_workers=None, nsamples=0, mark_invalid=False):
         """This will draw samples and execute the action on those samples.
         
@@ -702,7 +673,7 @@ class Campaign:
         action_statuses = self.apply_for_each_sample(action, max_workers=max_workers)
         return action_statuses
 
-    def apply_for_each_sample(action, max_workers=None):
+    def apply_for_each_sample(self, action, max_workers=None):
         """
         For each run in this Campaign's run list, apply the specified action
         (an object of type Action)
@@ -756,7 +727,6 @@ class Campaign:
             self.draw_samples(nsamples, mark_invalid=mark_invalid)
             action_pool = self.apply_for_each_sample(action, max_workers=max_workers)
             yield action_pool
-            self.collate()
             result = self.get_collation_result(last_iteration=True)
             invalid = self.get_invalid_runs(last_iteration=True)
             ignored_runs = self._active_sampler.update(result, invalid)
@@ -765,39 +735,6 @@ class Campaign:
                     filter(db.RunTable.id == int(run_id)).\
                     update({'status': constants.Status.IGNORED})
             self.campaign_db.session.commit()
-
-    def collate(self):
-        """Combine the output from all runs associated with the current app.
-
-        Returns
-        -------
-
-        """
-        app_id = self._active_app['id']
-        decoder = self._active_app_decoder
-        processed_run_IDs = []
-        processed_run_results = []
-        for run_id, run_info in self.campaign_db.runs(
-                status=constants.Status.ENCODED, app_id=app_id):
-            # use decoder to check if run has completed (in general application-specific)
-            if decoder.sim_complete(run_info=run_info):
-                # get the output of the simulation from the decoder
-                run_data = decoder.parse_sim_output(run_info=run_info)
-                if self._active_app['decoderspec'] is not None:
-                    v = Validator()
-                    v.schema = self._active_app['decoderspec']
-                    if not v.validate(run_data):
-                        raise RuntimeError(
-                            "the output of he decoder failed to validate: {}".format(run_data))
-                processed_run_IDs.append(run_id)
-                processed_run_results.append(run_data)
-        # update run statuses to "collated"
-        # self.campaign_db.set_run_statuses(processed_run_IDs, constants.Status.COLLATED)
-        # add the results to the database
-        self.campaign_db.store_results(
-            self._active_app_name, zip(
-                processed_run_IDs, processed_run_results))
-        return self.get_collation_result()
 
     def recollate(self):
         """Clears the current collation table, changes all COLLATED status runs

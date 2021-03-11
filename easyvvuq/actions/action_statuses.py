@@ -68,6 +68,7 @@ class ActionPool:
             future = self.pool.submit(action.start)
             future.add_done_callback(action.finalise)
             self.futures.append(future)
+        return self
 
     def progress(self):
         """Some basic stats about the action statuses status.
