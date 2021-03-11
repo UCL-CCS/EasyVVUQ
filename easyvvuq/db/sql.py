@@ -816,6 +816,13 @@ class CampaignDB(BaseCampaignDB):
 
         return self._get_campaign_info(campaign_name=campaign_name).runs_dir
 
+    def store_result(self, run_id, result):
+        import pdb; pdb.set_trace()
+        self.session.query(RunTable).\
+            filter(RunTable.run_name == run_id).\
+            update({'result': json.dumps(result), 'status': constants.Status.COLLATED})
+        self.session.commit()
+
     def store_results(self, app_name, results):
         """Stores the results from a given run in the database.
 

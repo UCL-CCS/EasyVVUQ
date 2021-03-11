@@ -696,9 +696,9 @@ class Campaign:
         # run the specified action on each run's dir
         action.campaign = self
         actions = []
-        for run_id, run_data in self.campaign_db.runs(status=Status.ENCODED, app_id=self._active_app['id']):
+        for run_id, run_data in self.campaign_db.runs(status=Status.NEW, app_id=self._active_app['id']):
             action.run_id = run_id
-            action.params = json.loads(run_data['params'])
+            action.params = run_data['params']
             actions.append(action)
         return ActionPool(actions, max_workers=max_workers)
         
