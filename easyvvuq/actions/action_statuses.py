@@ -24,7 +24,7 @@ __copyright__ = """
 __license__ = "LGPL"
 
 
-class ActionStatuses:
+class ActionPool:
     """A class that tracks statuses of a list of actions.
 
     Parameters
@@ -37,11 +37,10 @@ class ActionStatuses:
 
     """
 
-    def __init__(self, statuses, batch_size=8, poll_sleep_time=1):
-        self.statuses = list(statuses)
-        self.actions = []
-        self.poll_sleep_time = poll_sleep_time
-        self.pool = ThreadPoolExecutor(batch_size)
+    def __init__(self, actions, max_workers=8):
+        self.actions = list(actions)
+        self.futures = []
+        self.pool = ThreadPoolExecutor(max_workers=max_workers)
 
     def job_handler(self, status):
         """Will handle the execution of this action status.
@@ -52,8 +51,6 @@ class ActionStatuses:
             ActionStatus of an action to be executed.
         """
         status.start()
-        while not status.finished():
-            time.sleep(self.poll_sleep_time)
         if status.succeeded():
             status.finalise()
             return True
@@ -67,8 +64,10 @@ class ActionStatuses:
         -------
         A list of Python futures represending action execution.
         """
-        self.actions = [self.pool.submit(self.job_handler, status) for status in self.statuses]
-        return self
+        for action in self.actions:
+            future = self.pool.submit(action.start)
+            future.add_done_callback(action.finalise)
+            self.futures.append(future)
 
     def progress(self):
         """Some basic stats about the action statuses status.
@@ -81,11 +80,11 @@ class ActionStatuses:
         running = 0
         done = 0
         failed = 0
-        for action in self.actions:
-            if action.running():
+        for future in self.futures:
+            if future.running():
                 running += 1
-            elif action.done():
-                if not action.result():
+            elif future.done():
+                if not future.result():
                     failed += 1
                 else:
                     done += 1
@@ -93,13 +92,7 @@ class ActionStatuses:
                 ready += 1
         return {'ready': ready, 'active': running, 'finished': done, 'failed': failed}
 
-    def wait(self, poll_interval=1):
-        """A command that will automatically poll job statuses. For use in scripts.
-
-        Parameters
-        ----------
-        poll_interval: int
-           Polling interval in seconds.
+    def wait(self):
+        """A command that will block untill all futures in the pool have finished. For use in scripts.
         """
-        while self.progress()['ready'] > 0:
-            time.sleep(poll_interval)
+        self.pool.shutdown(wait=True)

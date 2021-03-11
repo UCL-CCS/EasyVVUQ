@@ -13,7 +13,7 @@ from easyvvuq import ParamsSpecification, constants
 from easyvvuq.constants import default_campaign_prefix, Status
 from easyvvuq.data_structs import RunInfo, CampaignInfo, AppInfo
 from easyvvuq.sampling import BaseSamplingElement
-from easyvvuq.actions import ActionStatuses
+from easyvvuq.actions import ActionPool
 import easyvvuq.db.sql as db
 from cerberus import Validator
 
@@ -655,12 +655,6 @@ class Campaign:
             raise RuntimeError("specified directory does not exist: {}".format(campaign_dir))
         self.campaign_db.relocate(campaign_dir, self.campaign_name)
 
-    def call_for_each_run(self, fn, status=Status.ENCODED):
-
-        # Loop through all runs in this campaign with the specified status,
-        # and call the specified user function for each.
-        for run_id, run_data in self.campaign_db.runs(status=status, app_id=self._active_app['id']):
-            fn(run_id, run_data)
 
     def apply_for_each_run_dir(self, action, status=Status.ENCODED, batch_size=1):
         """
@@ -708,7 +702,7 @@ class Campaign:
         action_statuses = self.apply_for_each_sample(action, status=Status.ENCODED, batch_size=batch_size)
         return action_statuses
 
-    def apply_for_each_sample(action, status=Status.ENCODED, batch_size=batch_size):
+    def apply_for_each_sample(action, batch_size=batch_size):
         """
         For each run in this Campaign's run list, apply the specified action
         (an object of type Action)
@@ -730,11 +724,12 @@ class Campaign:
         # Loop through all runs in this campaign with status ENCODED, and
         # run the specified action on each run's dir
         action.campaign = self
-        action_statuses = []
-        for run_id, run_data in self.campaign_db.runs(status=status, app_id=self._active_app['id']):
-            future = pool.submit(action, json.loads(run_data['params']))
-            future.add_done_callback(lambda f: self.campaign_db.submit_result(run_id, f.result))
-        return ActionStatuses(action_statuses, batch_size=batch_size)
+        actions = []
+        for run_id, run_data in self.campaign_db.runs(status=Status.ENCODED, app_id=self._active_app['id']):
+            action.run_id = run_id
+            action.params = json.loads(run_data['params'])
+            actions.append(action)
+        return ActionPool(actions, batch_size=batch_size)
         
     def sample_and_apply(self, action, batch_size=8, nsamples=0, mark_invalid=False):
         """This will draw samples, populated the runs directories and run the specified action.

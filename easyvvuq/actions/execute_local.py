@@ -74,30 +74,30 @@ class ExecuteLocal(BaseAction):
         return ActionStatusLocal()
 
 
-class ActionStatusPython():
-    def __init__(self):
-        pass
+class ExecutePython():
+    def __init__(self, function, params):
+        self.function = function
+        self.params = params
+        self.result = None
 
     def start(self):
-        return None
+        self.result = self.function(self.params)
+        return self.result
 
     def finished(self):
-        return True
+        if self.result is None:
+            return False
+        else:
+            return True
 
     def finalise(self):
-        return None
+        self.action.campaign.campaign_db.store_result(self.run_id, self.result)
 
     def succeeded(self):
-        return True
-
-
-class ExecutePython(BaseAction):
-    def __init__(self, function):
-        self.function = function
-
-    def evaluate(self, params):
-        self.function(params)
-        return ActionStatusLocal()
+        if not self.finished():
+            raise RuntimeError('action did not finish yet')
+        else:
+            return True
 
 
 class ActionStatusLocalV2():
