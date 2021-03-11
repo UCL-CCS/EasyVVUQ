@@ -8,6 +8,7 @@ import logging
 import tempfile
 import json
 import easyvvuq
+from concurrent.futures import ProcessPoolExecutor
 from easyvvuq import ParamsSpecification, constants
 from easyvvuq.constants import default_campaign_prefix, Status
 from easyvvuq.data_structs import RunInfo, CampaignInfo, AppInfo
@@ -631,45 +632,6 @@ class Campaign:
             return True
         return False
 
-    def populate_runs_dir(self):
-        """Populate run directories based on runs in the CampaignDB.
-
-        This calls the encoder element defined for the current application to
-        create input files for it in each run directory, usually with varying
-        input (scientific) parameters. Note that this method will also create
-        the directories in the file system. The directory names will be formed
-        in relation to the work_dir argument you have specified when creating
-        the Campaign object.
-
-        Returns
-        -------
-        a list with run ids
-
-        """
-
-        # Get the encoder for this app. If none is set, only the directory structure
-        # will be created.
-        active_encoder = self._active_app_encoder
-        if active_encoder is None:
-            logger.warning('No encoder set for this app. Creating directory structure only.')
-
-        run_ids = []
-
-        for run_id, run_data in self.campaign_db.runs(
-                status=Status.NEW, app_id=self._active_app['id']):
-
-            # Make directory for this run's output
-            os.makedirs(run_data['run_dir'])
-
-            # Encode run
-            if active_encoder is not None:
-                active_encoder.encode(params=run_data['params'],
-                                      target_dir=run_data['run_dir'])
-
-            run_ids.append(run_id)
-        self.campaign_db.set_run_statuses(run_ids, Status.ENCODED)
-        return run_ids
-
     def get_campaign_runs_dir(self):
         """Get the runs directory from the CampaignDB.
 
@@ -770,7 +732,8 @@ class Campaign:
         action.campaign = self
         action_statuses = []
         for run_id, run_data in self.campaign_db.runs(status=status, app_id=self._active_app['id']):
-            action_statuses.append(action.evaluate(json.loads(run_data['params'])))
+            future = pool.submit(action, json.loads(run_data['params']))
+            future.add_done_callback(lambda f: self.campaign_db.submit_result(run_id, f.result))
         return ActionStatuses(action_statuses, batch_size=batch_size)
         
     def sample_and_apply(self, action, batch_size=8, nsamples=0, mark_invalid=False):
