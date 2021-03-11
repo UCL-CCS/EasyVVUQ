@@ -28,52 +28,6 @@ class ActionStatusLocal():
         return True
 
 
-class ExecuteLocal(BaseAction):
-
-    def __init__(self, run_cmd, interpret=None):
-        """
-        Provides an action element to run a shell command in a specified
-        directory.
-
-        Parameters
-        ----------
-
-        run_cmd : str
-            Command to execute.
-        interpret : str or None
-            Interpreter to use to execute cmd.
-
-        """
-
-        if os.name == 'nt':
-            msg = ('Local execution is provided for testing on Posix systems'
-                   'only. We detect you are using Windows.')
-            logger.error(msg)
-            raise NotImplementedError(msg)
-
-        # Need to expand users, get absolute path and dereference symlinks
-        self.run_cmd = os.path.realpath(os.path.expanduser(run_cmd))
-        self.interpreter = interpret
-
-    def act_on_dir(self, target_dir):
-        """
-        Executes `self.run_cmd` in the shell in `target_dir`.
-
-        target_dir : str
-            Directory in which to execute command.
-
-        """
-
-        if self.interpreter is None:
-            full_cmd = f'cd "{target_dir}"\n{self.run_cmd}\n'
-        else:
-            full_cmd = f'cd "{target_dir}"\n{self.interpreter} {self.run_cmd}\n'
-        result = os.system(full_cmd)
-        if result != 0:
-            sys.exit(f'Non-zero exit code from command "{full_cmd}"\n')
-        return ActionStatusLocal()
-
-
 class ExecutePython():
     def __init__(self, function):
         self.function = function
@@ -100,7 +54,7 @@ class ExecutePython():
             return True
 
 
-class ActionStatusLocalV2():
+class ActionStatusLocal():
     def __init__(self, full_cmd, target_dir):
         self.full_cmd = full_cmd
         self.target_dir = target_dir
@@ -146,7 +100,7 @@ class ActionStatusLocalV2():
             return True
 
 
-class ExecuteLocalV2(ExecuteLocal):
+class ExecuteLocal(ExecuteLocal):
     """An improvement over ExecuteLocal that uses Popen and provides the non-blocking
     execution that allows you to track progress. In line with other Action classes in EasyVVUQ.
     """
