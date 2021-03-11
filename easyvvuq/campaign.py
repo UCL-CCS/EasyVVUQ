@@ -684,7 +684,7 @@ class Campaign:
             action_statuses.append(action.act_on_dir(run_data['run_dir']))
         return ActionStatuses(action_statuses, batch_size=batch_size)
 
-    def execute(self, action, batch_size=8, nsamples=0, mark_invalid=False):
+    def execute(self, action, max_workers=None, nsamples=0, mark_invalid=False):
         """This will draw samples and execute the action on those samples.
         
         Parameters
@@ -699,10 +699,10 @@ class Campaign:
             Mark runs that go outside the specified input parameter range as INVALID.
         """
         self.draw_samples(nsamples, mark_invalid=mark_invalid)
-        action_statuses = self.apply_for_each_sample(action, status=Status.ENCODED, batch_size=batch_size)
+        action_statuses = self.apply_for_each_sample(action, max_workers=max_workers)
         return action_statuses
 
-    def apply_for_each_sample(action, batch_size=batch_size):
+    def apply_for_each_sample(action, max_workers=None):
         """
         For each run in this Campaign's run list, apply the specified action
         (an object of type Action)
@@ -729,34 +729,10 @@ class Campaign:
             action.run_id = run_id
             action.params = json.loads(run_data['params'])
             actions.append(action)
-        return ActionPool(actions, batch_size=batch_size)
+        return ActionPool(actions, max_workers=max_workers)
         
-    def sample_and_apply(self, action, batch_size=8, nsamples=0, mark_invalid=False):
-        """This will draw samples, populated the runs directories and run the specified action.
-        This is a convenience method.
 
-        Parameters
-        ----------
-        nsamples : int
-            number of samples to draw
-        action : BaseAction
-            an action to be executed
-        batch_size : int
-            number of actions to be executed at the same time
-        mark_invalid : bool
-            Mark runs that go outside the specified input parameter range as INVALID.
-
-        Returns
-        -------
-        action_statuses: ActionStatuses
-            An object containing ActionStatus instances to track action execution
-        """
-        self.draw_samples(nsamples, mark_invalid=mark_invalid)
-        self.populate_runs_dir()
-        action_statuses = self.apply_for_each_run_dir(action, batch_size=batch_size)
-        return action_statuses
-
-    def iterate(self, action, batch_size=8, nsamples=0, mark_invalid=False):
+    def iterate(self, action, max_workers=None, nsamples=0, mark_invalid=False):
         """This is the equivalent of sample_and_apply for methods that rely on the output of the
         previous sampling stage (primarily MCMC).
 
@@ -778,9 +754,8 @@ class Campaign:
         """
         while True:
             self.draw_samples(nsamples, mark_invalid=mark_invalid)
-            self.populate_runs_dir()
-            action_statuses = self.apply_for_each_run_dir(action, batch_size=batch_size)
-            yield action_statuses
+            action_pool = self.apply_for_each_sample(action, max_workers=max_workers)
+            yield action_pool
             self.collate()
             result = self.get_collation_result(last_iteration=True)
             invalid = self.get_invalid_runs(last_iteration=True)
