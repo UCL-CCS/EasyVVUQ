@@ -12,23 +12,6 @@ import dill
 __license__ = "LGPL"
 
 
-class ActionStatusLocal():
-    def __init__(self):
-        pass
-
-    def start(self):
-        return None
-
-    def finished(self):
-        return True
-
-    def finalise(self):
-        return None
-
-    def succeeded(self):
-        return True
-
-
 class ExecutePython():
     def __init__(self, function):
         self.function = function
@@ -55,7 +38,7 @@ class ExecutePython():
             return True
 
 
-class ActionStatusLocal():
+class ExecuteLocal():
     def __init__(self, full_cmd, target_dir):
         self.full_cmd = full_cmd
         self.target_dir = target_dir
