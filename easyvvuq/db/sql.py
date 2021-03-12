@@ -4,6 +4,7 @@ import os
 import json
 import logging
 import pandas as pd
+import numpy as np
 import ast
 from sqlalchemy import create_engine, Column, Integer, String, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
@@ -120,6 +121,8 @@ class CampaignDB(BaseCampaignDB):
             self.engine = create_engine(location)
         else:
             self.engine = create_engine('sqlite://')
+
+        self.commit_counter = 0
 
         session_maker = sessionmaker(bind=self.engine)
 
@@ -735,7 +738,7 @@ class CampaignDB(BaseCampaignDB):
             app_id=app_id)
 
         for r in selected:
-            yield r.run_name, self._run_to_dict(r)
+            yield r.id, self._run_to_dict(r)
 
     def run_ids(self, campaign=None, sampler=None, status=None, not_status=None, app_id=None):
         """
@@ -817,11 +820,17 @@ class CampaignDB(BaseCampaignDB):
         return self._get_campaign_info(campaign_name=campaign_name).runs_dir
 
     def store_result(self, run_id, result):
-        import pdb; pdb.set_trace()
+        self.commit_counter += 1
+        def convert_nonserializable(obj):
+            if isinstance(obj, np.int64):
+                return int(obj)
+            raise TypeError('Unknown type:', type(obj))
         self.session.query(RunTable).\
-            filter(RunTable.run_name == run_id).\
-            update({'result': json.dumps(result), 'status': constants.Status.COLLATED})
-        self.session.commit()
+            filter(RunTable.id == run_id).\
+            update({'result': json.dumps(result, default=convert_nonserializable),
+                    'status': constants.Status.COLLATED})
+        if self.commit_counter % COMMIT_RATE == 0:
+            self.session.commit()
 
     def store_results(self, app_name, results):
         """Stores the results from a given run in the database.

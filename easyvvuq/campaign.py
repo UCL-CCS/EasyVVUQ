@@ -655,7 +655,7 @@ class Campaign:
             raise RuntimeError("specified directory does not exist: {}".format(campaign_dir))
         self.campaign_db.relocate(campaign_dir, self.campaign_name)
 
-    def execute(self, action, max_workers=None, nsamples=0, mark_invalid=False):
+    def execute(self, action, *args, max_workers=None, nsamples=0, mark_invalid=False):
         """This will draw samples and execute the action on those samples.
         
         Parameters
@@ -670,10 +670,10 @@ class Campaign:
             Mark runs that go outside the specified input parameter range as INVALID.
         """
         self.draw_samples(nsamples, mark_invalid=mark_invalid)
-        action_statuses = self.apply_for_each_sample(action, max_workers=max_workers)
-        return action_statuses
+        action_pool = self.apply_for_each_sample(action, *args, max_workers=max_workers)
+        return action_pool.start()
 
-    def apply_for_each_sample(self, action, max_workers=None):
+    def apply_for_each_sample(self, action, *args, max_workers=None):
         """
         For each run in this Campaign's run list, apply the specified action
         (an object of type Action)
@@ -694,16 +694,17 @@ class Campaign:
 
         # Loop through all runs in this campaign with status ENCODED, and
         # run the specified action on each run's dir
-        action.campaign = self
         actions = []
         for run_id, run_data in self.campaign_db.runs(status=Status.NEW, app_id=self._active_app['id']):
-            action.run_id = run_id
-            action.params = run_data['params']
-            actions.append(action)
-        return ActionPool(actions, max_workers=max_workers)
+            action_ = action(*args)
+            action_.campaign = self
+            action_.run_id = run_id
+            action_.params = run_data['params']
+            actions.append(action_)
+        return ActionPool(self, actions, max_workers=max_workers).start()
         
 
-    def iterate(self, action, max_workers=None, nsamples=0, mark_invalid=False):
+    def iterate(self, action, *args, max_workers=None, nsamples=0, mark_invalid=False):
         """This is the equivalent of sample_and_apply for methods that rely on the output of the
         previous sampling stage (primarily MCMC).
 
@@ -713,7 +714,9 @@ class Campaign:
             number of samples to draw
         action : BaseAction
             an action to be executed
-        batch_size : int
+        *args : args
+            arguments to action
+        max_workers : int
             number of actions to be executed at the same time
         mark_invalid : bool
             Mark runs that go outside the specified input parameter range as INVALID.
@@ -725,8 +728,8 @@ class Campaign:
         """
         while True:
             self.draw_samples(nsamples, mark_invalid=mark_invalid)
-            action_pool = self.apply_for_each_sample(action, max_workers=max_workers)
-            yield action_pool
+            action_pool = self.apply_for_each_sample(action, *args, max_workers=max_workers)
+            yield action_pool.start()
             result = self.get_collation_result(last_iteration=True)
             invalid = self.get_invalid_runs(last_iteration=True)
             ignored_runs = self._active_sampler.update(result, invalid)
@@ -815,7 +818,7 @@ class Campaign:
         **kwargs - dict
            Argument to the analysis class constructor (after sampler).
         """
-        collation_result = self.collate()
+        collation_result = self.get_collation_result()
         try:
             analysis = self._active_sampler.analysis_class(sampler=self._active_sampler, **kwargs)
             return analysis.analyse(collation_result)

@@ -1,5 +1,6 @@
 import time
-from concurrent.futures import ThreadPoolExecutor
+import dill
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 __copyright__ = """
 
@@ -37,25 +38,11 @@ class ActionPool:
 
     """
 
-    def __init__(self, actions, max_workers=8):
+    def __init__(self, campaign, actions, max_workers=8):
+        self.campaign = campaign
         self.actions = list(actions)
+        self.max_workers = max_workers
         self.futures = []
-        self.pool = ThreadPoolExecutor(max_workers=max_workers)
-
-    def job_handler(self, status):
-        """Will handle the execution of this action status.
-
-        Parameters
-        ----------
-        status: ActionStatus
-            ActionStatus of an action to be executed.
-        """
-        status.start()
-        if status.succeeded():
-            status.finalise()
-            return True
-        else:
-            return False
 
     def start(self):
         """Start the actions.
@@ -64,9 +51,9 @@ class ActionPool:
         -------
         A list of Python futures represending action execution.
         """
+        self.pool = ThreadPoolExecutor(max_workers=self.max_workers)
         for action in self.actions:
             future = self.pool.submit(action.start)
-            future.add_done_callback(action.finalise)
             self.futures.append(future)
         return self
 
@@ -93,7 +80,10 @@ class ActionPool:
                 ready += 1
         return {'ready': ready, 'active': running, 'finished': done, 'failed': failed}
 
-    def wait(self):
-        """A command that will block untill all futures in the pool have finished. For use in scripts.
+    def collect(self):
+        """A command that will block untill all futures in the pool have finished.
         """
-        self.pool.shutdown(wait=True)
+        for future in as_completed(self.futures):
+            action = future.result()
+            action.finalise()
+        self.campaign.campaign_db.session.commit()

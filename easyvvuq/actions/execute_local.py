@@ -7,6 +7,7 @@ import logging
 import subprocess
 from . import BaseAction
 import concurrent
+import dill
 
 __license__ = "LGPL"
 
@@ -36,7 +37,7 @@ class ExecutePython():
 
     def start(self):
         self.result = self.function(self.params)
-        return self.result
+        return self
 
     def finished(self):
         if self.result is None:
@@ -45,7 +46,7 @@ class ExecutePython():
             return True
 
     def finalise(self):
-        self.action.campaign.campaign_db.store_result(self.run_id, self.result)
+        self.campaign.campaign_db.store_result(self.run_id, self.result)
 
     def succeeded(self):
         if not self.finished():
