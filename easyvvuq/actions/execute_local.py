@@ -2,6 +2,7 @@
 """
 
 import os
+from pathlib import Path
 import sys
 import logging
 import subprocess
@@ -11,6 +12,34 @@ import dill
 
 __license__ = "LGPL"
 
+class CreateRunDirectory():
+    def __init__(self, root):
+        self.root = root
+
+    def start(self, run_info, previous_action=None):
+        run_id = run_info['id']
+        level1_a, level1_b = int(run_id / 10 ** 4) * 10 ** 4, int(run_id / 10 ** 4 + 1) * 10 ** 4
+        level2_a, level2_b = int(run_id / 10 ** 3) * 10 ** 3, int(run_id / 10 ** 3 + 1) * 10 ** 3
+        level3_a, level3_b = int(run_id / 10 ** 2) * 10 ** 2, int(run_id / 10 ** 2 + 1) * 10 ** 2
+        level4_a, level4_b = int(run_id / 10 ** 1) * 10 ** 1, int(run_id / 10 ** 1 + 1) * 10 ** 1
+        level1_dir = "runs_{}-{}/".format(level1_a, level1_b)
+        level2_dir = "runs_{}-{}/".format(level2_a, level2_b)
+        level3_dir = "runs_{}-{}/".format(level3_a, level3_b)
+        level4_dir = "runs_{}-{}/".format(level4_a, level4_b)
+        path = os.path.join(root, level1_dir, level2_dir, level3_dir, level4_dir)
+        Path(path).mkdir(parents=True, exist_ok=True)
+        run_info['rundir'] = path
+        self.result = run_info
+        return self
+
+    def finished(self):
+        return True
+
+    def finalise(self):
+        pass
+
+    def succeeded(self):
+        return True
 
 class ExecutePython():
     def __init__(self, function):
@@ -36,7 +65,6 @@ class ExecutePython():
             raise RuntimeError('action did not finish yet')
         else:
             return True
-
 
 class ExecuteLocal():
     def __init__(self, full_cmd):

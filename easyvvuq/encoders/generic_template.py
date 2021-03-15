@@ -54,7 +54,7 @@ class GenericEncoder(BaseEncoder, encoder_name="generic_template"):
     def cleanup(self, campaign, run_id):
         pass
 
-    def encode(self, params={}, target_dir=''):
+    def encode(self, run_data, params={}, target_dir=''):
         """Substitutes `params` into a template application input, saves in
         `target_dir`
 
