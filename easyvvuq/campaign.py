@@ -153,7 +153,6 @@ class Campaign:
         self._active_app_name = None
         self._active_app_encoder = None
         self._active_app_decoder = None
-        self._active_app_collater = None
 
         self._active_sampler = None
         self._active_sampler_id = None
