@@ -41,6 +41,12 @@ class CreateRunDirectory():
     def succeeded(self):
         return True
 
+class Encode():
+    pass
+
+class Decode():
+    pass
+
 class Cleanup():
     def __init__(self):
         pass
@@ -127,3 +133,6 @@ class ExecuteLocal():
             return False
         else:
             return True
+
+class Actions():
+    pass
