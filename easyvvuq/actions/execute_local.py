@@ -39,15 +39,15 @@ class ExecutePython():
 
 
 class ExecuteLocal():
-    def __init__(self, full_cmd, target_dir):
-        self.full_cmd = full_cmd
-        self.target_dir = target_dir
+    def __init__(self, full_cmd):
+        self.full_cmd = full_cmd.split()
         self.popen_object = None
         self.ret = None
         self._started = False
 
     def start(self):
-        self.popen_object = subprocess.Popen(self.full_cmd, cwd=self.target_dir)
+        target_dir = self.encoder.target_dir
+        self.popen_object = subprocess.Popen(self.full_cmd, cwd=target_dir)
         self._started = True
 
     def started(self):
@@ -69,7 +69,8 @@ class ExecuteLocal():
     def finalise(self):
         """Performs clean-up if necessary. In this case it isn't. I think.
         """
-        return None
+        self.result = self.decoder.parse_sim_output()
+        self.campaign.campaign_db.store_result(self.run_id, self.result)
 
     def succeeded(self):
         """Will return True if the process finished successfully.
@@ -82,24 +83,3 @@ class ExecuteLocal():
             return False
         else:
             return True
-
-
-class ExecuteLocal():
-    """An improvement over ExecuteLocal that uses Popen and provides the non-blocking
-    execution that allows you to track progress. In line with other Action classes in EasyVVUQ.
-    """
-
-    def act_on_dir(self, target_dir):
-        """
-        Executes `self.run_cmd` in the shell in `target_dir`.
-
-        target_dir : str
-            Directory in which to execute command.
-
-        """
-
-        if self.interpreter is None:
-            full_cmd = self.run_cmd.split()
-        else:
-            full_cmd = [self.interpreter] + self.run_cmd.split()
-        return ActionStatusLocalV2(full_cmd, target_dir)
