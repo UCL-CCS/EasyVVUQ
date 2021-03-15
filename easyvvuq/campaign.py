@@ -665,6 +665,8 @@ class Campaign:
             action_.campaign = self
             action_.run_id = run_id
             action_.params = run_data['params']
+            action_.encoder = self._active_app_encoder
+            action_.decoder = self._active_app_decoder
             actions.append(action_)
         return ActionPool(self, actions, max_workers=max_workers).start()
         
