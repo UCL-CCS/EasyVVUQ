@@ -16,7 +16,7 @@ class CreateRunDirectory():
     def __init__(self, root):
         self.root = root
 
-    def start(self, run_info, previous_action=None):
+    def start(self, previous=None):
         run_id = run_info['id']
         level1_a, level1_b = int(run_id / 10 ** 4) * 10 ** 4, int(run_id / 10 ** 4 + 1) * 10 ** 4
         level2_a, level2_b = int(run_id / 10 ** 3) * 10 ** 3, int(run_id / 10 ** 3 + 1) * 10 ** 3
@@ -28,9 +28,25 @@ class CreateRunDirectory():
         level4_dir = "runs_{}-{}/".format(level4_a, level4_b)
         path = os.path.join(root, level1_dir, level2_dir, level3_dir, level4_dir)
         Path(path).mkdir(parents=True, exist_ok=True)
-        run_info['rundir'] = path
-        self.result = run_info
+        self.result = dict(previous.result)
+        self.result['rundir'] = path
         return self
+
+    def finished(self):
+        return True
+
+    def finalise(self):
+        pass
+
+    def succeeded(self):
+        return True
+
+class Cleanup():
+    def __init__(self):
+        pass
+
+    def start(self, run_info, previous_action=None):
+        pass
 
     def finished(self):
         return True
