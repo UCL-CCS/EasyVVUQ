@@ -67,8 +67,10 @@ class Decode():
     def start(self, previous=None):
         run_info = dict(previous['run_info'])
         run_info['run_dir'] = previous['rundir']
-        self.decoder.parse_sim_output(self, run_info)
-        return dict(previous)
+        result = self.decoder.parse_sim_output(self, run_info)
+        previous = dict(previous)
+        previous['result'] = result
+        return previous
 
     def finished(self):
         return True

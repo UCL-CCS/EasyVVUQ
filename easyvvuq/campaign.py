@@ -62,11 +62,6 @@ class Campaign:
     name : :obj:`str`, optional
     params : dict
         Description of the parameters to associate with the application.
-    encoder : :obj:`easyvvuq.encoders.base.BaseEncoder`
-        Encoder element to convert parameters into application run inputs.
-    decoder : :obj:`easyvvuq.decoders.base.BaseDecoder`
-        Decoder element to convert application run output into data for
-        VVUQ analysis.
     db_type : str, default="sql"
         Type of database to use for CampaignDB.
     db_location : :obj:`str`, optional
@@ -109,14 +104,6 @@ class Campaign:
         Info about currently set app
     _active_app_name: str
         Name of currently set app
-    _active_app_encoder: easyvvuq.encoders.BaseEncoder
-        The current Encoder object being used, from the currently set app
-    _active_app_decoder: easyvvuq.decoders.BaseDecoder
-        The current Decoder object being used, from the currently set app
-    _active_app_collater: easyvvuq.collate.BaseCollationElement
-        The current Collater object assigned to this campaign
-    _active_sampler: easyvvuq.sampling.BaseSamplingElement
-        The currently set Sampler object
     _active_sampler_id: int
         The database id of the currently set Sampler object
 
@@ -344,8 +331,7 @@ class Campaign:
             logger.critical(message)
             raise RuntimeError(message)
 
-    def add_app(self, name=None, params=None, decoderspec=None,
-                encoder=None, decoder=None, set_active=True):
+    def add_app(self, name=None, params=None, set_active=True):
         """Add an application to the CampaignDB.
 
         Parameters
@@ -376,10 +362,6 @@ class Campaign:
         # validate application input
         app = AppInfo(
             name=name,
-            paramsspec=paramsspec,
-            decoderspec=decoderspec,
-            encoder=encoder,
-            decoder=decoder
         )
 
         self.campaign_db.add_app(app)
@@ -620,7 +602,7 @@ class Campaign:
             raise RuntimeError("specified directory does not exist: {}".format(campaign_dir))
         self.campaign_db.relocate(campaign_dir, self.campaign_name)
 
-    def execute(self, action, *args, max_workers=None, nsamples=0, mark_invalid=False):
+    def execute(self, action, max_workers=None, nsamples=0, mark_invalid=False):
         """This will draw samples and execute the action on those samples.
         
         Parameters
@@ -635,10 +617,10 @@ class Campaign:
             Mark runs that go outside the specified input parameter range as INVALID.
         """
         self.draw_samples(nsamples, mark_invalid=mark_invalid)
-        action_pool = self.apply_for_each_sample(action, *args, max_workers=max_workers)
+        action_pool = self.apply_for_each_sample(action, max_workers=max_workers)
         return action_pool.start()
 
-    def apply_for_each_sample(self, action, *args, max_workers=None):
+    def apply_for_each_sample(self, action, max_workers=None):
         """
         For each run in this Campaign's run list, apply the specified action
         (an object of type Action)
