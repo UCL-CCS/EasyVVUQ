@@ -3,6 +3,7 @@
 
 import os
 from pathlib import Path
+import shutil
 import sys
 import logging
 import subprocess
@@ -17,20 +18,20 @@ class CreateRunDirectory():
         self.root = root
 
     def start(self, previous=None):
-        run_id = run_info['id']
-        level1_a, level1_b = int(run_id / 10 ** 4) * 10 ** 4, int(run_id / 10 ** 4 + 1) * 10 ** 4
-        level2_a, level2_b = int(run_id / 10 ** 3) * 10 ** 3, int(run_id / 10 ** 3 + 1) * 10 ** 3
-        level3_a, level3_b = int(run_id / 10 ** 2) * 10 ** 2, int(run_id / 10 ** 2 + 1) * 10 ** 2
-        level4_a, level4_b = int(run_id / 10 ** 1) * 10 ** 1, int(run_id / 10 ** 1 + 1) * 10 ** 1
+        run_id = previous['run_info']['id']
+        level1_a, level1_b = int(run_id / 100 ** 4) * 100 ** 4, int(run_id / 100 ** 4 + 1) * 100 ** 4
+        level2_a, level2_b = int(run_id / 100 ** 3) * 100 ** 3, int(run_id / 100 ** 3 + 1) * 100 ** 3
+        level3_a, level3_b = int(run_id / 100 ** 2) * 100 ** 2, int(run_id / 100 ** 2 + 1) * 100 ** 2
+        level4_a, level4_b = int(run_id / 100 ** 1) * 100 ** 1, int(run_id / 100 ** 1 + 1) * 100 ** 1
         level1_dir = "runs_{}-{}/".format(level1_a, level1_b)
         level2_dir = "runs_{}-{}/".format(level2_a, level2_b)
         level3_dir = "runs_{}-{}/".format(level3_a, level3_b)
         level4_dir = "runs_{}-{}/".format(level4_a, level4_b)
-        path = os.path.join(root, level1_dir, level2_dir, level3_dir, level4_dir)
+        path = os.path.join(self.root, level1_dir, level2_dir, level3_dir, level4_dir)
         Path(path).mkdir(parents=True, exist_ok=True)
-        self.result = dict(previous.result)
-        self.result['rundir'] = path
-        return self
+        previous = dict(previous)
+        previous['rundir'] = path
+        return previous
 
     def finished(self):
         return True
@@ -42,18 +43,47 @@ class CreateRunDirectory():
         return True
 
 class Encode():
-    pass
+    def __init__(self, encoder):
+        self.encoder = encoder
+
+    def start(self, previous=None):
+        pass
+
+    def finished(self):
+        return True
+
+    def finalise(self):
+        pass
+
+    def succeeeded(self):
+        return True
 
 class Decode():
-    pass
+    def __init__(self, decoder):
+        self.decoder = decoder
+
+    def start(self, previous=None):
+        pass
+
+    def finished(self):
+        return True
+
+    def finalise(self):
+        pass
+
+    def succeeded(self):
+        return True
 
 class Cleanup():
     def __init__(self):
         pass
 
-    def start(self, run_info, previous_action=None):
-        pass
-
+    def start(self, previous=None):
+        if not ('rundir' in previous.keys()):
+            raise RuntimeError('must be used with actions that create a directory structure')
+        shutil.rmtree(previous['rundir'])
+        return dict(previous)
+                
     def finished(self):
         return True
 
