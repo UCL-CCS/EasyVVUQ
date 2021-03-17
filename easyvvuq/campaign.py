@@ -113,8 +113,7 @@ class Campaign:
             self,
             name=None,
             params=None,
-            encoder=None,
-            decoder=None,
+            actions=None,
             db_type="sql",
             db_location=None,
             work_dir="./",
@@ -138,8 +137,6 @@ class Campaign:
 
         self._active_app = None
         self._active_app_name = None
-        self._active_app_encoder = None
-        self._active_app_decoder = None
 
         self._active_sampler = None
         self._active_sampler_id = None
@@ -155,8 +152,8 @@ class Campaign:
             self.init_fresh(name, db_type, db_location, self.work_dir)
             self._state_dir = None
 
-        if (params is not None) and (encoder is not None) and (decoder is not None):
-            self.add_app(name=name, params=params, encoder=encoder, decoder=decoder)
+        if (params is not None) and (actions is not None):
+            self.add_app(name=name, params=params, actions=actions)
 
     @property
     def campaign_dir(self):
@@ -331,7 +328,7 @@ class Campaign:
             logger.critical(message)
             raise RuntimeError(message)
 
-    def add_app(self, name=None, params=None, set_active=True):
+    def add_app(self, name=None, params=None, actions=None, set_active=True):
         """Add an application to the CampaignDB.
 
         Parameters
@@ -362,6 +359,7 @@ class Campaign:
         # validate application input
         app = AppInfo(
             name=name,
+            actions=actions,
         )
 
         self.campaign_db.add_app(app)
@@ -388,8 +386,7 @@ class Campaign:
         self._active_app = self.campaign_db.app(name=app_name)
 
         # Resurrect the app encoder, decoder and collation elements
-        (self._active_app_encoder,
-         self._active_app_decoder) = self.campaign_db.resurrect_app(app_name)
+        self._active_app_actions = self.campaign_db.resurrect_app(app_name)
 
     def set_sampler(self, sampler, update=False):
         """Set active sampler.
@@ -641,16 +638,14 @@ class Campaign:
 
         # Loop through all runs in this campaign with status ENCODED, and
         # run the specified action on each run's dir
-        actions = []
-        for run_id, run_data in self.campaign_db.runs(status=Status.NEW, app_id=self._active_app['id']):
-            action_ = action(*args)
-            action_.campaign = self
-            action_.run_id = run_id
-            action_.params = run_data['params']
-            action_.encoder = self._active_app_encoder
-            action_.decoder = self._active_app_decoder
-            actions.append(action_)
-        return ActionPool(self, actions, max_workers=max_workers).start()
+        def inits():
+            for run_id, run_data in self.campaign_db.runs(status=Status.NEW, app_id=self._active_app['id']):
+                init = {}
+                init['campaign'] = self
+                init['run_id'] = run_id
+                init['run_info'] = run_data
+                yield init
+        return ActionPool(self, actions, inits=inits, max_workers=max_workers).start()
         
 
     def iterate(self, action, *args, max_workers=None, nsamples=0, mark_invalid=False):
