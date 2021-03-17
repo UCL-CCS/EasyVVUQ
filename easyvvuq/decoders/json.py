@@ -108,10 +108,3 @@ class JSONDecoder(BaseDecoder, decoder_name="json"):
     def _get_raw_data(self, out_path):
         with open(out_path) as fd:
             return json.load(fd)
-
-    def get_restart_dict(self):
-        return {"target_filename": self.target_filename,
-                "output_columns": self.output_columns}
-
-    def element_version(self):
-        return "0.1"

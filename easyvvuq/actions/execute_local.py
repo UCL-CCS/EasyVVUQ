@@ -170,4 +170,20 @@ class ExecuteLocal():
             return True
 
 class Actions():
-    pass
+    def __init__(self, actions):
+        self.actions = actions
+
+    def start(self, previous=None):
+        for action in actions:
+            previous = action.start(previous)
+        return dict(previous)
+
+    def finished(self):
+        return all([action.finished() in self.actions])
+
+    def finalise(self):
+        for action in self.actions:
+            action.finalise()
+
+    def succeeded(self):
+        return all([action.succeeded() in self.actions])
