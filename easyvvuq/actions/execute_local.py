@@ -69,7 +69,7 @@ class Decode():
     def start(self, previous=None):
         run_info = dict(previous['run_info'])
         run_info['run_dir'] = previous['rundir']
-        result = self.decoder.parse_sim_output(self, run_info)
+        result = self.decoder.parse_sim_output(run_info)
         previous = dict(previous)
         previous['result'] = result
         self.previous = previous
@@ -79,7 +79,7 @@ class Decode():
         return True
 
     def finalise(self):
-        self.campaign.campaign_db.store_result(self.previous['run_id'], self.previous['result'])
+        self.previous['campaign'].campaign_db.store_result(self.previous['run_id'], self.previous['result'])
 
     def succeeded(self):
         return True
@@ -139,6 +139,8 @@ class ExecuteLocal():
     def start(self, previous=None):
         target_dir = previous['rundir']
         self.ret = subprocess.run(self.full_cmd, cwd=target_dir)
+        self.previous = dict(previous)
+        return self
 
     def finished(self):
         return True
@@ -146,8 +148,7 @@ class ExecuteLocal():
     def finalise(self):
         """Performs clean-up if necessary. In this case it isn't. I think.
         """
-        self.result = self.decoder.parse_sim_output()
-        
+        pass
 
     def succeeded(self):
         """Will return True if the process finished successfully.
