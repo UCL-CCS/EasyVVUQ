@@ -46,8 +46,10 @@ class Encode():
     def __init__(self, encoder):
         self.encoder = encoder
 
-    def start(self, previous=None):
-        pass
+    def start(self, previous=None):        
+        self.encoder(previous['run_info'], params=previous['run_info']['params'],
+                     target_dir=previous['rundir'])
+        return dict(previous)
 
     def finished(self):
         return True
@@ -63,7 +65,10 @@ class Decode():
         self.decoder = decoder
 
     def start(self, previous=None):
-        pass
+        run_info = dict(previous['run_info'])
+        run_info['run_dir'] = previous['rundir']
+        self.decoder.parse_sim_output(self, run_info)
+        return dict(previous)
 
     def finished(self):
         return True
