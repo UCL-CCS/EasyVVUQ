@@ -27,7 +27,8 @@ class CreateRunDirectory():
         level2_dir = "runs_{}-{}/".format(level2_a, level2_b)
         level3_dir = "runs_{}-{}/".format(level3_a, level3_b)
         level4_dir = "runs_{}-{}/".format(level4_a, level4_b)
-        path = os.path.join(self.root, level1_dir, level2_dir, level3_dir, level4_dir)
+        level5_dir = "runs_{}".format(int(run_id))
+        path = os.path.join(self.root, level1_dir, level2_dir, level3_dir, level4_dir, level5_dir)
         Path(path).mkdir(parents=True, exist_ok=True)
         previous = dict(previous)
         previous['rundir'] = path
