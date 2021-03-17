@@ -38,9 +38,10 @@ class ActionPool:
 
     """
 
-    def __init__(self, campaign, actions, max_workers=8):
+    def __init__(self, campaign, actions, inits, max_workers=8):
         self.campaign = campaign
-        self.actions = list(actions)
+        self.actions = actions
+        self.inits = inits
         self.max_workers = max_workers
         self.futures = []
 
@@ -52,8 +53,8 @@ class ActionPool:
         A list of Python futures represending action execution.
         """
         self.pool = ThreadPoolExecutor(max_workers=self.max_workers)
-        for action in self.actions:
-            future = self.pool.submit(action.start)
+        for init in self.inits:
+            future = self.pool.submit(self.actions.start, init)
             self.futures.append(future)
         return self
 
@@ -80,10 +81,10 @@ class ActionPool:
                 ready += 1
         return {'ready': ready, 'active': running, 'finished': done, 'failed': failed}
 
-    def collect(self):
+    def collate(self):
         """A command that will block untill all futures in the pool have finished.
         """
         for future in as_completed(self.futures):
-            action = future.result()
-            action.finalise()
+            actions = future.result()
+            actions.finalise()
         self.campaign.campaign_db.session.commit()

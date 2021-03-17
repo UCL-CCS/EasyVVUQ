@@ -18,7 +18,7 @@ class CreateRunDirectory():
         self.root = root
 
     def start(self, previous=None):
-        run_id = previous['run_info']['id']
+        run_id = previous['run_id']
         level1_a, level1_b = int(run_id / 100 ** 4) * 100 ** 4, int(run_id / 100 ** 4 + 1) * 100 ** 4
         level2_a, level2_b = int(run_id / 100 ** 3) * 100 ** 3, int(run_id / 100 ** 3 + 1) * 100 ** 3
         level3_a, level3_b = int(run_id / 100 ** 2) * 100 ** 2, int(run_id / 100 ** 2 + 1) * 100 ** 2
@@ -31,7 +31,8 @@ class CreateRunDirectory():
         Path(path).mkdir(parents=True, exist_ok=True)
         previous = dict(previous)
         previous['rundir'] = path
-        return previous
+        self.previous = previous
+        return self
 
     def finished(self):
         return True
@@ -47,9 +48,10 @@ class Encode():
         self.encoder = encoder
 
     def start(self, previous=None):        
-        self.encoder(previous['run_info'], params=previous['run_info']['params'],
-                     target_dir=previous['rundir'])
-        return dict(previous)
+        self.encoder.encode(previous['run_info'], params=previous['run_info']['params'],
+                            target_dir=previous['rundir'])
+        self.previous = dict(previous)
+        return self
 
     def finished(self):
         return True
@@ -70,13 +72,14 @@ class Decode():
         result = self.decoder.parse_sim_output(self, run_info)
         previous = dict(previous)
         previous['result'] = result
-        return previous
+        self.previous = previous
+        return self
 
     def finished(self):
         return True
 
     def finalise(self):
-        pass
+        self.campaign.campaign_db.store_result(self.previous['run_id'], self.previous['result'])
 
     def succeeded(self):
         return True
@@ -89,7 +92,8 @@ class CleanUp():
         if not ('rundir' in previous.keys()):
             raise RuntimeError('must be used with actions that create a directory structure')
         shutil.rmtree(previous['rundir'])
-        return dict(previous)
+        self.previous = dict(previous)
+        return self
                 
     def finished(self):
         return True
@@ -106,7 +110,7 @@ class ExecutePython():
         self.params = None
         self.result = None
 
-    def start(self):
+    def start(self, previous=None):
         self.result = self.function(self.params)
         return self
 
@@ -132,40 +136,24 @@ class ExecuteLocal():
         self.ret = None
         self._started = False
 
-    def start(self):
-        target_dir = self.encoder.target_dir
-        self.popen_object = subprocess.Popen(self.full_cmd, cwd=target_dir)
-        self._started = True
-
-    def started(self):
-        return self._started
+    def start(self, previous=None):
+        target_dir = previous['rundir']
+        self.ret = subprocess.run(self.full_cmd, cwd=target_dir)
 
     def finished(self):
-        """Returns true if action is finished. In this case if calling poll on
-        the popen object returns a non-None value.
-        """
-        if self.popen_object is None:
-            return False
-        ret = self.popen_object.poll()
-        if ret is not None:
-            self.ret = ret
-            return True
-        else:
-            return False
+        return True
 
     def finalise(self):
         """Performs clean-up if necessary. In this case it isn't. I think.
         """
         self.result = self.decoder.parse_sim_output()
-        self.campaign.campaign_db.store_result(self.run_id, self.result)
+        
 
     def succeeded(self):
         """Will return True if the process finished successfully.
         It judges based on the return code and will return False
         if that code is not zero.
         """
-        if not self.started():
-            return False
         if self.ret != 0:
             return False
         else:
@@ -176,9 +164,10 @@ class Actions():
         self.actions = list(args)
 
     def start(self, previous=None):
-        for action in actions:
-            previous = action.start(previous)
-        return dict(previous)
+        for action in self.actions:
+            previous = action.start(previous).previous
+        self.previous = dict(previous)
+        return self
 
     def finished(self):
         return all([action.finished() in self.actions])

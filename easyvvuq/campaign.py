@@ -137,6 +137,7 @@ class Campaign:
 
         self._active_app = None
         self._active_app_name = None
+        self._active_app_actions = None
 
         self._active_sampler = None
         self._active_sampler_id = None
@@ -359,6 +360,7 @@ class Campaign:
         # validate application input
         app = AppInfo(
             name=name,
+            paramsspec=ParamsSpecification(params, appname=name),
             actions=actions,
         )
 
@@ -599,7 +601,7 @@ class Campaign:
             raise RuntimeError("specified directory does not exist: {}".format(campaign_dir))
         self.campaign_db.relocate(campaign_dir, self.campaign_name)
 
-    def execute(self, action, max_workers=None, nsamples=0, mark_invalid=False):
+    def execute(self, max_workers=None, nsamples=0, mark_invalid=False):
         """This will draw samples and execute the action on those samples.
         
         Parameters
@@ -614,7 +616,7 @@ class Campaign:
             Mark runs that go outside the specified input parameter range as INVALID.
         """
         self.draw_samples(nsamples, mark_invalid=mark_invalid)
-        action_pool = self.apply_for_each_sample(action, max_workers=max_workers)
+        action_pool = self.apply_for_each_sample(self._active_app_actions, max_workers=max_workers)
         return action_pool.start()
 
     def apply_for_each_sample(self, action, max_workers=None):
@@ -645,7 +647,7 @@ class Campaign:
                 init['run_id'] = run_id
                 init['run_info'] = run_data
                 yield init
-        return ActionPool(self, actions, inits=inits, max_workers=max_workers).start()
+        return ActionPool(self, action, inits=inits(), max_workers=max_workers).start()
         
 
     def iterate(self, action, *args, max_workers=None, nsamples=0, mark_invalid=False):

@@ -209,53 +209,17 @@ class AppInfo:
         Human readable application name.
     paramsspec : ParamsSpecification or None
         Description of possible parameter values.
-    decoderspec : dict
-        Description of the output format of the decoder.
-    input_encoder : :obj:`easyvvuq.encoders.base.BaseEncoder`
-        Encoder element for application.
-    output_decoder : :obj:`easyvvuq.decoders.base.BaseDecoder`
-        Decoder element for application.
     """
 
     def __init__(
             self,
             name=None,
             paramsspec=None,
-            decoderspec=None,
-            encoder=None,
-            decoder=None):
+            actions=None):
 
         self.name = name
-        self.input_encoder = encoder
-        self.output_decoder = decoder
         self.paramsspec = paramsspec
-        self.decoderspec = decoderspec
-
-    @property
-    def input_encoder(self):
-        return self._input_encoder
-
-    @input_encoder.setter
-    def input_encoder(self, encoder):
-        if not isinstance(encoder, BaseEncoder):
-            msg = f"Provided 'encoder' must be derived from type BaseEncoder"
-            logger.error(msg)
-            raise Exception(msg)
-
-        self._input_encoder = encoder
-
-    @property
-    def output_decoder(self):
-        return self._output_decoder
-
-    @output_decoder.setter
-    def output_decoder(self, decoder):
-        if not isinstance(decoder, BaseDecoder):
-            msg = f"Provided 'decoder' must be derived from type BaseDecoder"
-            logger.error(msg)
-            raise Exception(msg)
-
-        self._output_decoder = decoder
+        self.actions = actions
 
     def to_dict(self, flatten=False):
         """Convert to a dictionary (optionally flatten to single level)
@@ -283,9 +247,7 @@ class AppInfo:
             out_dict = {
                 'name': self.name,
                 'params': self.paramsspec,
-                'decoderspec': self.decoderspec,
-                'input_encoder': easyvvuq_serialize(self.input_encoder),
-                'output_decoder': easyvvuq_serialize(self.output_decoder)
+                'actions': easyvvuq_serialize(self.actions),
             }
 
         return out_dict

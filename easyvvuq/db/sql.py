@@ -76,11 +76,8 @@ class AppTable(Base):
     __tablename__ = 'app'
     id = Column(Integer, primary_key=True)
     name = Column(String)
-    input_encoder = Column(String)
-    output_decoder = Column(String)
-    collater = Column(String)
     params = Column(String)
-    decoderspec = Column(String)
+    actions = Column(String)
 
 
 class RunTable(Base):
@@ -195,19 +192,12 @@ class CampaignDB(BaseCampaignDB):
             raise RuntimeError(message)
 
         selected_app = selected[0]
-
-        decoderspec = selected_app.decoderspec
-        if decoderspec is not None:
-            decoderspec = ast.literal_eval(selected_app.decoderspec)
-
+        
         app_dict = {
             'id': selected_app.id,
             'name': selected_app.name,
-            'input_encoder': selected_app.input_encoder,
-            'output_decoder': selected_app.output_decoder,
-            'collater': selected_app.collater,
             'params': ParamsSpecification.deserialize(selected_app.params),
-            'decoderspec': decoderspec
+            'actions': selected_app.actions,
         }
 
         return app_dict
@@ -324,9 +314,8 @@ class CampaignDB(BaseCampaignDB):
 
         app_info = self.app(app_name)
 
-        encoder = easyvvuq_deserialize(app_info['input_encoder'])
-        decoder = easyvvuq_deserialize(app_info['output_decoder'])
-        return encoder, decoder
+        actions = easyvvuq_deserialize(app_info['actions'])
+        return actions
 
     def add_runs(self, run_info_list=None, run_prefix='Run_', iteration=0):
         """
