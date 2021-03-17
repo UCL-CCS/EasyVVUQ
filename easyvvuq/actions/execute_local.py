@@ -81,7 +81,7 @@ class Decode():
     def succeeded(self):
         return True
 
-class Cleanup():
+class CleanUp():
     def __init__(self):
         pass
 
@@ -172,8 +172,8 @@ class ExecuteLocal():
             return True
 
 class Actions():
-    def __init__(self, actions):
-        self.actions = actions
+    def __init__(self, *args):
+        self.actions = list(args)
 
     def start(self, previous=None):
         for action in actions:
