@@ -10,6 +10,7 @@ import subprocess
 from . import BaseAction
 import concurrent
 import dill
+import copy
 
 __license__ = "LGPL"
 
@@ -30,7 +31,7 @@ class CreateRunDirectory():
         level5_dir = "runs_{}".format(int(run_id))
         path = os.path.join(self.root, level1_dir, level2_dir, level3_dir, level4_dir, level5_dir)
         Path(path).mkdir(parents=True, exist_ok=True)
-        previous = dict(previous)
+        previous = dict(copy.deepcopy(previous))
         previous['rundir'] = path
         self.previous = previous
         return self
@@ -51,7 +52,7 @@ class Encode():
     def start(self, previous=None):        
         self.encoder.encode(previous['run_info'], params=previous['run_info']['params'],
                             target_dir=previous['rundir'])
-        self.previous = dict(previous)
+        self.previous = dict(copy.deepcopy(previous))
         return self
 
     def finished(self):
@@ -68,10 +69,10 @@ class Decode():
         self.decoder = decoder
 
     def start(self, previous=None):
-        run_info = dict(previous['run_info'])
+        run_info = dict(copy.deepcopy(previous['run_info']))
         run_info['run_dir'] = previous['rundir']
         result = self.decoder.parse_sim_output(run_info)
-        previous = dict(previous)
+        previous = dict(copy.deepcopy(previous))
         previous['result'] = result
         self.previous = previous
         return self
@@ -80,6 +81,7 @@ class Decode():
         return True
 
     def finalise(self):
+        print(self.previous['result'], self.previous['run_id'])
         self.previous['campaign'].campaign_db.store_result(self.previous['run_id'], self.previous['result'])
 
     def succeeded(self):
@@ -93,7 +95,7 @@ class CleanUp():
         if not ('rundir' in previous.keys()):
             raise RuntimeError('must be used with actions that create a directory structure')
         shutil.rmtree(previous['rundir'])
-        self.previous = dict(previous)
+        self.previous = dict(copy.deepcopy(previous))
         return self
                 
     def finished(self):
@@ -140,7 +142,7 @@ class ExecuteLocal():
     def start(self, previous=None):
         target_dir = previous['rundir']
         self.ret = subprocess.run(self.full_cmd, cwd=target_dir)
-        self.previous = dict(previous)
+        self.previous = dict(copy.deepcopy(previous))
         return self
 
     def finished(self):
@@ -168,7 +170,8 @@ class Actions():
     def start(self, previous=None):
         for action in self.actions:
             previous = action.start(previous).previous
-        self.previous = dict(previous)
+            #action.finalise()
+        self.previous = dict(copy.deepcopy(previous))
         return self
 
     def finished(self):

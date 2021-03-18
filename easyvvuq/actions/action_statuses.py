@@ -84,7 +84,10 @@ class ActionPool:
     def collate(self):
         """A command that will block untill all futures in the pool have finished.
         """
+        counter = 0
         for future in as_completed(self.futures):
+            counter += 1
             actions = future.result()
             actions.finalise()
+        assert(counter == len(self.futures))
         self.campaign.campaign_db.session.commit()
