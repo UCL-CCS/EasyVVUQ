@@ -601,7 +601,7 @@ class Campaign:
             raise RuntimeError("specified directory does not exist: {}".format(campaign_dir))
         self.campaign_db.relocate(campaign_dir, self.campaign_name)
 
-    def execute(self, max_workers=None, nsamples=0, mark_invalid=False):
+    def execute(self, max_workers=None, nsamples=0, mark_invalid=False, sequential=False):
         """This will draw samples and execute the action on those samples.
         
         Parameters
@@ -616,10 +616,13 @@ class Campaign:
             Mark runs that go outside the specified input parameter range as INVALID.
         """
         self.draw_samples(nsamples, mark_invalid=mark_invalid)
-        action_pool = self.apply_for_each_sample(self._active_app_actions, max_workers=max_workers)
-        return action_pool.start()
+        action_pool = self.apply_for_each_sample(self._active_app_actions, max_workers=max_workers, sequential=sequential)
+        if sequential:
+            return action_pool.start_seq()
+        else:
+            return action_pool.start()
 
-    def apply_for_each_sample(self, action, max_workers=None):
+    def apply_for_each_sample(self, action, max_workers=None, sequential=False):
         """
         For each run in this Campaign's run list, apply the specified action
         (an object of type Action)
@@ -650,7 +653,10 @@ class Campaign:
                 previous['run_info'] = run_data
                 yield previous
             assert(len(ids) == 0)
-        return ActionPool(self, action, inits=inits(), max_workers=max_workers).start()
+        if sequential:
+            return ActionPool(self, action, inits=inits(), max_workers=max_workers).start_seq()
+        else:
+            return ActionPool(self, action, inits=inits(), max_workers=max_workers).start()
         
 
     def iterate(self, action, *args, max_workers=None, nsamples=0, mark_invalid=False):

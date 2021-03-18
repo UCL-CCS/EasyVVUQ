@@ -66,12 +66,12 @@ class ActionPool:
         for previous in self.inits:
             previous = copy.copy(previous)
             result = self.actions.start(previous)
-            self.results.append(future)
+            self.results.append(result.previous)
         return self
 
     def collate_seq(self):
         for result in self.results:
-            self.campaign.campaign_db.store_result(result.previous['run_id'], result.previous['result'])
+            self.campaign.campaign_db.store_result(result['run_id'], result['result'])
         self.campaign.campaign_db.session.commit()
 
     def progress(self):
