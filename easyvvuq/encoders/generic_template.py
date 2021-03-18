@@ -69,8 +69,7 @@ class GenericEncoder(BaseEncoder, encoder_name="generic_template"):
         try:
             with open(self.template_fname, 'r') as template_file:
                 template_txt = template_file.read()
-                self.template = get_custom_template(
-                    template_txt, custom_delimiter=self.delimiter)
+                self.template = Template(template_txt)
         except FileNotFoundError:
             raise RuntimeError(
                 "the template file specified ({}) does not exist".format(self.template_fname))

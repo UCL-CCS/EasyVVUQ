@@ -648,7 +648,6 @@ class Campaign:
             for run_id, run_data in self.campaign_db.runs(status=Status.NEW, app_id=self._active_app['id']):
                 ids.remove(run_id)
                 previous = {}
-                previous['campaign'] = self
                 previous['run_id'] = run_id
                 previous['run_info'] = run_data
                 yield previous
