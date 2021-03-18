@@ -31,7 +31,6 @@ class CreateRunDirectory():
         level5_dir = "runs_{}".format(int(run_id))
         path = os.path.join(self.root, level1_dir, level2_dir, level3_dir, level4_dir, level5_dir)
         Path(path).mkdir(parents=True, exist_ok=True)
-        previous = dict(copy.deepcopy(previous))
         previous['rundir'] = path
         self.previous = previous
         return self
@@ -52,7 +51,7 @@ class Encode():
     def start(self, previous=None):        
         self.encoder.encode(previous['run_info'], params=previous['run_info']['params'],
                             target_dir=previous['rundir'])
-        self.previous = dict(copy.deepcopy(previous))
+        self.previous = previous
         return self
 
     def finished(self):
@@ -69,10 +68,9 @@ class Decode():
         self.decoder = decoder
 
     def start(self, previous=None):
-        run_info = dict(copy.deepcopy(previous['run_info']))
+        run_info = copy.copy(previous['run_info'])
         run_info['run_dir'] = previous['rundir']
         result = self.decoder.parse_sim_output(run_info)
-        previous = dict(copy.deepcopy(previous))
         previous['result'] = result
         self.previous = previous
         return self
@@ -81,8 +79,7 @@ class Decode():
         return True
 
     def finalise(self):
-        print(self.previous['result'], self.previous['run_id'])
-        self.previous['campaign'].campaign_db.store_result(self.previous['run_id'], self.previous['result'])
+        pass
 
     def succeeded(self):
         return True
@@ -95,7 +92,7 @@ class CleanUp():
         if not ('rundir' in previous.keys()):
             raise RuntimeError('must be used with actions that create a directory structure')
         shutil.rmtree(previous['rundir'])
-        self.previous = dict(copy.deepcopy(previous))
+        self.previous = previous
         return self
                 
     def finished(self):
@@ -124,7 +121,7 @@ class ExecutePython():
             return True
 
     def finalise(self):
-        self.campaign.campaign_db.store_result(self.run_id, self.result)
+        pass
 
     def succeeded(self):
         if not self.finished():
@@ -142,7 +139,7 @@ class ExecuteLocal():
     def start(self, previous=None):
         target_dir = previous['rundir']
         self.ret = subprocess.run(self.full_cmd, cwd=target_dir)
-        self.previous = dict(copy.deepcopy(previous))
+        self.previous = previous
         return self
 
     def finished(self):
@@ -168,10 +165,12 @@ class Actions():
         self.actions = list(args)
 
     def start(self, previous=None):
+        previous = copy.copy(previous)
+        run_id = previous['run_id']
         for action in self.actions:
             previous = action.start(previous).previous
-            #action.finalise()
-        self.previous = dict(copy.deepcopy(previous))
+        self.previous = previous
+        assert(self.previous['run_id'] == run_id)
         return self
 
     def finished(self):

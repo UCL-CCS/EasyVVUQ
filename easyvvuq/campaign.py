@@ -641,12 +641,15 @@ class Campaign:
         # Loop through all runs in this campaign with status ENCODED, and
         # run the specified action on each run's dir
         def inits():
+            ids = list(range(1, self.campaign_db.get_num_runs(status=Status.NEW) + 1))
             for run_id, run_data in self.campaign_db.runs(status=Status.NEW, app_id=self._active_app['id']):
-                init = {}
-                init['campaign'] = self
-                init['run_id'] = run_id
-                init['run_info'] = run_data
-                yield init
+                ids.remove(run_id)
+                previous = {}
+                previous['campaign'] = self
+                previous['run_id'] = run_id
+                previous['run_info'] = run_data
+                yield previous
+            assert(len(ids) == 0)
         return ActionPool(self, action, inits=inits(), max_workers=max_workers).start()
         
 

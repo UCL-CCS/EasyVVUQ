@@ -1,6 +1,8 @@
 import time
 import dill
-from concurrent.futures import ThreadPoolExecutor, as_completed
+from concurrent.futures import ProcessPoolExecutor, as_completed
+from easyvvuq.constants import Status
+import copy
 
 __copyright__ = """
 
@@ -44,6 +46,7 @@ class ActionPool:
         self.inits = inits
         self.max_workers = max_workers
         self.futures = []
+        self.results = []
 
     def start(self):
         """Start the actions.
@@ -52,11 +55,24 @@ class ActionPool:
         -------
         A list of Python futures represending action execution.
         """
-        self.pool = ThreadPoolExecutor(max_workers=self.max_workers)
-        for init in self.inits:
-            future = self.pool.submit(self.actions.start, init)
+        self.pool = ProcessPoolExecutor(max_workers=self.max_workers)
+        for previous in self.inits:
+            previous = copy.copy(previous)
+            future = self.pool.submit(self.actions.start, previous)
             self.futures.append(future)
         return self
+
+    def start_seq(self):
+        for previous in self.inits:
+            previous = copy.copy(previous)
+            result = self.actions.start(previous)
+            self.results.append(future)
+        return self
+
+    def collate_seq(self):
+        for result in self.results:
+            self.campaign.campaign_db.store_result(result.previous['run_id'], result.previous['result'])
+        self.campaign.campaign_db.session.commit()
 
     def progress(self):
         """Some basic stats about the action statuses status.
@@ -84,10 +100,11 @@ class ActionPool:
     def collate(self):
         """A command that will block untill all futures in the pool have finished.
         """
-        counter = 0
+        ids = []
         for future in as_completed(self.futures):
-            counter += 1
             actions = future.result()
-            actions.finalise()
-        assert(counter == len(self.futures))
+            assert(actions.previous['run_id'] not in ids)
+            ids.append(actions.previous['run_id'])
+            self.campaign.campaign_db.store_result(actions.previous['run_id'], actions.previous['result'])
+        assert(len(ids) == 0)
         self.campaign.campaign_db.session.commit()
