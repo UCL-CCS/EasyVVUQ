@@ -49,7 +49,7 @@ class ActionPool:
         self.futures = []
         self.results = []
 
-    def start(self, sequential=False):
+    def start(self):
         """Start the actions.
 
         Returns
@@ -61,7 +61,7 @@ class ActionPool:
             previous = copy.copy(previous)
             if self.sequential:
                 result = self.actions.start(previous)
-                self.results.append(result)
+                self.results.append(result.previous)
             else:
                 future = self.pool.submit(self.actions.start, previous)
                 self.futures.append(future)
@@ -95,9 +95,10 @@ class ActionPool:
         """
         if self.sequential:
             for result in self.results:
-                self.campaign.campaign_db.store_result(result.previous['run_id'], result.previous['result'])
+                self.campaign.campaign_db.store_result(result['run_id'], result['result'])
         else:
             for future in as_completed(self.futures):
                 actions = future.result()
-                self.campaign.campaign_db.store_result(actions.previous['run_id'], actions.previous['result'])
+                self.campaign.campaign_db.store_result(
+                    actions.previous['run_id'], actions.previous['result'])
         self.campaign.campaign_db.session.commit()
