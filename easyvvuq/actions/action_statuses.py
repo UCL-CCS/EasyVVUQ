@@ -106,5 +106,4 @@ class ActionPool:
             assert(actions.previous['run_id'] not in ids)
             ids.append(actions.previous['run_id'])
             self.campaign.campaign_db.store_result(actions.previous['run_id'], actions.previous['result'])
-        assert(len(ids) == 0)
         self.campaign.campaign_db.session.commit()
