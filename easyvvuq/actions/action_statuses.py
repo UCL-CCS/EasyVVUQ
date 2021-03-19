@@ -40,15 +40,16 @@ class ActionPool:
 
     """
 
-    def __init__(self, campaign, actions, inits, max_workers=8):
+    def __init__(self, campaign, actions, inits, max_workers=8, sequential=False):
         self.campaign = campaign
         self.actions = actions
         self.inits = inits
         self.max_workers = max_workers
+        self.sequential = sequential
         self.futures = []
         self.results = []
 
-    def start(self):
+    def start(self, sequential=False):
         """Start the actions.
 
         Returns
@@ -58,8 +59,12 @@ class ActionPool:
         self.pool = ProcessPoolExecutor(max_workers=self.max_workers)
         for previous in self.inits:
             previous = copy.copy(previous)
-            future = self.pool.submit(self.actions.start, previous)
-            self.futures.append(future)
+            if sequential:
+                result = self.actions.start(previous)
+                self.results.append(result)
+            else:
+                future = self.pool.submit(self.actions.start, previous)
+                self.futures.append(future)
         return self
 
     def start_seq(self):
@@ -100,10 +105,11 @@ class ActionPool:
     def collate(self):
         """A command that will block untill all futures in the pool have finished.
         """
-        ids = []
-        for future in as_completed(self.futures):
-            actions = future.result()
-            assert(actions.previous['run_id'] not in ids)
-            ids.append(actions.previous['run_id'])
-            self.campaign.campaign_db.store_result(actions.previous['run_id'], actions.previous['result'])
+        if sequential:
+            for result in self.results:
+                self.campaign.campaign_db.store_result(result.previous['run_id'], result.previous['result'])
+        else:
+            for future in as_completed(self.futures):
+                actions = future.result()
+                self.campaign.campaign_db.store_result(actions.previous['run_id'], actions.previous['result'])
         self.campaign.campaign_db.session.commit()
