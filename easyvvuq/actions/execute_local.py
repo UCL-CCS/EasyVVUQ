@@ -106,12 +106,15 @@ class CleanUp():
 
 class ExecutePython():
     def __init__(self, function):
-        self.function = function
+        self.function = dill.dumps(function)
         self.params = None
         self.result = None
 
     def start(self, previous=None):
-        self.result = self.function(self.params)
+        function = dill.loads(self.function)
+        self.result = function(previous['run_info']['params'])
+        previous['result'] = self.result
+        self.previous = previous
         return self
 
     def finished(self):

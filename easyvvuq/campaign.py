@@ -641,18 +641,15 @@ class Campaign:
         # Loop through all runs in this campaign with status ENCODED, and
         # run the specified action on each run's dir
         def inits():
-            ids = list(range(1, self.campaign_db.get_num_runs(status=Status.NEW) + 1))
             for run_id, run_data in self.campaign_db.runs(status=Status.NEW, app_id=self._active_app['id']):
-                ids.remove(run_id)
                 previous = {}
                 previous['run_id'] = run_id
                 previous['run_info'] = run_data
                 yield previous
-            assert(len(ids) == 0)
         return ActionPool(self, action, inits=inits(), max_workers=max_workers).start()
         
 
-    def iterate(self, action, *args, max_workers=None, nsamples=0, mark_invalid=False):
+    def iterate(self, max_workers=None, nsamples=0, mark_invalid=False):
         """This is the equivalent of sample_and_apply for methods that rely on the output of the
         previous sampling stage (primarily MCMC).
 
@@ -676,7 +673,7 @@ class Campaign:
         """
         while True:
             self.draw_samples(nsamples, mark_invalid=mark_invalid)
-            action_pool = self.apply_for_each_sample(action, *args, max_workers=max_workers)
+            action_pool = self.apply_for_each_sample(self._active_app_actions, max_workers=max_workers)
             yield action_pool.start()
             result = self.get_collation_result(last_iteration=True)
             invalid = self.get_invalid_runs(last_iteration=True)
