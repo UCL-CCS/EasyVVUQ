@@ -601,7 +601,7 @@ class Campaign:
             raise RuntimeError("specified directory does not exist: {}".format(campaign_dir))
         self.campaign_db.relocate(campaign_dir, self.campaign_name)
 
-    def execute(self, max_workers=None, nsamples=0, mark_invalid=False):
+    def execute(self, max_workers=None, nsamples=0, mark_invalid=False, sequential=False):
         """This will draw samples and execute the action on those samples.
         
         Parameters
@@ -616,10 +616,11 @@ class Campaign:
             Mark runs that go outside the specified input parameter range as INVALID.
         """
         self.draw_samples(nsamples, mark_invalid=mark_invalid)
-        action_pool = self.apply_for_each_sample(self._active_app_actions, max_workers=max_workers)
+        action_pool = self.apply_for_each_sample(
+            self._active_app_actions, max_workers=max_workers, sequential=sequential)
         return action_pool.start()
 
-    def apply_for_each_sample(self, action, max_workers=None):
+    def apply_for_each_sample(self, action, max_workers=None, sequential=False):
         """
         For each run in this Campaign's run list, apply the specified action
         (an object of type Action)
@@ -646,10 +647,10 @@ class Campaign:
                 previous['run_id'] = run_id
                 previous['run_info'] = run_data
                 yield previous
-        return ActionPool(self, action, inits=inits(), max_workers=max_workers).start()
+        return ActionPool(self, action, inits=inits(), max_workers=max_workers, sequential=sequential).start()
         
 
-    def iterate(self, max_workers=None, nsamples=0, mark_invalid=False):
+    def iterate(self, max_workers=None, nsamples=0, mark_invalid=False, sequential=False):
         """This is the equivalent of sample_and_apply for methods that rely on the output of the
         previous sampling stage (primarily MCMC).
 
@@ -673,7 +674,8 @@ class Campaign:
         """
         while True:
             self.draw_samples(nsamples, mark_invalid=mark_invalid)
-            action_pool = self.apply_for_each_sample(self._active_app_actions, max_workers=max_workers)
+            action_pool = self.apply_for_each_sample(
+                self._active_app_actions, max_workers=max_workers, sequential=sequential)
             yield action_pool.start()
             result = self.get_collation_result(last_iteration=True)
             invalid = self.get_invalid_runs(last_iteration=True)

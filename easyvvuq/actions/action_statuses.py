@@ -59,25 +59,13 @@ class ActionPool:
         self.pool = ProcessPoolExecutor(max_workers=self.max_workers)
         for previous in self.inits:
             previous = copy.copy(previous)
-            if sequential:
+            if self.sequential:
                 result = self.actions.start(previous)
                 self.results.append(result)
             else:
                 future = self.pool.submit(self.actions.start, previous)
                 self.futures.append(future)
         return self
-
-    def start_seq(self):
-        for previous in self.inits:
-            previous = copy.copy(previous)
-            result = self.actions.start(previous)
-            self.results.append(result.previous)
-        return self
-
-    def collate_seq(self):
-        for result in self.results:
-            self.campaign.campaign_db.store_result(result['run_id'], result['result'])
-        self.campaign.campaign_db.session.commit()
 
     def progress(self):
         """Some basic stats about the action statuses status.
@@ -105,7 +93,7 @@ class ActionPool:
     def collate(self):
         """A command that will block untill all futures in the pool have finished.
         """
-        if sequential:
+        if self.sequential:
             for result in self.results:
                 self.campaign.campaign_db.store_result(result.previous['run_id'], result.previous['result'])
         else:
