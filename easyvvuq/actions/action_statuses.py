@@ -95,10 +95,10 @@ class ActionPool:
         """
         if self.sequential:
             for result in self.results:
-                self.campaign.campaign_db.store_result(result['run_id'], result['result'])
+                self.campaign.campaign_db.store_result(result['run_id'], result)
         else:
             for future in as_completed(self.futures):
                 actions = future.result()
                 self.campaign.campaign_db.store_result(
-                    actions.previous['run_id'], actions.previous['result'])
+                    actions.previous['run_id'], actions.previous)
         self.campaign.campaign_db.session.commit()

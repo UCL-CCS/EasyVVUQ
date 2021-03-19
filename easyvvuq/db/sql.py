@@ -91,6 +91,7 @@ class RunTable(Base):
     status = Column(Integer)
     run_dir = Column(String)
     result = Column(String, default="{}")
+    execution_info = Column(String, default="{}")
     campaign = Column(Integer, ForeignKey('campaign_info.id'))
     sampler = Column(Integer, ForeignKey('sampler.id'))
     iteration = Column(Integer, default=0)
@@ -814,9 +815,13 @@ class CampaignDB(BaseCampaignDB):
             if isinstance(obj, np.int64):
                 return int(obj)
             raise TypeError('Unknown type:', type(obj))
+        result_ = result['result']
+        result.pop('result')
+        result.pop('run_info')
         self.session.query(RunTable).\
             filter(RunTable.id == run_id).\
-            update({'result': json.dumps(result, default=convert_nonserializable),
+            update({'result': json.dumps(result_, default=convert_nonserializable),
+                    'execution_info': json.dumps(result, default=convert_nonserializable),
                     'status': constants.Status.COLLATED})
         if self.commit_counter % COMMIT_RATE == 0:
             self.session.commit()

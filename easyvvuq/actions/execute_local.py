@@ -20,16 +20,21 @@ class CreateRunDirectory():
 
     def start(self, previous=None):
         run_id = previous['run_id']
-        level1_a, level1_b = int(run_id / 100 ** 4) * 100 ** 4, int(run_id / 100 ** 4 + 1) * 100 ** 4
-        level2_a, level2_b = int(run_id / 100 ** 3) * 100 ** 3, int(run_id / 100 ** 3 + 1) * 100 ** 3
-        level3_a, level3_b = int(run_id / 100 ** 2) * 100 ** 2, int(run_id / 100 ** 2 + 1) * 100 ** 2
-        level4_a, level4_b = int(run_id / 100 ** 1) * 100 ** 1, int(run_id / 100 ** 1 + 1) * 100 ** 1
+        level1_a, level1_b = (int(run_id / 100 ** 4) * 100 ** 4,
+                              int(run_id / 100 ** 4 + 1) * 100 ** 4)
+        level2_a, level2_b = (int(run_id / 100 ** 3) * 100 ** 3,
+                              int(run_id / 100 ** 3 + 1) * 100 ** 3)
+        level3_a, level3_b = (int(run_id / 100 ** 2) * 100 ** 2,
+                              int(run_id / 100 ** 2 + 1) * 100 ** 2)
+        level4_a, level4_b = (int(run_id / 100 ** 1) * 100 ** 1,
+                              int(run_id / 100 ** 1 + 1) * 100 ** 1)
         level1_dir = "runs_{}-{}/".format(level1_a, level1_b)
         level2_dir = "runs_{}-{}/".format(level2_a, level2_b)
         level3_dir = "runs_{}-{}/".format(level3_a, level3_b)
         level4_dir = "runs_{}-{}/".format(level4_a, level4_b)
         level5_dir = "runs_{}".format(int(run_id))
-        path = os.path.join(self.root, level1_dir, level2_dir, level3_dir, level4_dir, level5_dir)
+        path = os.path.join(self.root, previous['campaign_dir'], 'runs',
+                            level1_dir, level2_dir, level3_dir, level4_dir, level5_dir)
         Path(path).mkdir(parents=True, exist_ok=True)
         previous['rundir'] = path
         self.previous = previous

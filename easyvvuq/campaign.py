@@ -645,6 +645,7 @@ class Campaign:
             for run_id, run_data in self.campaign_db.runs(status=Status.NEW, app_id=self._active_app['id']):
                 previous = {}
                 previous['run_id'] = run_id
+                previous['campaign_dir'] = self._campaign_dir
                 previous['run_info'] = run_data
                 yield previous
         return ActionPool(self, action, inits=inits(), max_workers=max_workers, sequential=sequential).start()
