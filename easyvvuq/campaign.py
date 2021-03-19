@@ -616,7 +616,7 @@ class Campaign:
             Mark runs that go outside the specified input parameter range as INVALID.
         """
         self.draw_samples(nsamples, mark_invalid=mark_invalid)
-        action_pool = self.apply_for_each_sample(self._active_app_actions, max_workers=max_workers, sequential=sequential)
+        action_pool = self.apply_for_each_sample(self._active_app_actions, max_workers=max_workers)
         return action_pool.start()
 
     def apply_for_each_sample(self, action, max_workers=None):
