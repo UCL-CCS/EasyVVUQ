@@ -37,7 +37,7 @@ class CreateRunDirectory():
                             level1_dir, level2_dir, level3_dir, level4_dir, level5_dir)
         Path(path).mkdir(parents=True, exist_ok=True)
         previous['rundir'] = path
-        self.previous = previous
+        self.result = previous
         return self
 
     def finished(self):
@@ -56,7 +56,7 @@ class Encode():
     def start(self, previous=None):        
         self.encoder.encode(previous['run_info'], params=previous['run_info']['params'],
                             target_dir=previous['rundir'])
-        self.previous = previous
+        self.result = previous
         return self
 
     def finished(self):
@@ -77,7 +77,7 @@ class Decode():
         run_info['run_dir'] = previous['rundir']
         result = self.decoder.parse_sim_output(run_info)
         previous['result'] = result
-        self.previous = previous
+        self.result = previous
         return self
 
     def finished(self):
@@ -97,7 +97,7 @@ class CleanUp():
         if not ('rundir' in previous.keys()):
             raise RuntimeError('must be used with actions that create a directory structure')
         shutil.rmtree(previous['rundir'])
-        self.previous = previous
+        self.result = previous
         return self
                 
     def finished(self):
@@ -117,13 +117,13 @@ class ExecutePython():
 
     def start(self, previous=None):
         function = dill.loads(self.function)
-        self.result = function(previous['run_info']['params'])
+        self.eval_result = function(previous['run_info']['params'])
         previous['result'] = self.result
-        self.previous = previous
+        self.result = previous
         return self
 
     def finished(self):
-        if self.result is None:
+        if self.eval_result is None:
             return False
         else:
             return True
@@ -147,7 +147,7 @@ class ExecuteLocal():
     def start(self, previous=None):
         target_dir = previous['rundir']
         self.ret = subprocess.run(self.full_cmd, cwd=target_dir)
-        self.previous = previous
+        self.result = previous
         return self
 
     def finished(self):
@@ -176,9 +176,9 @@ class Actions():
         previous = copy.copy(previous)
         run_id = previous['run_id']
         for action in self.actions:
-            previous = action.start(previous).previous
-        self.previous = previous
-        assert(self.previous['run_id'] == run_id)
+            previous = action.start(previous).result
+        self.result = previous
+        assert(self.result['run_id'] == run_id)
         return self
 
     def finished(self):

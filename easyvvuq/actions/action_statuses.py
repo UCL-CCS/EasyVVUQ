@@ -61,7 +61,7 @@ class ActionPool:
             previous = copy.copy(previous)
             if self.sequential:
                 result = self.actions.start(previous)
-                self.results.append(result.previous)
+                self.results.append(result.result)
             else:
                 future = self.pool.submit(self.actions.start, previous)
                 self.futures.append(future)
@@ -100,5 +100,5 @@ class ActionPool:
             for future in as_completed(self.futures):
                 actions = future.result()
                 self.campaign.campaign_db.store_result(
-                    actions.previous['run_id'], actions.previous)
+                    actions.result['run_id'], actions.result)
         self.campaign.campaign_db.session.commit()
