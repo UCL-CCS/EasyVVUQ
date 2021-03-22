@@ -113,12 +113,12 @@ class ExecutePython():
     def __init__(self, function):
         self.function = dill.dumps(function)
         self.params = None
-        self.result = None
+        self.eval_result = None
 
     def start(self, previous=None):
         function = dill.loads(self.function)
         self.eval_result = function(previous['run_info']['params'])
-        previous['result'] = self.result
+        previous['result'] = self.eval_result
         self.result = previous
         return self
 
