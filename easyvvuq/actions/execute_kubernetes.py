@@ -24,6 +24,7 @@ import os
 import logging
 import uuid
 import copy
+import time
 from kubernetes.client.api import core_v1_api
 from kubernetes import config
 from kubernetes.client import V1ConfigMap, V1ObjectMeta
@@ -54,7 +55,7 @@ __license__ = "LGPL"
 logger = logging.getLogger(__name__)
 
 
-class ActionStatusKubernetes():
+class ExecuteKubernetes():
     """Provides a way to track the status of an on-going Kubernetes
     action.
 
@@ -71,50 +72,53 @@ class ActionStatusKubernetes():
     outfile : str
         a filename to write the output of the simulation
     """
-
-    #def __init__(self, api, body, config_names, namespace, outfile):
     def __init__(self, image, command, input_file_names=None, output_file_name=None):
         pod_name = str(uuid.uuid4())
         container_name = str(uuid.uuid4())
-        self.body = {'apiVersion': 'v1', 'kind': 'Pod', 'metadata': {'name': pod_name},
-                    'spec': {
-                        'restartPolicy': 'Never',
-                        'containers': [
-                            {
-                                'name': container_name,
-                                'image': image,
-                                'command': ['/bin/sh', '-c'],
-                                'args': [command]
-                            }
-                        ]
-        }
+        self.body = {
+            'apiVersion': 'v1', 'kind': 'Pod', 'metadata': {'name': pod_name},
+            'spec': {
+                'restartPolicy': 'Never',
+                'containers': [
+                    {
+                        'name': container_name,
+                        'image': image,
+                        'command': ['/bin/sh', '-c'],
+                        'args': [command]
+                    }
+                ]
+            }
         }
         self.input_file_names = input_file_names
         self.output_file_name = output_file_name
         config.load_kube_config()
         self.core_v1 = core_v1_api.CoreV1Api()
         self.pod_name = self.body['metadata']['name']
-        self.config_names = config_names
-        self.namespace = namespace
-        self.outfile = outfile
+        self.namespace = "default"
         self._succeeded = False
         self._started = False
 
     def start(self, previous=None):
         """Will create the Kubernetes pod and hence start the action.
         """
+        target_dir = previous['rundir']
         if self.input_file_names is None:
             self.input_file_names = [self.campaign._active_app_encoder.target_filename]
         if self.output_file_name is None:
             self.output_file_name = self.campaign._active_app_decoder.target_filename
         file_names = [(os.path.join(target_dir, input_file_name), str(uuid.uuid4()))
                       for input_file_name in self.input_file_names]
-        dep = copy.deepcopy(self.dep)
+        self.config_names = file_names
+        dep = copy.deepcopy(self.body)
         dep['metadata']['name'] = str(uuid.uuid4())
         self.create_config_maps(self.config_names)
         self.create_volumes(self.config_names, self.body)
         self.core_v1.create_namespaced_pod(body=self.body, namespace="default")
         self._started = True
+        self.result = previous
+        while not self.finished():
+            time.wait(5)
+        return self
 
     def finished(self):
         """Will return True if the pod has finished, otherwise will return False.
