@@ -21,3 +21,10 @@ def test_action_pool_start(campaign):
     assert(len(action_pool.futures) == 3)
     action_pool.collate()
     assert(len(action_pool.campaign.get_collation_result()) == 3)
+    assert(action_pool.progress() == {'ready': 0, 'active': 0, 'finished': 3, 'failed': 0})
+
+def test_action_pool_start_sequential(campaign):
+    action_pool = campaign.execute(nsamples=3, sequential=True)
+    assert(len(action_pool.results) == 3)
+    action_pool.collate()
+    assert(len(action_pool.campaign.get_collation_result()) == 3)
