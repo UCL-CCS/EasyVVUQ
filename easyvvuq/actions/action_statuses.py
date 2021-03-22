@@ -40,7 +40,7 @@ class ActionPool:
 
     """
 
-    def __init__(self, campaign, actions, inits, max_workers=8, sequential=False):
+    def __init__(self, campaign, actions, inits, max_workers=None, sequential=False):
         self.campaign = campaign
         self.actions = actions
         self.inits = inits
