@@ -98,7 +98,7 @@ class ExecuteKubernetes():
         self._succeeded = False
         self._started = False
 
-    def start(self, previous=None):
+    def __call__(self, previous=None):
         """Will create the Kubernetes pod and hence start the action.
         """
         target_dir = previous['rundir']
@@ -118,7 +118,7 @@ class ExecuteKubernetes():
         self.result = previous
         while not self.finished():
             time.wait(5)
-        return self.result
+        return previous
 
     def finished(self):
         """Will return True if the pod has finished, otherwise will return False.

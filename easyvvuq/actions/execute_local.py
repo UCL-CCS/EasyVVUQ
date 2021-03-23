@@ -18,7 +18,7 @@ class CreateRunDirectory():
     def __init__(self, root):
         self.root = root
 
-    def start(self, previous=None):
+    def __call__(self, previous=None):
         run_id = previous['run_id']
         level1_a, level1_b = (int(run_id / 100 ** 4) * 100 ** 4,
                               int(run_id / 100 ** 4 + 1) * 100 ** 4)
@@ -53,7 +53,7 @@ class Encode():
     def __init__(self, encoder):
         self.encoder = encoder
 
-    def start(self, previous=None):        
+    def __call__(self, previous=None):        
         self.encoder.encode(previous['run_info'], params=previous['run_info']['params'],
                             target_dir=previous['rundir'])
         return previous
@@ -71,7 +71,7 @@ class Decode():
     def __init__(self, decoder):
         self.decoder = decoder
 
-    def start(self, previous=None):
+    def __call__(self, previous=None):
         run_info = copy.copy(previous['run_info'])
         run_info['run_dir'] = previous['rundir']
         result = self.decoder.parse_sim_output(run_info)
@@ -91,7 +91,7 @@ class CleanUp():
     def __init__(self):
         pass
 
-    def start(self, previous=None):
+    def __call__(self, previous=None):
         if not ('rundir' in previous.keys()):
             raise RuntimeError('must be used with actions that create a directory structure')
         shutil.rmtree(previous['rundir'])
@@ -112,7 +112,7 @@ class ExecutePython():
         self.params = None
         self.eval_result = None
 
-    def start(self, previous=None):
+    def __call__(self, previous=None):
         function = dill.loads(self.function)
         self.eval_result = function(previous['run_info']['params'])
         previous['result'] = self.eval_result
@@ -140,7 +140,7 @@ class ExecuteLocal():
         self.ret = None
         self._started = False
 
-    def start(self, previous=None):
+    def __call__(self, previous=None):
         target_dir = previous['rundir']
         self.ret = subprocess.run(self.full_cmd, cwd=target_dir)
         return previous
@@ -167,11 +167,11 @@ class Actions():
     def __init__(self, *args):
         self.actions = list(args)
 
-    def start(self, previous=None):
+    def __call__(self, previous=None):
         previous = copy.copy(previous)
         run_id = previous['run_id']
         for action in self.actions:
-            previous = action.start(previous)
+            previous = action(previous)
         self.result = previous
         assert(self.result['run_id'] == run_id)
         return previous

@@ -1,6 +1,6 @@
 import time
 import dill
-from concurrent.futures import ProcessPoolExecutor, as_completed
+from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor, as_completed
 from easyvvuq.constants import Status
 import copy
 
@@ -49,21 +49,21 @@ class ActionPool:
         self.futures = []
         self.results = []
 
-    def start(self):
+    def start(self, executor=ThreadPoolExecutor):
         """Start the actions.
 
         Returns
         -------
         A list of Python futures represending action execution.
         """
-        self.pool = ProcessPoolExecutor(max_workers=self.max_workers)
+        self.pool = executor(max_workers=self.max_workers)
         for previous in self.inits:
             previous = copy.copy(previous)
             if self.sequential:
-                result = self.actions.start(previous)
+                result = self.actions(previous)
                 self.results.append(result)
             else:
-                future = self.pool.submit(self.actions.start, previous)
+                future = self.pool.submit(self.actions, previous)
                 self.futures.append(future)
         return self
 
