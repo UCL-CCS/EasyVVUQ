@@ -99,7 +99,7 @@ class ExecuteKubernetes():
         self._succeeded = False
         self._started = False
 
-    def __call__(self, previous=None):
+    def start(self, previous=None):
         """Will create the Kubernetes pod and hence start the action.
         """
         target_dir = previous['rundir']

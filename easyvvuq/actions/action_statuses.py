@@ -60,10 +60,10 @@ class ActionPool:
         for previous in self.inits:
             previous = copy.copy(previous)
             if self.sequential:
-                result = self.actions(previous)
+                result = self.actions.start(previous)
                 self.results.append(result)
             else:
-                future = self.pool.submit(self.actions, previous)
+                future = self.pool.submit(self.actions.start, previous)
                 self.futures.append(future)
         return self
 
