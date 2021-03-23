@@ -1,4 +1,5 @@
 import easyvvuq as uq
+from easyvvuq.actions import CreateRunDirectory, Encode, ExecuteLocal, Decode, Actions
 import chaospy as cp
 import os
 import logging
@@ -51,15 +52,15 @@ def campaign(tmpdir):
     }
     encoder = uq.encoders.GenericEncoder(
         template_fname=f'{TEST_PATH}/cannonsim/test_input/cannonsim.template',
-        delimiter='#',
         target_filename='in.cannon')
     decoder = uq.decoders.SimpleCSV(
         target_filename='output.csv', output_columns=[
             'Dist', 'lastvx', 'lastvy'])
+    execute = ExecuteLocal(f"{TEST_PATH}/cannonsim/bin/cannonsim in.cannon output.csv")
     campaign = uq.Campaign(name='test', work_dir=tmpdir)
-    campaign.add_app(name='test', params=params, encoder=encoder, decoder=decoder)
+    actions = Actions(CreateRunDirectory('/tmp'), Encode(encoder), execute, Decode(decoder))
+    campaign.add_app(name='test', params=params, actions=actions)
     campaign.set_app('test')
-    action = uq.actions.ExecuteLocal(f"{TEST_PATH}/cannonsim/bin/cannonsim in.cannon output.csv")
     stats = uq.analysis.BasicStats(qoi_cols=['Dist', 'lastvx', 'lastvy'])
     # Make a random sampler
     vary = {
@@ -70,16 +71,8 @@ def campaign(tmpdir):
     }
     sampler = uq.sampling.RandomSampler(vary=vary)
     campaign.set_sampler(sampler)
-    campaign.draw_samples(num_samples=100)
-    campaign.populate_runs_dir()
-    campaign.apply_for_each_run_dir(action)
+    campaign.execute(nsamples=100, sequential=True).collate()
     return campaign
-
-
-def test_no_input_state(tmp_path):
-    with pytest.raises(RuntimeError):
-        uq.Campaign(name='test', work_dir=tmp_path, relocate={})
-
 
 def test_invalid_db_type(tmp_path):
     with pytest.raises(RuntimeError):
@@ -143,16 +136,16 @@ def test_get_active_app(campaign):
     assert campaign.get_active_app() == campaign._active_app
 
 
-def test_relocate_campaign(campaign, tmpdir):
-    runs = campaign.campaign_db.runs()
-    runs_dir = campaign.campaign_db.runs_dir()
-    for run in runs:
-        assert(run[1]['run_dir'].startswith(runs_dir))
-    with pytest.raises(RuntimeError):
-        campaign.relocate('/test/test')
-    campaign.relocate(tmpdir)
-    for run in campaign.campaign_db.runs():
-        assert(run[1]['run_dir'] == os.path.join(tmpdir, 'runs', run[0]))
+# def test_relocate_campaign(campaign, tmpdir):
+#     runs = campaign.campaign_db.runs()
+#     runs_dir = campaign.campaign_db.runs_dir()
+#     for run in runs:
+#         assert(run[1]['run_dir'].startswith(runs_dir))
+#     with pytest.raises(RuntimeError):
+#         campaign.relocate('/test/test')
+#     campaign.relocate(tmpdir)
+#     for run in campaign.campaign_db.runs():
+#         assert(run[1]['run_dir'] == os.path.join(tmpdir, 'runs', run[0]))
 
 
 # def test_relocate_full(tmp_path):
