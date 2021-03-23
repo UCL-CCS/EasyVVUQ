@@ -56,6 +56,7 @@ class Encode():
     def __call__(self, previous=None):        
         self.encoder.encode(previous['run_info'], params=previous['run_info']['params'],
                             target_dir=previous['rundir'])
+        previous['encoder_filename'] = self.encoder.target_filename
         return previous
 
     def finished(self):
@@ -76,6 +77,7 @@ class Decode():
         run_info['run_dir'] = previous['rundir']
         result = self.decoder.parse_sim_output(run_info)
         previous['result'] = result
+        previous['decoder_filename'] = self.decoder.target_filename
         return previous
 
     def finished(self):

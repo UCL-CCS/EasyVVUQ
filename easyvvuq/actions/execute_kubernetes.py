@@ -25,6 +25,7 @@ import logging
 import uuid
 import copy
 import time
+
 from kubernetes.client.api import core_v1_api
 from kubernetes import config
 from kubernetes.client import V1ConfigMap, V1ObjectMeta
@@ -103,21 +104,24 @@ class ExecuteKubernetes():
         """
         target_dir = previous['rundir']
         if self.input_file_names is None:
-            self.input_file_names = [self.campaign._active_app_encoder.target_filename]
+            self.input_file_names = [previous['encoder_filename']]
         if self.output_file_name is None:
-            self.output_file_name = self.campaign._active_app_decoder.target_filename
+            self.output_file_name = previous['decoder_filename']
         file_names = [(os.path.join(target_dir, input_file_name), str(uuid.uuid4()))
                       for input_file_name in self.input_file_names]
         self.config_names = file_names
         dep = copy.deepcopy(self.body)
         dep['metadata']['name'] = str(uuid.uuid4())
         self.create_config_maps(self.config_names)
-        self.create_volumes(self.config_names, self.body)
-        self.core_v1.create_namespaced_pod(body=self.body, namespace="default")
+        print('configmaps created')
+        self.create_volumes(self.config_names, dep)
+        print('configs and volumes created')
+        self.core_v1.create_namespaced_pod(body=dep, namespace="default")
         self._started = True
         self.result = previous
         while not self.finished():
             time.wait(5)
+        self.finalise()
         return previous
 
     def finished(self):
@@ -183,4 +187,5 @@ class ExecuteKubernetes():
                 data={os.path.basename(file_name): data},
                 metadata=metadata
             )
+            print(configmap)
             self.core_v1.create_namespaced_config_map(namespace='default', body=configmap)
