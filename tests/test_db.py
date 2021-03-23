@@ -5,12 +5,14 @@ from easyvvuq.constants import default_campaign_prefix, Status
 from easyvvuq.db.sql import CampaignDB
 from easyvvuq.data_structs import CampaignInfo, RunInfo, AppInfo
 from easyvvuq.constants import Status
+from easyvvuq.actions import Actions, ExecutePython
 import pandas as pd
 import numpy as np
 
 
 @pytest.fixture
 def app_info():
+    actions = Actions(ExecutePython(lambda x: {}))
     app_info = AppInfo('test', uq.ParamsSpecification({
         "temp_init": {
             "type": "float",
@@ -30,14 +32,15 @@ def app_info():
         "out_file": {
             "type": "string",
             "default": "output.csv"}}),
-        None,
-        uq.encoders.GenericEncoder(
-            template_fname='tests/cooling/cooling.template',
-            delimiter='$',
-            target_filename='cooling_in.json'),
-        uq.decoders.SimpleCSV(
-            target_filename='output.csv',
-            output_columns=["te"]))
+        actions)
+#        None,
+#        uq.encoders.GenericEncoder(
+#            template_fname='tests/cooling/cooling.template',
+#            delimiter='$',
+#            target_filename='cooling_in.json'),
+#        uq.decoders.SimpleCSV(
+#            target_filename='output.csv',
+#            output_columns=["te"]))
 
     return app_info
 
