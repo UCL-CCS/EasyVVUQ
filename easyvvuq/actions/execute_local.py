@@ -38,7 +38,7 @@ class CreateRunDirectory():
         Path(path).mkdir(parents=True, exist_ok=True)
         previous['rundir'] = path
         self.result = previous
-        return self
+        return self.result
 
     def finished(self):
         return True
@@ -56,8 +56,7 @@ class Encode():
     def start(self, previous=None):        
         self.encoder.encode(previous['run_info'], params=previous['run_info']['params'],
                             target_dir=previous['rundir'])
-        self.result = previous
-        return self
+        return previous
 
     def finished(self):
         return True
@@ -77,8 +76,7 @@ class Decode():
         run_info['run_dir'] = previous['rundir']
         result = self.decoder.parse_sim_output(run_info)
         previous['result'] = result
-        self.result = previous
-        return self
+        return previous
 
     def finished(self):
         return True
@@ -97,8 +95,7 @@ class CleanUp():
         if not ('rundir' in previous.keys()):
             raise RuntimeError('must be used with actions that create a directory structure')
         shutil.rmtree(previous['rundir'])
-        self.result = previous
-        return self
+        return previous
                 
     def finished(self):
         return True
@@ -119,8 +116,7 @@ class ExecutePython():
         function = dill.loads(self.function)
         self.eval_result = function(previous['run_info']['params'])
         previous['result'] = self.eval_result
-        self.result = previous
-        return self
+        return previous
 
     def finished(self):
         if self.eval_result is None:
@@ -147,8 +143,7 @@ class ExecuteLocal():
     def start(self, previous=None):
         target_dir = previous['rundir']
         self.ret = subprocess.run(self.full_cmd, cwd=target_dir)
-        self.result = previous
-        return self
+        return previous
 
     def finished(self):
         return True
@@ -179,7 +174,7 @@ class Actions():
             previous = action.start(previous).result
         self.result = previous
         assert(self.result['run_id'] == run_id)
-        return self
+        return previous
 
     def finished(self):
         return all([action.finished() in self.actions])

@@ -821,7 +821,6 @@ class CampaignDB(BaseCampaignDB):
         self.session.query(RunTable).\
             filter(RunTable.id == run_id).\
             update({'result': json.dumps(result_, default=convert_nonserializable),
-                    'execution_info': json.dumps(result, default=convert_nonserializable),
                     'status': constants.Status.COLLATED})
         if self.commit_counter % COMMIT_RATE == 0:
             self.session.commit()

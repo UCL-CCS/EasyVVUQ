@@ -118,7 +118,7 @@ class ExecuteKubernetes():
         self.result = previous
         while not self.finished():
             time.wait(5)
-        return self
+        return self.result
 
     def finished(self):
         """Will return True if the pod has finished, otherwise will return False.
