@@ -170,6 +170,9 @@ class Actions():
         self.actions = list(args)
 
     def start(self, previous=None):
+        for action in self.actions:
+            if not hasattr(action, 'start'):
+                raise RuntimeError('action in the actions list does not provide a start method')
         previous = copy.copy(previous)
         run_id = previous['run_id']
         for action in self.actions:
