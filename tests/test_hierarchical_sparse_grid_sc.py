@@ -4,7 +4,7 @@ import numpy as np
 import chaospy as cp
 import pytest
 import logging
-
+from easyvvuq.actions import CreateRunDirectory, Encode, ExecuteLocal, Decode, Actions
 
 def exact_sobols_g_func(d=2, a=[0.0, 0.5, 3.0, 9.0, 99.0]):
     # for the Sobol g function, the exact (1st-order)
@@ -57,12 +57,13 @@ def sparse_campaign():
         target_filename='poly_in.json')
     decoder = uq.decoders.SimpleCSV(target_filename=output_filename,
                                     output_columns=output_columns)
+    execute = ExecuteLocal(os.path.abspath("tests/sc/sobol_model.py") + " poly_in.json")
+    actions = Actions(CreateRunDirectory('/tmp'), Encode(encoder), execute, Decode(decoder))
 
     # Add the SC app (automatically set as current app)
     campaign.add_app(name="sc",
                      params=params,
-                     encoder=encoder,
-                     decoder=decoder)
+                     actions=actions)
 
     # Create the sampler
     vary = {
@@ -78,17 +79,9 @@ def sparse_campaign():
     # Associate the sampler with the campaign
     campaign.set_sampler(sampler)
 
-    print('Number of samples:', sampler.n_samples)
+    logging.debug('Number of samples:', sampler.n_samples)
 
-    # Will draw all (of the finite set of samples)
-    campaign.draw_samples()
-    campaign.populate_runs_dir()
-
-    # Use this instead to run the samples using EasyVVUQ on the localhost
-    campaign.apply_for_each_run_dir(uq.actions.ExecuteLocal(
-        "tests/sc/sobol_model.py poly_in.json"))
-
-    campaign.collate()
+    campaign.execute().collate()
 
     # Post-processing analysis
     analysis = uq.analysis.SCAnalysis(sampler=sampler, qoi_cols=output_columns)
@@ -100,15 +93,8 @@ def sparse_campaign():
     for i in range(n_adaptations):
         # update the sparse grid to the next level
         sampler.next_level_sparse_grid()
+        campaign.execute().collate()
 
-        # draw the new samples
-        campaign.draw_samples()
-        campaign.populate_runs_dir()
-
-        campaign.apply_for_each_run_dir(uq.actions.ExecuteLocal(
-            "tests/sc/sobol_model.py poly_in.json"))
-
-        campaign.collate()
 
     campaign.apply_analysis(analysis)
     results = campaign.get_last_analysis()
