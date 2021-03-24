@@ -6,6 +6,7 @@ import logging
 import pandas as pd
 import numpy as np
 import ast
+from sqlalchemy.sql import case
 from sqlalchemy import create_engine, Column, Integer, String, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
@@ -422,15 +423,15 @@ class CampaignDB(BaseCampaignDB):
         selected.run_dir = run_dir
         self.session.commit()
 
-    def get_run_status(self, run_name, campaign=None, sampler=None):
+    def get_run_status(self, run_id, campaign=None, sampler=None):
         """
         Return the status (enum) for the run with name 'run_name' (and, optionally,
         filtering for campaign and sampler by id)
 
         Parameters
         ----------
-        run_name: str
-            Name of the run
+        run_id: int
+            id of the run
         campaign: int
             ID of the desired Campaign
         sampler: int
@@ -442,12 +443,11 @@ class CampaignDB(BaseCampaignDB):
             Status of the run.
         """
 
-        filter_options = {'run_name': run_name}
+        filter_options = {'id': run_id}
         if campaign:
             filter_options['campaign'] = campaign
         if sampler:
             filter_options['sampler'] = sampler
-
         selected = self.session.query(RunTable).filter_by(**filter_options)
 
         if selected.count() != 1:
@@ -457,29 +457,24 @@ class CampaignDB(BaseCampaignDB):
 
         return constants.Status(selected.status)
 
-    def set_run_statuses(self, run_name_list, status):
+    def set_run_statuses(self, run_id_list, status):
         """
-        Set the specified 'status' (enum) for all runs in the list run_name_list
+        Set the specified 'status' (enum) for all runs in the list run_id_list
 
         Parameters
         ----------
-        run_name_list: list of str
-            A list of run names run names (format is usually: prefix + int)
+        run_id_list: list of int
+            a list of run ids
         status: enum(Status)
             The new status all listed runs should now have
         Returns
         -------
 
         """
-        max_entries = 900
-
-        for i in range(0, len(run_name_list), max_entries):
-            selected = self.session.query(RunTable).filter(
-                RunTable.run_name.in_(set(run_name_list[i:i + max_entries]))).all()
-
-            for run in selected:
-                run.status = status
-            self.session.commit()
+        self.session.query(RunTable).filter(
+            RunTable.id.in_(run_id_list)).update(
+                {RunTable.status: status}, synchronize_session='fetch')
+        self.session.commit()
 
     def campaigns(self):
         """Get list of campaigns for which information is stored in the
@@ -840,37 +835,10 @@ class CampaignDB(BaseCampaignDB):
         except IndexError:
             raise RuntimeError("app with the name {} not found".format(app_name))
         commit_counter = 0
-        for run_name, result in results:
+        for run_id, result in results:
             try:
                 self.session.query(RunTable).\
-                    filter(RunTable.run_name == run_name, RunTable.app == app_id).\
-                    update({'result': json.dumps(result), 'status': constants.Status.COLLATED})
-                commit_counter += 1
-                if commit_counter % COMMIT_RATE == 0:
-                    self.session.commit()
-            except IndexError:
-                raise RuntimeError("no runs with name {} found".format(run_name))
-        self.session.commit()
-
-    def store_results_gen(self, app_name, results):
-        """A generator for storing the results from a given run in the database.
-
-        Parameters
-        ----------
-        run_name: str
-            name of the run
-        results: dict
-            dictionary with the results (from the decoder)
-        """
-        try:
-            app_id = self.session.query(AppTable).filter(AppTable.name == app_name).all()[0].id
-        except IndexError:
-            raise RuntimeError("app with the name {} not found".format(app_name))
-        commit_counter = 0
-        for run_name, result in results:
-            try:
-                self.session.query(RunTable).\
-                    filter(RunTable.run_name == run_name, RunTable.app == app_id).\
+                    filter(RunTable.id == run_id, RunTable.app == app_id).\
                     update({'result': json.dumps(result), 'status': constants.Status.COLLATED})
                 commit_counter += 1
                 if commit_counter % COMMIT_RATE == 0:
