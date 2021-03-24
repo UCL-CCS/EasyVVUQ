@@ -96,8 +96,8 @@ def adaptive_campaign():
         analysis.adapt_dimension('f', data_frame)
 
         campaign.apply_analysis(analysis)
-    print(analysis.l_norm)
-    print(sampler.admissible_idx)
+    logging.debug(analysis.l_norm)
+    logging.debug(sampler.admissible_idx)
 
     results = campaign.get_last_analysis()
 
