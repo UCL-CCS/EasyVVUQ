@@ -844,7 +844,7 @@ class CampaignDB(BaseCampaignDB):
                 if commit_counter % COMMIT_RATE == 0:
                     self.session.commit()
             except IndexError:
-                raise RuntimeError("no runs with name {} found".format(run_name))
+                raise RuntimeError("no runs with name {} found".format(run_id))
         self.session.commit()
 
     def get_results(self, app_name, sampler_id, status=constants.Status.COLLATED, iteration=-1):

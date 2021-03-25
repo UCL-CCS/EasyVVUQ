@@ -186,11 +186,11 @@ class Actions():
         return previous
 
     def finished(self):
-        return all([action.finished() in self.actions])
+        return all([action.finished() for action in self.actions])
 
     def finalise(self):
         for action in self.actions:
             action.finalise()
 
     def succeeded(self):
-        return all([action.succeeded() in self.actions])
+        return all([action.succeeded() for action in self.actions])
