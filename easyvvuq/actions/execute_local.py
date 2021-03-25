@@ -53,10 +53,14 @@ class Encode():
     def __init__(self, encoder):
         self.encoder = encoder
 
-    def start(self, previous=None):        
-        self.encoder.encode(previous['run_info'], params=previous['run_info']['params'],
-                            target_dir=previous['rundir'])
-        previous['encoder_filename'] = self.encoder.target_filename
+    def start(self, previous=None):
+        self.encoder.encode(
+            params=previous['run_info']['params'],
+            target_dir=previous['rundir'])
+        try:
+            previous['encoder_filename'] = self.encoder.target_filename
+        except AttributeError:
+            pass
         return previous
 
     def finished(self):

@@ -1,4 +1,5 @@
 import easyvvuq as uq
+from easyvvuq.actions import Actions, Encode, Decode, CreateRunDirectory
 import chaospy as cp
 import os
 import sys
@@ -105,12 +106,14 @@ def test_multiencoder(tmpdir):
     decoder = uq.decoders.SimpleCSV(
         target_filename='output.csv', output_columns=[
             'Dist', 'lastvx', 'lastvy'])
-
+    actions = Actions(CreateRunDirectory('/tmp'), Encode(multiencoder),
+                      uq.actions.ExecuteLocal(
+                          os.path.abspath("tests/cannonsim/bin/cannonsim dir5/dir6/in.cannon.2") + " output.csv"),
+                      Decode(decoder))
     # Add the cannonsim app
     my_campaign.add_app(name="cannonsim",
                         params=params,
-                        encoder=multiencoder,
-                        decoder=decoder)
+                        actions=actions)
 
     # Set the active app to be cannonsim (this is redundant when only one app
     # has been added)
@@ -131,16 +134,7 @@ def test_multiencoder(tmpdir):
     my_campaign.save_state(tmpdir + "test_multiencoder.json")
     reloaded_campaign = uq.Campaign(state_file=tmpdir + "test_multiencoder.json", work_dir=tmpdir)
 
-    # Draw all samples
-    my_campaign.draw_samples()
-
-    # Encode and execute.
-    my_campaign.populate_runs_dir()
-    my_campaign.apply_for_each_run_dir(
-        uq.actions.ExecuteLocal("tests/cannonsim/bin/cannonsim dir5/dir6/in.cannon.2 output.csv"))
-
-    # Collate all data into one pandas data frame
-    my_campaign.collate()
+    my_campaign.execute(sequential=True).collate()
 
     # Create a BasicStats analysis element and apply it to the campaign
     stats = uq.analysis.BasicStats(qoi_cols=['Dist', 'lastvx', 'lastvy'])
