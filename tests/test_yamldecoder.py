@@ -30,15 +30,6 @@ def test_yaml_nested():
     assert((data['leaf3'] == np.array([0.2, 0.3])).all().all())
 
 
-def test_get_restart_dict():
-    decoder = YAMLDecoder('nested.yml',
-                          [['root1', 'node1', 'leaf1'], ['root1', 'leaf2'], 'leaf3'])
-    restart_dict = decoder.get_restart_dict()
-    assert(restart_dict['target_filename'] == 'nested.yml')
-    assert(restart_dict['output_columns'] ==
-           [['root1', 'node1', 'leaf1'], ['root1', 'leaf2'], 'leaf3'])
-
-
 def test_sim_complete():
     decoder = YAMLDecoder('nested.yml',
                           [['root1', 'node1', 'leaf1'], ['root1', 'leaf2'], 'leaf3'])
