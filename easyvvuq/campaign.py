@@ -15,7 +15,6 @@ from easyvvuq.data_structs import RunInfo, CampaignInfo, AppInfo
 from easyvvuq.sampling import BaseSamplingElement
 from easyvvuq.actions import ActionPool
 import easyvvuq.db.sql as db
-from cerberus import Validator
 
 __copyright__ = """
 
@@ -360,7 +359,7 @@ class Campaign:
         # validate application input
         app = AppInfo(
             name=name,
-            paramsspec=ParamsSpecification(params, appname=name),
+            paramsspec=paramsspec,
             actions=actions,
         )
 
