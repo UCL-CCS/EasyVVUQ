@@ -83,10 +83,3 @@ class SimpleCSV(BaseDecoder, decoder_name="csv"):
                         raise RuntimeError('column not found in the csv file: {}'.format(column))
 
         return results
-
-    def get_restart_dict(self):
-        return {"target_filename": self.target_filename,
-                "output_columns": self.output_columns}
-
-    def element_version(self):
-        return "0.1"

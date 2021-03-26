@@ -196,12 +196,6 @@ def test_simple_csv(decoder):
     assert(df['Value'][5] == 25.950662)
 
 
-def test_get_restart_dict(decoder):
-    restart_dict = decoder.get_restart_dict()
-    assert(restart_dict['target_filename'] == 'test.csv')
-    assert(restart_dict['output_columns'] == ['Step', 'Value'])
-
-
 def test_sim_complete(decoder):
     assert(decoder.sim_complete({'run_dir': os.path.join('tests', 'simple_csv')}))
 

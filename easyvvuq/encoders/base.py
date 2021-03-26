@@ -85,17 +85,3 @@ class BaseEncoder(BaseElement):
         """
         raise NotImplementedError
 
-    def element_category(self):
-        return "encoding"
-
-    def element_name(self):
-        return self.encoder_name
-
-    def is_restartable(self):
-        return True
-
-    @staticmethod
-    def deserialize(encoderstr):
-        encoderdict = json.loads(encoderstr)
-        encoder = AVAILABLE_ENCODERS[encoderdict["element_name"]](**encoderdict["state"])
-        return encoder

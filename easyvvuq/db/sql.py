@@ -4,7 +4,9 @@ import os
 import json
 import logging
 import pandas as pd
+import numpy as np
 import ast
+from sqlalchemy.sql import case
 from sqlalchemy import create_engine, Column, Integer, String, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
@@ -75,11 +77,8 @@ class AppTable(Base):
     __tablename__ = 'app'
     id = Column(Integer, primary_key=True)
     name = Column(String)
-    input_encoder = Column(String)
-    output_decoder = Column(String)
-    collater = Column(String)
     params = Column(String)
-    decoderspec = Column(String)
+    actions = Column(String)
 
 
 class RunTable(Base):
@@ -93,6 +92,7 @@ class RunTable(Base):
     status = Column(Integer)
     run_dir = Column(String)
     result = Column(String, default="{}")
+    execution_info = Column(String, default="{}")
     campaign = Column(Integer, ForeignKey('campaign_info.id'))
     sampler = Column(Integer, ForeignKey('sampler.id'))
     iteration = Column(Integer, default=0)
@@ -120,6 +120,8 @@ class CampaignDB(BaseCampaignDB):
             self.engine = create_engine(location)
         else:
             self.engine = create_engine('sqlite://')
+
+        self.commit_counter = 0
 
         session_maker = sessionmaker(bind=self.engine)
 
@@ -192,19 +194,12 @@ class CampaignDB(BaseCampaignDB):
             raise RuntimeError(message)
 
         selected_app = selected[0]
-
-        decoderspec = selected_app.decoderspec
-        if decoderspec is not None:
-            decoderspec = ast.literal_eval(selected_app.decoderspec)
-
+        
         app_dict = {
             'id': selected_app.id,
             'name': selected_app.name,
-            'input_encoder': selected_app.input_encoder,
-            'output_decoder': selected_app.output_decoder,
-            'collater': selected_app.collater,
             'params': ParamsSpecification.deserialize(selected_app.params),
-            'decoderspec': decoderspec
+            'actions': selected_app.actions,
         }
 
         return app_dict
@@ -321,9 +316,8 @@ class CampaignDB(BaseCampaignDB):
 
         app_info = self.app(app_name)
 
-        encoder = easyvvuq_deserialize(app_info['input_encoder'])
-        decoder = easyvvuq_deserialize(app_info['output_decoder'])
-        return encoder, decoder
+        actions = easyvvuq_deserialize(app_info['actions'])
+        return actions
 
     def add_runs(self, run_info_list=None, run_prefix='Run_', iteration=0):
         """
@@ -429,15 +423,15 @@ class CampaignDB(BaseCampaignDB):
         selected.run_dir = run_dir
         self.session.commit()
 
-    def get_run_status(self, run_name, campaign=None, sampler=None):
+    def get_run_status(self, run_id, campaign=None, sampler=None):
         """
         Return the status (enum) for the run with name 'run_name' (and, optionally,
         filtering for campaign and sampler by id)
 
         Parameters
         ----------
-        run_name: str
-            Name of the run
+        run_id: int
+            id of the run
         campaign: int
             ID of the desired Campaign
         sampler: int
@@ -449,12 +443,11 @@ class CampaignDB(BaseCampaignDB):
             Status of the run.
         """
 
-        filter_options = {'run_name': run_name}
+        filter_options = {'id': run_id}
         if campaign:
             filter_options['campaign'] = campaign
         if sampler:
             filter_options['sampler'] = sampler
-
         selected = self.session.query(RunTable).filter_by(**filter_options)
 
         if selected.count() != 1:
@@ -464,29 +457,24 @@ class CampaignDB(BaseCampaignDB):
 
         return constants.Status(selected.status)
 
-    def set_run_statuses(self, run_name_list, status):
+    def set_run_statuses(self, run_id_list, status):
         """
-        Set the specified 'status' (enum) for all runs in the list run_name_list
+        Set the specified 'status' (enum) for all runs in the list run_id_list
 
         Parameters
         ----------
-        run_name_list: list of str
-            A list of run names run names (format is usually: prefix + int)
+        run_id_list: list of int
+            a list of run ids
         status: enum(Status)
             The new status all listed runs should now have
         Returns
         -------
 
         """
-        max_entries = 900
-
-        for i in range(0, len(run_name_list), max_entries):
-            selected = self.session.query(RunTable).filter(
-                RunTable.run_name.in_(set(run_name_list[i:i + max_entries]))).all()
-
-            for run in selected:
-                run.status = status
-            self.session.commit()
+        self.session.query(RunTable).filter(
+            RunTable.id.in_(run_id_list)).update(
+                {RunTable.status: status}, synchronize_session='fetch')
+        self.session.commit()
 
     def campaigns(self):
         """Get list of campaigns for which information is stored in the
@@ -735,7 +723,7 @@ class CampaignDB(BaseCampaignDB):
             app_id=app_id)
 
         for r in selected:
-            yield r.run_name, self._run_to_dict(r)
+            yield r.id, self._run_to_dict(r)
 
     def run_ids(self, campaign=None, sampler=None, status=None, not_status=None, app_id=None):
         """
@@ -816,6 +804,22 @@ class CampaignDB(BaseCampaignDB):
 
         return self._get_campaign_info(campaign_name=campaign_name).runs_dir
 
+    def store_result(self, run_id, result):
+        self.commit_counter += 1
+        def convert_nonserializable(obj):
+            if isinstance(obj, np.int64):
+                return int(obj)
+            raise TypeError('Unknown type:', type(obj))
+        result_ = result['result']
+        result.pop('result')
+        result.pop('run_info')
+        self.session.query(RunTable).\
+            filter(RunTable.id == run_id).\
+            update({'result': json.dumps(result_, default=convert_nonserializable),
+                    'status': constants.Status.COLLATED})
+        if self.commit_counter % COMMIT_RATE == 0:
+            self.session.commit()
+
     def store_results(self, app_name, results):
         """Stores the results from a given run in the database.
 
@@ -831,16 +835,16 @@ class CampaignDB(BaseCampaignDB):
         except IndexError:
             raise RuntimeError("app with the name {} not found".format(app_name))
         commit_counter = 0
-        for run_name, result in results:
+        for run_id, result in results:
             try:
                 self.session.query(RunTable).\
-                    filter(RunTable.run_name == run_name, RunTable.app == app_id).\
+                    filter(RunTable.id == run_id, RunTable.app == app_id).\
                     update({'result': json.dumps(result), 'status': constants.Status.COLLATED})
                 commit_counter += 1
                 if commit_counter % COMMIT_RATE == 0:
                     self.session.commit()
             except IndexError:
-                raise RuntimeError("no runs with name {} found".format(run_name))
+                raise RuntimeError("no runs with name {} found".format(run_id))
         self.session.commit()
 
     def get_results(self, app_name, sampler_id, status=constants.Status.COLLATED, iteration=-1):
@@ -907,14 +911,4 @@ class CampaignDB(BaseCampaignDB):
             filter(CampaignTable.id == campaign_id).\
             update({'campaign_dir': str(new_path),
                     'runs_dir': str(os.path.join(new_path, runs_dir))})
-        for app_info in self.session.query(AppTable):
-            for run in self.runs(app_id=app_info.id):
-                path, run_dir = os.path.split(run[1]['run_dir'])
-                path, runs_dir = os.path.split(path)
-                new_path_ = os.path.join(new_path, runs_dir, run_dir)
-                self.session.query(RunTable).\
-                    filter(RunTable.campaign == campaign_id).\
-                    filter(RunTable.run_name == run[0]).\
-                    filter(RunTable.app == app_info.id).\
-                    update({'run_dir': new_path_})
         self.session.commit()

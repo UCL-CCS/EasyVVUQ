@@ -2,6 +2,7 @@ import pytest
 import easyvvuq as uq
 import chaospy as cp
 import numpy as np
+from easyvvuq.actions import Actions, Encode, Decode, CreateRunDirectory
 
 
 def pytest_namespace():
@@ -23,7 +24,9 @@ def test_draw(benchmark):
         delimiter='$',
         target_filename='input.json')
     decoder = uq.decoders.SimpleCSV(target_filename='output.csv', output_columns=['I'])
-    campaign = uq.Campaign(name='sir_benchmark', params=params, encoder=encoder, decoder=decoder)
+    execute = uq.actions.ExecuteLocal('test')
+    actions = Actions(execute)
+    campaign = uq.Campaign(name='sir_benchmark', params=params, actions=actions)
     pytest.shared = campaign
     vary = {
         "beta": cp.Uniform(0.15, 0.25),
