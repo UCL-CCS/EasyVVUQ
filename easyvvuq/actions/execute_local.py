@@ -10,6 +10,30 @@ import copy
 
 __license__ = "LGPL"
 
+
+def local_execute(encoder, command, decoder, root='/tmp'):
+    """A helper function for a simple local execution.
+    It will create a directory under your specified root folder, encode the sampler output, execute a command
+    and decode the results of the simulation.
+
+    Parameters
+    ----------
+    encoder: Encoder
+      an encoder to use
+    command: list of str
+      a command to run your simulation (same as argument to popen, e.g. ['ls', '-al'])
+    decoder: Decoder
+      a decoder to use
+    root: str
+      root folder, for example '/tmp' or if you want to use ram based filesystem it could be '/dev/shm'
+  
+    Returns
+    -------
+    EasyVVUQ Actions
+    """
+    return Actions(CreateRunDirectory(root), Encode(encoder), ExecuteLocal(command), Decode(decoder))
+
+
 class CreateRunDirectory():
     def __init__(self, root):
         self.root = root
