@@ -1,7 +1,5 @@
 from easyvvuq.base_element import BaseElement
 import logging
-import json
-import jsonpickle
 
 __copyright__ = """
 
