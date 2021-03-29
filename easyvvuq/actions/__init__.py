@@ -1,5 +1,5 @@
 from .base import BaseAction
-from .execute_local import ExecuteLocal, ExecutePython, CreateRunDirectory, Encode, Decode
+from .execute_local import ExecuteLocal, ExecutePython, CreateRunDirectory, Encode, Decode, local_execute
 from .execute_local import CleanUp, Actions
 from .execute_kubernetes import ExecuteKubernetes
 from .execute_slurm import ExecuteSLURM
