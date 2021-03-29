@@ -18,7 +18,8 @@ def benchmark(nsamples):
         delimiter='$',
         target_filename='input.json')
     decoder = uq.decoders.SimpleCSV(target_filename='output.csv', output_columns=['I'])
-    campaign = uq.Campaign(name='sir_benchmark', params=params, encoder=encoder, decoder=decoder)
+    actions = uq.actions.local_execute(encoder, 'sir input.json', decoder)
+    campaign = uq.Campaign(name='sir_benchmark', params=params, actions=actions)
     vary = {
         "beta": cp.Uniform(0.15, 0.25),
         "gamma": cp.Normal(0.04, 0.001),
