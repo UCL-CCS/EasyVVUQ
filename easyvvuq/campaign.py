@@ -600,24 +600,26 @@ class Campaign:
             raise RuntimeError("specified directory does not exist: {}".format(campaign_dir))
         self.campaign_db.relocate(campaign_dir, self.campaign_name)
 
-    def execute(self, max_workers=None, nsamples=0, mark_invalid=False, sequential=False):
+    def execute(self, nsamples=0, executor=None, max_workers=None,  mark_invalid=False, sequential=False):
         """This will draw samples and execute the action on those samples.
         
         Parameters
         ----------
         nsamples : int
-            Number of samples to draw.
-        action : BaseAction
-            An action to be executed.
-        batch_size : int
-            Number of actions to be executed at the same time.
+            Number of samples to draw. For infinite samplers or when you want to process samples in batches.
+        executor : Executor
+            An Executor class to be used when processing runs (e.g. ThreadPoolExecutor or ProcessPoolExecutor).
+        max_workers : int
+            Maximum number of workers to use when processing runs.
         mark_invalid : bool
             Mark runs that go outside the specified input parameter range as INVALID.
+        sequential : bool
+            Whether to process samples sequentially (sometimes more efficient).
         """
         self.draw_samples(nsamples, mark_invalid=mark_invalid)
         action_pool = self.apply_for_each_sample(
             self._active_app_actions, max_workers=max_workers, sequential=sequential)
-        return action_pool.start()
+        return action_pool.start(executor=executor)
 
     def apply_for_each_sample(self, action, max_workers=None, sequential=False):
         """
