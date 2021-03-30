@@ -11,7 +11,6 @@ AVAILABLE_ENCODERS : dict
 """
 
 from easyvvuq.base_element import BaseElement
-import json
 
 __copyright__ = """
 
