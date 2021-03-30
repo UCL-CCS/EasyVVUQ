@@ -46,13 +46,15 @@ class ActionPool:
         self.futures = []
         self.results = []
 
-    def start(self, executor=ThreadPoolExecutor):
+    def start(self, executor=None):
         """Start the actions.
 
         Returns
         -------
         A list of Python futures represending action execution.
         """
+        if executor is None:
+            executor = ThreadPoolExecutor
         self.pool = executor(max_workers=self.max_workers)
         for previous in self.inits:
             previous = copy.copy(previous)
