@@ -5,7 +5,6 @@ import json
 import logging
 import pandas as pd
 import numpy as np
-import ast
 from sqlalchemy.sql import case
 from sqlalchemy import create_engine, Column, Integer, String, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
