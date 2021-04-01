@@ -100,18 +100,3 @@ class BaseDecoder(BaseElement):
 
         """
         raise NotImplementedError
-
-    def element_category(self):
-        return "decoding"
-
-    def element_name(self):
-        return self.decoder_name
-
-    def is_restartable(self):
-        return True
-
-    @staticmethod
-    def deserialize(decoderstr):
-        decoderdict = json.loads(decoderstr)
-        decoder = AVAILABLE_DECODERS[decoderdict["element_name"]](**decoderdict["state"])
-        return decoder

@@ -2,9 +2,10 @@ import chaospy as cp
 import numpy as np
 import easyvvuq as uq
 import matplotlib.pyplot as plt
+import os
 import logging
 import pytest
-
+from easyvvuq.actions import CreateRunDirectory, Encode, ExecuteLocal, Decode, Actions
 
 plt.close('all')
 
@@ -62,12 +63,13 @@ def adaptive_campaign():
         target_filename='poly_in.json')
     decoder = uq.decoders.SimpleCSV(target_filename=output_filename,
                                     output_columns=output_columns)
-
+    execute = ExecuteLocal(os.path.abspath("tests/sc/poly_model_anisotropic.py") + " poly_in.json")
+    actions = Actions(CreateRunDirectory('/tmp'), Encode(encoder), execute, Decode(decoder))
+    
     # Add the SC app (automatically set as current app)
     campaign.add_app(name="sc",
                      params=params,
-                     encoder=encoder,
-                     decoder=decoder)
+                     actions=actions)
 
     # Create the sampler
     vary = {}
@@ -80,11 +82,7 @@ def adaptive_campaign():
                                     midpoint_level1=True,
                                     dimension_adaptive=True)
     campaign.set_sampler(sampler)
-    campaign.draw_samples()
-    campaign.populate_runs_dir()
-    campaign.apply_for_each_run_dir(uq.actions.ExecuteLocal(
-        "tests/sc/poly_model_anisotropic.py poly_in.json"))
-    campaign.collate()
+    campaign.execute().collate()
     data_frame = campaign.get_collation_result()
     analysis = uq.analysis.SCAnalysis(sampler=sampler, qoi_cols=output_columns)
 
@@ -93,17 +91,13 @@ def adaptive_campaign():
     for i in range(number_of_adaptations):
         sampler.look_ahead(analysis.l_norm)
 
-        campaign.draw_samples()
-        campaign.populate_runs_dir()
-        campaign.apply_for_each_run_dir(uq.actions.ExecuteLocal(
-            "tests/sc/poly_model_anisotropic.py poly_in.json"))
-        campaign.collate()
+        campaign.execute().collate()
         data_frame = campaign.get_collation_result()
         analysis.adapt_dimension('f', data_frame)
 
         campaign.apply_analysis(analysis)
-    print(analysis.l_norm)
-    print(sampler.admissible_idx)
+    logging.debug(analysis.l_norm)
+    logging.debug(sampler.admissible_idx)
 
     results = campaign.get_last_analysis()
 

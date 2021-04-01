@@ -9,15 +9,18 @@
 [![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/3796/badge)](https://bestpractices.coreinfrastructure.org/projects/3796)
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/UCL-CCS/EasyVVUQ/dev?filepath=tutorials)
 
-The aim of this library is to facilitate verification, validation and 
+The aim of EasyVVUQ is to facilitate verification, validation and 
 uncertainty quantification (VVUQ) for a wide variety of
-simulations. We want you to be able to take your existing simulation,
-no matter what programming language or platform, and allow you to sample the parameter space
-of that simulation using a variety of statistical method on a variety of computing resources
-that might be available to you. All of this is to be achieved using a minimal amount of set-up
-overhead. EasyVVUQ is especially suitable for cases where the simulation is computationally expensive, 
-you want to use heterogeneous computing resources or the runs are very large and bookkeeping is prohibitively
-complex. It coordinates execution using an efficient back-end database and all the work is resumable.
+simulations. While very convenient for simple cases, EasyVVUQ is particularly well suited in situations where the simulations are computationally expensive, 
+heterogeneous computing resources are necessary, the sampling space is very large or book-keeping is prohibitively
+complex. It coordinates execution using an efficient database, it is fault tolerant and all progress can be saved.
+
+Here are some examples of questions EasyVVUQ can answer about your code:
+
+ * Given the uncertainties in input parameters, what is the distribution of the output?
+ * What percentage of the output variance each input parameter contributes?
+
+It also lets you construct surrogate models that are cheaper to evaluate than the complete simulation.
 
 Basic concepts are introduced [here](https://mybinder.org/v2/gh/UCL-CCS/EasyVVUQ/a6852d6c5ba36f15579e601d7a8d074505f31084?filepath=tutorials%2Fbasic_tutorial.ipynb) and [here](https://mybinder.org/v2/gh/UCL-CCS/EasyVVUQ/74d6a9f4b0eecc754918de2f3795395d35ac4875?filepath=tutorials%2Fvector_qoi_tutorial.ipynb).
 

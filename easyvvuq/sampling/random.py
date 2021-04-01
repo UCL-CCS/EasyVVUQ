@@ -58,9 +58,3 @@ class RandomSampler(BaseSamplingElement, sampler_name="random_sampler"):
 
         self.count += 1
         return run_dict
-
-    def is_restartable(self):
-        return True
-
-    def get_restart_dict(self):
-        return {"vary": self.vary.serialize(), "max_num": self.max_num, "count": self.count}

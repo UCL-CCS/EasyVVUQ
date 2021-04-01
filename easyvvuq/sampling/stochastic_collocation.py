@@ -391,9 +391,6 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
         # count the number of times the dimensions were adapted
         self.nadaptations += 1
 
-    def element_version(self):
-        return "0.6"
-
     def is_finite(self):
         return True
 
@@ -424,20 +421,6 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
             return run_dict
         else:
             raise StopIteration
-
-    def is_restartable(self):
-        return True
-
-    def get_restart_dict(self):
-        return {
-            "vary": self.vary.serialize(),
-            "polynomial_order": self.polynomial_order,
-            "quadrature_rule": self.quadrature_rule,
-            "count": self.count,
-            "growth": self.growth,
-            "sparse": self.sparse,
-            "midpoint_level1": self.midpoint_level1,
-            "dimension_adaptive": self.dimension_adaptive}
 
     def save_state(self, filename):
         logging.debug("Saving sampler state to %s" % filename)

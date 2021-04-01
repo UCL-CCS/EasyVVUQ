@@ -1,5 +1,5 @@
-import time
-from concurrent.futures import ThreadPoolExecutor
+from concurrent.futures import ThreadPoolExecutor, as_completed
+import copy
 
 __copyright__ = """
 
@@ -24,7 +24,7 @@ __copyright__ = """
 __license__ = "LGPL"
 
 
-class ActionStatuses:
+class ActionPool:
     """A class that tracks statuses of a list of actions.
 
     Parameters
@@ -37,37 +37,33 @@ class ActionStatuses:
 
     """
 
-    def __init__(self, statuses, batch_size=8, poll_sleep_time=1):
-        self.statuses = list(statuses)
-        self.actions = []
-        self.poll_sleep_time = poll_sleep_time
-        self.pool = ThreadPoolExecutor(batch_size)
+    def __init__(self, campaign, actions, inits, max_workers=None, sequential=False):
+        self.campaign = campaign
+        self.actions = actions
+        self.inits = inits
+        self.max_workers = max_workers
+        self.sequential = sequential
+        self.futures = []
+        self.results = []
 
-    def job_handler(self, status):
-        """Will handle the execution of this action status.
-
-        Parameters
-        ----------
-        status: ActionStatus
-            ActionStatus of an action to be executed.
-        """
-        status.start()
-        while not status.finished():
-            time.sleep(self.poll_sleep_time)
-        if status.succeeded():
-            status.finalise()
-            return True
-        else:
-            return False
-
-    def start(self):
+    def start(self, executor=None):
         """Start the actions.
 
         Returns
         -------
         A list of Python futures represending action execution.
         """
-        self.actions = [self.pool.submit(self.job_handler, status) for status in self.statuses]
+        if executor is None:
+            executor = ThreadPoolExecutor
+        self.pool = executor(max_workers=self.max_workers)
+        for previous in self.inits:
+            previous = copy.copy(previous)
+            if self.sequential:
+                result = self.actions.start(previous)
+                self.results.append(result)
+            else:
+                future = self.pool.submit(self.actions.start, previous)
+                self.futures.append(future)
         return self
 
     def progress(self):
@@ -81,11 +77,11 @@ class ActionStatuses:
         running = 0
         done = 0
         failed = 0
-        for action in self.actions:
-            if action.running():
+        for future in self.futures:
+            if future.running():
                 running += 1
-            elif action.done():
-                if not action.result():
+            elif future.done():
+                if not future.result():
                     failed += 1
                 else:
                     done += 1
@@ -93,13 +89,14 @@ class ActionStatuses:
                 ready += 1
         return {'ready': ready, 'active': running, 'finished': done, 'failed': failed}
 
-    def wait(self, poll_interval=10):
-        """A command that will automatically poll job statuses. For use in scripts.
-
-        Parameters
-        ----------
-        poll_interval: int
-           Polling interval in seconds.
+    def collate(self):
+        """A command that will block untill all futures in the pool have finished.
         """
-        while self.progress()['ready'] > 0:
-            time.sleep(poll_interval)
+        if self.sequential:
+            for result in self.results:
+                self.campaign.campaign_db.store_result(result['run_id'], result)
+        else:
+            for future in as_completed(self.futures):
+                result = future.result()
+                self.campaign.campaign_db.store_result(result['run_id'], result)
+        self.campaign.campaign_db.session.commit()

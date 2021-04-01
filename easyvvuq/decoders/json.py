@@ -108,4 +108,3 @@ class JSONDecoder(BaseDecoder, decoder_name="json"):
     def _get_raw_data(self, out_path):
         with open(out_path) as fd:
             return json.load(fd)
-

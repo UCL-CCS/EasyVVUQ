@@ -30,22 +30,15 @@ logger = logging.getLogger(__name__)
 
 class MultiSampler(BaseSamplingElement, sampler_name="multisampler"):
 
-    def __init__(self, *samplers, count=0, serialized_list_of_samplers=None):
+    def __init__(self, *samplers, count=0):
         """
             Expects one or more samplers
         """
 
-        # If no serialized samplers list passed, generate one. Else deserialize the passed samplers.
-        if len(samplers) < 1 and serialized_list_of_samplers is None:
+        if len(samplers) < 1:
             raise RuntimeError("You need to supply at least one sampler to the MultiSampler")
-        if serialized_list_of_samplers is None:
-            self.samplers = samplers
-            self.serialized_list_of_samplers = [sampler.serialize() for sampler in self.samplers]
-        else:
-            self.serialized_list_of_samplers = serialized_list_of_samplers
-            self.samplers = []
-            for serialized_sampler in self.serialized_list_of_samplers:
-                self.samplers.append(BaseSamplingElement.deserialize(serialized_sampler))
+
+        self.samplers = samplers
 
         # Multisampler is finite only if all samplers in it are finite
         for sampler in self.samplers:
@@ -63,9 +56,6 @@ class MultiSampler(BaseSamplingElement, sampler_name="multisampler"):
                 self.__next__()
             except StopIteration:
                 logger.warning("Multisampler constructed, but has no samples left to draw.")
-
-    def element_version(self):
-        return "0.1"
 
     def is_finite(self):
         return True
@@ -90,9 +80,3 @@ class MultiSampler(BaseSamplingElement, sampler_name="multisampler"):
 
         self.count += 1
         return run_dict
-
-    def is_restartable(self):
-        return True
-
-    def get_restart_dict(self):
-        return {'serialized_list_of_samplers': self.serialized_list_of_samplers}

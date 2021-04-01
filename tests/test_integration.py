@@ -7,6 +7,8 @@ import logging
 from pprint import pformat, pprint
 from .gauss.encoder_gauss import GaussEncoder
 from .gauss.decoder_gauss import GaussDecoder
+from easyvvuq.actions import CreateRunDirectory, Encode, ExecuteLocal, Decode, Actions
+
 
 __copyright__ = """
 
@@ -49,53 +51,20 @@ logging.basicConfig(level=logging.CRITICAL)
 
 
 @pytest.fixture
-def campaign_test():
-    class CampaignTest:
-        def __init__(self, campaign_name, work_dir, db_type='sql'):
-            self.campaign = uq.Campaign(name=campaign_name, work_dir=work_dir, db_type=db_type)
-
-        def run_tests(self):
-            pass
-
-
-@pytest.fixture
 def campaign():
     def _campaign(work_dir, campaign_name, app_name, params, encoder, decoder, sampler,
                   actions, stats, vary, num_samples=0, replicas=1, db_type='sql',
                   call_fn=None):
         my_campaign = uq.Campaign(name=campaign_name, work_dir=work_dir, db_type=db_type)
-        logging.debug("Serialized encoder: %s", str(encoder.serialize()))
-        logging.debug("Serialized decoder: %s", str(decoder.serialize()))
         # Add the cannonsim app
+        actions_ = Actions(CreateRunDirectory('/tmp'), Encode(encoder), actions, Decode(decoder))
         my_campaign.add_app(name=app_name,
                             params=params,
-                            encoder=encoder,
-                            decoder=decoder)
+                            actions=actions_)
         my_campaign.set_app(app_name)
-        logging.debug("Serialized sampler: %s", str(sampler.serialize()))
         # Set the campaign to use this sampler
         my_campaign.set_sampler(sampler)
-        # Draw 5 samples
-        my_campaign.draw_samples(num_samples=num_samples, replicas=replicas)
-        # Print the list of runs now in the campaign db
-        logging.debug("List of runs added:")
-        logging.debug(pformat(my_campaign.list_runs()))
-        logging.debug("---")
-        # Encode all runs into a local directory
-        logging.debug(pformat(
-            f"Encoding all runs to campaign runs dir {my_campaign.get_campaign_runs_dir()}"))
-        my_campaign.populate_runs_dir()
-        assert(len(my_campaign.get_campaign_runs_dir()) > 0)
-        assert(os.path.exists(my_campaign.get_campaign_runs_dir()))
-        assert(os.path.isdir(my_campaign.get_campaign_runs_dir()))
-        if call_fn is not None:
-            my_campaign.call_for_each_run(call_fn)
-        # Local execution
-        if actions is not None:
-            my_campaign.apply_for_each_run_dir(actions)
-        # Collate all data into one pandas data frame
-        my_campaign.collate()
-        logging.debug("data: %s", str(my_campaign.get_collation_result()))
+        my_campaign.execute(nsamples=num_samples, sequential=True).collate()
         # Save the state of the campaign
         state_file = work_dir + "{}_state.json".format(app_name)
         my_campaign.save_state(state_file)
@@ -103,30 +72,12 @@ def campaign():
         # Load state in new campaign object
         reloaded_campaign = uq.Campaign(state_file=state_file, work_dir=work_dir)
         reloaded_campaign.set_app(app_name)
+        reloaded_campaign.execute(nsamples=num_samples).collate()
         # Draw 3 more samples, execute, and collate onto existing dataframe
-        logging.debug("Running 3 more samples...")
-        reloaded_campaign.draw_samples(num_samples=num_samples, replicas=replicas)
-        logging.debug("List of runs added:")
-        logging.debug(pformat(reloaded_campaign.list_runs()))
-        logging.debug("---")
-        reloaded_campaign.populate_runs_dir()
-        if call_fn is not None:
-            reloaded_campaign.call_for_each_run(call_fn)
-        if actions is not None:
-            reloaded_campaign.apply_for_each_run_dir(actions)
-        logging.debug("Completed runs:")
-        logging.debug(pformat(reloaded_campaign.scan_completed()))
-        logging.debug("All completed? %s", str(reloaded_campaign.all_complete()))
-        reloaded_campaign.collate()
-        logging.debug("data:\n %s", str(reloaded_campaign.get_collation_result()))
-        logging.debug(reloaded_campaign)
-        # Create a BasicStats analysis element and apply it to the campaign
+        #reloaded_campaign.draw_samples(num_samples=num_samples, replicas=replicas)
+        #reloaded_campaign.collate()
         if stats is not None:
             reloaded_campaign.apply_analysis(stats)
-            logging.debug("stats:\n %s", str(reloaded_campaign.get_last_analysis()))
-        # Print the campaign log
-        logging.debug(pformat(reloaded_campaign._log))
-        logging.debug("All completed? %s", str(reloaded_campaign.all_complete()))
     return _campaign
 
 
@@ -178,7 +129,7 @@ def test_cannonsim(tmpdir, campaign):
         target_filename='output.csv', output_columns=[
             'Dist', 'lastvx', 'lastvy'])
     # Create a collation element for this campaign
-    actions = uq.actions.ExecuteLocal("tests/cannonsim/bin/cannonsim in.cannon output.csv")
+    actions = uq.actions.ExecuteLocal(os.path.abspath("tests/cannonsim/bin/cannonsim") +  " in.cannon output.csv")
     stats = uq.analysis.BasicStats(qoi_cols=['Dist', 'lastvx', 'lastvy'])
     # Make a random sampler
     vary = {
@@ -189,18 +140,18 @@ def test_cannonsim(tmpdir, campaign):
     }
     sampler = uq.sampling.RandomSampler(vary=vary)
     campaign(
-        tmpdir,
-        'cannon',
-        'cannonsim',
-        params,
-        encoder,
-        decoder,
-        sampler,
-        actions,
-        stats,
-        vary,
-        5,
-        1)
+        work_dir=tmpdir,
+        campaign_name='cannon',
+        app_name='cannonsim',
+        params=params,
+        encoder=encoder,
+        decoder=decoder,
+        sampler=sampler,
+        actions=actions,
+        stats=stats,
+        vary=vary,
+        num_samples=5,
+        replicas=1)
     # Make a sweep sampler
     sweep = {
         "angle": [0.1, 0.2, 0.3],
@@ -209,18 +160,18 @@ def test_cannonsim(tmpdir, campaign):
     }
     sampler = uq.sampling.BasicSweep(sweep=sweep)
     campaign(
-        tmpdir,
-        'cannonsim',
-        'cannonsim',
-        params,
-        encoder,
-        decoder,
-        sampler,
-        actions,
-        None,
-        sweep,
-        5,
-        1)
+        work_dir=tmpdir,
+        campaign_name='cannonsim',
+        app_name='cannonsim',
+        params=params,
+        encoder=encoder,
+        decoder=decoder,
+        sampler=sampler,
+        actions=actions,
+        stats=None,
+        vary=sweep,
+        num_samples=5,
+        replicas=1)
 
 
 # def test_gauss(tmpdir, campaign):
@@ -325,7 +276,7 @@ def test_pce(tmpdir, campaign):
     }
     sampler = uq.sampling.PCESampler(vary=vary,
                                      polynomial_order=3)
-    actions = uq.actions.ExecuteLocal("tests/cooling/cooling_model.py cooling_in.json")
+    actions = uq.actions.ExecuteLocal(os.path.abspath("tests/cooling/cooling_model.py") + " cooling_in.json")
     stats = uq.analysis.PCEAnalysis(sampler=sampler,
                                     qoi_cols=output_columns)
     campaign(tmpdir, 'pce', 'pce', params, encoder, decoder, sampler, actions, stats, vary, 0, 1)
@@ -359,7 +310,7 @@ def test_sc(tmpdir, campaign):
         "f": cp.Normal(1.0, 0.1)
     }
     sampler = uq.sampling.SCSampler(vary=vary, polynomial_order=1)
-    actions = uq.actions.ExecuteLocal(f"tests/sc/sc_model.py sc_in.json")
+    actions = uq.actions.ExecuteLocal(os.path.abspath("tests/sc/sc_model.py") + " sc_in.json")
     stats = uq.analysis.SCAnalysis(sampler=sampler, qoi_cols=output_columns)
     campaign(tmpdir, 'sc', 'sc', params, encoder, decoder, sampler, actions, stats, vary, 0, 1)
 

@@ -3,7 +3,6 @@ under the hood for this functionality.
 """
 import logging
 import chaospy as cp
-import pandas as pd
 import numpy as np
 from easyvvuq import OutputType
 from .base import BaseAnalysisElement

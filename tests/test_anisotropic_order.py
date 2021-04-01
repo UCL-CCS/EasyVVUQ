@@ -1,6 +1,7 @@
 import chaospy as cp
 import numpy as np
 import easyvvuq as uq
+from easyvvuq.actions import CreateRunDirectory, Encode, ExecuteLocal, Decode, Actions
 import os
 import matplotlib.pyplot as plt
 
@@ -41,12 +42,13 @@ def test_anisotropic_order(tmpdir):
         target_filename='ade_in.json')
     decoder = uq.decoders.SimpleCSV(target_filename=output_filename,
                                     output_columns=output_columns)
+    execute = ExecuteLocal("{} ade_in.json".format(os.path.abspath('tests/sc/sc_model.py')))
+    actions = Actions(CreateRunDirectory('/tmp'), Encode(encoder), execute, Decode(decoder))
 
     # Add the SC app (automatically set as current app)
     my_campaign.add_app(name="sc",
                         params=params,
-                        encoder=encoder,
-                        decoder=decoder)
+                        actions=actions)
 
     # Create the sampler
     vary = {
@@ -61,15 +63,7 @@ def test_anisotropic_order(tmpdir):
     # Associate the sampler with the campaign
     my_campaign.set_sampler(sampler)
 
-    # Will draw all (of the finite set of samples)
-    my_campaign.draw_samples()
-    my_campaign.populate_runs_dir()
-
-    #   Use this instead to run the samples using EasyVVUQ on the localhost
-    my_campaign.apply_for_each_run_dir(uq.actions.ExecuteLocal(
-        "tests/sc/sc_model.py ade_in.json"))
-
-    my_campaign.collate()
+    my_campaign.execute().collate()
 
     # Post-processing analysis
     analysis = uq.analysis.SCAnalysis(sampler=sampler, qoi_cols=output_columns)

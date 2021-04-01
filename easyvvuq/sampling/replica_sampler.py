@@ -23,36 +23,70 @@ class ReplicaSampler(BaseSamplingElement, sampler_name='replica_sampler'):
     sampler : an instance of a class derived from  BaseSamplingElement
         a finite sampler to loop over
 
-    ensemble_col : string
-        a parameter name for the ensemble id
+    replica_col : string
+        a parameter name for the replica id
+    seed_col : string
+        a parameter name for the input parameter that specifies the RNG seed
+    replicas : int
+        number of replicas, if zero will result in an infinite sampler
     """
 
-    def __init__(self, sampler, ensemble_col='ensemble'):
+    def __init__(self, sampler, replica_col='ensemble_id', seed_col=None, replicas=0):
         if not sampler.is_finite():
             raise RuntimeError("Replica sampler only works with finite samplers")
         self.sampler = sampler
-        self.ensemble_col = ensemble_col
+        self.replica_col = replica_col
+        self.replicas = replicas
+        self.sampler.n_replicas = replicas
+        self.reset()
+
+    def reset(self):
         self.history = []
-        for sample in sampler:
+        for sample in self.sampler:
             self.history.append(sample)
         self.size = len(self.history)
         self.cycle = cycle(self.history)
         self.counter = 0
+        self.total_counter = self.replicas * self.sampler.n_samples()
 
     def is_finite(self):
-        return False
-
-    def element_version(self):
-        return '0.1'
+        if self.replicas == 0:
+            return False
+        else:
+            return True
 
     def n_samples(self):
-        raise RuntimeError("You can't get the number of samples in an infinite sampler")
+        if self.replicas == 0:
+            raise RuntimeError("You can't get the number of samples in an infinite sampler")
+        else:
+            return self.replicas * self.sampler.n_samples()
 
     def __next__(self):
+        if self.replicas != 0:
+            self.total_counter -= 1
+            if self.total_counter < 0:
+                raise StopIteration
         params = dict(next(self.cycle))
-        params[self.ensemble_col] = self.counter
+        params[self.replica_col] = self.counter
         self.counter = (self.counter + 1) % self.size
         return params
 
-    def is_restartable(self):
-        return False
+    def update(self, result, invalid):
+        self.reset()
+        return self.sampler.update(result, invalid)
+
+    @property
+    def iteration(self):
+        return self.sampler.iteration
+
+    @property
+    def analysis_class(self):
+        return self.sampler.analysis_class
+
+    @property
+    def inputs(self):
+        return self.sampler.inputs
+
+    @property
+    def qoi(self):
+        return self.sampler.qoi

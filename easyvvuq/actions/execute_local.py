@@ -2,170 +2,215 @@
 """
 
 import os
-import sys
-import logging
+from pathlib import Path
+import shutil
 import subprocess
-from . import BaseAction
+import dill
+import copy
 
-__copyright__ = """
-
-    Copyright 2018 Robin A. Richardson, David W. Wright
-
-    This file is part of EasyVVUQ
-
-    EasyVVUQ is free software: you can redistribute it and/or modify
-    it under the terms of the Lesser GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    EasyVVUQ is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    Lesser GNU General Public License for more details.
-
-    You should have received a copy of the Lesser GNU General Public License
-    along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
-"""
 __license__ = "LGPL"
 
-logger = logging.getLogger(__name__)
+
+def local_execute(encoder, command, decoder, root='/tmp'):
+    """A helper function for a simple local execution.
+    It will create a directory under your specified root folder, encode the sampler output, execute a command
+    and decode the results of the simulation.
+
+    Parameters
+    ----------
+    encoder: Encoder
+      an encoder to use
+    command: list of str
+      a command to run your simulation (same as argument to popen, e.g. ['ls', '-al'])
+    decoder: Decoder
+      a decoder to use
+    root: str
+      root folder, for example '/tmp' or if you want to use ram based filesystem it could be '/dev/shm'
+  
+    Returns
+    -------
+    EasyVVUQ Actions
+    """
+    return Actions(CreateRunDirectory(root), Encode(encoder), ExecuteLocal(command), Decode(decoder))
 
 
-class ActionStatusLocal():
-    def __init__(self):
-        pass
+class CreateRunDirectory():
+    def __init__(self, root):
+        self.root = root
 
-    def start(self):
-        return None
+    def start(self, previous=None):
+        run_id = previous['run_id']
+        level1_a, level1_b = (int(run_id / 100 ** 4) * 100 ** 4,
+                              int(run_id / 100 ** 4 + 1) * 100 ** 4)
+        level2_a, level2_b = (int(run_id / 100 ** 3) * 100 ** 3,
+                              int(run_id / 100 ** 3 + 1) * 100 ** 3)
+        level3_a, level3_b = (int(run_id / 100 ** 2) * 100 ** 2,
+                              int(run_id / 100 ** 2 + 1) * 100 ** 2)
+        level4_a, level4_b = (int(run_id / 100 ** 1) * 100 ** 1,
+                              int(run_id / 100 ** 1 + 1) * 100 ** 1)
+        level1_dir = "runs_{}-{}/".format(level1_a, level1_b)
+        level2_dir = "runs_{}-{}/".format(level2_a, level2_b)
+        level3_dir = "runs_{}-{}/".format(level3_a, level3_b)
+        level4_dir = "runs_{}-{}/".format(level4_a, level4_b)
+        level5_dir = "runs_{}".format(int(run_id))
+        path = os.path.join(self.root, previous['campaign_dir'], 'runs',
+                            level1_dir, level2_dir, level3_dir, level4_dir, level5_dir)
+        Path(path).mkdir(parents=True, exist_ok=True)
+        previous['rundir'] = path
+        self.result = previous
+        return self.result
 
     def finished(self):
         return True
 
     def finalise(self):
-        return None
+        pass
 
     def succeeded(self):
         return True
 
+class Encode():
+    def __init__(self, encoder):
+        self.encoder = encoder
 
-class ExecuteLocal(BaseAction):
+    def start(self, previous=None):
+        self.encoder.encode(
+            params=previous['run_info']['params'],
+            target_dir=previous['rundir'])
+        try:
+            previous['encoder_filename'] = self.encoder.target_filename
+        except AttributeError:
+            pass
+        return previous
 
-    def __init__(self, run_cmd, interpret=None):
-        """
-        Provides an action element to run a shell command in a specified
-        directory.
+    def finished(self):
+        return True
 
-        Parameters
-        ----------
+    def finalise(self):
+        pass
 
-        run_cmd : str
-            Command to execute.
-        interpret : str or None
-            Interpreter to use to execute cmd.
+    def succeeeded(self):
+        return True
 
-        """
+class Decode():
+    def __init__(self, decoder):
+        self.decoder = decoder
 
-        if os.name == 'nt':
-            msg = ('Local execution is provided for testing on Posix systems'
-                   'only. We detect you are using Windows.')
-            logger.error(msg)
-            raise NotImplementedError(msg)
+    def start(self, previous=None):
+        run_info = copy.copy(previous['run_info'])
+        run_info['run_dir'] = previous['rundir']
+        result = self.decoder.parse_sim_output(run_info)
+        previous['result'] = result
+        previous['decoder_filename'] = self.decoder.target_filename
+        return previous
 
-        # Need to expand users, get absolute path and dereference symlinks
-        self.run_cmd = os.path.realpath(os.path.expanduser(run_cmd))
-        self.interpreter = interpret
+    def finished(self):
+        return True
 
-    def act_on_dir(self, target_dir):
-        """
-        Executes `self.run_cmd` in the shell in `target_dir`.
+    def finalise(self):
+        pass
 
-        target_dir : str
-            Directory in which to execute command.
+    def succeeded(self):
+        return True
 
-        """
+class CleanUp():
+    def __init__(self):
+        pass
 
-        if self.interpreter is None:
-            full_cmd = f'cd "{target_dir}"\n{self.run_cmd}\n'
-        else:
-            full_cmd = f'cd "{target_dir}"\n{self.interpreter} {self.run_cmd}\n'
-        result = os.system(full_cmd)
-        if result != 0:
-            sys.exit(f'Non-zero exit code from command "{full_cmd}"\n')
-        return ActionStatusLocal()
+    def start(self, previous=None):
+        if not ('rundir' in previous.keys()):
+            raise RuntimeError('must be used with actions that create a directory structure')
+        shutil.rmtree(previous['rundir'])
+        return previous
+                
+    def finished(self):
+        return True
 
+    def finalise(self):
+        pass
 
-class ExecutePython(BaseAction):
+    def succeeded(self):
+        return True
+
+class ExecutePython():
     def __init__(self, function):
-        self.function = function
+        self.function = dill.dumps(function)
+        self.params = None
+        self.eval_result = None
 
-    def act_on_dir(self, target_dir):
-        self.function(target_dir)
-        return ActionStatusLocal()
+    def start(self, previous=None):
+        function = dill.loads(self.function)
+        self.eval_result = function(previous['run_info']['params'])
+        previous['result'] = self.eval_result
+        return previous
 
+    def finished(self):
+        if self.eval_result is None:
+            return False
+        else:
+            return True
 
-class ActionStatusLocalV2():
-    def __init__(self, full_cmd, target_dir):
-        self.full_cmd = full_cmd
-        self.target_dir = target_dir
+    def finalise(self):
+        pass
+
+    def succeeded(self):
+        if not self.finished():
+            raise RuntimeError('action did not finish yet')
+        else:
+            return True
+
+class ExecuteLocal():
+    def __init__(self, full_cmd):
+        self.full_cmd = full_cmd.split()
         self.popen_object = None
         self.ret = None
         self._started = False
 
-    def start(self):
-        self.popen_object = subprocess.Popen(self.full_cmd, cwd=self.target_dir)
-        self._started = True
-
-    def started(self):
-        return self._started
+    def start(self, previous=None):
+        target_dir = previous['rundir']
+        self.ret = subprocess.run(self.full_cmd, cwd=target_dir)
+        return previous
 
     def finished(self):
-        """Returns true if action is finished. In this case if calling poll on
-        the popen object returns a non-None value.
-        """
-        if self.popen_object is None:
-            return False
-        ret = self.popen_object.poll()
-        if ret is not None:
-            self.ret = ret
-            return True
-        else:
-            return False
+        return True
 
     def finalise(self):
         """Performs clean-up if necessary. In this case it isn't. I think.
         """
-        return None
+        pass
 
     def succeeded(self):
         """Will return True if the process finished successfully.
         It judges based on the return code and will return False
         if that code is not zero.
         """
-        if not self.started():
-            return False
         if self.ret != 0:
             return False
         else:
             return True
 
+class Actions():
+    def __init__(self, *args):
+        self.actions = list(args)
 
-class ExecuteLocalV2(ExecuteLocal):
-    """An improvement over ExecuteLocal that uses Popen and provides the non-blocking
-    execution that allows you to track progress. In line with other Action classes in EasyVVUQ.
-    """
+    def start(self, previous=None):
+        for action in self.actions:
+            if not hasattr(action, 'start'):
+                raise RuntimeError('action in the actions list does not provide a start method')
+        previous = copy.copy(previous)
+        run_id = previous['run_id']
+        for action in self.actions:
+            previous = action.start(previous)
+        self.result = previous
+        assert(self.result['run_id'] == run_id)
+        return previous
 
-    def act_on_dir(self, target_dir):
-        """
-        Executes `self.run_cmd` in the shell in `target_dir`.
+    def finished(self):
+        return all([action.finished() for action in self.actions])
 
-        target_dir : str
-            Directory in which to execute command.
+    def finalise(self):
+        for action in self.actions:
+            action.finalise()
 
-        """
-
-        if self.interpreter is None:
-            full_cmd = self.run_cmd.split()
-        else:
-            full_cmd = [self.interpreter] + self.run_cmd.split()
-        return ActionStatusLocalV2(full_cmd, target_dir)
+    def succeeded(self):
+        return all([action.succeeded() for action in self.actions])

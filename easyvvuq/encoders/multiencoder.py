@@ -28,33 +28,18 @@ logger = logging.getLogger(__name__)
 
 class MultiEncoder(BaseEncoder, encoder_name="multiencoder"):
 
-    def __init__(self, *encoders, serialized_list_of_encoders=None):
+    def __init__(self, *encoders):
         """
             Expects one or more encoders
         """
+        self.encoders = encoders
 
-        # If no serialized encoders list passed, generate one. Else deserialize the passed encoders.
-        if serialized_list_of_encoders is None:
-            self.encoders = encoders
-            self.serialized_list_of_encoders = [encoder.serialize() for encoder in self.encoders]
-        else:
-            self.serialized_list_of_encoders = serialized_list_of_encoders
-            self.encoders = []
-            for serialized_encoder in self.serialized_list_of_encoders:
-                self.encoders.append(BaseEncoder.deserialize(serialized_encoder))
-
-    def encode(self, params=None, target_dir=''):
+    def encode(self, params={}, target_dir=''):
         """
             Applies all encoders in the list of encoders.
         """
         for encoder in self.encoders:
             encoder.encode(params=params, target_dir=target_dir)
 
-    def element_version(self):
-        return "0.1"
-
     def is_restartable(self):
         return True
-
-    def get_restart_dict(self):
-        return {'serialized_list_of_encoders': self.serialized_list_of_encoders}
