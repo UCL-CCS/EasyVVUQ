@@ -600,17 +600,16 @@ class Campaign:
             raise RuntimeError("specified directory does not exist: {}".format(campaign_dir))
         self.campaign_db.relocate(campaign_dir, self.campaign_name)
 
-    def execute(self, nsamples=0, executor=None, max_workers=None,  mark_invalid=False, sequential=False):
+    def execute(self, nsamples=0, pool=None, mark_invalid=False, sequential=False):
         """This will draw samples and execute the action on those samples.
         
         Parameters
         ----------
         nsamples : int
             Number of samples to draw. For infinite samplers or when you want to process samples in batches.
-        executor : Executor
-            An Executor class to be used when processing runs (e.g. ThreadPoolExecutor or ProcessPoolExecutor).
-        max_workers : int
-            Maximum number of workers to use when processing runs.
+        pool : Pool
+            A pool object to be used when processing runs (e.g. instance of ThreadPoolExecutor or 
+            ProcessPoolExecutor).
         mark_invalid : bool
             Mark runs that go outside the specified input parameter range as INVALID.
         sequential : bool
@@ -618,10 +617,10 @@ class Campaign:
         """
         self.draw_samples(nsamples, mark_invalid=mark_invalid)
         action_pool = self.apply_for_each_sample(
-            self._active_app_actions, max_workers=max_workers, sequential=sequential)
-        return action_pool.start(executor=executor)
+            self._active_app_actions, sequential=sequential)
+        return action_pool.start(pool=pool)
 
-    def apply_for_each_sample(self, action, max_workers=None, sequential=False):
+    def apply_for_each_sample(self, action, sequential=False):
         """
         For each run in this Campaign's run list, apply the specified action
         (an object of type Action)
@@ -649,10 +648,10 @@ class Campaign:
                 previous['campaign_dir'] = self._campaign_dir
                 previous['run_info'] = run_data
                 yield previous
-        return ActionPool(self, action, inits=inits(), max_workers=max_workers, sequential=sequential).start()
+        return ActionPool(self, action, inits=inits(), sequential=sequential).start()
         
 
-    def iterate(self, max_workers=None, nsamples=0, mark_invalid=False, sequential=False):
+    def iterate(self, nsamples=0, pool=None, mark_invalid=False, sequential=False):
         """This is the equivalent of sample_and_apply for methods that rely on the output of the
         previous sampling stage (primarily MCMC).
 
@@ -677,8 +676,8 @@ class Campaign:
         while True:
             self.draw_samples(nsamples, mark_invalid=mark_invalid)
             action_pool = self.apply_for_each_sample(
-                self._active_app_actions, max_workers=max_workers, sequential=sequential)
-            yield action_pool.start()
+                self._active_app_actions, sequential=sequential)
+            yield action_pool.start(pool=pool)
             result = self.get_collation_result(last_iteration=True)
             invalid = self.get_invalid_runs(last_iteration=True)
             ignored_runs = self._active_sampler.update(result, invalid)

@@ -37,25 +37,24 @@ class ActionPool:
 
     """
 
-    def __init__(self, campaign, actions, inits, max_workers=None, sequential=False):
+    def __init__(self, campaign, actions, inits, sequential=False):
         self.campaign = campaign
         self.actions = actions
         self.inits = inits
-        self.max_workers = max_workers
         self.sequential = sequential
         self.futures = []
         self.results = []
 
-    def start(self, executor=None):
+    def start(self, pool=None):
         """Start the actions.
 
         Returns
         -------
         A list of Python futures represending action execution.
         """
-        if executor is None:
-            executor = ThreadPoolExecutor
-        self.pool = executor(max_workers=self.max_workers)
+        if pool is None:
+            pool = ThreadPoolExecutor()
+        self.pool = pool
         for previous in self.inits:
             previous = copy.copy(previous)
             if self.sequential:
