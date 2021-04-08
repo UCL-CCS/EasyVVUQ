@@ -1,4 +1,5 @@
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from dask.distributed import Client
 import copy
 
 __copyright__ = """

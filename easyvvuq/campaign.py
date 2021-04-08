@@ -648,7 +648,7 @@ class Campaign:
                 previous['campaign_dir'] = self._campaign_dir
                 previous['run_info'] = run_data
                 yield previous
-        return ActionPool(self, action, inits=inits(), sequential=sequential).start()
+        return ActionPool(self, action, inits=inits(), sequential=sequential)
         
 
     def iterate(self, nsamples=0, pool=None, mark_invalid=False, sequential=False):
@@ -677,6 +677,7 @@ class Campaign:
             self.draw_samples(nsamples, mark_invalid=mark_invalid)
             action_pool = self.apply_for_each_sample(
                 self._active_app_actions, sequential=sequential)
+            import pdb; pdb.set_trace()
             yield action_pool.start(pool=pool)
             result = self.get_collation_result(last_iteration=True)
             invalid = self.get_invalid_runs(last_iteration=True)
