@@ -677,7 +677,6 @@ class Campaign:
             self.draw_samples(nsamples, mark_invalid=mark_invalid)
             action_pool = self.apply_for_each_sample(
                 self._active_app_actions, sequential=sequential)
-            import pdb; pdb.set_trace()
             yield action_pool.start(pool=pool)
             result = self.get_collation_result(last_iteration=True)
             invalid = self.get_invalid_runs(last_iteration=True)

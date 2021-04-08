@@ -92,7 +92,9 @@ class ActionPool:
     def collate(self):
         """A command that will block untill all futures in the pool have finished.
         """
-        if self.sequential:
+        if isinstance(self.pool, Client):
+            self.results = self.pool.gather(self.futures)
+        if self.sequential or isinstance(self.pool, Client):
             for result in self.results:
                 self.campaign.campaign_db.store_result(result['run_id'], result)
         else:
