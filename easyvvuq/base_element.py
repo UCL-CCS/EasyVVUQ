@@ -39,18 +39,3 @@ class BaseElement(object):
 
     def element_category(self):
         raise NotImplementedError
-
-    def is_restartable(self):
-        return False
-
-    def get_restart_dict(self):
-        return None
-
-    def serialize(self):
-        return json.dumps({
-            "element_name": self.element_name(),
-            "element_version": self.element_version(),
-            "element_category": self.element_category(),
-            "restartable": self.is_restartable(),
-            "state": self.get_restart_dict()
-        })
