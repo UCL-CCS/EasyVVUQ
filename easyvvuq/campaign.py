@@ -648,7 +648,7 @@ class Campaign:
                 previous['campaign_dir'] = self._campaign_dir
                 previous['run_info'] = run_data
                 yield previous
-        return ActionPool(self, action, inits=inits(), sequential=sequential).start()
+        return ActionPool(self, action, inits=inits(), sequential=sequential)
         
 
     def iterate(self, nsamples=0, pool=None, mark_invalid=False, sequential=False):
