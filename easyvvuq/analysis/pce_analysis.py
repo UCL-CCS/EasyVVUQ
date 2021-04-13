@@ -74,6 +74,16 @@ class PCEAnalysisResults(QMCAnalysisResults):
         raw_dict = AnalysisResults._keys_to_tuples(self.raw_data['sobols_total'])
         return raw_dict[AnalysisResults._to_tuple(qoi)][input_]
 
+    def supported_stats(self):
+        """Types of statistics supported by the describe method.
+
+        Returns
+        -------
+        list of str
+        """
+        return ['min', 'max', '10%', '90%', '1%', '99%', 'median',
+                'mean', 'var', 'std']
+
     def _describe(self, qoi, statistic):
         """Returns descriptive statistics, similar to pandas describe.
 
@@ -89,6 +99,8 @@ class PCEAnalysisResults(QMCAnalysisResults):
         float
             Value of the requested statistic.
         """
+        if statistic not in self.supported_stats():
+            raise NotImplementedError
         if statistic == 'min':
             return np.array([v.lower[0] for _, v in enumerate(
                 self.raw_data['output_distributions'][qoi])])

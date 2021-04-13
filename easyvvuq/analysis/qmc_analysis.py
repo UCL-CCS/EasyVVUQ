@@ -44,11 +44,19 @@ class QMCAnalysisResults(AnalysisResults):
         return [raw_dict[AnalysisResults._to_tuple(qoi)][input_]['low'][0],
                 raw_dict[AnalysisResults._to_tuple(qoi)][input_]['high'][0]]
 
+    def supported_stats(self):
+        """Types of statistics supported by the describe method.
+
+        Returns
+        -------
+        list of str
+        """
+        return ['mean', 'var', 'std']
+
     def _describe(self, qoi, statistic):
-        if statistic in ['mean', 'var', 'std']:
-            return self.raw_data['statistical_moments'][qoi][statistic][0]
-        else:
+        if statistic not in self.supported_stats():
             raise NotImplementedError
+        return self.raw_data['statistical_moments'][qoi][statistic][0]
 
 
 class QMCAnalysis(BaseAnalysisElement):
