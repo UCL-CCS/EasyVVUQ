@@ -281,26 +281,6 @@ class Campaign:
 
         return state_dir
 
-    def save_state(self, state_filename):
-        """Save the current Campaign state to file in JSON format
-        Parameters
-        ----------
-        state_filename : str
-            Name of file in which to save the state
-        Returns
-        -------
-        """
-
-        output_json = {
-            "db_location": self.db_location,
-            "db_type": self.db_type,
-            "active_app": self._active_app_name,
-            "campaign_name": self.campaign_name,
-            "campaign_dir": self._campaign_dir,
-        }
-        with open(state_filename, "w") as outfile:
-            json.dump(output_json, outfile, indent=4)
-
     def load_state(self, state_filename):
         """Load up a Campaign state from the specified JSON file
 
