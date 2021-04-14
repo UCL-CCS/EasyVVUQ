@@ -385,6 +385,7 @@ class Campaign:
         
         self._active_app_name = app_name
         self._active_app = self.campaign_db.app(name=app_name)
+        self.campaign_db.set_active_app(app_name)
 
         # Resurrect the app encoder, decoder and collation elements
         self._active_app_actions = self.campaign_db.resurrect_app(app_name)
