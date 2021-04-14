@@ -113,7 +113,6 @@ class Campaign:
             name=None,
             params=None,
             actions=None,
-            db_type="sql",
             db_location=None,
             work_dir="./",
             state_file=None,
@@ -127,7 +126,6 @@ class Campaign:
         self.campaign_name = name
         self._campaign_dir = None
         self.db_location = db_location
-        self.db_type = db_type
 
         self.campaign_id = None
         self.campaign_db = None
@@ -149,7 +147,7 @@ class Campaign:
             if change_to_state:
                 os.chdir(self._state_dir)
         else:
-            self.init_fresh(name, db_type, db_location, self.work_dir)
+            self.init_fresh(name, db_location, self.work_dir)
             self._state_dir = None
 
         if (params is not None) and (actions is not None):
@@ -168,8 +166,7 @@ class Campaign:
 
         return os.path.join(self.work_dir, self._campaign_dir)
 
-    def init_fresh(self, name, db_type='sql',
-                   db_location=None, work_dir='.'):
+    def init_fresh(self, name, db_location=None, work_dir='.'):
         """
         Initialise a new campaign - create database and output directory
         (`campaign_dir`, a uniquely named directory in `work_dir`).
@@ -178,8 +175,6 @@ class Campaign:
         ----------
         name : str
             Campaign name.
-        db_type : str
-            Database type - current options are 'sql'.
         db_location : str or None
             Path in which to create campaign database - defaults to None which
             results in the database being placed in `campaign_dir` with a
@@ -202,18 +197,10 @@ class Campaign:
         self._campaign_dir = os.path.relpath(campaign_dir, start=work_dir)
 
         self.db_location = db_location
-        self.db_type = db_type
 
-        if self.db_type == 'sql':
-            from .db.sql import CampaignDB
-            if self.db_location is None:
-                self.db_location = "sqlite:///" + self.campaign_dir + "/campaign.db"
-        else:
-            message = (f"Invalid 'db_type' {db_type}. Supported types are "
-                       f"'sql'.")
-            logger.critical(message)
-            raise RuntimeError(message)
-
+        if self.db_location is None:
+            self.db_location = "sqlite:///" + self.campaign_dir + "/campaign.db"
+   
         info = CampaignInfo(
             name=name,
             campaign_dir_prefix=default_campaign_prefix,
@@ -239,34 +226,8 @@ class Campaign:
         -------
 
         """
-
-        full_state_path = os.path.realpath(os.path.expanduser(state_file))
-
-        if not os.path.isfile(full_state_path):
-            if not os.path.exists(full_state_path):
-                msg = (f"Unable to open state file (no file exists): "
-                       f"{state_file}")
-            else:
-                msg = (f"Unable to open state file (path is not a file): "
-                       f"{state_file}")
-
-            logger.error(msg)
-            raise RuntimeError(msg)
-
-        state_dir = os.path.dirname(full_state_path)
-
-        logger.info(f"Loading campaign from state file '{full_state_path}'")
         self.load_state(full_state_path)
 
-        if self.db_type == 'sql':
-            from .db.sql import CampaignDB
-        else:
-            message = (f"Invalid 'db_type' {self.db_type}. Supported types "
-                       f"are 'sql'.")
-            logger.critical(message)
-            raise RuntimeError(message)
-
-        logger.info(f"Opening session with CampaignDB at {self.db_location}")
         self.campaign_db = CampaignDB(location=self.db_location,
                                       new_campaign=False,
                                       name=self.campaign_name)
