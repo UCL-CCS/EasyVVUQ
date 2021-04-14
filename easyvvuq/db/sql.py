@@ -68,6 +68,7 @@ class CampaignTable(Base):
     campaign_dir = Column(String)
     runs_dir = Column(String)
     sampler = Column(Integer, ForeignKey('sampler.id'))
+    active_app = Column(Integer, ForeignKey('app.id'))
 
 
 class AppTable(Base):
