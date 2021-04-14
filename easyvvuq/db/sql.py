@@ -214,7 +214,7 @@ class CampaignDB(BaseCampaignDB):
         """
         selected = self.session.query(AppTable).filter_by(name=name).all()
         if len(selected) == 0:
-            raise RuntimeError('no such app - {}'.format(app_name))
+            raise RuntimeError('no such app - {}'.format(name))
         assert(not (len(selected) > 1))
         app = selected[0]
         self.session.query(CampaignTable).update({'active_app' : app.id})
