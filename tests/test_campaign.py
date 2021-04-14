@@ -74,9 +74,11 @@ def campaign(tmpdir):
     campaign.execute(nsamples=100, sequential=True).collate()
     return campaign
 
-def test_invalid_db_type(tmp_path):
-    with pytest.raises(RuntimeError):
-        uq.Campaign(name='test', work_dir=tmp_path, db_type='pen&paper')
+
+def test_campaign_exists(tmp_path):
+    campaign = uq.Campaign(name='test', work_dir=tmp_path)
+    assert(campaign.campaign_db.campaign_exists('test'))
+    assert(not campaign.campaign_db.campaign_exists('test2'))
 
 
 def test_invalid_sampler(tmp_path):

@@ -14,6 +14,7 @@ from easyvvuq.constants import default_campaign_prefix, Status
 from easyvvuq.data_structs import RunInfo, CampaignInfo, AppInfo
 from easyvvuq.sampling import BaseSamplingElement
 from easyvvuq.actions import ActionPool
+from easyvvuq.db.sql import CampaignDB
 import easyvvuq.db.sql as db
 
 __copyright__ = """
@@ -61,8 +62,6 @@ class Campaign:
     name : :obj:`str`, optional
     params : dict
         Description of the parameters to associate with the application.
-    db_type : str, default="sql"
-        Type of database to use for CampaignDB.
     db_location : :obj:`str`, optional
         Location of the underlying campaign database - either a path or
         acceptable URI for SQLAlchemy.
@@ -88,8 +87,6 @@ class Campaign:
     db_location : str or None
         Location of the underlying campaign database - either a path or
         acceptable URI for SQLAlchemy.
-    db_type : str or None
-        Type of CampaignDB ("sql").
     _log: list
         The log of all elements that have been applied, with information about
         their application
@@ -150,6 +147,7 @@ class Campaign:
             self.init_fresh(name, db_location, self.work_dir)
             self._state_dir = None
 
+        # here we assume that the user wants to add an app
         if (params is not None) and (actions is not None):
             self.add_app(name=name, params=params, actions=actions)
 
@@ -258,7 +256,6 @@ class Campaign:
         with open(state_filename, "r") as infile:
             input_json = json.load(infile)
         self.db_location = input_json["db_location"]
-        self.db_type = input_json["db_type"]
         self._active_app_name = input_json["active_app"]
         self.campaign_name = input_json["campaign_name"]
         self._campaign_dir = input_json["campaign_dir"]

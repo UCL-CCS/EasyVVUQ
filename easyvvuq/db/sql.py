@@ -162,6 +162,21 @@ class CampaignDB(BaseCampaignDB):
             db_info = self.session.query(DBInfoTable).first()
             self._next_run = db_info.next_run
 
+    def campaign_exists(self, name):
+        """Check if campaign specified by that name already exists.
+
+        Parameters
+        ----------
+        name: str
+        
+        Returns
+        -------
+        bool
+          True if such a campaign already exists, False otherwise
+        """
+        result = self.session.query(CampaignTable).filter_by(name=name).all()
+        return len(result) == 1
+
     def app(self, name=None):
         """
         Get app information. Specific applications selected by `name`,
