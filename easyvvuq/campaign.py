@@ -382,7 +382,7 @@ class Campaign:
         -------
 
         """
-
+        
         self._active_app_name = app_name
         self._active_app = self.campaign_db.app(name=app_name)
 

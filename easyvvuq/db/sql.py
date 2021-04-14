@@ -204,6 +204,22 @@ class CampaignDB(BaseCampaignDB):
 
         return app_dict
 
+    def set_active_app(self, name):
+        """Set an app specified by name as active.
+        
+        Parameters
+        ----------
+        name: str
+           name of the app to set as active
+        """
+        selected = self.session.query(AppTable).filter_by(name=name).all()
+        if len(selected) == 0:
+            raise RuntimeError('no such app - {}'.format(app_name))
+        assert(not (len(selected) > 1))
+        app = selected[0]
+        self.session.query(CampaignTable).update({'active_app' : app.id})
+        self.session.commit() 
+
     def add_app(self, app_info):
         """
         Add application to the 'app' table.
