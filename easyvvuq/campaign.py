@@ -156,6 +156,9 @@ class Campaign:
 
         return os.path.join(self.work_dir, self._campaign_dir)
 
+    def init_db(self, name, db_location, work_dir='.'):
+        pass
+
     def init_fresh(self, name, db_location=None, work_dir='.'):
         """
         Initialise a new campaign - create database and output directory

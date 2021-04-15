@@ -121,11 +121,8 @@ class CampaignDB(BaseCampaignDB):
        database URI as needed by SQLAlchemy
     name: str
        campaign name to either create or resume
-    info: CampaignInfo
-       information needed to create the campaign
     """
-
-    def __init__(self, location=None, name=None, info=None):
+    def __init__(self, location=None, name=None):
         if location is not None:
             self.engine = create_engine(location)
         else:
