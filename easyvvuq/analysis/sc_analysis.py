@@ -43,8 +43,17 @@ class SCAnalysisResults(AnalysisResults):
         except TypeError:
             return np.array(result)
 
+    def supported_stats(self):
+        """Types of statistics supported by the describe method.
+
+        Returns
+        -------
+        list of str
+        """
+        return ['mean', 'var', 'std']
+        
     def _describe(self, qoi, statistic):
-        if statistic in ['mean', 'var', 'std']:
+        if statistic in self.supported_stats():
             return self.raw_data['statistical_moments'][qoi][statistic]
         else:
             raise NotImplementedError

@@ -47,16 +47,8 @@ class AnalysisResults:
             raise AttributeError(
                 "type object '{}' has no attribute '{}'".format(self.__class__.__name__, attr))
 
-    def implemented(self):
-        """Returns a list of implemented functionality.
-
-        Returns
-        -------
-        a list of str
-           names of types of analysis results that are implemented
-           for this method
-        """
-        return []
+    def supported_stats(self):
+        raise NotImplementedError('descriptive statistics not available in this method')
 
     def _get_sobols_first(self, qoi, input_):
         """Returns first order Sobol indices.
