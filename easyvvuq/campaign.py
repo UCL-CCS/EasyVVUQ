@@ -164,10 +164,10 @@ class Campaign:
         self.campaign_db = CampaignDB(location=db_location, name=name)
         if self.campaign_db.campaign_exists(name):
             self.campaign_id = self.campaign_db.get_campaign_id(name)
-            self._active_app_name = input_json["active_app"]
+            self._active_app_name = self.campaign_db.get_active_app().name
             self.campaign_name = name
-            self._campaign_dir = input_json["campaign_dir"]
-            if not os.path.exists(self.campaign_dir):
+            self._campaign_dir = self.campaign_db.campaign_dir(name)
+            if not os.path.exists(self._campaign_dir):
                 message = (f"Campaign directory in state_file {state_filename}"
                            f" ({self.campaign_dir}) does not exist.")
                 raise RuntimeError(message)
@@ -184,59 +184,6 @@ class Campaign:
             self.campaign_db.create_campaign(info)
             self.campaign_name = name
             self.campaign_id = self.campaign_db.get_campaign_id(self.campaign_name)
-
-    def init_from_state_file(self, state_file):
-        """Load campaign state from file.
-
-        Parameters
-        ----------
-        state_file : str
-            Path to the file containing the campaign state.
-
-        Returns
-        -------
-
-        """
-        self.load_state(full_state_path)
-
-        self.campaign_db = CampaignDB(location=self.db_location,
-                                      name=self.campaign_name)
-        campaign_db = self.campaign_db
-        self.campaign_id = campaign_db.get_campaign_id(self.campaign_name)
-
-        # Resurrect the sampler
-        self._active_sampler_id = campaign_db.get_sampler_id(self.campaign_id)
-        self._active_sampler = campaign_db.resurrect_sampler(self._active_sampler_id)
-
-        self.set_app(self._active_app_name)
-
-        return state_dir
-
-    def load_state(self, state_filename):
-        """Load up a Campaign state from the specified JSON file
-
-        Parameters
-        ----------
-        state_filename : str
-            Name of file from which to load the state
-
-        Returns
-        -------
-
-        """
-
-        with open(state_filename, "r") as infile:
-            input_json = json.load(infile)
-        self.db_location = input_json["db_location"]
-        self._active_app_name = input_json["active_app"]
-        self.campaign_name = input_json["campaign_name"]
-        self._campaign_dir = input_json["campaign_dir"]
-
-        if not os.path.exists(self.campaign_dir):
-            message = (f"Campaign directory in state_file {state_filename}"
-                       f" ({self.campaign_dir}) does not exist.")
-            logger.critical(message)
-            raise RuntimeError(message)
 
     def add_app(self, name=None, params=None, actions=None, set_active=True):
         """Add an application to the CampaignDB.
