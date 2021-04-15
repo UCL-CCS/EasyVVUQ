@@ -125,6 +125,7 @@ class CampaignDB(BaseCampaignDB):
             self.engine = create_engine(location)
         else:
             self.engine = create_engine('sqlite://')
+        Base.metadata.create_all(self.engine)
         self.commit_counter = 0
         session_maker = sessionmaker(bind=self.engine)
         self.session = session_maker()
@@ -150,7 +151,6 @@ class CampaignDB(BaseCampaignDB):
         ----------
         info: CampaignInfo
         """
-        Base.metadata.create_all(self.engine)
         is_db_empty = (self.session.query(CampaignTable).first() is None)
         version_check = self.session.query(
             CampaignTable).filter(CampaignTable.easyvvuq_version != info.easyvvuq_version).all()
@@ -170,7 +170,7 @@ class CampaignDB(BaseCampaignDB):
         AppTable
         """
         return self.session.query(AppTable, CampaignTable).filter(
-            AppTable.id == CampaignTable.activate_app).first()
+            AppTable.id == CampaignTable.active_app).first()
 
     def campaign_exists(self, name):
         """Check if campaign specified by that name already exists.
@@ -184,8 +184,9 @@ class CampaignDB(BaseCampaignDB):
         bool
           True if such a campaign already exists, False otherwise
         """
-        result = self.session.query(CampaignTable).filter_by(name=name).all()
-        return len(result) == 1
+        result = self.session.query(CampaignTable).filter(
+            CampaignTable.name == name).all()
+        return len(result) > 0
 
     def app(self, name=None):
         """

@@ -157,11 +157,8 @@ class Campaign:
         return os.path.join(self.work_dir, self._campaign_dir)
 
     def init_db(self, name, db_location, work_dir='.'):
-        if db_location is None:
-            self.db_location = "sqlite:///" + self.campaign_dir + "/campaign.db"
-        else:
-            self.db_location = db_location
-        self.campaign_db = CampaignDB(location=db_location, name=name)
+        self.db_location = db_location
+        self.campaign_db = CampaignDB(location=db_location)
         if self.campaign_db.campaign_exists(name):
             self.campaign_id = self.campaign_db.get_campaign_id(name)
             self._active_app_name = self.campaign_db.get_active_app().name
@@ -174,8 +171,11 @@ class Campaign:
             self._active_sampler_id = self.campaign_db.get_sampler_id(self.campaign_id)
             self._active_sampler = self.campaign_db.resurrect_sampler(self._active_sampler_id)
             self.set_app(self._active_app_name)
+            self.campaign_db.resume_campaign(name)
         else:
             self._campaign_dir = tempfile.mkdtemp(prefix=name, dir=work_dir)
+            if self.db_location is None:
+                self.db_location = "sqlite:///" + self._campaign_dir + "/campaign.db"
             info = CampaignInfo(
                 name=name,
                 campaign_dir_prefix=default_campaign_prefix,
@@ -184,6 +184,7 @@ class Campaign:
             self.campaign_db.create_campaign(info)
             self.campaign_name = name
             self.campaign_id = self.campaign_db.get_campaign_id(self.campaign_name)
+            self.campaign_db.create_campaign(info)
 
     def add_app(self, name=None, params=None, actions=None, set_active=True):
         """Add an application to the CampaignDB.
