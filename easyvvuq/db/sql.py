@@ -119,10 +119,8 @@ class CampaignDB(BaseCampaignDB):
     ----------
     location: str
        database URI as needed by SQLAlchemy
-    name: str
-       campaign name to either create or resume
     """
-    def __init__(self, location=None, name=None):
+    def __init__(self, location=None):
         if location is not None:
             self.engine = create_engine(location)
         else:
@@ -163,6 +161,16 @@ class CampaignDB(BaseCampaignDB):
         self.session.add(CampaignTable(**info.to_dict(flatten=True)))
         self.session.add(DBInfoTable(next_run=self._next_run))
         self.session.commit()
+
+    def get_active_app(self):
+        """Returns active app table.
+
+        Returns
+        -------
+        AppTable
+        """
+        return self.session.query(AppTable, CampaignTable).filter(
+            AppTable.id == CampaignTable.activate_app).first()
 
     def campaign_exists(self, name):
         """Check if campaign specified by that name already exists.

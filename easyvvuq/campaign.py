@@ -136,7 +136,7 @@ class Campaign:
         self._active_sampler = None
         self._active_sampler_id = None
 
-        self.init_fresh(name, db_location, self.work_dir)
+        self.init_db(name, db_location, self.work_dir)
         self._state_dir = None
 
         # here we assume that the user wants to add an app
@@ -157,55 +157,33 @@ class Campaign:
         return os.path.join(self.work_dir, self._campaign_dir)
 
     def init_db(self, name, db_location, work_dir='.'):
-        pass
-
-    def init_fresh(self, name, db_location=None, work_dir='.'):
-        """
-        Initialise a new campaign - create database and output directory
-        (`campaign_dir`, a uniquely named directory in `work_dir`).
-
-        Parameters
-        ----------
-        name : str
-            Campaign name.
-        db_location : str or None
-            Path in which to create campaign database - defaults to None which
-            results in the database being placed in `campaign_dir` with a
-            default name.
-        work_dir : str
-            Path in which to create the `campaign_dir`.
-
-        Returns
-        -------
-
-        """
-
-        # Create temp dir for campaign
-        campaign_prefix = default_campaign_prefix
-        if name is not None:
-            campaign_prefix = name
-
-        campaign_dir = tempfile.mkdtemp(prefix=campaign_prefix, dir=work_dir)
-
-        self._campaign_dir = os.path.relpath(campaign_dir, start=work_dir)
-
-        self.db_location = db_location
-
-        if self.db_location is None:
+        if db_location is None:
             self.db_location = "sqlite:///" + self.campaign_dir + "/campaign.db"
-   
-        info = CampaignInfo(
-            name=name,
-            campaign_dir_prefix=default_campaign_prefix,
-            easyvvuq_version=easyvvuq.__version__,
-            campaign_dir=self.campaign_dir)
-        self.campaign_db = CampaignDB(location=self.db_location,
-                                      name=name, info=info)
-
-        # Record the campaign's name and its associated ID in the database
-        self.campaign_name = name
-        self.campaign_id = self.campaign_db.get_campaign_id(self.campaign_name)
-
+        else:
+            self.db_location = db_location
+        self.campaign_db = CampaignDB(location=db_location, name=name)
+        if self.campaign_db.campaign_exists(name):
+            self.campaign_id = self.campaign_db.get_campaign_id(name)
+            self._active_app_name = input_json["active_app"]
+            self.campaign_name = name
+            self._campaign_dir = input_json["campaign_dir"]
+            if not os.path.exists(self.campaign_dir):
+                message = (f"Campaign directory in state_file {state_filename}"
+                           f" ({self.campaign_dir}) does not exist.")
+                raise RuntimeError(message)
+            self._active_sampler_id = self.campaign_db.get_sampler_id(self.campaign_id)
+            self._active_sampler = self.campaign_db.resurrect_sampler(self._active_sampler_id)
+            self.set_app(self._active_app_name)
+        else:
+            self._campaign_dir = tempfile.mkdtemp(prefix=name, dir=work_dir)
+            info = CampaignInfo(
+                name=name,
+                campaign_dir_prefix=default_campaign_prefix,
+                easyvvuq_version=easyvvuq.__version__,
+                campaign_dir=self._campaign_dir)
+            self.campaign_db.create_campaign(info)
+            self.campaign_name = name
+            self.campaign_id = self.campaign_db.get_campaign_id(self.campaign_name)
 
     def init_from_state_file(self, state_file):
         """Load campaign state from file.
