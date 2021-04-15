@@ -113,18 +113,25 @@ def set_sqlite_pragma(dbapi_connection, connection_record):
     cursor.close()
 
 class CampaignDB(BaseCampaignDB):
+    """An interface between the campaign database and the campaign.
+
+    Parameters
+    ----------
+    location: str
+       database URI as needed by SQLAlchemy
+    name: str
+       campaign name to either create or resume
+    info: CampaignInfo
+       information needed to create the campaign
+    """
 
     def __init__(self, location=None, name=None, info=None):
-
         if location is not None:
             self.engine = create_engine(location)
         else:
             self.engine = create_engine('sqlite://')
-
         self.commit_counter = 0
-
         session_maker = sessionmaker(bind=self.engine)
-
         self.session = session_maker()
 
     def resume_campaign(self, name):
