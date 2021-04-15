@@ -136,16 +136,8 @@ class Campaign:
         self._active_sampler = None
         self._active_sampler_id = None
 
-        # Load campaign from state_file, if provided. Else make a fresh new
-        # campaign with a new campaign database
-        if state_file is not None:
-            self._state_dir = self.init_from_state_file(
-                state_file)
-            if change_to_state:
-                os.chdir(self._state_dir)
-        else:
-            self.init_fresh(name, db_location, self.work_dir)
-            self._state_dir = None
+        self.init_fresh(name, db_location, self.work_dir)
+        self._state_dir = None
 
         # here we assume that the user wants to add an app
         if (params is not None) and (actions is not None):
@@ -205,12 +197,12 @@ class Campaign:
             easyvvuq_version=easyvvuq.__version__,
             campaign_dir=self.campaign_dir)
         self.campaign_db = CampaignDB(location=self.db_location,
-                                      new_campaign=True,
                                       name=name, info=info)
 
         # Record the campaign's name and its associated ID in the database
         self.campaign_name = name
         self.campaign_id = self.campaign_db.get_campaign_id(self.campaign_name)
+
 
     def init_from_state_file(self, state_file):
         """Load campaign state from file.
@@ -227,7 +219,6 @@ class Campaign:
         self.load_state(full_state_path)
 
         self.campaign_db = CampaignDB(location=self.db_location,
-                                      new_campaign=False,
                                       name=self.campaign_name)
         campaign_db = self.campaign_db
         self.campaign_id = campaign_db.get_campaign_id(self.campaign_name)

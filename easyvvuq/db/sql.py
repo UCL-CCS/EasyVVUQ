@@ -114,7 +114,7 @@ def set_sqlite_pragma(dbapi_connection, connection_record):
 
 class CampaignDB(BaseCampaignDB):
 
-    def __init__(self, location=None, new_campaign=False, name=None, info=None):
+    def __init__(self, location=None, name=None, info=None):
 
         if location is not None:
             self.engine = create_engine(location)
@@ -127,40 +127,38 @@ class CampaignDB(BaseCampaignDB):
 
         self.session = session_maker()
 
-        if new_campaign:
-            if info is None:
-                raise RuntimeError('No information provided to create'
-                                   'database')
-            if info.name != name:
-                message = (f'Information for campaign {info.name} given '
-                           f'for campaign database {name}')
-                logging.critical(message)
-                raise RuntimeError(message)
+    def resume_campaign(self, name):
+        """Resumes campaign.
 
-            Base.metadata.create_all(self.engine)
+        Parameters
+        ----------
+        name: str
+        """
+        info = self.session.query(
+            CampaignTable).filter_by(name=name).first()
+        if info is None:
+            raise ValueError('Campaign with the given name not found.')
+        db_info = self.session.query(DBInfoTable).first()
+        self._next_run = db_info.next_run
 
-            is_db_empty = (self.session.query(CampaignTable).first() is None)
+    def create_campaign(self, info):
+        """Creates a new campaign in the database.
 
-            version_check = self.session.query(
-                CampaignTable).filter(CampaignTable.easyvvuq_version != info.easyvvuq_version).all()
-
-            if (not is_db_empty) and (len(version_check) != 0):
-                raise RuntimeError('Database contains campaign created with an incompatible' +
-                                   ' version of EasyVVUQ!')
-
-            self._next_run = 1
-
-            self.session.add(CampaignTable(**info.to_dict(flatten=True)))
-            self.session.add(DBInfoTable(next_run=self._next_run))
-            self.session.commit()
-        else:
-            info = self.session.query(
-                CampaignTable).filter_by(name=name).first()
-            if info is None:
-                raise ValueError('Campaign with the given name not found.')
-
-            db_info = self.session.query(DBInfoTable).first()
-            self._next_run = db_info.next_run
+        Parameters
+        ----------
+        info: CampaignInfo
+        """
+        Base.metadata.create_all(self.engine)
+        is_db_empty = (self.session.query(CampaignTable).first() is None)
+        version_check = self.session.query(
+            CampaignTable).filter(CampaignTable.easyvvuq_version != info.easyvvuq_version).all()
+        if (not is_db_empty) and (len(version_check) != 0):
+            raise RuntimeError('Database contains campaign created with an incompatible' +
+                               ' version of EasyVVUQ!')
+        self._next_run = 1
+        self.session.add(CampaignTable(**info.to_dict(flatten=True)))
+        self.session.add(DBInfoTable(next_run=self._next_run))
+        self.session.commit()
 
     def campaign_exists(self, name):
         """Check if campaign specified by that name already exists.
