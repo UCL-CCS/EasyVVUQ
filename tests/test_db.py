@@ -111,12 +111,14 @@ def test_version_check(campaign):
         campaign_dir=str(campaign.tmp_path))
     with pytest.raises(RuntimeError):
         campaign2 = CampaignDB(location='sqlite:///{}/test.sqlite'.format(campaign.tmp_path))
+        campaign2.create_campaign(info)
     info = CampaignInfo(
         name='test3',
         campaign_dir_prefix=default_campaign_prefix,
         easyvvuq_version=uq.__version__,
         campaign_dir=str(campaign.tmp_path))
     campaign3 = CampaignDB(location='sqlite:///{}/test.sqlite'.format(campaign.tmp_path))
+    campaign3.create_campaign(info)
 
 
 def test_collation(campaign):
