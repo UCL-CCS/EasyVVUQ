@@ -122,7 +122,12 @@ class Campaign:
 
         self.campaign_name = name
         self._campaign_dir = None
-        self.db_location = db_location
+        
+        if db_location is None:
+            self._campaign_dir = tempfile.mkdtemp(prefix=name, dir=work_dir)
+            self.db_location = "sqlite:///" + self._campaign_dir + "/campaign.db"
+        else:
+            self.db_location = db_location
 
         self.campaign_id = None
         self.campaign_db = None
@@ -169,7 +174,7 @@ class Campaign:
         self.campaign_db = CampaignDB(location=self.db_location)
         if self.campaign_db.campaign_exists(name):
             self.campaign_id = self.campaign_db.get_campaign_id(name)
-            self._active_app_name = self.campaign_db.get_active_app().name
+            self._active_app_name = self.campaign_db.get_active_app()[0].name
             self.campaign_name = name
             self._campaign_dir = self.campaign_db.campaign_dir(name)
             if not os.path.exists(self._campaign_dir):
@@ -181,9 +186,6 @@ class Campaign:
             self.set_app(self._active_app_name)
             self.campaign_db.resume_campaign(name)
         else:
-            self._campaign_dir = tempfile.mkdtemp(prefix=name, dir=work_dir)
-            if self.db_location is None:
-                self.db_location = "sqlite:///" + self._campaign_dir + "/campaign.db"
             info = CampaignInfo(
                 name=name,
                 campaign_dir_prefix=default_campaign_prefix,

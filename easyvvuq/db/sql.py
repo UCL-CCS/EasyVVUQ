@@ -109,8 +109,8 @@ class SamplerTable(Base):
 @event.listens_for(Engine, "connect")
 def set_sqlite_pragma(dbapi_connection, connection_record):
     cursor = dbapi_connection.cursor()
-    cursor.execute("PRAGMA synchronous = OFF")
-    cursor.execute("PRAGMA journal_mode = OFF")
+    #cursor.execute("PRAGMA synchronous = OFF")
+    #cursor.execute("PRAGMA journal_mode = OFF")
     cursor.close()
 
 class CampaignDB(BaseCampaignDB):
@@ -126,10 +126,10 @@ class CampaignDB(BaseCampaignDB):
             self.engine = create_engine(location)
         else:
             self.engine = create_engine('sqlite://')
-        Base.metadata.create_all(self.engine)
         self.commit_counter = 0
         session_maker = sessionmaker(bind=self.engine)
         self.session = session_maker()
+        Base.metadata.create_all(self.engine, checkfirst=True)
 
     def resume_campaign(self, name):
         """Resumes campaign.
@@ -955,3 +955,13 @@ class CampaignDB(BaseCampaignDB):
             update({'campaign_dir': str(new_path),
                     'runs_dir': str(os.path.join(new_path, runs_dir))})
         self.session.commit()
+
+    def dump(self):
+        """Dump the database as JSON for debugging purposes.
+        """
+        meta = MetaData()
+        meta.reflect(bind=self.engine)
+        result = {}
+        for table in meta.sorted_tables:
+            result[table.name] = [dict(row) for row in self.engine.execute(table.select())]
+        return json.dumps(result)
