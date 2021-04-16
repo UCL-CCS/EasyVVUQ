@@ -51,7 +51,7 @@ class SCAnalysisResults(AnalysisResults):
         list of str
         """
         return ['mean', 'var', 'std']
-        
+
     def _describe(self, qoi, statistic):
         if statistic in self.supported_stats():
             return self.raw_data['statistical_moments'][qoi][statistic]

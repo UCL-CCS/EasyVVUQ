@@ -75,7 +75,8 @@ def test_gauss_vector_sc(tmpdir):
                                          target_filename='gauss_in.json')
     decoder = uq.decoders.SimpleCSV(target_filename="output.csv",
                                     output_columns=["numbers"])
-    execute = uq.actions.ExecuteLocal(os.path.abspath("tests/gauss/gauss_json.py") + " gauss_in.json")
+    execute = uq.actions.ExecuteLocal(os.path.abspath(
+        "tests/gauss/gauss_json.py") + " gauss_in.json")
     actions = Actions(CreateRunDirectory('/tmp'), Encode(encoder), execute, Decode(decoder))
     sampler = uq.sampling.SCSampler(vary=vary, polynomial_order=4)
     my_campaign = uq.Campaign(name='gauss_vector', work_dir=tmpdir)
@@ -128,7 +129,8 @@ def test_gauss_vector_pce(tmpdir):
     #decoder = JSONDecoder(target_filename='output.csv.json', output_columns=['numbers'])
     decoder = uq.decoders.SimpleCSV(target_filename="output.csv",
                                     output_columns=["numbers"])
-    execute = uq.actions.ExecuteLocal(os.path.abspath("tests/gauss/gauss_json.py") + " gauss_in.json")
+    execute = uq.actions.ExecuteLocal(os.path.abspath(
+        "tests/gauss/gauss_json.py") + " gauss_in.json")
     actions = Actions(CreateRunDirectory('/tmp'), Encode(encoder), execute, Decode(decoder))
     sampler = uq.sampling.PCESampler(vary=vary, polynomial_order=4)
     my_campaign = uq.Campaign(name='gauss_vector', work_dir=tmpdir)

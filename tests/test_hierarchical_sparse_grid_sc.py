@@ -6,6 +6,7 @@ import pytest
 import logging
 from easyvvuq.actions import CreateRunDirectory, Encode, ExecuteLocal, Decode, Actions
 
+
 def exact_sobols_g_func(d=2, a=[0.0, 0.5, 3.0, 9.0, 99.0]):
     # for the Sobol g function, the exact (1st-order)
     # Sobol indices are known analytically
@@ -94,7 +95,6 @@ def sparse_campaign():
         # update the sparse grid to the next level
         sampler.next_level_sparse_grid()
         campaign.execute().collate()
-
 
     campaign.apply_analysis(analysis)
     results = campaign.get_last_analysis()

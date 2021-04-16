@@ -14,6 +14,7 @@ from easyvvuq.constants import default_campaign_prefix, Status
 from easyvvuq.data_structs import RunInfo, CampaignInfo, AppInfo
 from easyvvuq.sampling import BaseSamplingElement
 from easyvvuq.actions import ActionPool
+from easyvvuq.db.sql import CampaignDB
 import easyvvuq.db.sql as db
 
 __copyright__ = """
@@ -61,8 +62,6 @@ class Campaign:
     name : :obj:`str`, optional
     params : dict
         Description of the parameters to associate with the application.
-    db_type : str, default="sql"
-        Type of database to use for CampaignDB.
     db_location : :obj:`str`, optional
         Location of the underlying campaign database - either a path or
         acceptable URI for SQLAlchemy.
@@ -88,8 +87,6 @@ class Campaign:
     db_location : str or None
         Location of the underlying campaign database - either a path or
         acceptable URI for SQLAlchemy.
-    db_type : str or None
-        Type of CampaignDB ("sql").
     _log: list
         The log of all elements that have been applied, with information about
         their application
@@ -110,10 +107,9 @@ class Campaign:
 
     def __init__(
             self,
-            name=None,
+            name,
             params=None,
             actions=None,
-            db_type="sql",
             db_location=None,
             work_dir="./",
             state_file=None,
@@ -126,8 +122,12 @@ class Campaign:
 
         self.campaign_name = name
         self._campaign_dir = None
-        self.db_location = db_location
-        self.db_type = db_type
+
+        if db_location is None:
+            self._campaign_dir = tempfile.mkdtemp(prefix=name, dir=work_dir)
+            self.db_location = "sqlite:///" + self._campaign_dir + "/campaign.db"
+        else:
+            self.db_location = db_location
 
         self.campaign_id = None
         self.campaign_db = None
@@ -141,17 +141,10 @@ class Campaign:
         self._active_sampler = None
         self._active_sampler_id = None
 
-        # Load campaign from state_file, if provided. Else make a fresh new
-        # campaign with a new campaign database
-        if state_file is not None:
-            self._state_dir = self.init_from_state_file(
-                state_file)
-            if change_to_state:
-                os.chdir(self._state_dir)
-        else:
-            self.init_fresh(name, db_type, db_location, self.work_dir)
-            self._state_dir = None
+        self.init_db(name, self.work_dir)
+        self._state_dir = None
 
+        # here we assume that the user wants to add an app
         if (params is not None) and (actions is not None):
             self.add_app(name=name, params=params, actions=actions)
 
@@ -168,165 +161,40 @@ class Campaign:
 
         return os.path.join(self.work_dir, self._campaign_dir)
 
-    def init_fresh(self, name, db_type='sql',
-                   db_location=None, work_dir='.'):
-        """
-        Initialise a new campaign - create database and output directory
-        (`campaign_dir`, a uniquely named directory in `work_dir`).
+    def init_db(self, name, work_dir='.'):
+        """Initialize the connection with the database and either resume or create the campaign.
 
         Parameters
         ----------
-        name : str
-            Campaign name.
-        db_type : str
-            Database type - current options are 'sql'.
-        db_location : str or None
-            Path in which to create campaign database - defaults to None which
-            results in the database being placed in `campaign_dir` with a
-            default name.
-        work_dir : str
-            Path in which to create the `campaign_dir`.
-
-        Returns
-        -------
-
+        name: str
+            name of the campaign
+        work_dir: str
+            work directory, defaults to cwd
         """
-
-        # Create temp dir for campaign
-        campaign_prefix = default_campaign_prefix
-        if name is not None:
-            campaign_prefix = name
-
-        campaign_dir = tempfile.mkdtemp(prefix=campaign_prefix, dir=work_dir)
-
-        self._campaign_dir = os.path.relpath(campaign_dir, start=work_dir)
-
-        self.db_location = db_location
-        self.db_type = db_type
-
-        if self.db_type == 'sql':
-            from .db.sql import CampaignDB
-            if self.db_location is None:
-                self.db_location = "sqlite:///" + self.campaign_dir + "/campaign.db"
+        self.campaign_db = CampaignDB(location=self.db_location)
+        if self.campaign_db.campaign_exists(name):
+            self.campaign_id = self.campaign_db.get_campaign_id(name)
+            self._active_app_name = self.campaign_db.get_active_app()[0].name
+            self.campaign_name = name
+            self._campaign_dir = self.campaign_db.campaign_dir(name)
+            if not os.path.exists(self._campaign_dir):
+                message = (f"Campaign directory ({self.campaign_dir}) does not exist.")
+                raise RuntimeError(message)
+            self._active_sampler_id = self.campaign_db.get_sampler_id(self.campaign_id)
+            self._active_sampler = self.campaign_db.resurrect_sampler(self._active_sampler_id)
+            self.set_app(self._active_app_name)
+            self.campaign_db.resume_campaign(name)
         else:
-            message = (f"Invalid 'db_type' {db_type}. Supported types are "
-                       f"'sql'.")
-            logger.critical(message)
-            raise RuntimeError(message)
-
-        info = CampaignInfo(
-            name=name,
-            campaign_dir_prefix=default_campaign_prefix,
-            easyvvuq_version=easyvvuq.__version__,
-            campaign_dir=self.campaign_dir)
-        self.campaign_db = CampaignDB(location=self.db_location,
-                                      new_campaign=True,
-                                      name=name, info=info)
-
-        # Record the campaign's name and its associated ID in the database
-        self.campaign_name = name
-        self.campaign_id = self.campaign_db.get_campaign_id(self.campaign_name)
-
-    def init_from_state_file(self, state_file):
-        """Load campaign state from file.
-
-        Parameters
-        ----------
-        state_file : str
-            Path to the file containing the campaign state.
-
-        Returns
-        -------
-
-        """
-
-        full_state_path = os.path.realpath(os.path.expanduser(state_file))
-
-        if not os.path.isfile(full_state_path):
-            if not os.path.exists(full_state_path):
-                msg = (f"Unable to open state file (no file exists): "
-                       f"{state_file}")
-            else:
-                msg = (f"Unable to open state file (path is not a file): "
-                       f"{state_file}")
-
-            logger.error(msg)
-            raise RuntimeError(msg)
-
-        state_dir = os.path.dirname(full_state_path)
-
-        logger.info(f"Loading campaign from state file '{full_state_path}'")
-        self.load_state(full_state_path)
-
-        if self.db_type == 'sql':
-            from .db.sql import CampaignDB
-        else:
-            message = (f"Invalid 'db_type' {self.db_type}. Supported types "
-                       f"are 'sql'.")
-            logger.critical(message)
-            raise RuntimeError(message)
-
-        logger.info(f"Opening session with CampaignDB at {self.db_location}")
-        self.campaign_db = CampaignDB(location=self.db_location,
-                                      new_campaign=False,
-                                      name=self.campaign_name)
-        campaign_db = self.campaign_db
-        self.campaign_id = campaign_db.get_campaign_id(self.campaign_name)
-
-        # Resurrect the sampler
-        self._active_sampler_id = campaign_db.get_sampler_id(self.campaign_id)
-        self._active_sampler = campaign_db.resurrect_sampler(self._active_sampler_id)
-
-        self.set_app(self._active_app_name)
-
-        return state_dir
-
-    def save_state(self, state_filename):
-        """Save the current Campaign state to file in JSON format
-        Parameters
-        ----------
-        state_filename : str
-            Name of file in which to save the state
-        Returns
-        -------
-        """
-
-        output_json = {
-            "db_location": self.db_location,
-            "db_type": self.db_type,
-            "active_app": self._active_app_name,
-            "campaign_name": self.campaign_name,
-            "campaign_dir": self._campaign_dir,
-        }
-        with open(state_filename, "w") as outfile:
-            json.dump(output_json, outfile, indent=4)
-
-    def load_state(self, state_filename):
-        """Load up a Campaign state from the specified JSON file
-
-        Parameters
-        ----------
-        state_filename : str
-            Name of file from which to load the state
-
-        Returns
-        -------
-
-        """
-
-        with open(state_filename, "r") as infile:
-            input_json = json.load(infile)
-        self.db_location = input_json["db_location"]
-        self.db_type = input_json["db_type"]
-        self._active_app_name = input_json["active_app"]
-        self.campaign_name = input_json["campaign_name"]
-        self._campaign_dir = input_json["campaign_dir"]
-
-        if not os.path.exists(self.campaign_dir):
-            message = (f"Campaign directory in state_file {state_filename}"
-                       f" ({self.campaign_dir}) does not exist.")
-            logger.critical(message)
-            raise RuntimeError(message)
+            if self._campaign_dir is None:
+                self._campaign_dir = tempfile.mkdtemp(prefix=name, dir=work_dir)
+            info = CampaignInfo(
+                name=name,
+                campaign_dir_prefix=default_campaign_prefix,
+                easyvvuq_version=easyvvuq.__version__,
+                campaign_dir=self._campaign_dir)
+            self.campaign_db.create_campaign(info)
+            self.campaign_name = name
+            self.campaign_id = self.campaign_db.get_campaign_id(self.campaign_name)
 
     def add_app(self, name=None, params=None, actions=None, set_active=True):
         """Add an application to the CampaignDB.
@@ -385,6 +253,7 @@ class Campaign:
 
         self._active_app_name = app_name
         self._active_app = self.campaign_db.app(name=app_name)
+        self.campaign_db.set_active_app(app_name)
 
         # Resurrect the app encoder, decoder and collation elements
         self._active_app_actions = self.campaign_db.resurrect_app(app_name)
@@ -602,13 +471,13 @@ class Campaign:
 
     def execute(self, nsamples=0, pool=None, mark_invalid=False, sequential=False):
         """This will draw samples and execute the action on those samples.
-        
+
         Parameters
         ----------
         nsamples : int
             Number of samples to draw. For infinite samplers or when you want to process samples in batches.
         pool : Pool
-            A pool object to be used when processing runs (e.g. instance of ThreadPoolExecutor or 
+            A pool object to be used when processing runs (e.g. instance of ThreadPoolExecutor or
             ProcessPoolExecutor).
         mark_invalid : bool
             Mark runs that go outside the specified input parameter range as INVALID.
@@ -642,14 +511,14 @@ class Campaign:
         # Loop through all runs in this campaign with status ENCODED, and
         # run the specified action on each run's dir
         def inits():
-            for run_id, run_data in self.campaign_db.runs(status=Status.NEW, app_id=self._active_app['id']):
+            for run_id, run_data in self.campaign_db.runs(
+                    status=Status.NEW, app_id=self._active_app['id']):
                 previous = {}
                 previous['run_id'] = run_id
                 previous['campaign_dir'] = self._campaign_dir
                 previous['run_info'] = run_data
                 yield previous
         return ActionPool(self, action, inits=inits(), sequential=sequential)
-        
 
     def iterate(self, nsamples=0, pool=None, mark_invalid=False, sequential=False):
         """This is the equivalent of sample_and_apply for methods that rely on the output of the
