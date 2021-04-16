@@ -130,9 +130,7 @@ def test_multiencoder(tmpdir):
     # Set the campaign to use this sampler
     my_campaign.set_sampler(sampler)
 
-    # Test reloading
-    my_campaign.save_state(tmpdir + "test_multiencoder.json")
-    reloaded_campaign = uq.Campaign(state_file=tmpdir + "test_multiencoder.json", work_dir=tmpdir)
+    reloaded_campaign = uq.Campaign('cannon', db_location=my_campaign.db_location)
 
     my_campaign.execute(sequential=True).collate()
 

@@ -107,7 +107,7 @@ class Campaign:
 
     def __init__(
             self,
-            name=None,
+            name,
             params=None,
             actions=None,
             db_location=None,
