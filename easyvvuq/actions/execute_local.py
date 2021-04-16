@@ -26,12 +26,16 @@ def local_execute(encoder, command, decoder, root='/tmp'):
       a decoder to use
     root: str
       root folder, for example '/tmp' or if you want to use ram based filesystem it could be '/dev/shm'
-  
+
     Returns
     -------
     EasyVVUQ Actions
     """
-    return Actions(CreateRunDirectory(root), Encode(encoder), ExecuteLocal(command), Decode(decoder))
+    return Actions(
+        CreateRunDirectory(root),
+        Encode(encoder),
+        ExecuteLocal(command),
+        Decode(decoder))
 
 
 class CreateRunDirectory():
@@ -69,6 +73,7 @@ class CreateRunDirectory():
     def succeeded(self):
         return True
 
+
 class Encode():
     def __init__(self, encoder):
         self.encoder = encoder
@@ -92,6 +97,7 @@ class Encode():
     def succeeeded(self):
         return True
 
+
 class Decode():
     def __init__(self, decoder):
         self.decoder = decoder
@@ -113,6 +119,7 @@ class Decode():
     def succeeded(self):
         return True
 
+
 class CleanUp():
     def __init__(self):
         pass
@@ -122,7 +129,7 @@ class CleanUp():
             raise RuntimeError('must be used with actions that create a directory structure')
         shutil.rmtree(previous['rundir'])
         return previous
-                
+
     def finished(self):
         return True
 
@@ -131,6 +138,7 @@ class CleanUp():
 
     def succeeded(self):
         return True
+
 
 class ExecutePython():
     def __init__(self, function):
@@ -158,6 +166,7 @@ class ExecutePython():
             raise RuntimeError('action did not finish yet')
         else:
             return True
+
 
 class ExecuteLocal():
     def __init__(self, full_cmd):
@@ -188,6 +197,7 @@ class ExecuteLocal():
             return False
         else:
             return True
+
 
 class Actions():
     def __init__(self, *args):

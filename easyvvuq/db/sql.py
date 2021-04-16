@@ -10,6 +10,7 @@ from sqlalchemy import create_engine, Column, Integer, String, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import MetaData
+from sqlalchemy.exc import OperationalError
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import text
 from sqlalchemy.engine import Engine
@@ -68,6 +69,7 @@ class CampaignTable(Base):
     campaign_dir = Column(String)
     runs_dir = Column(String)
     sampler = Column(Integer, ForeignKey('sampler.id'))
+    active_app = Column(Integer, ForeignKey('app.id'))
 
 
 class AppTable(Base):
@@ -104,6 +106,7 @@ class SamplerTable(Base):
     id = Column(Integer, primary_key=True)
     sampler = Column(String)
 
+
 @event.listens_for(Engine, "connect")
 def set_sqlite_pragma(dbapi_connection, connection_record):
     cursor = dbapi_connection.cursor()
@@ -111,55 +114,83 @@ def set_sqlite_pragma(dbapi_connection, connection_record):
     cursor.execute("PRAGMA journal_mode = OFF")
     cursor.close()
 
+
 class CampaignDB(BaseCampaignDB):
+    """An interface between the campaign database and the campaign.
 
-    def __init__(self, location=None, new_campaign=False, name=None, info=None):
+    Parameters
+    ----------
+    location: str
+       database URI as needed by SQLAlchemy
+    """
 
+    def __init__(self, location=None):
         if location is not None:
             self.engine = create_engine(location)
         else:
             self.engine = create_engine('sqlite://')
-
         self.commit_counter = 0
-
         session_maker = sessionmaker(bind=self.engine)
-
         self.session = session_maker()
+        Base.metadata.create_all(self.engine, checkfirst=True)
 
-        if new_campaign:
-            if info is None:
-                raise RuntimeError('No information provided to create'
-                                   'database')
-            if info.name != name:
-                message = (f'Information for campaign {info.name} given '
-                           f'for campaign database {name}')
-                logging.critical(message)
-                raise RuntimeError(message)
+    def resume_campaign(self, name):
+        """Resumes campaign.
 
-            Base.metadata.create_all(self.engine)
+        Parameters
+        ----------
+        name: str
+        """
+        info = self.session.query(
+            CampaignTable).filter_by(name=name).first()
+        if info is None:
+            raise ValueError('Campaign with the given name not found.')
+        db_info = self.session.query(DBInfoTable).first()
+        self._next_run = db_info.next_run
 
-            is_db_empty = (self.session.query(CampaignTable).first() is None)
+    def create_campaign(self, info):
+        """Creates a new campaign in the database.
 
-            version_check = self.session.query(
-                CampaignTable).filter(CampaignTable.easyvvuq_version != info.easyvvuq_version).all()
+        Parameters
+        ----------
+        info: CampaignInfo
+        """
+        is_db_empty = (self.session.query(CampaignTable).first() is None)
+        version_check = self.session.query(
+            CampaignTable).filter(CampaignTable.easyvvuq_version != info.easyvvuq_version).all()
+        if (not is_db_empty) and (len(version_check) != 0):
+            raise RuntimeError('Database contains campaign created with an incompatible' +
+                               ' version of EasyVVUQ!')
+        self._next_run = 1
+        self.session.add(CampaignTable(**info.to_dict(flatten=True)))
+        self.session.add(DBInfoTable(next_run=self._next_run))
+        self.session.commit()
 
-            if (not is_db_empty) and (len(version_check) != 0):
-                raise RuntimeError('Database contains campaign created with an incompatible' +
-                                   ' version of EasyVVUQ!')
+    def get_active_app(self):
+        """Returns active app table.
 
-            self._next_run = 1
+        Returns
+        -------
+        AppTable
+        """
+        return self.session.query(AppTable, CampaignTable).filter(
+            AppTable.id == CampaignTable.active_app).first()
 
-            self.session.add(CampaignTable(**info.to_dict(flatten=True)))
-            self.session.add(DBInfoTable(next_run=self._next_run))
-            self.session.commit()
-        else:
-            info = self.session.query(
-                CampaignTable).filter_by(name=name).first()
-            if info is None:
-                raise ValueError('Campaign with the given name not found.')
+    def campaign_exists(self, name):
+        """Check if campaign specified by that name already exists.
 
-            db_info = self.session.query(DBInfoTable).first()
-            self._next_run = db_info.next_run
+        Parameters
+        ----------
+        name: str
+
+        Returns
+        -------
+        bool
+          True if such a campaign already exists, False otherwise
+        """
+        result = self.session.query(CampaignTable).filter(
+            CampaignTable.name == name).all()
+        return len(result) > 0
 
     def app(self, name=None):
         """
@@ -193,7 +224,7 @@ class CampaignDB(BaseCampaignDB):
             raise RuntimeError(message)
 
         selected_app = selected[0]
-        
+
         app_dict = {
             'id': selected_app.id,
             'name': selected_app.name,
@@ -202,6 +233,22 @@ class CampaignDB(BaseCampaignDB):
         }
 
         return app_dict
+
+    def set_active_app(self, name):
+        """Set an app specified by name as active.
+
+        Parameters
+        ----------
+        name: str
+           name of the app to set as active
+        """
+        selected = self.session.query(AppTable).filter_by(name=name).all()
+        if len(selected) == 0:
+            raise RuntimeError('no such app - {}'.format(name))
+        assert(not (len(selected) > 1))
+        app = selected[0]
+        self.session.query(CampaignTable).update({'active_app': app.id})
+        self.session.commit()
 
     def add_app(self, app_info):
         """
@@ -805,6 +852,7 @@ class CampaignDB(BaseCampaignDB):
 
     def store_result(self, run_id, result):
         self.commit_counter += 1
+
         def convert_nonserializable(obj):
             if isinstance(obj, np.int64):
                 return int(obj)
@@ -911,3 +959,13 @@ class CampaignDB(BaseCampaignDB):
             update({'campaign_dir': str(new_path),
                     'runs_dir': str(os.path.join(new_path, runs_dir))})
         self.session.commit()
+
+    def dump(self):
+        """Dump the database as JSON for debugging purposes.
+        """
+        meta = MetaData()
+        meta.reflect(bind=self.engine)
+        result = {}
+        for table in meta.sorted_tables:
+            result[table.name] = [dict(row) for row in self.engine.execute(table.select())]
+        return json.dumps(result)

@@ -4,6 +4,7 @@ import numpy as np
 import json
 from timeit import Timer
 
+
 def benchmark(nsamples):
     params = {
         "S0": {"type": "float", "default": 997},
@@ -28,6 +29,7 @@ def benchmark(nsamples):
     benchmark_results = {}
     t = Timer('campaign.draw_samples(nsamples)', globals=locals())
     benchmark_results['draw_samples'] = t.timeit(1)
+
     def fake_results():
         counter = 1
         while True:
@@ -37,13 +39,14 @@ def benchmark(nsamples):
     results_ = []
     for _ in range(nsamples):
         results_.append(next(fakes))
-    t = Timer('campaign.campaign_db.store_results(campaign._active_app_name, results_)', globals=locals())
+    t = Timer(
+        'campaign.campaign_db.store_results(campaign._active_app_name, results_)',
+        globals=locals())
     benchmark_results['store_results'] = t.timeit(1)
     t = Timer('campaign.get_collation_result()', globals=locals())
     benchmark_results['get_collation_result'] = t.timeit(1)
     return benchmark_results
-    
-    
+
 
 if __name__ == '__main__':
     nsamples = [1000, 10000, 100000, 1000000]

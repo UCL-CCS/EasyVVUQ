@@ -65,7 +65,7 @@ def adaptive_campaign():
                                     output_columns=output_columns)
     execute = ExecuteLocal(os.path.abspath("tests/sc/poly_model_anisotropic.py") + " poly_in.json")
     actions = Actions(CreateRunDirectory('/tmp'), Encode(encoder), execute, Decode(decoder))
-    
+
     # Add the SC app (automatically set as current app)
     campaign.add_app(name="sc",
                      params=params,
