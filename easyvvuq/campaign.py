@@ -186,6 +186,8 @@ class Campaign:
             self.set_app(self._active_app_name)
             self.campaign_db.resume_campaign(name)
         else:
+            if self._campaign_dir is None:
+                self._campaign_dir = tempfile.mkdtemp(prefix=name, dir=work_dir)
             info = CampaignInfo(
                 name=name,
                 campaign_dir_prefix=default_campaign_prefix,
