@@ -53,6 +53,7 @@ def campaign(tmp_path, app_info):
         easyvvuq_version=uq.__version__,
         campaign_dir=str(tmp_path))
     campaign = CampaignDB(location='sqlite:///{}/test.sqlite'.format(tmp_path))
+    campaign.create_campaign(info)
     campaign.tmp_path = str(tmp_path)
     runs = [RunInfo('run', '.', 1, {'a': 1}, 1, 1) for _ in range(1010)]
     campaign.add_runs(runs)
@@ -298,6 +299,7 @@ def test_mv_collation(tmp_path, app_info):
         easyvvuq_version=uq.__version__,
         campaign_dir=str(tmp_path))
     campaign = CampaignDB(location='sqlite:///{}/test.sqlite'.format(tmp_path))
+    campaign.create_campaign(info)
     campaign.tmp_path = str(tmp_path)
     runs = [RunInfo('run', '.', 1, params, 1, 1)]
     run_ids = [0]
