@@ -53,7 +53,6 @@ def campaign(tmp_path, app_info):
         easyvvuq_version=uq.__version__,
         campaign_dir=str(tmp_path))
     campaign = CampaignDB(location='sqlite:///{}/test.sqlite'.format(tmp_path))
-    campaign.create_campaign(info)
     campaign.tmp_path = str(tmp_path)
     runs = [RunInfo('run', '.', 1, {'a': 1}, 1, 1) for _ in range(1010)]
     campaign.add_runs(runs)
@@ -111,14 +110,12 @@ def test_version_check(campaign):
         campaign_dir=str(campaign.tmp_path))
     with pytest.raises(RuntimeError):
         campaign2 = CampaignDB(location='sqlite:///{}/test.sqlite'.format(campaign.tmp_path))
-        campaign2.create_campaign(info)
     info = CampaignInfo(
         name='test3',
         campaign_dir_prefix=default_campaign_prefix,
         easyvvuq_version=uq.__version__,
         campaign_dir=str(campaign.tmp_path))
     campaign3 = CampaignDB(location='sqlite:///{}/test.sqlite'.format(campaign.tmp_path))
-    campaign3.create_campaign(info)
 
 
 def test_collation(campaign):
@@ -301,7 +298,6 @@ def test_mv_collation(tmp_path, app_info):
         easyvvuq_version=uq.__version__,
         campaign_dir=str(tmp_path))
     campaign = CampaignDB(location='sqlite:///{}/test.sqlite'.format(tmp_path))
-    campaign.create_campaign(info)
     campaign.tmp_path = str(tmp_path)
     runs = [RunInfo('run', '.', 1, params, 1, 1)]
     run_ids = [0]

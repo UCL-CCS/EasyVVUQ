@@ -157,6 +157,17 @@ class Campaign:
         return os.path.join(self.work_dir, self._campaign_dir)
 
     def init_db(self, name, db_location, work_dir='.'):
+        """Initialize the connection with the database and either resume or create the campaign.
+
+        Parameters
+        ----------
+        name: str
+            name of the campaign
+        db_location: str
+            database URI
+        work_dir: str
+            work directory, defaults to cwd
+        """
         self.db_location = db_location
         self.campaign_db = CampaignDB(location=db_location)
         if self.campaign_db.campaign_exists(name):
