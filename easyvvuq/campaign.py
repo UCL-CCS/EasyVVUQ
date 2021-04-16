@@ -122,7 +122,7 @@ class Campaign:
 
         self.campaign_name = name
         self._campaign_dir = None
-        
+
         if db_location is None:
             self._campaign_dir = tempfile.mkdtemp(prefix=name, dir=work_dir)
             self.db_location = "sqlite:///" + self._campaign_dir + "/campaign.db"
@@ -250,7 +250,7 @@ class Campaign:
         -------
 
         """
-        
+
         self._active_app_name = app_name
         self._active_app = self.campaign_db.app(name=app_name)
         self.campaign_db.set_active_app(app_name)
@@ -471,13 +471,13 @@ class Campaign:
 
     def execute(self, nsamples=0, pool=None, mark_invalid=False, sequential=False):
         """This will draw samples and execute the action on those samples.
-        
+
         Parameters
         ----------
         nsamples : int
             Number of samples to draw. For infinite samplers or when you want to process samples in batches.
         pool : Pool
-            A pool object to be used when processing runs (e.g. instance of ThreadPoolExecutor or 
+            A pool object to be used when processing runs (e.g. instance of ThreadPoolExecutor or
             ProcessPoolExecutor).
         mark_invalid : bool
             Mark runs that go outside the specified input parameter range as INVALID.
@@ -511,14 +511,14 @@ class Campaign:
         # Loop through all runs in this campaign with status ENCODED, and
         # run the specified action on each run's dir
         def inits():
-            for run_id, run_data in self.campaign_db.runs(status=Status.NEW, app_id=self._active_app['id']):
+            for run_id, run_data in self.campaign_db.runs(
+                    status=Status.NEW, app_id=self._active_app['id']):
                 previous = {}
                 previous['run_id'] = run_id
                 previous['campaign_dir'] = self._campaign_dir
                 previous['run_info'] = run_data
                 yield previous
         return ActionPool(self, action, inits=inits(), sequential=sequential)
-        
 
     def iterate(self, nsamples=0, pool=None, mark_invalid=False, sequential=False):
         """This is the equivalent of sample_and_apply for methods that rely on the output of the

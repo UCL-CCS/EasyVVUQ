@@ -83,4 +83,3 @@ class BaseEncoder(BaseElement):
 
         """
         raise NotImplementedError
-

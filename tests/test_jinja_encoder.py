@@ -132,7 +132,7 @@ def test_jinjaencoder(tmpdir):
     decoder = uq.decoders.SimpleCSV(
         target_filename='results.csv',
         output_columns=output_columns)
-    
+
 
 if __name__ == "__main__":
     test_jinjaencoder("/tmp/")

@@ -89,12 +89,14 @@ def test_multisampler(tmpdir):
     decoder = uq.decoders.SimpleCSV(
         target_filename='output.csv', output_columns=[
             'Dist', 'lastvx', 'lastvy'])
-    execute = uq.actions.ExecuteLocal(os.path.abspath("tests/cannonsim/bin/cannonsim") + " in.cannon output.csv")
+    execute = uq.actions.ExecuteLocal(
+        os.path.abspath("tests/cannonsim/bin/cannonsim") +
+        " in.cannon output.csv")
     actions = Actions(CreateRunDirectory('/tmp'), Encode(encoder), execute, Decode(decoder))
     # Add the cannonsim app
     my_campaign.add_app(name="cannonsim",
                         params=params,
-                        actions = actions)
+                        actions=actions)
 
     # Set the active app to be cannonsim (this is redundant when only one app
     # has been added)
@@ -129,7 +131,7 @@ def test_multisampler(tmpdir):
     reloaded_campaign = uq.Campaign('cannon', db_location=my_campaign.db_location)
 
     my_campaign.execute(sequential=True).collate()
-    
+
     # Create a BasicStats analysis element and apply it to the campaign
     stats = uq.analysis.BasicStats(qoi_cols=['Dist', 'lastvx', 'lastvy'])
     my_campaign.apply_analysis(stats)

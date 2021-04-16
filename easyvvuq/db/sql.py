@@ -106,12 +106,14 @@ class SamplerTable(Base):
     id = Column(Integer, primary_key=True)
     sampler = Column(String)
 
+
 @event.listens_for(Engine, "connect")
 def set_sqlite_pragma(dbapi_connection, connection_record):
     cursor = dbapi_connection.cursor()
     cursor.execute("PRAGMA synchronous = OFF")
     cursor.execute("PRAGMA journal_mode = OFF")
     cursor.close()
+
 
 class CampaignDB(BaseCampaignDB):
     """An interface between the campaign database and the campaign.
@@ -121,6 +123,7 @@ class CampaignDB(BaseCampaignDB):
     location: str
        database URI as needed by SQLAlchemy
     """
+
     def __init__(self, location=None):
         if location is not None:
             self.engine = create_engine(location)
@@ -179,7 +182,7 @@ class CampaignDB(BaseCampaignDB):
         Parameters
         ----------
         name: str
-        
+
         Returns
         -------
         bool
@@ -221,7 +224,7 @@ class CampaignDB(BaseCampaignDB):
             raise RuntimeError(message)
 
         selected_app = selected[0]
-        
+
         app_dict = {
             'id': selected_app.id,
             'name': selected_app.name,
@@ -233,7 +236,7 @@ class CampaignDB(BaseCampaignDB):
 
     def set_active_app(self, name):
         """Set an app specified by name as active.
-        
+
         Parameters
         ----------
         name: str
@@ -244,8 +247,8 @@ class CampaignDB(BaseCampaignDB):
             raise RuntimeError('no such app - {}'.format(name))
         assert(not (len(selected) > 1))
         app = selected[0]
-        self.session.query(CampaignTable).update({'active_app' : app.id})
-        self.session.commit() 
+        self.session.query(CampaignTable).update({'active_app': app.id})
+        self.session.commit()
 
     def add_app(self, app_info):
         """
@@ -849,6 +852,7 @@ class CampaignDB(BaseCampaignDB):
 
     def store_result(self, run_id, result):
         self.commit_counter += 1
+
         def convert_nonserializable(obj):
             if isinstance(obj, np.int64):
                 return int(obj)

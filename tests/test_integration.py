@@ -73,7 +73,7 @@ def campaign():
         reloaded_campaign.execute(nsamples=num_samples).collate()
         # Draw 3 more samples, execute, and collate onto existing dataframe
         #reloaded_campaign.draw_samples(num_samples=num_samples, replicas=replicas)
-        #reloaded_campaign.collate()
+        # reloaded_campaign.collate()
         if stats is not None:
             reloaded_campaign.apply_analysis(stats)
     return _campaign
@@ -127,7 +127,9 @@ def test_cannonsim(tmpdir, campaign):
         target_filename='output.csv', output_columns=[
             'Dist', 'lastvx', 'lastvy'])
     # Create a collation element for this campaign
-    actions = uq.actions.ExecuteLocal(os.path.abspath("tests/cannonsim/bin/cannonsim") +  " in.cannon output.csv")
+    actions = uq.actions.ExecuteLocal(
+        os.path.abspath("tests/cannonsim/bin/cannonsim") +
+        " in.cannon output.csv")
     stats = uq.analysis.BasicStats(qoi_cols=['Dist', 'lastvx', 'lastvy'])
     # Make a random sampler
     vary = {
@@ -274,7 +276,9 @@ def test_pce(tmpdir, campaign):
     }
     sampler = uq.sampling.PCESampler(vary=vary,
                                      polynomial_order=3)
-    actions = uq.actions.ExecuteLocal(os.path.abspath("tests/cooling/cooling_model.py") + " cooling_in.json")
+    actions = uq.actions.ExecuteLocal(
+        os.path.abspath("tests/cooling/cooling_model.py") +
+        " cooling_in.json")
     stats = uq.analysis.PCEAnalysis(sampler=sampler,
                                     qoi_cols=output_columns)
     campaign(tmpdir, 'pce', 'pce', params, encoder, decoder, sampler, actions, stats, vary, 0, 1)

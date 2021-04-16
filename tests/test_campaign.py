@@ -136,4 +136,3 @@ def test_get_active_sampler(tmp_path):
 
 def test_get_active_app(campaign):
     assert campaign.get_active_app() == campaign._active_app
-
