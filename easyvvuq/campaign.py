@@ -136,7 +136,7 @@ class Campaign:
         self._active_sampler = None
         self._active_sampler_id = None
 
-        self.init_db(name, db_location, self.work_dir)
+        self.init_db(name, self.work_dir)
         self._state_dir = None
 
         # here we assume that the user wants to add an app
@@ -156,20 +156,17 @@ class Campaign:
 
         return os.path.join(self.work_dir, self._campaign_dir)
 
-    def init_db(self, name, db_location, work_dir='.'):
+    def init_db(self, name, work_dir='.'):
         """Initialize the connection with the database and either resume or create the campaign.
 
         Parameters
         ----------
         name: str
             name of the campaign
-        db_location: str
-            database URI
         work_dir: str
             work directory, defaults to cwd
         """
-        self.db_location = db_location
-        self.campaign_db = CampaignDB(location=db_location)
+        self.campaign_db = CampaignDB(location=self.db_location)
         if self.campaign_db.campaign_exists(name):
             self.campaign_id = self.campaign_db.get_campaign_id(name)
             self._active_app_name = self.campaign_db.get_active_app().name
@@ -195,7 +192,6 @@ class Campaign:
             self.campaign_db.create_campaign(info)
             self.campaign_name = name
             self.campaign_id = self.campaign_db.get_campaign_id(self.campaign_name)
-            self.campaign_db.create_campaign(info)
 
     def add_app(self, name=None, params=None, actions=None, set_active=True):
         """Add an application to the CampaignDB.

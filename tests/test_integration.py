@@ -55,7 +55,8 @@ def campaign():
     def _campaign(work_dir, campaign_name, app_name, params, encoder, decoder, sampler,
                   actions, stats, vary, num_samples=0, replicas=1, db_type='sql',
                   call_fn=None):
-        my_campaign = uq.Campaign(name=campaign_name, work_dir=work_dir, db_type=db_type)
+        my_campaign = uq.Campaign(name=campaign_name, work_dir=work_dir)
+        db_location = my_campaign.db_location
         # Add the cannonsim app
         actions_ = Actions(CreateRunDirectory('/tmp'), Encode(encoder), actions, Decode(decoder))
         my_campaign.add_app(name=app_name,
@@ -65,12 +66,9 @@ def campaign():
         # Set the campaign to use this sampler
         my_campaign.set_sampler(sampler)
         my_campaign.execute(nsamples=num_samples, sequential=True).collate()
-        # Save the state of the campaign
-        state_file = work_dir + "{}_state.json".format(app_name)
-        my_campaign.save_state(state_file)
         my_campaign = None
         # Load state in new campaign object
-        reloaded_campaign = uq.Campaign(state_file=state_file, work_dir=work_dir)
+        reloaded_campaign = uq.Campaign(name=campaign_name, db_location=db_location)
         reloaded_campaign.set_app(app_name)
         reloaded_campaign.execute(nsamples=num_samples).collate()
         # Draw 3 more samples, execute, and collate onto existing dataframe
