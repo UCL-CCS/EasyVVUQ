@@ -41,7 +41,7 @@ CANNONSIM_PATH = os.path.realpath(os.path.expanduser("tests/cannonsim/bin/cannon
 def test_multisampler(tmpdir):
 
     # Set up a fresh campaign called "cannon"
-    my_campaign = uq.Campaign(name='cannon', db_type='sql', work_dir=tmpdir)
+    my_campaign = uq.Campaign(name='cannon', work_dir=tmpdir)
 
     # Define parameter space for the cannonsim app
     params = {
@@ -126,10 +126,9 @@ def test_multisampler(tmpdir):
     my_campaign.set_sampler(multisampler)
 
     # Test reloading
-    my_campaign.save_state(tmpdir + "test_multisampler.json")
-    reloaded_campaign = uq.Campaign(state_file=tmpdir + "test_multisampler.json", work_dir=tmpdir)
+    reloaded_campaign = uq.Campaign('cannon', db_location=my_campaign.db_location)
 
-    my_campaign.execute().collate()
+    my_campaign.execute(sequential=True).collate()
     
     # Create a BasicStats analysis element and apply it to the campaign
     stats = uq.analysis.BasicStats(qoi_cols=['Dist', 'lastvx', 'lastvy'])
