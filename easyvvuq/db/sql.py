@@ -337,9 +337,11 @@ class CampaignDB(BaseCampaignDB):
             The 'live' sampler object, deserialized from the state in the db
 
         """
-
-        serialized_sampler = self.session.query(SamplerTable).get(sampler_id).sampler
-        sampler = easyvvuq_deserialize(serialized_sampler.encode('utf-8'))
+        try:
+            serialized_sampler = self.session.query(SamplerTable).get(sampler_id).sampler
+            sampler = easyvvuq_deserialize(serialized_sampler.encode('utf-8'))
+        except AttributeError:
+            sampler = None
         return sampler
 
     def resurrect_app(self, app_name):
