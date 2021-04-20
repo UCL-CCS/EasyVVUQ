@@ -54,14 +54,6 @@ class MCMCAnalysis(BaseAnalysisElement):
         self.sampler = sampler
         self.qoi = qoi
 
-    def element_name(self):
-        """Name for this element"""
-        return "MCMCAnalysis"
-
-    def element_version(self):
-        """Version of this element"""
-        return "0.1"
-
     def analyse(self, df):
         chains = dict([(chain_id, []) for chain_id in df[('chain_id', 0)].unique()])
         for chain in chains:
