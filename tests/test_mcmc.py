@@ -46,3 +46,7 @@ def test_mcmc(tmp_path):
     df = campaign.get_collation_result()
     analysis = uq.analysis.MCMCAnalysis(sampler, 'value')
     result = analysis.analyse(df)
+    result.plot_hist('x1')
+    result.plot_hist('x2')
+    result.plot_chains('x1')
+    result.plot_chains('x2')
