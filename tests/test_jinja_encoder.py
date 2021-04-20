@@ -129,10 +129,7 @@ def test_jinjaencoder(tmpdir):
     my_campaign = uq.Campaign(name='dales', work_dir=tmpdir, db_location='sqlite:///')
     encoder = JinjaEncoder(template_fname='tests/jinjaencoder/namoptions.template',
                            target_filename='namoptions.001')
-    decoder = uq.decoders.SimpleCSV(
-        target_filename='results.csv',
-        output_columns=output_columns)
-
+    encoder.encode(params, tmpdir)
 
 if __name__ == "__main__":
     test_jinjaencoder("/tmp/")
