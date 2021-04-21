@@ -205,14 +205,8 @@ class Campaign:
             Name of the application.
         params : dict
             Description of the parameters to associate with the application.
-        decoderspec : dict
-            A Cerberus validation dictionary for the output of the decoder
-            if left None, will not be used.
-        encoder : :obj:`easyvvuq.encoders.base.BaseEncoder`
-            Encoder element to convert parameters into application run inputs.
-        decoder : :obj:`easyvvuq.decoders.base.BaseDecoder`
-            Decoder element to convert application run output into data for
-            VVUQ analysis.
+        actions : Actions
+            An instance of Actions containing actions to be executed
         set_active: bool
             Should the added app be set to be the currently active app?
 
