@@ -49,7 +49,9 @@ str += '}'
 print(str, file=open('fusion.template','w'))
 """
 
-# Create an encoder and decoder for PCE test app
+
+# Create an encoder, decoder and collater for PCE test app
+
 encoder = uq.encoders.GenericEncoder(template_fname='fusion.template',
                                      delimiter='$',
                                      target_filename='fusion_in.json')
@@ -57,12 +59,15 @@ encoder = uq.encoders.GenericEncoder(template_fname='fusion.template',
 
 decoder = uq.decoders.SimpleCSV(target_filename="output.csv",
                                 output_columns=["te", "ne", "rho", "rho_norm"])
+                                
+
+execute = uq.actions.ExecuteLocal('python3 %s/fusion_model.py fusion_in.json' % (os.getcwd()))
+
+actions = uq.actions.Actions(uq.actions.CreateRunDirectory('/tmp'), 
+                  uq.actions.Encode(encoder), execute, uq.actions.Decode(decoder))
 
 # Add the app (automatically set as current app)
-my_campaign.add_app(name="fusion",
-                    params=params,
-                    encoder=encoder,
-                    decoder=decoder)
+my_campaign.add_app(name="fusion", params=params, actions=actions)
 
 time_end = time.time()
 print('Time for phase 1 = %.3f' % (time_end-time_start))
@@ -74,7 +79,12 @@ vary = {
     "H0":       cp.Uniform(0.0,   0.2),
     "Hw":       cp.Uniform(0.1,   0.5),
     "chi":      cp.Uniform(0.8,   1.2),
-    "Te_bc":    cp.Uniform(80.0,  120.0)
+    "Te_bc":    cp.Uniform(80.0,  120.0),
+    "b_pos":    cp.Uniform(0.95,  0.99),
+    "b_height": cp.Uniform(5e19,  7e19),
+    "b_sol":    cp.Uniform(1e19,  3e19),
+    "b_width":  cp.Uniform(0.015, 0.025),
+    "b_slope":  cp.Uniform(0.005, 0.020)
 }
 """ other possible quantities to vary
     "a0":       cp.Uniform(0.9,   1.1),
@@ -88,7 +98,7 @@ vary = {
 """
 
 # Associate a sampler with the campaign
-my_campaign.set_sampler(uq.sampling.PCESampler(vary=vary, polynomial_order=2))
+my_campaign.set_sampler(uq.sampling.PCESampler(vary=vary, polynomial_order=1))
 
 # Will draw all (of the finite set of samples)
 my_campaign.draw_samples()
@@ -98,35 +108,19 @@ time_end = time.time()
 print('Time for phase 2 = %.3f' % (time_end-time_start))
 time_start = time.time()
 
-# Create and populate the run directories
-my_campaign.populate_runs_dir()
-
-time_end = time.time()
-print('Time for phase 3 = %.3f' % (time_end-time_start))
-time_start = time.time()
-
-# Run the cases
-cwd = os.getcwd().replace(' ', '\ ')      # deal with ' ' in the path
-cmd = f"{cwd}/fusion_model.py fusion_in.json"
-my_campaign.apply_for_each_run_dir(uq.actions.ExecuteLocal(cmd, interpret='python3'))
-
-time_end = time.time()
-print('Time for phase 4 = %.3f' % (time_end-time_start))
-time_start = time.time()
-
-# Collate the results
-my_campaign.collate()
+# Run and collate the cases
+my_campaign.execute().collate()
 results_df = my_campaign.get_collation_result()
 
 time_end = time.time()
-print('Time for phase 5 = %.3f' % (time_end-time_start))
+print('Time for phase 3 = %.3f' % (time_end-time_start))
 time_start = time.time()
 
 # Post-processing analysis
 my_campaign.apply_analysis(uq.analysis.PCEAnalysis(sampler=my_campaign.get_active_sampler(), qoi_cols=["te", "ne", "rho", "rho_norm"]))
 
 time_end = time.time()
-print('Time for phase 6 = %.3f' % (time_end-time_start))
+print('Time for phase 4 = %.3f' % (time_end-time_start))
 time_start = time.time()
 
 # Get Descriptive Statistics
@@ -136,18 +130,15 @@ rho = results.describe('rho', 'mean')
 rho_norm = results.describe('rho_norm', 'mean')
 
 time_end = time.time()
-print('Time for phase 7 = %.3f' % (time_end-time_start))
+print('Time for phase 5 = %.3f' % (time_end-time_start))
 time_start = time.time()
 
-my_campaign.save_state("campaign_state.json")
-
-###old_campaign = uq.Campaign(state_file="campaign_state.json", work_dir=".")
 
 pickle.dump(results, open('fusion_results.pickle','bw'))
 ###saved_results = pickle.load(open('fusion_results.pickle','br'))
 
 time_end = time.time()
-print('Time for phase 8 = %.3f' % (time_end-time_start))
+print('Time for phase 6 = %.3f' % (time_end-time_start))
 
 plt.ion()
 
@@ -160,7 +151,7 @@ plt.fill_between(rho, results.describe('te', 'mean')-results.describe('te', 'std
 plt.plot(rho, results.describe('te', '10%'), 'b:', label='10 and 90 percentiles')
 plt.plot(rho, results.describe('te', '90%'), 'b:')
 plt.fill_between(rho, results.describe('te', '10%'), results.describe('te', '90%'), color='b', alpha=0.1)
-plt.fill_between(rho, results.describe('te', 'min'), results.describe('te', 'max'), color='b', alpha=0.05)
+plt.fill_between(rho, results.describe('te', '1%'), results.describe('te', '99%'), color='b', alpha=0.05)
 plt.legend(loc=0)
 plt.xlabel('rho [m]')
 plt.ylabel('Te [eV]')
@@ -213,13 +204,18 @@ plt.savefig('sobols_total.png')
 # plt.savefig('distribution_functions.png')
 
 te_dist = results.raw_data['output_distributions']['te']
-for i in [0]:
+for i in [np.maximum(0, int(i-1)) for i in np.linspace(0,1,5) * rho_norm.shape]:
     plt.figure()
+    pdf_raw_samples = cp.GaussianKDE(results_df.te[i])
+    pdf_kde_samples = cp.GaussianKDE(te_dist.samples[i])
     plt.hist(results_df.te[i], density=True, bins=50, label='histogram of raw samples', alpha=0.25)
     if hasattr(te_dist, 'samples'):
         plt.hist(te_dist.samples[i], density=True, bins=50, label='histogram of kde samples', alpha=0.25)
-    t1 = te_dist[i]
-    plt.plot(np.linspace(t1.lower, t1.upper), t1.pdf(np.linspace(t1.lower,t1.upper)), label='PDF')
+    plt.plot(np.linspace(pdf_raw_samples.lower, pdf_raw_samples.upper), pdf_raw_samples.pdf(np.linspace(pdf_raw_samples.lower, pdf_raw_samples.upper)), label='PDF (raw samples)')
+    plt.plot(np.linspace(pdf_kde_samples.lower, pdf_kde_samples.upper), pdf_kde_samples.pdf(np.linspace(pdf_kde_samples.lower, pdf_kde_samples.upper)), label='PDF (kde samples)')
+    if i==0:
+        t1 = te_dist[i]
+        plt.plot(np.linspace(t1.lower, t1.upper), t1.pdf(np.linspace(t1.lower,t1.upper)), label='PDF from EasyVVUQ')
     plt.legend(loc=0)
     plt.xlabel('Te [eV]')
     plt.title('Distributions for rho_norm = %0.4f' % (rho_norm[i]))
