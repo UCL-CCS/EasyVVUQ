@@ -123,6 +123,22 @@ class PCEAnalysisResults(QMCAnalysisResults):
             except KeyError:
                 raise NotImplementedError
 
+    def get_pdf(self, qoi):
+        """Returns a pdf for the given qoi.
+
+        Parameters
+        ----------
+        qoi: str
+            QoI name
+        
+        Returns
+        -------
+        A ChaosPy PDF
+        """
+        if qoi not in self.qois:
+            raise RuntimeError('no such quantity of interest - {}'.format(qoi))
+        return self.raw_data['output_distributions'][qoi]
+
 
 class PCEAnalysis(BaseAnalysisElement):
 

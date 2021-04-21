@@ -519,6 +519,20 @@ class AnalysisResults:
             fig.savefig(filename, dpi=dpi)
         return ax
 
+    def get_pdf(self, qoi):
+        """Returns a pdf for the given qoi.
+
+        Parameters
+        ----------
+        qoi: str
+            QoI name
+        
+        Returns
+        -------
+        A ChaosPy PDF
+        """
+        raise NotImplementedError
+
     @staticmethod
     def _keys_to_tuples(dictionary):
         """Convert the keys in the dictionary to tuples.
@@ -574,3 +588,4 @@ class AnalysisResults:
             return (key, 0)
         else:
             raise RuntimeError("this method expects either a string or tuple")
+
