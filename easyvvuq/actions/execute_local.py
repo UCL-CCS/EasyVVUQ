@@ -173,15 +173,27 @@ class ExecutePython():
 
 
 class ExecuteLocal():
-    def __init__(self, full_cmd):
+    def __init__(self, full_cmd, stdout=None, stderr=None):
         self.full_cmd = full_cmd.split()
         self.popen_object = None
         self.ret = None
         self._started = False
+        self.stdout = stdout
+        self.stderr = stderr
 
     def start(self, previous=None):
         target_dir = previous['rundir']
-        self.ret = subprocess.run(self.full_cmd, cwd=target_dir)
+        if isinstance(self.stdout, str):
+            stdout = open(self.stdout, 'w')
+        else:
+            stdout = self.stdout
+        if isinstance(self.stderr, str):
+            stderr = open(self.stderr, 'w')
+        else:
+            stderr = self.stderr
+        self.ret = subprocess.run(
+            self.full_cmd, cwd=target_dir,
+            stdout=stdout, stderr=stderr)
         return previous
 
     def finished(self):
