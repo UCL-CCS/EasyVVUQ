@@ -42,7 +42,7 @@ class CreateRunDirectory():
     def __init__(self, root):
         self.root = root
 
-    def start(self, previous=None):
+    def start(self, previous=None, flatten=False):
         run_id = previous['run_id']
         level1_a, level1_b = (int(run_id / 100 ** 4) * 100 ** 4,
                               int(run_id / 100 ** 4 + 1) * 100 ** 4)
@@ -56,9 +56,12 @@ class CreateRunDirectory():
         level2_dir = "runs_{}-{}/".format(level2_a, level2_b)
         level3_dir = "runs_{}-{}/".format(level3_a, level3_b)
         level4_dir = "runs_{}-{}/".format(level4_a, level4_b)
-        level5_dir = "runs_{}".format(int(run_id))
-        path = os.path.join(self.root, previous['campaign_dir'], 'runs',
-                            level1_dir, level2_dir, level3_dir, level4_dir, level5_dir)
+        level5_dir = "run_{}".format(int(run_id))
+        if flatten:
+            path = os.path.join(self.root, previous['campaign_dir'], 'runs', level5_dir)
+        else:
+            path = os.path.join(self.root, previous['campaign_dir'], 'runs',
+                                level1_dir, level2_dir, level3_dir, level4_dir, level5_dir)
         Path(path).mkdir(parents=True, exist_ok=True)
         previous['rundir'] = path
         self.result = previous
