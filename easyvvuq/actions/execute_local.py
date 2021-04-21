@@ -39,10 +39,11 @@ def local_execute(encoder, command, decoder, root='/tmp'):
 
 
 class CreateRunDirectory():
-    def __init__(self, root):
+    def __init__(self, root, flatten=False):
         self.root = root
+        self.flatten = flatten
 
-    def start(self, previous=None, flatten=False):
+    def start(self, previous=None):
         run_id = previous['run_id']
         level1_a, level1_b = (int(run_id / 100 ** 4) * 100 ** 4,
                               int(run_id / 100 ** 4 + 1) * 100 ** 4)
@@ -57,7 +58,7 @@ class CreateRunDirectory():
         level3_dir = "runs_{}-{}/".format(level3_a, level3_b)
         level4_dir = "runs_{}-{}/".format(level4_a, level4_b)
         level5_dir = "run_{}".format(int(run_id))
-        if flatten:
+        if self.flatten:
             path = os.path.join(self.root, previous['campaign_dir'], 'runs', level5_dir)
         else:
             path = os.path.join(self.root, previous['campaign_dir'], 'runs',

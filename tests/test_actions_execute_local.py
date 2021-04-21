@@ -18,5 +18,6 @@ def test_create_run_directory(tmpdir):
             tmpdir, 'test', 'runs', 'runs_0-100000000', 'runs_0-1000000', 'runs_0-10000',
             'runs_0-100')))
     previous = {'campaign_dir': 'test', 'run_id': 100, 'run_info': {'id': 100}}
-    previous = action.start(previous, flatten=True)
+    action = CreateRunDirectory(tmpdir, flatten=True)
+    previous = action.start(previous)
     assert(os.path.exists(os.path.join(tmpdir, 'test', 'runs', 'run_100')))
