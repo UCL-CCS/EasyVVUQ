@@ -114,10 +114,10 @@ def test_full_results(results):
     assert(results.sobols_first('f', 'x2')[0] == pytest.approx(0.2678957617817755))
 
 
-def test_pdf(results):
+def test_distribution(results):
     with pytest.raises(RuntimeError):
-        results.get_pdf('z')
-    assert(results.get_pdf('f').pdf([0, 0]) == pytest.approx([0.44296863, 0.44296863]))
+        results.get_distribution('z')
+    assert(results.get_distribution('f').pdf([0, 0]) == pytest.approx([0.44296863, 0.44296863]))
 
     
 def test_describe(results_vectors):

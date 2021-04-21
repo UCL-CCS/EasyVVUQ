@@ -123,8 +123,8 @@ class PCEAnalysisResults(QMCAnalysisResults):
             except KeyError:
                 raise NotImplementedError
 
-    def get_pdf(self, qoi):
-        """Returns a pdf for the given qoi.
+    def get_distribution(self, qoi):
+        """Returns a distribution for the given qoi.
 
         Parameters
         ----------

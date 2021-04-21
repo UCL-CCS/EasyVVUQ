@@ -519,8 +519,8 @@ class AnalysisResults:
             fig.savefig(filename, dpi=dpi)
         return ax
 
-    def get_pdf(self, qoi):
-        """Returns a pdf for the given qoi.
+    def get_distribution(self, qoi):
+        """Returns a distribution for the given qoi.
 
         Parameters
         ----------
@@ -529,7 +529,7 @@ class AnalysisResults:
         
         Returns
         -------
-        A ChaosPy PDF
+        A ChaosPy distribution
         """
         raise NotImplementedError
 
