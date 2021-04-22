@@ -107,7 +107,7 @@ class ActionPool:
            Whether to show progress bar
         """
         if not progress_bar:
-            tqdm_ = lambda x: x
+            tqdm_ = lambda x, total=None: x
         else:
             tqdm_ = tqdm
         if isinstance(self.pool, Client):
