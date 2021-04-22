@@ -20,3 +20,4 @@ kubernetes
 autopep8
 squarify
 dill
+tqdm
