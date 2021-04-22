@@ -86,7 +86,7 @@ We are trying to keep dependencies at a minimum but a few are inevitable, to ins
 ```
 cd EasyVVUQ/
 
-pip install -r requirements.txt
+pip install --use-feature=2020-resolver -r requirements.txt
 ```
 
 Then the library can be installed using:
