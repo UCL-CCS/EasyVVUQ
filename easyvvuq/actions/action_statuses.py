@@ -1,5 +1,6 @@
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from dask.distributed import Client
+from tqdm import tqdm
 import copy
 
 __copyright__ = """
@@ -89,16 +90,20 @@ class ActionPool:
                 ready += 1
         return {'ready': ready, 'active': running, 'finished': done, 'failed': failed}
 
-    def collate(self):
+    def collate(self, progress_bar=False):
         """A command that will block untill all futures in the pool have finished.
         """
+        if not progress_bar:
+            tqdm_ = lambda x: x
+        else:
+            tqdm_ = tqdm
         if isinstance(self.pool, Client):
             self.results = self.pool.gather(self.futures)
         if self.sequential or isinstance(self.pool, Client):
-            for result in self.results:
+            for result in tqdm_(self.results, total=len(self.results)):
                 self.campaign.campaign_db.store_result(result['run_id'], result)
         else:
-            for future in as_completed(self.futures):
+            for future in tqdm_(as_completed(self.futures), total=len(self.futures)):
                 result = future.result()
                 self.campaign.campaign_db.store_result(result['run_id'], result)
         self.campaign.campaign_db.session.commit()
