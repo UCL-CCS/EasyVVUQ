@@ -27,16 +27,19 @@ __license__ = "LGPL"
 
 
 class ActionPool:
-    """A class that tracks statuses of a list of actions.
+    """A class that handles the execution of actions.
 
     Parameters
     ----------
-    statuses: list of ActionStatus
-        a list of action statuses to track
-    poll_sleep_time: int
-        a time to sleep for after iterating over all active statuses
-        before starting again
-
+    campaign: Campaign
+        An instance of an EasyVVUQ campaign.
+    actions: Actions
+        An instance of Actions containing things to be done as part of the simulation.
+    inits: iterable
+        Initial inputs to be passed to each Actions representing a sample. Will usually contain
+        dictionaries with the following information: {'run_id': ..., 'campaign_dir': ..., 'run_info': ...}.
+    sequential: bool
+        Will run the actions sequentially.
     """
 
     def __init__(self, campaign, actions, inits, sequential=False):
@@ -50,9 +53,13 @@ class ActionPool:
     def start(self, pool=None):
         """Start the actions.
 
+        Parameters
+        ----------
+        pool: An Executor instance (e.g. ThreadPoolExecutor)
+
         Returns
         -------
-        A list of Python futures represending action execution.
+        ActionPool
         """
         if pool is None:
             pool = ThreadPoolExecutor()
@@ -91,7 +98,13 @@ class ActionPool:
         return {'ready': ready, 'active': running, 'finished': done, 'failed': failed}
 
     def collate(self, progress_bar=False):
-        """A command that will block untill all futures in the pool have finished.
+        """A command that will block untill al futures in the pool have finished.
+        It will also store the results in the database.
+
+        Parameters
+        ----------
+        progress_bar: bool
+           Whether to show progress bar
         """
         if not progress_bar:
             tqdm_ = lambda x: x
