@@ -26,8 +26,8 @@ jobs:
       run: |
         pdoc --html --force --output-dir pdocs easyvvuq
     - name: Publish generated content to GitHub Pages
-        uses: tsunematsu21/actions-publish-gh-pages@v1.0.1
-        with:
-          dir: pdocs
-          branch: gh-pages
-          token: ${{ secrets.PERSONAL_GITHUB_TOKEN }}
+      uses: tsunematsu21/actions-publish-gh-pages@v1.0.1
+      with:
+        dir: pdocs
+        branch: gh-pages
+        token: ${{ secrets.PERSONAL_GITHUB_TOKEN }}
