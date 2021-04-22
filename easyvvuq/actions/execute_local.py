@@ -184,11 +184,11 @@ class ExecuteLocal():
     def start(self, previous=None):
         target_dir = previous['rundir']
         if isinstance(self.stdout, str):
-            stdout = open(self.stdout, 'w')
+            stdout = open(os.path.join(target_dir, self.stdout), 'w')
         else:
             stdout = self.stdout
         if isinstance(self.stderr, str):
-            stderr = open(self.stderr, 'w')
+            stderr = open(os.path.join(target_dir, self.stderr), 'w')
         else:
             stderr = self.stderr
         self.ret = subprocess.run(
