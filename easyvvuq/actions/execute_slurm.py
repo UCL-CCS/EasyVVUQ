@@ -6,7 +6,9 @@ import logging
 import re
 import subprocess
 from . import BaseAction
+import time
 import os
+import random
 
 __copyright__ = """
 
@@ -33,7 +35,7 @@ __license__ = "LGPL"
 logger = logging.getLogger(__name__)
 
 
-class ActionStatusSLURM():
+class ExecuteSLURM():
     """An ActionStatus to track the execution of a SLURM job.
 
     Parameters
@@ -48,85 +50,36 @@ class ActionStatusSLURM():
         Name of the execution directory for this job.
     """
 
-    def __init__(self, script, script_name, target_dir):
-        self.script = script
-        self.script_name = os.path.join(target_dir, script_name)
-        with open(self.script_name, 'w') as fd:
-            fd.write(self.script)
-        self.target_dir = target_dir
-        self._started = False
-
-    def start(self):
-        """Start the SLURM job.
-        """
-        result = subprocess.run(['sbatch', self.script_name],
-                                cwd=self.target_dir, check=True, capture_output=True)
-        stdout = result.stdout.decode('utf-8')
-        self.job_id = re.findall(r'\d+', stdout)[0]
-        self._started = True
-
-    def started(self):
-        """Returns True if the job has started.
-        """
-        return self._started
-
-    def finished(self):
-        """Returns true if action is finished. In this case if calling poll on
-        the popen object returns a non-None value.
-        """
-        if not self.started():
-            return False
-        result = subprocess.run(['squeue', '-j', self.job_id],
-                                cwd=self.target_dir, check=True, capture_output=True)
-        stdout = result.stdout.decode('utf-8')
-        return not (self.job_id in stdout)
-
-    def finalise(self):
-        """Performs clean-up if necessary. In this case it isn't. I think.
-        """
-        return None
-
-    def succeeded(self):
-        """Will return True if the process finished successfully.
-        It judges based on the return code and will return False
-        if that code is not zero.
-        """
-        if not self.started():
-            return False
-        if self.finished():
-            return True
-
-
-class ExecuteSLURM(BaseAction):
-    """An improvement over ExecuteLocal that uses Popen and provides the
-    non-blocking execution that allows you to track progress. In line
-    with other Action classes in EasyVVUQ.
-
-    Parameters
-    ----------
-    template_script: str
-       filename for the template slurm script
-
-    variable: str a string in the template script that will be
-       replaced with the target_dir
-
-    """
-
     def __init__(self, template_script, variable):
         with open(template_script, 'r') as fd:
             self.template = fd.read()
         self.script_name = template_script
         self.variable = variable
 
-    def act_on_dir(self, target_dir):
+    def start(self, previous=None):
+        """Start the SLURM job.
         """
-        Executes `self.run_cmd` in the shell in `target_dir`.
+        target_dir = previous['rundir']
+        script_name = os.path.join(target_dir, os.path.basename(self.script_name))
+        script, = self.template.replace(self.variable, target_dir),
+        with open(script_name, 'w') as fd:
+            fd.write(script)
+        result = subprocess.run(
+            ['sbatch', script_name],
+            cwd=target_dir, check=True, capture_output=True)
+        stdout = result.stdout.decode('utf-8')
+        self.job_id = re.findall(r'\d+', stdout)[0]
+        while True:
+            result = subprocess.run(
+                ['squeue', '-j', self.job_id],
+                cwd=target_dir, check=True, capture_output=True)
+            stdout = result.stdout.decode('utf-8')
+            if not self.job_id in stdout:
+                break
+            time.sleep(random.randint(1, 600))
+        return previous
 
-        target_dir : str
-            Directory in which to execute command.
-
+    def finalise(self):
+        """Performs clean-up if necessary. In this case it isn't. I think.
         """
-        return ActionStatusSLURM(
-            self.template.replace(
-                self.variable, target_dir),
-            self.script_name, target_dir)
+        return None
