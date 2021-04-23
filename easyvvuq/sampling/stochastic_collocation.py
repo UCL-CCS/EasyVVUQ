@@ -362,7 +362,7 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
         # The max quad order can be low for discrete input variables
         idx = np.where((self.admissible_idx <= self.max_level).all(axis=1))[0]
         self.admissible_idx = self.admissible_idx[idx]
-        logging.debug('Admissible multi-indices:\n', self.admissible_idx)
+        logging.debug('Admissible multi-indices:\n%s', self.admissible_idx)
 
         # determine the maximum level L of the new index set L = |l| - N + 1
         # self.L = np.max(np.sum(self.admissible_idx, axis=1) - self.N + 1)
