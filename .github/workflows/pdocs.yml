@@ -27,7 +27,7 @@ jobs:
         pip install pdoc
     - name: Build and publish
       run: |
-        pdoc pdocs easyvvuq
+        pdoc -o ./pdocs easyvvuq
     - name: Publish generated content to GitHub Pages
       uses: tsunematsu21/actions-publish-gh-pages@v1.0.1
       with:
