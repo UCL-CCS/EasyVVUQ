@@ -250,7 +250,7 @@ class CampaignDB(BaseCampaignDB):
         self.session.query(CampaignTable).update({'active_app': app.id})
         self.session.commit()
 
-    def add_app(self, app_info):
+    def add_app(self, app_info, replace_app=None):
         """
         Add application to the 'app' table.
 
@@ -258,6 +258,9 @@ class CampaignDB(BaseCampaignDB):
         ----------
         app_info: AppInfo
             Application definition.
+        replace_app: int or None
+            Which app to replace if any (app field will be overwritten in runs that
+            have replace_app as their app)
 
         Returns
         -------
@@ -280,6 +283,14 @@ class CampaignDB(BaseCampaignDB):
         db_entry = AppTable(**app_dict)
         self.session.add(db_entry)
         self.session.commit()
+        if replace_app is not None:
+            assert(isinstance(replace_app, int))
+            self.session.query(RunTable).filter(
+                RunTable.app == db_entry.id).update(
+                    {RunTable.status: Status.NEW, RunTable.app: replace_app},
+                    synchronize_session='fetch')
+            self.session.commit()
+
 
     def add_sampler(self, sampler_element):
         """
