@@ -28,37 +28,16 @@
                     <h2>API Documentation</h2>
                         <ul class="memberlist">
             <li>
-                    <a class="class" href="#ActionStatusSLURM">ActionStatusSLURM</a>
-                            <ul class="memberlist">
-                        <li>
-                                <a class="function" href="#ActionStatusSLURM.__init__">ActionStatusSLURM</a>
-                        </li>
-                        <li>
-                                <a class="function" href="#ActionStatusSLURM.start">start</a>
-                        </li>
-                        <li>
-                                <a class="function" href="#ActionStatusSLURM.started">started</a>
-                        </li>
-                        <li>
-                                <a class="function" href="#ActionStatusSLURM.finished">finished</a>
-                        </li>
-                        <li>
-                                <a class="function" href="#ActionStatusSLURM.finalise">finalise</a>
-                        </li>
-                        <li>
-                                <a class="function" href="#ActionStatusSLURM.succeeded">succeeded</a>
-                        </li>
-                </ul>
-
-            </li>
-            <li>
                     <a class="class" href="#ExecuteSLURM">ExecuteSLURM</a>
                             <ul class="memberlist">
                         <li>
                                 <a class="function" href="#ExecuteSLURM.__init__">ExecuteSLURM</a>
                         </li>
                         <li>
-                                <a class="function" href="#ExecuteSLURM.act_on_dir">act_on_dir</a>
+                                <a class="function" href="#ExecuteSLURM.start">start</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#ExecuteSLURM.finalise">finalise</a>
                         </li>
                 </ul>
 
@@ -92,110 +71,25 @@ execute your simulation on a SLURM cluster.</p>
 <span class="kn">import</span> <span class="nn">re</span>
 <span class="kn">import</span> <span class="nn">subprocess</span>
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">BaseAction</span>
+<span class="kn">import</span> <span class="nn">time</span>
 <span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">random</span>
 
-<span class="n">__copyright__</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
-
-<span class="s2">    Copyright 2018 Robin A. Richardson, David W. Wright</span>
-
-<span class="s2">    This file is part of EasyVVUQ</span>
-
-<span class="s2">    EasyVVUQ is free software: you can redistribute it and/or modify</span>
-<span class="s2">    it under the terms of the Lesser GNU General Public License as published by</span>
-<span class="s2">    the Free Software Foundation, either version 3 of the License, or</span>
-<span class="s2">    (at your option) any later version.</span>
-
-<span class="s2">    EasyVVUQ is distributed in the hope that it will be useful,</span>
-<span class="s2">    but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
-<span class="s2">    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
-<span class="s2">    Lesser GNU General Public License for more details.</span>
-
-<span class="s2">    You should have received a copy of the Lesser GNU General Public License</span>
-<span class="s2">    along with this program.  If not, see &lt;https://www.gnu.org/licenses/&gt;.</span>
-
-<span class="s2">&quot;&quot;&quot;</span>
 <span class="n">__license__</span> <span class="o">=</span> <span class="s2">&quot;LGPL&quot;</span>
 
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
-
-<span class="k">class</span> <span class="nc">ActionStatusSLURM</span><span class="p">():</span>
-    <span class="sd">&quot;&quot;&quot;An ActionStatus to track the execution of a SLURM job.</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    script: str</span>
-<span class="sd">        The body of the script. Will be written to a file</span>
-<span class="sd">        relative to target_dir named script_name.</span>
-<span class="sd">    script_name: str</span>
-<span class="sd">        Name of the script file. This will be written to.</span>
-<span class="sd">        So beware of overwriting issues.</span>
-<span class="sd">    target_dir: str</span>
-<span class="sd">        Name of the execution directory for this job.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">script</span><span class="p">,</span> <span class="n">script_name</span><span class="p">,</span> <span class="n">target_dir</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">script</span> <span class="o">=</span> <span class="n">script</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">script_name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">target_dir</span><span class="p">,</span> <span class="n">script_name</span><span class="p">)</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">script_name</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fd</span><span class="p">:</span>
-            <span class="n">fd</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">script</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">target_dir</span> <span class="o">=</span> <span class="n">target_dir</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_started</span> <span class="o">=</span> <span class="kc">False</span>
-
-    <span class="k">def</span> <span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Start the SLURM job.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">result</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">([</span><span class="s1">&#39;sbatch&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">script_name</span><span class="p">],</span>
-                                <span class="n">cwd</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">target_dir</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">capture_output</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="n">stdout</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">job_id</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;\d+&#39;</span><span class="p">,</span> <span class="n">stdout</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_started</span> <span class="o">=</span> <span class="kc">True</span>
-
-    <span class="k">def</span> <span class="nf">started</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Returns True if the job has started.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_started</span>
-
-    <span class="k">def</span> <span class="nf">finished</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Returns true if action is finished. In this case if calling poll on</span>
-<span class="sd">        the popen object returns a non-None value.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">started</span><span class="p">():</span>
-            <span class="k">return</span> <span class="kc">False</span>
-        <span class="n">result</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">([</span><span class="s1">&#39;squeue&#39;</span><span class="p">,</span> <span class="s1">&#39;-j&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">job_id</span><span class="p">],</span>
-                                <span class="n">cwd</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">target_dir</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">capture_output</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="n">stdout</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
-        <span class="k">return</span> <span class="ow">not</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">job_id</span> <span class="ow">in</span> <span class="n">stdout</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">finalise</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Performs clean-up if necessary. In this case it isn&#39;t. I think.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="kc">None</span>
-
-    <span class="k">def</span> <span class="nf">succeeded</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Will return True if the process finished successfully.</span>
-<span class="sd">        It judges based on the return code and will return False</span>
-<span class="sd">        if that code is not zero.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">started</span><span class="p">():</span>
-            <span class="k">return</span> <span class="kc">False</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">finished</span><span class="p">():</span>
-            <span class="k">return</span> <span class="kc">True</span>
-
-
-<span class="k">class</span> <span class="nc">ExecuteSLURM</span><span class="p">(</span><span class="n">BaseAction</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;An improvement over ExecuteLocal that uses Popen and provides the</span>
-<span class="sd">    non-blocking execution that allows you to track progress. In line</span>
-<span class="sd">    with other Action classes in EasyVVUQ.</span>
+<span class="k">class</span> <span class="nc">ExecuteSLURM</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;An Action to launch and track the execution of a SLURM job.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    template_script: str</span>
-<span class="sd">       filename for the template slurm script</span>
-
-<span class="sd">    variable: str a string in the template script that will be</span>
-<span class="sd">       replaced with the target_dir</span>
-
+<span class="sd">        Filename of a file containing the script template.</span>
+<span class="sd">    variable: str</span>
+<span class="sd">        A string to be replaced with the directory in which the job is meant to be executed.</span>
+<span class="sd">        This is to be used to make sure that the simulation can find the correct input files and knows</span>
+<span class="sd">        where to put output files.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">template_script</span><span class="p">,</span> <span class="n">variable</span><span class="p">):</span>
@@ -204,296 +98,65 @@ execute your simulation on a SLURM cluster.</p>
         <span class="bp">self</span><span class="o">.</span><span class="n">script_name</span> <span class="o">=</span> <span class="n">template_script</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">variable</span> <span class="o">=</span> <span class="n">variable</span>
 
-    <span class="k">def</span> <span class="nf">act_on_dir</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target_dir</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Executes `self.run_cmd` in the shell in `target_dir`.</span>
-
-<span class="sd">        target_dir : str</span>
-<span class="sd">            Directory in which to execute command.</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">ActionStatusSLURM</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">template</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">variable</span><span class="p">,</span> <span class="n">target_dir</span><span class="p">),</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">script_name</span><span class="p">,</span> <span class="n">target_dir</span><span class="p">)</span>
-</pre></div>
-
-        </details>
-
-            </section>
-                <section id="ActionStatusSLURM">
-                                <div class="attr class">
-        <a class="headerlink" href="#ActionStatusSLURM">#&nbsp;&nbsp</a>
-
-        
-        <span class="def">class</span>
-        <span class="name">ActionStatusSLURM</span>:
-    </div>
-
-                <details>
-            <summary>View Source</summary>
-            <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">ActionStatusSLURM</span><span class="p">():</span>
-    <span class="sd">&quot;&quot;&quot;An ActionStatus to track the execution of a SLURM job.</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    script: str</span>
-<span class="sd">        The body of the script. Will be written to a file</span>
-<span class="sd">        relative to target_dir named script_name.</span>
-<span class="sd">    script_name: str</span>
-<span class="sd">        Name of the script file. This will be written to.</span>
-<span class="sd">        So beware of overwriting issues.</span>
-<span class="sd">    target_dir: str</span>
-<span class="sd">        Name of the execution directory for this job.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">script</span><span class="p">,</span> <span class="n">script_name</span><span class="p">,</span> <span class="n">target_dir</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">script</span> <span class="o">=</span> <span class="n">script</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">script_name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">target_dir</span><span class="p">,</span> <span class="n">script_name</span><span class="p">)</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">script_name</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fd</span><span class="p">:</span>
-            <span class="n">fd</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">script</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">target_dir</span> <span class="o">=</span> <span class="n">target_dir</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_started</span> <span class="o">=</span> <span class="kc">False</span>
-
-    <span class="k">def</span> <span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">previous</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Start the SLURM job.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        previous: dict</span>
+<span class="sd">            A dictionary containing information provided by previously executed actions.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">result</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">([</span><span class="s1">&#39;sbatch&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">script_name</span><span class="p">],</span>
-                                <span class="n">cwd</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">target_dir</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">capture_output</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">target_dir</span> <span class="o">=</span> <span class="n">previous</span><span class="p">[</span><span class="s1">&#39;rundir&#39;</span><span class="p">]</span>
+        <span class="n">script_name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">target_dir</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">script_name</span><span class="p">))</span>
+        <span class="n">script</span><span class="p">,</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">template</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">variable</span><span class="p">,</span> <span class="n">target_dir</span><span class="p">),</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">script_name</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fd</span><span class="p">:</span>
+            <span class="n">fd</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">script</span><span class="p">)</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
+            <span class="p">[</span><span class="s1">&#39;sbatch&#39;</span><span class="p">,</span> <span class="n">script_name</span><span class="p">],</span>
+            <span class="n">cwd</span><span class="o">=</span><span class="n">target_dir</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">capture_output</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="n">stdout</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">job_id</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;\d+&#39;</span><span class="p">,</span> <span class="n">stdout</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_started</span> <span class="o">=</span> <span class="kc">True</span>
-
-    <span class="k">def</span> <span class="nf">started</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Returns True if the job has started.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_started</span>
-
-    <span class="k">def</span> <span class="nf">finished</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Returns true if action is finished. In this case if calling poll on</span>
-<span class="sd">        the popen object returns a non-None value.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">started</span><span class="p">():</span>
-            <span class="k">return</span> <span class="kc">False</span>
-        <span class="n">result</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">([</span><span class="s1">&#39;squeue&#39;</span><span class="p">,</span> <span class="s1">&#39;-j&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">job_id</span><span class="p">],</span>
-                                <span class="n">cwd</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">target_dir</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">capture_output</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="n">stdout</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
-        <span class="k">return</span> <span class="ow">not</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">job_id</span> <span class="ow">in</span> <span class="n">stdout</span><span class="p">)</span>
+        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
+                <span class="p">[</span><span class="s1">&#39;squeue&#39;</span><span class="p">,</span> <span class="s1">&#39;-j&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">job_id</span><span class="p">],</span>
+                <span class="n">cwd</span><span class="o">=</span><span class="n">target_dir</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">capture_output</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">stdout</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">job_id</span> <span class="ow">in</span> <span class="n">stdout</span><span class="p">:</span>
+                <span class="k">break</span>
+            <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">600</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">previous</span>
 
     <span class="k">def</span> <span class="nf">finalise</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Performs clean-up if necessary. In this case it isn&#39;t. I think.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="kc">None</span>
-
-    <span class="k">def</span> <span class="nf">succeeded</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Will return True if the process finished successfully.</span>
-<span class="sd">        It judges based on the return code and will return False</span>
-<span class="sd">        if that code is not zero.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">started</span><span class="p">():</span>
-            <span class="k">return</span> <span class="kc">False</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">finished</span><span class="p">():</span>
-            <span class="k">return</span> <span class="kc">True</span>
 </pre></div>
 
         </details>
 
-            <div class="docstring"><p>An ActionStatus to track the execution of a SLURM job.</p>
-
-<h2 id="parameters">Parameters</h2>
-
-<p>script: str
-    The body of the script. Will be written to a file
-    relative to target_dir named script_name.
-script_name: str
-    Name of the script file. This will be written to.
-    So beware of overwriting issues.
-target_dir: str
-    Name of the execution directory for this job.</p>
-</div>
-
-
-                            <div id="ActionStatusSLURM.__init__" class="classattr">
-                                        <div class="attr function"><a class="headerlink" href="#ActionStatusSLURM.__init__">#&nbsp;&nbsp</a>
-
-        
-            <span class="name">ActionStatusSLURM</span><span class="signature">(script, script_name, target_dir)</span>
-    </div>
-
-                <details>
-            <summary>View Source</summary>
-            <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">script</span><span class="p">,</span> <span class="n">script_name</span><span class="p">,</span> <span class="n">target_dir</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">script</span> <span class="o">=</span> <span class="n">script</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">script_name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">target_dir</span><span class="p">,</span> <span class="n">script_name</span><span class="p">)</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">script_name</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fd</span><span class="p">:</span>
-            <span class="n">fd</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">script</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">target_dir</span> <span class="o">=</span> <span class="n">target_dir</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_started</span> <span class="o">=</span> <span class="kc">False</span>
-</pre></div>
-
-        </details>
-
-    
-
-                            </div>
-                            <div id="ActionStatusSLURM.start" class="classattr">
-                                        <div class="attr function"><a class="headerlink" href="#ActionStatusSLURM.start">#&nbsp;&nbsp</a>
-
-        
-            <span class="def">def</span>
-            <span class="name">start</span><span class="signature">(self)</span>:
-    </div>
-
-                <details>
-            <summary>View Source</summary>
-            <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Start the SLURM job.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">result</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">([</span><span class="s1">&#39;sbatch&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">script_name</span><span class="p">],</span>
-                                <span class="n">cwd</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">target_dir</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">capture_output</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="n">stdout</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">job_id</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;\d+&#39;</span><span class="p">,</span> <span class="n">stdout</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_started</span> <span class="o">=</span> <span class="kc">True</span>
-</pre></div>
-
-        </details>
-
-            <div class="docstring"><p>Start the SLURM job.</p>
-</div>
-
-
-                            </div>
-                            <div id="ActionStatusSLURM.started" class="classattr">
-                                        <div class="attr function"><a class="headerlink" href="#ActionStatusSLURM.started">#&nbsp;&nbsp</a>
-
-        
-            <span class="def">def</span>
-            <span class="name">started</span><span class="signature">(self)</span>:
-    </div>
-
-                <details>
-            <summary>View Source</summary>
-            <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">started</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Returns True if the job has started.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_started</span>
-</pre></div>
-
-        </details>
-
-            <div class="docstring"><p>Returns True if the job has started.</p>
-</div>
-
-
-                            </div>
-                            <div id="ActionStatusSLURM.finished" class="classattr">
-                                        <div class="attr function"><a class="headerlink" href="#ActionStatusSLURM.finished">#&nbsp;&nbsp</a>
-
-        
-            <span class="def">def</span>
-            <span class="name">finished</span><span class="signature">(self)</span>:
-    </div>
-
-                <details>
-            <summary>View Source</summary>
-            <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">finished</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Returns true if action is finished. In this case if calling poll on</span>
-<span class="sd">        the popen object returns a non-None value.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">started</span><span class="p">():</span>
-            <span class="k">return</span> <span class="kc">False</span>
-        <span class="n">result</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">([</span><span class="s1">&#39;squeue&#39;</span><span class="p">,</span> <span class="s1">&#39;-j&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">job_id</span><span class="p">],</span>
-                                <span class="n">cwd</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">target_dir</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">capture_output</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="n">stdout</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
-        <span class="k">return</span> <span class="ow">not</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">job_id</span> <span class="ow">in</span> <span class="n">stdout</span><span class="p">)</span>
-</pre></div>
-
-        </details>
-
-            <div class="docstring"><p>Returns true if action is finished. In this case if calling poll on
-the popen object returns a non-None value.</p>
-</div>
-
-
-                            </div>
-                            <div id="ActionStatusSLURM.finalise" class="classattr">
-                                        <div class="attr function"><a class="headerlink" href="#ActionStatusSLURM.finalise">#&nbsp;&nbsp</a>
-
-        
-            <span class="def">def</span>
-            <span class="name">finalise</span><span class="signature">(self)</span>:
-    </div>
-
-                <details>
-            <summary>View Source</summary>
-            <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">finalise</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Performs clean-up if necessary. In this case it isn&#39;t. I think.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="kc">None</span>
-</pre></div>
-
-        </details>
-
-            <div class="docstring"><p>Performs clean-up if necessary. In this case it isn't. I think.</p>
-</div>
-
-
-                            </div>
-                            <div id="ActionStatusSLURM.succeeded" class="classattr">
-                                        <div class="attr function"><a class="headerlink" href="#ActionStatusSLURM.succeeded">#&nbsp;&nbsp</a>
-
-        
-            <span class="def">def</span>
-            <span class="name">succeeded</span><span class="signature">(self)</span>:
-    </div>
-
-                <details>
-            <summary>View Source</summary>
-            <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">succeeded</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Will return True if the process finished successfully.</span>
-<span class="sd">        It judges based on the return code and will return False</span>
-<span class="sd">        if that code is not zero.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">started</span><span class="p">():</span>
-            <span class="k">return</span> <span class="kc">False</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">finished</span><span class="p">():</span>
-            <span class="k">return</span> <span class="kc">True</span>
-</pre></div>
-
-        </details>
-
-            <div class="docstring"><p>Will return True if the process finished successfully.
-It judges based on the return code and will return False
-if that code is not zero.</p>
-</div>
-
-
-                            </div>
-                </section>
+            </section>
                 <section id="ExecuteSLURM">
                                 <div class="attr class">
         <a class="headerlink" href="#ExecuteSLURM">#&nbsp;&nbsp</a>
 
         
         <span class="def">class</span>
-        <span class="name">ExecuteSLURM</span>(<span class="base"><a href="base.html#BaseAction">easyvvuq.actions.base.BaseAction</a></span>):
+        <span class="name">ExecuteSLURM</span>:
     </div>
 
                 <details>
             <summary>View Source</summary>
-            <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">ExecuteSLURM</span><span class="p">(</span><span class="n">BaseAction</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;An improvement over ExecuteLocal that uses Popen and provides the</span>
-<span class="sd">    non-blocking execution that allows you to track progress. In line</span>
-<span class="sd">    with other Action classes in EasyVVUQ.</span>
+            <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">ExecuteSLURM</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;An Action to launch and track the execution of a SLURM job.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    template_script: str</span>
-<span class="sd">       filename for the template slurm script</span>
-
-<span class="sd">    variable: str a string in the template script that will be</span>
-<span class="sd">       replaced with the target_dir</span>
-
+<span class="sd">        Filename of a file containing the script template.</span>
+<span class="sd">    variable: str</span>
+<span class="sd">        A string to be replaced with the directory in which the job is meant to be executed.</span>
+<span class="sd">        This is to be used to make sure that the simulation can find the correct input files and knows</span>
+<span class="sd">        where to put output files.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">template_script</span><span class="p">,</span> <span class="n">variable</span><span class="p">):</span>
@@ -502,33 +165,52 @@ if that code is not zero.</p>
         <span class="bp">self</span><span class="o">.</span><span class="n">script_name</span> <span class="o">=</span> <span class="n">template_script</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">variable</span> <span class="o">=</span> <span class="n">variable</span>
 
-    <span class="k">def</span> <span class="nf">act_on_dir</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target_dir</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Executes `self.run_cmd` in the shell in `target_dir`.</span>
+    <span class="k">def</span> <span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">previous</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Start the SLURM job.</span>
 
-<span class="sd">        target_dir : str</span>
-<span class="sd">            Directory in which to execute command.</span>
-
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        previous: dict</span>
+<span class="sd">            A dictionary containing information provided by previously executed actions.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">ActionStatusSLURM</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">template</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">variable</span><span class="p">,</span> <span class="n">target_dir</span><span class="p">),</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">script_name</span><span class="p">,</span> <span class="n">target_dir</span><span class="p">)</span>
+        <span class="n">target_dir</span> <span class="o">=</span> <span class="n">previous</span><span class="p">[</span><span class="s1">&#39;rundir&#39;</span><span class="p">]</span>
+        <span class="n">script_name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">target_dir</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">script_name</span><span class="p">))</span>
+        <span class="n">script</span><span class="p">,</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">template</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">variable</span><span class="p">,</span> <span class="n">target_dir</span><span class="p">),</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">script_name</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fd</span><span class="p">:</span>
+            <span class="n">fd</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">script</span><span class="p">)</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
+            <span class="p">[</span><span class="s1">&#39;sbatch&#39;</span><span class="p">,</span> <span class="n">script_name</span><span class="p">],</span>
+            <span class="n">cwd</span><span class="o">=</span><span class="n">target_dir</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">capture_output</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">stdout</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">job_id</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;\d+&#39;</span><span class="p">,</span> <span class="n">stdout</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
+                <span class="p">[</span><span class="s1">&#39;squeue&#39;</span><span class="p">,</span> <span class="s1">&#39;-j&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">job_id</span><span class="p">],</span>
+                <span class="n">cwd</span><span class="o">=</span><span class="n">target_dir</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">capture_output</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">stdout</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">job_id</span> <span class="ow">in</span> <span class="n">stdout</span><span class="p">:</span>
+                <span class="k">break</span>
+            <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">600</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">previous</span>
+
+    <span class="k">def</span> <span class="nf">finalise</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Performs clean-up if necessary. In this case it isn&#39;t. I think.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="kc">None</span>
 </pre></div>
 
         </details>
 
-            <div class="docstring"><p>An improvement over ExecuteLocal that uses Popen and provides the
-non-blocking execution that allows you to track progress. In line
-with other Action classes in EasyVVUQ.</p>
+            <div class="docstring"><p>An Action to launch and track the execution of a SLURM job.</p>
 
 <h2 id="parameters">Parameters</h2>
 
 <p>template_script: str
-   filename for the template slurm script</p>
-
-<p>variable: str a string in the template script that will be
-   replaced with the target_dir</p>
+    Filename of a file containing the script template.
+variable: str
+    A string to be replaced with the directory in which the job is meant to be executed.
+    This is to be used to make sure that the simulation can find the correct input files and knows
+    where to put output files.</p>
 </div>
 
 
@@ -553,48 +235,79 @@ with other Action classes in EasyVVUQ.</p>
     
 
                             </div>
-                            <div id="ExecuteSLURM.act_on_dir" class="classattr">
-                                        <div class="attr function"><a class="headerlink" href="#ExecuteSLURM.act_on_dir">#&nbsp;&nbsp</a>
+                            <div id="ExecuteSLURM.start" class="classattr">
+                                        <div class="attr function"><a class="headerlink" href="#ExecuteSLURM.start">#&nbsp;&nbsp</a>
 
         
             <span class="def">def</span>
-            <span class="name">act_on_dir</span><span class="signature">(self, target_dir)</span>:
+            <span class="name">start</span><span class="signature">(self, previous=None)</span>:
     </div>
 
                 <details>
             <summary>View Source</summary>
-            <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">act_on_dir</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target_dir</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Executes `self.run_cmd` in the shell in `target_dir`.</span>
+            <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">previous</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Start the SLURM job.</span>
 
-<span class="sd">        target_dir : str</span>
-<span class="sd">            Directory in which to execute command.</span>
-
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        previous: dict</span>
+<span class="sd">            A dictionary containing information provided by previously executed actions.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">ActionStatusSLURM</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">template</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">variable</span><span class="p">,</span> <span class="n">target_dir</span><span class="p">),</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">script_name</span><span class="p">,</span> <span class="n">target_dir</span><span class="p">)</span>
+        <span class="n">target_dir</span> <span class="o">=</span> <span class="n">previous</span><span class="p">[</span><span class="s1">&#39;rundir&#39;</span><span class="p">]</span>
+        <span class="n">script_name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">target_dir</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">script_name</span><span class="p">))</span>
+        <span class="n">script</span><span class="p">,</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">template</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">variable</span><span class="p">,</span> <span class="n">target_dir</span><span class="p">),</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">script_name</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fd</span><span class="p">:</span>
+            <span class="n">fd</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">script</span><span class="p">)</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
+            <span class="p">[</span><span class="s1">&#39;sbatch&#39;</span><span class="p">,</span> <span class="n">script_name</span><span class="p">],</span>
+            <span class="n">cwd</span><span class="o">=</span><span class="n">target_dir</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">capture_output</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">stdout</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">job_id</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;\d+&#39;</span><span class="p">,</span> <span class="n">stdout</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
+                <span class="p">[</span><span class="s1">&#39;squeue&#39;</span><span class="p">,</span> <span class="s1">&#39;-j&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">job_id</span><span class="p">],</span>
+                <span class="n">cwd</span><span class="o">=</span><span class="n">target_dir</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">capture_output</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">stdout</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">job_id</span> <span class="ow">in</span> <span class="n">stdout</span><span class="p">:</span>
+                <span class="k">break</span>
+            <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">600</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">previous</span>
 </pre></div>
 
         </details>
 
-            <div class="docstring"><p>Executes <code>self.run_cmd</code> in the shell in <code>target_dir</code>.</p>
+            <div class="docstring"><p>Start the SLURM job.</p>
 
-<p>target_dir : str
-    Directory in which to execute command.</p>
+<h2 id="parameters">Parameters</h2>
+
+<p>previous: dict
+    A dictionary containing information provided by previously executed actions.</p>
 </div>
 
 
                             </div>
-                            <div class="inherited">
-                                <h5>Inherited Members</h5>
-                                <dl>
-                                    <div><dt><a href="base.html#BaseAction">easyvvuq.actions.base.BaseAction</a></dt>
-                                <dd id="ExecuteSLURM.campaign" class="variable"><a href="base.html#BaseAction.campaign">campaign</a></dd>
+                            <div id="ExecuteSLURM.finalise" class="classattr">
+                                        <div class="attr function"><a class="headerlink" href="#ExecuteSLURM.finalise">#&nbsp;&nbsp</a>
 
-            </div>
-                                </dl>
+        
+            <span class="def">def</span>
+            <span class="name">finalise</span><span class="signature">(self)</span>:
+    </div>
+
+                <details>
+            <summary>View Source</summary>
+            <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">finalise</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Performs clean-up if necessary. In this case it isn&#39;t. I think.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="kc">None</span>
+</pre></div>
+
+        </details>
+
+            <div class="docstring"><p>Performs clean-up if necessary. In this case it isn't. I think.</p>
+</div>
+
+
                             </div>
                 </section>
     </main>
