@@ -335,7 +335,7 @@ EasyVVUQ workflows.</p>
             <span class="bp">self</span><span class="o">.</span><span class="n">campaign_name</span> <span class="o">=</span> <span class="n">name</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">campaign_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">campaign_db</span><span class="o">.</span><span class="n">get_campaign_id</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">campaign_name</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">add_app</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">actions</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">set_active</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">add_app</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">actions</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">set_active</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">replace_app</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Add an application to the CampaignDB.</span>
 
 <span class="sd">        Parameters</span>
@@ -348,6 +348,9 @@ EasyVVUQ workflows.</p>
 <span class="sd">            An instance of Actions containing actions to be executed</span>
 <span class="sd">        set_active: bool</span>
 <span class="sd">            Should the added app be set to be the currently active app?</span>
+<span class="sd">        replace_app: int or None</span>
+<span class="sd">            Which app to replace if any (app field will be overwritten in runs that</span>
+<span class="sd">            have replace_app as their app)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="c1"># Verify input parameters dict</span>
@@ -360,7 +363,7 @@ EasyVVUQ workflows.</p>
             <span class="n">actions</span><span class="o">=</span><span class="n">actions</span><span class="p">,</span>
         <span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">campaign_db</span><span class="o">.</span><span class="n">add_app</span><span class="p">(</span><span class="n">app</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">campaign_db</span><span class="o">.</span><span class="n">add_app</span><span class="p">(</span><span class="n">app</span><span class="p">,</span> <span class="n">replace_app</span><span class="o">=</span><span class="n">replace_app</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">set_active</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">set_app</span><span class="p">(</span><span class="n">app</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
 
@@ -976,7 +979,7 @@ EasyVVUQ workflows.</p>
             <span class="bp">self</span><span class="o">.</span><span class="n">campaign_name</span> <span class="o">=</span> <span class="n">name</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">campaign_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">campaign_db</span><span class="o">.</span><span class="n">get_campaign_id</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">campaign_name</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">add_app</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">actions</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">set_active</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">add_app</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">actions</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">set_active</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">replace_app</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Add an application to the CampaignDB.</span>
 
 <span class="sd">        Parameters</span>
@@ -989,6 +992,9 @@ EasyVVUQ workflows.</p>
 <span class="sd">            An instance of Actions containing actions to be executed</span>
 <span class="sd">        set_active: bool</span>
 <span class="sd">            Should the added app be set to be the currently active app?</span>
+<span class="sd">        replace_app: int or None</span>
+<span class="sd">            Which app to replace if any (app field will be overwritten in runs that</span>
+<span class="sd">            have replace_app as their app)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="c1"># Verify input parameters dict</span>
@@ -1001,7 +1007,7 @@ EasyVVUQ workflows.</p>
             <span class="n">actions</span><span class="o">=</span><span class="n">actions</span><span class="p">,</span>
         <span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">campaign_db</span><span class="o">.</span><span class="n">add_app</span><span class="p">(</span><span class="n">app</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">campaign_db</span><span class="o">.</span><span class="n">add_app</span><span class="p">(</span><span class="n">app</span><span class="p">,</span> <span class="n">replace_app</span><span class="o">=</span><span class="n">replace_app</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">set_active</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">set_app</span><span class="p">(</span><span class="n">app</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
 
@@ -1667,12 +1673,19 @@ work directory, defaults to cwd</li>
 
         
             <span class="def">def</span>
-            <span class="name">add_app</span><span class="signature">(self, name=None, params=None, actions=None, set_active=True)</span>:
+            <span class="name">add_app</span><span class="signature">(
+    self,
+    name=None,
+    params=None,
+    actions=None,
+    set_active=True,
+    replace_app=None
+)</span>:
     </div>
 
                 <details>
             <summary>View Source</summary>
-            <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">add_app</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">actions</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">set_active</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+            <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">add_app</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">actions</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">set_active</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">replace_app</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Add an application to the CampaignDB.</span>
 
 <span class="sd">        Parameters</span>
@@ -1685,6 +1698,9 @@ work directory, defaults to cwd</li>
 <span class="sd">            An instance of Actions containing actions to be executed</span>
 <span class="sd">        set_active: bool</span>
 <span class="sd">            Should the added app be set to be the currently active app?</span>
+<span class="sd">        replace_app: int or None</span>
+<span class="sd">            Which app to replace if any (app field will be overwritten in runs that</span>
+<span class="sd">            have replace_app as their app)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="c1"># Verify input parameters dict</span>
@@ -1697,7 +1713,7 @@ work directory, defaults to cwd</li>
             <span class="n">actions</span><span class="o">=</span><span class="n">actions</span><span class="p">,</span>
         <span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">campaign_db</span><span class="o">.</span><span class="n">add_app</span><span class="p">(</span><span class="n">app</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">campaign_db</span><span class="o">.</span><span class="n">add_app</span><span class="p">(</span><span class="n">app</span><span class="p">,</span> <span class="n">replace_app</span><span class="o">=</span><span class="n">replace_app</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">set_active</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">set_app</span><span class="p">(</span><span class="n">app</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
 </pre></div>
@@ -1717,6 +1733,9 @@ Description of the parameters to associate with the application.</li>
 An instance of Actions containing actions to be executed</li>
 <li><strong>set_active</strong> (bool):
 Should the added app be set to be the currently active app?</li>
+<li><strong>replace_app</strong> (int or None):
+Which app to replace if any (app field will be overwritten in runs that
+have replace_app as their app)</li>
 </ul>
 </div>
 

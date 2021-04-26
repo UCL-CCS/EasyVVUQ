@@ -527,7 +527,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">CampaignTable</span><span class="p">)</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;active_app&#39;</span><span class="p">:</span> <span class="n">app</span><span class="o">.</span><span class="n">id</span><span class="p">})</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="nf">add_app</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">app_info</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">add_app</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">app_info</span><span class="p">,</span> <span class="n">replace_app</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Add application to the &#39;app&#39; table.</span>
 
@@ -535,6 +535,9 @@
 <span class="sd">        ----------</span>
 <span class="sd">        app_info: AppInfo</span>
 <span class="sd">            Application definition.</span>
+<span class="sd">        replace_app: int or None</span>
+<span class="sd">            Which app to replace if any (app field will be overwritten in runs that</span>
+<span class="sd">            have replace_app as their app)</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -557,6 +560,14 @@
         <span class="n">db_entry</span> <span class="o">=</span> <span class="n">AppTable</span><span class="p">(</span><span class="o">**</span><span class="n">app_dict</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">db_entry</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">replace_app</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">assert</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">replace_app</span><span class="p">,</span> <span class="nb">int</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">RunTable</span><span class="p">)</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+                <span class="n">RunTable</span><span class="o">.</span><span class="n">app</span> <span class="o">==</span> <span class="n">db_entry</span><span class="o">.</span><span class="n">id</span><span class="p">)</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
+                    <span class="p">{</span><span class="n">RunTable</span><span class="o">.</span><span class="n">status</span><span class="p">:</span> <span class="n">Status</span><span class="o">.</span><span class="n">NEW</span><span class="p">,</span> <span class="n">RunTable</span><span class="o">.</span><span class="n">app</span><span class="p">:</span> <span class="n">replace_app</span><span class="p">},</span>
+                    <span class="n">synchronize_session</span><span class="o">=</span><span class="s1">&#39;fetch&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+
 
     <span class="k">def</span> <span class="nf">add_sampler</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sampler_element</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -1963,7 +1974,7 @@ for example, any mapped columns or relationships.</p>
         <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">CampaignTable</span><span class="p">)</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;active_app&#39;</span><span class="p">:</span> <span class="n">app</span><span class="o">.</span><span class="n">id</span><span class="p">})</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="nf">add_app</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">app_info</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">add_app</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">app_info</span><span class="p">,</span> <span class="n">replace_app</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Add application to the &#39;app&#39; table.</span>
 
@@ -1971,6 +1982,9 @@ for example, any mapped columns or relationships.</p>
 <span class="sd">        ----------</span>
 <span class="sd">        app_info: AppInfo</span>
 <span class="sd">            Application definition.</span>
+<span class="sd">        replace_app: int or None</span>
+<span class="sd">            Which app to replace if any (app field will be overwritten in runs that</span>
+<span class="sd">            have replace_app as their app)</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -1993,6 +2007,14 @@ for example, any mapped columns or relationships.</p>
         <span class="n">db_entry</span> <span class="o">=</span> <span class="n">AppTable</span><span class="p">(</span><span class="o">**</span><span class="n">app_dict</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">db_entry</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">replace_app</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">assert</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">replace_app</span><span class="p">,</span> <span class="nb">int</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">RunTable</span><span class="p">)</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+                <span class="n">RunTable</span><span class="o">.</span><span class="n">app</span> <span class="o">==</span> <span class="n">db_entry</span><span class="o">.</span><span class="n">id</span><span class="p">)</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
+                    <span class="p">{</span><span class="n">RunTable</span><span class="o">.</span><span class="n">status</span><span class="p">:</span> <span class="n">Status</span><span class="o">.</span><span class="n">NEW</span><span class="p">,</span> <span class="n">RunTable</span><span class="o">.</span><span class="n">app</span><span class="p">:</span> <span class="n">replace_app</span><span class="p">},</span>
+                    <span class="n">synchronize_session</span><span class="o">=</span><span class="s1">&#39;fetch&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+
 
     <span class="k">def</span> <span class="nf">add_sampler</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sampler_element</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -3005,12 +3027,12 @@ name of the app to set as active</li>
 
         
             <span class="def">def</span>
-            <span class="name">add_app</span><span class="signature">(self, app_info)</span>:
+            <span class="name">add_app</span><span class="signature">(self, app_info, replace_app=None)</span>:
     </div>
 
                 <details>
             <summary>View Source</summary>
-            <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">add_app</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">app_info</span><span class="p">):</span>
+            <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">add_app</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">app_info</span><span class="p">,</span> <span class="n">replace_app</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Add application to the &#39;app&#39; table.</span>
 
@@ -3018,6 +3040,9 @@ name of the app to set as active</li>
 <span class="sd">        ----------</span>
 <span class="sd">        app_info: AppInfo</span>
 <span class="sd">            Application definition.</span>
+<span class="sd">        replace_app: int or None</span>
+<span class="sd">            Which app to replace if any (app field will be overwritten in runs that</span>
+<span class="sd">            have replace_app as their app)</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -3040,6 +3065,13 @@ name of the app to set as active</li>
         <span class="n">db_entry</span> <span class="o">=</span> <span class="n">AppTable</span><span class="p">(</span><span class="o">**</span><span class="n">app_dict</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">db_entry</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">replace_app</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">assert</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">replace_app</span><span class="p">,</span> <span class="nb">int</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">RunTable</span><span class="p">)</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+                <span class="n">RunTable</span><span class="o">.</span><span class="n">app</span> <span class="o">==</span> <span class="n">db_entry</span><span class="o">.</span><span class="n">id</span><span class="p">)</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
+                    <span class="p">{</span><span class="n">RunTable</span><span class="o">.</span><span class="n">status</span><span class="p">:</span> <span class="n">Status</span><span class="o">.</span><span class="n">NEW</span><span class="p">,</span> <span class="n">RunTable</span><span class="o">.</span><span class="n">app</span><span class="p">:</span> <span class="n">replace_app</span><span class="p">},</span>
+                    <span class="n">synchronize_session</span><span class="o">=</span><span class="s1">&#39;fetch&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
 </pre></div>
 
         </details>
@@ -3051,6 +3083,9 @@ name of the app to set as active</li>
 <ul>
 <li><strong>app_info</strong> (AppInfo):
 Application definition.</li>
+<li><strong>replace_app</strong> (int or None):
+Which app to replace if any (app field will be overwritten in runs that
+have replace_app as their app)</li>
 <li><strong>Returns</strong></li>
 </ul>
 
