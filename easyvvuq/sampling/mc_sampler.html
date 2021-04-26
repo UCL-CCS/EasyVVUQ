@@ -353,19 +353,21 @@ and variance of the different QoIs.</p>
 
         </details>
 
-            <div class="docstring"><h2 id="parameters">Parameters</h2>
+            <div class="docstring"><h6 id="parameters">Parameters</h6>
 
 <ul>
-<li>vary : a dictionary of chaospy input distributions</li>
-<li>n_mc_samples : the number of MC samples. The total number of MC samples
+<li><p><strong>+ vary</strong> (a dictionary of chaospy input distributions):</p></li>
+<li><p><strong>+ n_mc_samples</strong> (the number of MC samples. The total number of MC samples):
 required to compute the Sobol indices using a Saltelli sampling plan
 will be n_mc_samples * (n_params + 1), where n_params is the number of
-uncertain parameters in vary.</li>
+uncertain parameters in vary.</p></li>
 </ul>
 
-<h2 id="returns">Returns</h2>
+<h6 id="returns">Returns</h6>
 
-<p>None.</p>
+<ul>
+<li><strong>None.</strong></li>
+</ul>
 </div>
 
 
@@ -434,14 +436,18 @@ needed to compute the Sobol indices. Stored in xi_mc.</p>
 <p>Method: A. Saltelli, Making best use of model evaluations to compute
 sensitivity indices, Computer Physics Communications, 2002.</p>
 
-<h2 id="parameters">Parameters</h2>
+<h6 id="parameters">Parameters</h6>
 
-<p>n_mc : the number of Monte Carlo samples per input matrix. The total
-number of samples is n_mc*(n_params + 2)</p>
+<ul>
+<li><p><strong>n_mc</strong> (the number of Monte Carlo samples per input matrix. The total):</p></li>
+<li><p><strong>number of samples is n_mc*(n_params + 2)</strong></p></li>
+</ul>
 
-<h2 id="returns">Returns</h2>
+<h6 id="returns">Returns</h6>
 
-<p>None.</p>
+<ul>
+<li><strong>None.</strong></li>
+</ul>
 </div>
 
 

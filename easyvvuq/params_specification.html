@@ -242,48 +242,48 @@
 
             <div class="docstring"><p>Validator class. Normalizes and/or validates any mapping against a
 validation-schema which is provided as an argument at class instantiation
-or upon calling the :meth:<code>~cerberus.Validator.validate</code>,
-:meth:<code>~cerberus.Validator.validated</code> or
-:meth:<code>~cerberus.Validator.normalized</code> method. An instance itself is
+or upon calling the <code>~cerberus.Validator.validate</code>,
+<code>~cerberus.Validator.validated</code> or
+<code>~cerberus.Validator.normalized</code> method. An instance itself is
 callable and executes a validation.</p>
 
 <p>All instantiation parameters are optional.</p>
 
-<p>There are the introspective properties :attr:<code><a href="#EasyVVUQValidator.types">types</a></code>, :attr:<code>validators</code>,
-:attr:<code><a href="#EasyVVUQValidator.coercers">coercers</a></code>, :attr:<code><a href="#EasyVVUQValidator.default_setters">default_setters</a></code>, :attr:<code><a href="#EasyVVUQValidator.rules">rules</a></code>,
-:attr:<code><a href="#EasyVVUQValidator.normalization_rules">normalization_rules</a></code> and :attr:<code><a href="#EasyVVUQValidator.validation_rules">validation_rules</a></code>.</p>
+<p>There are the introspective properties <code><a href="#EasyVVUQValidator.types">types</a></code>, <code>validators</code>,
+<code><a href="#EasyVVUQValidator.coercers">coercers</a></code>, <code><a href="#EasyVVUQValidator.default_setters">default_setters</a></code>, <code><a href="#EasyVVUQValidator.rules">rules</a></code>,
+<code><a href="#EasyVVUQValidator.normalization_rules">normalization_rules</a></code> and <code><a href="#EasyVVUQValidator.validation_rules">validation_rules</a></code>.</p>
 
 <p>The attributes reflecting the available rules are assembled considering
 constraints that are defined in the docstrings of rules' methods and is
-effectively used as validation schema for :attr:<code><a href="#EasyVVUQValidator.schema">schema</a></code>.</p>
+effectively used as validation schema for <code><a href="#EasyVVUQValidator.schema">schema</a></code>.</p>
 
-<p>:param schema: See :attr:<code>~cerberus.Validator.schema</code>.
-               Defaults to :obj:<code>None</code>.
+<p>:param schema: See <code>~cerberus.Validator.schema</code>.
+               Defaults to <code>None</code>.
 :type schema: any :term:<code>mapping</code>
-:param ignore_none_values: See :attr:<code>~cerberus.Validator.ignore_none_values</code>.
+:param ignore_none_values: See <code>~cerberus.Validator.ignore_none_values</code>.
                            Defaults to <code>False</code>.
-:type ignore_none_values: :class:<code>bool</code>
-:param allow_unknown: See :attr:<code>~cerberus.Validator.allow_unknown</code>.
+:type ignore_none_values: <code>bool</code>
+:param allow_unknown: See <code>~cerberus.Validator.allow_unknown</code>.
                       Defaults to <code>False</code>.
-:type allow_unknown: :class:<code>bool</code> or any :term:<code>mapping</code>
-:param require_all: See :attr:<code>~cerberus.Validator.require_all</code>.
+:type allow_unknown: <code>bool</code> or any :term:<code>mapping</code>
+:param require_all: See <code>~cerberus.Validator.require_all</code>.
                     Defaults to <code>False</code>.
-:type require_all: :class:<code>bool</code>
-:param purge_unknown: See :attr:<code>~cerberus.Validator.purge_unknown</code>.
+:type require_all: <code>bool</code>
+:param purge_unknown: See <code>~cerberus.Validator.purge_unknown</code>.
                       Defaults to to <code>False</code>.
-:type purge_unknown: :class:<code>bool</code>
+:type purge_unknown: <code>bool</code>
 :param purge_readonly: Removes all fields that are defined as <code>readonly</code> in the
                        normalization phase.
-:type purge_readonly: :class:<code>bool</code>
+:type purge_readonly: <code>bool</code>
 :param error_handler: The error handler that formats the result of
-                      :attr:<code>~cerberus.Validator.errors</code>.
+                      <code>~cerberus.Validator.errors</code>.
                       When given as two-value tuple with an error-handler
                       class and a dictionary, the latter is passed to the
                       initialization of the error handler.
-                      Default: :class:<code>~cerberus.errors.BasicErrorHandler</code>.
+                      Default: <code>~cerberus.errors.BasicErrorHandler</code>.
 :type error_handler: class or instance based on
-                     :class:<code>~cerberus.errors.BaseErrorHandler</code> or
-                     :class:<code>tuple</code></p>
+                     <code>~cerberus.errors.BaseErrorHandler</code> or
+                     <code>tuple</code></p>
 </div>
 
 

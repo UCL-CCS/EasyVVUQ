@@ -654,9 +654,11 @@ under the hood for this functionality.</p>
 
             <div class="docstring"><p>Types of statistics supported by the describe method.</p>
 
-<h2 id="returns">Returns</h2>
+<h6 id="returns">Returns</h6>
 
-<p>list of str</p>
+<ul>
+<li><strong>list of str</strong></li>
+</ul>
 </div>
 
 
@@ -695,17 +697,19 @@ under the hood for this functionality.</p>
 
             <div class="docstring"><p>Use PCE fit to provide a surrogate</p>
 
-<h2 id="parameters">Parameters</h2>
+<h6 id="parameters">Parameters</h6>
 
 <ul>
-<li>qoi (str): name of the qoi</li>
-<li>x (array): location at which to evaluate the surrogate</li>
-<li>L (int): level of the (sparse) grid, default = self.L</li>
+<li><p><strong>- qoi (str)</strong> (name of the qoi):</p></li>
+<li><p><strong>- x (array)</strong> (location at which to evaluate the surrogate):</p></li>
+<li><p><strong>- L (int)</strong> (level of the (sparse) grid, default = self.L):</p></li>
 </ul>
 
-<h2 id="returns">Returns</h2>
+<h6 id="returns">Returns</h6>
 
-<p>the interpolated value of qoi at x (float, (N_qoi,))</p>
+<ul>
+<li><strong>the interpolated value of qoi at x (float, (N_qoi,))</strong></li>
+</ul>
 </div>
 
 
@@ -741,14 +745,18 @@ under the hood for this functionality.</p>
 
             <div class="docstring"><p>Returns a distribution for the given qoi.</p>
 
-<h2 id="parameters">Parameters</h2>
+<h6 id="parameters">Parameters</h6>
 
-<p>qoi: str
-    QoI name</p>
+<ul>
+<li><strong>qoi</strong> (str):
+QoI name</li>
+</ul>
 
-<h2 id="returns">Returns</h2>
+<h6 id="returns">Returns</h6>
 
-<p>A ChaosPy PDF</p>
+<ul>
+<li><strong>A ChaosPy PDF</strong></li>
+</ul>
 </div>
 
 
@@ -1055,15 +1063,17 @@ under the hood for this functionality.</p>
 
             <div class="docstring"><p>Analysis element for polynomial chaos expansion (PCE).</p>
 
-<h2 id="parameters">Parameters</h2>
+<h6 id="parameters">Parameters</h6>
 
-<p>sampler : PCESampler
-    Sampler used to initiate the PCE analysis.
-qoi_cols : list or None
-    Column names for quantities of interest (for which analysis is
-    performed).
-sampling : True if chaospy sampling method to be used for calculating
-    statitical quantities; otherwise [default] the pce coefficients are used</p>
+<ul>
+<li><strong>sampler</strong> (PCESampler):
+Sampler used to initiate the PCE analysis.</li>
+<li><strong>qoi_cols</strong> (list or None):
+Column names for quantities of interest (for which analysis is
+performed).</li>
+<li><strong>sampling</strong> (True if chaospy sampling method to be used for calculating):
+statitical quantities; otherwise [default] the pce coefficients are used</li>
+</ul>
 </div>
 
 
@@ -1093,10 +1103,11 @@ sampling : True if chaospy sampling method to be used for calculating
 
             <div class="docstring"><p>Name for this element for logging purposes.</p>
 
-<h2 id="returns">Returns</h2>
+<h6 id="returns">Returns</h6>
 
-<p>str
-    "PCE_Analysis"</p>
+<ul>
+<li><strong>str</strong>: "PCE_Analysis"</li>
+</ul>
 </div>
 
 
@@ -1126,10 +1137,11 @@ sampling : True if chaospy sampling method to be used for calculating
 
             <div class="docstring"><p>Version of this element for logging purposes.</p>
 
-<h2 id="returns">Returns</h2>
+<h6 id="returns">Returns</h6>
 
-<p>str
-    Element version.</p>
+<ul>
+<li><strong>str</strong>: Element version.</li>
+</ul>
 </div>
 
 
@@ -1322,15 +1334,18 @@ sampling : True if chaospy sampling method to be used for calculating
 
             <div class="docstring"><p>Perform PCE analysis on input <code>data_frame</code>.</p>
 
-<h2 id="parameters">Parameters</h2>
+<h6 id="parameters">Parameters</h6>
 
-<p>data_frame : pandas DataFrame
-    Input data for analysis.</p>
+<ul>
+<li><strong>data_frame</strong> (pandas DataFrame):
+Input data for analysis.</li>
+</ul>
 
-<h2 id="returns">Returns</h2>
+<h6 id="returns">Returns</h6>
 
-<p>PCEAnalysisResults
-    Use it to get the sobol indices and other information.</p>
+<ul>
+<li><strong>PCEAnalysisResults</strong>: Use it to get the sobol indices and other information.</li>
+</ul>
 </div>
 
 

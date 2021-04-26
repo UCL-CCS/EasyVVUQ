@@ -203,14 +203,16 @@ execute your simulation on a SLURM cluster.</p>
 
             <div class="docstring"><p>An Action to launch and track the execution of a SLURM job.</p>
 
-<h2 id="parameters">Parameters</h2>
+<h6 id="parameters">Parameters</h6>
 
-<p>template_script: str
-    Filename of a file containing the script template.
-variable: str
-    A string to be replaced with the directory in which the job is meant to be executed.
-    This is to be used to make sure that the simulation can find the correct input files and knows
-    where to put output files.</p>
+<ul>
+<li><strong>template_script</strong> (str):
+Filename of a file containing the script template.</li>
+<li><strong>variable</strong> (str):
+A string to be replaced with the directory in which the job is meant to be executed.
+This is to be used to make sure that the simulation can find the correct input files and knows
+where to put output files.</li>
+</ul>
 </div>
 
 
@@ -278,10 +280,12 @@ variable: str
 
             <div class="docstring"><p>Start the SLURM job.</p>
 
-<h2 id="parameters">Parameters</h2>
+<h6 id="parameters">Parameters</h6>
 
-<p>previous: dict
-    A dictionary containing information provided by previously executed actions.</p>
+<ul>
+<li><strong>previous</strong> (dict):
+A dictionary containing information provided by previously executed actions.</li>
+</ul>
 </div>
 
 

@@ -97,7 +97,7 @@ All the analysis classes should implement this in a way that makes
 most sense. Provides a more unified interface for accessing the results
 in a variety of formats (e.g. NumPy arrays or pandas DataFrames).</p>
 
-<h2 id="examples">Examples</h2>
+<h6 id="examples">Examples</h6>
 
 <div class="codehilite"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">results</span> <span class="o">=</span> <span class="n">PCEAnalysis</span><span class="p">(</span><span class="n">sampler</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">results</span><span class="o">.</span><span class="n">to_pd</span><span class="p">()</span>
@@ -1291,13 +1291,14 @@ in a variety of formats (e.g. NumPy arrays or pandas DataFrames).</p>
 
             <div class="docstring"><p>Contains the analysis results.</p>
 
-<h2 id="parameters">Parameters</h2>
+<h6 id="parameters">Parameters</h6>
 
-<p>raw_data: obj
-    an arbitrary object that contains raw analysis data</p>
-
-<p>samples: pandas DataFrame
-    collated samples</p>
+<ul>
+<li><strong>raw_data</strong> (obj):
+an arbitrary object that contains raw analysis data</li>
+<li><strong>samples</strong> (pandas DataFrame):
+collated samples</li>
+</ul>
 </div>
 
 
@@ -1404,17 +1405,18 @@ in a variety of formats (e.g. NumPy arrays or pandas DataFrames).</p>
 
             <div class="docstring"><p>Return first order sensitivity indices.</p>
 
-<h2 id="parameters">Parameters</h2>
+<h6 id="parameters">Parameters</h6>
 
-<p>qoi: str or tuple
-    The name of the quantity of interest or None.
-    Use a tuple of the form (qoi, index) where index is integer
-    that means the coordinate index of a vector qoi.</p>
+<ul>
+<li><strong>qoi</strong> (str or tuple):
+The name of the quantity of interest or None.
+Use a tuple of the form (qoi, index) where index is integer
+that means the coordinate index of a vector qoi.</li>
+<li><strong>input_</strong> (str):
+The name of the input parameter or None.</li>
+</ul>
 
-<p>input_: str
-    The name of the input parameter or None.</p>
-
-<h2 id="examples">Examples</h2>
+<h6 id="examples">Examples</h6>
 
 <div class="codehilite"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">results</span><span class="o">.</span><span class="n">sobols_first</span><span class="p">()</span>
 <span class="go">{&#39;f&#39;: {&#39;x1&#39;: array([0.610242]), &#39;x2&#39;: array([0.26096511])}}</span>
@@ -1426,9 +1428,11 @@ in a variety of formats (e.g. NumPy arrays or pandas DataFrames).</p>
 <span class="go">{&#39;x1&#39;: array([0.5]), &#39;x2&#39;: array([0.5])}</span>
 </code></pre></div>
 
-<h2 id="returns">Returns</h2>
+<h6 id="returns">Returns</h6>
 
-<p>a dictionary or an array</p>
+<ul>
+<li><strong>a dictionary or an array</strong></li>
+</ul>
 </div>
 
 
@@ -1470,21 +1474,24 @@ in a variety of formats (e.g. NumPy arrays or pandas DataFrames).</p>
 
             <div class="docstring"><p>Return second order sensitivity indices.</p>
 
-<h2 id="parameters">Parameters</h2>
+<h6 id="parameters">Parameters</h6>
 
-<p>qoi: str or tuple
-    The name of the quantity of interest or None.
-    Use a tuple of the form (qoi, index) where index is integer
-    that means the coordinate index of a vector qoi.</p>
+<ul>
+<li><strong>qoi</strong> (str or tuple):
+The name of the quantity of interest or None.
+Use a tuple of the form (qoi, index) where index is integer
+that means the coordinate index of a vector qoi.</li>
+<li><strong>input_</strong> (str):
+The name of the input parameter or None.</li>
+</ul>
 
-<p>input_: str
-    The name of the input parameter or None.</p>
+<h6 id="examples">Examples</h6>
 
-<h2 id="examples">Examples</h2>
+<h6 id="returns">Returns</h6>
 
-<h2 id="returns">Returns</h2>
-
-<p>a dictionary or an array</p>
+<ul>
+<li><strong>a dictionary or an array</strong></li>
+</ul>
 </div>
 
 
@@ -1527,21 +1534,24 @@ in a variety of formats (e.g. NumPy arrays or pandas DataFrames).</p>
 
             <div class="docstring"><p>Returns total order sensitivity indices.</p>
 
-<h2 id="parameters">Parameters</h2>
+<h6 id="parameters">Parameters</h6>
 
-<p>qoi: str or tuple
-    The name of the quantity of interest or None.
-    Use a tuple of the form (qoi, index) where index is integer
-    that means the coordinate index of a vector qoi.</p>
+<ul>
+<li><strong>qoi</strong> (str or tuple):
+The name of the quantity of interest or None.
+Use a tuple of the form (qoi, index) where index is integer
+that means the coordinate index of a vector qoi.</li>
+<li><strong>input_</strong> (str):
+The name of the input parameter or None.</li>
+</ul>
 
-<p>input_: str
-    The name of the input parameter or None.</p>
+<h6 id="examples">Examples</h6>
 
-<h2 id="examples">Examples</h2>
+<h6 id="returns">Returns</h6>
 
-<h2 id="returns">Returns</h2>
-
-<p>a dictionary or an array</p>
+<ul>
+<li><strong>a dictionary or an array</strong></li>
+</ul>
 </div>
 
 
@@ -1576,10 +1586,12 @@ in a variety of formats (e.g. NumPy arrays or pandas DataFrames).</p>
 to pandas DataFrame. This only needs to be implemented if the analysis
 method in question provides surrogate models.</p>
 
-<h2 id="returns">Returns</h2>
+<h6 id="returns">Returns</h6>
 
-<p>a function that takes a dictionary of parameter - value pairs and returns
-a pandas DataFrame with the results (same output as decoder)</p>
+<ul>
+<li><strong>a function that takes a dictionary of parameter - value pairs and returns</strong></li>
+<li><strong>a pandas DataFrame with the results (same output as decoder)</strong></li>
+</ul>
 </div>
 
 
@@ -1668,7 +1680,7 @@ a pandas DataFrame with the results (same output as decoder)</p>
 
             <div class="docstring"><p>Returns descriptive statistics.</p>
 
-<h2 id="examples">Examples</h2>
+<h6 id="examples">Examples</h6>
 
 <div class="codehilite"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">results</span><span class="o">.</span><span class="n">describe</span><span class="p">()</span>
 <span class="go">             g                             h</span>
@@ -1698,17 +1710,21 @@ a pandas DataFrame with the results (same output as decoder)</p>
 <span class="go">array([0.04861111, 0.06823568])</span>
 </code></pre></div>
 
-<h2 id="parameters">Parameters</h2>
+<h6 id="parameters">Parameters</h6>
 
-<p>qoi: str or None
-    if not None it is the name of the quantity of interest
-statistic: str or None
-    if not None it is the name of the statistic, currently supported ones
-    are: ['mean', 'var', 'std', '10%', '90%', 'min', 'max', 'median']</p>
+<ul>
+<li><strong>qoi</strong> (str or None):
+if not None it is the name of the quantity of interest</li>
+<li><strong>statistic</strong> (str or None):
+if not None it is the name of the statistic, currently supported ones
+are: ['mean', 'var', 'std', '10%', '90%', 'min', 'max', 'median']</li>
+</ul>
 
-<h2 id="returns">Returns</h2>
+<h6 id="returns">Returns</h6>
 
-<p>pandas DataFrame or a numpy array</p>
+<ul>
+<li><strong>pandas DataFrame or a numpy array</strong></li>
+</ul>
 </div>
 
 
@@ -1770,18 +1786,20 @@ statistic: str or None
 
             <div class="docstring"><p>Plot sobols first and second order indices in a hierarchical treemap format.</p>
 
-<h2 id="parameters">Parameters</h2>
+<h6 id="parameters">Parameters</h6>
 
-<p>qoi: str
-   Name of the quantity of interest.
-figsize: tuple
-   A tuple with two integers representing figure size in inches.
-ax: matplotlib
-   Matplotlib axis to plot on.
-filename: str
-   Filename to write the plot to. If left None will display to screen.
-dpi: int
-   Dots per inches. Only used when writing to file.</p>
+<ul>
+<li><strong>qoi</strong> (str):
+Name of the quantity of interest.</li>
+<li><strong>figsize</strong> (tuple):
+A tuple with two integers representing figure size in inches.</li>
+<li><strong>ax</strong> (matplotlib):
+Matplotlib axis to plot on.</li>
+<li><strong>filename</strong> (str):
+Filename to write the plot to. If left None will display to screen.</li>
+<li><strong>dpi</strong> (int):
+Dots per inches. Only used when writing to file.</li>
+</ul>
 </div>
 
 
@@ -1890,31 +1908,34 @@ dpi: int
 
             <div class="docstring"><p>Plot first order sobol indices.</p>
 
-<h2 id="parameters">Parameters</h2>
+<h6 id="parameters">Parameters</h6>
 
-<p>qoi: str
-    a vector quantity of interest for which sobol indices will be plotted
-inputs: list of str or None
-    list of inputs to plot if None will use all input variables
-withdots: bool
-    if True will add shapes on top of the lines in the plot for visual clarity
-ylabel: str or None
-    if None will use "First Order Sobol Index"
-xlabel: str or None
-    if None will use the name of the qoi
-xvalues: array or None
-   x-axis coordiante if None will use range(len(qoi_values))
-filename: str or None
-    if None will try to open a plotting window on-screen, otherwise will write the plot to this file, with the type determined by the extension specified
-dpi: int
-    dots per inch, quality of the image if a raster format was chosen
-ax: matplotlib axes object, default None
-    if None, plots to a new axes, otherwise plot to existing axes ax</p>
+<ul>
+<li><strong>qoi</strong> (str):
+a vector quantity of interest for which sobol indices will be plotted</li>
+<li><strong>inputs</strong> (list of str or None):
+list of inputs to plot if None will use all input variables</li>
+<li><strong>withdots</strong> (bool):
+if True will add shapes on top of the lines in the plot for visual clarity</li>
+<li><strong>ylabel</strong> (str or None):
+if None will use "First Order Sobol Index"</li>
+<li><strong>xlabel</strong> (str or None):
+if None will use the name of the qoi</li>
+<li><strong>xvalues</strong> (array or None):
+x-axis coordiante if None will use range(len(qoi_values))</li>
+<li><strong>filename</strong> (str or None):
+if None will try to open a plotting window on-screen, otherwise will write the plot to this file, with the type determined by the extension specified</li>
+<li><strong>dpi</strong> (int):
+dots per inch, quality of the image if a raster format was chosen</li>
+<li><strong>ax</strong> (matplotlib axes object, default None):
+if None, plots to a new axes, otherwise plot to existing axes ax</li>
+</ul>
 
-<h2 id="returns">Returns</h2>
+<h6 id="returns">Returns</h6>
 
-<p>matplotlib axes object
-    the actual axes plotted to</p>
+<ul>
+<li><strong>matplotlib axes object</strong>: the actual axes plotted to</li>
+</ul>
 </div>
 
 
@@ -2014,30 +2035,33 @@ ax: matplotlib axes object, default None
 
             <div class="docstring"><p>Plot statistical moments for this analysis.</p>
 
-<h2 id="parameters">Parameters</h2>
+<h6 id="parameters">Parameters</h6>
 
-<p>qoi: str
-    a vector quantity of interest for which sobol indices will be plotted
-ylabel: str or None
-    if None will use "Values"
-xlabel: str or None
-    if None will use the name of the qoi
-xvalues: array or None
-    x-axis coordiante if None will use range(len(qoi_values)))
-alpha: float
-    transparency amount
-filename: str or None
-    if None will try to open a plotting window on-screen, otherwise will
-    write the plot to this file, with the type determined by the extension specified
-dpi: int
-    dots per inch, quality of the image if a raster format was chosen
-ax: matplotlib axes object, default None
-    if None, plots to a new axes, otherwise plot to existing axes ax</p>
+<ul>
+<li><strong>qoi</strong> (str):
+a vector quantity of interest for which sobol indices will be plotted</li>
+<li><strong>ylabel</strong> (str or None):
+if None will use "Values"</li>
+<li><strong>xlabel</strong> (str or None):
+if None will use the name of the qoi</li>
+<li><strong>xvalues</strong> (array or None):
+x-axis coordiante if None will use range(len(qoi_values)))</li>
+<li><strong>alpha</strong> (float):
+transparency amount</li>
+<li><strong>filename</strong> (str or None):
+if None will try to open a plotting window on-screen, otherwise will
+write the plot to this file, with the type determined by the extension specified</li>
+<li><strong>dpi</strong> (int):
+dots per inch, quality of the image if a raster format was chosen</li>
+<li><strong>ax</strong> (matplotlib axes object, default None):
+if None, plots to a new axes, otherwise plot to existing axes ax</li>
+</ul>
 
-<h2 id="returns">Returns</h2>
+<h6 id="returns">Returns</h6>
 
-<p>matplotlib axes object
-    the actual axes plotted to</p>
+<ul>
+<li><strong>matplotlib axes object</strong>: the actual axes plotted to</li>
+</ul>
 </div>
 
 
@@ -2071,14 +2095,18 @@ ax: matplotlib axes object, default None
 
             <div class="docstring"><p>Returns a distribution for the given qoi.</p>
 
-<h2 id="parameters">Parameters</h2>
+<h6 id="parameters">Parameters</h6>
 
-<p>qoi: str
-    QoI name</p>
+<ul>
+<li><strong>qoi</strong> (str):
+QoI name</li>
+</ul>
 
-<h2 id="returns">Returns</h2>
+<h6 id="returns">Returns</h6>
 
-<p>A ChaosPy distribution</p>
+<ul>
+<li><strong>A ChaosPy distribution</strong></li>
+</ul>
 </div>
 
 

@@ -73,7 +73,7 @@ It is meant to be used in combination with MultiBuilder encoder and possibly
 the DirectoryBuilder. It duplicates some functionality of the ApplyFixtures
 encoder but can be useful for very simple cases.</p>
 
-<h2 id="examples">Examples</h2>
+<h6 id="examples">Examples</h6>
 
 <div class="codehilite"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">multiencoder</span> <span class="o">=</span> <span class="n">uq</span><span class="o">.</span><span class="n">encoders</span><span class="o">.</span><span class="n">MultiEncoder</span><span class="p">(</span>
 <span class="go">      DirectoryBuilder(tree={&quot;parent&quot; : {&quot;child1&quot; : None, &quot;child2&quot; : None}}),</span>
@@ -208,13 +208,14 @@ encoder but can be useful for very simple cases.</p>
 
             <div class="docstring"><p>An Encoder to copy an input file to a simulation.</p>
 
-<h2 id="parameters">Parameters</h2>
+<h6 id="parameters">Parameters</h6>
 
-<p>source_filename : str
-  a full path to some file that a simulation needs</p>
-
-<p>target_filename : str
-  a target filename inside the simulation directory</p>
+<ul>
+<li><strong>source_filename</strong> (str):
+a full path to some file that a simulation needs</li>
+<li><strong>target_filename</strong> (str):
+a target filename inside the simulation directory</li>
+</ul>
 </div>
 
 
@@ -269,13 +270,14 @@ encoder but can be useful for very simple cases.</p>
 
             <div class="docstring"><p>Copy a file to target_dir.</p>
 
-<h2 id="parameters">Parameters</h2>
+<h6 id="parameters">Parameters</h6>
 
-<p>params : dict
-   keep empty, has no effect</p>
-
-<p>target_dir : str
-   target directory, full path</p>
+<ul>
+<li><strong>params</strong> (dict):
+keep empty, has no effect</li>
+<li><strong>target_dir</strong> (str):
+target directory, full path</li>
+</ul>
 </div>
 
 

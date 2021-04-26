@@ -487,20 +487,24 @@
 It will create a directory under your specified root folder, encode the sampler output, execute a command
 and decode the results of the simulation.</p>
 
-<h2 id="parameters">Parameters</h2>
+<h6 id="parameters">Parameters</h6>
 
-<p>encoder: Encoder
-  an encoder to use
-command: list of str
-  a command to run your simulation (same as argument to popen, e.g. ['ls', '-al'])
-decoder: Decoder
-  a decoder to use
-root: str
-  root folder, for example '/tmp' or if you want to use ram based filesystem it could be '/dev/shm'</p>
+<ul>
+<li><strong>encoder</strong> (Encoder):
+an encoder to use</li>
+<li><strong>command</strong> (list of str):
+a command to run your simulation (same as argument to popen, e.g. ['ls', '-al'])</li>
+<li><strong>decoder</strong> (Decoder):
+a decoder to use</li>
+<li><strong>root</strong> (str):
+root folder, for example '/tmp' or if you want to use ram based filesystem it could be '/dev/shm'</li>
+</ul>
 
-<h2 id="returns">Returns</h2>
+<h6 id="returns">Returns</h6>
 
-<p>EasyVVUQ Actions</p>
+<ul>
+<li><strong>EasyVVUQ Actions</strong></li>
+</ul>
 </div>
 
 

@@ -489,15 +489,18 @@
 
             <div class="docstring"><p>Check that local path exists and if not create it.</p>
 
-<h2 id="parameters">Parameters</h2>
+<h6 id="parameters">Parameters</h6>
 
-<p>path : str
-    Directory location to check.
-dir_type : str, default='campaign'
-    Type of directory we are checking (used for user and debugging
-    information.)</p>
+<ul>
+<li><strong>path</strong> (str):
+Directory location to check.</li>
+<li><strong>dir_type</strong> (str, default='campaign'):
+Type of directory we are checking (used for user and debugging
+information.)</li>
+<li><strong>Returns</strong></li>
+</ul>
 
-<h2 id="returns">Returns</h2>
+<hr />
 </div>
 
 
@@ -552,18 +555,21 @@ dir_type : str, default='campaign'
 has been passed to use as a reference to another 'table' - i.e. to a
 specific campaign, app or sampler.</p>
 
-<h2 id="parameters">Parameters</h2>
+<h6 id="parameters">Parameters</h6>
 
-<p>ref : int
-    Reference to be checked.
-run_name : str
-    Name of run for which the check is being performed (user info/
-    debugging).
-ref_type : str, default='campaign'
-    Are we checking for a campaign, sampler or app (user info/
-    debugging).</p>
+<ul>
+<li><strong>ref</strong> (int):
+Reference to be checked.</li>
+<li><strong>run_name</strong> (str):
+Name of run for which the check is being performed (user info/
+debugging).</li>
+<li><strong>ref_type</strong> (str, default='campaign'):
+Are we checking for a campaign, sampler or app (user info/
+debugging).</li>
+<li><strong>Returns</strong></li>
+</ul>
 
-<h2 id="returns">Returns</h2>
+<hr />
 </div>
 
 
@@ -687,30 +693,34 @@ ref_type : str, default='campaign'
 
             <div class="docstring"><p>Handles information for individual application runs.</p>
 
-<h2 id="parameters">Parameters</h2>
+<h6 id="parameters">Parameters</h6>
 
-<p>run_name : str
-    Human readable name of the run.
-app : None or int
-    ID of the associated application.
-params : None or dict
-    Dictionary of parameter values for this run.
-sample: None or int
-    ID of the sampler that created the run.
-campaign: None or int
-    ID of the associated campaign.</p>
+<ul>
+<li><strong>run_name</strong> (str):
+Human readable name of the run.</li>
+<li><strong>app</strong> (None or int):
+ID of the associated application.</li>
+<li><strong>params</strong> (None or dict):
+Dictionary of parameter values for this run.</li>
+<li><strong>sample</strong> (None or int):
+ID of the sampler that created the run.</li>
+<li><strong>campaign</strong> (None or int):
+ID of the associated campaign.</li>
+</ul>
 
-<h2 id="attributes">Attributes</h2>
+<h6 id="attributes">Attributes</h6>
 
-<p>campaign : int
-    ID of the associated campaign.
-sample : int
-    ID of the sampler that created the run.
-app : int
-    ID of the associated application.
-run_name : str
-    Human readable name of the run.
-status : enum(Status)</p>
+<ul>
+<li><strong>campaign</strong> (int):
+ID of the associated campaign.</li>
+<li><strong>sample</strong> (int):
+ID of the sampler that created the run.</li>
+<li><strong>app</strong> (int):
+ID of the associated application.</li>
+<li><strong>run_name</strong> (str):
+Human readable name of the run.</li>
+<li><strong>status</strong> (enum(Status)):</li>
+</ul>
 </div>
 
 
@@ -826,17 +836,20 @@ status : enum(Status)</p>
 
             <div class="docstring"><p>Convert to a dictionary (optionally flatten to single level)</p>
 
-<h2 id="parameters">Parameters</h2>
+<h6 id="parameters">Parameters</h6>
 
-<p>flatten : bool
-    Should the return dictionary be single level (i.e. should <code>params</code>
-    or other dictionary variables be serialized).</p>
+<ul>
+<li><strong>flatten</strong> (bool):
+Should the return dictionary be single level (i.e. should <code>params</code>
+or other dictionary variables be serialized).</li>
+</ul>
 
-<h2 id="returns">Returns</h2>
+<h6 id="returns">Returns</h6>
 
-<p>dict
-    Dictionary representing the run - if flattened then params are
-    returned as a JSON format sting.</p>
+<ul>
+<li><strong>dict</strong>: Dictionary representing the run - if flattened then params are
+returned as a JSON format sting.</li>
+</ul>
 </div>
 
 
@@ -910,12 +923,14 @@ status : enum(Status)</p>
 
             <div class="docstring"><p>Handles information for particular application.</p>
 
-<h2 id="attributes">Attributes</h2>
+<h6 id="attributes">Attributes</h6>
 
-<p>name : str or None
-    Human readable application name.
-paramsspec : ParamsSpecification or None
-    Description of possible parameter values.</p>
+<ul>
+<li><strong>name</strong> (str or None):
+Human readable application name.</li>
+<li><strong>paramsspec</strong> (ParamsSpecification or None):
+Description of possible parameter values.</li>
+</ul>
 </div>
 
 
@@ -990,17 +1005,20 @@ paramsspec : ParamsSpecification or None
 
             <div class="docstring"><p>Convert to a dictionary (optionally flatten to single level)</p>
 
-<h2 id="parameters">Parameters</h2>
+<h6 id="parameters">Parameters</h6>
 
-<p>flatten : bool
-    Should the return dictionary be single level (i.e. should <code>paramsspec</code>
-    be serialized).</p>
+<ul>
+<li><strong>flatten</strong> (bool):
+Should the return dictionary be single level (i.e. should <code>paramsspec</code>
+be serialized).</li>
+</ul>
 
-<h2 id="returns">Returns</h2>
+<h6 id="returns">Returns</h6>
 
-<p>dict
-    Dictionary representing the application- if flattened then <code>paramsspec</code>
-    is returned as a JSON format sting.</p>
+<ul>
+<li><strong>dict</strong>: Dictionary representing the application- if flattened then <code>paramsspec</code>
+is returned as a JSON format sting.</li>
+</ul>
 </div>
 
 
@@ -1121,34 +1139,38 @@ paramsspec : ParamsSpecification or None
 
             <div class="docstring"><p>Handles information on Campaign.</p>
 
-<h2 id="parameters">Parameters</h2>
+<h6 id="parameters">Parameters</h6>
 
-<p>name : str or None
-    Human readable campaign name.
-easyvvuq_version : str or None
-    Version of EasyVVUQ used to create the campaign.
-campaign_dir_prefix : str or None
-    Prefix test for campaign directory.
-campaign_dir : str or None,
-    Path to the campaign directory.
-runs_dir : str or None
-    path to run directory (within the campaign directory)
-local : bool, default=False
-    Is this campaign designed to be created and executed on the same
-    machine?</p>
+<ul>
+<li><strong>name</strong> (str or None):
+Human readable campaign name.</li>
+<li><strong>easyvvuq_version</strong> (str or None):
+Version of EasyVVUQ used to create the campaign.</li>
+<li><strong>campaign_dir_prefix</strong> (str or None):
+Prefix test for campaign directory.</li>
+<li><strong>campaign_dir</strong> (str or None,):
+Path to the campaign directory.</li>
+<li><strong>runs_dir</strong> (str or None):
+path to run directory (within the campaign directory)</li>
+<li><strong>local</strong> (bool, default=False):
+Is this campaign designed to be created and executed on the same
+machine?</li>
+</ul>
 
-<h2 id="attributes">Attributes</h2>
+<h6 id="attributes">Attributes</h6>
 
-<p>name : str or None
-    Human readable campaign name.
-easyvvuq_version : str or None
-    Version of EasyVVUQ used to create the campaign.
-campaign_dir_prefix : str or None
-    Prefix test for campaign directory.
-campaign_dir : str or None,
-    Path to the campaign directory.
-runs_dir : str or None
-    path to run directory (within the campaign directory)</p>
+<ul>
+<li><strong>name</strong> (str or None):
+Human readable campaign name.</li>
+<li><strong>easyvvuq_version</strong> (str or None):
+Version of EasyVVUQ used to create the campaign.</li>
+<li><strong>campaign_dir_prefix</strong> (str or None):
+Prefix test for campaign directory.</li>
+<li><strong>campaign_dir</strong> (str or None,):
+Path to the campaign directory.</li>
+<li><strong>runs_dir</strong> (str or None):
+path to run directory (within the campaign directory)</li>
+</ul>
 </div>
 
 
@@ -1255,15 +1277,18 @@ runs_dir : str or None
 
             <div class="docstring"><p>Convert this to a dictionary</p>
 
-<h2 id="parameters">Parameters</h2>
+<h6 id="parameters">Parameters</h6>
 
-<p>flatten : bool
-    Should the return dictionary be single level (always true here).</p>
+<ul>
+<li><strong>flatten</strong> (bool):
+Should the return dictionary be single level (always true here).</li>
+</ul>
 
-<h2 id="returns">Returns</h2>
+<h6 id="returns">Returns</h6>
 
-<p>dict
-    Dictionary representing the campaign.</p>
+<ul>
+<li><strong>dict</strong>: Dictionary representing the campaign.</li>
+</ul>
 </div>
 
 

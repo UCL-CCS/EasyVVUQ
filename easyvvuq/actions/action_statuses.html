@@ -301,17 +301,19 @@
 
             <div class="docstring"><p>A class that handles the execution of actions.</p>
 
-<h2 id="parameters">Parameters</h2>
+<h6 id="parameters">Parameters</h6>
 
-<p>campaign: Campaign
-    An instance of an EasyVVUQ campaign.
-actions: Actions
-    An instance of Actions containing things to be done as part of the simulation.
-inits: iterable
-    Initial inputs to be passed to each Actions representing a sample. Will usually contain
-    dictionaries with the following information: {'run_id': ..., 'campaign_dir': ..., 'run_info': ...}.
-sequential: bool
-    Will run the actions sequentially.</p>
+<ul>
+<li><strong>campaign</strong> (Campaign):
+An instance of an EasyVVUQ campaign.</li>
+<li><strong>actions</strong> (Actions):
+An instance of Actions containing things to be done as part of the simulation.</li>
+<li><strong>inits</strong> (iterable):
+Initial inputs to be passed to each Actions representing a sample. Will usually contain
+dictionaries with the following information: {'run_id': ..., 'campaign_dir': ..., 'run_info': ...}.</li>
+<li><strong>sequential</strong> (bool):
+Will run the actions sequentially.</li>
+</ul>
 </div>
 
 
@@ -377,13 +379,17 @@ sequential: bool
 
             <div class="docstring"><p>Start the actions.</p>
 
-<h2 id="parameters">Parameters</h2>
+<h6 id="parameters">Parameters</h6>
 
-<p>pool: An Executor instance (e.g. ThreadPoolExecutor)</p>
+<ul>
+<li><strong>pool</strong> (An Executor instance (e.g. ThreadPoolExecutor)):</li>
+</ul>
 
-<h2 id="returns">Returns</h2>
+<h6 id="returns">Returns</h6>
 
-<p>ActionPool</p>
+<ul>
+<li><strong>ActionPool</strong></li>
+</ul>
 </div>
 
 
@@ -426,9 +432,11 @@ sequential: bool
 
             <div class="docstring"><p>Some basic stats about the action statuses status.</p>
 
-<h2 id="returns">Returns</h2>
+<h6 id="returns">Returns</h6>
 
-<p>A dictionary with four keys - 'ready', 'active' and 'finished', 'failed'.</p>
+<ul>
+<li><strong>A dictionary with four keys - 'ready', 'active' and 'finished', 'failed'.</strong></li>
+</ul>
 </div>
 
 
@@ -473,10 +481,12 @@ sequential: bool
             <div class="docstring"><p>A command that will block untill al futures in the pool have finished.
 It will also store the results in the database.</p>
 
-<h2 id="parameters">Parameters</h2>
+<h6 id="parameters">Parameters</h6>
 
-<p>progress_bar: bool
-   Whether to show progress bar</p>
+<ul>
+<li><strong>progress_bar</strong> (bool):
+Whether to show progress bar</li>
+</ul>
 </div>
 
 

@@ -324,10 +324,12 @@
 
             <div class="docstring"><p>Baseclass for all EasyVVUQ sampling elements.</p>
 
-<h2 id="attributes">Attributes</h2>
+<h6 id="attributes">Attributes</h6>
 
-<p>sampler_name : str
-    Name of the particular sampler.</p>
+<ul>
+<li><strong>sampler_name</strong> (str):
+Name of the particular sampler.</li>
+</ul>
 </div>
 
 
@@ -411,18 +413,20 @@
 
             <div class="docstring"><p>Create a Quasi Monte Carlo sampler.</p>
 
-<h2 id="parameters">Parameters</h2>
+<h6 id="parameters">Parameters</h6>
 
-<p>vary: dict
-    Expects a dictionary where the keys are variable names
-    (inputs for your simulation that you want to vary during
-    sampling) and values are ChaosPy distributions you want to
-    sample from.
-n_mc_samples : int
-    An estimate for how many samples the monte carlo run will need.
-count : int
-    This is used to resume sampling. It will skip the first
-    count samples if this parameter is not zero.</p>
+<ul>
+<li><strong>vary</strong> (dict):
+Expects a dictionary where the keys are variable names
+(inputs for your simulation that you want to vary during
+sampling) and values are ChaosPy distributions you want to
+sample from.</li>
+<li><strong>n_mc_samples</strong> (int):
+An estimate for how many samples the monte carlo run will need.</li>
+<li><strong>count</strong> (int):
+This is used to resume sampling. It will skip the first
+count samples if this parameter is not zero.</li>
+</ul>
 </div>
 
 
@@ -457,11 +461,13 @@ count : int
 
             <div class="docstring"><p>Returns the number of samples in this sampler.</p>
 
-<h2 id="returns">Returns</h2>
+<h6 id="returns">Returns</h6>
 
-<p>This computed with the formula (d + 2) * N, where d is the number
-of uncertain parameters and N is the (estimated) number of samples
-for the Monte Carlo method.</p>
+<ul>
+<li><strong>This computed with the formula (d + 2) * N, where d is the number</strong></li>
+<li><strong>of uncertain parameters and N is the (estimated) number of samples</strong></li>
+<li><strong>for the Monte Carlo method.</strong></li>
+</ul>
 </div>
 
 

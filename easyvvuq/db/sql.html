@@ -2690,10 +2690,12 @@ for example, any mapped columns or relationships.</p>
 
             <div class="docstring"><p>An interface between the campaign database and the campaign.</p>
 
-<h2 id="parameters">Parameters</h2>
+<h6 id="parameters">Parameters</h6>
 
-<p>location: str
-   database URI as needed by SQLAlchemy</p>
+<ul>
+<li><strong>location</strong> (str):
+database URI as needed by SQLAlchemy</li>
+</ul>
 </div>
 
 
@@ -2751,9 +2753,11 @@ for example, any mapped columns or relationships.</p>
 
             <div class="docstring"><p>Resumes campaign.</p>
 
-<h2 id="parameters">Parameters</h2>
+<h6 id="parameters">Parameters</h6>
 
-<p>name: str</p>
+<ul>
+<li><strong>name</strong> (str):</li>
+</ul>
 </div>
 
 
@@ -2791,9 +2795,11 @@ for example, any mapped columns or relationships.</p>
 
             <div class="docstring"><p>Creates a new campaign in the database.</p>
 
-<h2 id="parameters">Parameters</h2>
+<h6 id="parameters">Parameters</h6>
 
-<p>info: CampaignInfo</p>
+<ul>
+<li><strong>info</strong> (CampaignInfo):</li>
+</ul>
 </div>
 
 
@@ -2823,9 +2829,11 @@ for example, any mapped columns or relationships.</p>
 
             <div class="docstring"><p>Returns active app table.</p>
 
-<h2 id="returns">Returns</h2>
+<h6 id="returns">Returns</h6>
 
-<p>AppTable</p>
+<ul>
+<li><strong>AppTable</strong></li>
+</ul>
 </div>
 
 
@@ -2861,14 +2869,17 @@ for example, any mapped columns or relationships.</p>
 
             <div class="docstring"><p>Check if campaign specified by that name already exists.</p>
 
-<h2 id="parameters">Parameters</h2>
+<h6 id="parameters">Parameters</h6>
 
-<p>name: str</p>
+<ul>
+<li><strong>name</strong> (str):</li>
+</ul>
 
-<h2 id="returns">Returns</h2>
+<h6 id="returns">Returns</h6>
 
-<p>bool
-  True if such a campaign already exists, False otherwise</p>
+<ul>
+<li><strong>bool</strong>: True if such a campaign already exists, False otherwise</li>
+</ul>
 </div>
 
 
@@ -2931,16 +2942,19 @@ for example, any mapped columns or relationships.</p>
             <div class="docstring"><p>Get app information. Specific applications selected by <code>name</code>,
 otherwise first entry in database 'app' selected.</p>
 
-<h2 id="parameters">Parameters</h2>
+<h6 id="parameters">Parameters</h6>
 
-<p>name : str or None
-    Name of selected app, if <code>None</code> given then first app will be
-    selected.</p>
+<ul>
+<li><strong>name</strong> (str or None):
+Name of selected app, if <code>None</code> given then first app will be
+selected.</li>
+</ul>
 
-<h2 id="returns">Returns</h2>
+<h6 id="returns">Returns</h6>
 
-<p>dict:
-    Application information.</p>
+<ul>
+<li><strong>dict:</strong>: Application information.</li>
+</ul>
 </div>
 
 
@@ -2976,10 +2990,12 @@ otherwise first entry in database 'app' selected.</p>
 
             <div class="docstring"><p>Set an app specified by name as active.</p>
 
-<h2 id="parameters">Parameters</h2>
+<h6 id="parameters">Parameters</h6>
 
-<p>name: str
-   name of the app to set as active</p>
+<ul>
+<li><strong>name</strong> (str):
+name of the app to set as active</li>
+</ul>
 </div>
 
 
@@ -3030,12 +3046,15 @@ otherwise first entry in database 'app' selected.</p>
 
             <div class="docstring"><p>Add application to the 'app' table.</p>
 
-<h2 id="parameters">Parameters</h2>
+<h6 id="parameters">Parameters</h6>
 
-<p>app_info: AppInfo
-    Application definition.</p>
+<ul>
+<li><strong>app_info</strong> (AppInfo):
+Application definition.</li>
+<li><strong>Returns</strong></li>
+</ul>
 
-<h2 id="returns">Returns</h2>
+<hr />
 </div>
 
 
@@ -3074,11 +3093,14 @@ otherwise first entry in database 'app' selected.</p>
 
             <div class="docstring"><p>Add new Sampler to the 'sampler' table.</p>
 
-<h2 id="parameters">Parameters</h2>
+<h6 id="parameters">Parameters</h6>
 
-<p>sampler_element: BaseSamplingElement</p>
+<ul>
+<li><p><strong>sampler_element</strong> (BaseSamplingElement):</p></li>
+<li><p><strong>Returns</strong></p></li>
+</ul>
 
-<h2 id="returns">Returns</h2>
+<hr />
 </div>
 
 
@@ -3120,14 +3142,17 @@ otherwise first entry in database 'app' selected.</p>
             <div class="docstring"><p>Update the state of the Sampler with id 'sampler_id' to
 that in the passed 'sampler_element'</p>
 
-<h2 id="parameters">Parameters</h2>
+<h6 id="parameters">Parameters</h6>
 
-<p>sampler_id: int
-    The id of the sampler in the db to update
-sampler_element: BaseSamplingElement
-    The sampler whose state should be used as the new state</p>
+<ul>
+<li><strong>sampler_id</strong> (int):
+The id of the sampler in the db to update</li>
+<li><strong>sampler_element</strong> (BaseSamplingElement):
+The sampler whose state should be used as the new state</li>
+<li><strong>Returns</strong></li>
+</ul>
 
-<h2 id="returns">Returns</h2>
+<hr />
 </div>
 
 
@@ -3171,15 +3196,18 @@ sampler_element: BaseSamplingElement
             <div class="docstring"><p>Return the sampler object corresponding to id sampler_id in the database.
 It is deserialized from the state stored in the database.</p>
 
-<h2 id="parameters">Parameters</h2>
+<h6 id="parameters">Parameters</h6>
 
-<p>sampler_id: int
-    The id of the sampler to resurrect</p>
+<ul>
+<li><strong>sampler_id</strong> (int):
+The id of the sampler to resurrect</li>
+</ul>
 
-<h2 id="returns">Returns</h2>
+<h6 id="returns">Returns</h6>
 
-<p>BaseSamplingElement
-    The 'live' sampler object, deserialized from the state in the db</p>
+<ul>
+<li><strong>BaseSamplingElement</strong>: The 'live' sampler object, deserialized from the state in the db</li>
+</ul>
 </div>
 
 
@@ -3224,15 +3252,18 @@ It is deserialized from the state stored in the database.</p>
 name 'app_name' in the database. They are deserialized from the states previously
 stored in the database.</p>
 
-<h2 id="parameters">Parameters</h2>
+<h6 id="parameters">Parameters</h6>
 
-<p>app_name: string
-    Name of the app to resurrect</p>
+<ul>
+<li><strong>app_name</strong> (string):
+Name of the app to resurrect</li>
+</ul>
 
-<h2 id="returns">Returns</h2>
+<h6 id="returns">Returns</h6>
 
-<p>BaseEncoder, BaseDecoder, BaseCollationElement
-    The 'live' encoder and decoder objects associated with this app</p>
+<ul>
+<li><strong>BaseEncoder, BaseDecoder, BaseCollationElement</strong>: The 'live' encoder and decoder objects associated with this app</li>
+</ul>
 </div>
 
 
@@ -3289,15 +3320,18 @@ stored in the database.</p>
 
             <div class="docstring"><p>Add list of runs to the <code><a href="#CampaignDB.runs">runs</a></code> table in the database.</p>
 
-<h2 id="parameters">Parameters</h2>
+<h6 id="parameters">Parameters</h6>
 
-<p>run_info_list: List of RunInfo objects
-    Each RunInfo object contains relevant run fields: params, status (where in the
-    EasyVVUQ workflow is this RunTable), campaign (id number), sample, app
-run_prefix: str
-    Prefix for run id</p>
+<ul>
+<li><strong>run_info_list</strong> (List of RunInfo objects):
+Each RunInfo object contains relevant run fields: params, status (where in the
+EasyVVUQ workflow is this RunTable), campaign (id number), sample, app</li>
+<li><strong>run_prefix</strong> (str):
+Prefix for run id</li>
+<li><strong>Returns</strong></li>
+</ul>
 
-<h2 id="returns">Returns</h2>
+<hr />
 </div>
 
 
@@ -3353,18 +3387,21 @@ run_prefix: str
 
             <div class="docstring"><p>Set the 'run_dir' path for the specified run in the database.</p>
 
-<h2 id="parameters">Parameters</h2>
+<h6 id="parameters">Parameters</h6>
 
-<p>run_name: str
-    Name of run to filter for.
-run_dir: str
-    Directory path associated to set for this run.
-campaign:  int or None
-    Campaign id to filter for.
-sampler: int or None
-    Sample id to filter for.</p>
+<ul>
+<li><strong>run_name</strong> (str):
+Name of run to filter for.</li>
+<li><strong>run_dir</strong> (str):
+Directory path associated to set for this run.</li>
+<li><strong>campaign</strong> (int or None):
+Campaign id to filter for.</li>
+<li><strong>sampler</strong> (int or None):
+Sample id to filter for.</li>
+<li><strong>Returns</strong></li>
+</ul>
 
-<h2 id="returns">Returns</h2>
+<hr />
 </div>
 
 
@@ -3419,19 +3456,23 @@ sampler: int or None
             <div class="docstring"><p>Return the status (enum) for the run with name 'run_name' (and, optionally,
 filtering for campaign and sampler by id)</p>
 
-<h2 id="parameters">Parameters</h2>
+<h6 id="parameters">Parameters</h6>
 
-<p>run_id: int
-    id of the run
-campaign: int
-    ID of the desired Campaign
-sampler: int
-    ID of the desired Sampler</p>
+<ul>
+<li><strong>run_id</strong> (int):
+id of the run</li>
+<li><strong>campaign</strong> (int):
+ID of the desired Campaign</li>
+<li><strong>sampler</strong> (int):
+ID of the desired Sampler</li>
+</ul>
 
-<h2 id="returns">Returns</h2>
+<h6 id="returns">Returns</h6>
 
-<p>status: enum(Status)
-    Status of the run.</p>
+<ul>
+<li><strong>status</strong> (enum(Status)):
+Status of the run.</li>
+</ul>
 </div>
 
 
@@ -3470,14 +3511,17 @@ sampler: int
 
             <div class="docstring"><p>Set the specified 'status' (enum) for all runs in the list run_id_list</p>
 
-<h2 id="parameters">Parameters</h2>
+<h6 id="parameters">Parameters</h6>
 
-<p>run_id_list: list of int
-    a list of run ids
-status: enum(Status)
-    The new status all listed runs should now have</p>
+<ul>
+<li><strong>run_id_list</strong> (list of int):
+a list of run ids</li>
+<li><strong>status</strong> (enum(Status)):
+The new status all listed runs should now have</li>
+<li><strong>Returns</strong></li>
+</ul>
 
-<h2 id="returns">Returns</h2>
+<hr />
 </div>
 
 
@@ -3510,10 +3554,11 @@ status: enum(Status)
             <div class="docstring"><p>Get list of campaigns for which information is stored in the
 database.</p>
 
-<h2 id="returns">Returns</h2>
+<h6 id="returns">Returns</h6>
 
-<p>list:
-    Campaign names.</p>
+<ul>
+<li><strong>list:</strong>: Campaign names.</li>
+</ul>
 </div>
 
 
@@ -3566,15 +3611,18 @@ database.</p>
 
             <div class="docstring"><p>Return the (database) id corresponding to the campaign with name 'name'.</p>
 
-<h2 id="parameters">Parameters</h2>
+<h6 id="parameters">Parameters</h6>
 
-<p>name: str
-    Name of the campaign.</p>
+<ul>
+<li><strong>name</strong> (str):
+Name of the campaign.</li>
+</ul>
 
-<h2 id="returns">Returns</h2>
+<h6 id="returns">Returns</h6>
 
-<p>int:
-    The id of the campaign with the specified name</p>
+<ul>
+<li><strong>int:</strong>: The id of the campaign with the specified name</li>
+</ul>
 </div>
 
 
@@ -3614,15 +3662,18 @@ database.</p>
             <div class="docstring"><p>Return the (database) id corresponding to the sampler currently set
 for the campaign with id 'campaign_id'</p>
 
-<h2 id="parameters">Parameters</h2>
+<h6 id="parameters">Parameters</h6>
 
-<p>campaign_id: int
-    ID of the campaign.</p>
+<ul>
+<li><strong>campaign_id</strong> (int):
+ID of the campaign.</li>
+</ul>
 
-<h2 id="returns">Returns</h2>
+<h6 id="returns">Returns</h6>
 
-<p>int:
-    The id of the sampler set for the specified campaign</p>
+<ul>
+<li><strong>int:</strong>: The id of the sampler set for the specified campaign</li>
+</ul>
 </div>
 
 
@@ -3660,14 +3711,17 @@ for the campaign with id 'campaign_id'</p>
 
             <div class="docstring"><p>Set specified campaign to be using specified sampler</p>
 
-<h2 id="parameters">Parameters</h2>
+<h6 id="parameters">Parameters</h6>
 
-<p>campaign_id: int
-    ID of the campaign.
-sampler_id: int
-    ID of the sampler.</p>
+<ul>
+<li><strong>campaign_id</strong> (int):
+ID of the campaign.</li>
+<li><strong>sampler_id</strong> (int):
+ID of the sampler.</li>
+<li><strong>Returns</strong></li>
+</ul>
 
-<h2 id="returns">Returns</h2>
+<hr />
 </div>
 
 
@@ -3703,15 +3757,18 @@ sampler_id: int
 
             <div class="docstring"><p>Get campaign directory for <code>campaign_name</code>.</p>
 
-<h2 id="parameters">Parameters</h2>
+<h6 id="parameters">Parameters</h6>
 
-<p>campaign_name: str
-    Name of campaign to select</p>
+<ul>
+<li><strong>campaign_name</strong> (str):
+Name of campaign to select</li>
+</ul>
 
-<h2 id="returns">Returns</h2>
+<h6 id="returns">Returns</h6>
 
-<p>str:
-    Path to campaign directory.</p>
+<ul>
+<li><strong>str:</strong>: Path to campaign directory.</li>
+</ul>
 </div>
 
 
@@ -3778,24 +3835,27 @@ sampler_id: int
 
             <div class="docstring"><p>Get the information for a specified run.</p>
 
-<h2 id="parameters">Parameters</h2>
+<h6 id="parameters">Parameters</h6>
 
-<p>name: str
-    Name of run to filter for.
-campaign:  int or None
-    Campaign id to filter for.
-sampler: int or None
-    Sampler id to filter for.
-status: enum(Status) or None
-    Status string to filter for.
-not_status: enum(Status) or None
-    Exclude runs with this status string</p>
+<ul>
+<li><strong>name</strong> (str):
+Name of run to filter for.</li>
+<li><strong>campaign</strong> (int or None):
+Campaign id to filter for.</li>
+<li><strong>sampler</strong> (int or None):
+Sampler id to filter for.</li>
+<li><strong>status</strong> (enum(Status) or None):
+Status string to filter for.</li>
+<li><strong>not_status</strong> (enum(Status) or None):
+Exclude runs with this status string</li>
+</ul>
 
-<h2 id="returns">Returns</h2>
+<h6 id="returns">Returns</h6>
 
-<p>dict
-    Containing run information (run_name, params, status, sample,
-    campaign, app)</p>
+<ul>
+<li><strong>dict</strong>: Containing run information (run_name, params, status, sample,
+campaign, app)</li>
+</ul>
 </div>
 
 
@@ -3855,22 +3915,25 @@ not_status: enum(Status) or None
 
             <div class="docstring"><p>A generator to return all run information for selected <code>campaign</code> and <code>sampler</code>.</p>
 
-<h2 id="parameters">Parameters</h2>
+<h6 id="parameters">Parameters</h6>
 
-<p>campaign: int or None
-    Campaign id to filter for.
-sampler: int or None
-    Sampler id to filter for.
-status: enum(Status) or None
-    Status string to filter for.
-not_status: enum(Status) or None
-    Exclude runs with this status string</p>
+<ul>
+<li><strong>campaign</strong> (int or None):
+Campaign id to filter for.</li>
+<li><strong>sampler</strong> (int or None):
+Sampler id to filter for.</li>
+<li><strong>status</strong> (enum(Status) or None):
+Status string to filter for.</li>
+<li><strong>not_status</strong> (enum(Status) or None):
+Exclude runs with this status string</li>
+</ul>
 
-<h2 id="returns">Returns</h2>
+<h6 id="returns">Returns</h6>
 
-<p>dict:
-    Information on each selected run (key = run_name, value = dict of
-    run information fields.), one at a time.</p>
+<ul>
+<li><strong>dict:</strong>: Information on each selected run (key = run_name, value = dict of
+run information fields.), one at a time.</li>
+</ul>
 </div>
 
 
@@ -3929,21 +3992,24 @@ not_status: enum(Status) or None
 
             <div class="docstring"><p>A generator to return all run IDs for selected <code>campaign</code> and <code>sampler</code>.</p>
 
-<h2 id="parameters">Parameters</h2>
+<h6 id="parameters">Parameters</h6>
 
-<p>campaign: int or None
-    Campaign id to filter for.
-sampler: int or None
-    Sampler id to filter for.
-status: enum(Status) or None
-    Status string to filter for.
-not_status: enum(Status) or None
-    Exclude runs with this status string</p>
+<ul>
+<li><strong>campaign</strong> (int or None):
+Campaign id to filter for.</li>
+<li><strong>sampler</strong> (int or None):
+Sampler id to filter for.</li>
+<li><strong>status</strong> (enum(Status) or None):
+Status string to filter for.</li>
+<li><strong>not_status</strong> (enum(Status) or None):
+Exclude runs with this status string</li>
+</ul>
 
-<h2 id="returns">Returns</h2>
+<h6 id="returns">Returns</h6>
 
-<p>str:
-    run ID for each selected run, one at a time.</p>
+<ul>
+<li><strong>str:</strong>: run ID for each selected run, one at a time.</li>
+</ul>
 </div>
 
 
@@ -3993,21 +4059,24 @@ not_status: enum(Status) or None
 
             <div class="docstring"><p>Returns the number of runs matching the filtering criteria.</p>
 
-<h2 id="parameters">Parameters</h2>
+<h6 id="parameters">Parameters</h6>
 
-<p>campaign: int or None
-    Campaign id to filter for.
-sampler: int or None
-    Sampler id to filter for.
-status: enum(Status) or None
-    Status string to filter for.
-not_status: enum(Status) or None
-    Exclude runs with this status string</p>
+<ul>
+<li><strong>campaign</strong> (int or None):
+Campaign id to filter for.</li>
+<li><strong>sampler</strong> (int or None):
+Sampler id to filter for.</li>
+<li><strong>status</strong> (enum(Status) or None):
+Status string to filter for.</li>
+<li><strong>not_status</strong> (enum(Status) or None):
+Exclude runs with this status string</li>
+</ul>
 
-<h2 id="returns">Returns</h2>
+<h6 id="returns">Returns</h6>
 
-<p>int:
-    The number of runs in the database matching the filtering criteria</p>
+<ul>
+<li><strong>int:</strong>: The number of runs in the database matching the filtering criteria</li>
+</ul>
 </div>
 
 
@@ -4044,15 +4113,18 @@ not_status: enum(Status) or None
 
             <div class="docstring"><p>Get the directory used to store run information for <code>campaign_name</code>.</p>
 
-<h2 id="parameters">Parameters</h2>
+<h6 id="parameters">Parameters</h6>
 
-<p>campaign_name: str
-    Name of the selected campaign.</p>
+<ul>
+<li><strong>campaign_name</strong> (str):
+Name of the selected campaign.</li>
+</ul>
 
-<h2 id="returns">Returns</h2>
+<h6 id="returns">Returns</h6>
 
-<p>str:
-    Path containing run outputs.</p>
+<ul>
+<li><strong>str:</strong>: Path containing run outputs.</li>
+</ul>
 </div>
 
 
@@ -4132,12 +4204,14 @@ not_status: enum(Status) or None
 
             <div class="docstring"><p>Stores the results from a given run in the database.</p>
 
-<h2 id="parameters">Parameters</h2>
+<h6 id="parameters">Parameters</h6>
 
-<p>run_name: str
-    name of the run
-results: dict
-    dictionary with the results (from the decoder)</p>
+<ul>
+<li><strong>run_name</strong> (str):
+name of the run</li>
+<li><strong>results</strong> (dict):
+dictionary with the results (from the decoder)</li>
+</ul>
 </div>
 
 
@@ -4209,16 +4283,20 @@ results: dict
 
             <div class="docstring"><p>Returns the results as a pandas DataFrame.</p>
 
-<h2 id="parameters">Parameters</h2>
+<h6 id="parameters">Parameters</h6>
 
-<p>app_name: str
-    Name of the app to return data for.
-sampler_id: int
-    ID of the sampler.</p>
+<ul>
+<li><strong>app_name</strong> (str):
+Name of the app to return data for.</li>
+<li><strong>sampler_id</strong> (int):
+ID of the sampler.</li>
+</ul>
 
-<h2 id="returns">Returns</h2>
+<h6 id="returns">Returns</h6>
 
-<p>pandas DataFrame constructed from the decoder output dictionaries</p>
+<ul>
+<li><strong>pandas DataFrame constructed from the decoder output dictionaries</strong></li>
+</ul>
 </div>
 
 
@@ -4258,12 +4336,14 @@ sampler_id: int
 
             <div class="docstring"><p>Update all runs in the db with the new campaign path.</p>
 
-<h2 id="parameters">Parameters</h2>
+<h6 id="parameters">Parameters</h6>
 
-<p>new_path: str
-    new runs directory
-campaign_name: str
-    name of the campaign</p>
+<ul>
+<li><strong>new_path</strong> (str):
+new runs directory</li>
+<li><strong>campaign_name</strong> (str):
+name of the campaign</li>
+</ul>
 </div>
 
 

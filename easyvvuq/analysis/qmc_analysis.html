@@ -504,9 +504,11 @@ documentation for details on using it.</p>
 
             <div class="docstring"><p>Types of statistics supported by the describe method.</p>
 
-<h2 id="returns">Returns</h2>
+<h6 id="returns">Returns</h6>
 
-<p>list of str</p>
+<ul>
+<li><strong>list of str</strong></li>
+</ul>
 </div>
 
 
@@ -860,13 +862,15 @@ documentation for details on using it.</p>
 
             <div class="docstring"><p>Analysis element for Quasi-Monte Carlo (QMC).</p>
 
-<h2 id="parameters">Parameters</h2>
+<h6 id="parameters">Parameters</h6>
 
-<p>sampler : <a href="../sampling/qmc.html#QMCSampler">easyvvuq.sampling.qmc.QMCSampler</a>
-    Sampler used to initiate the QMC analysis
-qoi_cols : list or None
-    Column names for quantities of interest (for which analysis is to be
-    performed).</p>
+<ul>
+<li><strong>sampler</strong> (<a href="../sampling/qmc.html#QMCSampler">easyvvuq.sampling.qmc.QMCSampler</a>):
+Sampler used to initiate the QMC analysis</li>
+<li><strong>qoi_cols</strong> (list or None):
+Column names for quantities of interest (for which analysis is to be
+performed).</li>
+</ul>
 </div>
 
 
@@ -896,7 +900,7 @@ qoi_cols : list or None
 
             <div class="docstring"><p>Name for this element.</p>
 
-<h2 id="return">Return</h2>
+<h6 id="return">Return</h6>
 
 <p>str:
     "QMC_Analysis"</p>
@@ -929,7 +933,7 @@ qoi_cols : list or None
 
             <div class="docstring"><p>Version of this element.</p>
 
-<h2 id="return">Return</h2>
+<h6 id="return">Return</h6>
 
 <p>str:
     Element version.</p>
@@ -997,15 +1001,18 @@ qoi_cols : list or None
 
             <div class="docstring"><p>Perform QMC analysis on a given pandas DataFrame.</p>
 
-<h2 id="parameters">Parameters</h2>
+<h6 id="parameters">Parameters</h6>
 
-<p>data_frame : pandas DataFrame
-    Input data for analysis.</p>
+<ul>
+<li><strong>data_frame</strong> (pandas DataFrame):
+Input data for analysis.</li>
+</ul>
 
-<h2 id="returns">Returns</h2>
+<h6 id="returns">Returns</h6>
 
-<p><a href="../analysis.html#qmc.QMCAnalysisResults">easyvvuq.analysis.qmc.QMCAnalysisResults</a>
-    AnalysisResults object for QMC.</p>
+<ul>
+<li><strong><a href="../analysis.html#qmc.QMCAnalysisResults">easyvvuq.analysis.qmc.QMCAnalysisResults</a></strong>: AnalysisResults object for QMC.</li>
+</ul>
 </div>
 
 
@@ -1047,16 +1054,19 @@ qoi_cols : list or None
 
             <div class="docstring"><p>Converts the Pandas dataframe into a dictionary.</p>
 
-<h2 id="parameters">Parameters</h2>
+<h6 id="parameters">Parameters</h6>
 
-<p>data_frame : pandas DataFrame
-    the EasyVVUQ Pandas dataframe from collation.</p>
+<ul>
+<li><strong>data_frame</strong> (pandas DataFrame):
+the EasyVVUQ Pandas dataframe from collation.</li>
+</ul>
 
-<h2 id="returns">Returns</h2>
+<h6 id="returns">Returns</h6>
 
-<p>dict :
-    A dictionary with the QoI names as keys.
-    Each element is a list of code evaluations.</p>
+<ul>
+<li><strong>dict :</strong>: A dictionary with the QoI names as keys.
+Each element is a list of code evaluations.</li>
+</ul>
 </div>
 
 
@@ -1158,20 +1168,24 @@ are also computed.</p>
 <p>Reference: A. Saltelli, Making best use of model evaluations to compute
 sensitivity indices, Computer Physics Communications, 2002.</p>
 
-<h2 id="parameters">Parameters</h2>
+<h6 id="parameters">Parameters</h6>
 
-<p>samples : list
-    The samples for a given QoI.
-alpha: float
-    The (1 - alpha) * 100 confidence interval parameter. The default is 0.05.
-n_samples: int
-    The number of bootstrap samples. The default is 1000.</p>
+<ul>
+<li><strong>samples</strong> (list):
+The samples for a given QoI.</li>
+<li><strong>alpha</strong> (float):
+The (1 - alpha) * 100 confidence interval parameter. The default is 0.05.</li>
+<li><strong>n_samples</strong> (int):
+The number of bootstrap samples. The default is 1000.</li>
+</ul>
 
-<h2 id="returns">Returns</h2>
+<h6 id="returns">Returns</h6>
 
-<p>sobols_first_dict, conf_first_dict, sobols_total_dict, conf_total_dict:
-dictionaries containing the first- and total-order Sobol indices for all
-parameters, and (1-alpha)*100 lower and upper confidence bounds.</p>
+<ul>
+<li><strong>sobols_first_dict, conf_first_dict, sobols_total_dict, conf_total_dict:</strong></li>
+<li><strong>dictionaries containing the first- and total-order Sobol indices for all</strong></li>
+<li><strong>parameters, and (1-alpha)*100 lower and upper confidence bounds.</strong></li>
+</ul>
 </div>
 
 

@@ -314,14 +314,16 @@
 <p>This results in values for: count, mean, std, min, max and 25%, 50% &amp;
 75% percentiles for each value in the analysis.</p>
 
-<h2 id="parameters">Parameters</h2>
+<h6 id="parameters">Parameters</h6>
 
-<p>groupby : list or None
-    Columns to use to group the data in <code><a href="#BasicStats.analyse">analyse</a></code> method before
-    calculating stats.
-qoi_cols : list or None
-    Columns of quantities of interest (for which stats will be
-    calculated).</p>
+<ul>
+<li><strong>groupby</strong> (list or None):
+Columns to use to group the data in <code><a href="#BasicStats.analyse">analyse</a></code> method before
+calculating stats.</li>
+<li><strong>qoi_cols</strong> (list or None):
+Columns of quantities of interest (for which stats will be
+calculated).</li>
+</ul>
 </div>
 
 
@@ -437,15 +439,18 @@ for each value in the analysis.</p>
 <p>The data_frame is grouped according to <code>self.groupby</code> if specified and
 analysis is performed on the columns selected in <code>self.qoi_cols</code> if set.</p>
 
-<h2 id="parameters">Parameters</h2>
+<h6 id="parameters">Parameters</h6>
 
-<p>data_frame : :obj:<code>pandas.DataFrame</code>
-    Summary data produced through collation of simulation output.</p>
+<ul>
+<li><strong>data_frame</strong> (<code>pandas.DataFrame</code>):
+Summary data produced through collation of simulation output.</li>
+</ul>
 
-<h2 id="returns">Returns</h2>
+<h6 id="returns">Returns</h6>
 
-<p>:obj:<code>pandas.DataFrame</code>
-    Basic statistic for selected columns and groupings of data.</p>
+<ul>
+<li><strong><code>pandas.DataFrame</code></strong>: Basic statistic for selected columns and groupings of data.</li>
+</ul>
 </div>
 
 

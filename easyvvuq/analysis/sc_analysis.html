@@ -220,7 +220,7 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        sampler : :obj:`easyvvuq.sampling.stochastic_collocation.SCSampler`</span>
+<span class="sd">        sampler : SCSampler</span>
 <span class="sd">            Sampler used to initiate the SC analysis</span>
 <span class="sd">        qoi_cols : list or None</span>
 <span class="sd">            Column names for quantities of interest (for which analysis is</span>
@@ -254,18 +254,13 @@
         <span class="k">return</span> <span class="s2">&quot;0.5&quot;</span>
 
     <span class="k">def</span> <span class="nf">save_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Saves the complete state of the analysis object to a pickle file,</span>
+        <span class="sd">&quot;&quot;&quot;Saves the complete state of the analysis object to a pickle file,</span>
 <span class="sd">        except the sampler object (self.samples).</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        filename : (string) name to the file to write the state to</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        None.</span>
-
+<span class="sd">        filename : string </span>
+<span class="sd">            name to the file to write the state to</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Saving analysis state to </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">filename</span><span class="p">)</span>
         <span class="c1"># make a copy of the state, and do not store the sampler as well</span>
@@ -276,18 +271,13 @@
         <span class="n">file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">load_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Loads the complete state of the analysis object from a</span>
+        <span class="sd">&quot;&quot;&quot;Loads the complete state of the analysis object from a</span>
 <span class="sd">        pickle file, stored using save_state.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        filename : (string) name of the file to load</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        None.</span>
-
+<span class="sd">        filename : string </span>
+<span class="sd">            name of the file to load</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Loading analysis state from </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">filename</span><span class="p">)</span>
         <span class="n">file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span>
@@ -301,7 +291,7 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        data_frame : :obj:`pandas.DataFrame`</span>
+<span class="sd">        data_frame : pandas.DataFrame</span>
 <span class="sd">            Input data for analysis.</span>
 
 <span class="sd">        Returns</span>
@@ -412,8 +402,7 @@
                                  <span class="n">qois</span><span class="o">=</span><span class="n">qoi_cols</span><span class="p">,</span> <span class="n">inputs</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sampler</span><span class="o">.</span><span class="n">vary</span><span class="o">.</span><span class="n">get_keys</span><span class="p">()))</span>
 
     <span class="k">def</span> <span class="nf">compute_comb_coef</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Compute general combination coefficients. These are the coefficients</span>
+        <span class="sd">&quot;&quot;&quot;Compute general combination coefficients. These are the coefficients</span>
 <span class="sd">        multiplying the tensor products associated to each multi index l,</span>
 <span class="sd">        see page 12 Gerstner &amp; Griebel, numerical integration using sparse grids</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -441,8 +430,7 @@
 
     <span class="k">def</span> <span class="nf">adapt_dimension</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">qoi</span><span class="p">,</span> <span class="n">data_frame</span><span class="p">,</span> <span class="n">store_stats_history</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
                         <span class="n">method</span><span class="o">=</span><span class="s1">&#39;surplus&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Compute the adaptation metric and decide which of the admissible</span>
+        <span class="sd">&quot;&quot;&quot;Compute the adaptation metric and decide which of the admissible</span>
 <span class="sd">        level indices to include in next iteration of the sparse grid. The</span>
 <span class="sd">        adaptation metric is based on the hierarchical surplus, defined as the</span>
 <span class="sd">        difference between the new code values of the admissible level indices,</span>
@@ -455,23 +443,21 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        - qoi : (string) the name of the quantity of interest which is used</span>
-<span class="sd">                        to base the adaptation metric on.</span>
-<span class="sd">        - data_frame : the data frame from the EasyVVUQ Campaign</span>
-<span class="sd">        - store_stats_history (boolean, default=True): store the mean and variance</span>
-<span class="sd">          at each refinement in self.mean_history and self.std_history. Used for</span>
-<span class="sd">          checking convergence in the stattistics over the refinement iterations</span>
-<span class="sd">        - method (string) : name of the refinement error, default is &#39;surplus&#39;.</span>
-<span class="sd">          In this case the error is based on the hierarchical surplus, which is</span>
-<span class="sd">          an interpolation based error. Other possibilities are &#39;mean&#39; and &#39;var&#39;,</span>
-<span class="sd">          in which case the error is based on the difference in the mean or</span>
-<span class="sd">          variance between the current estimate and the estimate obtained</span>
-<span class="sd">          when a particular candidate direction is added.</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        None.</span>
-
+<span class="sd">        qoi : string</span>
+<span class="sd">            the name of the quantity of interest which is used</span>
+<span class="sd">            to base the adaptation metric on.</span>
+<span class="sd">        data_frame : pandas.DataFrame</span>
+<span class="sd">        store_stats_history : bool </span>
+<span class="sd">            store the mean and variance at each refinement in self.mean_history </span>
+<span class="sd">            and self.std_history. Used for checking convergence in the statistics </span>
+<span class="sd">            over the refinement iterations</span>
+<span class="sd">        method : string</span>
+<span class="sd">            name of the refinement error, default is &#39;surplus&#39;. In this case the </span>
+<span class="sd">            error is based on the hierarchical surplus, which is an interpolation </span>
+<span class="sd">            based error. Other possibilities are &#39;mean&#39; and &#39;var&#39;,</span>
+<span class="sd">            in which case the error is based on the difference in the mean or</span>
+<span class="sd">            variance between the current estimate and the estimate obtained</span>
+<span class="sd">             when a particular candidate direction is added.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Refining sampling plan...&#39;</span><span class="p">)</span>
         <span class="c1"># load the code samples</span>
@@ -594,8 +580,7 @@
             <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;done&#39;</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">merge_accepted_and_admissible</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        In the case of the dimension-adaptive sampler, there are 2 sets of</span>
+        <span class="sd">&quot;&quot;&quot;In the case of the dimension-adaptive sampler, there are 2 sets of</span>
 <span class="sd">        quadrature multi indices. There are the accepted indices that are actually</span>
 <span class="sd">        used in the analysis, and the admissible indices, of which some might</span>
 <span class="sd">        move to the accepted set in subsequent iterations. This subroutine merges</span>
@@ -644,8 +629,7 @@
             <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;done&#39;</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">undo_merge</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        This reverses the effect of the merge_accepted_and_admissble subroutine.</span>
+        <span class="sd">&quot;&quot;&quot;This reverses the effect of the merge_accepted_and_admissble subroutine.</span>
 <span class="sd">        Execute if further refinement are required after all.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">sampler</span><span class="o">.</span><span class="n">dimension_adaptive</span><span class="p">:</span>
@@ -653,22 +637,15 @@
             <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Restored old multi indices.&#39;</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">get_adaptation_errors</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Returns self.adaptation_errors</span>
+        <span class="sd">&quot;&quot;&quot;Returns self.adaptation_errors</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">adaptation_errors</span>
 
     <span class="k">def</span> <span class="nf">plot_stat_convergence</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Plots the convergence of the statistical mean and std dev over the different</span>
+        <span class="sd">&quot;&quot;&quot;Plots the convergence of the statistical mean and std dev over the different</span>
 <span class="sd">        refinements in a dimension-adaptive setting. Specifically the inf norm</span>
 <span class="sd">        of the difference between the stats of iteration i and iteration i-1</span>
 <span class="sd">        is plotted.</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        None.</span>
-
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">dimension_adaptive</span><span class="p">:</span>
             <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Only works for the dimension adaptive sampler.&#39;</span><span class="p">)</span>
@@ -716,14 +693,16 @@
         <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">surrogate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">qoi</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">L</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Use sc_expansion UQP as a surrogate</span>
+        <span class="sd">&quot;&quot;&quot;Use sc_expansion UQP as a surrogate</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        - qoi (str): name of the qoi</span>
-<span class="sd">        - x (array): location at which to evaluate the surrogate</span>
-<span class="sd">        - L (int): level of the (sparse) grid, default = self.L</span>
+<span class="sd">        qoi : str</span>
+<span class="sd">            name of the qoi</span>
+<span class="sd">        x : array</span>
+<span class="sd">            location at which to evaluate the surrogate</span>
+<span class="sd">        L : int</span>
+<span class="sd">            level of the (sparse) grid, default = self.L</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -733,19 +712,20 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">sc_expansion</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">samples</span><span class="p">[</span><span class="n">qoi</span><span class="p">],</span> <span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">quadrature</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">qoi</span><span class="p">,</span> <span class="n">samples</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Computes a (Smolyak) quadrature</span>
+        <span class="sd">&quot;&quot;&quot;Computes a (Smolyak) quadrature</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        - qoi (str): name of the qoi</span>
+<span class="sd">        qoi : str</span>
+<span class="sd">            name of the qoi</span>
 
-<span class="sd">        - samples: Default: compute the mean</span>
-<span class="sd">          by setting samples = self.samples. To compute the variance,</span>
-<span class="sd">          set samples = (self.samples - mean)**2</span>
+<span class="sd">        samples: array</span>
+<span class="sd">            compute the mean by setting samples = self.samples. </span>
+<span class="sd">            To compute the variance, set samples = (self.samples - mean)**2</span>
 
-<span class="sd">        Returns: the quadrature of qoi</span>
+<span class="sd">        Returns</span>
 <span class="sd">        -------</span>
+<span class="sd">        the quadrature of qoi</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">samples</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">samples</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">samples</span><span class="p">[</span><span class="n">qoi</span><span class="p">]</span>
@@ -753,19 +733,19 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">combination_technique</span><span class="p">(</span><span class="n">qoi</span><span class="p">,</span> <span class="n">samples</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">combination_technique</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">qoi</span><span class="p">,</span> <span class="n">samples</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Efficient quadrature formulation for (sparse) grids. See:</span>
+        <span class="sd">&quot;&quot;&quot;Efficient quadrature formulation for (sparse) grids. See:</span>
 
 <span class="sd">            Gerstner, Griebel, &quot;Numerical integration using sparse grids&quot;</span>
 <span class="sd">            Uses the general combination technique (page 12).</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        - qoi (str): name of the qoi</span>
+<span class="sd">        qoi : str</span>
+<span class="sd">            name of the qoi</span>
 
-<span class="sd">        - samples (optional in kwargs): Default: compute the mean</span>
-<span class="sd">          by setting samples = self.samples. To compute the variance,</span>
-<span class="sd">          set samples = (self.samples - mean)**2</span>
+<span class="sd">        samples : array </span>
+<span class="sd">            compute the mean by setting samples = self.samples. </span>
+<span class="sd">            To compute the variance, set samples = (self.samples - mean)**2</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="n">samples</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -817,12 +797,12 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        - qoi (str): name of the qoi</span>
+<span class="sd">        qoi : str</span>
+<span class="sd">            name of the qoi</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        - mean and variance of qoi (float (N_qoi,))</span>
-
+<span class="sd">        mean and variance of qoi (float (N_qoi,))</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Computing moments...&#39;</span><span class="p">)</span>
         <span class="c1"># compute mean</span>
@@ -834,17 +814,15 @@
         <span class="k">return</span> <span class="n">mean_f</span><span class="p">,</span> <span class="n">var_f</span>
 
     <span class="k">def</span> <span class="nf">sc_expansion</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">samples</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        -------------------------------------------------</span>
-<span class="sd">        Non recursive implementation of the SC expansion.</span>
+        <span class="sd">&quot;&quot;&quot;Non recursive implementation of the SC expansion.</span>
 <span class="sd">        (Default setting of surrogate)</span>
-<span class="sd">        -------------------------------------------------</span>
 <span class="sd">        Performs interpolation for both full and sparse grids.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        - samples: array of code samples</span>
-<span class="sd">        - x (float (N,)): location in stochastic space at which to eval</span>
+<span class="sd">        samples: array </span>
+<span class="sd">            array of code samples</span>
+<span class="sd">        x (float (N,)): location in stochastic space at which to eval</span>
 <span class="sd">          the surrogate</span>
 
 <span class="sd">        Returns</span>
@@ -891,23 +869,17 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        - qoi (str): name of quantity of interest</span>
+<span class="sd">        qoi : str</span>
+<span class="sd">            name of quantity of interest</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">         - array of all samples of qoi</span>
+<span class="sd">        array of all samples of qoi</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">samples</span><span class="p">[</span><span class="n">qoi</span><span class="p">][</span><span class="n">k</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">samples</span><span class="p">[</span><span class="n">qoi</span><span class="p">]))])</span>
 
     <span class="k">def</span> <span class="nf">adaptation_histogram</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        None</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        Plots a bar chart of the maximum order of the quadrature rule</span>
+        <span class="sd">&quot;&quot;&quot;Plots a bar chart of the maximum order of the quadrature rule</span>
 <span class="sd">        that is used in each dimension. Use in case of the dimension adaptive</span>
 <span class="sd">        sampler to get an idea of which parameters were more refined than others.</span>
 <span class="sd">        This gives only a first-order idea, as it only plots the max quad</span>
@@ -931,8 +903,7 @@
         <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">adaptation_table</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Plots a color-coded table of the quadrature-order refinement.</span>
+        <span class="sd">&quot;&quot;&quot;Plots a color-coded table of the quadrature-order refinement.</span>
 <span class="sd">        Shows in what order the parameters were refined, and unlike</span>
 <span class="sd">        adaptation_histogram, this also shows higher-order refinements.</span>
 
@@ -987,8 +958,7 @@
         <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">plot_grid</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Plots the collocation points for 2 and 3 dimensional problems</span>
+        <span class="sd">&quot;&quot;&quot;Plots the collocation points for 2 and 3 dimensional problems</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 
@@ -1010,19 +980,19 @@
             <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Will only plot for N = 2 or N = 3.&#39;</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">SC2PCE</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">samples</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Computes the Polynomials Chaos Expansion coefficients from the SC</span>
+        <span class="sd">&quot;&quot;&quot;Computes the Polynomials Chaos Expansion coefficients from the SC</span>
 <span class="sd">        expansion via a transformation of basis (Lagrange polynomials basis --&gt;</span>
 <span class="sd">        orthonomial basis).</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        samples : array of SC code samples from which to compute the PCE coefficients</span>
+<span class="sd">        samples : array</span>
+<span class="sd">            SC code samples from which to compute the PCE coefficients</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        pce_coefs : dict of PCE coefficients per multi index l</span>
-
+<span class="sd">        pce_coefs : dict</span>
+<span class="sd">            PCE coefficients per multi index l</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">pce_coefs</span> <span class="o">=</span> <span class="p">{}</span>
 
@@ -1132,19 +1102,20 @@
         <span class="k">return</span> <span class="n">pce_coefs</span>
 
     <span class="k">def</span> <span class="nf">get_pce_stats</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">l_norm</span><span class="p">,</span> <span class="n">pce_coefs</span><span class="p">,</span> <span class="n">comb_coef</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Compute the mean and the variance based on the PCE coefficients</span>
+        <span class="sd">&quot;&quot;&quot;Compute the mean and the variance based on the PCE coefficients</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        - l_norm (array): array of quadrature order multi indices</span>
-<span class="sd">        - pce_coefs (tuple): tuple of PCE coefficients computed by SC2PCE subroutine</span>
-<span class="sd">        - comb_coef (tuple): tuple of combination coefficients computed by compute_comb_coef</span>
+<span class="sd">        l_norm : array</span>
+<span class="sd">            array of quadrature order multi indices</span>
+<span class="sd">        pce_coefs : tuple</span>
+<span class="sd">            tuple of PCE coefficients computed by SC2PCE subroutine</span>
+<span class="sd">        comb_coef : tuple</span>
+<span class="sd">            tuple of combination coefficients computed by compute_comb_coef</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        - mean and variance based on the PCE coefficients</span>
-
+<span class="sd">        tuple with mean and variance based on the PCE coefficients</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="c1"># Compute the PCE mean</span>
@@ -1166,8 +1137,7 @@
         <span class="k">return</span> <span class="n">mean</span><span class="p">,</span> <span class="n">D</span>
 
     <span class="k">def</span> <span class="nf">get_pce_sobol_indices</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">qoi</span><span class="p">,</span> <span class="n">typ</span><span class="o">=</span><span class="s1">&#39;first_order&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Computes Sobol indices using Polynomials Chaos coefficients. These</span>
+        <span class="sd">&quot;&quot;&quot;Computes Sobol indices using Polynomials Chaos coefficients. These</span>
 <span class="sd">        coefficients are computed from the SC expansion via a transformation</span>
 <span class="sd">        of basis (SC2PCE subroutine). This works better than computing the</span>
 <span class="sd">        Sobol indices directly from the SC expansion in the case of the</span>
@@ -1179,16 +1149,20 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        - qoi (str): name of the Quantity of Interest for which to compute the indices</span>
-<span class="sd">        - typ (str): Default = &#39;first_order&#39;. &#39;all&#39; is also possible</span>
-<span class="sd">        - **kwargs: if this contains &#39;samples&#39;, use these instead of the SC samples ]</span>
-<span class="sd">          in the database</span>
+<span class="sd">        qoi : str</span>
+<span class="sd">            name of the Quantity of Interest for which to compute the indices</span>
+<span class="sd">        typ : str</span>
+<span class="sd">            Default = &#39;first_order&#39;. &#39;all&#39; is also possible</span>
+<span class="sd">        **kwargs : dict </span>
+<span class="sd">            if this contains &#39;samples&#39;, use these instead of the SC samples ]</span>
+<span class="sd">            in the database</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        - Mean: PCE mean</span>
-<span class="sd">        - Var: PCE variance</span>
-<span class="sd">        - S_u: PCE Sobol indices, either the first order indices or all indices</span>
+<span class="sd">        Tuple</span>
+<span class="sd">            Mean: PCE mean</span>
+<span class="sd">            Var: PCE variance</span>
+<span class="sd">            S_u: PCE Sobol indices, either the first order indices or all indices</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="s1">&#39;samples&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
@@ -1473,8 +1447,7 @@
 
 
 <span class="k">def</span> <span class="nf">powerset</span><span class="p">(</span><span class="n">iterable</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    powerset([1,2,3]) --&gt; () (1,) (2,) (3,) (1,2) (1,3) (2,3) (1,2,3)</span>
+    <span class="sd">&quot;&quot;&quot;powerset([1,2,3]) --&gt; () (1,) (2,) (3,) (1,2) (1,3) (2,3) (1,2,3)</span>
 
 <span class="sd">    Taken from: https://docs.python.org/3/library/itertools.html#recipes</span>
 
@@ -1493,19 +1466,21 @@
 
 
 <span class="k">def</span> <span class="nf">lagrange_poly</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">x_i</span><span class="p">,</span> <span class="n">j</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Lagrange polynomials used for interpolation</span>
+    <span class="sd">&quot;&quot;&quot;Lagrange polynomials used for interpolation</span>
 
 <span class="sd">    l_j(x) = product(x - x_m / x_j - x_m) with 0 &lt;= m &lt;= k</span>
 <span class="sd">                                               and m !=j</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    x : (float), location at which to compute the polynomial</span>
+<span class="sd">    x : float</span>
+<span class="sd">        location at which to compute the polynomial</span>
 
-<span class="sd">    x_i : list or array of float, nodes of the Lagrange polynomials</span>
+<span class="sd">    x_i : list or array of float</span>
+<span class="sd">        nodes of the Lagrange polynomials</span>
 
-<span class="sd">    j : int, index of node at which l_j(x_j) = 1</span>
+<span class="sd">    j : int</span>
+<span class="sd">        index of node at which l_j(x_j) = 1</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
@@ -1589,13 +1564,14 @@
 
             <div class="docstring"><p>Contains the analysis results.</p>
 
-<h2 id="parameters">Parameters</h2>
+<h6 id="parameters">Parameters</h6>
 
-<p>raw_data: obj
-    an arbitrary object that contains raw analysis data</p>
-
-<p>samples: pandas DataFrame
-    collated samples</p>
+<ul>
+<li><strong>raw_data</strong> (obj):
+an arbitrary object that contains raw analysis data</li>
+<li><strong>samples</strong> (pandas DataFrame):
+collated samples</li>
+</ul>
 </div>
 
 
@@ -1623,9 +1599,11 @@
 
             <div class="docstring"><p>Types of statistics supported by the describe method.</p>
 
-<h2 id="returns">Returns</h2>
+<h6 id="returns">Returns</h6>
 
-<p>list of str</p>
+<ul>
+<li><strong>list of str</strong></li>
+</ul>
 </div>
 
 
@@ -1668,7 +1646,7 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        sampler : :obj:`easyvvuq.sampling.stochastic_collocation.SCSampler`</span>
+<span class="sd">        sampler : SCSampler</span>
 <span class="sd">            Sampler used to initiate the SC analysis</span>
 <span class="sd">        qoi_cols : list or None</span>
 <span class="sd">            Column names for quantities of interest (for which analysis is</span>
@@ -1702,18 +1680,13 @@
         <span class="k">return</span> <span class="s2">&quot;0.5&quot;</span>
 
     <span class="k">def</span> <span class="nf">save_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Saves the complete state of the analysis object to a pickle file,</span>
+        <span class="sd">&quot;&quot;&quot;Saves the complete state of the analysis object to a pickle file,</span>
 <span class="sd">        except the sampler object (self.samples).</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        filename : (string) name to the file to write the state to</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        None.</span>
-
+<span class="sd">        filename : string </span>
+<span class="sd">            name to the file to write the state to</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Saving analysis state to </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">filename</span><span class="p">)</span>
         <span class="c1"># make a copy of the state, and do not store the sampler as well</span>
@@ -1724,18 +1697,13 @@
         <span class="n">file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">load_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Loads the complete state of the analysis object from a</span>
+        <span class="sd">&quot;&quot;&quot;Loads the complete state of the analysis object from a</span>
 <span class="sd">        pickle file, stored using save_state.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        filename : (string) name of the file to load</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        None.</span>
-
+<span class="sd">        filename : string </span>
+<span class="sd">            name of the file to load</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Loading analysis state from </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">filename</span><span class="p">)</span>
         <span class="n">file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span>
@@ -1749,7 +1717,7 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        data_frame : :obj:`pandas.DataFrame`</span>
+<span class="sd">        data_frame : pandas.DataFrame</span>
 <span class="sd">            Input data for analysis.</span>
 
 <span class="sd">        Returns</span>
@@ -1860,8 +1828,7 @@
                                  <span class="n">qois</span><span class="o">=</span><span class="n">qoi_cols</span><span class="p">,</span> <span class="n">inputs</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sampler</span><span class="o">.</span><span class="n">vary</span><span class="o">.</span><span class="n">get_keys</span><span class="p">()))</span>
 
     <span class="k">def</span> <span class="nf">compute_comb_coef</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Compute general combination coefficients. These are the coefficients</span>
+        <span class="sd">&quot;&quot;&quot;Compute general combination coefficients. These are the coefficients</span>
 <span class="sd">        multiplying the tensor products associated to each multi index l,</span>
 <span class="sd">        see page 12 Gerstner &amp; Griebel, numerical integration using sparse grids</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -1889,8 +1856,7 @@
 
     <span class="k">def</span> <span class="nf">adapt_dimension</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">qoi</span><span class="p">,</span> <span class="n">data_frame</span><span class="p">,</span> <span class="n">store_stats_history</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
                         <span class="n">method</span><span class="o">=</span><span class="s1">&#39;surplus&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Compute the adaptation metric and decide which of the admissible</span>
+        <span class="sd">&quot;&quot;&quot;Compute the adaptation metric and decide which of the admissible</span>
 <span class="sd">        level indices to include in next iteration of the sparse grid. The</span>
 <span class="sd">        adaptation metric is based on the hierarchical surplus, defined as the</span>
 <span class="sd">        difference between the new code values of the admissible level indices,</span>
@@ -1903,23 +1869,21 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        - qoi : (string) the name of the quantity of interest which is used</span>
-<span class="sd">                        to base the adaptation metric on.</span>
-<span class="sd">        - data_frame : the data frame from the EasyVVUQ Campaign</span>
-<span class="sd">        - store_stats_history (boolean, default=True): store the mean and variance</span>
-<span class="sd">          at each refinement in self.mean_history and self.std_history. Used for</span>
-<span class="sd">          checking convergence in the stattistics over the refinement iterations</span>
-<span class="sd">        - method (string) : name of the refinement error, default is &#39;surplus&#39;.</span>
-<span class="sd">          In this case the error is based on the hierarchical surplus, which is</span>
-<span class="sd">          an interpolation based error. Other possibilities are &#39;mean&#39; and &#39;var&#39;,</span>
-<span class="sd">          in which case the error is based on the difference in the mean or</span>
-<span class="sd">          variance between the current estimate and the estimate obtained</span>
-<span class="sd">          when a particular candidate direction is added.</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        None.</span>
-
+<span class="sd">        qoi : string</span>
+<span class="sd">            the name of the quantity of interest which is used</span>
+<span class="sd">            to base the adaptation metric on.</span>
+<span class="sd">        data_frame : pandas.DataFrame</span>
+<span class="sd">        store_stats_history : bool </span>
+<span class="sd">            store the mean and variance at each refinement in self.mean_history </span>
+<span class="sd">            and self.std_history. Used for checking convergence in the statistics </span>
+<span class="sd">            over the refinement iterations</span>
+<span class="sd">        method : string</span>
+<span class="sd">            name of the refinement error, default is &#39;surplus&#39;. In this case the </span>
+<span class="sd">            error is based on the hierarchical surplus, which is an interpolation </span>
+<span class="sd">            based error. Other possibilities are &#39;mean&#39; and &#39;var&#39;,</span>
+<span class="sd">            in which case the error is based on the difference in the mean or</span>
+<span class="sd">            variance between the current estimate and the estimate obtained</span>
+<span class="sd">             when a particular candidate direction is added.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Refining sampling plan...&#39;</span><span class="p">)</span>
         <span class="c1"># load the code samples</span>
@@ -2042,8 +2006,7 @@
             <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;done&#39;</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">merge_accepted_and_admissible</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        In the case of the dimension-adaptive sampler, there are 2 sets of</span>
+        <span class="sd">&quot;&quot;&quot;In the case of the dimension-adaptive sampler, there are 2 sets of</span>
 <span class="sd">        quadrature multi indices. There are the accepted indices that are actually</span>
 <span class="sd">        used in the analysis, and the admissible indices, of which some might</span>
 <span class="sd">        move to the accepted set in subsequent iterations. This subroutine merges</span>
@@ -2092,8 +2055,7 @@
             <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;done&#39;</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">undo_merge</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        This reverses the effect of the merge_accepted_and_admissble subroutine.</span>
+        <span class="sd">&quot;&quot;&quot;This reverses the effect of the merge_accepted_and_admissble subroutine.</span>
 <span class="sd">        Execute if further refinement are required after all.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">sampler</span><span class="o">.</span><span class="n">dimension_adaptive</span><span class="p">:</span>
@@ -2101,22 +2063,15 @@
             <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Restored old multi indices.&#39;</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">get_adaptation_errors</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Returns self.adaptation_errors</span>
+        <span class="sd">&quot;&quot;&quot;Returns self.adaptation_errors</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">adaptation_errors</span>
 
     <span class="k">def</span> <span class="nf">plot_stat_convergence</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Plots the convergence of the statistical mean and std dev over the different</span>
+        <span class="sd">&quot;&quot;&quot;Plots the convergence of the statistical mean and std dev over the different</span>
 <span class="sd">        refinements in a dimension-adaptive setting. Specifically the inf norm</span>
 <span class="sd">        of the difference between the stats of iteration i and iteration i-1</span>
 <span class="sd">        is plotted.</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        None.</span>
-
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">dimension_adaptive</span><span class="p">:</span>
             <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Only works for the dimension adaptive sampler.&#39;</span><span class="p">)</span>
@@ -2164,14 +2119,16 @@
         <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">surrogate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">qoi</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">L</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Use sc_expansion UQP as a surrogate</span>
+        <span class="sd">&quot;&quot;&quot;Use sc_expansion UQP as a surrogate</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        - qoi (str): name of the qoi</span>
-<span class="sd">        - x (array): location at which to evaluate the surrogate</span>
-<span class="sd">        - L (int): level of the (sparse) grid, default = self.L</span>
+<span class="sd">        qoi : str</span>
+<span class="sd">            name of the qoi</span>
+<span class="sd">        x : array</span>
+<span class="sd">            location at which to evaluate the surrogate</span>
+<span class="sd">        L : int</span>
+<span class="sd">            level of the (sparse) grid, default = self.L</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -2181,19 +2138,20 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">sc_expansion</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">samples</span><span class="p">[</span><span class="n">qoi</span><span class="p">],</span> <span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">quadrature</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">qoi</span><span class="p">,</span> <span class="n">samples</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Computes a (Smolyak) quadrature</span>
+        <span class="sd">&quot;&quot;&quot;Computes a (Smolyak) quadrature</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        - qoi (str): name of the qoi</span>
+<span class="sd">        qoi : str</span>
+<span class="sd">            name of the qoi</span>
 
-<span class="sd">        - samples: Default: compute the mean</span>
-<span class="sd">          by setting samples = self.samples. To compute the variance,</span>
-<span class="sd">          set samples = (self.samples - mean)**2</span>
+<span class="sd">        samples: array</span>
+<span class="sd">            compute the mean by setting samples = self.samples. </span>
+<span class="sd">            To compute the variance, set samples = (self.samples - mean)**2</span>
 
-<span class="sd">        Returns: the quadrature of qoi</span>
+<span class="sd">        Returns</span>
 <span class="sd">        -------</span>
+<span class="sd">        the quadrature of qoi</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">samples</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">samples</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">samples</span><span class="p">[</span><span class="n">qoi</span><span class="p">]</span>
@@ -2201,19 +2159,19 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">combination_technique</span><span class="p">(</span><span class="n">qoi</span><span class="p">,</span> <span class="n">samples</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">combination_technique</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">qoi</span><span class="p">,</span> <span class="n">samples</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Efficient quadrature formulation for (sparse) grids. See:</span>
+        <span class="sd">&quot;&quot;&quot;Efficient quadrature formulation for (sparse) grids. See:</span>
 
 <span class="sd">            Gerstner, Griebel, &quot;Numerical integration using sparse grids&quot;</span>
 <span class="sd">            Uses the general combination technique (page 12).</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        - qoi (str): name of the qoi</span>
+<span class="sd">        qoi : str</span>
+<span class="sd">            name of the qoi</span>
 
-<span class="sd">        - samples (optional in kwargs): Default: compute the mean</span>
-<span class="sd">          by setting samples = self.samples. To compute the variance,</span>
-<span class="sd">          set samples = (self.samples - mean)**2</span>
+<span class="sd">        samples : array </span>
+<span class="sd">            compute the mean by setting samples = self.samples. </span>
+<span class="sd">            To compute the variance, set samples = (self.samples - mean)**2</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="n">samples</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -2265,12 +2223,12 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        - qoi (str): name of the qoi</span>
+<span class="sd">        qoi : str</span>
+<span class="sd">            name of the qoi</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        - mean and variance of qoi (float (N_qoi,))</span>
-
+<span class="sd">        mean and variance of qoi (float (N_qoi,))</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Computing moments...&#39;</span><span class="p">)</span>
         <span class="c1"># compute mean</span>
@@ -2282,17 +2240,15 @@
         <span class="k">return</span> <span class="n">mean_f</span><span class="p">,</span> <span class="n">var_f</span>
 
     <span class="k">def</span> <span class="nf">sc_expansion</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">samples</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        -------------------------------------------------</span>
-<span class="sd">        Non recursive implementation of the SC expansion.</span>
+        <span class="sd">&quot;&quot;&quot;Non recursive implementation of the SC expansion.</span>
 <span class="sd">        (Default setting of surrogate)</span>
-<span class="sd">        -------------------------------------------------</span>
 <span class="sd">        Performs interpolation for both full and sparse grids.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        - samples: array of code samples</span>
-<span class="sd">        - x (float (N,)): location in stochastic space at which to eval</span>
+<span class="sd">        samples: array </span>
+<span class="sd">            array of code samples</span>
+<span class="sd">        x (float (N,)): location in stochastic space at which to eval</span>
 <span class="sd">          the surrogate</span>
 
 <span class="sd">        Returns</span>
@@ -2339,23 +2295,17 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        - qoi (str): name of quantity of interest</span>
+<span class="sd">        qoi : str</span>
+<span class="sd">            name of quantity of interest</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">         - array of all samples of qoi</span>
+<span class="sd">        array of all samples of qoi</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">samples</span><span class="p">[</span><span class="n">qoi</span><span class="p">][</span><span class="n">k</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">samples</span><span class="p">[</span><span class="n">qoi</span><span class="p">]))])</span>
 
     <span class="k">def</span> <span class="nf">adaptation_histogram</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        None</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        Plots a bar chart of the maximum order of the quadrature rule</span>
+        <span class="sd">&quot;&quot;&quot;Plots a bar chart of the maximum order of the quadrature rule</span>
 <span class="sd">        that is used in each dimension. Use in case of the dimension adaptive</span>
 <span class="sd">        sampler to get an idea of which parameters were more refined than others.</span>
 <span class="sd">        This gives only a first-order idea, as it only plots the max quad</span>
@@ -2379,8 +2329,7 @@
         <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">adaptation_table</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Plots a color-coded table of the quadrature-order refinement.</span>
+        <span class="sd">&quot;&quot;&quot;Plots a color-coded table of the quadrature-order refinement.</span>
 <span class="sd">        Shows in what order the parameters were refined, and unlike</span>
 <span class="sd">        adaptation_histogram, this also shows higher-order refinements.</span>
 
@@ -2435,8 +2384,7 @@
         <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">plot_grid</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Plots the collocation points for 2 and 3 dimensional problems</span>
+        <span class="sd">&quot;&quot;&quot;Plots the collocation points for 2 and 3 dimensional problems</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 
@@ -2458,19 +2406,19 @@
             <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Will only plot for N = 2 or N = 3.&#39;</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">SC2PCE</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">samples</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Computes the Polynomials Chaos Expansion coefficients from the SC</span>
+        <span class="sd">&quot;&quot;&quot;Computes the Polynomials Chaos Expansion coefficients from the SC</span>
 <span class="sd">        expansion via a transformation of basis (Lagrange polynomials basis --&gt;</span>
 <span class="sd">        orthonomial basis).</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        samples : array of SC code samples from which to compute the PCE coefficients</span>
+<span class="sd">        samples : array</span>
+<span class="sd">            SC code samples from which to compute the PCE coefficients</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        pce_coefs : dict of PCE coefficients per multi index l</span>
-
+<span class="sd">        pce_coefs : dict</span>
+<span class="sd">            PCE coefficients per multi index l</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">pce_coefs</span> <span class="o">=</span> <span class="p">{}</span>
 
@@ -2580,19 +2528,20 @@
         <span class="k">return</span> <span class="n">pce_coefs</span>
 
     <span class="k">def</span> <span class="nf">get_pce_stats</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">l_norm</span><span class="p">,</span> <span class="n">pce_coefs</span><span class="p">,</span> <span class="n">comb_coef</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Compute the mean and the variance based on the PCE coefficients</span>
+        <span class="sd">&quot;&quot;&quot;Compute the mean and the variance based on the PCE coefficients</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        - l_norm (array): array of quadrature order multi indices</span>
-<span class="sd">        - pce_coefs (tuple): tuple of PCE coefficients computed by SC2PCE subroutine</span>
-<span class="sd">        - comb_coef (tuple): tuple of combination coefficients computed by compute_comb_coef</span>
+<span class="sd">        l_norm : array</span>
+<span class="sd">            array of quadrature order multi indices</span>
+<span class="sd">        pce_coefs : tuple</span>
+<span class="sd">            tuple of PCE coefficients computed by SC2PCE subroutine</span>
+<span class="sd">        comb_coef : tuple</span>
+<span class="sd">            tuple of combination coefficients computed by compute_comb_coef</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        - mean and variance based on the PCE coefficients</span>
-
+<span class="sd">        tuple with mean and variance based on the PCE coefficients</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="c1"># Compute the PCE mean</span>
@@ -2614,8 +2563,7 @@
         <span class="k">return</span> <span class="n">mean</span><span class="p">,</span> <span class="n">D</span>
 
     <span class="k">def</span> <span class="nf">get_pce_sobol_indices</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">qoi</span><span class="p">,</span> <span class="n">typ</span><span class="o">=</span><span class="s1">&#39;first_order&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Computes Sobol indices using Polynomials Chaos coefficients. These</span>
+        <span class="sd">&quot;&quot;&quot;Computes Sobol indices using Polynomials Chaos coefficients. These</span>
 <span class="sd">        coefficients are computed from the SC expansion via a transformation</span>
 <span class="sd">        of basis (SC2PCE subroutine). This works better than computing the</span>
 <span class="sd">        Sobol indices directly from the SC expansion in the case of the</span>
@@ -2627,16 +2575,20 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        - qoi (str): name of the Quantity of Interest for which to compute the indices</span>
-<span class="sd">        - typ (str): Default = &#39;first_order&#39;. &#39;all&#39; is also possible</span>
-<span class="sd">        - **kwargs: if this contains &#39;samples&#39;, use these instead of the SC samples ]</span>
-<span class="sd">          in the database</span>
+<span class="sd">        qoi : str</span>
+<span class="sd">            name of the Quantity of Interest for which to compute the indices</span>
+<span class="sd">        typ : str</span>
+<span class="sd">            Default = &#39;first_order&#39;. &#39;all&#39; is also possible</span>
+<span class="sd">        **kwargs : dict </span>
+<span class="sd">            if this contains &#39;samples&#39;, use these instead of the SC samples ]</span>
+<span class="sd">            in the database</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        - Mean: PCE mean</span>
-<span class="sd">        - Var: PCE variance</span>
-<span class="sd">        - S_u: PCE Sobol indices, either the first order indices or all indices</span>
+<span class="sd">        Tuple</span>
+<span class="sd">            Mean: PCE mean</span>
+<span class="sd">            Var: PCE variance</span>
+<span class="sd">            S_u: PCE Sobol indices, either the first order indices or all indices</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="s1">&#39;samples&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
@@ -2941,7 +2893,7 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        sampler : :obj:`easyvvuq.sampling.stochastic_collocation.SCSampler`</span>
+<span class="sd">        sampler : SCSampler</span>
 <span class="sd">            Sampler used to initiate the SC analysis</span>
 <span class="sd">        qoi_cols : list or None</span>
 <span class="sd">            Column names for quantities of interest (for which analysis is</span>
@@ -2969,13 +2921,15 @@
 
         </details>
 
-            <div class="docstring"><h2 id="parameters">Parameters</h2>
+            <div class="docstring"><h6 id="parameters">Parameters</h6>
 
-<p>sampler : :obj:<code><a href="../sampling/stochastic_collocation.html#SCSampler">easyvvuq.sampling.stochastic_collocation.SCSampler</a></code>
-    Sampler used to initiate the SC analysis
-qoi_cols : list or None
-    Column names for quantities of interest (for which analysis is
-    performed).</p>
+<ul>
+<li><strong>sampler</strong> (SCSampler):
+Sampler used to initiate the SC analysis</li>
+<li><strong>qoi_cols</strong> (list or None):
+Column names for quantities of interest (for which analysis is
+performed).</li>
+</ul>
 </div>
 
 
@@ -3035,18 +2989,13 @@ qoi_cols : list or None
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">save_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Saves the complete state of the analysis object to a pickle file,</span>
+        <span class="sd">&quot;&quot;&quot;Saves the complete state of the analysis object to a pickle file,</span>
 <span class="sd">        except the sampler object (self.samples).</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        filename : (string) name to the file to write the state to</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        None.</span>
-
+<span class="sd">        filename : string </span>
+<span class="sd">            name to the file to write the state to</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Saving analysis state to </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">filename</span><span class="p">)</span>
         <span class="c1"># make a copy of the state, and do not store the sampler as well</span>
@@ -3062,13 +3011,12 @@ qoi_cols : list or None
             <div class="docstring"><p>Saves the complete state of the analysis object to a pickle file,
 except the sampler object (self.samples).</p>
 
-<h2 id="parameters">Parameters</h2>
+<h6 id="parameters">Parameters</h6>
 
-<p>filename : (string) name to the file to write the state to</p>
-
-<h2 id="returns">Returns</h2>
-
-<p>None.</p>
+<ul>
+<li><strong>filename</strong> (string):
+name to the file to write the state to</li>
+</ul>
 </div>
 
 
@@ -3084,18 +3032,13 @@ except the sampler object (self.samples).</p>
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">load_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Loads the complete state of the analysis object from a</span>
+        <span class="sd">&quot;&quot;&quot;Loads the complete state of the analysis object from a</span>
 <span class="sd">        pickle file, stored using save_state.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        filename : (string) name of the file to load</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        None.</span>
-
+<span class="sd">        filename : string </span>
+<span class="sd">            name of the file to load</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Loading analysis state from </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">filename</span><span class="p">)</span>
         <span class="n">file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span>
@@ -3110,13 +3053,12 @@ except the sampler object (self.samples).</p>
             <div class="docstring"><p>Loads the complete state of the analysis object from a
 pickle file, stored using save_state.</p>
 
-<h2 id="parameters">Parameters</h2>
+<h6 id="parameters">Parameters</h6>
 
-<p>filename : (string) name of the file to load</p>
-
-<h2 id="returns">Returns</h2>
-
-<p>None.</p>
+<ul>
+<li><strong>filename</strong> (string):
+name of the file to load</li>
+</ul>
 </div>
 
 
@@ -3136,7 +3078,7 @@ pickle file, stored using save_state.</p>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        data_frame : :obj:`pandas.DataFrame`</span>
+<span class="sd">        data_frame : pandas.DataFrame</span>
 <span class="sd">            Input data for analysis.</span>
 
 <span class="sd">        Returns</span>
@@ -3251,17 +3193,20 @@ pickle file, stored using save_state.</p>
 
             <div class="docstring"><p>Perform SC analysis on input <code>data_frame</code>.</p>
 
-<h2 id="parameters">Parameters</h2>
+<h6 id="parameters">Parameters</h6>
 
-<p>data_frame : :obj:<code>pandas.DataFrame</code>
-    Input data for analysis.</p>
+<ul>
+<li><strong>data_frame</strong> (pandas.DataFrame):
+Input data for analysis.</li>
+</ul>
 
-<h2 id="returns">Returns</h2>
+<h6 id="returns">Returns</h6>
 
-<p>dict
-    Results dictionary with sub-dicts with keys:
-    ['statistical_moments', 'sobol_indices'].
-    Each dict has an entry for each item in <code>qoi_cols</code>.</p>
+<ul>
+<li><strong>dict</strong>: Results dictionary with sub-dicts with keys:
+['statistical_moments', 'sobol_indices'].
+Each dict has an entry for each item in <code>qoi_cols</code>.</li>
+</ul>
 </div>
 
 
@@ -3277,8 +3222,7 @@ pickle file, stored using save_state.</p>
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">compute_comb_coef</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Compute general combination coefficients. These are the coefficients</span>
+        <span class="sd">&quot;&quot;&quot;Compute general combination coefficients. These are the coefficients</span>
 <span class="sd">        multiplying the tensor products associated to each multi index l,</span>
 <span class="sd">        see page 12 Gerstner &amp; Griebel, numerical integration using sparse grids</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -3333,8 +3277,7 @@ see page 12 Gerstner &amp; Griebel, numerical integration using sparse grids</p>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">adapt_dimension</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">qoi</span><span class="p">,</span> <span class="n">data_frame</span><span class="p">,</span> <span class="n">store_stats_history</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
                         <span class="n">method</span><span class="o">=</span><span class="s1">&#39;surplus&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Compute the adaptation metric and decide which of the admissible</span>
+        <span class="sd">&quot;&quot;&quot;Compute the adaptation metric and decide which of the admissible</span>
 <span class="sd">        level indices to include in next iteration of the sparse grid. The</span>
 <span class="sd">        adaptation metric is based on the hierarchical surplus, defined as the</span>
 <span class="sd">        difference between the new code values of the admissible level indices,</span>
@@ -3347,23 +3290,21 @@ see page 12 Gerstner &amp; Griebel, numerical integration using sparse grids</p>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        - qoi : (string) the name of the quantity of interest which is used</span>
-<span class="sd">                        to base the adaptation metric on.</span>
-<span class="sd">        - data_frame : the data frame from the EasyVVUQ Campaign</span>
-<span class="sd">        - store_stats_history (boolean, default=True): store the mean and variance</span>
-<span class="sd">          at each refinement in self.mean_history and self.std_history. Used for</span>
-<span class="sd">          checking convergence in the stattistics over the refinement iterations</span>
-<span class="sd">        - method (string) : name of the refinement error, default is &#39;surplus&#39;.</span>
-<span class="sd">          In this case the error is based on the hierarchical surplus, which is</span>
-<span class="sd">          an interpolation based error. Other possibilities are &#39;mean&#39; and &#39;var&#39;,</span>
-<span class="sd">          in which case the error is based on the difference in the mean or</span>
-<span class="sd">          variance between the current estimate and the estimate obtained</span>
-<span class="sd">          when a particular candidate direction is added.</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        None.</span>
-
+<span class="sd">        qoi : string</span>
+<span class="sd">            the name of the quantity of interest which is used</span>
+<span class="sd">            to base the adaptation metric on.</span>
+<span class="sd">        data_frame : pandas.DataFrame</span>
+<span class="sd">        store_stats_history : bool </span>
+<span class="sd">            store the mean and variance at each refinement in self.mean_history </span>
+<span class="sd">            and self.std_history. Used for checking convergence in the statistics </span>
+<span class="sd">            over the refinement iterations</span>
+<span class="sd">        method : string</span>
+<span class="sd">            name of the refinement error, default is &#39;surplus&#39;. In this case the </span>
+<span class="sd">            error is based on the hierarchical surplus, which is an interpolation </span>
+<span class="sd">            based error. Other possibilities are &#39;mean&#39; and &#39;var&#39;,</span>
+<span class="sd">            in which case the error is based on the difference in the mean or</span>
+<span class="sd">            variance between the current estimate and the estimate obtained</span>
+<span class="sd">             when a particular candidate direction is added.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Refining sampling plan...&#39;</span><span class="p">)</span>
         <span class="c1"># load the code samples</span>
@@ -3499,26 +3440,25 @@ and the mean computed with one extra admissible index.</p>
 <p>This subroutine must be called AFTER the code is evaluated at
 the new points, but BEFORE the analysis is performed.</p>
 
-<h2 id="parameters">Parameters</h2>
+<h6 id="parameters">Parameters</h6>
 
 <ul>
-<li>qoi : (string) the name of the quantity of interest which is used
-            to base the adaptation metric on.</li>
-<li>data_frame : the data frame from the EasyVVUQ Campaign</li>
-<li>store_stats_history (boolean, default=True): store the mean and variance
-at each refinement in self.mean_history and self.std_history. Used for
-checking convergence in the stattistics over the refinement iterations</li>
-<li>method (string) : name of the refinement error, default is 'surplus'.
-In this case the error is based on the hierarchical surplus, which is
-an interpolation based error. Other possibilities are 'mean' and 'var',
+<li><strong>qoi</strong> (string):
+the name of the quantity of interest which is used
+to base the adaptation metric on.</li>
+<li><p><strong>data_frame</strong> (pandas.DataFrame):</p></li>
+<li><p><strong>store_stats_history</strong> (bool):
+store the mean and variance at each refinement in self.mean_history 
+and self.std_history. Used for checking convergence in the statistics 
+over the refinement iterations</p></li>
+<li><strong>method</strong> (string):
+name of the refinement error, default is 'surplus'. In this case the 
+error is based on the hierarchical surplus, which is an interpolation 
+based error. Other possibilities are 'mean' and 'var',
 in which case the error is based on the difference in the mean or
 variance between the current estimate and the estimate obtained
 when a particular candidate direction is added.</li>
 </ul>
-
-<h2 id="returns">Returns</h2>
-
-<p>None.</p>
 </div>
 
 
@@ -3534,8 +3474,7 @@ when a particular candidate direction is added.</li>
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">merge_accepted_and_admissible</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        In the case of the dimension-adaptive sampler, there are 2 sets of</span>
+        <span class="sd">&quot;&quot;&quot;In the case of the dimension-adaptive sampler, there are 2 sets of</span>
 <span class="sd">        quadrature multi indices. There are the accepted indices that are actually</span>
 <span class="sd">        used in the analysis, and the admissible indices, of which some might</span>
 <span class="sd">        move to the accepted set in subsequent iterations. This subroutine merges</span>
@@ -3617,8 +3556,7 @@ campaign.apply_analysis again to let the old set of indices take effect.</p>
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">undo_merge</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        This reverses the effect of the merge_accepted_and_admissble subroutine.</span>
+        <span class="sd">&quot;&quot;&quot;This reverses the effect of the merge_accepted_and_admissble subroutine.</span>
 <span class="sd">        Execute if further refinement are required after all.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">sampler</span><span class="o">.</span><span class="n">dimension_adaptive</span><span class="p">:</span>
@@ -3645,8 +3583,7 @@ Execute if further refinement are required after all.</p>
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">get_adaptation_errors</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Returns self.adaptation_errors</span>
+        <span class="sd">&quot;&quot;&quot;Returns self.adaptation_errors</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">adaptation_errors</span>
 </pre></div>
@@ -3669,16 +3606,10 @@ Execute if further refinement are required after all.</p>
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">plot_stat_convergence</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Plots the convergence of the statistical mean and std dev over the different</span>
+        <span class="sd">&quot;&quot;&quot;Plots the convergence of the statistical mean and std dev over the different</span>
 <span class="sd">        refinements in a dimension-adaptive setting. Specifically the inf norm</span>
 <span class="sd">        of the difference between the stats of iteration i and iteration i-1</span>
 <span class="sd">        is plotted.</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        None.</span>
-
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">dimension_adaptive</span><span class="p">:</span>
             <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Only works for the dimension adaptive sampler.&#39;</span><span class="p">)</span>
@@ -3732,10 +3663,6 @@ Execute if further refinement are required after all.</p>
 refinements in a dimension-adaptive setting. Specifically the inf norm
 of the difference between the stats of iteration i and iteration i-1
 is plotted.</p>
-
-<h2 id="returns">Returns</h2>
-
-<p>None.</p>
 </div>
 
 
@@ -3751,14 +3678,16 @@ is plotted.</p>
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">surrogate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">qoi</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">L</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Use sc_expansion UQP as a surrogate</span>
+        <span class="sd">&quot;&quot;&quot;Use sc_expansion UQP as a surrogate</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        - qoi (str): name of the qoi</span>
-<span class="sd">        - x (array): location at which to evaluate the surrogate</span>
-<span class="sd">        - L (int): level of the (sparse) grid, default = self.L</span>
+<span class="sd">        qoi : str</span>
+<span class="sd">            name of the qoi</span>
+<span class="sd">        x : array</span>
+<span class="sd">            location at which to evaluate the surrogate</span>
+<span class="sd">        L : int</span>
+<span class="sd">            level of the (sparse) grid, default = self.L</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -3772,17 +3701,22 @@ is plotted.</p>
 
             <div class="docstring"><p>Use sc_expansion UQP as a surrogate</p>
 
-<h2 id="parameters">Parameters</h2>
+<h6 id="parameters">Parameters</h6>
 
 <ul>
-<li>qoi (str): name of the qoi</li>
-<li>x (array): location at which to evaluate the surrogate</li>
-<li>L (int): level of the (sparse) grid, default = self.L</li>
+<li><strong>qoi</strong> (str):
+name of the qoi</li>
+<li><strong>x</strong> (array):
+location at which to evaluate the surrogate</li>
+<li><strong>L</strong> (int):
+level of the (sparse) grid, default = self.L</li>
 </ul>
 
-<h2 id="returns">Returns</h2>
+<h6 id="returns">Returns</h6>
 
-<p>the interpolated value of qoi at x (float, (N_qoi,))</p>
+<ul>
+<li><strong>the interpolated value of qoi at x (float, (N_qoi,))</strong></li>
+</ul>
 </div>
 
 
@@ -3798,19 +3732,20 @@ is plotted.</p>
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">quadrature</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">qoi</span><span class="p">,</span> <span class="n">samples</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Computes a (Smolyak) quadrature</span>
+        <span class="sd">&quot;&quot;&quot;Computes a (Smolyak) quadrature</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        - qoi (str): name of the qoi</span>
+<span class="sd">        qoi : str</span>
+<span class="sd">            name of the qoi</span>
 
-<span class="sd">        - samples: Default: compute the mean</span>
-<span class="sd">          by setting samples = self.samples. To compute the variance,</span>
-<span class="sd">          set samples = (self.samples - mean)**2</span>
+<span class="sd">        samples: array</span>
+<span class="sd">            compute the mean by setting samples = self.samples. </span>
+<span class="sd">            To compute the variance, set samples = (self.samples - mean)**2</span>
 
-<span class="sd">        Returns: the quadrature of qoi</span>
+<span class="sd">        Returns</span>
 <span class="sd">        -------</span>
+<span class="sd">        the quadrature of qoi</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">samples</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">samples</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">samples</span><span class="p">[</span><span class="n">qoi</span><span class="p">]</span>
@@ -3822,16 +3757,21 @@ is plotted.</p>
 
             <div class="docstring"><p>Computes a (Smolyak) quadrature</p>
 
-<h2 id="parameters">Parameters</h2>
+<h6 id="parameters">Parameters</h6>
 
 <ul>
-<li><p>qoi (str): name of the qoi</p></li>
-<li><p>samples: Default: compute the mean
-by setting samples = self.samples. To compute the variance,
-set samples = (self.samples - mean)**2</p></li>
+<li><strong>qoi</strong> (str):
+name of the qoi</li>
+<li><strong>samples</strong> (array):
+compute the mean by setting samples = self.samples. 
+To compute the variance, set samples = (self.samples - mean)**2</li>
 </ul>
 
-<h2 id="returns-the-quadrature-of-qoi">Returns: the quadrature of qoi</h2>
+<h6 id="returns">Returns</h6>
+
+<ul>
+<li><strong>the quadrature of qoi</strong></li>
+</ul>
 </div>
 
 
@@ -3847,19 +3787,19 @@ set samples = (self.samples - mean)**2</p></li>
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">combination_technique</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">qoi</span><span class="p">,</span> <span class="n">samples</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Efficient quadrature formulation for (sparse) grids. See:</span>
+        <span class="sd">&quot;&quot;&quot;Efficient quadrature formulation for (sparse) grids. See:</span>
 
 <span class="sd">            Gerstner, Griebel, &quot;Numerical integration using sparse grids&quot;</span>
 <span class="sd">            Uses the general combination technique (page 12).</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        - qoi (str): name of the qoi</span>
+<span class="sd">        qoi : str</span>
+<span class="sd">            name of the qoi</span>
 
-<span class="sd">        - samples (optional in kwargs): Default: compute the mean</span>
-<span class="sd">          by setting samples = self.samples. To compute the variance,</span>
-<span class="sd">          set samples = (self.samples - mean)**2</span>
+<span class="sd">        samples : array </span>
+<span class="sd">            compute the mean by setting samples = self.samples. </span>
+<span class="sd">            To compute the variance, set samples = (self.samples - mean)**2</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="n">samples</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -3916,13 +3856,14 @@ set samples = (self.samples - mean)**2</p></li>
 Uses the general combination technique (page 12).
 </code></pre>
 
-<h2 id="parameters">Parameters</h2>
+<h6 id="parameters">Parameters</h6>
 
 <ul>
-<li><p>qoi (str): name of the qoi</p></li>
-<li><p>samples (optional in kwargs): Default: compute the mean
-by setting samples = self.samples. To compute the variance,
-set samples = (self.samples - mean)**2</p></li>
+<li><strong>qoi</strong> (str):
+name of the qoi</li>
+<li><strong>samples</strong> (array):
+compute the mean by setting samples = self.samples. 
+To compute the variance, set samples = (self.samples - mean)**2</li>
 </ul>
 </div>
 
@@ -3942,12 +3883,12 @@ set samples = (self.samples - mean)**2</p></li>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        - qoi (str): name of the qoi</span>
+<span class="sd">        qoi : str</span>
+<span class="sd">            name of the qoi</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        - mean and variance of qoi (float (N_qoi,))</span>
-
+<span class="sd">        mean and variance of qoi (float (N_qoi,))</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Computing moments...&#39;</span><span class="p">)</span>
         <span class="c1"># compute mean</span>
@@ -3961,16 +3902,17 @@ set samples = (self.samples - mean)**2</p></li>
 
         </details>
 
-            <div class="docstring"><h2 id="parameters">Parameters</h2>
+            <div class="docstring"><h6 id="parameters">Parameters</h6>
 
 <ul>
-<li>qoi (str): name of the qoi</li>
+<li><strong>qoi</strong> (str):
+name of the qoi</li>
 </ul>
 
-<h2 id="returns">Returns</h2>
+<h6 id="returns">Returns</h6>
 
 <ul>
-<li>mean and variance of qoi (float (N_qoi,))</li>
+<li><strong>mean and variance of qoi (float (N_qoi,))</strong></li>
 </ul>
 </div>
 
@@ -3987,17 +3929,15 @@ set samples = (self.samples - mean)**2</p></li>
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">sc_expansion</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">samples</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        -------------------------------------------------</span>
-<span class="sd">        Non recursive implementation of the SC expansion.</span>
+        <span class="sd">&quot;&quot;&quot;Non recursive implementation of the SC expansion.</span>
 <span class="sd">        (Default setting of surrogate)</span>
-<span class="sd">        -------------------------------------------------</span>
 <span class="sd">        Performs interpolation for both full and sparse grids.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        - samples: array of code samples</span>
-<span class="sd">        - x (float (N,)): location in stochastic space at which to eval</span>
+<span class="sd">        samples: array </span>
+<span class="sd">            array of code samples</span>
+<span class="sd">        x (float (N,)): location in stochastic space at which to eval</span>
 <span class="sd">          the surrogate</span>
 
 <span class="sd">        Returns</span>
@@ -4043,25 +3983,24 @@ set samples = (self.samples - mean)**2</p></li>
 
         </details>
 
-            <div class="docstring"><hr />
+            <div class="docstring"><p>Non recursive implementation of the SC expansion.
+(Default setting of surrogate)
+Performs interpolation for both full and sparse grids.</p>
 
-<p>Non recursive implementation of the SC expansion.</p>
-
-<h2 id="default-setting-of-surrogate">(Default setting of surrogate)</h2>
-
-<p>Performs interpolation for both full and sparse grids.</p>
-
-<h2 id="parameters">Parameters</h2>
+<h6 id="parameters">Parameters</h6>
 
 <ul>
-<li>samples: array of code samples</li>
-<li>x (float (N,)): location in stochastic space at which to eval
+<li><strong>samples</strong> (array):
+array of code samples</li>
+<li><strong>x (float (N,))</strong> (location in stochastic space at which to eval):
 the surrogate</li>
 </ul>
 
-<h2 id="returns">Returns</h2>
+<h6 id="returns">Returns</h6>
 
-<p>surr (float, (N_qoi,)): the interpolated value of qoi at x</p>
+<ul>
+<li><strong>surr (float, (N_qoi,))</strong> (the interpolated value of qoi at x):</li>
+</ul>
 </div>
 
 
@@ -4080,27 +4019,29 @@ the surrogate</li>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        - qoi (str): name of quantity of interest</span>
+<span class="sd">        qoi : str</span>
+<span class="sd">            name of quantity of interest</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">         - array of all samples of qoi</span>
+<span class="sd">        array of all samples of qoi</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">samples</span><span class="p">[</span><span class="n">qoi</span><span class="p">][</span><span class="n">k</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">samples</span><span class="p">[</span><span class="n">qoi</span><span class="p">]))])</span>
 </pre></div>
 
         </details>
 
-            <div class="docstring"><h2 id="parameters">Parameters</h2>
+            <div class="docstring"><h6 id="parameters">Parameters</h6>
 
 <ul>
-<li>qoi (str): name of quantity of interest</li>
+<li><strong>qoi</strong> (str):
+name of quantity of interest</li>
 </ul>
 
-<h2 id="returns">Returns</h2>
+<h6 id="returns">Returns</h6>
 
 <ul>
-<li>array of all samples of qoi</li>
+<li><strong>array of all samples of qoi</strong></li>
 </ul>
 </div>
 
@@ -4117,14 +4058,7 @@ the surrogate</li>
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">adaptation_histogram</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        None</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        Plots a bar chart of the maximum order of the quadrature rule</span>
+        <span class="sd">&quot;&quot;&quot;Plots a bar chart of the maximum order of the quadrature rule</span>
 <span class="sd">        that is used in each dimension. Use in case of the dimension adaptive</span>
 <span class="sd">        sampler to get an idea of which parameters were more refined than others.</span>
 <span class="sd">        This gives only a first-order idea, as it only plots the max quad</span>
@@ -4150,13 +4084,7 @@ the surrogate</li>
 
         </details>
 
-            <div class="docstring"><h2 id="parameters">Parameters</h2>
-
-<p>None</p>
-
-<h2 id="returns">Returns</h2>
-
-<p>Plots a bar chart of the maximum order of the quadrature rule
+            <div class="docstring"><p>Plots a bar chart of the maximum order of the quadrature rule
 that is used in each dimension. Use in case of the dimension adaptive
 sampler to get an idea of which parameters were more refined than others.
 This gives only a first-order idea, as it only plots the max quad
@@ -4177,8 +4105,7 @@ that were made do not show up in the bar chart.</p>
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">adaptation_table</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Plots a color-coded table of the quadrature-order refinement.</span>
+        <span class="sd">&quot;&quot;&quot;Plots a color-coded table of the quadrature-order refinement.</span>
 <span class="sd">        Shows in what order the parameters were refined, and unlike</span>
 <span class="sd">        adaptation_histogram, this also shows higher-order refinements.</span>
 
@@ -4239,15 +4166,19 @@ that were made do not show up in the bar chart.</p>
 Shows in what order the parameters were refined, and unlike
 adaptation_histogram, this also shows higher-order refinements.</p>
 
-<h2 id="parameters">Parameters</h2>
+<h6 id="parameters">Parameters</h6>
 
-<p>**kwargs: can contain kwarg 'order' to specify the order in which
-the variables on the x axis are plotted (e.g. in order of decreasing
-1st order Sobol index).</p>
+<ul>
+<li><p><strong>**kwargs</strong> (can contain kwarg 'order' to specify the order in which):</p></li>
+<li><p><strong>the variables on the x axis are plotted (e.g. in order of decreasing</strong></p></li>
+<li><strong>1st order Sobol index).</strong></li>
+</ul>
 
-<h2 id="returns">Returns</h2>
+<h6 id="returns">Returns</h6>
 
-<p>None.</p>
+<ul>
+<li><strong>None.</strong></li>
+</ul>
 </div>
 
 
@@ -4263,8 +4194,7 @@ the variables on the x axis are plotted (e.g. in order of decreasing
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">plot_grid</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Plots the collocation points for 2 and 3 dimensional problems</span>
+        <span class="sd">&quot;&quot;&quot;Plots the collocation points for 2 and 3 dimensional problems</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 
@@ -4304,19 +4234,19 @@ the variables on the x axis are plotted (e.g. in order of decreasing
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">SC2PCE</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">samples</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Computes the Polynomials Chaos Expansion coefficients from the SC</span>
+        <span class="sd">&quot;&quot;&quot;Computes the Polynomials Chaos Expansion coefficients from the SC</span>
 <span class="sd">        expansion via a transformation of basis (Lagrange polynomials basis --&gt;</span>
 <span class="sd">        orthonomial basis).</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        samples : array of SC code samples from which to compute the PCE coefficients</span>
+<span class="sd">        samples : array</span>
+<span class="sd">            SC code samples from which to compute the PCE coefficients</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        pce_coefs : dict of PCE coefficients per multi index l</span>
-
+<span class="sd">        pce_coefs : dict</span>
+<span class="sd">            PCE coefficients per multi index l</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">pce_coefs</span> <span class="o">=</span> <span class="p">{}</span>
 
@@ -4432,13 +4362,19 @@ the variables on the x axis are plotted (e.g. in order of decreasing
 expansion via a transformation of basis (Lagrange polynomials basis -->
 orthonomial basis).</p>
 
-<h2 id="parameters">Parameters</h2>
+<h6 id="parameters">Parameters</h6>
 
-<p>samples : array of SC code samples from which to compute the PCE coefficients</p>
+<ul>
+<li><strong>samples</strong> (array):
+SC code samples from which to compute the PCE coefficients</li>
+</ul>
 
-<h2 id="returns">Returns</h2>
+<h6 id="returns">Returns</h6>
 
-<p>pce_coefs : dict of PCE coefficients per multi index l</p>
+<ul>
+<li><strong>pce_coefs</strong> (dict):
+PCE coefficients per multi index l</li>
+</ul>
 </div>
 
 
@@ -4454,19 +4390,20 @@ orthonomial basis).</p>
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">get_pce_stats</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">l_norm</span><span class="p">,</span> <span class="n">pce_coefs</span><span class="p">,</span> <span class="n">comb_coef</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Compute the mean and the variance based on the PCE coefficients</span>
+        <span class="sd">&quot;&quot;&quot;Compute the mean and the variance based on the PCE coefficients</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        - l_norm (array): array of quadrature order multi indices</span>
-<span class="sd">        - pce_coefs (tuple): tuple of PCE coefficients computed by SC2PCE subroutine</span>
-<span class="sd">        - comb_coef (tuple): tuple of combination coefficients computed by compute_comb_coef</span>
+<span class="sd">        l_norm : array</span>
+<span class="sd">            array of quadrature order multi indices</span>
+<span class="sd">        pce_coefs : tuple</span>
+<span class="sd">            tuple of PCE coefficients computed by SC2PCE subroutine</span>
+<span class="sd">        comb_coef : tuple</span>
+<span class="sd">            tuple of combination coefficients computed by compute_comb_coef</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        - mean and variance based on the PCE coefficients</span>
-
+<span class="sd">        tuple with mean and variance based on the PCE coefficients</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="c1"># Compute the PCE mean</span>
@@ -4492,18 +4429,21 @@ orthonomial basis).</p>
 
             <div class="docstring"><p>Compute the mean and the variance based on the PCE coefficients</p>
 
-<h2 id="parameters">Parameters</h2>
+<h6 id="parameters">Parameters</h6>
 
 <ul>
-<li>l_norm (array): array of quadrature order multi indices</li>
-<li>pce_coefs (tuple): tuple of PCE coefficients computed by SC2PCE subroutine</li>
-<li>comb_coef (tuple): tuple of combination coefficients computed by compute_comb_coef</li>
+<li><strong>l_norm</strong> (array):
+array of quadrature order multi indices</li>
+<li><strong>pce_coefs</strong> (tuple):
+tuple of PCE coefficients computed by SC2PCE subroutine</li>
+<li><strong>comb_coef</strong> (tuple):
+tuple of combination coefficients computed by compute_comb_coef</li>
 </ul>
 
-<h2 id="returns">Returns</h2>
+<h6 id="returns">Returns</h6>
 
 <ul>
-<li>mean and variance based on the PCE coefficients</li>
+<li><strong>tuple with mean and variance based on the PCE coefficients</strong></li>
 </ul>
 </div>
 
@@ -4520,8 +4460,7 @@ orthonomial basis).</p>
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">get_pce_sobol_indices</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">qoi</span><span class="p">,</span> <span class="n">typ</span><span class="o">=</span><span class="s1">&#39;first_order&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Computes Sobol indices using Polynomials Chaos coefficients. These</span>
+        <span class="sd">&quot;&quot;&quot;Computes Sobol indices using Polynomials Chaos coefficients. These</span>
 <span class="sd">        coefficients are computed from the SC expansion via a transformation</span>
 <span class="sd">        of basis (SC2PCE subroutine). This works better than computing the</span>
 <span class="sd">        Sobol indices directly from the SC expansion in the case of the</span>
@@ -4533,16 +4472,20 @@ orthonomial basis).</p>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        - qoi (str): name of the Quantity of Interest for which to compute the indices</span>
-<span class="sd">        - typ (str): Default = &#39;first_order&#39;. &#39;all&#39; is also possible</span>
-<span class="sd">        - **kwargs: if this contains &#39;samples&#39;, use these instead of the SC samples ]</span>
-<span class="sd">          in the database</span>
+<span class="sd">        qoi : str</span>
+<span class="sd">            name of the Quantity of Interest for which to compute the indices</span>
+<span class="sd">        typ : str</span>
+<span class="sd">            Default = &#39;first_order&#39;. &#39;all&#39; is also possible</span>
+<span class="sd">        **kwargs : dict </span>
+<span class="sd">            if this contains &#39;samples&#39;, use these instead of the SC samples ]</span>
+<span class="sd">            in the database</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        - Mean: PCE mean</span>
-<span class="sd">        - Var: PCE variance</span>
-<span class="sd">        - S_u: PCE Sobol indices, either the first order indices or all indices</span>
+<span class="sd">        Tuple</span>
+<span class="sd">            Mean: PCE mean</span>
+<span class="sd">            Var: PCE variance</span>
+<span class="sd">            S_u: PCE Sobol indices, either the first order indices or all indices</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="s1">&#39;samples&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
@@ -4643,21 +4586,24 @@ dimension-adaptive sampler.</p>
 for uncertainty quantification and sensitivity analysis", 2019.
 (Page 18)</p>
 
-<h2 id="parameters">Parameters</h2>
+<h6 id="parameters">Parameters</h6>
 
 <ul>
-<li>qoi (str): name of the Quantity of Interest for which to compute the indices</li>
-<li>typ (str): Default = 'first_order'. 'all' is also possible</li>
-<li>**kwargs: if this contains 'samples', use these instead of the SC samples ]
+<li><strong>qoi</strong> (str):
+name of the Quantity of Interest for which to compute the indices</li>
+<li><strong>typ</strong> (str):
+Default = 'first_order'. 'all' is also possible</li>
+<li><strong>**kwargs</strong> (dict):
+if this contains 'samples', use these instead of the SC samples ]
 in the database</li>
 </ul>
 
-<h2 id="returns">Returns</h2>
+<h6 id="returns">Returns</h6>
 
 <ul>
-<li>Mean: PCE mean</li>
-<li>Var: PCE variance</li>
-<li>S_u: PCE Sobol indices, either the first order indices or all indices</li>
+<li><strong>Tuple</strong>: Mean: PCE mean
+Var: PCE variance
+S_u: PCE Sobol indices, either the first order indices or all indices</li>
 </ul>
 </div>
 
@@ -4715,16 +4661,18 @@ in the database</li>
             <div class="docstring"><p>Calculate tensor products of weights and collocation points
 with dimension of u and u'</p>
 
-<h2 id="parameters">Parameters</h2>
+<h6 id="parameters">Parameters</h6>
 
-<p>xi (array of floats): 1D colloction points
-wi (array of floats): 1D quadrature weights
-u  (array of int): dimensions
-u_prime (array of int): remaining dimensions (u union u' = range(N))</p>
+<ul>
+<li><p><strong>xi (array of floats)</strong> (1D colloction points):</p></li>
+<li><p><strong>wi (array of floats)</strong> (1D quadrature weights):</p></li>
+<li><p><strong>u  (array of int)</strong> (dimensions):</p></li>
+<li><p><strong>u_prime (array of int)</strong> (remaining dimensions (u union u' = range(N))):</p></li>
+<li><p><strong>Returns</strong></p></li>
+<li><strong>dict of tensor products of weight and points for dimensions u and u'</strong></li>
+</ul>
 
-<p>Returns</p>
-
-<h2 id="dict-of-tensor-products-of-weight-and-points-for-dimensions-u-and-u">dict of tensor products of weight and points for dimensions u and u'</h2>
+<hr />
 </div>
 
 
@@ -4784,18 +4732,18 @@ u_prime (array of int): remaining dimensions (u union u' = range(N))</p>
             <div class="docstring"><p>Computes a marginal integral of the qoi(x) over the dimension defined
 by u_prime, for every x value in dimensions u</p>
 
-<h2 id="parameters">Parameters</h2>
+<h6 id="parameters">Parameters</h6>
 
 <ul>
-<li>qoi (str): name of the quantity of interest</li>
-<li>u (array of int): dimensions which are not integrated</li>
-<li>u_prime (array of int): dimensions which are integrated</li>
-<li>diff (array of int): levels</li>
+<li><p><strong>- qoi (str)</strong> (name of the quantity of interest):</p></li>
+<li><p><strong>- u (array of int)</strong> (dimensions which are not integrated):</p></li>
+<li><p><strong>- u_prime (array of int)</strong> (dimensions which are integrated):</p></li>
+<li><p><strong>- diff (array of int)</strong> (levels):</p></li>
+<li><p><strong>Returns</strong></p></li>
+<li><strong>- Values of the marginal integral</strong></li>
 </ul>
 
-<p>Returns</p>
-
-<h2 id="-values-of-the-marginal-integral">- Values of the marginal integral</h2>
+<hr />
 </div>
 
 
@@ -4891,14 +4839,18 @@ by u_prime, for every x value in dimensions u</p>
 Tang (2009), GLOBAL SENSITIVITY ANALYSIS  FOR STOCHASTIC COLLOCATION
 EXPANSION.</p>
 
-<h2 id="parameters">Parameters</h2>
+<h6 id="parameters">Parameters</h6>
 
-<p>qoi (str): name of the Quantity of Interest for which to compute the indices
-typ (str): Default = 'first_order'. 'all' is also possible</p>
+<ul>
+<li><p><strong>qoi (str)</strong> (name of the Quantity of Interest for which to compute the indices):</p></li>
+<li><p><strong>typ (str)</strong> (Default = 'first_order'. 'all' is also possible):</p></li>
+</ul>
 
-<h2 id="returns">Returns</h2>
+<h6 id="returns">Returns</h6>
 
-<p>Either the first order or all Sobol indices of qoi</p>
+<ul>
+<li><strong>Either the first order or all Sobol indices of qoi</strong></li>
+</ul>
 </div>
 
 
@@ -4965,13 +4917,17 @@ typ (str): Default = 'first_order'. 'all' is also possible</p>
 uncertainty. It is computed as the (mean) Coefficient of Variation (V)
 of the output divided by the (mean) CV of the input.</p>
 
-<h2 id="parameters">Parameters</h2>
+<h6 id="parameters">Parameters</h6>
 
-<p>qoi (string): name of the Quantity of Interest</p>
+<ul>
+<li><strong>qoi (string)</strong> (name of the Quantity of Interest):</li>
+</ul>
 
-<h2 id="returns">Returns</h2>
+<h6 id="returns">Returns</h6>
 
-<p>blowup (float): the ratio output CV / input CV</p>
+<ul>
+<li><strong>blowup (float)</strong> (the ratio output CV / input CV):</li>
+</ul>
 </div>
 
 
@@ -4997,8 +4953,7 @@ of the output divided by the (mean) CV of the input.</p>
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">powerset</span><span class="p">(</span><span class="n">iterable</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    powerset([1,2,3]) --&gt; () (1,) (2,) (3,) (1,2) (1,3) (2,3) (1,2,3)</span>
+    <span class="sd">&quot;&quot;&quot;powerset([1,2,3]) --&gt; () (1,) (2,) (3,) (1,2) (1,3) (2,3) (1,2,3)</span>
 
 <span class="sd">    Taken from: https://docs.python.org/3/library/itertools.html#recipes</span>
 
@@ -5022,12 +4977,15 @@ of the output divided by the (mean) CV of the input.</p>
 
 <p>Taken from: https://docs.python.org/3/library/itertools.html#recipes</p>
 
-<h2 id="parameters">Parameters</h2>
+<h6 id="parameters">Parameters</h6>
 
-<p>iterable : iterable
-    Input sequence</p>
+<ul>
+<li><strong>iterable</strong> (iterable):
+Input sequence</li>
+<li><strong>Returns</strong></li>
+</ul>
 
-<h2 id="returns">Returns</h2>
+<hr />
 </div>
 
 
@@ -5043,19 +5001,21 @@ of the output divided by the (mean) CV of the input.</p>
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">lagrange_poly</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">x_i</span><span class="p">,</span> <span class="n">j</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Lagrange polynomials used for interpolation</span>
+    <span class="sd">&quot;&quot;&quot;Lagrange polynomials used for interpolation</span>
 
 <span class="sd">    l_j(x) = product(x - x_m / x_j - x_m) with 0 &lt;= m &lt;= k</span>
 <span class="sd">                                               and m !=j</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    x : (float), location at which to compute the polynomial</span>
+<span class="sd">    x : float</span>
+<span class="sd">        location at which to compute the polynomial</span>
 
-<span class="sd">    x_i : list or array of float, nodes of the Lagrange polynomials</span>
+<span class="sd">    x_i : list or array of float</span>
+<span class="sd">        nodes of the Lagrange polynomials</span>
 
-<span class="sd">    j : int, index of node at which l_j(x_j) = 1</span>
+<span class="sd">    j : int</span>
+<span class="sd">        index of node at which l_j(x_j) = 1</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
@@ -5085,18 +5045,22 @@ of the output divided by the (mean) CV of the input.</p>
 <p>l_j(x) = product(x - x_m / x_j - x_m) with 0 &lt;= m &lt;= k
                                            and m !=j</p>
 
-<h2 id="parameters">Parameters</h2>
+<h6 id="parameters">Parameters</h6>
 
-<p>x : (float), location at which to compute the polynomial</p>
+<ul>
+<li><strong>x</strong> (float):
+location at which to compute the polynomial</li>
+<li><strong>x_i</strong> (list or array of float):
+nodes of the Lagrange polynomials</li>
+<li><strong>j</strong> (int):
+index of node at which l_j(x_j) = 1</li>
+</ul>
 
-<p>x_i : list or array of float, nodes of the Lagrange polynomials</p>
+<h6 id="returns">Returns</h6>
 
-<p>j : int, index of node at which l_j(x_j) = 1</p>
-
-<h2 id="returns">Returns</h2>
-
-<p>float
-    l_j(x) calculated as shown above.</p>
+<ul>
+<li><strong>float</strong>: l_j(x) calculated as shown above.</li>
+</ul>
 </div>
 
 
@@ -5133,14 +5097,18 @@ of the output divided by the (mean) CV of the input.</p>
 
             <div class="docstring"><p>Computes the difference of two 2D arrays X and Y</p>
 
-<h2 id="parameters">Parameters</h2>
+<h6 id="parameters">Parameters</h6>
 
-<p>X : 2D numpy array
-Y : 2D numpy array</p>
+<ul>
+<li><p><strong>X</strong> (2D numpy array):</p></li>
+<li><p><strong>Y</strong> (2D numpy array):</p></li>
+</ul>
 
-<h2 id="returns">Returns</h2>
+<h6 id="returns">Returns</h6>
 
-<p>The difference X \ Y as a 2D array</p>
+<ul>
+<li><strong>The difference X \ Y as a 2D array</strong></li>
+</ul>
 </div>
 
 

@@ -424,10 +424,12 @@
 
             <div class="docstring"><p>Baseclass for all EasyVVUQ sampling elements.</p>
 
-<h2 id="attributes">Attributes</h2>
+<h6 id="attributes">Attributes</h6>
 
-<p>sampler_name : str
-    Name of the particular sampler.</p>
+<ul>
+<li><strong>sampler_name</strong> (str):
+Name of the particular sampler.</li>
+</ul>
 </div>
 
 
@@ -571,32 +573,27 @@
             <div class="docstring"><p>Create the sampler for the Polynomial Chaos Expansion using
 pseudo-spectral projection or regression (Point Collocation).</p>
 
-<h2 id="parameters">Parameters</h2>
+<h6 id="parameters">Parameters</h6>
 
-<p>vary: dict or None
-    keys = parameters to be sampled, values = distributions.</p>
-
-<p>count : int, optional
-    Specified counter for Fast forward, default is 0.</p>
-
-<p>polynomial_order : int, optional
-    The polynomial order, default is 4.</p>
-
-<p>regression : bool, optional
-    If True, regression variante (point collecation) will be used,
-    otherwise projection variante (pseud-spectral) will be used.
-    Default value is False.</p>
-
-<p>rule : char, optional
-    The quadrature method, in case of projection (default is Gaussian "G").
-    The sequence sampler in case of regression (default is Hammersley "M")</p>
-
-<p>sparse : bool, optional
-    If True, use Smolyak sparse grid instead of normal tensor product
-    grid. Default value is False.</p>
-
-<p>growth (bool, None), optional
-    If True, quadrature point became nested.</p>
+<ul>
+<li><strong>vary</strong> (dict or None):
+keys = parameters to be sampled, values = distributions.</li>
+<li><strong>count</strong> (int, optional):
+Specified counter for Fast forward, default is 0.</li>
+<li><strong>polynomial_order</strong> (int, optional):
+The polynomial order, default is 4.</li>
+<li><strong>regression</strong> (bool, optional):
+If True, regression variante (point collecation) will be used,
+otherwise projection variante (pseud-spectral) will be used.
+Default value is False.</li>
+<li><strong>rule</strong> (char, optional):
+The quadrature method, in case of projection (default is Gaussian "G").
+The sequence sampler in case of regression (default is Hammersley "M")</li>
+<li><strong>sparse</strong> (bool, optional):
+If True, use Smolyak sparse grid instead of normal tensor product
+grid. Default value is False.</li>
+<li><strong>growth (bool, None), optional</strong>: If True, quadrature point became nested.</li>
+</ul>
 </div>
 
 

@@ -401,20 +401,22 @@
 
             <div class="docstring"><p>A Metropolis-Hastings MCMC Sampler.</p>
 
-<h2 id="parameters">Parameters</h2>
+<h6 id="parameters">Parameters</h6>
 
-<p>init: dict
-   Initial values for each input parameter. Of the form {'input1': value, ...}
-q: function
-   A function of one argument X (dictionary) that returns the proposal distribution conditional on
-the X.
-qoi: str
-   Name of the quantity of interest
-n_chains: int
-   Number of MCMC chains to run in paralle.
-estimator: function
-   To be used with replica_col argument. Outputs an estimate of some
-   parameter when given a sample array.</p>
+<ul>
+<li><strong>init</strong> (dict):
+Initial values for each input parameter. Of the form {'input1': value, ...}</li>
+<li><strong>q</strong> (function):
+A function of one argument X (dictionary) that returns the proposal distribution conditional on</li>
+<li><strong>the X.</strong></li>
+<li><strong>qoi</strong> (str):
+Name of the quantity of interest</li>
+<li><strong>n_chains</strong> (int):
+Number of MCMC chains to run in paralle.</li>
+<li><strong>estimator</strong> (function):
+To be used with replica_col argument. Outputs an estimate of some
+parameter when given a sample array.</li>
+</ul>
 </div>
 
 
@@ -580,16 +582,20 @@ estimator: function
 
             <div class="docstring"><p>Performs the MCMC sampling procedure on the campaign.</p>
 
-<h2 id="parameters">Parameters</h2>
+<h6 id="parameters">Parameters</h6>
 
-<p>result: pandas DataFrame
-    run information from previous iteration (same as collation DataFrame)
-invalid: pandas DataFrame
-    invalid run information (runs that cannot be executed for some reason)</p>
+<ul>
+<li><strong>result</strong> (pandas DataFrame):
+run information from previous iteration (same as collation DataFrame)</li>
+<li><strong>invalid</strong> (pandas DataFrame):
+invalid run information (runs that cannot be executed for some reason)</li>
+</ul>
 
-<h2 id="returns">Returns</h2>
+<h6 id="returns">Returns</h6>
 
-<p>list of rejected run ids</p>
+<ul>
+<li><strong>list of rejected run ids</strong></li>
+</ul>
 </div>
 
 
@@ -602,9 +608,11 @@ invalid: pandas DataFrame
 
             <div class="docstring"><p>Returns a corresponding analysis class for this sampler.</p>
 
-<h2 id="returns">Returns</h2>
+<h6 id="returns">Returns</h6>
 
-<p>class</p>
+<ul>
+<li><strong>class</strong></li>
+</ul>
 </div>
 
 

@@ -65,10 +65,12 @@ encoders.</p>
 <p>Encoders provide functions to convert generic problem space parameters lists
 into inputs for particular simulation codes.</p>
 
-<h2 id="attributes">Attributes</h2>
+<h6 id="attributes">Attributes</h6>
 
-<p>AVAILABLE_ENCODERS : dict
-    Registers all imported encoders.</p>
+<ul>
+<li><strong>AVAILABLE_ENCODERS</strong> (dict):
+Registers all imported encoders.</li>
+</ul>
 </div>
 
                         <details>
@@ -228,9 +230,13 @@ into inputs for particular simulation codes.</p>
 contract - provide an <code><a href="#BaseEncoder.encode">encode</a></code>
 method to parse these and write relevant run file to a target directory.</p>
 
-<h2 id="parameters">Parameters</h2>
+<h6 id="parameters">Parameters</h6>
 
-<h2 id="attributes">Attributes</h2>
+<ul>
+<li><strong>Attributes</strong></li>
+</ul>
+
+<hr />
 </div>
 
 
@@ -279,14 +285,17 @@ method to parse these and write relevant run file to a target directory.</p>
             <div class="docstring"><p>Takes list of generic parameter values from <code>params</code> and
 converts them into simulation input files (in <code>target_dir</code>).</p>
 
-<h2 id="parameters">Parameters</h2>
+<h6 id="parameters">Parameters</h6>
 
-<p>params: dict or None
-    Dictionary containing parameter names and values.
-target_dir: str
-    Path into which output will be written.</p>
+<ul>
+<li><strong>params</strong> (dict or None):
+Dictionary containing parameter names and values.</li>
+<li><strong>target_dir</strong> (str):
+Path into which output will be written.</li>
+<li><strong>Returns</strong></li>
+</ul>
 
-<h2 id="returns">Returns</h2>
+<hr />
 </div>
 
 

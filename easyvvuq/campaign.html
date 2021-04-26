@@ -198,15 +198,15 @@ EasyVVUQ workflows.</p>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    name : :obj:`str`, optional</span>
+<span class="sd">    name : str, optional</span>
 <span class="sd">    params : dict</span>
 <span class="sd">        Description of the parameters to associate with the application.</span>
-<span class="sd">    db_location : :obj:`str`, optional</span>
+<span class="sd">    db_location : str, optional</span>
 <span class="sd">        Location of the underlying campaign database - either a path or</span>
 <span class="sd">        acceptable URI for SQLAlchemy.</span>
-<span class="sd">    work_dir : :obj:`str`, optional, default=&#39;./&#39;</span>
+<span class="sd">    work_dir : str, optional, default=&#39;./&#39;</span>
 <span class="sd">        Path to working directory - used to store campaign directory.</span>
-<span class="sd">    state_file : :obj:`str`, optional</span>
+<span class="sd">    state_file : str, optional</span>
 <span class="sd">        Path to serialised state - used to initialise the Campaign.</span>
 <span class="sd">    change_to_state : bool, optional, default=False</span>
 <span class="sd">        Should we change to the directory containing any specified `state_file`</span>
@@ -348,10 +348,6 @@ EasyVVUQ workflows.</p>
 <span class="sd">            An instance of Actions containing actions to be executed</span>
 <span class="sd">        set_active: bool</span>
 <span class="sd">            Should the added app be set to be the currently active app?</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="c1"># Verify input parameters dict</span>
@@ -378,10 +374,6 @@ EasyVVUQ workflows.</p>
 <span class="sd">        app_name: str or None</span>
 <span class="sd">            Name of selected app, if `None` given then first app will be</span>
 <span class="sd">            selected.</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_active_app_name</span> <span class="o">=</span> <span class="n">app_name</span>
@@ -396,14 +388,10 @@ EasyVVUQ workflows.</p>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        sampler : easyvvuq.sampling.base.BaseSamplingElement</span>
+<span class="sd">        sampler : Sampler</span>
 <span class="sd">            Sampler that will be used to create runs for the current campaign.</span>
 <span class="sd">        update : bool</span>
 <span class="sd">            If set to True it will not add the sampler to the database, just change it as the active sampler.</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">sampler</span><span class="p">,</span> <span class="n">BaseSamplingElement</span><span class="p">):</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;set_sampler() must be passed a sampling element&quot;</span>
@@ -424,13 +412,9 @@ EasyVVUQ workflows.</p>
 <span class="sd">        ----------</span>
 <span class="sd">        runs : list of dicts</span>
 <span class="sd">            Each dict defines the value of each model parameter listed in</span>
-<span class="sd">            `self.params_info` for a run to be added to `self.runs`</span>
+<span class="sd">            self.params_info for a run to be added to self.runs</span>
 <span class="sd">        mark_invalid : bool</span>
 <span class="sd">            Will mark runs that fail verification as invalid (but will not raise an exception)</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_active_app</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -472,11 +456,9 @@ EasyVVUQ workflows.</p>
         <span class="bp">self</span><span class="o">.</span><span class="n">campaign_db</span><span class="o">.</span><span class="n">add_runs</span><span class="p">(</span><span class="n">run_info_list</span><span class="p">,</span> <span class="n">iteration</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_active_sampler</span><span class="o">.</span><span class="n">iteration</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">add_default_run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Add a single new run to the queue, using only default values for</span>
+        <span class="sd">&quot;&quot;&quot;Add a single new run to the queue, using only default values for</span>
 <span class="sd">        all parameters.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-
         <span class="n">new_run</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">add_runs</span><span class="p">([</span><span class="n">new_run</span><span class="p">])</span>
 
@@ -496,20 +478,16 @@ EasyVVUQ workflows.</p>
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        num_samples : int</span>
-<span class="sd">                Number of samples to draw from the active sampling element.</span>
-<span class="sd">                By default is 0 (draw ALL samples)</span>
+<span class="sd">            Number of samples to draw from the active sampling element.</span>
+<span class="sd">            By default is 0 (draw ALL samples)</span>
 <span class="sd">        replicas : int</span>
-<span class="sd">                Number of replica runs to create with each set of parameters.</span>
-<span class="sd">                Default is 1 - so only a single run added for each set of</span>
-<span class="sd">                parameters.</span>
+<span class="sd">            Number of replica runs to create with each set of parameters.</span>
+<span class="sd">            Default is 1 - so only a single run added for each set of</span>
+<span class="sd">            parameters.</span>
 <span class="sd">        mark_invalid : bool</span>
-<span class="sd">           If True will mark runs that go outside valid parameter range as INVALID.</span>
-<span class="sd">           This is useful for MCMC style methods where you want those runs to evaluate</span>
-<span class="sd">           to low probabilities.</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-
+<span class="sd">            If True will mark runs that go outside valid parameter range as INVALID.</span>
+<span class="sd">            This is useful for MCMC style methods where you want those runs to evaluate</span>
+<span class="sd">            to low probabilities.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="c1"># Make sure `num_samples` is not 0 for an infinite generator</span>
@@ -547,31 +525,26 @@ EasyVVUQ workflows.</p>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">            list of runs</span>
-
+<span class="sd">        list of runs</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">campaign_db</span><span class="o">.</span><span class="n">runs</span><span class="p">(</span><span class="n">sampler</span><span class="o">=</span><span class="n">sampler</span><span class="p">,</span> <span class="n">campaign</span><span class="o">=</span><span class="n">campaign</span><span class="p">,</span> <span class="n">status</span><span class="o">=</span><span class="n">status</span><span class="p">))</span>
 
     <span class="k">def</span> <span class="nf">scan_completed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Check campaign database for completed runs (defined as runs with COLLATED status)</span>
+        <span class="sd">&quot;&quot;&quot;Check campaign database for completed runs (defined as runs with COLLATED status)</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">            list of runs</span>
-
+<span class="sd">        list of runs</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">list_runs</span><span class="p">(</span><span class="n">status</span><span class="o">=</span><span class="n">Status</span><span class="o">.</span><span class="n">COLLATED</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">all_complete</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Check if all runs have reported having output generated by</span>
+        <span class="sd">&quot;&quot;&quot;Check if all runs have reported having output generated by</span>
 <span class="sd">        a completed simulation.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">            list of runs</span>
-
+<span class="sd">        list of runs</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">num</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">campaign_db</span><span class="o">.</span><span class="n">get_num_runs</span><span class="p">(</span><span class="n">not_status</span><span class="o">=</span><span class="n">Status</span><span class="o">.</span><span class="n">COLLATED</span><span class="p">)</span>
@@ -585,8 +558,7 @@ EasyVVUQ workflows.</p>
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        str</span>
-<span class="sd">            Path in which the runs information will be written.</span>
-
+<span class="sd">        Path in which the runs information will be written.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">campaign_db</span><span class="o">.</span><span class="n">runs_dir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">campaign_name</span><span class="p">)</span>
 
@@ -623,13 +595,13 @@ EasyVVUQ workflows.</p>
         <span class="k">return</span> <span class="n">action_pool</span><span class="o">.</span><span class="n">start</span><span class="p">(</span><span class="n">pool</span><span class="o">=</span><span class="n">pool</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">apply_for_each_sample</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">sequential</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        For each run in this Campaign&#39;s run list, apply the specified action</span>
+        <span class="sd">&quot;&quot;&quot;For each run in this Campaign&#39;s run list, apply the specified action</span>
 <span class="sd">        (an object of type Action)</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        action : the action to be applied to each run directory</span>
+<span class="sd">        action : action</span>
+<span class="sd">            the action to be applied to each run directory</span>
 <span class="sd">            The function to be applied to each run directory. func() will</span>
 <span class="sd">            be called with the run directory path as its only argument.</span>
 <span class="sd">        status : Status</span>
@@ -692,19 +664,13 @@ EasyVVUQ workflows.</p>
     <span class="k">def</span> <span class="nf">recollate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Clears the current collation table, changes all COLLATED status runs</span>
 <span class="sd">           back to ENCODED, then runs collate() again</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-
 <span class="sd">        &quot;&quot;&quot;</span>
-
         <span class="n">collated_run_ids</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">campaign_db</span><span class="o">.</span><span class="n">run_ids</span><span class="p">(</span><span class="n">status</span><span class="o">=</span><span class="n">Status</span><span class="o">.</span><span class="n">COLLATED</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">campaign_db</span><span class="o">.</span><span class="n">set_run_statuses</span><span class="p">(</span><span class="n">collated_run_ids</span><span class="p">,</span> <span class="n">Status</span><span class="o">.</span><span class="n">ENCODED</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">collate</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">get_collation_result</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">last_iteration</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Return dataframe containing all collated results</span>
+        <span class="sd">&quot;&quot;&quot;Return dataframe containing all collated results</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -713,7 +679,7 @@ EasyVVUQ workflows.</p>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">            pandas dataframe</span>
+<span class="sd">        pandas dataframe</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">last_iteration</span><span class="p">:</span>
@@ -724,8 +690,7 @@ EasyVVUQ workflows.</p>
                                             <span class="n">status</span><span class="o">=</span><span class="n">constants</span><span class="o">.</span><span class="n">Status</span><span class="o">.</span><span class="n">COLLATED</span><span class="p">,</span> <span class="n">iteration</span><span class="o">=</span><span class="n">iteration</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">get_invalid_runs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">last_iteration</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Return dataframe containing all results marked as INVALID.</span>
+        <span class="sd">&quot;&quot;&quot;Return dataframe containing all results marked as INVALID.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -734,7 +699,7 @@ EasyVVUQ workflows.</p>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">            pandas DataFrame</span>
+<span class="sd">        pandas DataFrame</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">last_iteration</span><span class="p">:</span>
             <span class="n">iteration</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_active_sampler</span><span class="o">.</span><span class="n">iteration</span> <span class="o">-</span> <span class="mi">1</span>
@@ -748,13 +713,9 @@ EasyVVUQ workflows.</p>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        analysis : `easyvvuq.analysis.base.BaseAnalysisElement`</span>
+<span class="sd">        analysis : Analysis</span>
 <span class="sd">            Element that performs a VVUQ analysis on a dataframe summary of</span>
 <span class="sd">            run outputs.</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="c1"># Apply analysis element to most recent collation result</span>
@@ -765,7 +726,7 @@ EasyVVUQ workflows.</p>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        **kwargs - dict</span>
+<span class="sd">        **kwargs : dict</span>
 <span class="sd">           Argument to the analysis class constructor (after sampler).</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">collation_result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_collation_result</span><span class="p">()</span>
@@ -776,12 +737,7 @@ EasyVVUQ workflows.</p>
             <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;This sampler does not have a corresponding analysis class&quot;</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">get_last_analysis</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Return the output of the most recently run analysis element.</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-
+        <span class="sd">&quot;&quot;&quot;Return the output of the most recently run analysis element.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_analysis</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">logging</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;No last analysis output available.&quot;</span><span class="p">)</span>
@@ -790,7 +746,8 @@ EasyVVUQ workflows.</p>
 
     <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Returns formatted summary of the current Campaign state.</span>
-<span class="sd">        Enables class to work with standard print() method&quot;&quot;&quot;</span>
+<span class="sd">        Enables class to work with standard print() method</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">return</span> <span class="p">(</span><span class="sa">f</span><span class="s2">&quot;db_location = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">db_location</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
                 <span class="sa">f</span><span class="s2">&quot;active_sampler_id = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_active_sampler_id</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
@@ -807,8 +764,6 @@ EasyVVUQ workflows.</p>
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        The sampler currently in use</span>
-<span class="sd">            easyvvuq.sampling.base.BaseSamplingElement</span>
-
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_active_sampler</span>
@@ -822,11 +777,6 @@ EasyVVUQ workflows.</p>
 <span class="sd">        ----------</span>
 <span class="sd">        list_of_run_IDs: list</span>
 <span class="sd">            The list of run IDs for the runs that should be set to status IGNORED</span>
-
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">campaign_db</span><span class="o">.</span><span class="n">set_run_statuses</span><span class="p">(</span><span class="n">list_of_run_IDs</span><span class="p">,</span> <span class="n">Status</span><span class="o">.</span><span class="n">IGNORED</span><span class="p">)</span>
 
@@ -841,11 +791,6 @@ EasyVVUQ workflows.</p>
 <span class="sd">        ----------</span>
 <span class="sd">        list_of_run_IDs: list</span>
 <span class="sd">            The list of run IDs for the runs that should be set to status ENCODED</span>
-
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">for</span> <span class="n">run_ID</span> <span class="ow">in</span> <span class="n">list_of_run_IDs</span><span class="p">:</span>
@@ -858,8 +803,7 @@ EasyVVUQ workflows.</p>
         <span class="bp">self</span><span class="o">.</span><span class="n">campaign_db</span><span class="o">.</span><span class="n">set_run_statuses</span><span class="p">(</span><span class="n">list_of_run_IDs</span><span class="p">,</span> <span class="n">Status</span><span class="o">.</span><span class="n">ENCODED</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">get_active_app</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Returns a dict of information regarding the application that is currently</span>
+        <span class="sd">&quot;&quot;&quot;Returns a dict of information regarding the application that is currently</span>
 <span class="sd">        set for this campaign.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_active_app</span>
@@ -895,15 +839,15 @@ EasyVVUQ workflows.</p>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    name : :obj:`str`, optional</span>
+<span class="sd">    name : str, optional</span>
 <span class="sd">    params : dict</span>
 <span class="sd">        Description of the parameters to associate with the application.</span>
-<span class="sd">    db_location : :obj:`str`, optional</span>
+<span class="sd">    db_location : str, optional</span>
 <span class="sd">        Location of the underlying campaign database - either a path or</span>
 <span class="sd">        acceptable URI for SQLAlchemy.</span>
-<span class="sd">    work_dir : :obj:`str`, optional, default=&#39;./&#39;</span>
+<span class="sd">    work_dir : str, optional, default=&#39;./&#39;</span>
 <span class="sd">        Path to working directory - used to store campaign directory.</span>
-<span class="sd">    state_file : :obj:`str`, optional</span>
+<span class="sd">    state_file : str, optional</span>
 <span class="sd">        Path to serialised state - used to initialise the Campaign.</span>
 <span class="sd">    change_to_state : bool, optional, default=False</span>
 <span class="sd">        Should we change to the directory containing any specified `state_file`</span>
@@ -1045,10 +989,6 @@ EasyVVUQ workflows.</p>
 <span class="sd">            An instance of Actions containing actions to be executed</span>
 <span class="sd">        set_active: bool</span>
 <span class="sd">            Should the added app be set to be the currently active app?</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="c1"># Verify input parameters dict</span>
@@ -1075,10 +1015,6 @@ EasyVVUQ workflows.</p>
 <span class="sd">        app_name: str or None</span>
 <span class="sd">            Name of selected app, if `None` given then first app will be</span>
 <span class="sd">            selected.</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_active_app_name</span> <span class="o">=</span> <span class="n">app_name</span>
@@ -1093,14 +1029,10 @@ EasyVVUQ workflows.</p>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        sampler : easyvvuq.sampling.base.BaseSamplingElement</span>
+<span class="sd">        sampler : Sampler</span>
 <span class="sd">            Sampler that will be used to create runs for the current campaign.</span>
 <span class="sd">        update : bool</span>
 <span class="sd">            If set to True it will not add the sampler to the database, just change it as the active sampler.</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">sampler</span><span class="p">,</span> <span class="n">BaseSamplingElement</span><span class="p">):</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;set_sampler() must be passed a sampling element&quot;</span>
@@ -1121,13 +1053,9 @@ EasyVVUQ workflows.</p>
 <span class="sd">        ----------</span>
 <span class="sd">        runs : list of dicts</span>
 <span class="sd">            Each dict defines the value of each model parameter listed in</span>
-<span class="sd">            `self.params_info` for a run to be added to `self.runs`</span>
+<span class="sd">            self.params_info for a run to be added to self.runs</span>
 <span class="sd">        mark_invalid : bool</span>
 <span class="sd">            Will mark runs that fail verification as invalid (but will not raise an exception)</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_active_app</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -1169,11 +1097,9 @@ EasyVVUQ workflows.</p>
         <span class="bp">self</span><span class="o">.</span><span class="n">campaign_db</span><span class="o">.</span><span class="n">add_runs</span><span class="p">(</span><span class="n">run_info_list</span><span class="p">,</span> <span class="n">iteration</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_active_sampler</span><span class="o">.</span><span class="n">iteration</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">add_default_run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Add a single new run to the queue, using only default values for</span>
+        <span class="sd">&quot;&quot;&quot;Add a single new run to the queue, using only default values for</span>
 <span class="sd">        all parameters.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-
         <span class="n">new_run</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">add_runs</span><span class="p">([</span><span class="n">new_run</span><span class="p">])</span>
 
@@ -1193,20 +1119,16 @@ EasyVVUQ workflows.</p>
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        num_samples : int</span>
-<span class="sd">                Number of samples to draw from the active sampling element.</span>
-<span class="sd">                By default is 0 (draw ALL samples)</span>
+<span class="sd">            Number of samples to draw from the active sampling element.</span>
+<span class="sd">            By default is 0 (draw ALL samples)</span>
 <span class="sd">        replicas : int</span>
-<span class="sd">                Number of replica runs to create with each set of parameters.</span>
-<span class="sd">                Default is 1 - so only a single run added for each set of</span>
-<span class="sd">                parameters.</span>
+<span class="sd">            Number of replica runs to create with each set of parameters.</span>
+<span class="sd">            Default is 1 - so only a single run added for each set of</span>
+<span class="sd">            parameters.</span>
 <span class="sd">        mark_invalid : bool</span>
-<span class="sd">           If True will mark runs that go outside valid parameter range as INVALID.</span>
-<span class="sd">           This is useful for MCMC style methods where you want those runs to evaluate</span>
-<span class="sd">           to low probabilities.</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-
+<span class="sd">            If True will mark runs that go outside valid parameter range as INVALID.</span>
+<span class="sd">            This is useful for MCMC style methods where you want those runs to evaluate</span>
+<span class="sd">            to low probabilities.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="c1"># Make sure `num_samples` is not 0 for an infinite generator</span>
@@ -1244,31 +1166,26 @@ EasyVVUQ workflows.</p>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">            list of runs</span>
-
+<span class="sd">        list of runs</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">campaign_db</span><span class="o">.</span><span class="n">runs</span><span class="p">(</span><span class="n">sampler</span><span class="o">=</span><span class="n">sampler</span><span class="p">,</span> <span class="n">campaign</span><span class="o">=</span><span class="n">campaign</span><span class="p">,</span> <span class="n">status</span><span class="o">=</span><span class="n">status</span><span class="p">))</span>
 
     <span class="k">def</span> <span class="nf">scan_completed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Check campaign database for completed runs (defined as runs with COLLATED status)</span>
+        <span class="sd">&quot;&quot;&quot;Check campaign database for completed runs (defined as runs with COLLATED status)</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">            list of runs</span>
-
+<span class="sd">        list of runs</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">list_runs</span><span class="p">(</span><span class="n">status</span><span class="o">=</span><span class="n">Status</span><span class="o">.</span><span class="n">COLLATED</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">all_complete</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Check if all runs have reported having output generated by</span>
+        <span class="sd">&quot;&quot;&quot;Check if all runs have reported having output generated by</span>
 <span class="sd">        a completed simulation.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">            list of runs</span>
-
+<span class="sd">        list of runs</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">num</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">campaign_db</span><span class="o">.</span><span class="n">get_num_runs</span><span class="p">(</span><span class="n">not_status</span><span class="o">=</span><span class="n">Status</span><span class="o">.</span><span class="n">COLLATED</span><span class="p">)</span>
@@ -1282,8 +1199,7 @@ EasyVVUQ workflows.</p>
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        str</span>
-<span class="sd">            Path in which the runs information will be written.</span>
-
+<span class="sd">        Path in which the runs information will be written.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">campaign_db</span><span class="o">.</span><span class="n">runs_dir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">campaign_name</span><span class="p">)</span>
 
@@ -1320,13 +1236,13 @@ EasyVVUQ workflows.</p>
         <span class="k">return</span> <span class="n">action_pool</span><span class="o">.</span><span class="n">start</span><span class="p">(</span><span class="n">pool</span><span class="o">=</span><span class="n">pool</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">apply_for_each_sample</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">sequential</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        For each run in this Campaign&#39;s run list, apply the specified action</span>
+        <span class="sd">&quot;&quot;&quot;For each run in this Campaign&#39;s run list, apply the specified action</span>
 <span class="sd">        (an object of type Action)</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        action : the action to be applied to each run directory</span>
+<span class="sd">        action : action</span>
+<span class="sd">            the action to be applied to each run directory</span>
 <span class="sd">            The function to be applied to each run directory. func() will</span>
 <span class="sd">            be called with the run directory path as its only argument.</span>
 <span class="sd">        status : Status</span>
@@ -1389,19 +1305,13 @@ EasyVVUQ workflows.</p>
     <span class="k">def</span> <span class="nf">recollate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Clears the current collation table, changes all COLLATED status runs</span>
 <span class="sd">           back to ENCODED, then runs collate() again</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-
 <span class="sd">        &quot;&quot;&quot;</span>
-
         <span class="n">collated_run_ids</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">campaign_db</span><span class="o">.</span><span class="n">run_ids</span><span class="p">(</span><span class="n">status</span><span class="o">=</span><span class="n">Status</span><span class="o">.</span><span class="n">COLLATED</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">campaign_db</span><span class="o">.</span><span class="n">set_run_statuses</span><span class="p">(</span><span class="n">collated_run_ids</span><span class="p">,</span> <span class="n">Status</span><span class="o">.</span><span class="n">ENCODED</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">collate</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">get_collation_result</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">last_iteration</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Return dataframe containing all collated results</span>
+        <span class="sd">&quot;&quot;&quot;Return dataframe containing all collated results</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -1410,7 +1320,7 @@ EasyVVUQ workflows.</p>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">            pandas dataframe</span>
+<span class="sd">        pandas dataframe</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">last_iteration</span><span class="p">:</span>
@@ -1421,8 +1331,7 @@ EasyVVUQ workflows.</p>
                                             <span class="n">status</span><span class="o">=</span><span class="n">constants</span><span class="o">.</span><span class="n">Status</span><span class="o">.</span><span class="n">COLLATED</span><span class="p">,</span> <span class="n">iteration</span><span class="o">=</span><span class="n">iteration</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">get_invalid_runs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">last_iteration</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Return dataframe containing all results marked as INVALID.</span>
+        <span class="sd">&quot;&quot;&quot;Return dataframe containing all results marked as INVALID.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -1431,7 +1340,7 @@ EasyVVUQ workflows.</p>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">            pandas DataFrame</span>
+<span class="sd">        pandas DataFrame</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">last_iteration</span><span class="p">:</span>
             <span class="n">iteration</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_active_sampler</span><span class="o">.</span><span class="n">iteration</span> <span class="o">-</span> <span class="mi">1</span>
@@ -1445,13 +1354,9 @@ EasyVVUQ workflows.</p>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        analysis : `easyvvuq.analysis.base.BaseAnalysisElement`</span>
+<span class="sd">        analysis : Analysis</span>
 <span class="sd">            Element that performs a VVUQ analysis on a dataframe summary of</span>
 <span class="sd">            run outputs.</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="c1"># Apply analysis element to most recent collation result</span>
@@ -1462,7 +1367,7 @@ EasyVVUQ workflows.</p>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        **kwargs - dict</span>
+<span class="sd">        **kwargs : dict</span>
 <span class="sd">           Argument to the analysis class constructor (after sampler).</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">collation_result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_collation_result</span><span class="p">()</span>
@@ -1473,12 +1378,7 @@ EasyVVUQ workflows.</p>
             <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;This sampler does not have a corresponding analysis class&quot;</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">get_last_analysis</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Return the output of the most recently run analysis element.</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-
+        <span class="sd">&quot;&quot;&quot;Return the output of the most recently run analysis element.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_analysis</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">logging</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;No last analysis output available.&quot;</span><span class="p">)</span>
@@ -1487,7 +1387,8 @@ EasyVVUQ workflows.</p>
 
     <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Returns formatted summary of the current Campaign state.</span>
-<span class="sd">        Enables class to work with standard print() method&quot;&quot;&quot;</span>
+<span class="sd">        Enables class to work with standard print() method</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">return</span> <span class="p">(</span><span class="sa">f</span><span class="s2">&quot;db_location = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">db_location</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
                 <span class="sa">f</span><span class="s2">&quot;active_sampler_id = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_active_sampler_id</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
@@ -1504,8 +1405,6 @@ EasyVVUQ workflows.</p>
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        The sampler currently in use</span>
-<span class="sd">            easyvvuq.sampling.base.BaseSamplingElement</span>
-
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_active_sampler</span>
@@ -1519,11 +1418,6 @@ EasyVVUQ workflows.</p>
 <span class="sd">        ----------</span>
 <span class="sd">        list_of_run_IDs: list</span>
 <span class="sd">            The list of run IDs for the runs that should be set to status IGNORED</span>
-
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">campaign_db</span><span class="o">.</span><span class="n">set_run_statuses</span><span class="p">(</span><span class="n">list_of_run_IDs</span><span class="p">,</span> <span class="n">Status</span><span class="o">.</span><span class="n">IGNORED</span><span class="p">)</span>
 
@@ -1538,11 +1432,6 @@ EasyVVUQ workflows.</p>
 <span class="sd">        ----------</span>
 <span class="sd">        list_of_run_IDs: list</span>
 <span class="sd">            The list of run IDs for the runs that should be set to status ENCODED</span>
-
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">for</span> <span class="n">run_ID</span> <span class="ow">in</span> <span class="n">list_of_run_IDs</span><span class="p">:</span>
@@ -1555,8 +1444,7 @@ EasyVVUQ workflows.</p>
         <span class="bp">self</span><span class="o">.</span><span class="n">campaign_db</span><span class="o">.</span><span class="n">set_run_statuses</span><span class="p">(</span><span class="n">list_of_run_IDs</span><span class="p">,</span> <span class="n">Status</span><span class="o">.</span><span class="n">ENCODED</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">get_active_app</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Returns a dict of information regarding the application that is currently</span>
+        <span class="sd">&quot;&quot;&quot;Returns a dict of information regarding the application that is currently</span>
 <span class="sd">        set for this campaign.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_active_app</span>
@@ -1571,56 +1459,59 @@ database (CampaignDB) to store information on both the target application
 and the VVUQ algorithms being employed. It also collects data from the simulations
 and can be used to store and resume your state.</p>
 
-<h2 id="notes">Notes</h2>
+<h6 id="notes">Notes</h6>
 
 <p>Multiple campaigns can be combined in a CampaignDB. Hence the particular
 campaign we are currently working on will be specified using <code>campaign_id</code>.</p>
 
-<h2 id="parameters">Parameters</h2>
+<h6 id="parameters">Parameters</h6>
 
-<p>name : :obj:<code>str</code>, optional
-params : dict
-    Description of the parameters to associate with the application.
-db_location : :obj:<code>str</code>, optional
-    Location of the underlying campaign database - either a path or
-    acceptable URI for SQLAlchemy.
-work_dir : :obj:<code>str</code>, optional, default='./'
-    Path to working directory - used to store campaign directory.
-state_file : :obj:<code>str</code>, optional
-    Path to serialised state - used to initialise the Campaign.
-change_to_state : bool, optional, default=False
-    Should we change to the directory containing any specified <code>state_file</code>
-    in order to make relative paths work.
-verify_all_runs: bool, optional, default=True
-    Check all new runs being added for unrecognised params (not defined for the currently set
-    app), values lying within defined physical range, type checking etc. This should normally
-    always be set to True, but in cases where the performance is too degraded, the checks can
-    be disabled by setting to False.</p>
+<ul>
+<li><p><strong>name</strong> (str, optional):</p></li>
+<li><p><strong>params</strong> (dict):
+Description of the parameters to associate with the application.</p></li>
+<li><strong>db_location</strong> (str, optional):
+Location of the underlying campaign database - either a path or
+acceptable URI for SQLAlchemy.</li>
+<li><strong>work_dir</strong> (str, optional, default='./'):
+Path to working directory - used to store campaign directory.</li>
+<li><strong>state_file</strong> (str, optional):
+Path to serialised state - used to initialise the Campaign.</li>
+<li><strong>change_to_state</strong> (bool, optional, default=False):
+Should we change to the directory containing any specified <code>state_file</code>
+in order to make relative paths work.</li>
+<li><strong>verify_all_runs</strong> (bool, optional, default=True):
+Check all new runs being added for unrecognised params (not defined for the currently set
+app), values lying within defined physical range, type checking etc. This should normally
+always be set to True, but in cases where the performance is too degraded, the checks can
+be disabled by setting to False.</li>
+</ul>
 
-<h2 id="attributes">Attributes</h2>
+<h6 id="attributes">Attributes</h6>
 
-<p>campaign_name : str or None
-    Name for the campaign/workflow.
-_campaign_dir: str or None
-    Path to the directory campaign uses for local storage (runs inputs etc)
-db_location : str or None
-    Location of the underlying campaign database - either a path or
-    acceptable URI for SQLAlchemy.
-_log: list
-    The log of all elements that have been applied, with information about
-    their application
-campaign_id : int
-    ID number for the current campaign in the CampaignDB.
-campaign_db: <a href="db.html#BaseCampaignDB">easyvvuq.db.BaseCampaignDB</a>
-    A campaign database object
-last_analysis:
-    The result of the most recent analysis carried out on this campaign
-_active_app: dict
-    Info about currently set app
-_active_app_name: str
-    Name of currently set app
-_active_sampler_id: int
-    The database id of the currently set Sampler object</p>
+<ul>
+<li><strong>campaign_name</strong> (str or None):
+Name for the campaign/workflow.</li>
+<li><strong>_campaign_dir</strong> (str or None):
+Path to the directory campaign uses for local storage (runs inputs etc)</li>
+<li><strong>db_location</strong> (str or None):
+Location of the underlying campaign database - either a path or
+acceptable URI for SQLAlchemy.</li>
+<li><strong>_log</strong> (list):
+The log of all elements that have been applied, with information about
+their application</li>
+<li><strong>campaign_id</strong> (int):
+ID number for the current campaign in the CampaignDB.</li>
+<li><strong>campaign_db</strong> (<a href="db.html#BaseCampaignDB">easyvvuq.db.BaseCampaignDB</a>):
+A campaign database object</li>
+<li><strong>last_analysis:</strong>: The result of the most recent analysis carried out on this campaign</li>
+<li><strong>_active_app</strong> (dict):
+Info about currently set app</li>
+<li><strong>_active_app_name</strong> (str):
+Name of currently set app</li>
+<li><strong>_active_sampler_id</strong> (int):
+The database id of the currently set Sampler object</li>
+</ul>
 </div>
 
 
@@ -1699,11 +1590,12 @@ _active_sampler_id: int
 
             <div class="docstring"><p>Get the path in which to load/save files related to the campaign.</p>
 
-<h2 id="returns">Returns</h2>
+<h6 id="returns">Returns</h6>
 
-<p>str
-    Path to the campaign directory - given as a subdirectory of the
-    working directory.</p>
+<ul>
+<li><strong>str</strong>: Path to the campaign directory - given as a subdirectory of the
+working directory.</li>
+</ul>
 </div>
 
 
@@ -1758,12 +1650,14 @@ _active_sampler_id: int
 
             <div class="docstring"><p>Initialize the connection with the database and either resume or create the campaign.</p>
 
-<h2 id="parameters">Parameters</h2>
+<h6 id="parameters">Parameters</h6>
 
-<p>name: str
-    name of the campaign
-work_dir: str
-    work directory, defaults to cwd</p>
+<ul>
+<li><strong>name</strong> (str):
+name of the campaign</li>
+<li><strong>work_dir</strong> (str):
+work directory, defaults to cwd</li>
+</ul>
 </div>
 
 
@@ -1791,10 +1685,6 @@ work_dir: str
 <span class="sd">            An instance of Actions containing actions to be executed</span>
 <span class="sd">        set_active: bool</span>
 <span class="sd">            Should the added app be set to be the currently active app?</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="c1"># Verify input parameters dict</span>
@@ -1816,18 +1706,18 @@ work_dir: str
 
             <div class="docstring"><p>Add an application to the CampaignDB.</p>
 
-<h2 id="parameters">Parameters</h2>
+<h6 id="parameters">Parameters</h6>
 
-<p>name : str
-    Name of the application.
-params : dict
-    Description of the parameters to associate with the application.
-actions : Actions
-    An instance of Actions containing actions to be executed
-set_active: bool
-    Should the added app be set to be the currently active app?</p>
-
-<h2 id="returns">Returns</h2>
+<ul>
+<li><strong>name</strong> (str):
+Name of the application.</li>
+<li><strong>params</strong> (dict):
+Description of the parameters to associate with the application.</li>
+<li><strong>actions</strong> (Actions):
+An instance of Actions containing actions to be executed</li>
+<li><strong>set_active</strong> (bool):
+Should the added app be set to be the currently active app?</li>
+</ul>
 </div>
 
 
@@ -1852,10 +1742,6 @@ set_active: bool
 <span class="sd">        app_name: str or None</span>
 <span class="sd">            Name of selected app, if `None` given then first app will be</span>
 <span class="sd">            selected.</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_active_app_name</span> <span class="o">=</span> <span class="n">app_name</span>
@@ -1872,13 +1758,13 @@ set_active: bool
 
 <p>Application information is retrieved from <code>self.campaign_db</code>.</p>
 
-<h2 id="parameters">Parameters</h2>
+<h6 id="parameters">Parameters</h6>
 
-<p>app_name: str or None
-    Name of selected app, if <code>None</code> given then first app will be
-    selected.</p>
-
-<h2 id="returns">Returns</h2>
+<ul>
+<li><strong>app_name</strong> (str or None):
+Name of selected app, if <code>None</code> given then first app will be
+selected.</li>
+</ul>
 </div>
 
 
@@ -1898,14 +1784,10 @@ set_active: bool
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        sampler : easyvvuq.sampling.base.BaseSamplingElement</span>
+<span class="sd">        sampler : Sampler</span>
 <span class="sd">            Sampler that will be used to create runs for the current campaign.</span>
 <span class="sd">        update : bool</span>
 <span class="sd">            If set to True it will not add the sampler to the database, just change it as the active sampler.</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">sampler</span><span class="p">,</span> <span class="n">BaseSamplingElement</span><span class="p">):</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;set_sampler() must be passed a sampling element&quot;</span>
@@ -1924,14 +1806,14 @@ set_active: bool
 
             <div class="docstring"><p>Set active sampler.</p>
 
-<h2 id="parameters">Parameters</h2>
+<h6 id="parameters">Parameters</h6>
 
-<p>sampler : <a href="sampling/base.html#BaseSamplingElement">easyvvuq.sampling.base.BaseSamplingElement</a>
-    Sampler that will be used to create runs for the current campaign.
-update : bool
-    If set to True it will not add the sampler to the database, just change it as the active sampler.</p>
-
-<h2 id="returns">Returns</h2>
+<ul>
+<li><strong>sampler</strong> (Sampler):
+Sampler that will be used to create runs for the current campaign.</li>
+<li><strong>update</strong> (bool):
+If set to True it will not add the sampler to the database, just change it as the active sampler.</li>
+</ul>
 </div>
 
 
@@ -1953,13 +1835,9 @@ update : bool
 <span class="sd">        ----------</span>
 <span class="sd">        runs : list of dicts</span>
 <span class="sd">            Each dict defines the value of each model parameter listed in</span>
-<span class="sd">            `self.params_info` for a run to be added to `self.runs`</span>
+<span class="sd">            self.params_info for a run to be added to self.runs</span>
 <span class="sd">        mark_invalid : bool</span>
 <span class="sd">            Will mark runs that fail verification as invalid (but will not raise an exception)</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_active_app</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -2005,15 +1883,15 @@ update : bool
 
             <div class="docstring"><p>Add a new run to the queue.</p>
 
-<h2 id="parameters">Parameters</h2>
+<h6 id="parameters">Parameters</h6>
 
-<p>runs : list of dicts
-    Each dict defines the value of each model parameter listed in
-    <code>self.params_info</code> for a run to be added to <code>self.runs</code>
-mark_invalid : bool
-    Will mark runs that fail verification as invalid (but will not raise an exception)</p>
-
-<h2 id="returns">Returns</h2>
+<ul>
+<li><strong>runs</strong> (list of dicts):
+Each dict defines the value of each model parameter listed in
+self.params_info for a run to be added to self.runs</li>
+<li><strong>mark_invalid</strong> (bool):
+Will mark runs that fail verification as invalid (but will not raise an exception)</li>
+</ul>
 </div>
 
 
@@ -2029,11 +1907,9 @@ mark_invalid : bool
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">add_default_run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Add a single new run to the queue, using only default values for</span>
+        <span class="sd">&quot;&quot;&quot;Add a single new run to the queue, using only default values for</span>
 <span class="sd">        all parameters.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-
         <span class="n">new_run</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">add_runs</span><span class="p">([</span><span class="n">new_run</span><span class="p">])</span>
 </pre></div>
@@ -2072,20 +1948,16 @@ all parameters.</p>
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        num_samples : int</span>
-<span class="sd">                Number of samples to draw from the active sampling element.</span>
-<span class="sd">                By default is 0 (draw ALL samples)</span>
+<span class="sd">            Number of samples to draw from the active sampling element.</span>
+<span class="sd">            By default is 0 (draw ALL samples)</span>
 <span class="sd">        replicas : int</span>
-<span class="sd">                Number of replica runs to create with each set of parameters.</span>
-<span class="sd">                Default is 1 - so only a single run added for each set of</span>
-<span class="sd">                parameters.</span>
+<span class="sd">            Number of replica runs to create with each set of parameters.</span>
+<span class="sd">            Default is 1 - so only a single run added for each set of</span>
+<span class="sd">            parameters.</span>
 <span class="sd">        mark_invalid : bool</span>
-<span class="sd">           If True will mark runs that go outside valid parameter range as INVALID.</span>
-<span class="sd">           This is useful for MCMC style methods where you want those runs to evaluate</span>
-<span class="sd">           to low probabilities.</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-
+<span class="sd">            If True will mark runs that go outside valid parameter range as INVALID.</span>
+<span class="sd">            This is useful for MCMC style methods where you want those runs to evaluate</span>
+<span class="sd">            to low probabilities.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="c1"># Make sure `num_samples` is not 0 for an infinite generator</span>
@@ -2127,27 +1999,27 @@ runs list. If <code>num_samples</code> is 0 (its default value) then
 this method draws ALL samples from the sampler, until exhaustion (this
 will fail if the sampler is not finite).</p>
 
-<h2 id="notes">Notes</h2>
+<h6 id="notes">Notes</h6>
 
 <p>Do NOT use this in cases where you need 'replicas' with a different
 random seed. In those cases need to sample from a uniform_integer
 distribution and filter at analysis step.</p>
 
-<h2 id="parameters">Parameters</h2>
+<h6 id="parameters">Parameters</h6>
 
-<p>num_samples : int
-        Number of samples to draw from the active sampling element.
-        By default is 0 (draw ALL samples)
-replicas : int
-        Number of replica runs to create with each set of parameters.
-        Default is 1 - so only a single run added for each set of
-        parameters.
-mark_invalid : bool
-   If True will mark runs that go outside valid parameter range as INVALID.
-   This is useful for MCMC style methods where you want those runs to evaluate
-   to low probabilities.</p>
-
-<h2 id="returns">Returns</h2>
+<ul>
+<li><strong>num_samples</strong> (int):
+Number of samples to draw from the active sampling element.
+By default is 0 (draw ALL samples)</li>
+<li><strong>replicas</strong> (int):
+Number of replica runs to create with each set of parameters.
+Default is 1 - so only a single run added for each set of
+parameters.</li>
+<li><strong>mark_invalid</strong> (bool):
+If True will mark runs that go outside valid parameter range as INVALID.
+This is useful for MCMC style methods where you want those runs to evaluate
+to low probabilities.</li>
+</ul>
 </div>
 
 
@@ -2167,8 +2039,7 @@ mark_invalid : bool
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">            list of runs</span>
-
+<span class="sd">        list of runs</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">campaign_db</span><span class="o">.</span><span class="n">runs</span><span class="p">(</span><span class="n">sampler</span><span class="o">=</span><span class="n">sampler</span><span class="p">,</span> <span class="n">campaign</span><span class="o">=</span><span class="n">campaign</span><span class="p">,</span> <span class="n">status</span><span class="o">=</span><span class="n">status</span><span class="p">))</span>
 </pre></div>
@@ -2177,10 +2048,11 @@ mark_invalid : bool
 
             <div class="docstring"><p>Get list of runs in the CampaignDB.</p>
 
-<h2 id="returns">Returns</h2>
+<h6 id="returns">Returns</h6>
 
-<pre><code>list of runs
-</code></pre>
+<ul>
+<li><strong>list of runs</strong></li>
+</ul>
 </div>
 
 
@@ -2196,13 +2068,11 @@ mark_invalid : bool
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">scan_completed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Check campaign database for completed runs (defined as runs with COLLATED status)</span>
+        <span class="sd">&quot;&quot;&quot;Check campaign database for completed runs (defined as runs with COLLATED status)</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">            list of runs</span>
-
+<span class="sd">        list of runs</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">list_runs</span><span class="p">(</span><span class="n">status</span><span class="o">=</span><span class="n">Status</span><span class="o">.</span><span class="n">COLLATED</span><span class="p">)</span>
 </pre></div>
@@ -2211,10 +2081,11 @@ mark_invalid : bool
 
             <div class="docstring"><p>Check campaign database for completed runs (defined as runs with COLLATED status)</p>
 
-<h2 id="returns">Returns</h2>
+<h6 id="returns">Returns</h6>
 
-<pre><code>list of runs
-</code></pre>
+<ul>
+<li><strong>list of runs</strong></li>
+</ul>
 </div>
 
 
@@ -2230,14 +2101,12 @@ mark_invalid : bool
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">all_complete</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Check if all runs have reported having output generated by</span>
+        <span class="sd">&quot;&quot;&quot;Check if all runs have reported having output generated by</span>
 <span class="sd">        a completed simulation.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">            list of runs</span>
-
+<span class="sd">        list of runs</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">num</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">campaign_db</span><span class="o">.</span><span class="n">get_num_runs</span><span class="p">(</span><span class="n">not_status</span><span class="o">=</span><span class="n">Status</span><span class="o">.</span><span class="n">COLLATED</span><span class="p">)</span>
@@ -2251,10 +2120,11 @@ mark_invalid : bool
             <div class="docstring"><p>Check if all runs have reported having output generated by
 a completed simulation.</p>
 
-<h2 id="returns">Returns</h2>
+<h6 id="returns">Returns</h6>
 
-<pre><code>list of runs
-</code></pre>
+<ul>
+<li><strong>list of runs</strong></li>
+</ul>
 </div>
 
 
@@ -2275,8 +2145,7 @@ a completed simulation.</p>
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        str</span>
-<span class="sd">            Path in which the runs information will be written.</span>
-
+<span class="sd">        Path in which the runs information will be written.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">campaign_db</span><span class="o">.</span><span class="n">runs_dir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">campaign_name</span><span class="p">)</span>
 </pre></div>
@@ -2285,10 +2154,12 @@ a completed simulation.</p>
 
             <div class="docstring"><p>Get the runs directory from the CampaignDB.</p>
 
-<h2 id="returns">Returns</h2>
+<h6 id="returns">Returns</h6>
 
-<p>str
-    Path in which the runs information will be written.</p>
+<ul>
+<li><strong>str</strong></li>
+<li><strong>Path in which the runs information will be written.</strong></li>
+</ul>
 </div>
 
 
@@ -2320,10 +2191,12 @@ a completed simulation.</p>
 
             <div class="docstring"><p>Relocate the campaign by specifying a new path where campaign is located.</p>
 
-<h2 id="parameters">Parameters</h2>
+<h6 id="parameters">Parameters</h6>
 
-<p>new_path: str
-    new runs directory</p>
+<ul>
+<li><strong>new_path</strong> (str):
+new runs directory</li>
+</ul>
 </div>
 
 
@@ -2363,17 +2236,19 @@ a completed simulation.</p>
 
             <div class="docstring"><p>This will draw samples and execute the action on those samples.</p>
 
-<h2 id="parameters">Parameters</h2>
+<h6 id="parameters">Parameters</h6>
 
-<p>nsamples : int
-    Number of samples to draw. For infinite samplers or when you want to process samples in batches.
-pool : Pool
-    A pool object to be used when processing runs (e.g. instance of ThreadPoolExecutor or
-    ProcessPoolExecutor).
-mark_invalid : bool
-    Mark runs that go outside the specified input parameter range as INVALID.
-sequential : bool
-    Whether to process samples sequentially (sometimes more efficient).</p>
+<ul>
+<li><strong>nsamples</strong> (int):
+Number of samples to draw. For infinite samplers or when you want to process samples in batches.</li>
+<li><strong>pool</strong> (Pool):
+A pool object to be used when processing runs (e.g. instance of ThreadPoolExecutor or
+ProcessPoolExecutor).</li>
+<li><strong>mark_invalid</strong> (bool):
+Mark runs that go outside the specified input parameter range as INVALID.</li>
+<li><strong>sequential</strong> (bool):
+Whether to process samples sequentially (sometimes more efficient).</li>
+</ul>
 </div>
 
 
@@ -2389,13 +2264,13 @@ sequential : bool
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">apply_for_each_sample</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">sequential</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        For each run in this Campaign&#39;s run list, apply the specified action</span>
+        <span class="sd">&quot;&quot;&quot;For each run in this Campaign&#39;s run list, apply the specified action</span>
 <span class="sd">        (an object of type Action)</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        action : the action to be applied to each run directory</span>
+<span class="sd">        action : action</span>
+<span class="sd">            the action to be applied to each run directory</span>
 <span class="sd">            The function to be applied to each run directory. func() will</span>
 <span class="sd">            be called with the run directory path as its only argument.</span>
 <span class="sd">        status : Status</span>
@@ -2425,18 +2300,23 @@ sequential : bool
             <div class="docstring"><p>For each run in this Campaign's run list, apply the specified action
 (an object of type Action)</p>
 
-<h2 id="parameters">Parameters</h2>
+<h6 id="parameters">Parameters</h6>
 
-<p>action : the action to be applied to each run directory
-    The function to be applied to each run directory. func() will
-    be called with the run directory path as its only argument.
-status : Status
-    Will apply the action only to those runs whose status is as specified</p>
+<ul>
+<li><strong>action</strong> (action):
+the action to be applied to each run directory
+The function to be applied to each run directory. func() will
+be called with the run directory path as its only argument.</li>
+<li><strong>status</strong> (Status):
+Will apply the action only to those runs whose status is as specified</li>
+</ul>
 
-<h2 id="returns">Returns</h2>
+<h6 id="returns">Returns</h6>
 
-<p>action_statuses: ActionStatuses
-    An object containing ActionStatus instances to track action execution</p>
+<ul>
+<li><strong>action_statuses</strong> (ActionStatuses):
+An object containing ActionStatus instances to track action execution</li>
+</ul>
 </div>
 
 
@@ -2493,23 +2373,27 @@ status : Status
             <div class="docstring"><p>This is the equivalent of sample_and_apply for methods that rely on the output of the
 previous sampling stage (primarily MCMC).</p>
 
-<h2 id="parameters">Parameters</h2>
+<h6 id="parameters">Parameters</h6>
 
-<p>nsamples : int
-    number of samples to draw
-action : BaseAction
-    an action to be executed
-*args : args
-    arguments to action
-max_workers : int
-    number of actions to be executed at the same time
-mark_invalid : bool
-    Mark runs that go outside the specified input parameter range as INVALID.</p>
+<ul>
+<li><strong>nsamples</strong> (int):
+number of samples to draw</li>
+<li><strong>action</strong> (BaseAction):
+an action to be executed</li>
+<li><strong>*args</strong> (args):
+arguments to action</li>
+<li><strong>max_workers</strong> (int):
+number of actions to be executed at the same time</li>
+<li><strong>mark_invalid</strong> (bool):
+Mark runs that go outside the specified input parameter range as INVALID.</li>
+</ul>
 
-<h2 id="yields">Yields</h2>
+<h6 id="yields">Yields</h6>
 
-<p>action_statuses: ActionStatuses
-    An object containing ActionStatus instances to track action execution</p>
+<ul>
+<li><strong>action_statuses</strong> (ActionStatuses):
+An object containing ActionStatus instances to track action execution</li>
+</ul>
 </div>
 
 
@@ -2527,12 +2411,7 @@ mark_invalid : bool
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">recollate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Clears the current collation table, changes all COLLATED status runs</span>
 <span class="sd">           back to ENCODED, then runs collate() again</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-
 <span class="sd">        &quot;&quot;&quot;</span>
-
         <span class="n">collated_run_ids</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">campaign_db</span><span class="o">.</span><span class="n">run_ids</span><span class="p">(</span><span class="n">status</span><span class="o">=</span><span class="n">Status</span><span class="o">.</span><span class="n">COLLATED</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">campaign_db</span><span class="o">.</span><span class="n">set_run_statuses</span><span class="p">(</span><span class="n">collated_run_ids</span><span class="p">,</span> <span class="n">Status</span><span class="o">.</span><span class="n">ENCODED</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">collate</span><span class="p">()</span>
@@ -2541,9 +2420,7 @@ mark_invalid : bool
         </details>
 
             <div class="docstring"><p>Clears the current collation table, changes all COLLATED status runs
-   back to ENCODED, then runs collate() again</p>
-
-<h2 id="returns">Returns</h2>
+back to ENCODED, then runs collate() again</p>
 </div>
 
 
@@ -2559,8 +2436,7 @@ mark_invalid : bool
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">get_collation_result</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">last_iteration</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Return dataframe containing all collated results</span>
+        <span class="sd">&quot;&quot;&quot;Return dataframe containing all collated results</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -2569,7 +2445,7 @@ mark_invalid : bool
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">            pandas dataframe</span>
+<span class="sd">        pandas dataframe</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">last_iteration</span><span class="p">:</span>
@@ -2584,15 +2460,18 @@ mark_invalid : bool
 
             <div class="docstring"><p>Return dataframe containing all collated results</p>
 
-<h2 id="parameters">Parameters</h2>
+<h6 id="parameters">Parameters</h6>
 
-<p>last_collation : bool
-    Will only return the result of the last collation.</p>
+<ul>
+<li><strong>last_collation</strong> (bool):
+Will only return the result of the last collation.</li>
+</ul>
 
-<h2 id="returns">Returns</h2>
+<h6 id="returns">Returns</h6>
 
-<pre><code>pandas dataframe
-</code></pre>
+<ul>
+<li><strong>pandas dataframe</strong></li>
+</ul>
 </div>
 
 
@@ -2608,8 +2487,7 @@ mark_invalid : bool
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">get_invalid_runs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">last_iteration</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Return dataframe containing all results marked as INVALID.</span>
+        <span class="sd">&quot;&quot;&quot;Return dataframe containing all results marked as INVALID.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -2618,7 +2496,7 @@ mark_invalid : bool
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">            pandas DataFrame</span>
+<span class="sd">        pandas DataFrame</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">last_iteration</span><span class="p">:</span>
             <span class="n">iteration</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_active_sampler</span><span class="o">.</span><span class="n">iteration</span> <span class="o">-</span> <span class="mi">1</span>
@@ -2632,15 +2510,18 @@ mark_invalid : bool
 
             <div class="docstring"><p>Return dataframe containing all results marked as INVALID.</p>
 
-<h2 id="parameters">Parameters</h2>
+<h6 id="parameters">Parameters</h6>
 
-<p>last_collation : bool
-    Will only return the result of the last collation.</p>
+<ul>
+<li><strong>last_collation</strong> (bool):
+Will only return the result of the last collation.</li>
+</ul>
 
-<h2 id="returns">Returns</h2>
+<h6 id="returns">Returns</h6>
 
-<pre><code>pandas DataFrame
-</code></pre>
+<ul>
+<li><strong>pandas DataFrame</strong></li>
+</ul>
 </div>
 
 
@@ -2660,13 +2541,9 @@ mark_invalid : bool
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        analysis : `easyvvuq.analysis.base.BaseAnalysisElement`</span>
+<span class="sd">        analysis : Analysis</span>
 <span class="sd">            Element that performs a VVUQ analysis on a dataframe summary of</span>
 <span class="sd">            run outputs.</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="c1"># Apply analysis element to most recent collation result</span>
@@ -2677,13 +2554,13 @@ mark_invalid : bool
 
             <div class="docstring"><p>Run the <code>analysis</code> element on the output of the last run collation.</p>
 
-<h2 id="parameters">Parameters</h2>
+<h6 id="parameters">Parameters</h6>
 
-<p>analysis : <code><a href="analysis/base.html#BaseAnalysisElement">easyvvuq.analysis.base.BaseAnalysisElement</a></code>
-    Element that performs a VVUQ analysis on a dataframe summary of
-    run outputs.</p>
-
-<h2 id="returns">Returns</h2>
+<ul>
+<li><strong>analysis</strong> (Analysis):
+Element that performs a VVUQ analysis on a dataframe summary of
+run outputs.</li>
+</ul>
 </div>
 
 
@@ -2703,7 +2580,7 @@ mark_invalid : bool
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        **kwargs - dict</span>
+<span class="sd">        **kwargs : dict</span>
 <span class="sd">           Argument to the analysis class constructor (after sampler).</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">collation_result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_collation_result</span><span class="p">()</span>
@@ -2718,10 +2595,12 @@ mark_invalid : bool
 
             <div class="docstring"><p>If available will call an appropriate analysis class on the collation result.</p>
 
-<h2 id="parameters">Parameters</h2>
+<h6 id="parameters">Parameters</h6>
 
-<p>**kwargs - dict
-   Argument to the analysis class constructor (after sampler).</p>
+<ul>
+<li><strong>**kwargs</strong> (dict):
+Argument to the analysis class constructor (after sampler).</li>
+</ul>
 </div>
 
 
@@ -2737,12 +2616,7 @@ mark_invalid : bool
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">get_last_analysis</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Return the output of the most recently run analysis element.</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-
+        <span class="sd">&quot;&quot;&quot;Return the output of the most recently run analysis element.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_analysis</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">logging</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;No last analysis output available.&quot;</span><span class="p">)</span>
@@ -2753,8 +2627,6 @@ mark_invalid : bool
         </details>
 
             <div class="docstring"><p>Return the output of the most recently run analysis element.</p>
-
-<h2 id="returns">Returns</h2>
 </div>
 
 
@@ -2778,8 +2650,6 @@ mark_invalid : bool
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        The sampler currently in use</span>
-<span class="sd">            easyvvuq.sampling.base.BaseSamplingElement</span>
-
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_active_sampler</span>
@@ -2789,12 +2659,13 @@ mark_invalid : bool
 
             <div class="docstring"><p>Return the active sampler element in use by this campaign.</p>
 
-<h2 id="parameters">Parameters</h2>
+<h6 id="parameters">Parameters</h6>
 
-<h2 id="returns">Returns</h2>
+<h6 id="returns">Returns</h6>
 
-<p>The sampler currently in use
-    <a href="sampling/base.html#BaseSamplingElement">easyvvuq.sampling.base.BaseSamplingElement</a></p>
+<ul>
+<li><strong>The sampler currently in use</strong></li>
+</ul>
 </div>
 
 
@@ -2818,11 +2689,6 @@ mark_invalid : bool
 <span class="sd">        ----------</span>
 <span class="sd">        list_of_run_IDs: list</span>
 <span class="sd">            The list of run IDs for the runs that should be set to status IGNORED</span>
-
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">campaign_db</span><span class="o">.</span><span class="n">set_run_statuses</span><span class="p">(</span><span class="n">list_of_run_IDs</span><span class="p">,</span> <span class="n">Status</span><span class="o">.</span><span class="n">IGNORED</span><span class="p">)</span>
 </pre></div>
@@ -2833,12 +2699,12 @@ mark_invalid : bool
 this does NOT remove previously collated results from the collation table.
 For that you must refresh the collation by running recollate().</p>
 
-<h2 id="parameters">Parameters</h2>
+<h6 id="parameters">Parameters</h6>
 
-<p>list_of_run_IDs: list
-    The list of run IDs for the runs that should be set to status IGNORED</p>
-
-<h2 id="returns">Returns</h2>
+<ul>
+<li><strong>list_of_run_IDs</strong> (list):
+The list of run IDs for the runs that should be set to status IGNORED</li>
+</ul>
 </div>
 
 
@@ -2864,11 +2730,6 @@ For that you must refresh the collation by running recollate().</p>
 <span class="sd">        ----------</span>
 <span class="sd">        list_of_run_IDs: list</span>
 <span class="sd">            The list of run IDs for the runs that should be set to status ENCODED</span>
-
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">for</span> <span class="n">run_ID</span> <span class="ow">in</span> <span class="n">list_of_run_IDs</span><span class="p">:</span>
@@ -2889,12 +2750,12 @@ modifying the data in the relevant run folder). Note that this method will
 NOT perform any execution - it simply flags the run in EasyVVUQ as being
 uncollated. Actual execution is (as usual) the job of the user or middleware.</p>
 
-<h2 id="parameters">Parameters</h2>
+<h6 id="parameters">Parameters</h6>
 
-<p>list_of_run_IDs: list
-    The list of run IDs for the runs that should be set to status ENCODED</p>
-
-<h2 id="returns">Returns</h2>
+<ul>
+<li><strong>list_of_run_IDs</strong> (list):
+The list of run IDs for the runs that should be set to status ENCODED</li>
+</ul>
 </div>
 
 
@@ -2910,8 +2771,7 @@ uncollated. Actual execution is (as usual) the job of the user or middleware.</p
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">get_active_app</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Returns a dict of information regarding the application that is currently</span>
+        <span class="sd">&quot;&quot;&quot;Returns a dict of information regarding the application that is currently</span>
 <span class="sd">        set for this campaign.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_active_app</span>

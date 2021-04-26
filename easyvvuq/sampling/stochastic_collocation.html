@@ -1170,24 +1170,23 @@
 
             <div class="docstring"><p>Create the sampler for the Stochastic Collocation method.</p>
 
-<h2 id="parameters">Parameters</h2>
+<h6 id="parameters">Parameters</h6>
 
-<p>vary: dict or None
-    keys = parameters to be sampled, values = distributions.
-polynomial_order : int, optional
-    The polynomial order, default is 4.</p>
-
-<p>quadrature_rule : char, optional
-    The quadrature method, default is Gaussian "G".</p>
-
-<p>growth: bool, optional
-     Sets the growth rule to exponential for Clenshaw Curtis quadrature,
-     which makes it nested, and therefore more efficient for sparse grids.
-     Default is False.</p>
-
-<p>sparse : bool, optional
-    If True use sparse grid instead of normal tensor product grid,
-    default is False.</p>
+<ul>
+<li><strong>vary</strong> (dict or None):
+keys = parameters to be sampled, values = distributions.</li>
+<li><strong>polynomial_order</strong> (int, optional):
+The polynomial order, default is 4.</li>
+<li><strong>quadrature_rule</strong> (char, optional):
+The quadrature method, default is Gaussian "G".</li>
+<li><strong>growth</strong> (bool, optional):
+Sets the growth rule to exponential for Clenshaw Curtis quadrature,
+which makes it nested, and therefore more efficient for sparse grids.
+Default is False.</li>
+<li><strong>sparse</strong> (bool, optional):
+If True use sparse grid instead of normal tensor product grid,
+default is False.</li>
+</ul>
 </div>
 
 
@@ -1281,14 +1280,18 @@ polynomial_order : int, optional
             <div class="docstring"><p>Computes 1D collocation points and quad weights,
 and stores this in self.xi_1d, self.wi_1d.</p>
 
-<h2 id="parameters">Parameters</h2>
+<h6 id="parameters">Parameters</h6>
 
-<p>L : (int) the max level of the (sparse) grid
-N : (int) the number of uncertain parameters</p>
+<ul>
+<li><p><strong>L</strong> ((int) the max level of the (sparse) grid):</p></li>
+<li><p><strong>N</strong> ((int) the number of uncertain parameters):</p></li>
+</ul>
 
-<h2 id="returns">Returns</h2>
+<h6 id="returns">Returns</h6>
 
-<p>None.</p>
+<ul>
+<li><strong>None.</strong></li>
+</ul>
 </div>
 
 
@@ -1361,9 +1364,11 @@ This subroutine prevents that.</p>
 
 <p>The max quad orders are stores in self.max_quad_order</p>
 
-<h2 id="returns">Returns</h2>
+<h6 id="returns">Returns</h6>
 
-<p>None</p>
+<ul>
+<li><strong>None</strong></li>
+</ul>
 </div>
 
 
@@ -1427,9 +1432,11 @@ This subroutine prevents that.</p>
 
             <div class="docstring"><p>Adds the points of the next level for isotropic hierarchical sparse grids.</p>
 
-<h2 id="returns">Returns</h2>
+<h6 id="returns">Returns</h6>
 
-<p>None.</p>
+<ul>
+<li><strong>None.</strong></li>
+</ul>
 </div>
 
 
@@ -1549,14 +1556,18 @@ corresponding to the levels in admissble_idx.</p>
 
 <p>Source: Gerstner, Griebel, "Numerical integration using sparse grids"</p>
 
-<h2 id="parameters">Parameters</h2>
+<h6 id="parameters">Parameters</h6>
 
-<p>current_multi_idx : array of the levels in the current iteration
-of the sparse grid.</p>
+<ul>
+<li><p><strong>current_multi_idx</strong> (array of the levels in the current iteration):</p></li>
+<li><p><strong>of the sparse grid.</strong></p></li>
+</ul>
 
-<h2 id="returns">Returns</h2>
+<h6 id="returns">Returns</h6>
 
-<p>None.</p>
+<ul>
+<li><strong>None.</strong></li>
+</ul>
 </div>
 
 
@@ -1771,14 +1782,18 @@ Here |l| is the internal sum of i (l1+...+lN)</p>
 
             <div class="docstring"><p>Computes the difference of two 2D arrays X and Y</p>
 
-<h2 id="parameters">Parameters</h2>
+<h6 id="parameters">Parameters</h6>
 
-<p>X : 2D numpy array
-Y : 2D numpy array</p>
+<ul>
+<li><p><strong>X</strong> (2D numpy array):</p></li>
+<li><p><strong>Y</strong> (2D numpy array):</p></li>
+</ul>
 
-<h2 id="returns">Returns</h2>
+<h6 id="returns">Returns</h6>
 
-<p>The difference X \ Y as a 2D array</p>
+<ul>
+<li><strong>The difference X \ Y as a 2D array</strong></li>
+</ul>
 </div>
 
 

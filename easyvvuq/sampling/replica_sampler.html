@@ -85,7 +85,7 @@
 
                         <div class="docstring"><p>Replica Sampler</p>
 
-<h2 id="summary">Summary</h2>
+<h6 id="summary">Summary</h6>
 
 <p>Primarily intended for sampling the same paramater values but with
 different random seed. Other uses may be possible. It takes a finite
@@ -286,17 +286,18 @@ parameter dictionary.</p>
 
             <div class="docstring"><p>Replica Sampler</p>
 
-<h2 id="parameters">Parameters</h2>
+<h6 id="parameters">Parameters</h6>
 
-<p>sampler : an instance of a class derived from  BaseSamplingElement
-    a finite sampler to loop over</p>
-
-<p>replica_col : string
-    a parameter name for the replica id
-seed_col : string
-    a parameter name for the input parameter that specifies the RNG seed
-replicas : int
-    number of replicas, if zero will result in an infinite sampler</p>
+<ul>
+<li><strong>sampler</strong> (an instance of a class derived from  BaseSamplingElement):
+a finite sampler to loop over</li>
+<li><strong>replica_col</strong> (string):
+a parameter name for the replica id</li>
+<li><strong>seed_col</strong> (string):
+a parameter name for the input parameter that specifies the RNG seed</li>
+<li><strong>replicas</strong> (int):
+number of replicas, if zero will result in an infinite sampler</li>
+</ul>
 </div>
 
 

@@ -431,25 +431,22 @@
 
             <div class="docstring"><p>Get the bootstrap confidence interval for a given distribution.</p>
 
-<h2 id="parameters">Parameters</h2>
+<h6 id="parameters">Parameters</h6>
 
-<p>dist:
-    Array containing distribution of bootstrap results.
-value:
-    Value of statistic for which we are calculating error bars.
-alpha:
-    The alpha value for the confidence intervals.
-pivotal:
-    Use the pivotal method? Default to percentile method.</p>
+<ul>
+<li><strong>dist:</strong>: Array containing distribution of bootstrap results.</li>
+<li><strong>value:</strong>: Value of statistic for which we are calculating error bars.</li>
+<li><strong>alpha:</strong>: The alpha value for the confidence intervals.</li>
+<li><strong>pivotal:</strong>: Use the pivotal method? Default to percentile method.</li>
+</ul>
 
-<h2 id="returns">Returns</h2>
+<h6 id="returns">Returns</h6>
 
-<p>float:
-      Value of the bootstrap statistic
-float:
-      Highest value of the confidence interval
-float:
-      Lowest value of the confidence interval</p>
+<ul>
+<li><strong>float:</strong>: Value of the bootstrap statistic</li>
+<li><strong>float:</strong>: Highest value of the confidence interval</li>
+<li><strong>float:</strong>: Lowest value of the confidence interval</li>
+</ul>
 </div>
 
 
@@ -521,29 +518,30 @@ float:
 
         </details>
 
-            <div class="docstring"><h2 id="parameters">Parameters</h2>
+            <div class="docstring"><h6 id="parameters">Parameters</h6>
 
-<p>data : :obj:<code>pandas.DataFrame</code>
-    Input data to be analysed.
-stat_func : function
-    Statistical function to be applied to data for bootstrapping.
-alpha : float
-    Produce estimate of 100.0*(1-<code>alpha</code>) confidence interval.
-sample_size : int
-    Size of the sample to be drawn from the input data.
-n_samples : int
-    Number of times samples are to be drawn from the input data.
-pivotal : bool
-    Use the pivotal method? Default to percentile method.</p>
+<ul>
+<li><strong>data</strong> (<code>pandas.DataFrame</code>):
+Input data to be analysed.</li>
+<li><strong>stat_func</strong> (function):
+Statistical function to be applied to data for bootstrapping.</li>
+<li><strong>alpha</strong> (float):
+Produce estimate of 100.0*(1-<code>alpha</code>) confidence interval.</li>
+<li><strong>sample_size</strong> (int):
+Size of the sample to be drawn from the input data.</li>
+<li><strong>n_samples</strong> (int):
+Number of times samples are to be drawn from the input data.</li>
+<li><strong>pivotal</strong> (bool):
+Use the pivotal method? Default to percentile method.</li>
+</ul>
 
-<h2 id="returns">Returns</h2>
+<h6 id="returns">Returns</h6>
 
-<p>float:
-      Value of the bootstrap statistic
-float:
-      Highest value of the confidence interval
-float:
-      Lowest value of the confidence interval</p>
+<ul>
+<li><strong>float:</strong>: Value of the bootstrap statistic</li>
+<li><strong>float:</strong>: Highest value of the confidence interval</li>
+<li><strong>float:</strong>: Lowest value of the confidence interval</li>
+</ul>
 </div>
 
 
@@ -647,35 +645,38 @@ float:
 
             <div class="docstring"><p>Perform bootstrapping analysis on input data.</p>
 
-<h2 id="parameters">Parameters</h2>
+<h6 id="parameters">Parameters</h6>
 
-<p>data : :obj:<code>pandas.DataFrame</code>
-    DataFrame to be analysed.
-groupby : list or None
-    Columns to use to group the data in <code>analyse</code> method before
-    calculating stats.
-qoi_cols : list or None
-    Columns of quantities of interest (for which stats will be
-    calculated).
-stat_func : function
-    Statistical function to be applied to data for bootstrapping.
-alpha : float, default=0.05
-    Produce estimate of 100.0*(1-<code>alpha</code>) confidence interval.
-sample_size : int
-    Size of the sample to be drawn from the input data.
-n_samples : int, default=1000
-    Number of times samples are to be drawn from the input data.
-pivotal : bool, default=False
-    Use the pivotal method? Default to percentile method.
-stat_name : str, default='boot'
-    Name to use to describe columns containing output statistic (for example
-    'mean').</p>
+<ul>
+<li><strong>data</strong> (<code>pandas.DataFrame</code>):
+DataFrame to be analysed.</li>
+<li><strong>groupby</strong> (list or None):
+Columns to use to group the data in <code>analyse</code> method before
+calculating stats.</li>
+<li><strong>qoi_cols</strong> (list or None):
+Columns of quantities of interest (for which stats will be
+calculated).</li>
+<li><strong>stat_func</strong> (function):
+Statistical function to be applied to data for bootstrapping.</li>
+<li><strong>alpha</strong> (float, default=0.05):
+Produce estimate of 100.0*(1-<code>alpha</code>) confidence interval.</li>
+<li><strong>sample_size</strong> (int):
+Size of the sample to be drawn from the input data.</li>
+<li><strong>n_samples</strong> (int, default=1000):
+Number of times samples are to be drawn from the input data.</li>
+<li><strong>pivotal</strong> (bool, default=False):
+Use the pivotal method? Default to percentile method.</li>
+<li><strong>stat_name</strong> (str, default='boot'):
+Name to use to describe columns containing output statistic (for example
+'mean').</li>
+</ul>
 
-<h2 id="returns">Returns</h2>
+<h6 id="returns">Returns</h6>
 
-<p>:obj:<code>pandas.DataFrame</code>
-    Description of input data using bootstrap statistic and high/low
-    confidence intervals.</p>
+<ul>
+<li><strong><code>pandas.DataFrame</code></strong>: Description of input data using bootstrap statistic and high/low
+confidence intervals.</li>
+</ul>
 </div>
 
 
@@ -860,27 +861,29 @@ stat_name : str, default='boot'
 
             <div class="docstring"><p>Element to perform bootstrapping on collated simulation output.</p>
 
-<h2 id="parameters">Parameters</h2>
+<h6 id="parameters">Parameters</h6>
 
-<p>groupby : list or None
-    Columns to use to group the data in <code><a href="#EnsembleBoot.analyse">analyse</a></code> method before
-    calculating stats.
-qoi_cols : list or None
-    Columns of quantities of interest (for which stats will be
-    calculated).
-stat_func : function
-    Statistical function to be applied to data for bootstrapping.
-alpha : float, default=0.05
-    Produce estimate of 100.0*(1-<code>alpha</code>) confidence interval.
-sample_size : int
-    Size of the sample to be drawn from the input data.
-n_boot_samples : int, default=1000
-    Number of times samples are to be drawn from the input data.
-pivotal : bool, default=False
-    Use the pivotal method? Default to percentile method.
-stat_name : str, default='boot'
-    Name to use to describe columns containing output statistic (for example
-    'mean').</p>
+<ul>
+<li><strong>groupby</strong> (list or None):
+Columns to use to group the data in <code><a href="#EnsembleBoot.analyse">analyse</a></code> method before
+calculating stats.</li>
+<li><strong>qoi_cols</strong> (list or None):
+Columns of quantities of interest (for which stats will be
+calculated).</li>
+<li><strong>stat_func</strong> (function):
+Statistical function to be applied to data for bootstrapping.</li>
+<li><strong>alpha</strong> (float, default=0.05):
+Produce estimate of 100.0*(1-<code>alpha</code>) confidence interval.</li>
+<li><strong>sample_size</strong> (int):
+Size of the sample to be drawn from the input data.</li>
+<li><strong>n_boot_samples</strong> (int, default=1000):
+Number of times samples are to be drawn from the input data.</li>
+<li><strong>pivotal</strong> (bool, default=False):
+Use the pivotal method? Default to percentile method.</li>
+<li><strong>stat_name</strong> (str, default='boot'):
+Name to use to describe columns containing output statistic (for example
+'mean').</li>
+</ul>
 </div>
 
 
@@ -984,15 +987,18 @@ stat_name : str, default='boot'
 <p>The data_frame is grouped according to <code>self.groupby</code> if specified and
 analysis is performed on the columns selected in <code>self.qoi_cols</code> if set.</p>
 
-<h2 id="parameters">Parameters</h2>
+<h6 id="parameters">Parameters</h6>
 
-<p>data_frame : :obj:<code>pandas.DataFrame</code>
-    Summary data produced through collation of simulation output.</p>
+<ul>
+<li><strong>data_frame</strong> (<code>pandas.DataFrame</code>):
+Summary data produced through collation of simulation output.</li>
+</ul>
 
-<h2 id="returns">Returns</h2>
+<h6 id="returns">Returns</h6>
 
-<p>:obj:<code>pandas.DataFrame</code>
-    Basic statistic for selected columns and groupings of data.</p>
+<ul>
+<li><strong><code>pandas.DataFrame</code></strong>: Basic statistic for selected columns and groupings of data.</li>
+</ul>
 </div>
 
 
