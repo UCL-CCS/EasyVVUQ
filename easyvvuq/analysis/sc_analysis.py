@@ -65,7 +65,7 @@ class SCAnalysis(BaseAnalysisElement):
         """
         Parameters
         ----------
-        sampler : :obj:`easyvvuq.sampling.stochastic_collocation.SCSampler`
+        sampler : SCSampler
             Sampler used to initiate the SC analysis
         qoi_cols : list or None
             Column names for quantities of interest (for which analysis is
@@ -99,18 +99,13 @@ class SCAnalysis(BaseAnalysisElement):
         return "0.5"
 
     def save_state(self, filename):
-        """
-        Saves the complete state of the analysis object to a pickle file,
+        """Saves the complete state of the analysis object to a pickle file,
         except the sampler object (self.samples).
 
         Parameters
         ----------
-        filename : (string) name to the file to write the state to
-
-        Returns
-        -------
-        None.
-
+        filename : string 
+            name to the file to write the state to
         """
         logging.debug("Saving analysis state to %s" % filename)
         # make a copy of the state, and do not store the sampler as well
@@ -121,18 +116,13 @@ class SCAnalysis(BaseAnalysisElement):
         file.close()
 
     def load_state(self, filename):
-        """
-        Loads the complete state of the analysis object from a
+        """Loads the complete state of the analysis object from a
         pickle file, stored using save_state.
 
         Parameters
         ----------
-        filename : (string) name of the file to load
-
-        Returns
-        -------
-        None.
-
+        filename : string 
+            name of the file to load
         """
         logging.debug("Loading analysis state from %s" % filename)
         file = open(filename, 'rb')
@@ -146,7 +136,7 @@ class SCAnalysis(BaseAnalysisElement):
 
         Parameters
         ----------
-        data_frame : :obj:`pandas.DataFrame`
+        data_frame : pandas.DataFrame
             Input data for analysis.
 
         Returns
@@ -257,8 +247,7 @@ class SCAnalysis(BaseAnalysisElement):
                                  qois=qoi_cols, inputs=list(self.sampler.vary.get_keys()))
 
     def compute_comb_coef(self, **kwargs):
-        """
-        Compute general combination coefficients. These are the coefficients
+        """Compute general combination coefficients. These are the coefficients
         multiplying the tensor products associated to each multi index l,
         see page 12 Gerstner & Griebel, numerical integration using sparse grids
         """
@@ -286,8 +275,7 @@ class SCAnalysis(BaseAnalysisElement):
 
     def adapt_dimension(self, qoi, data_frame, store_stats_history=True,
                         method='surplus', **kwargs):
-        """
-        Compute the adaptation metric and decide which of the admissible
+        """Compute the adaptation metric and decide which of the admissible
         level indices to include in next iteration of the sparse grid. The
         adaptation metric is based on the hierarchical surplus, defined as the
         difference between the new code values of the admissible level indices,
@@ -300,23 +288,21 @@ class SCAnalysis(BaseAnalysisElement):
 
         Parameters
         ----------
-        - qoi : (string) the name of the quantity of interest which is used
-                        to base the adaptation metric on.
-        - data_frame : the data frame from the EasyVVUQ Campaign
-        - store_stats_history (boolean, default=True): store the mean and variance
-          at each refinement in self.mean_history and self.std_history. Used for
-          checking convergence in the stattistics over the refinement iterations
-        - method (string) : name of the refinement error, default is 'surplus'.
-          In this case the error is based on the hierarchical surplus, which is
-          an interpolation based error. Other possibilities are 'mean' and 'var',
-          in which case the error is based on the difference in the mean or
-          variance between the current estimate and the estimate obtained
-          when a particular candidate direction is added.
-
-        Returns
-        -------
-        None.
-
+        qoi : string
+            the name of the quantity of interest which is used
+            to base the adaptation metric on.
+        data_frame : pandas.DataFrame
+        store_stats_history : bool 
+            store the mean and variance at each refinement in self.mean_history 
+            and self.std_history. Used for checking convergence in the statistics 
+            over the refinement iterations
+        method : string
+            name of the refinement error, default is 'surplus'. In this case the 
+            error is based on the hierarchical surplus, which is an interpolation 
+            based error. Other possibilities are 'mean' and 'var',
+            in which case the error is based on the difference in the mean or
+            variance between the current estimate and the estimate obtained
+             when a particular candidate direction is added.
         """
         logging.debug('Refining sampling plan...')
         # load the code samples
@@ -439,8 +425,7 @@ class SCAnalysis(BaseAnalysisElement):
             logging.debug('done')
 
     def merge_accepted_and_admissible(self, level=0, **kwargs):
-        """
-        In the case of the dimension-adaptive sampler, there are 2 sets of
+        """In the case of the dimension-adaptive sampler, there are 2 sets of
         quadrature multi indices. There are the accepted indices that are actually
         used in the analysis, and the admissible indices, of which some might
         move to the accepted set in subsequent iterations. This subroutine merges
@@ -489,8 +474,7 @@ class SCAnalysis(BaseAnalysisElement):
             logging.debug('done')
 
     def undo_merge(self):
-        """
-        This reverses the effect of the merge_accepted_and_admissble subroutine.
+        """This reverses the effect of the merge_accepted_and_admissble subroutine.
         Execute if further refinement are required after all.
         """
         if self.sampler.dimension_adaptive:
@@ -498,22 +482,15 @@ class SCAnalysis(BaseAnalysisElement):
             logging.debug('Restored old multi indices.')
 
     def get_adaptation_errors(self):
-        """
-        Returns self.adaptation_errors
+        """Returns self.adaptation_errors
         """
         return self.adaptation_errors
 
     def plot_stat_convergence(self):
-        """
-        Plots the convergence of the statistical mean and std dev over the different
+        """Plots the convergence of the statistical mean and std dev over the different
         refinements in a dimension-adaptive setting. Specifically the inf norm
         of the difference between the stats of iteration i and iteration i-1
         is plotted.
-
-        Returns
-        -------
-        None.
-
         """
         if not self.dimension_adaptive:
             logging.debug('Only works for the dimension adaptive sampler.')
@@ -561,14 +538,16 @@ class SCAnalysis(BaseAnalysisElement):
         plt.show()
 
     def surrogate(self, qoi, x, L=None):
-        """
-        Use sc_expansion UQP as a surrogate
+        """Use sc_expansion UQP as a surrogate
 
         Parameters
         ----------
-        - qoi (str): name of the qoi
-        - x (array): location at which to evaluate the surrogate
-        - L (int): level of the (sparse) grid, default = self.L
+        qoi : str
+            name of the qoi
+        x : array
+            location at which to evaluate the surrogate
+        L : int
+            level of the (sparse) grid, default = self.L
 
         Returns
         -------
@@ -578,19 +557,20 @@ class SCAnalysis(BaseAnalysisElement):
         return self.sc_expansion(self.samples[qoi], x=x)
 
     def quadrature(self, qoi, samples=None):
-        """
-        Computes a (Smolyak) quadrature
+        """Computes a (Smolyak) quadrature
 
         Parameters
         ----------
-        - qoi (str): name of the qoi
+        qoi : str
+            name of the qoi
 
-        - samples: Default: compute the mean
-          by setting samples = self.samples. To compute the variance,
-          set samples = (self.samples - mean)**2
+        samples: array
+            compute the mean by setting samples = self.samples. 
+            To compute the variance, set samples = (self.samples - mean)**2
 
-        Returns: the quadrature of qoi
+        Returns
         -------
+        the quadrature of qoi
         """
         if samples is None:
             samples = self.samples[qoi]
@@ -598,19 +578,19 @@ class SCAnalysis(BaseAnalysisElement):
         return self.combination_technique(qoi, samples)
 
     def combination_technique(self, qoi, samples=None, **kwargs):
-        """
-        Efficient quadrature formulation for (sparse) grids. See:
+        """Efficient quadrature formulation for (sparse) grids. See:
 
             Gerstner, Griebel, "Numerical integration using sparse grids"
             Uses the general combination technique (page 12).
 
         Parameters
         ----------
-        - qoi (str): name of the qoi
+        qoi : str
+            name of the qoi
 
-        - samples (optional in kwargs): Default: compute the mean
-          by setting samples = self.samples. To compute the variance,
-          set samples = (self.samples - mean)**2
+        samples : array 
+            compute the mean by setting samples = self.samples. 
+            To compute the variance, set samples = (self.samples - mean)**2
         """
 
         if samples is None:
@@ -662,12 +642,12 @@ class SCAnalysis(BaseAnalysisElement):
         """
         Parameters
         ----------
-        - qoi (str): name of the qoi
+        qoi : str
+            name of the qoi
 
         Returns
         -------
-        - mean and variance of qoi (float (N_qoi,))
-
+        mean and variance of qoi (float (N_qoi,))
         """
         logging.debug('Computing moments...')
         # compute mean
@@ -679,17 +659,15 @@ class SCAnalysis(BaseAnalysisElement):
         return mean_f, var_f
 
     def sc_expansion(self, samples, x):
-        """
-        -------------------------------------------------
-        Non recursive implementation of the SC expansion.
+        """Non recursive implementation of the SC expansion.
         (Default setting of surrogate)
-        -------------------------------------------------
         Performs interpolation for both full and sparse grids.
 
         Parameters
         ----------
-        - samples: array of code samples
-        - x (float (N,)): location in stochastic space at which to eval
+        samples: array 
+            array of code samples
+        x (float (N,)): location in stochastic space at which to eval
           the surrogate
 
         Returns
@@ -736,23 +714,17 @@ class SCAnalysis(BaseAnalysisElement):
         """
         Parameters
         ----------
-        - qoi (str): name of quantity of interest
+        qoi : str
+            name of quantity of interest
 
         Returns
         -------
-         - array of all samples of qoi
+        array of all samples of qoi
         """
         return np.array([self.samples[qoi][k] for k in range(len(self.samples[qoi]))])
 
     def adaptation_histogram(self):
-        """
-        Parameters
-        ----------
-        None
-
-        Returns
-        -------
-        Plots a bar chart of the maximum order of the quadrature rule
+        """Plots a bar chart of the maximum order of the quadrature rule
         that is used in each dimension. Use in case of the dimension adaptive
         sampler to get an idea of which parameters were more refined than others.
         This gives only a first-order idea, as it only plots the max quad
@@ -776,8 +748,7 @@ class SCAnalysis(BaseAnalysisElement):
         plt.show()
 
     def adaptation_table(self, **kwargs):
-        """
-        Plots a color-coded table of the quadrature-order refinement.
+        """Plots a color-coded table of the quadrature-order refinement.
         Shows in what order the parameters were refined, and unlike
         adaptation_histogram, this also shows higher-order refinements.
 
@@ -832,8 +803,7 @@ class SCAnalysis(BaseAnalysisElement):
         plt.show()
 
     def plot_grid(self):
-        """
-        Plots the collocation points for 2 and 3 dimensional problems
+        """Plots the collocation points for 2 and 3 dimensional problems
         """
         import matplotlib.pyplot as plt
 
@@ -855,19 +825,19 @@ class SCAnalysis(BaseAnalysisElement):
             logging.debug('Will only plot for N = 2 or N = 3.')
 
     def SC2PCE(self, samples, verbose=True, **kwargs):
-        """
-        Computes the Polynomials Chaos Expansion coefficients from the SC
+        """Computes the Polynomials Chaos Expansion coefficients from the SC
         expansion via a transformation of basis (Lagrange polynomials basis -->
         orthonomial basis).
 
         Parameters
         ----------
-        samples : array of SC code samples from which to compute the PCE coefficients
+        samples : array
+            SC code samples from which to compute the PCE coefficients
 
         Returns
         -------
-        pce_coefs : dict of PCE coefficients per multi index l
-
+        pce_coefs : dict
+            PCE coefficients per multi index l
         """
         pce_coefs = {}
 
@@ -977,19 +947,20 @@ class SCAnalysis(BaseAnalysisElement):
         return pce_coefs
 
     def get_pce_stats(self, l_norm, pce_coefs, comb_coef):
-        """
-        Compute the mean and the variance based on the PCE coefficients
+        """Compute the mean and the variance based on the PCE coefficients
 
         Parameters
         ----------
-        - l_norm (array): array of quadrature order multi indices
-        - pce_coefs (tuple): tuple of PCE coefficients computed by SC2PCE subroutine
-        - comb_coef (tuple): tuple of combination coefficients computed by compute_comb_coef
+        l_norm : array
+            array of quadrature order multi indices
+        pce_coefs : tuple
+            tuple of PCE coefficients computed by SC2PCE subroutine
+        comb_coef : tuple
+            tuple of combination coefficients computed by compute_comb_coef
 
         Returns
         -------
-        - mean and variance based on the PCE coefficients
-
+        tuple with mean and variance based on the PCE coefficients
         """
 
         # Compute the PCE mean
@@ -1011,8 +982,7 @@ class SCAnalysis(BaseAnalysisElement):
         return mean, D
 
     def get_pce_sobol_indices(self, qoi, typ='first_order', **kwargs):
-        """
-        Computes Sobol indices using Polynomials Chaos coefficients. These
+        """Computes Sobol indices using Polynomials Chaos coefficients. These
         coefficients are computed from the SC expansion via a transformation
         of basis (SC2PCE subroutine). This works better than computing the
         Sobol indices directly from the SC expansion in the case of the
@@ -1024,16 +994,20 @@ class SCAnalysis(BaseAnalysisElement):
 
         Parameters
         ----------
-        - qoi (str): name of the Quantity of Interest for which to compute the indices
-        - typ (str): Default = 'first_order'. 'all' is also possible
-        - **kwargs: if this contains 'samples', use these instead of the SC samples ]
-          in the database
+        qoi : str
+            name of the Quantity of Interest for which to compute the indices
+        typ : str
+            Default = 'first_order'. 'all' is also possible
+        **kwargs : dict 
+            if this contains 'samples', use these instead of the SC samples ]
+            in the database
 
         Returns
         -------
-        - Mean: PCE mean
-        - Var: PCE variance
-        - S_u: PCE Sobol indices, either the first order indices or all indices
+        Tuple
+            Mean: PCE mean
+            Var: PCE variance
+            S_u: PCE Sobol indices, either the first order indices or all indices
         """
 
         if 'samples' in kwargs:
@@ -1318,8 +1292,7 @@ class SCAnalysis(BaseAnalysisElement):
 
 
 def powerset(iterable):
-    """
-    powerset([1,2,3]) --> () (1,) (2,) (3,) (1,2) (1,3) (2,3) (1,2,3)
+    """powerset([1,2,3]) --> () (1,) (2,) (3,) (1,2) (1,3) (2,3) (1,2,3)
 
     Taken from: https://docs.python.org/3/library/itertools.html#recipes
 
@@ -1338,19 +1311,21 @@ def powerset(iterable):
 
 
 def lagrange_poly(x, x_i, j):
-    """
-    Lagrange polynomials used for interpolation
+    """Lagrange polynomials used for interpolation
 
     l_j(x) = product(x - x_m / x_j - x_m) with 0 <= m <= k
                                                and m !=j
 
     Parameters
     ----------
-    x : (float), location at which to compute the polynomial
+    x : float
+        location at which to compute the polynomial
 
-    x_i : list or array of float, nodes of the Lagrange polynomials
+    x_i : list or array of float
+        nodes of the Lagrange polynomials
 
-    j : int, index of node at which l_j(x_j) = 1
+    j : int
+        index of node at which l_j(x_j) = 1
 
     Returns
     -------
