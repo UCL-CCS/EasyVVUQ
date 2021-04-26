@@ -10,44 +10,21 @@ import time
 import os
 import random
 
-__copyright__ = """
-
-    Copyright 2018 Robin A. Richardson, David W. Wright
-
-    This file is part of EasyVVUQ
-
-    EasyVVUQ is free software: you can redistribute it and/or modify
-    it under the terms of the Lesser GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    EasyVVUQ is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    Lesser GNU General Public License for more details.
-
-    You should have received a copy of the Lesser GNU General Public License
-    along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
-"""
 __license__ = "LGPL"
 
 logger = logging.getLogger(__name__)
 
-
 class ExecuteSLURM():
-    """An ActionStatus to track the execution of a SLURM job.
+    """An Action to launch and track the execution of a SLURM job.
 
     Parameters
     ----------
-    script: str
-        The body of the script. Will be written to a file
-        relative to target_dir named script_name.
-    script_name: str
-        Name of the script file. This will be written to.
-        So beware of overwriting issues.
-    target_dir: str
-        Name of the execution directory for this job.
+    template_script: str
+        Filename of a file containing the script template.
+    variable: str
+        A string to be replaced with the directory in which the job is meant to be executed.
+        This is to be used to make sure that the simulation can find the correct input files and knows
+        where to put output files.
     """
 
     def __init__(self, template_script, variable):
@@ -58,6 +35,11 @@ class ExecuteSLURM():
 
     def start(self, previous=None):
         """Start the SLURM job.
+
+        Parameters
+        ----------
+        previous: dict
+            A dictionary containing information provided by previously executed actions.
         """
         target_dir = previous['rundir']
         script_name = os.path.join(target_dir, os.path.basename(self.script_name))
