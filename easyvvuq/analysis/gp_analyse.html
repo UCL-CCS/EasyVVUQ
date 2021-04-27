@@ -92,18 +92,20 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        data_frame : :obj:`pandas.DataFrame`</span>
+<span class="sd">        data_frame : pandas.DataFrame</span>
 <span class="sd">            Summary data produced through collation of simulation output.</span>
+<span class="sd">        kwargs : keyword arguments</span>
+<span class="sd">            These arguments will be passed to sklearn&#39;s GaussianProcessRegressor</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        :obj:`pandas.DataFrame`</span>
-<span class="sd">            Basic statistic for selected columns and groupings of data.</span>
+<span class="sd">        easyvvuq.analysis.gp.GaussianProcessSurrogateResults</span>
+<span class="sd">           GaussianProcessSurrogateResults instance</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">x</span> <span class="o">=</span> <span class="n">data_frame</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">attr_cols</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
         <span class="n">y</span> <span class="o">=</span> <span class="n">data_frame</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">target_cols</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
 
-        <span class="n">gp</span> <span class="o">=</span> <span class="n">GaussianProcessRegressor</span><span class="p">()</span>
+        <span class="n">gp</span> <span class="o">=</span> <span class="n">GaussianProcessRegressor</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="n">gp</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">gp</span>
 </pre></div>
@@ -152,18 +154,20 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        data_frame : :obj:`pandas.DataFrame`</span>
+<span class="sd">        data_frame : pandas.DataFrame</span>
 <span class="sd">            Summary data produced through collation of simulation output.</span>
+<span class="sd">        kwargs : keyword arguments</span>
+<span class="sd">            These arguments will be passed to sklearn&#39;s GaussianProcessRegressor</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        :obj:`pandas.DataFrame`</span>
-<span class="sd">            Basic statistic for selected columns and groupings of data.</span>
+<span class="sd">        easyvvuq.analysis.gp.GaussianProcessSurrogateResults</span>
+<span class="sd">           GaussianProcessSurrogateResults instance</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">x</span> <span class="o">=</span> <span class="n">data_frame</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">attr_cols</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
         <span class="n">y</span> <span class="o">=</span> <span class="n">data_frame</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">target_cols</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
 
-        <span class="n">gp</span> <span class="o">=</span> <span class="n">GaussianProcessRegressor</span><span class="p">()</span>
+        <span class="n">gp</span> <span class="o">=</span> <span class="n">GaussianProcessRegressor</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="n">gp</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">gp</span>
 </pre></div>
@@ -243,18 +247,20 @@ Corresponding target values (can be vectors).</li>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        data_frame : :obj:`pandas.DataFrame`</span>
+<span class="sd">        data_frame : pandas.DataFrame</span>
 <span class="sd">            Summary data produced through collation of simulation output.</span>
+<span class="sd">        kwargs : keyword arguments</span>
+<span class="sd">            These arguments will be passed to sklearn&#39;s GaussianProcessRegressor</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        :obj:`pandas.DataFrame`</span>
-<span class="sd">            Basic statistic for selected columns and groupings of data.</span>
+<span class="sd">        easyvvuq.analysis.gp.GaussianProcessSurrogateResults</span>
+<span class="sd">           GaussianProcessSurrogateResults instance</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">x</span> <span class="o">=</span> <span class="n">data_frame</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">attr_cols</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
         <span class="n">y</span> <span class="o">=</span> <span class="n">data_frame</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">target_cols</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
 
-        <span class="n">gp</span> <span class="o">=</span> <span class="n">GaussianProcessRegressor</span><span class="p">()</span>
+        <span class="n">gp</span> <span class="o">=</span> <span class="n">GaussianProcessRegressor</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="n">gp</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">gp</span>
 </pre></div>
@@ -273,14 +279,16 @@ analysis is performed on the columns selected in <code>self.qoi_cols</code> if s
 <h6 id="parameters">Parameters</h6>
 
 <ul>
-<li><strong>data_frame</strong> (<code>pandas.DataFrame</code>):
+<li><strong>data_frame</strong> (pandas.DataFrame):
 Summary data produced through collation of simulation output.</li>
+<li><strong>kwargs</strong> (keyword arguments):
+These arguments will be passed to sklearn's GaussianProcessRegressor</li>
 </ul>
 
 <h6 id="returns">Returns</h6>
 
 <ul>
-<li><strong><code>pandas.DataFrame</code></strong>: Basic statistic for selected columns and groupings of data.</li>
+<li><strong><a href="../analysis.html#gp.GaussianProcessSurrogateResults">easyvvuq.analysis.gp.GaussianProcessSurrogateResults</a></strong>: GaussianProcessSurrogateResults instance</li>
 </ul>
 </div>
 
