@@ -283,11 +283,12 @@ class CampaignDB(BaseCampaignDB):
         db_entry = AppTable(**app_dict)
         self.session.add(db_entry)
         self.session.commit()
+        
         if replace_app is not None:
             assert(isinstance(replace_app, int))
             self.session.query(RunTable).filter(
                 RunTable.app == db_entry.id).update(
-                    {RunTable.status: Status.NEW, RunTable.app: replace_app},
+                    {RunTable.status: constants.Status.NEW, RunTable.app: replace_app},
                     synchronize_session='fetch')
             self.session.commit()
 
