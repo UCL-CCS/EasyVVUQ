@@ -250,7 +250,7 @@ class CampaignDB(BaseCampaignDB):
         self.session.query(CampaignTable).update({'active_app': app.id})
         self.session.commit()
 
-    def add_app(self, app_info, replace_app=None):
+    def add_app(self, app_info):
         """
         Add application to the 'app' table.
 
@@ -258,13 +258,6 @@ class CampaignDB(BaseCampaignDB):
         ----------
         app_info: AppInfo
             Application definition.
-        replace_app: int or None
-            Which app to replace if any (app field will be overwritten in runs that
-            have replace_app as their app)
-
-        Returns
-        -------
-
         """
 
         # Check that no app with same name exists
@@ -283,14 +276,21 @@ class CampaignDB(BaseCampaignDB):
         db_entry = AppTable(**app_dict)
         self.session.add(db_entry)
         self.session.commit()
+
+
+    def replace_actions(self, app_name, actions):
+        """Replace actions for an app with a given name.
         
-        if replace_app is not None:
-            assert(isinstance(replace_app, int))
-            self.session.query(RunTable).filter(
-                RunTable.app == db_entry.id).update(
-                    {RunTable.status: constants.Status.NEW, RunTable.app: replace_app},
-                    synchronize_session='fetch')
-            self.session.commit()
+        Parameters
+        ----------
+        app_name: str
+            Name of the app.
+        actions: Actions
+            `Actions instance, will replace the current `Actions` of an app.
+        """
+        self.session.query(AppTable).filter_by(name=app_name).update(
+            'actions': easyvvuq_serialize(action))
+        self.session.commit()
 
 
     def add_sampler(self, sampler_element):
