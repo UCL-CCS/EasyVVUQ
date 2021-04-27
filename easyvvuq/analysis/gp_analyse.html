@@ -80,7 +80,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">attr_cols</span> <span class="o">=</span> <span class="n">attr_cols</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">target_cols</span> <span class="o">=</span> <span class="n">target_cols</span>
 
-    <span class="k">def</span> <span class="nf">analyse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_frame</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">analyse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_frame</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Perform the basis stats analysis on the input `data_frame`.</span>
 
 <span class="sd">        Analysis is based on `pandas.Dataframe.describe` and results in</span>
@@ -142,7 +142,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">attr_cols</span> <span class="o">=</span> <span class="n">attr_cols</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">target_cols</span> <span class="o">=</span> <span class="n">target_cols</span>
 
-    <span class="k">def</span> <span class="nf">analyse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_frame</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">analyse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_frame</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Perform the basis stats analysis on the input `data_frame`.</span>
 
 <span class="sd">        Analysis is based on `pandas.Dataframe.describe` and results in</span>
@@ -230,12 +230,12 @@ Corresponding target values (can be vectors).</li>
 
         
             <span class="def">def</span>
-            <span class="name">analyse</span><span class="signature">(self, data_frame=None)</span>:
+            <span class="name">analyse</span><span class="signature">(self, data_frame=None, **kwargs)</span>:
     </div>
 
                 <details>
             <summary>View Source</summary>
-            <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">analyse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_frame</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+            <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">analyse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_frame</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Perform the basis stats analysis on the input `data_frame`.</span>
 
 <span class="sd">        Analysis is based on `pandas.Dataframe.describe` and results in</span>
