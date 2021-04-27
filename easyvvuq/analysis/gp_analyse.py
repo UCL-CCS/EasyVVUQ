@@ -21,15 +21,7 @@ class GaussianProcessSurrogate(BaseAnalysisElement):
         self.attr_cols = attr_cols
         self.target_cols = target_cols
 
-    def element_name(self):
-        """Name for this element for logging purposes"""
-        return "gp_surrogate"
-
-    def element_version(self):
-        """Version of this element for logging purposes"""
-        return "0.1"
-
-    def analyse(self, data_frame=None, **kwargs):
+    def analyse(self, data_frame=None):
         """Perform the basis stats analysis on the input `data_frame`.
 
         Analysis is based on `pandas.Dataframe.describe` and results in

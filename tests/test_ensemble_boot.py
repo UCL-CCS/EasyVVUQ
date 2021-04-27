@@ -37,13 +37,13 @@ def test_confidence_interval():
     stat, low, high = confidence_interval(dist, 0.0, 0.05, pivotal=True)
     assert(stat == low == high == 0.0)
     stat, low, high = confidence_interval(VALUES, 0.0, 0.05)
-    assert(stat == -0.06909454)
-    assert(low == -1.4859470412500002)
-    assert(high == 1.90957202975)
+    assert(stat == pytest.approx(-0.06909454))
+    assert(low == pytest.approx(-1.4859470412500002))
+    assert(high == pytest.approx(1.90957202975))
     stat, low, high = confidence_interval(VALUES, 0.0, 0.05, pivotal=True)
     assert(stat == 0.0)
-    assert(low == -1.90957202975)
-    assert(high == 1.4859470412500002)
+    assert(low == pytest.approx(-1.90957202975))
+    assert(high == pytest.approx(1.4859470412500002))
 
 
 def test_bootstrap():

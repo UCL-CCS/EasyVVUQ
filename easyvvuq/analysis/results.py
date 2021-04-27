@@ -47,16 +47,8 @@ class AnalysisResults:
             raise AttributeError(
                 "type object '{}' has no attribute '{}'".format(self.__class__.__name__, attr))
 
-    def implemented(self):
-        """Returns a list of implemented functionality.
-
-        Returns
-        -------
-        a list of str
-           names of types of analysis results that are implemented
-           for this method
-        """
-        return []
+    def supported_stats(self):
+        raise NotImplementedError('descriptive statistics not available in this method')
 
     def _get_sobols_first(self, qoi, input_):
         """Returns first order Sobol indices.
@@ -311,7 +303,7 @@ class AnalysisResults:
         pandas DataFrame or a numpy array
         """
         assert(not ((qoi is None) and (statistic is not None)))
-        statistics = ['mean', 'var', 'std', '10%', '90%', 'min', 'max', 'median']
+        statistics = ['mean', 'var', 'std', '1%', '10%', '90%', '99%', 'min', 'max', 'median']
         qois = self.qois
         if qoi is not None:
             qois = [qoi]
@@ -337,9 +329,51 @@ class AnalysisResults:
         else:
             return pd.DataFrame(result)
 
+    def plot_sobols_treemap(self, qoi, figsize=(10, 10), ax=None, filename=None, dpi=None):
+        """Plot sobols first and second order indices in a hierarchical treemap format.
+
+        Parameters
+        ----------
+        qoi: str
+           Name of the quantity of interest.
+        figsize: tuple
+           A tuple with two integers representing figure size in inches.
+        ax: matplotlib
+           Matplotlib axis to plot on.
+        filename: str
+           Filename to write the plot to. If left None will display to screen.
+        dpi: int
+           Dots per inches. Only used when writing to file.
+        """
+        if qoi not in self.qois:
+            raise RuntimeError("no such qoi - {}".format(qoi))
+        import matplotlib.pyplot as plt
+        import matplotlib._color_data as mcd
+        import squarify
+        sobols_first = self.sobols_first(qoi)
+        keys = list(sobols_first.keys())
+        values = [value[0] for value in list(sobols_first.values())]
+        keys = ["{}\n{:.5f}".format(key, value) for key, value in zip(keys, values)]
+        if sum(values) < 1.0:
+            keys.append("higher orders\n{:.5f}".format(1.0 - sum(values)))
+            values.append(1.0 - sum(values))
+        colors = mcd.XKCD_COLORS
+        if ax is None:
+            fig, ax = plt.subplots()
+        else:
+            fig = ax.get_figure()
+        fig.set_size_inches(figsize)
+        ax.set_title("Decomposition of {} variance".format(qoi))
+        squarify.plot(sizes=values, label=keys, color=colors, ax=ax, pad=True)
+        ax.axis('off')
+        if filename is None:
+            fig.show()
+        else:
+            fig.savefig(filename, dpi=dpi)
+
     def plot_sobols_first(self, qoi, inputs=None, withdots=False,
-                          ylabel=None, xlabel=None, filename=None,
-                          dpi=None):
+                          ylabel=None, xlabel=None, xvalues=None,
+                          filename=None, dpi=None, ax=None):
         """Plot first order sobol indices.
 
         Parameters
@@ -354,10 +388,19 @@ class AnalysisResults:
             if None will use "First Order Sobol Index"
         xlabel: str or None
             if None will use the name of the qoi
+        xvalues: array or None
+           x-axis coordiante if None will use range(len(qoi_values))
         filename: str or None
             if None will try to open a plotting window on-screen, otherwise will write the plot to this file, with the type determined by the extension specified
         dpi: int
             dots per inch, quality of the image if a raster format was chosen
+        ax: matplotlib axes object, default None
+            if None, plots to a new axes, otherwise plot to existing axes ax
+
+        Returns
+        -------
+        matplotlib axes object
+            the actual axes plotted to
         """
         if qoi not in self.qois:
             raise RuntimeError("no such qoi - {}".format(qoi))
@@ -381,24 +424,41 @@ class AnalysisResults:
                 points = [indices]
             else:
                 points.append(self.sobols_first(qoi, input_))
+        if xvalues is None:
+            xvalues = np.arange(len(points[0]))
+        if ax is None:
+            fig, ax = plt.subplots()
+        else:
+            fig = ax.get_figure()
+        higher = np.array([1.0] * len(points[0]))
         for p, label in zip(points, inputs):
-            plt.plot(p, next(styles), label=label)
-        plt.grid(True)
+            higher -= p
+            ax.plot(xvalues, p, next(styles), label=label)
+        ax.plot(xvalues, higher, next(styles), label='higher orders')
+        ax.grid(True)
         if ylabel is None:
-            plt.ylabel('First Order Sobol Index')
+            ax.set_ylabel('First Order Sobol Index')
         else:
-            plt.ylabel(ylabel)
+            ax.set_ylabel(ylabel)
         if xlabel is None:
-            plt.xlabel(qoi)
+            ax.set_xlabel('x-axis')
         else:
-            plt.xlabel(xlabel)
-        plt.legend()
-        if filename is None:
-            plt.show()
-        else:
-            plt.savefig(filename, dpi=dpi)
+            ax.set_xlabel(xlabel)
+        ax.legend()
+        if filename is not None:
+            fig.savefig(filename, dpi=dpi)
+        return ax
 
-    def plot_moments(self, qoi, ylabel=None, xlabel=None, alpha=0.5, filename=None, dpi=None):
+    def plot_moments(
+            self,
+            qoi,
+            ylabel=None,
+            xlabel=None,
+            xvalues=None,
+            alpha=0.2,
+            filename=None,
+            dpi=None,
+            ax=None):
         """Plot statistical moments for this analysis.
 
         Parameters
@@ -409,6 +469,8 @@ class AnalysisResults:
             if None will use "Values"
         xlabel: str or None
             if None will use the name of the qoi
+        xvalues: array or None
+            x-axis coordiante if None will use range(len(qoi_values)))
         alpha: float
             transparency amount
         filename: str or None
@@ -416,33 +478,60 @@ class AnalysisResults:
             write the plot to this file, with the type determined by the extension specified
         dpi: int
             dots per inch, quality of the image if a raster format was chosen
+        ax: matplotlib axes object, default None
+            if None, plots to a new axes, otherwise plot to existing axes ax
+
+        Returns
+        -------
+        matplotlib axes object
+            the actual axes plotted to
         """
         if qoi not in self.qois:
             raise RuntimeError("no such qoi - {}".format(qoi))
         import matplotlib.pyplot as plt
-        xs = np.arange(len(self.describe(qoi, 'mean')))
-        plt.fill_between(
-            xs, self.describe(
-                qoi, 'min'), self.describe(
-                qoi, 'max'), label='min-max', alpha=alpha)
-        plt.fill_between(xs, self.describe(qoi, 'mean') -
-                         self.describe(qoi, 'std'), self.describe(qoi, 'mean') +
-                         self.describe(qoi, 'std'), label='std', alpha=alpha)
-        plt.plot(self.describe(qoi, 'mean'), label='mean')
-        plt.grid(True)
+        if ax is None:
+            fig, ax = plt.subplots()
+        else:
+            fig = ax.get_figure()
+        if xvalues is None:
+            xvalues = np.arange(len(self.describe(qoi, 'mean')))
+#        ax.fill_between(
+#            xvalues, self.describe(
+#                qoi, 'min'), self.describe(
+#                qoi, 'max'), label='min-max', alpha=alpha)
+        ax.fill_between(xvalues, self.describe(qoi, 'mean') -
+                        self.describe(qoi, 'std'), self.describe(qoi, 'mean') +
+                        self.describe(qoi, 'std'), label='std', alpha=alpha)
+        ax.plot(xvalues, self.describe(qoi, 'mean'), label='mean')
+        ax.plot(xvalues, self.describe(qoi, '1%'), '--', label='1%', color='black')
+        ax.plot(xvalues, self.describe(qoi, '99%'), '--', label='99%', color='black')
+        ax.grid(True)
         if ylabel is None:
-            plt.ylabel("Value")
+            ax.set_ylabel(qoi)
         else:
-            plt.ylabel(ylabel)
+            ax.set_ylabel(ylabel)
         if xlabel is None:
-            plt.xlabel(qoi)
+            ax.set_xlabel('x-axis')
         else:
-            plt.xlabel(xlabel)
-        plt.legend()
-        if filename is None:
-            plt.show()
-        else:
-            plt.savefig(filename, dpi=dpi)
+            ax.set_xlabel(xlabel)
+        ax.legend()
+        if filename is not None:
+            fig.savefig(filename, dpi=dpi)
+        return ax
+
+    def get_distribution(self, qoi):
+        """Returns a distribution for the given qoi.
+
+        Parameters
+        ----------
+        qoi: str
+            QoI name
+        
+        Returns
+        -------
+        A ChaosPy distribution
+        """
+        raise NotImplementedError
 
     @staticmethod
     def _keys_to_tuples(dictionary):
@@ -499,3 +588,4 @@ class AnalysisResults:
             return (key, 0)
         else:
             raise RuntimeError("this method expects either a string or tuple")
+

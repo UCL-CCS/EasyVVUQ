@@ -1,5 +1,7 @@
-import time
-from concurrent.futures import ThreadPoolExecutor
+from concurrent.futures import ThreadPoolExecutor, as_completed
+from dask.distributed import Client
+from tqdm import tqdm
+import copy
 
 __copyright__ = """
 
@@ -24,51 +26,53 @@ __copyright__ = """
 __license__ = "LGPL"
 
 
-class ActionStatuses:
-    """A class that tracks statuses of a list of actions.
+class ActionPool:
+    """A class that handles the execution of actions.
 
     Parameters
     ----------
-    statuses: list of ActionStatus
-        a list of action statuses to track
-    poll_sleep_time: int
-        a time to sleep for after iterating over all active statuses
-        before starting again
-
+    campaign: Campaign
+        An instance of an EasyVVUQ campaign.
+    actions: Actions
+        An instance of Actions containing things to be done as part of the simulation.
+    inits: iterable
+        Initial inputs to be passed to each Actions representing a sample. Will usually contain
+        dictionaries with the following information: {'run_id': ..., 'campaign_dir': ..., 'run_info': ...}.
+    sequential: bool
+        Will run the actions sequentially.
     """
 
-    def __init__(self, statuses, batch_size=8, poll_sleep_time=1):
-        self.statuses = list(statuses)
-        self.actions = []
-        self.poll_sleep_time = poll_sleep_time
-        self.pool = ThreadPoolExecutor(batch_size)
+    def __init__(self, campaign, actions, inits, sequential=False):
+        self.campaign = campaign
+        self.actions = actions
+        self.inits = inits
+        self.sequential = sequential
+        self.futures = []
+        self.results = []
 
-    def job_handler(self, status):
-        """Will handle the execution of this action status.
-        
+    def start(self, pool=None):
+        """Start the actions.
+
         Parameters
         ----------
-        status: ActionStatus
-            ActionStatus of an action to be executed.
-        """
-        status.start()
-        while not status.finished():
-            time.sleep(self.poll_sleep_time)
-        if status.succeeded():
-            status.finalise()
-            return True
-        else:
-            return False
-
-    def start(self):
-        """Start the actions.
+        pool: An Executor instance (e.g. ThreadPoolExecutor)
 
         Returns
         -------
-        A list of Python futures represending action execution.
+        ActionPool
         """
-        self.actions = [self.pool.submit(self.job_handler, status) for status in self.statuses]
-        return self.actions
+        if pool is None:
+            pool = ThreadPoolExecutor()
+        self.pool = pool
+        for previous in self.inits:
+            previous = copy.copy(previous)
+            if self.sequential:
+                result = self.actions.start(previous)
+                self.results.append(result)
+            else:
+                future = self.pool.submit(self.actions.start, previous)
+                self.futures.append(future)
+        return self
 
     def progress(self):
         """Some basic stats about the action statuses status.
@@ -81,14 +85,38 @@ class ActionStatuses:
         running = 0
         done = 0
         failed = 0
-        for action in self.actions:
-            if action.running():
+        for future in self.futures:
+            if future.running():
                 running += 1
-            elif action.done():
-                if not action.result():
+            elif future.done():
+                if not future.result():
                     failed += 1
                 else:
                     done += 1
             else:
                 ready += 1
         return {'ready': ready, 'active': running, 'finished': done, 'failed': failed}
+
+    def collate(self, progress_bar=False):
+        """A command that will block untill al futures in the pool have finished.
+        It will also store the results in the database.
+
+        Parameters
+        ----------
+        progress_bar: bool
+           Whether to show progress bar
+        """
+        if not progress_bar:
+            tqdm_ = lambda x, total=None: x
+        else:
+            tqdm_ = tqdm
+        if isinstance(self.pool, Client):
+            self.results = self.pool.gather(self.futures)
+        if self.sequential or isinstance(self.pool, Client):
+            for result in tqdm_(self.results, total=len(self.results)):
+                self.campaign.campaign_db.store_result(result['run_id'], result)
+        else:
+            for future in tqdm_(as_completed(self.futures), total=len(self.futures)):
+                result = future.result()
+                self.campaign.campaign_db.store_result(result['run_id'], result)
+        self.campaign.campaign_db.session.commit()

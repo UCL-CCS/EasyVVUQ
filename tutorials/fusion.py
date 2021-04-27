@@ -41,7 +41,7 @@ def mtanh(x, b_slope):
     """
     return ((1 + b_slope * x)*np.exp(x)-np.exp(-x))/(np.exp(x)+np.exp(-x))
 
-def solve_Te(Qe_tot=2e6, H0=0, Hw=0.1, Te_bc=100, chi=1, a0=1, R0=3, E0=1.5, b_pos=0.98, b_height=6e19, b_sol=2e19, b_width=0.01, b_slope=0.01, nr=100, dt=100, plots=True):
+def solve_Te(Qe_tot=2e6, H0=0, Hw=0.1, Te_bc=100, chi=1, a0=1, R0=3, E0=1.5, b_pos=0.98, b_height=6e19, b_sol=2e19, b_width=0.01, b_slope=0.01, nr=100, dt=100, plots=True, output=True):
     """
     :param Qe_tot: heating power [W]
     :type Qe_tot: numpy float
@@ -75,6 +75,8 @@ def solve_Te(Qe_tot=2e6, H0=0, Hw=0.1, Te_bc=100, chi=1, a0=1, R0=3, E0=1.5, b_p
     :type dt: numpy float
     :param plots: enable plots
     :type plots: boolean
+    :param output: enable output of some diagnostic information
+    :type output: boolean
     :return: array of Te values [eV]
     :type: numpy float array
     :return: array of ne values [m^-3]
@@ -104,8 +106,9 @@ def solve_Te(Qe_tot=2e6, H0=0, Hw=0.1, Te_bc=100, chi=1, a0=1, R0=3, E0=1.5, b_p
     Qe = CellVariable(name="Qe", mesh=mesh, value=np.exp(-((mesh.cellCenters.value/a-H0)/(Hw))**2)[0])
     Qe = Qe * Qe_tot/((mesh.cellVolumes*Qe.value).sum() * V)
 
-    print('Volume = %s m^3' % (mesh.cellVolumes.sum() * V))
-    print('Heating power = %0.3e W' % ((mesh.cellVolumes*Qe).sum() * V))
+    if output:
+        print('Volume = %s m^3' % (mesh.cellVolumes.sum() * V))
+        print('Heating power = %0.3e W' % ((mesh.cellVolumes*Qe).sum() * V))
 
     Te.constrain(Te_bc, mesh.facesRight)
     eqI = TransientTerm(coeff=scipy.constants.e*ne*1.5) == DiffusionTerm(coeff=scipy.constants.e*ne*chi) + Qe

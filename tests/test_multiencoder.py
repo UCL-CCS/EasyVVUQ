@@ -1,9 +1,9 @@
 import easyvvuq as uq
+from easyvvuq.actions import Actions, Encode, Decode, CreateRunDirectory
 import chaospy as cp
 import os
 import sys
 import pytest
-from pprint import pprint
 
 __copyright__ = """
 
@@ -106,12 +106,17 @@ def test_multiencoder(tmpdir):
     decoder = uq.decoders.SimpleCSV(
         target_filename='output.csv', output_columns=[
             'Dist', 'lastvx', 'lastvy'])
-
+    actions = Actions(
+        CreateRunDirectory('/tmp'),
+        Encode(multiencoder),
+        uq.actions.ExecuteLocal(
+            os.path.abspath("tests/cannonsim/bin/cannonsim dir5/dir6/in.cannon.2") +
+            " output.csv"),
+        Decode(decoder))
     # Add the cannonsim app
     my_campaign.add_app(name="cannonsim",
                         params=params,
-                        encoder=multiencoder,
-                        decoder=decoder)
+                        actions=actions)
 
     # Set the active app to be cannonsim (this is redundant when only one app
     # has been added)
@@ -128,39 +133,13 @@ def test_multiencoder(tmpdir):
     # Set the campaign to use this sampler
     my_campaign.set_sampler(sampler)
 
-    # Test reloading
-    my_campaign.save_state(tmpdir + "test_multiencoder.json")
-    reloaded_campaign = uq.Campaign(state_file=tmpdir + "test_multiencoder.json", work_dir=tmpdir)
+    reloaded_campaign = uq.Campaign('cannon', db_location=my_campaign.db_location)
 
-    # Draw all samples
-    my_campaign.draw_samples()
-
-    # Print the list of runs now in the campaign db
-    print("List of runs added:")
-    pprint(my_campaign.list_runs())
-    print("---")
-
-    # Encode and execute.
-    my_campaign.populate_runs_dir()
-    my_campaign.apply_for_each_run_dir(
-        uq.actions.ExecuteLocal("tests/cannonsim/bin/cannonsim dir5/dir6/in.cannon.2 output.csv"))
-
-    print("Runs list after encoding and execution:")
-    pprint(my_campaign.list_runs())
-
-    # Collate all data into one pandas data frame
-    my_campaign.collate()
-    print("data:", my_campaign.get_collation_result())
+    my_campaign.execute(sequential=True).collate()
 
     # Create a BasicStats analysis element and apply it to the campaign
     stats = uq.analysis.BasicStats(qoi_cols=['Dist', 'lastvx', 'lastvy'])
     my_campaign.apply_analysis(stats)
-    print("stats:\n", my_campaign.get_last_analysis())
-
-    # Print the campaign log
-    pprint(my_campaign._log)
-
-    print("All completed?", my_campaign.all_complete())
 
 
 if __name__ == "__main__":

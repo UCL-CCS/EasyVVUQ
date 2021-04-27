@@ -93,8 +93,8 @@ def test_results(results):
     sobols_total_x2 = results._get_sobols_total('f', 'x2')
     assert(sobols_first_x1 == pytest.approx(0.62644867, 0.001))
     assert(sobols_first_x2 == pytest.approx(0.26789576, 0.001))
-    assert(sobols_second_x1 == {'x2': 0.10565556484738273})
-    assert(sobols_second_x2 == {'x1': 0.10565556484738273})
+    assert(sobols_second_x1['x2'] == pytest.approx(0.10565556484738273, 0.001))
+    assert(sobols_second_x2['x1'] == pytest.approx(0.10565556484738273, 0.001))
     assert(sobols_total_x1 == pytest.approx(0.73210424, 0.001))
     assert(sobols_total_x2 == pytest.approx(0.37355133, 0.001))
 
@@ -114,27 +114,39 @@ def test_full_results(results):
     assert(results.sobols_first('f', 'x2')[0] == pytest.approx(0.2678957617817755))
 
 
+def test_distribution(results):
+    with pytest.raises(RuntimeError):
+        results.get_distribution('z')
+    assert(results.get_distribution('f').pdf([0, 0]) == pytest.approx([0.44296863, 0.44296863]))
+
+    
 def test_describe(results_vectors):
     assert(
         results_vectors.describe()[
             ('g',
              1)].to_dict() == {
-            'mean': 0.5000000000000001,
-            'var': 0.08333333333333348,
-            'std': 0.28867513459481314,
-            '10%': 0.09946223131463872,
-            '90%': 0.8994171166439805,
-            'min': 4.677810565448583e-06,
-            'max': 0.9998733762740958})
+            'mean': pytest.approx(0.5000000000000001, 0.001),
+            'var': pytest.approx(0.08333333333333348, 0.001),
+            'std': pytest.approx(0.28867513459481314, 0.001),
+            '1%': pytest.approx(0.00918264783704714, 0.001),
+            '10%': pytest.approx(0.09946223131463872, 0.001),
+            'median': pytest.approx(0.49494477064098824, 0.001),
+            '90%': pytest.approx(0.9004983440179313, 0.001),
+            '99%': pytest.approx(0.9905999521854744, 0.001),
+            'min': pytest.approx(-0.775685017772766, 0.001),
+            'max': pytest.approx(1.775781592068878, 0.001)})
     assert(
         results_vectors.describe('g').to_dict()[
             ('g',
              1)] == {
-            'mean': 0.5000000000000001,
-            'var': 0.08333333333333348,
-            'std': 0.28867513459481314,
-            '10%': 0.09946223131463872,
-            '90%': 0.8994171166439805,
-            'min': 4.677810565448583e-06,
-            'max': 0.9998733762740958})
+            'mean': pytest.approx(0.5000000000000001, 0.001),
+            'var': pytest.approx(0.08333333333333348, 0.001),
+            'std': pytest.approx(0.28867513459481314, 0.001),
+            '1%': pytest.approx(0.00918264783704714, 0.001),
+            '10%': pytest.approx(0.09946223131463872, 0.001),
+            'median': pytest.approx(0.49494477064098824, 0.001),
+            '90%': pytest.approx(0.9004983440179313, 0.001),
+            '99%': pytest.approx(0.9905999521854744, 0.001),
+            'min': pytest.approx(-0.7756850177727665, 0.001),
+            'max': pytest.approx(1.775781592068878, 0.001)})
     assert(isinstance(results_vectors.describe('g', 'min'), np.ndarray))

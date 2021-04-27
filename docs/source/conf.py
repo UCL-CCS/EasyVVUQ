@@ -14,6 +14,10 @@ import os
 import sys
 sys.path.insert(0, os.path.abspath('../easyvvuq'))
 
+from sphinx.ext.apidoc import main as apidoc_main
+apidoc_main(["--force", "-o", "./_autodoc", "../../easyvvuq"])
+
+autodoc_mock_imports = ['dill']
 
 # -- Project information -----------------------------------------------------
 
@@ -22,7 +26,7 @@ copyright = '2020, David W. Wright, Robin A. Richardson, Vytautas Jancauskas, Ja
 author = 'David W. Wright, Robin A. Richardson, Vytautas Jancauskas, Jalal Lakhlili'
 
 # The full version, including alpha/beta/rc tags
-release = '0.7'
+release = '0.8'
 
 
 # -- General configuration ---------------------------------------------------
@@ -32,7 +36,7 @@ master_doc = 'index'
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
-extensions = ['sphinx.ext.autodoc','sphinx.ext.napoleon', 'sphinx.ext.autosectionlabel']
+extensions = ['sphinx.ext.autodoc', 'sphinx.ext.napoleon', 'sphinx.ext.autosectionlabel', 'sphinx.ext.viewcode']
 
 autosectionlabel_prefix_document = True
 

@@ -48,7 +48,7 @@ class JinjaEncoder(BaseEncoder, encoder_name="jinja_template"):
         self.template_fname = template_fname
         self.fixture_support = True
 
-    def encode(self, params={}, target_dir='', fixtures=None):
+    def encode(self, params={}, target_dir=''):
         """Substitutes `params` into a template application input, saves in
         `target_dir`
 
@@ -58,15 +58,9 @@ class JinjaEncoder(BaseEncoder, encoder_name="jinja_template"):
             Parameter information in dictionary.
         target_dir    : str
             Path to directory where application input will be written.
-        fixtures      : dict
-            Information of files/assets for fixture type parameters.
         """
 
-        if fixtures is not None:
-            local_params = self.substitute_fixtures_params(params, fixtures,
-                                                           target_dir)
-        else:
-            local_params = params
+        local_params = params
 
         try:
             with open(self.template_fname, 'r') as template_file:
@@ -96,10 +90,3 @@ class JinjaEncoder(BaseEncoder, encoder_name="jinja_template"):
         logging.error(reasoning)
 
         raise KeyError(reasoning)
-
-    def get_restart_dict(self):
-        return {"target_filename": self.target_filename,
-                "template_fname": self.template_fname}
-
-    def element_version(self):
-        return "0.1"

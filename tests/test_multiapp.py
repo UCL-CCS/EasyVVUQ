@@ -1,9 +1,9 @@
 import easyvvuq as uq
+from easyvvuq.actions import Actions, Encode, Decode, CreateRunDirectory
 import chaospy as cp
 import os
 import sys
 import pytest
-from pprint import pprint
 
 __copyright__ = """
 
@@ -85,14 +85,15 @@ def setup_cannonsim_app():
             'Dist', 'lastvx', 'lastvy'])
 
     vary = {
-        "gravity": cp.Uniform(9.8, 1.0),
+        "gravity": cp.Uniform(1.0, 9.8),
         "mass": cp.Uniform(2.0, 10.0),
     }
     cannon_sampler = uq.sampling.RandomSampler(vary=vary, max_num=5)
-    cannon_action = uq.actions.ExecuteLocal("tests/cannonsim/bin/cannonsim in.cannon output.csv")
+    cannon_action = uq.actions.ExecuteLocal(os.path.abspath("tests/cannonsim/bin/cannonsim") +
+                                            " in.cannon output.csv")
     cannon_stats = uq.analysis.BasicStats(qoi_cols=['Dist', 'lastvx', 'lastvy'])
-
-    return params, encoder, decoder, cannon_sampler, cannon_action, cannon_stats
+    actions = Actions(CreateRunDirectory('/tmp'), Encode(encoder), cannon_action, Decode(decoder))
+    return params, cannon_sampler, actions, cannon_stats
 
 
 def setup_cooling_app():
@@ -130,100 +131,61 @@ def setup_cooling_app():
         "t_env": cp.Uniform(15, 25)
     }
     cooling_sampler = uq.sampling.PCESampler(vary=vary, polynomial_order=3)
-    cooling_action = uq.actions.ExecuteLocal("tests/cooling/cooling_model.py cooling_in.json")
+    cooling_action = uq.actions.ExecuteLocal(os.path.abspath("tests/cooling/cooling_model.py") +
+                                             " cooling_in.json")
     cooling_stats = uq.analysis.PCEAnalysis(sampler=cooling_sampler, qoi_cols=output_columns)
-
-    return params, encoder, decoder, cooling_sampler, cooling_action, cooling_stats
+    actions = Actions(CreateRunDirectory('/tmp'), Encode(encoder), cooling_action, Decode(decoder))
+    return params, cooling_sampler, actions, cooling_stats
 
 
 def test_multiapp(tmpdir):
 
-    my_campaign = uq.Campaign(name='multiapp', work_dir=tmpdir, db_location='sqlite:///')
+    campaign = uq.Campaign(name='multiapp', work_dir=tmpdir, db_location='sqlite:///')
 
     # Add the cannonsim app to the campaign
-    (params, encoder, decoder, cannon_sampler,
-     cannon_action, cannon_stats) = setup_cannonsim_app()
-    my_campaign.add_app(name="cannonsim",
-                        params=params,
-                        encoder=encoder,
-                        decoder=decoder)
+    (params, cannon_sampler, cannon_action, cannon_stats) = setup_cannonsim_app()
+    campaign.add_app(name="cannonsim",
+                     params=params,
+                     actions=cannon_action)
 
-    my_campaign.set_app("cannonsim")
-    my_campaign.set_sampler(cannon_sampler)
+    campaign.set_app("cannonsim")
+    campaign.set_sampler(cannon_sampler)
 
     # Add the cooling app to the campaign
-    (params, encoder, decoder, cooling_sampler,
-     cooling_action, cooling_stats) = setup_cooling_app()
-    my_campaign.add_app(name="cooling",
-                        params=params,
-                        encoder=encoder,
-                        decoder=decoder)
-
-    # Set campaign to cannonsim, apply sampler, draw all samples
-    my_campaign.set_app("cannonsim")
-    my_campaign.set_sampler(cannon_sampler)
-    my_campaign.draw_samples()
-
-    # Set campaign to cooling model, apply sampler, draw all samples
-    my_campaign.set_app("cooling")
-    my_campaign.set_sampler(cooling_sampler)
-    my_campaign.draw_samples()
-
-    # Print the list of runs now in the campaign db
-    print("List of runs added:")
-    pprint(my_campaign.list_runs())
-    print("---")
+    (params, cooling_sampler, cooling_action, cooling_stats) = setup_cooling_app()
+    campaign.add_app(name="cooling",
+                     params=params,
+                     actions=cooling_action)
 
     # Populate the runs dirs for runs belonging to the cannonsim app
-    my_campaign.set_app("cannonsim")
-    my_campaign.populate_runs_dir()
+    campaign.set_app("cannonsim")
+    campaign.set_sampler(cannon_sampler)
+    campaign.execute().collate()
 
     # Populate the runs dirs for runs belonging to the cooling app
-    my_campaign.set_app("cooling")
-    my_campaign.populate_runs_dir()
+    campaign.set_app("cooling")
+    campaign.set_sampler(cooling_sampler)
+    campaign.execute().collate()
 
-    # Execute all the cannon runs
-    my_campaign.set_app("cannonsim")
-    my_campaign.apply_for_each_run_dir(cannon_action)
+    campaign.set_app("cannonsim")
 
-    # Execute all the cooling runs
-    my_campaign.set_app("cooling")
-    my_campaign.apply_for_each_run_dir(cooling_action)
-
-    print("Runs list after encoding and execution:")
-    pprint(my_campaign.list_runs())
-
-    # Collate cannon results
-    my_campaign.set_app("cannonsim")
-    my_campaign.collate()
-
-    # Collate cooling results
-    my_campaign.set_app("cooling")
-    my_campaign.collate()
-
-    print("Runs list after collation:")
-    pprint(my_campaign.list_runs())
-
-    my_campaign.set_app("cannonsim")
-    print("cannonsim data:", my_campaign.get_collation_result())
-
-    my_campaign.set_app("cooling")
-    print("cooling data:", my_campaign.get_collation_result())
+    campaign.set_app("cooling")
 
     # Apply analysis for cannon app
-    my_campaign.set_app("cannonsim")
-    my_campaign.apply_analysis(cannon_stats)
-    print("cannon stats:\n", my_campaign.get_last_analysis())
+    campaign.set_app("cannonsim")
+    campaign.set_sampler(cannon_sampler, True)
+    campaign.apply_analysis(cannon_stats)
+
+    cannonsim_df = campaign.get_collation_result()
 
     # Apply analysis for cooling app
-    my_campaign.set_app("cooling")
-    my_campaign.apply_analysis(cooling_stats)
-    print("cooling stats:\n", my_campaign.get_last_analysis())
+    campaign.set_app("cooling")
+    campaign.set_sampler(cooling_sampler, True)
+    campaign.apply_analysis(cooling_stats)
 
-    # Print the campaign log
-    pprint(my_campaign._log)
+    cooling_df = campaign.get_collation_result
 
-    print("All completed?", my_campaign.all_complete())
+    assert(not cannonsim_df.equals(cooling_df))
 
 
 if __name__ == "__main__":

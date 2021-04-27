@@ -1,6 +1,7 @@
 import chaospy as cp
 import numpy as np
 import easyvvuq as uq
+from easyvvuq.actions import CreateRunDirectory, Encode, ExecuteLocal, Decode, Actions
 import os
 import matplotlib.pyplot as plt
 
@@ -41,12 +42,13 @@ def test_anisotropic_order(tmpdir):
         target_filename='ade_in.json')
     decoder = uq.decoders.SimpleCSV(target_filename=output_filename,
                                     output_columns=output_columns)
+    execute = ExecuteLocal("{} ade_in.json".format(os.path.abspath('tests/sc/sc_model.py')))
+    actions = Actions(CreateRunDirectory('/tmp'), Encode(encoder), execute, Decode(decoder))
 
     # Add the SC app (automatically set as current app)
     my_campaign.add_app(name="sc",
                         params=params,
-                        encoder=encoder,
-                        decoder=decoder)
+                        actions=actions)
 
     # Create the sampler
     vary = {
@@ -55,45 +57,34 @@ def test_anisotropic_order(tmpdir):
     }
 
     # different orders for the 2 parameters
-    my_sampler = uq.sampling.SCSampler(vary=vary, polynomial_order=[2, 5],
-                                       quadrature_rule="G")
+    sampler = uq.sampling.SCSampler(vary=vary, polynomial_order=[2, 5],
+                                    quadrature_rule="G")
 
     # Associate the sampler with the campaign
-    my_campaign.set_sampler(my_sampler)
+    my_campaign.set_sampler(sampler)
 
-    # Will draw all (of the finite set of samples)
-    my_campaign.draw_samples()
-    my_campaign.populate_runs_dir()
-
-    #   Use this instead to run the samples using EasyVVUQ on the localhost
-    my_campaign.apply_for_each_run_dir(uq.actions.ExecuteLocal(
-        "tests/sc/sc_model.py ade_in.json"))
-
-    my_campaign.collate()
+    my_campaign.execute().collate()
 
     # Post-processing analysis
-    analysis = uq.analysis.SCAnalysis(sampler=my_sampler, qoi_cols=output_columns)
+    analysis = uq.analysis.SCAnalysis(sampler=sampler, qoi_cols=output_columns)
 
     my_campaign.apply_analysis(analysis)
 
-    #import pickle
-    #pickle.dump(analysis, open('analysis.p', 'wb'))
-
     results = my_campaign.get_last_analysis()
 
-    return results, my_sampler, analysis
+    return results, sampler, analysis
 
 
 if __name__ == "__main__":
 
-    results, my_sampler, analysis = test_anisotropic_order("/tmp")
+    results, sampler, analysis = test_anisotropic_order("/tmp")
 
     ###################################
     # Plot the moments and SC samples #
     ###################################
 
-    mu = results['statistical_moments']['u']['mean']
-    std = results['statistical_moments']['u']['std']
+    mu = results.describe('u', 'mean')
+    std = results.describe('u', 'std')
 
     x = np.linspace(0, 1, 301)
 
@@ -115,7 +106,7 @@ if __name__ == "__main__":
     n_mc = 20
     xi_mc = np.zeros([20, 2])
     idx = 0
-    for dist in my_sampler.vary.get_values():
+    for dist in sampler.vary.get_values():
         xi_mc[:, idx] = dist.sample(n_mc)
         idx += 1
 
@@ -138,12 +129,8 @@ if __name__ == "__main__":
         ylabel='Sobol indices',
         title='spatial dist. Sobol indices, Pe only important in viscous regions')
 
-    lbl = ['Pe', 'f', 'Pe-f interaction']
-    idx = 0
-
-    for S_i in results['sobols']['u']:
-        ax.plot(x, results['sobols']['u'][S_i], label=lbl[idx])
-        idx += 1
+    for param in sampler.vary.get_keys():
+        ax.plot(x, results._get_sobols_first('u', param), label=param)
 
     leg = plt.legend(loc=0)
     leg.set_draggable(True)

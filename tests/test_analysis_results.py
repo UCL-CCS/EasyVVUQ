@@ -109,11 +109,24 @@ def test_plotting_moments(tmp_path, ylabel, xlabel, dpi):
             return data.mean(axis=0)
         elif stat == 'std':
             return data.std(axis=0)
-        elif stat == 'min':
+        elif stat == '1%':
             return data.min(axis=0)
-        elif stat == 'max':
+        elif stat == '99%':
             return data.max(axis=0)
     results.describe = describe
     results.inputs = ['kappa', 't_env']
     results.plot_moments('t', ylabel, xlabel, filename=os.path.join(tmp_path, 'test.png'), dpi=dpi)
+    assert(os.path.exists(os.path.join(tmp_path, 'test.png')))
+
+
+def test_plotting_sobols_tree(tmp_path):
+    results = AnalysisResults()
+    results.qois = ['g1']
+    results.inputs = ['a', 'b', 'c', 'd']
+
+    def sobols_first(qoi):
+        return {'a': np.array([0.1]), 'b': np.array([0.2]),
+                'c': np.array([0.3]), 'd': np.array([0.3])}
+    results.sobols_first = sobols_first
+    results.plot_sobols_treemap('g1', filename=os.path.join(tmp_path, 'test.png'), dpi=10)
     assert(os.path.exists(os.path.join(tmp_path, 'test.png')))

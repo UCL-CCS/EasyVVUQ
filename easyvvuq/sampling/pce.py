@@ -94,7 +94,7 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
         self.distribution = cp.J(*params_distribution)
 
         # The orthogonal polynomials corresponding to the joint distribution
-        self.P = cp.orth_ttr(polynomial_order, self.distribution)
+        self.P = cp.orth_ttr(polynomial_order, self.distribution, normed=True)
 
         # The quadrature information
         self.quad_sparse = sparse
@@ -144,9 +144,6 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
             for i in range(count):
                 self.__next__()
 
-    def element_version(self):
-        return "0.6"
-
     def is_finite(self):
         return True
 
@@ -167,8 +164,12 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
         """
         return self._n_samples
 
-    def is_restartable(self):
-        return True
+    @property
+    def analysis_class(self):
+        """Return a corresponding analysis class.
+        """
+        from easyvvuq.analysis import PCEAnalysis
+        return PCEAnalysis
 
     def __next__(self):
         if self.count < self._n_samples:
@@ -179,12 +180,3 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
             return run_dict
         else:
             raise StopIteration
-
-    def get_restart_dict(self):
-        return {"vary": self.vary.serialize(),
-                "count": self.count,
-                "polynomial_order": self.polynomial_order,
-                "regression": self.regression,
-                "rule": self.rule,
-                "sparse": self.quad_sparse,
-                "growth": self.quad_growth}

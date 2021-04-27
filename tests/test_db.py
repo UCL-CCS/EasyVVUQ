@@ -5,12 +5,14 @@ from easyvvuq.constants import default_campaign_prefix, Status
 from easyvvuq.db.sql import CampaignDB
 from easyvvuq.data_structs import CampaignInfo, RunInfo, AppInfo
 from easyvvuq.constants import Status
+from easyvvuq.actions import Actions, ExecutePython
 import pandas as pd
 import numpy as np
 
 
 @pytest.fixture
 def app_info():
+    actions = Actions(ExecutePython(lambda x: {}))
     app_info = AppInfo('test', uq.ParamsSpecification({
         "temp_init": {
             "type": "float",
@@ -30,14 +32,15 @@ def app_info():
         "out_file": {
             "type": "string",
             "default": "output.csv"}}),
-        None,
-        uq.encoders.GenericEncoder(
-            template_fname='tests/cooling/cooling.template',
-            delimiter='$',
-            target_filename='cooling_in.json'),
-        uq.decoders.SimpleCSV(
-            target_filename='output.csv',
-            output_columns=["te"]))
+        actions)
+#        None,
+#        uq.encoders.GenericEncoder(
+#            template_fname='tests/cooling/cooling.template',
+#            delimiter='$',
+#            target_filename='cooling_in.json'),
+#        uq.decoders.SimpleCSV(
+#            target_filename='output.csv',
+#            output_columns=["te"]))
 
     return app_info
 
@@ -49,11 +52,10 @@ def campaign(tmp_path, app_info):
         campaign_dir_prefix=default_campaign_prefix,
         easyvvuq_version=uq.__version__,
         campaign_dir=str(tmp_path))
-    campaign = CampaignDB(location='sqlite:///{}/test.sqlite'.format(tmp_path),
-                          new_campaign=True, name='test', info=info)
+    campaign = CampaignDB(location='sqlite:///{}/test.sqlite'.format(tmp_path))
+    campaign.create_campaign(info)
     campaign.tmp_path = str(tmp_path)
-    runs = [RunInfo('run', 'test', '.', 1, {'a': 1}, 1, 1) for _ in range(1010)]
-    run_names = ['Run_{}'.format(i) for i in range(1, 1011)]
+    runs = [RunInfo('run', '.', 1, {'a': 1}, 1, 1) for _ in range(1010)]
     campaign.add_runs(runs)
     campaign.add_app(app_info)
     return campaign
@@ -64,10 +66,10 @@ def test_db_file_created(campaign):
 
 
 def test_get_and_set_status(campaign):
-    run_names = ['Run_{}'.format(i) for i in range(1, 1011)]
-    assert(all([campaign.get_run_status(name) == Status.NEW for name in run_names]))
-    campaign.set_run_statuses(run_names, Status.ENCODED)
-    assert(all([campaign.get_run_status(name) == Status.ENCODED for name in run_names]))
+    run_ids = list(range(1, 1011))
+    assert(all([campaign.get_run_status(id_) == Status.NEW for id_ in run_ids]))
+    campaign.set_run_statuses(run_ids, Status.ENCODED)
+    assert(all([campaign.get_run_status(id_) == Status.ENCODED for id_ in run_ids]))
 
 
 def test_get_num_runs(campaign):
@@ -108,25 +110,26 @@ def test_version_check(campaign):
         easyvvuq_version="some.other.version",
         campaign_dir=str(campaign.tmp_path))
     with pytest.raises(RuntimeError):
-        campaign2 = CampaignDB(location='sqlite:///{}/test.sqlite'.format(campaign.tmp_path),
-                               new_campaign=True, name='test2', info=info)
+        campaign2 = CampaignDB(location='sqlite:///{}/test.sqlite'.format(campaign.tmp_path))
+        campaign2.create_campaign(info)
     info = CampaignInfo(
         name='test3',
         campaign_dir_prefix=default_campaign_prefix,
         easyvvuq_version=uq.__version__,
         campaign_dir=str(campaign.tmp_path))
-    campaign3 = CampaignDB(location='sqlite:///{}/test.sqlite'.format(campaign.tmp_path),
-                           new_campaign=True, name='test3', info=info)
+    campaign3 = CampaignDB(location='sqlite:///{}/test.sqlite'.format(campaign.tmp_path))
+    campaign3.create_campaign(info)
 
 
 def test_collation(campaign):
     results = [(run[0], {'b': i, 'c': [i + 1, i + 2]}) for i, run in enumerate(campaign.runs())]
     campaign.store_results('test', results)
     campaign.set_run_statuses([run[0] for run in campaign.runs()], Status.COLLATED)
-    result = campaign.get_results('test')
+    result = campaign.get_results('test', 1)
     assert(isinstance(result, pd.DataFrame))
-    assert(list(result.columns) == [('run_id', 0), ('a', 0), ('b', 0), ('c', 0), ('c', 1)])
-    assert(list(result.iloc[100].values) == [101, 1, 100, 101, 102])
+    assert(list(result.columns) == [('run_id', 0), ('iteration', 0),
+                                    ('a', 0), ('b', 0), ('c', 0), ('c', 1)])
+    assert(list(result.iloc[100].values) == [101, 0, 1, 100, 101, 102])
     assert(result.count()[0] == 1010)
 
 
@@ -297,14 +300,14 @@ def test_mv_collation(tmp_path, app_info):
         campaign_dir_prefix=default_campaign_prefix,
         easyvvuq_version=uq.__version__,
         campaign_dir=str(tmp_path))
-    campaign = CampaignDB(location='sqlite:///{}/test.sqlite'.format(tmp_path),
-                          new_campaign=True, name='test', info=info)
+    campaign = CampaignDB(location='sqlite:///{}/test.sqlite'.format(tmp_path))
+    campaign.create_campaign(info)
     campaign.tmp_path = str(tmp_path)
-    runs = [RunInfo('run', 'test', '.', 1, params, 1, 1)]
-    run_names = ['Run_1']
+    runs = [RunInfo('run', '.', 1, params, 1, 1)]
+    run_ids = [0]
     campaign.add_runs(runs)
     campaign.add_app(app_info)
-    results = [('Run_1', mv_data), ('Run_2', mv_data)]
+    results = [(0, mv_data), (1, mv_data)]
     campaign.store_results('test', results)
-    assert(not campaign.get_results('test').empty)
+    assert(not campaign.get_results('test', 1).empty)
     return campaign

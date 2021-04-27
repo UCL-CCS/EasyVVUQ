@@ -119,5 +119,9 @@ class MCSampler(RandomSampler, sampler_name='mc_sampler'):
             self.xi_mc[(i + 1):self.max_num:step] = N_i
         logging.debug('Done.')
 
-    def get_restart_dict(self):
-        return {"vary": self.vary.serialize(), "n_mc_samples": self.n_mc_samples}
+    @property
+    def analysis_class(self):
+        """Return a corresponding analysis class.
+        """
+        from easyvvuq.analysis import QMCAnalysis
+        return QMCAnalysis

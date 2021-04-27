@@ -1,9 +1,9 @@
 import easyvvuq as uq
+from easyvvuq.actions import Actions, Encode, Decode, CreateRunDirectory
 import chaospy as cp
 import os
 import sys
 import pytest
-from pprint import pprint
 
 __copyright__ = """
 
@@ -41,7 +41,7 @@ CANNONSIM_PATH = os.path.realpath(os.path.expanduser("tests/cannonsim/bin/cannon
 def test_multisampler(tmpdir):
 
     # Set up a fresh campaign called "cannon"
-    my_campaign = uq.Campaign(name='cannon', db_type='sql', work_dir=tmpdir)
+    my_campaign = uq.Campaign(name='cannon', work_dir=tmpdir)
 
     # Define parameter space for the cannonsim app
     params = {
@@ -89,12 +89,14 @@ def test_multisampler(tmpdir):
     decoder = uq.decoders.SimpleCSV(
         target_filename='output.csv', output_columns=[
             'Dist', 'lastvx', 'lastvy'])
-
+    execute = uq.actions.ExecuteLocal(
+        os.path.abspath("tests/cannonsim/bin/cannonsim") +
+        " in.cannon output.csv")
+    actions = Actions(CreateRunDirectory('/tmp'), Encode(encoder), execute, Decode(decoder))
     # Add the cannonsim app
     my_campaign.add_app(name="cannonsim",
                         params=params,
-                        encoder=encoder,
-                        decoder=decoder)
+                        actions=actions)
 
     # Set the active app to be cannonsim (this is redundant when only one app
     # has been added)
@@ -114,7 +116,7 @@ def test_multisampler(tmpdir):
     sampler2 = uq.sampling.BasicSweep(sweep=sweep2)
 
     vary = {
-        "gravity": cp.Uniform(9.8, 1.0),
+        "gravity": cp.Uniform(1.0, 9.8),
         "mass": cp.Uniform(2.0, 10.0),
     }
     sampler3 = uq.sampling.RandomSampler(vary=vary, max_num=5)
@@ -126,38 +128,13 @@ def test_multisampler(tmpdir):
     my_campaign.set_sampler(multisampler)
 
     # Test reloading
-    my_campaign.save_state(tmpdir + "test_multisampler.json")
-    reloaded_campaign = uq.Campaign(state_file=tmpdir + "test_multisampler.json", work_dir=tmpdir)
+    reloaded_campaign = uq.Campaign('cannon', db_location=my_campaign.db_location)
 
-    # Draw all samples
-    my_campaign.draw_samples()
-
-    # Print the list of runs now in the campaign db
-    print("List of runs added:")
-    pprint(my_campaign.list_runs())
-    print("---")
-
-    # Encode and execute.
-    my_campaign.populate_runs_dir()
-    my_campaign.apply_for_each_run_dir(
-        uq.actions.ExecuteLocal("tests/cannonsim/bin/cannonsim in.cannon output.csv"))
-
-    print("Runs list after encoding and execution:")
-    pprint(my_campaign.list_runs())
-
-    # Collate all data into one pandas data frame
-    my_campaign.collate()
-    print("data:", my_campaign.get_collation_result())
+    my_campaign.execute(sequential=True).collate()
 
     # Create a BasicStats analysis element and apply it to the campaign
     stats = uq.analysis.BasicStats(qoi_cols=['Dist', 'lastvx', 'lastvy'])
     my_campaign.apply_analysis(stats)
-    print("stats:\n", my_campaign.get_last_analysis())
-
-    # Print the campaign log
-    pprint(my_campaign._log)
-
-    print("All completed?", my_campaign.all_complete())
 
 
 if __name__ == "__main__":

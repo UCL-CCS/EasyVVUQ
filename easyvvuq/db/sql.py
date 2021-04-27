@@ -4,19 +4,22 @@ import os
 import json
 import logging
 import pandas as pd
-import ast
+import numpy as np
+from sqlalchemy.sql import case
 from sqlalchemy import create_engine, Column, Integer, String, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import MetaData
+from sqlalchemy.exc import OperationalError
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import text
+from sqlalchemy.engine import Engine
+from sqlalchemy import event
 from .base import BaseCampaignDB
 from easyvvuq import constants
-from easyvvuq.sampling.base import BaseSamplingElement
-from easyvvuq.encoders.base import BaseEncoder
-from easyvvuq.decoders.base import BaseDecoder
 from easyvvuq import ParamsSpecification
+from easyvvuq.utils.helpers import easyvvuq_serialize, easyvvuq_deserialize
+
 
 __copyright__ = """
 
@@ -40,6 +43,8 @@ __copyright__ = """
 """
 __license__ = "LGPL"
 
+COMMIT_RATE = 50000
+
 logger = logging.getLogger(__name__)
 
 Base = declarative_base()
@@ -51,7 +56,6 @@ class DBInfoTable(Base):
     __tablename__ = 'db_info'
     id = Column(Integer, primary_key=True)
     next_run = Column(Integer)
-    next_ensemble = Column(Integer)
 
 
 class CampaignTable(Base):
@@ -65,6 +69,7 @@ class CampaignTable(Base):
     campaign_dir = Column(String)
     runs_dir = Column(String)
     sampler = Column(Integer, ForeignKey('sampler.id'))
+    active_app = Column(Integer, ForeignKey('app.id'))
 
 
 class AppTable(Base):
@@ -73,11 +78,8 @@ class AppTable(Base):
     __tablename__ = 'app'
     id = Column(Integer, primary_key=True)
     name = Column(String)
-    input_encoder = Column(String)
-    output_decoder = Column(String)
-    collater = Column(String)
     params = Column(String)
-    decoderspec = Column(String)
+    actions = Column(String)
 
 
 class RunTable(Base):
@@ -85,15 +87,16 @@ class RunTable(Base):
     """
     __tablename__ = 'run'
     id = Column(Integer, primary_key=True)
-    run_name = Column(String)
-    ensemble_name = Column(String)
+    run_name = Column(String, index=True)
     app = Column(Integer, ForeignKey('app.id'))
     params = Column(String)
     status = Column(Integer)
     run_dir = Column(String)
-    result = Column(String)
+    result = Column(String, default="{}")
+    execution_info = Column(String, default="{}")
     campaign = Column(Integer, ForeignKey('campaign_info.id'))
     sampler = Column(Integer, ForeignKey('sampler.id'))
+    iteration = Column(Integer, default=0)
 
 
 class SamplerTable(Base):
@@ -104,58 +107,90 @@ class SamplerTable(Base):
     sampler = Column(String)
 
 
+@event.listens_for(Engine, "connect")
+def set_sqlite_pragma(dbapi_connection, connection_record):
+    cursor = dbapi_connection.cursor()
+    cursor.execute("PRAGMA synchronous = OFF")
+    cursor.execute("PRAGMA journal_mode = OFF")
+    cursor.close()
+
+
 class CampaignDB(BaseCampaignDB):
+    """An interface between the campaign database and the campaign.
 
-    def __init__(self, location=None, new_campaign=False, name=None, info=None):
+    Parameters
+    ----------
+    location: str
+       database URI as needed by SQLAlchemy
+    """
 
+    def __init__(self, location=None):
         if location is not None:
             self.engine = create_engine(location)
         else:
             self.engine = create_engine('sqlite://')
-
+        self.commit_counter = 0
         session_maker = sessionmaker(bind=self.engine)
-
         self.session = session_maker()
+        Base.metadata.create_all(self.engine, checkfirst=True)
 
-        if new_campaign:
-            if info is None:
-                raise RuntimeError('No information provided to create'
-                                   'database')
-            if info.name != name:
-                message = (f'Information for campaign {info.name} given '
-                           f'for campaign database {name}')
-                logging.critical(message)
-                raise RuntimeError(message)
+    def resume_campaign(self, name):
+        """Resumes campaign.
 
-            Base.metadata.create_all(self.engine)
+        Parameters
+        ----------
+        name: str
+        """
+        info = self.session.query(
+            CampaignTable).filter_by(name=name).first()
+        if info is None:
+            raise ValueError('Campaign with the given name not found.')
+        db_info = self.session.query(DBInfoTable).first()
+        self._next_run = db_info.next_run
 
-            is_db_empty = (self.session.query(CampaignTable).first() is None)
+    def create_campaign(self, info):
+        """Creates a new campaign in the database.
 
-            version_check = self.session.query(
-                CampaignTable).filter(CampaignTable.easyvvuq_version != info.easyvvuq_version).all()
+        Parameters
+        ----------
+        info: CampaignInfo
+        """
+        is_db_empty = (self.session.query(CampaignTable).first() is None)
+        version_check = self.session.query(
+            CampaignTable).filter(CampaignTable.easyvvuq_version != info.easyvvuq_version).all()
+        if (not is_db_empty) and (len(version_check) != 0):
+            raise RuntimeError('Database contains campaign created with an incompatible' +
+                               ' version of EasyVVUQ!')
+        self._next_run = 1
+        self.session.add(CampaignTable(**info.to_dict(flatten=True)))
+        self.session.add(DBInfoTable(next_run=self._next_run))
+        self.session.commit()
 
-            if (not is_db_empty) and (len(version_check) != 0):
-                raise RuntimeError('Database contains campaign created with an incompatible' +
-                                   ' version of EasyVVUQ!')
+    def get_active_app(self):
+        """Returns active app table.
 
-            self._next_run = 1
-            self._next_ensemble = 1
+        Returns
+        -------
+        AppTable
+        """
+        return self.session.query(AppTable, CampaignTable).filter(
+            AppTable.id == CampaignTable.active_app).first()
 
-            self.session.add(CampaignTable(**info.to_dict(flatten=True)))
-            self.session.add(
-                DBInfoTable(
-                    next_run=self._next_run,
-                    next_ensemble=self._next_ensemble))
-            self.session.commit()
-        else:
-            info = self.session.query(
-                CampaignTable).filter_by(name=name).first()
-            if info is None:
-                raise ValueError('Campaign with the given name not found.')
+    def campaign_exists(self, name):
+        """Check if campaign specified by that name already exists.
 
-            db_info = self.session.query(DBInfoTable).first()
-            self._next_run = db_info.next_run
-            self._next_ensemble = db_info.next_ensemble
+        Parameters
+        ----------
+        name: str
+
+        Returns
+        -------
+        bool
+          True if such a campaign already exists, False otherwise
+        """
+        result = self.session.query(CampaignTable).filter(
+            CampaignTable.name == name).all()
+        return len(result) > 0
 
     def app(self, name=None):
         """
@@ -175,8 +210,6 @@ class CampaignDB(BaseCampaignDB):
         """
 
         if name is None:
-            logging.warning('No app name provided so using first app '
-                            'in database')
             selected = self.session.query(AppTable).all()
         else:
             selected = self.session.query(AppTable).filter_by(name=name).all()
@@ -192,21 +225,30 @@ class CampaignDB(BaseCampaignDB):
 
         selected_app = selected[0]
 
-        decoderspec = selected_app.decoderspec
-        if decoderspec is not None:
-            decoderspec = ast.literal_eval(selected_app.decoderspec)
-
         app_dict = {
             'id': selected_app.id,
             'name': selected_app.name,
-            'input_encoder': selected_app.input_encoder,
-            'output_decoder': selected_app.output_decoder,
-            'collater': selected_app.collater,
             'params': ParamsSpecification.deserialize(selected_app.params),
-            'decoderspec': decoderspec
+            'actions': selected_app.actions,
         }
 
         return app_dict
+
+    def set_active_app(self, name):
+        """Set an app specified by name as active.
+
+        Parameters
+        ----------
+        name: str
+           name of the app to set as active
+        """
+        selected = self.session.query(AppTable).filter_by(name=name).all()
+        if len(selected) == 0:
+            raise RuntimeError('no such app - {}'.format(name))
+        assert(not (len(selected) > 1))
+        app = selected[0]
+        self.session.query(CampaignTable).update({'active_app': app.id})
+        self.session.commit()
 
     def add_app(self, app_info):
         """
@@ -216,10 +258,6 @@ class CampaignDB(BaseCampaignDB):
         ----------
         app_info: AppInfo
             Application definition.
-
-        Returns
-        -------
-
         """
 
         # Check that no app with same name exists
@@ -239,6 +277,22 @@ class CampaignDB(BaseCampaignDB):
         self.session.add(db_entry)
         self.session.commit()
 
+
+    def replace_actions(self, app_name, actions):
+        """Replace actions for an app with a given name.
+        
+        Parameters
+        ----------
+        app_name: str
+            Name of the app.
+        actions: Actions
+            `Actions instance, will replace the current `Actions` of an app.
+        """
+        self.session.query(AppTable).filter_by(name=app_name).update(
+            {'actions': easyvvuq_serialize(actions)})
+        self.session.commit()
+
+
     def add_sampler(self, sampler_element):
         """
         Add new Sampler to the 'sampler' table.
@@ -251,7 +305,7 @@ class CampaignDB(BaseCampaignDB):
         -------
 
         """
-        db_entry = SamplerTable(sampler=sampler_element.serialize())
+        db_entry = SamplerTable(sampler=easyvvuq_serialize(sampler_element))
 
         self.session.add(db_entry)
         self.session.commit()
@@ -276,7 +330,7 @@ class CampaignDB(BaseCampaignDB):
         """
 
         selected = self.session.query(SamplerTable).get(sampler_id)
-        selected.sampler = sampler_element.serialize()
+        selected.sampler = easyvvuq_serialize(sampler_element)
         self.session.commit()
 
     def resurrect_sampler(self, sampler_id):
@@ -295,9 +349,11 @@ class CampaignDB(BaseCampaignDB):
             The 'live' sampler object, deserialized from the state in the db
 
         """
-
-        serialized_sampler = self.session.query(SamplerTable).get(sampler_id).sampler
-        sampler = BaseSamplingElement.deserialize(serialized_sampler)
+        try:
+            serialized_sampler = self.session.query(SamplerTable).get(sampler_id).sampler
+            sampler = easyvvuq_deserialize(serialized_sampler.encode('utf-8'))
+        except AttributeError:
+            sampler = None
         return sampler
 
     def resurrect_app(self, app_name):
@@ -320,11 +376,10 @@ class CampaignDB(BaseCampaignDB):
 
         app_info = self.app(app_name)
 
-        encoder = BaseEncoder.deserialize(app_info['input_encoder'])
-        decoder = BaseDecoder.deserialize(app_info['output_decoder'])
-        return encoder, decoder
+        actions = easyvvuq_deserialize(app_info['actions'])
+        return actions
 
-    def add_runs(self, run_info_list=None, run_prefix='Run_', ensemble_prefix='Ensemble_'):
+    def add_runs(self, run_info_list=None, run_prefix='Run_', iteration=0):
         """
         Add list of runs to the `runs` table in the database.
 
@@ -335,8 +390,6 @@ class CampaignDB(BaseCampaignDB):
             EasyVVUQ workflow is this RunTable), campaign (id number), sample, app
         run_prefix: str
             Prefix for run id
-        ensemble_prefix: str
-            Prefix for ensemble id
 
         Returns
         -------
@@ -345,20 +398,21 @@ class CampaignDB(BaseCampaignDB):
 
         # Add all runs to RunTable
         runs_dir = self.runs_dir()
+        commit_counter = 0
         for run_info in run_info_list:
-            run_info.ensemble_name = f"{ensemble_prefix}{self._next_ensemble}"
             run_info.run_name = f"{run_prefix}{self._next_run}"
             run_info.run_dir = os.path.join(runs_dir, run_info.run_name)
-
+            run_info.iteration = iteration
             run = RunTable(**run_info.to_dict(flatten=True))
             self.session.add(run)
             self._next_run += 1
-        self._next_ensemble += 1
+            commit_counter += 1
+            if commit_counter % COMMIT_RATE == 0:
+                self.session.commit()
 
         # Update run and ensemble counters in db
         db_info = self.session.query(DBInfoTable).first()
         db_info.next_run = self._next_run
-        db_info.next_ensemble = self._next_ensemble
 
         self.session.commit()
 
@@ -382,12 +436,12 @@ class CampaignDB(BaseCampaignDB):
 
         run_info = {
             'run_name': run_row.run_name,
-            'ensemble_name': run_row.ensemble_name,
             'params': json.loads(run_row.params),
             'status': constants.Status(run_row.status),
             'sampler': run_row.sampler,
             'campaign': run_row.campaign,
             'app': run_row.app,
+            'result': run_row.result,
             'run_dir': run_row.run_dir
         }
 
@@ -429,15 +483,15 @@ class CampaignDB(BaseCampaignDB):
         selected.run_dir = run_dir
         self.session.commit()
 
-    def get_run_status(self, run_name, campaign=None, sampler=None):
+    def get_run_status(self, run_id, campaign=None, sampler=None):
         """
         Return the status (enum) for the run with name 'run_name' (and, optionally,
         filtering for campaign and sampler by id)
 
         Parameters
         ----------
-        run_name: str
-            Name of the run
+        run_id: int
+            id of the run
         campaign: int
             ID of the desired Campaign
         sampler: int
@@ -449,12 +503,11 @@ class CampaignDB(BaseCampaignDB):
             Status of the run.
         """
 
-        filter_options = {'run_name': run_name}
+        filter_options = {'id': run_id}
         if campaign:
             filter_options['campaign'] = campaign
         if sampler:
             filter_options['sampler'] = sampler
-
         selected = self.session.query(RunTable).filter_by(**filter_options)
 
         if selected.count() != 1:
@@ -464,30 +517,24 @@ class CampaignDB(BaseCampaignDB):
 
         return constants.Status(selected.status)
 
-    def set_run_statuses(self, run_name_list, status):
+    def set_run_statuses(self, run_id_list, status):
         """
-        Set the specified 'status' (enum) for all runs in the list run_ID_list
+        Set the specified 'status' (enum) for all runs in the list run_id_list
 
         Parameters
         ----------
-        run_name_list: list of str
-            A list of run names run names (format is usually: prefix + int)
+        run_id_list: list of int
+            a list of run ids
         status: enum(Status)
             The new status all listed runs should now have
-
         Returns
         -------
 
         """
-        max_entries = 900
-
-        for i in range(0, len(run_name_list), max_entries):
-            selected = self.session.query(RunTable).filter(
-                RunTable.run_name.in_(set(run_name_list[i:i + max_entries]))).all()
-
-            for run in selected:
-                run.status = status
-            self.session.commit()
+        self.session.query(RunTable).filter(
+            RunTable.id.in_(run_id_list)).update(
+                {RunTable.status: status}, synchronize_session='fetch')
+        self.session.commit()
 
     def campaigns(self):
         """Get list of campaigns for which information is stored in the
@@ -736,7 +783,7 @@ class CampaignDB(BaseCampaignDB):
             app_id=app_id)
 
         for r in selected:
-            yield r.run_name, self._run_to_dict(r)
+            yield r.id, self._run_to_dict(r)
 
     def run_ids(self, campaign=None, sampler=None, status=None, not_status=None, app_id=None):
         """
@@ -817,6 +864,23 @@ class CampaignDB(BaseCampaignDB):
 
         return self._get_campaign_info(campaign_name=campaign_name).runs_dir
 
+    def store_result(self, run_id, result):
+        self.commit_counter += 1
+
+        def convert_nonserializable(obj):
+            if isinstance(obj, np.int64):
+                return int(obj)
+            raise TypeError('Unknown type:', type(obj))
+        result_ = result['result']
+        result.pop('result')
+        result.pop('run_info')
+        self.session.query(RunTable).\
+            filter(RunTable.id == run_id).\
+            update({'result': json.dumps(result_, default=convert_nonserializable),
+                    'status': constants.Status.COLLATED})
+        if self.commit_counter % COMMIT_RATE == 0:
+            self.session.commit()
+
     def store_results(self, app_name, results):
         """Stores the results from a given run in the database.
 
@@ -831,23 +895,28 @@ class CampaignDB(BaseCampaignDB):
             app_id = self.session.query(AppTable).filter(AppTable.name == app_name).all()[0].id
         except IndexError:
             raise RuntimeError("app with the name {} not found".format(app_name))
-        for run_name, result in results:
+        commit_counter = 0
+        for run_id, result in results:
             try:
                 self.session.query(RunTable).\
-                    filter(RunTable.run_name == run_name).\
-                    filter(RunTable.app == app_id).\
+                    filter(RunTable.id == run_id, RunTable.app == app_id).\
                     update({'result': json.dumps(result), 'status': constants.Status.COLLATED})
+                commit_counter += 1
+                if commit_counter % COMMIT_RATE == 0:
+                    self.session.commit()
             except IndexError:
-                raise RuntimeError("no runs with name {} found".format(run_name))
+                raise RuntimeError("no runs with name {} found".format(run_id))
         self.session.commit()
 
-    def get_results(self, app_name):
+    def get_results(self, app_name, sampler_id, status=constants.Status.COLLATED, iteration=-1):
         """Returns the results as a pandas DataFrame.
 
         Parameters
         ----------
-        app_id: int
-            ID of the app to return data for
+        app_name: str
+            Name of the app to return data for.
+        sampler_id: int
+            ID of the sampler.
 
         Returns
         -------
@@ -858,10 +927,16 @@ class CampaignDB(BaseCampaignDB):
         except IndexError:
             raise RuntimeError("app with the name {} not found".format(app_name))
         pd_result = {}
-        for row in self.session.query(RunTable).\
-                filter(RunTable.app == app_id).\
-                filter(RunTable.status == constants.Status.COLLATED):
+        query = self.session.query(RunTable).\
+            filter(RunTable.app == app_id).\
+            filter(RunTable.sampler == sampler_id).\
+            filter(RunTable.status == status)
+        # if only a specific iteration is requested filter it out
+        if iteration >= 0:
+            query = query.filter(RunTable.iteration == iteration)
+        for row in query:
             params = {'run_id': row.id}
+            params['iteration'] = row.iteration
             params = {**params, **json.loads(row.params)}
             result = json.loads(row.result)
             pd_dict = {**params, **result}
@@ -879,23 +954,32 @@ class CampaignDB(BaseCampaignDB):
                             pd_result[(key, i)] = [pd_dict[key][i]]
         return pd.DataFrame(pd_result)
 
-    def relocate(self, new_path, app_name):
+    def relocate(self, new_path, campaign_name):
         """Update all runs in the db with the new campaign path.
 
         Parameters
         ----------
         new_path: str
             new runs directory
-        app_name: str
-            name of the app to use for updating
+        campaign_name: str
+            name of the campaign
         """
-        app_info = self.app(app_name)
-        for run in self.runs(app_id=app_info['id']):
-            path, run_dir = os.path.split(run[1]['run_dir'])
-            path, runs_dir = os.path.split(path)
-            new_path_ = os.path.join(new_path, runs_dir, run_dir)
-            self.session.query(RunTable).\
-                filter(RunTable.run_name == run[0]).\
-                filter(RunTable.app == app_info['id']).\
-                update({'run_dir': new_path_})
+        campaign_id = self.get_campaign_id(campaign_name)
+        campaign_info = self.session.query(CampaignTable).\
+            filter(CampaignTable.id == campaign_id).first()
+        path, runs_dir = os.path.split(campaign_info.runs_dir)
+        self.session.query(CampaignTable).\
+            filter(CampaignTable.id == campaign_id).\
+            update({'campaign_dir': str(new_path),
+                    'runs_dir': str(os.path.join(new_path, runs_dir))})
         self.session.commit()
+
+    def dump(self):
+        """Dump the database as JSON for debugging purposes.
+        """
+        meta = MetaData()
+        meta.reflect(bind=self.engine)
+        result = {}
+        for table in meta.sorted_tables:
+            result[table.name] = [dict(row) for row in self.engine.execute(table.select())]
+        return json.dumps(result)

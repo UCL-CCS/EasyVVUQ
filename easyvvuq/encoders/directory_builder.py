@@ -36,11 +36,8 @@ class DirectoryBuilder(BaseEncoder, encoder_name="directory_builder"):
 
     Parameters
     ----------
-        tree    : dict of dicts
-            The desired directory structure
-    Attributes
-    ----------
-
+    tree : dict of dicts
+        The desired directory structure
     """
 
     def __init__(self, tree):
@@ -51,9 +48,9 @@ class DirectoryBuilder(BaseEncoder, encoder_name="directory_builder"):
 
         Parameters
         ----------
-        params        : dict
+        params : dict
             Parameter information in dictionary.
-        target_dir    : str
+        target_dir : str
             Path to directory where application input will be written.
         """
 

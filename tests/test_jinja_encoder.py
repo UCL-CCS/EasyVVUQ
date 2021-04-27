@@ -4,6 +4,7 @@ import os
 import sys
 import pytest
 from easyvvuq.encoders.jinja_encoder import JinjaEncoder
+from easyvvuq.actions import CreateRunDirectory, Encode, ExecuteLocal, Decode, Actions
 
 __copyright__ = """
 
@@ -128,18 +129,8 @@ def test_jinjaencoder(tmpdir):
     my_campaign = uq.Campaign(name='dales', work_dir=tmpdir, db_location='sqlite:///')
     encoder = JinjaEncoder(template_fname='tests/jinjaencoder/namoptions.template',
                            target_filename='namoptions.001')
-    decoder = uq.decoders.SimpleCSV(
-        target_filename='results.csv',
-        output_columns=output_columns)
-    my_campaign.add_app(name="dales",
-                        params=params,
-                        encoder=encoder,
-                        decoder=decoder)
-    my_campaign.verify_all_runs = False  # to prevent errors on integer quantities
-    my_campaign.set_sampler(my_sampler)
-    my_campaign.draw_samples()
-    my_campaign.populate_runs_dir()
-
+    encoder.encode(params, tmpdir)
+    assert(os.path.isfile(os.path.join(tmpdir, 'namoptions.001')))
 
 if __name__ == "__main__":
     test_jinjaencoder("/tmp/")

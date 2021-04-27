@@ -12,12 +12,14 @@ from .random import RandomSampler
 from .stochastic_collocation import SCSampler
 from .pce import PCESampler
 from .qmc import QMCSampler
+from .mcmc import MCMCSampler
 from .sweep import BasicSweep
 from .sampler_of_samplers import MultiSampler
 from .quasirandom import LHCSampler
 from .empty import EmptySampler
 from .replica_sampler import ReplicaSampler
 from .mc_sampler import MCSampler
+from .csv_sampler import CSVSampler
 
 __copyright__ = """
 

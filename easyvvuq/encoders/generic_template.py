@@ -43,10 +43,8 @@ class GenericEncoder(BaseEncoder, encoder_name="generic_template"):
 
     """
 
-    def __init__(self, template_fname, delimiter='$',
-                 target_filename="app_input.txt"):
-
-        self.encoder_delimiter = delimiter
+    def __init__(self, template_fname, delimiter='$', target_filename="app_input.txt"):
+        self.delimiter = delimiter
         self.target_filename = target_filename
         self.template_fname = template_fname
 
@@ -65,8 +63,7 @@ class GenericEncoder(BaseEncoder, encoder_name="generic_template"):
         try:
             with open(self.template_fname, 'r') as template_file:
                 template_txt = template_file.read()
-                self.template = get_custom_template(
-                    template_txt, custom_delimiter=self.encoder_delimiter)
+                self.template = Template(template_txt)
         except FileNotFoundError:
             raise RuntimeError(
                 "the template file specified ({}) does not exist".format(self.template_fname))
@@ -95,11 +92,3 @@ class GenericEncoder(BaseEncoder, encoder_name="generic_template"):
         logging.error(reasoning)
 
         raise KeyError(reasoning)
-
-    def get_restart_dict(self):
-        return {"delimiter": self.encoder_delimiter,
-                "target_filename": self.target_filename,
-                "template_fname": self.template_fname}
-
-    def element_version(self):
-        return "0.1"
