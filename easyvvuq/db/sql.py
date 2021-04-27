@@ -289,7 +289,7 @@ class CampaignDB(BaseCampaignDB):
             `Actions instance, will replace the current `Actions` of an app.
         """
         self.session.query(AppTable).filter_by(name=app_name).update(
-            'actions': easyvvuq_serialize(action))
+            {'actions': easyvvuq_serialize(action)})
         self.session.commit()
 
 
