@@ -569,7 +569,7 @@
 <span class="sd">            `Actions instance, will replace the current `Actions` of an app.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">AppTable</span><span class="p">)</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">app_name</span><span class="p">)</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
-            <span class="p">{</span><span class="s1">&#39;actions&#39;</span><span class="p">:</span> <span class="n">easyvvuq_serialize</span><span class="p">(</span><span class="n">action</span><span class="p">)})</span>
+            <span class="p">{</span><span class="s1">&#39;actions&#39;</span><span class="p">:</span> <span class="n">easyvvuq_serialize</span><span class="p">(</span><span class="n">actions</span><span class="p">)})</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
 
 
@@ -2017,7 +2017,7 @@ for example, any mapped columns or relationships.</p>
 <span class="sd">            `Actions instance, will replace the current `Actions` of an app.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">AppTable</span><span class="p">)</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">app_name</span><span class="p">)</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
-            <span class="p">{</span><span class="s1">&#39;actions&#39;</span><span class="p">:</span> <span class="n">easyvvuq_serialize</span><span class="p">(</span><span class="n">action</span><span class="p">)})</span>
+            <span class="p">{</span><span class="s1">&#39;actions&#39;</span><span class="p">:</span> <span class="n">easyvvuq_serialize</span><span class="p">(</span><span class="n">actions</span><span class="p">)})</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
 
 
@@ -3100,7 +3100,7 @@ Application definition.</li>
 <span class="sd">            `Actions instance, will replace the current `Actions` of an app.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">AppTable</span><span class="p">)</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">app_name</span><span class="p">)</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
-            <span class="p">{</span><span class="s1">&#39;actions&#39;</span><span class="p">:</span> <span class="n">easyvvuq_serialize</span><span class="p">(</span><span class="n">action</span><span class="p">)})</span>
+            <span class="p">{</span><span class="s1">&#39;actions&#39;</span><span class="p">:</span> <span class="n">easyvvuq_serialize</span><span class="p">(</span><span class="n">actions</span><span class="p">)})</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
 </pre></div>
 
