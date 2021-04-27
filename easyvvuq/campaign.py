@@ -196,7 +196,7 @@ class Campaign:
             self.campaign_name = name
             self.campaign_id = self.campaign_db.get_campaign_id(self.campaign_name)
 
-    def add_app(self, name=None, params=None, actions=None, set_active=True, replace_app=None):
+    def add_app(self, name=None, params=None, actions=None, set_active=True):
         """Add an application to the CampaignDB.
 
         Parameters
@@ -209,9 +209,6 @@ class Campaign:
             An instance of Actions containing actions to be executed
         set_active: bool
             Should the added app be set to be the currently active app?
-        replace_app: int or None
-            Which app to replace if any (app field will be overwritten in runs that
-            have replace_app as their app)
         """
 
         # Verify input parameters dict
@@ -224,7 +221,7 @@ class Campaign:
             actions=actions,
         )
 
-        self.campaign_db.add_app(app, replace_app=replace_app)
+        self.campaign_db.add_app(app)
         if set_active:
             self.set_app(app.name)
 
