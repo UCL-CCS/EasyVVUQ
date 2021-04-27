@@ -247,6 +247,19 @@ class Campaign:
         # Resurrect the app encoder, decoder and collation elements
         self._active_app_actions = self.campaign_db.resurrect_app(app_name)
 
+    def replace_actions(self, app_name, actions):
+        """Replace actions for an app with a given name.
+        
+        Parameters
+        ----------
+        app_name: str
+            Name of the app.
+        actions: Actions
+            `Actions instance, will replace the current `Actions` of an app.
+        """
+        self.campaign_db.replace_actions(app_name, actions)
+        self._active_app_actions = actions
+
     def set_sampler(self, sampler, update=False):
         """Set active sampler.
 
