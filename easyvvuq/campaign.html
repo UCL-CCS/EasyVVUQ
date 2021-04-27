@@ -46,6 +46,9 @@
                                 <a class="function" href="#Campaign.set_app">set_app</a>
                         </li>
                         <li>
+                                <a class="function" href="#Campaign.replace_actions">replace_actions</a>
+                        </li>
+                        <li>
                                 <a class="function" href="#Campaign.set_sampler">set_sampler</a>
                         </li>
                         <li>
@@ -385,6 +388,19 @@ EasyVVUQ workflows.</p>
 
         <span class="c1"># Resurrect the app encoder, decoder and collation elements</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_active_app_actions</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">campaign_db</span><span class="o">.</span><span class="n">resurrect_app</span><span class="p">(</span><span class="n">app_name</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">replace_actions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">app_name</span><span class="p">,</span> <span class="n">actions</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Replace actions for an app with a given name.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        app_name: str</span>
+<span class="sd">            Name of the app.</span>
+<span class="sd">        actions: Actions</span>
+<span class="sd">            `Actions instance, will replace the current `Actions` of an app.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">campaign_db</span><span class="o">.</span><span class="n">replace_actions</span><span class="p">(</span><span class="n">app_name</span><span class="p">,</span> <span class="n">actions</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_active_app_actions</span> <span class="o">=</span> <span class="n">actions</span>
 
     <span class="k">def</span> <span class="nf">set_sampler</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sampler</span><span class="p">,</span> <span class="n">update</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Set active sampler.</span>
@@ -1029,6 +1045,19 @@ EasyVVUQ workflows.</p>
 
         <span class="c1"># Resurrect the app encoder, decoder and collation elements</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_active_app_actions</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">campaign_db</span><span class="o">.</span><span class="n">resurrect_app</span><span class="p">(</span><span class="n">app_name</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">replace_actions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">app_name</span><span class="p">,</span> <span class="n">actions</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Replace actions for an app with a given name.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        app_name: str</span>
+<span class="sd">            Name of the app.</span>
+<span class="sd">        actions: Actions</span>
+<span class="sd">            `Actions instance, will replace the current `Actions` of an app.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">campaign_db</span><span class="o">.</span><span class="n">replace_actions</span><span class="p">(</span><span class="n">app_name</span><span class="p">,</span> <span class="n">actions</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_active_app_actions</span> <span class="o">=</span> <span class="n">actions</span>
 
     <span class="k">def</span> <span class="nf">set_sampler</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sampler</span><span class="p">,</span> <span class="n">update</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Set active sampler.</span>
@@ -1783,6 +1812,46 @@ have replace_app as their app)</li>
 <li><strong>app_name</strong> (str or None):
 Name of selected app, if <code>None</code> given then first app will be
 selected.</li>
+</ul>
+</div>
+
+
+                            </div>
+                            <div id="Campaign.replace_actions" class="classattr">
+                                        <div class="attr function"><a class="headerlink" href="#Campaign.replace_actions">#&nbsp;&nbsp</a>
+
+        
+            <span class="def">def</span>
+            <span class="name">replace_actions</span><span class="signature">(self, app_name, actions)</span>:
+    </div>
+
+                <details>
+            <summary>View Source</summary>
+            <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">replace_actions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">app_name</span><span class="p">,</span> <span class="n">actions</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Replace actions for an app with a given name.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        app_name: str</span>
+<span class="sd">            Name of the app.</span>
+<span class="sd">        actions: Actions</span>
+<span class="sd">            `Actions instance, will replace the current `Actions` of an app.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">campaign_db</span><span class="o">.</span><span class="n">replace_actions</span><span class="p">(</span><span class="n">app_name</span><span class="p">,</span> <span class="n">actions</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_active_app_actions</span> <span class="o">=</span> <span class="n">actions</span>
+</pre></div>
+
+        </details>
+
+            <div class="docstring"><p>Replace actions for an app with a given name.</p>
+
+<h6 id="parameters">Parameters</h6>
+
+<ul>
+<li><strong>app_name</strong> (str):
+Name of the app.</li>
+<li><strong>actions</strong> (Actions):
+<code>Actions instance, will replace the current</code>Actions` of an app.</li>
 </ul>
 </div>
 
