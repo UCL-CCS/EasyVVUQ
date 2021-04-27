@@ -379,7 +379,7 @@ class CampaignDB(BaseCampaignDB):
         actions = easyvvuq_deserialize(app_info['actions'])
         return actions
 
-    def add_runs(self, run_info_list=None, run_prefix='Run_', iteration=0):
+    def add_runs(self, run_info_list=None, run_prefix='run_', iteration=0):
         """
         Add list of runs to the `runs` table in the database.
 
@@ -401,7 +401,6 @@ class CampaignDB(BaseCampaignDB):
         commit_counter = 0
         for run_info in run_info_list:
             run_info.run_name = f"{run_prefix}{self._next_run}"
-            run_info.run_dir = os.path.join(runs_dir, run_info.run_name)
             run_info.iteration = iteration
             run = RunTable(**run_info.to_dict(flatten=True))
             self.session.add(run)
