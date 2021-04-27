@@ -3,8 +3,9 @@ import chaospy as cp
 import os
 import pytest
 import shutil
+from easyvvuq.actions import CreateRunDirectory, Encode, ExecuteLocal, Decode, Actions
 
-def test_relocate_full(tmp_path):
+def test_gp(tmp_path):
     campaign = uq.Campaign(name='test', work_dir=tmp_path)
     params = {
         "temp_init": {
@@ -34,19 +35,18 @@ def test_relocate_full(tmp_path):
         target_filename='cooling_in.json')
     decoder = uq.decoders.SimpleCSV(target_filename=output_filename,
                                     output_columns=output_columns)
+    execute = ExecuteLocal("{} cooling_in.json".format(os.path.abspath("tests/cooling/cooling_model.py")))
+    actions = Actions(CreateRunDirectory('/tmp'), Encode(encoder), execute, Decode(decoder))
     vary = {
         "kappa": cp.Uniform(0.025, 0.075),
         "t_env": cp.Uniform(15, 25)
     }
     sampler = uq.sampling.quasirandom.LHCSampler(vary=vary)
-    actions = uq.actions.ExecuteLocal("tests/cooling/cooling_model.py cooling_in.json")
-    campaign.add_app(name='test_app', params=params, encoder=encoder, decoder=decoder)
+    
+    campaign.add_app(name='test_app', params=params, actions=actions)
     campaign.set_app('test_app')
     campaign.set_sampler(sampler)
-    campaign.draw_samples(100)
-    campaign.populate_runs_dir()
-    campaign.apply_for_each_run_dir(actions)
-    campaign.collate()
+    campaign.execute(nsamples=100).collate()
     df = campaign.get_collation_result()
     analysis = uq.analysis.gp_analyse.GaussianProcessSurrogate(['kappa', 't_env'], ['te'])
     result = analysis.analyse(df)
