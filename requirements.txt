@@ -21,3 +21,4 @@ autopep8
 squarify
 dill
 tqdm
+fipy
