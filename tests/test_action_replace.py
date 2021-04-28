@@ -8,6 +8,7 @@ import matplotlib.pylab as plt
 from pprint import pprint
 import glob
 import subprocess
+import pytest
 
 @pytest.mark.skip(reason="fipy nonsense")
 def test_action_replace():
