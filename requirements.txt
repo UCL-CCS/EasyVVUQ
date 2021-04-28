@@ -21,4 +21,4 @@ autopep8
 squarify
 dill
 tqdm
-fipy==3.4.2
+FiPy
