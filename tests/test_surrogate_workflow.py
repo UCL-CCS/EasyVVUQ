@@ -52,3 +52,4 @@ def test_surrogate_workflow(tmpdir):
 
     results = campaign.analyse(qoi_cols=output_columns)
 
+
