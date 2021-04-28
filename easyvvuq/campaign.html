@@ -639,6 +639,8 @@ EasyVVUQ workflows.</p>
                 <span class="n">previous</span><span class="p">[</span><span class="s1">&#39;campaign_dir&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_campaign_dir</span>
                 <span class="n">previous</span><span class="p">[</span><span class="s1">&#39;rundir&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">run_data</span><span class="p">[</span><span class="s1">&#39;run_dir&#39;</span><span class="p">]</span>
                 <span class="n">previous</span><span class="p">[</span><span class="s1">&#39;run_info&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">run_data</span>
+                <span class="n">previous</span><span class="p">[</span><span class="s1">&#39;result&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+                <span class="n">previous</span><span class="p">[</span><span class="s1">&#39;collated&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
                 <span class="k">yield</span> <span class="n">previous</span>
         <span class="k">return</span> <span class="n">ActionPool</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">inits</span><span class="o">=</span><span class="n">inits</span><span class="p">(),</span> <span class="n">sequential</span><span class="o">=</span><span class="n">sequential</span><span class="p">)</span>
 
@@ -1294,6 +1296,8 @@ EasyVVUQ workflows.</p>
                 <span class="n">previous</span><span class="p">[</span><span class="s1">&#39;campaign_dir&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_campaign_dir</span>
                 <span class="n">previous</span><span class="p">[</span><span class="s1">&#39;rundir&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">run_data</span><span class="p">[</span><span class="s1">&#39;run_dir&#39;</span><span class="p">]</span>
                 <span class="n">previous</span><span class="p">[</span><span class="s1">&#39;run_info&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">run_data</span>
+                <span class="n">previous</span><span class="p">[</span><span class="s1">&#39;result&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+                <span class="n">previous</span><span class="p">[</span><span class="s1">&#39;collated&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
                 <span class="k">yield</span> <span class="n">previous</span>
         <span class="k">return</span> <span class="n">ActionPool</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">inits</span><span class="o">=</span><span class="n">inits</span><span class="p">(),</span> <span class="n">sequential</span><span class="o">=</span><span class="n">sequential</span><span class="p">)</span>
 
@@ -2363,6 +2367,8 @@ Whether to process samples sequentially (sometimes more efficient).</li>
                 <span class="n">previous</span><span class="p">[</span><span class="s1">&#39;campaign_dir&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_campaign_dir</span>
                 <span class="n">previous</span><span class="p">[</span><span class="s1">&#39;rundir&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">run_data</span><span class="p">[</span><span class="s1">&#39;run_dir&#39;</span><span class="p">]</span>
                 <span class="n">previous</span><span class="p">[</span><span class="s1">&#39;run_info&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">run_data</span>
+                <span class="n">previous</span><span class="p">[</span><span class="s1">&#39;result&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+                <span class="n">previous</span><span class="p">[</span><span class="s1">&#39;collated&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
                 <span class="k">yield</span> <span class="n">previous</span>
         <span class="k">return</span> <span class="n">ActionPool</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">inits</span><span class="o">=</span><span class="n">inits</span><span class="p">(),</span> <span class="n">sequential</span><span class="o">=</span><span class="n">sequential</span><span class="p">)</span>
 </pre></div>

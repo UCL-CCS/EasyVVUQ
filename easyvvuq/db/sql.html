@@ -1143,7 +1143,7 @@
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_campaign_info</span><span class="p">(</span><span class="n">campaign_name</span><span class="o">=</span><span class="n">campaign_name</span><span class="p">)</span><span class="o">.</span><span class="n">runs_dir</span>
 
-    <span class="k">def</span> <span class="nf">store_result</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">run_id</span><span class="p">,</span> <span class="n">result</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">store_result</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">run_id</span><span class="p">,</span> <span class="n">result</span><span class="p">,</span> <span class="n">change_status</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">commit_counter</span> <span class="o">+=</span> <span class="mi">1</span>
 
         <span class="k">def</span> <span class="nf">convert_nonserializable</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
@@ -1153,11 +1153,17 @@
         <span class="n">result_</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="s1">&#39;result&#39;</span><span class="p">]</span>
         <span class="n">result</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;result&#39;</span><span class="p">)</span>
         <span class="n">result</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;run_info&#39;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">RunTable</span><span class="p">)</span><span class="o">.</span>\
-            <span class="nb">filter</span><span class="p">(</span><span class="n">RunTable</span><span class="o">.</span><span class="n">id</span> <span class="o">==</span> <span class="n">run_id</span><span class="p">)</span><span class="o">.</span>\
-            <span class="n">update</span><span class="p">({</span><span class="s1">&#39;result&#39;</span><span class="p">:</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">result_</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">convert_nonserializable</span><span class="p">),</span>
-                    <span class="s1">&#39;status&#39;</span><span class="p">:</span> <span class="n">constants</span><span class="o">.</span><span class="n">Status</span><span class="o">.</span><span class="n">COLLATED</span><span class="p">,</span>
-                    <span class="s1">&#39;run_dir&#39;</span><span class="p">:</span> <span class="n">result</span><span class="p">[</span><span class="s1">&#39;rundir&#39;</span><span class="p">]})</span>
+        <span class="k">if</span> <span class="n">change_status</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">RunTable</span><span class="p">)</span><span class="o">.</span>\
+                <span class="nb">filter</span><span class="p">(</span><span class="n">RunTable</span><span class="o">.</span><span class="n">id</span> <span class="o">==</span> <span class="n">run_id</span><span class="p">)</span><span class="o">.</span>\
+                <span class="n">update</span><span class="p">({</span><span class="s1">&#39;result&#39;</span><span class="p">:</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">result_</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">convert_nonserializable</span><span class="p">),</span>
+                        <span class="s1">&#39;status&#39;</span><span class="p">:</span> <span class="n">constants</span><span class="o">.</span><span class="n">Status</span><span class="o">.</span><span class="n">COLLATED</span><span class="p">,</span>
+                        <span class="s1">&#39;run_dir&#39;</span><span class="p">:</span> <span class="n">result</span><span class="p">[</span><span class="s1">&#39;rundir&#39;</span><span class="p">]})</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">RunTable</span><span class="p">)</span><span class="o">.</span>\
+                <span class="nb">filter</span><span class="p">(</span><span class="n">RunTable</span><span class="o">.</span><span class="n">id</span> <span class="o">==</span> <span class="n">run_id</span><span class="p">)</span><span class="o">.</span>\
+                <span class="n">update</span><span class="p">({</span><span class="s1">&#39;result&#39;</span><span class="p">:</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">result_</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">convert_nonserializable</span><span class="p">),</span>
+                        <span class="s1">&#39;run_dir&#39;</span><span class="p">:</span> <span class="n">result</span><span class="p">[</span><span class="s1">&#39;rundir&#39;</span><span class="p">]})</span>            
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">commit_counter</span> <span class="o">%</span> <span class="n">COMMIT_RATE</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
 
@@ -2591,7 +2597,7 @@ for example, any mapped columns or relationships.</p>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_campaign_info</span><span class="p">(</span><span class="n">campaign_name</span><span class="o">=</span><span class="n">campaign_name</span><span class="p">)</span><span class="o">.</span><span class="n">runs_dir</span>
 
-    <span class="k">def</span> <span class="nf">store_result</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">run_id</span><span class="p">,</span> <span class="n">result</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">store_result</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">run_id</span><span class="p">,</span> <span class="n">result</span><span class="p">,</span> <span class="n">change_status</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">commit_counter</span> <span class="o">+=</span> <span class="mi">1</span>
 
         <span class="k">def</span> <span class="nf">convert_nonserializable</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
@@ -2601,11 +2607,17 @@ for example, any mapped columns or relationships.</p>
         <span class="n">result_</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="s1">&#39;result&#39;</span><span class="p">]</span>
         <span class="n">result</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;result&#39;</span><span class="p">)</span>
         <span class="n">result</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;run_info&#39;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">RunTable</span><span class="p">)</span><span class="o">.</span>\
-            <span class="nb">filter</span><span class="p">(</span><span class="n">RunTable</span><span class="o">.</span><span class="n">id</span> <span class="o">==</span> <span class="n">run_id</span><span class="p">)</span><span class="o">.</span>\
-            <span class="n">update</span><span class="p">({</span><span class="s1">&#39;result&#39;</span><span class="p">:</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">result_</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">convert_nonserializable</span><span class="p">),</span>
-                    <span class="s1">&#39;status&#39;</span><span class="p">:</span> <span class="n">constants</span><span class="o">.</span><span class="n">Status</span><span class="o">.</span><span class="n">COLLATED</span><span class="p">,</span>
-                    <span class="s1">&#39;run_dir&#39;</span><span class="p">:</span> <span class="n">result</span><span class="p">[</span><span class="s1">&#39;rundir&#39;</span><span class="p">]})</span>
+        <span class="k">if</span> <span class="n">change_status</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">RunTable</span><span class="p">)</span><span class="o">.</span>\
+                <span class="nb">filter</span><span class="p">(</span><span class="n">RunTable</span><span class="o">.</span><span class="n">id</span> <span class="o">==</span> <span class="n">run_id</span><span class="p">)</span><span class="o">.</span>\
+                <span class="n">update</span><span class="p">({</span><span class="s1">&#39;result&#39;</span><span class="p">:</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">result_</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">convert_nonserializable</span><span class="p">),</span>
+                        <span class="s1">&#39;status&#39;</span><span class="p">:</span> <span class="n">constants</span><span class="o">.</span><span class="n">Status</span><span class="o">.</span><span class="n">COLLATED</span><span class="p">,</span>
+                        <span class="s1">&#39;run_dir&#39;</span><span class="p">:</span> <span class="n">result</span><span class="p">[</span><span class="s1">&#39;rundir&#39;</span><span class="p">]})</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">RunTable</span><span class="p">)</span><span class="o">.</span>\
+                <span class="nb">filter</span><span class="p">(</span><span class="n">RunTable</span><span class="o">.</span><span class="n">id</span> <span class="o">==</span> <span class="n">run_id</span><span class="p">)</span><span class="o">.</span>\
+                <span class="n">update</span><span class="p">({</span><span class="s1">&#39;result&#39;</span><span class="p">:</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">result_</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">convert_nonserializable</span><span class="p">),</span>
+                        <span class="s1">&#39;run_dir&#39;</span><span class="p">:</span> <span class="n">result</span><span class="p">[</span><span class="s1">&#39;rundir&#39;</span><span class="p">]})</span>            
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">commit_counter</span> <span class="o">%</span> <span class="n">COMMIT_RATE</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
 
@@ -4194,12 +4206,12 @@ Name of the selected campaign.</li>
 
         
             <span class="def">def</span>
-            <span class="name">store_result</span><span class="signature">(self, run_id, result)</span>:
+            <span class="name">store_result</span><span class="signature">(self, run_id, result, change_status=True)</span>:
     </div>
 
                 <details>
             <summary>View Source</summary>
-            <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">store_result</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">run_id</span><span class="p">,</span> <span class="n">result</span><span class="p">):</span>
+            <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">store_result</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">run_id</span><span class="p">,</span> <span class="n">result</span><span class="p">,</span> <span class="n">change_status</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">commit_counter</span> <span class="o">+=</span> <span class="mi">1</span>
 
         <span class="k">def</span> <span class="nf">convert_nonserializable</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
@@ -4209,11 +4221,17 @@ Name of the selected campaign.</li>
         <span class="n">result_</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="s1">&#39;result&#39;</span><span class="p">]</span>
         <span class="n">result</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;result&#39;</span><span class="p">)</span>
         <span class="n">result</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;run_info&#39;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">RunTable</span><span class="p">)</span><span class="o">.</span>\
-            <span class="nb">filter</span><span class="p">(</span><span class="n">RunTable</span><span class="o">.</span><span class="n">id</span> <span class="o">==</span> <span class="n">run_id</span><span class="p">)</span><span class="o">.</span>\
-            <span class="n">update</span><span class="p">({</span><span class="s1">&#39;result&#39;</span><span class="p">:</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">result_</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">convert_nonserializable</span><span class="p">),</span>
-                    <span class="s1">&#39;status&#39;</span><span class="p">:</span> <span class="n">constants</span><span class="o">.</span><span class="n">Status</span><span class="o">.</span><span class="n">COLLATED</span><span class="p">,</span>
-                    <span class="s1">&#39;run_dir&#39;</span><span class="p">:</span> <span class="n">result</span><span class="p">[</span><span class="s1">&#39;rundir&#39;</span><span class="p">]})</span>
+        <span class="k">if</span> <span class="n">change_status</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">RunTable</span><span class="p">)</span><span class="o">.</span>\
+                <span class="nb">filter</span><span class="p">(</span><span class="n">RunTable</span><span class="o">.</span><span class="n">id</span> <span class="o">==</span> <span class="n">run_id</span><span class="p">)</span><span class="o">.</span>\
+                <span class="n">update</span><span class="p">({</span><span class="s1">&#39;result&#39;</span><span class="p">:</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">result_</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">convert_nonserializable</span><span class="p">),</span>
+                        <span class="s1">&#39;status&#39;</span><span class="p">:</span> <span class="n">constants</span><span class="o">.</span><span class="n">Status</span><span class="o">.</span><span class="n">COLLATED</span><span class="p">,</span>
+                        <span class="s1">&#39;run_dir&#39;</span><span class="p">:</span> <span class="n">result</span><span class="p">[</span><span class="s1">&#39;rundir&#39;</span><span class="p">]})</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">RunTable</span><span class="p">)</span><span class="o">.</span>\
+                <span class="nb">filter</span><span class="p">(</span><span class="n">RunTable</span><span class="o">.</span><span class="n">id</span> <span class="o">==</span> <span class="n">run_id</span><span class="p">)</span><span class="o">.</span>\
+                <span class="n">update</span><span class="p">({</span><span class="s1">&#39;result&#39;</span><span class="p">:</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">result_</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">convert_nonserializable</span><span class="p">),</span>
+                        <span class="s1">&#39;run_dir&#39;</span><span class="p">:</span> <span class="n">result</span><span class="p">[</span><span class="s1">&#39;rundir&#39;</span><span class="p">]})</span>            
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">commit_counter</span> <span class="o">%</span> <span class="n">COMMIT_RATE</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
 </pre></div>

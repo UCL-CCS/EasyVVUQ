@@ -311,6 +311,7 @@
         <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">decoder</span><span class="o">.</span><span class="n">parse_sim_output</span><span class="p">(</span><span class="n">run_info</span><span class="p">)</span>
         <span class="n">previous</span><span class="p">[</span><span class="s1">&#39;result&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span>
         <span class="n">previous</span><span class="p">[</span><span class="s1">&#39;decoder_filename&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">decoder</span><span class="o">.</span><span class="n">target_filename</span>
+        <span class="n">previous</span><span class="p">[</span><span class="s1">&#39;collated&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="k">return</span> <span class="n">previous</span>
 
     <span class="k">def</span> <span class="nf">finished</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -353,6 +354,7 @@
         <span class="n">function</span> <span class="o">=</span> <span class="n">dill</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">function</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">eval_result</span> <span class="o">=</span> <span class="n">function</span><span class="p">(</span><span class="n">previous</span><span class="p">[</span><span class="s1">&#39;run_info&#39;</span><span class="p">][</span><span class="s1">&#39;params&#39;</span><span class="p">])</span>
         <span class="n">previous</span><span class="p">[</span><span class="s1">&#39;result&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">eval_result</span>
+        <span class="n">previous</span><span class="p">[</span><span class="s1">&#39;collated&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="k">return</span> <span class="n">previous</span>
 
     <span class="k">def</span> <span class="nf">finished</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -844,6 +846,7 @@ root folder, for example '/tmp' or if you want to use ram based filesystem it co
         <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">decoder</span><span class="o">.</span><span class="n">parse_sim_output</span><span class="p">(</span><span class="n">run_info</span><span class="p">)</span>
         <span class="n">previous</span><span class="p">[</span><span class="s1">&#39;result&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span>
         <span class="n">previous</span><span class="p">[</span><span class="s1">&#39;decoder_filename&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">decoder</span><span class="o">.</span><span class="n">target_filename</span>
+        <span class="n">previous</span><span class="p">[</span><span class="s1">&#39;collated&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="k">return</span> <span class="n">previous</span>
 
     <span class="k">def</span> <span class="nf">finished</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -894,6 +897,7 @@ root folder, for example '/tmp' or if you want to use ram based filesystem it co
         <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">decoder</span><span class="o">.</span><span class="n">parse_sim_output</span><span class="p">(</span><span class="n">run_info</span><span class="p">)</span>
         <span class="n">previous</span><span class="p">[</span><span class="s1">&#39;result&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span>
         <span class="n">previous</span><span class="p">[</span><span class="s1">&#39;decoder_filename&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">decoder</span><span class="o">.</span><span class="n">target_filename</span>
+        <span class="n">previous</span><span class="p">[</span><span class="s1">&#39;collated&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="k">return</span> <span class="n">previous</span>
 </pre></div>
 
@@ -1114,6 +1118,7 @@ root folder, for example '/tmp' or if you want to use ram based filesystem it co
         <span class="n">function</span> <span class="o">=</span> <span class="n">dill</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">function</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">eval_result</span> <span class="o">=</span> <span class="n">function</span><span class="p">(</span><span class="n">previous</span><span class="p">[</span><span class="s1">&#39;run_info&#39;</span><span class="p">][</span><span class="s1">&#39;params&#39;</span><span class="p">])</span>
         <span class="n">previous</span><span class="p">[</span><span class="s1">&#39;result&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">eval_result</span>
+        <span class="n">previous</span><span class="p">[</span><span class="s1">&#39;collated&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="k">return</span> <span class="n">previous</span>
 
     <span class="k">def</span> <span class="nf">finished</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -1170,6 +1175,7 @@ root folder, for example '/tmp' or if you want to use ram based filesystem it co
         <span class="n">function</span> <span class="o">=</span> <span class="n">dill</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">function</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">eval_result</span> <span class="o">=</span> <span class="n">function</span><span class="p">(</span><span class="n">previous</span><span class="p">[</span><span class="s1">&#39;run_info&#39;</span><span class="p">][</span><span class="s1">&#39;params&#39;</span><span class="p">])</span>
         <span class="n">previous</span><span class="p">[</span><span class="s1">&#39;result&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">eval_result</span>
+        <span class="n">previous</span><span class="p">[</span><span class="s1">&#39;collated&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="k">return</span> <span class="n">previous</span>
 </pre></div>
 
