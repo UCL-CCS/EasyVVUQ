@@ -6,7 +6,6 @@ EasyVVUQ workflows.
 import os
 import logging
 import tempfile
-import json
 import easyvvuq
 from concurrent.futures import ProcessPoolExecutor
 from easyvvuq import ParamsSpecification, constants
