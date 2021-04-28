@@ -112,6 +112,7 @@ class Decode():
         result = self.decoder.parse_sim_output(run_info)
         previous['result'] = result
         previous['decoder_filename'] = self.decoder.target_filename
+        previous['collated'] = True
         return previous
 
     def finished(self):
@@ -154,6 +155,7 @@ class ExecutePython():
         function = dill.loads(self.function)
         self.eval_result = function(previous['run_info']['params'])
         previous['result'] = self.eval_result
+        previous['collated'] = True
         return previous
 
     def finished(self):
