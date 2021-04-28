@@ -497,6 +497,8 @@ class Campaign:
                 previous['campaign_dir'] = self._campaign_dir
                 previous['rundir'] = run_data['run_dir']
                 previous['run_info'] = run_data
+                previous['result'] = {}
+                previous['collated'] = False
                 yield previous
         return ActionPool(self, action, inits=inits(), sequential=sequential)
 
