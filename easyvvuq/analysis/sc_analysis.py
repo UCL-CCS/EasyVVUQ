@@ -34,6 +34,32 @@ __copyright__ = """
 __license__ = "LGPL"
 
 
+class SCDistribution():
+    def __init__(self):
+        pass
+
+    def pdf(self, x_data):
+        pass
+
+    def cdf(self, x_data):
+        pass
+
+    def fwd(self, x_data):
+        pass
+
+    def inv(self, q_data):
+        pass
+
+    def sample(self):
+        pass
+
+    def mom(self):
+        pass
+
+    def ttr(self, kloc):
+        pass
+
+
 class SCAnalysisResults(AnalysisResults):
     def _get_sobols_first(self, qoi, input_):
         raw_dict = AnalysisResults._keys_to_tuples(self.raw_data['sobols_first'])
@@ -57,6 +83,22 @@ class SCAnalysisResults(AnalysisResults):
             return self.raw_data['statistical_moments'][qoi][statistic]
         else:
             raise NotImplementedError
+
+    def get_distribution(self, qoi):
+        """Returns a distribution for the given qoi.
+
+        Parameters
+        ----------
+        qoi: str
+            QoI name
+        
+        Returns
+        -------
+        A ChaosPy PDF
+        """
+        if qoi not in self.qois:
+            raise RuntimeError('no such quantity of interest - {}'.format(qoi))
+        return SCDistribution(self.raw_data)
 
 
 class SCAnalysis(BaseAnalysisElement):
