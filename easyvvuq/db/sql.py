@@ -863,7 +863,7 @@ class CampaignDB(BaseCampaignDB):
 
         return self._get_campaign_info(campaign_name=campaign_name).runs_dir
 
-    def store_result(self, run_id, result):
+    def store_result(self, run_id, result, change_status=True):
         self.commit_counter += 1
 
         def convert_nonserializable(obj):
@@ -873,11 +873,17 @@ class CampaignDB(BaseCampaignDB):
         result_ = result['result']
         result.pop('result')
         result.pop('run_info')
-        self.session.query(RunTable).\
-            filter(RunTable.id == run_id).\
-            update({'result': json.dumps(result_, default=convert_nonserializable),
-                    'status': constants.Status.COLLATED,
-                    'run_dir': result['rundir']})
+        if change_status:
+            self.session.query(RunTable).\
+                filter(RunTable.id == run_id).\
+                update({'result': json.dumps(result_, default=convert_nonserializable),
+                        'status': constants.Status.COLLATED,
+                        'run_dir': result['rundir']})
+        else:
+            self.session.query(RunTable).\
+                filter(RunTable.id == run_id).\
+                update({'result': json.dumps(result_, default=convert_nonserializable),
+                        'run_dir': result['rundir']})            
         if self.commit_counter % COMMIT_RATE == 0:
             self.session.commit()
 

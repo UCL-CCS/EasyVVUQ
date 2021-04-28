@@ -59,7 +59,7 @@ def test_action_replace():
     curr_dir = os.getcwd()
     for run_dir in input_json_files_PATH:
         subprocess.call(
-            ["python3 {}/fusion_model.py  fusion_in.json".format(curr_dir)],
+            ["python3 {}/tutorials/fusion_model.py  fusion_in.json".format(curr_dir)],
             cwd=run_dir,
             shell=True
         )
