@@ -10,7 +10,6 @@ from sqlalchemy import create_engine, Column, Integer, String, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import MetaData
-from sqlalchemy.exc import OperationalError
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import text
 from sqlalchemy.engine import Engine
@@ -379,7 +378,7 @@ class CampaignDB(BaseCampaignDB):
         actions = easyvvuq_deserialize(app_info['actions'])
         return actions
 
-    def add_runs(self, run_info_list=None, run_prefix='Run_', iteration=0):
+    def add_runs(self, run_info_list=None, run_prefix='run_', iteration=0):
         """
         Add list of runs to the `runs` table in the database.
 
@@ -401,7 +400,6 @@ class CampaignDB(BaseCampaignDB):
         commit_counter = 0
         for run_info in run_info_list:
             run_info.run_name = f"{run_prefix}{self._next_run}"
-            run_info.run_dir = os.path.join(runs_dir, run_info.run_name)
             run_info.iteration = iteration
             run = RunTable(**run_info.to_dict(flatten=True))
             self.session.add(run)
@@ -864,7 +862,7 @@ class CampaignDB(BaseCampaignDB):
 
         return self._get_campaign_info(campaign_name=campaign_name).runs_dir
 
-    def store_result(self, run_id, result):
+    def store_result(self, run_id, result, change_status=True):
         self.commit_counter += 1
 
         def convert_nonserializable(obj):
@@ -874,10 +872,17 @@ class CampaignDB(BaseCampaignDB):
         result_ = result['result']
         result.pop('result')
         result.pop('run_info')
-        self.session.query(RunTable).\
-            filter(RunTable.id == run_id).\
-            update({'result': json.dumps(result_, default=convert_nonserializable),
-                    'status': constants.Status.COLLATED})
+        if change_status:
+            self.session.query(RunTable).\
+                filter(RunTable.id == run_id).\
+                update({'result': json.dumps(result_, default=convert_nonserializable),
+                        'status': constants.Status.COLLATED,
+                        'run_dir': result['rundir']})
+        else:
+            self.session.query(RunTable).\
+                filter(RunTable.id == run_id).\
+                update({'result': json.dumps(result_, default=convert_nonserializable),
+                        'run_dir': result['rundir']})            
         if self.commit_counter % COMMIT_RATE == 0:
             self.session.commit()
 
