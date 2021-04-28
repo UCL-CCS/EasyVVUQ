@@ -957,7 +957,10 @@ class CampaignDB(BaseCampaignDB):
                             pd_result[(key, i)].append(pd_dict[key][i])
                         except KeyError:
                             pd_result[(key, i)] = [pd_dict[key][i]]
-        return pd.DataFrame(pd_result)
+        try:
+            return pd.DataFrame(pd_result)
+        except ValueError:
+            raise RuntimeError('the results received from the database seem to be malformed - commonly because a vector quantity of interest changes dimensionality')
 
     def relocate(self, new_path, campaign_name):
         """Update all runs in the db with the new campaign path.
