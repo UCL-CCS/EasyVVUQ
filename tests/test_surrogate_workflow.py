@@ -81,3 +81,4 @@ def results_vectors(data_vectors):
 
 def test_surrogate_workflow():
     campaign = uq.Campaign('surrogate')
+    
