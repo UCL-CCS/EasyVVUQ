@@ -1237,7 +1237,10 @@
                             <span class="n">pd_result</span><span class="p">[(</span><span class="n">key</span><span class="p">,</span> <span class="n">i</span><span class="p">)]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pd_dict</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="n">i</span><span class="p">])</span>
                         <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
                             <span class="n">pd_result</span><span class="p">[(</span><span class="n">key</span><span class="p">,</span> <span class="n">i</span><span class="p">)]</span> <span class="o">=</span> <span class="p">[</span><span class="n">pd_dict</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="n">i</span><span class="p">]]</span>
-        <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">pd_result</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">pd_result</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;the results received from the database seem to be malformed - commonly because a vector quantity of interest changes dimensionality&#39;</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">relocate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_path</span><span class="p">,</span> <span class="n">campaign_name</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Update all runs in the db with the new campaign path.</span>
@@ -2691,7 +2694,10 @@ for example, any mapped columns or relationships.</p>
                             <span class="n">pd_result</span><span class="p">[(</span><span class="n">key</span><span class="p">,</span> <span class="n">i</span><span class="p">)]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pd_dict</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="n">i</span><span class="p">])</span>
                         <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
                             <span class="n">pd_result</span><span class="p">[(</span><span class="n">key</span><span class="p">,</span> <span class="n">i</span><span class="p">)]</span> <span class="o">=</span> <span class="p">[</span><span class="n">pd_dict</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="n">i</span><span class="p">]]</span>
-        <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">pd_result</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">pd_result</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;the results received from the database seem to be malformed - commonly because a vector quantity of interest changes dimensionality&#39;</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">relocate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_path</span><span class="p">,</span> <span class="n">campaign_name</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Update all runs in the db with the new campaign path.</span>
@@ -4354,7 +4360,10 @@ dictionary with the results (from the decoder)</li>
                             <span class="n">pd_result</span><span class="p">[(</span><span class="n">key</span><span class="p">,</span> <span class="n">i</span><span class="p">)]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pd_dict</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="n">i</span><span class="p">])</span>
                         <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
                             <span class="n">pd_result</span><span class="p">[(</span><span class="n">key</span><span class="p">,</span> <span class="n">i</span><span class="p">)]</span> <span class="o">=</span> <span class="p">[</span><span class="n">pd_dict</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="n">i</span><span class="p">]]</span>
-        <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">pd_result</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">pd_result</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;the results received from the database seem to be malformed - commonly because a vector quantity of interest changes dimensionality&#39;</span><span class="p">)</span>
 </pre></div>
 
         </details>
