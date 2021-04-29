@@ -376,19 +376,23 @@ surrogate functionality.</p>
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        dict or array</span>
+<span class="sd">           If both qoi and input_ are specified will return a dictionary,</span>
+<span class="sd">           otherwise will return an array.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_sobols_general</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_sobols_total</span><span class="p">,</span> <span class="n">qoi</span><span class="p">,</span> <span class="n">input_</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">surrogate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Returns the surrogate model as a function from parameter dictionary</span>
-<span class="sd">        to pandas DataFrame. This only needs to be implemented if the analysis</span>
+<span class="sd">        to output dictionary. This only needs to be implemented if the analysis</span>
 <span class="sd">        method in question provides surrogate models.</span>
 
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        a function that takes a dictionary of parameter - value pairs and returns</span>
-<span class="sd">        a pandas DataFrame with the results (same output as decoder)</span>
+<span class="sd">        function</span>
+<span class="sd">            Returns a function that takes a dictionary and returns a dictionary.</span>
+<span class="sd">            These dictionaries use the same format as Encoder and Decoder used</span>
+<span class="sd">            to construct the surrogate.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
 
@@ -1007,19 +1011,23 @@ surrogate functionality.</p>
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        dict or array</span>
+<span class="sd">           If both qoi and input_ are specified will return a dictionary,</span>
+<span class="sd">           otherwise will return an array.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_sobols_general</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_sobols_total</span><span class="p">,</span> <span class="n">qoi</span><span class="p">,</span> <span class="n">input_</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">surrogate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Returns the surrogate model as a function from parameter dictionary</span>
-<span class="sd">        to pandas DataFrame. This only needs to be implemented if the analysis</span>
+<span class="sd">        to output dictionary. This only needs to be implemented if the analysis</span>
 <span class="sd">        method in question provides surrogate models.</span>
 
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        a function that takes a dictionary of parameter - value pairs and returns</span>
-<span class="sd">        a pandas DataFrame with the results (same output as decoder)</span>
+<span class="sd">        function</span>
+<span class="sd">            Returns a function that takes a dictionary and returns a dictionary.</span>
+<span class="sd">            These dictionaries use the same format as Encoder and Decoder used</span>
+<span class="sd">            to construct the surrogate.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
 
@@ -1648,6 +1656,8 @@ all inputs but <code>input_</code>.</li>
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        dict or array</span>
+<span class="sd">           If both qoi and input_ are specified will return a dictionary,</span>
+<span class="sd">           otherwise will return an array.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_sobols_general</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_sobols_total</span><span class="p">,</span> <span class="n">qoi</span><span class="p">,</span> <span class="n">input_</span><span class="p">)</span>
 </pre></div>
@@ -1681,7 +1691,8 @@ The name of the input parameter or None.</li>
 <h6 id="returns">Returns</h6>
 
 <ul>
-<li><strong>dict or array</strong></li>
+<li><strong>dict or array</strong>: If both qoi and input_ are specified will return a dictionary,
+otherwise will return an array.</li>
 </ul>
 </div>
 
@@ -1699,14 +1710,16 @@ The name of the input parameter or None.</li>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">surrogate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Returns the surrogate model as a function from parameter dictionary</span>
-<span class="sd">        to pandas DataFrame. This only needs to be implemented if the analysis</span>
+<span class="sd">        to output dictionary. This only needs to be implemented if the analysis</span>
 <span class="sd">        method in question provides surrogate models.</span>
 
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        a function that takes a dictionary of parameter - value pairs and returns</span>
-<span class="sd">        a pandas DataFrame with the results (same output as decoder)</span>
+<span class="sd">        function</span>
+<span class="sd">            Returns a function that takes a dictionary and returns a dictionary.</span>
+<span class="sd">            These dictionaries use the same format as Encoder and Decoder used</span>
+<span class="sd">            to construct the surrogate.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
 </pre></div>
@@ -1714,14 +1727,15 @@ The name of the input parameter or None.</li>
         </details>
 
             <div class="docstring"><p>Returns the surrogate model as a function from parameter dictionary
-to pandas DataFrame. This only needs to be implemented if the analysis
+to output dictionary. This only needs to be implemented if the analysis
 method in question provides surrogate models.</p>
 
 <h6 id="returns">Returns</h6>
 
 <ul>
-<li><strong>a function that takes a dictionary of parameter - value pairs and returns</strong></li>
-<li><strong>a pandas DataFrame with the results (same output as decoder)</strong></li>
+<li><strong>function</strong>: Returns a function that takes a dictionary and returns a dictionary.
+These dictionaries use the same format as Encoder and Decoder used
+to construct the surrogate.</li>
 </ul>
 </div>
 
