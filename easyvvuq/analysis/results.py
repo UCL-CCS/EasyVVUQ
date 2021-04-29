@@ -56,15 +56,16 @@ class AnalysisResults:
         Parameters
         ----------
         qoi - str or tuple
-           Quantity of interest or if a tuple quantity of interest plus
-        coordinate index (for cases where qoi is vector valued.
-
+            Quantity of interest or if a tuple quantity of interest plus
+            coordinate index (for cases where qoi is vector valued).
         input_ - str
-           Input variable name.
+            Input variable name.
 
         Returns
         -------
-        a pandas DataFrame
+        `np.array`
+            An array with first order sobol indices. If the `qoi` is not vector valued the
+            array will have one element.
         """
         raise NotImplementedError
 
@@ -75,23 +76,34 @@ class AnalysisResults:
         ----------
         qoi - str or tuple
            Quantity of interest or if a tuple quantity of interest plus
-        coordinate index (for cases where qoi is vector valued.
-
+           coordinate index (for cases where qoi is vector valued).
         input_ - str
            Input variable name.
 
         Returns
         -------
-        a pandas DataFrame
+        `np.array`
+            An array with first order sobol indices. If the `qoi` is not vector valued the
+            array will have one element.
         """
         raise NotImplementedError
 
     def _get_sobols_total(self, qoi, input_):
         """Returns total order Sobol indices.
 
+        Parameters
+        ----------
+        qoi - str or tuple
+           Quantity of interest or if a tuple quantity of interest plus
+           coordinate index (for cases where qoi is vector valued).
+        input_ - str
+           Input variable name.
+
         Returns
         -------
-        a pandas DataFrame
+        `np.array`
+            An array with total order sobol indices. If the `qoi` is not vector valued the
+            array will have one element.
         """
         raise NotImplementedError
 
@@ -102,14 +114,15 @@ class AnalysisResults:
         ----------
         qoi : str
             Name of the qoi for which the first order sensitivity index
-        confidence interval is requested.
+            confidence interval is requested.
         input_ : str
             Name of the input for which the first order sensitivy index
-        confidence interval is requested.
+            confidence interval is requested.
 
         Returns
         -------
-        a pandas DataFrame
+        `list`
+            A list of two floats - lower and upper confidence interval bounds.
         """
         raise NotImplementedError
 
@@ -120,14 +133,15 @@ class AnalysisResults:
         ----------
         qoi : str
             Name of the qoi for which the first order sensitivity index
-        confidence interval is requested.
+            confidence interval is requested.
         input_ : str
             Name of the input for which the first order sensitivy index
-        confidence interval is requested.
+            confidence interval is requested.
 
         Returns
         -------
-        a pandas DataFrame
+        `list`
+            A list of two floats - lower and upper confidence interval bounds.
         """
         raise NotImplementedError
 
