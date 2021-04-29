@@ -30,27 +30,13 @@ class AnalysisResults:
         List of qoi names used during the analysis.
     
     inputs: list of str
-        List of input parameter names used during the analysis.
+        List of input names used during the analysis.
     """
-
-    all_analysis_methods = []
-    implemented = []
-
     def __init__(self, raw_data=None, samples=None, qois=None, inputs=None):
         self.raw_data = raw_data
         self.samples = samples
         self.qois = qois
         self.inputs = inputs
-
-    def __getattr__(self, attr):
-        if attr in self.all_analysis_methods:
-            raise RuntimeError(
-                "analysis results method '{}' is not implement in '{}',\
-                 implemented methods are {}".format(
-                    attr, self.__class__.__name__, self.implemented))
-        else:
-            raise AttributeError(
-                "type object '{}' has no attribute '{}'".format(self.__class__.__name__, attr))
 
     def supported_stats(self):
         raise NotImplementedError('descriptive statistics not available in this method')
