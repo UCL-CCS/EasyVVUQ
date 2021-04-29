@@ -541,10 +541,6 @@ class AnalysisResults:
             fig = ax.get_figure()
         if xvalues is None:
             xvalues = np.arange(len(self.describe(qoi, 'mean')))
-#        ax.fill_between(
-#            xvalues, self.describe(
-#                qoi, 'min'), self.describe(
-#                qoi, 'max'), label='min-max', alpha=alpha)
         ax.fill_between(xvalues, self.describe(qoi, 'mean') -
                         self.describe(qoi, 'std'), self.describe(qoi, 'mean') +
                         self.describe(qoi, 'std'), label='std', alpha=alpha)
