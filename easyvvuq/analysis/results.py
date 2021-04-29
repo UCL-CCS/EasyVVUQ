@@ -1,7 +1,4 @@
 """
-Summary
--------
-
 Represents the results obtained during the analysis stage.
 All the analysis classes should implement this in a way that makes
 most sense. Provides a more unified interface for accessing the results
@@ -39,6 +36,18 @@ class AnalysisResults:
         self.inputs = inputs
 
     def supported_stats(self):
+        """Returns a list of descriptive statistics that the method reports.
+
+        Examples
+        --------
+        >>> results.supported_stats()
+        ['min', 'max', '10%', '90%', '1%', '99%', 'median', 'mean', 'var', 'std']
+
+        Returns
+        -------
+        list of str
+            A list of statistics that can then be passed to the `describe` method.
+        """
         raise NotImplementedError('descriptive statistics not available in this method')
 
     def _get_sobols_first(self, qoi, input_):
