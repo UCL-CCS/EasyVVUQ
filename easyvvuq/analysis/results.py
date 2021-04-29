@@ -343,7 +343,10 @@ class AnalysisResults:
 
         Returns
         -------
-        pandas DataFrame or a numpy array
+        DataFrame or array
+            If both quantity of interest and the statistic are specified will return
+            an array with the values for that statistic. Otherwise will return a DataFrame
+            with more data.
         """
         assert(not ((qoi is None) and (statistic is not None)))
         statistics = ['mean', 'var', 'std', '1%', '10%', '90%', '99%', 'min', 'max', 'median']
