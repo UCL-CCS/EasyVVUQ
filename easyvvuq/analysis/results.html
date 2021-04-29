@@ -436,7 +436,10 @@ surrogate functionality.</p>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        pandas DataFrame or a numpy array</span>
+<span class="sd">        DataFrame or array</span>
+<span class="sd">            If both quantity of interest and the statistic are specified will return</span>
+<span class="sd">            an array with the values for that statistic. Otherwise will return a DataFrame</span>
+<span class="sd">            with more data.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">assert</span><span class="p">(</span><span class="ow">not</span> <span class="p">((</span><span class="n">qoi</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">statistic</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)))</span>
         <span class="n">statistics</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;mean&#39;</span><span class="p">,</span> <span class="s1">&#39;var&#39;</span><span class="p">,</span> <span class="s1">&#39;std&#39;</span><span class="p">,</span> <span class="s1">&#39;1%&#39;</span><span class="p">,</span> <span class="s1">&#39;10%&#39;</span><span class="p">,</span> <span class="s1">&#39;90%&#39;</span><span class="p">,</span> <span class="s1">&#39;99%&#39;</span><span class="p">,</span> <span class="s1">&#39;min&#39;</span><span class="p">,</span> <span class="s1">&#39;max&#39;</span><span class="p">,</span> <span class="s1">&#39;median&#39;</span><span class="p">]</span>
@@ -631,10 +634,6 @@ surrogate functionality.</p>
             <span class="n">fig</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">get_figure</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">xvalues</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">xvalues</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">describe</span><span class="p">(</span><span class="n">qoi</span><span class="p">,</span> <span class="s1">&#39;mean&#39;</span><span class="p">)))</span>
-<span class="c1">#        ax.fill_between(</span>
-<span class="c1">#            xvalues, self.describe(</span>
-<span class="c1">#                qoi, &#39;min&#39;), self.describe(</span>
-<span class="c1">#                qoi, &#39;max&#39;), label=&#39;min-max&#39;, alpha=alpha)</span>
         <span class="n">ax</span><span class="o">.</span><span class="n">fill_between</span><span class="p">(</span><span class="n">xvalues</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">describe</span><span class="p">(</span><span class="n">qoi</span><span class="p">,</span> <span class="s1">&#39;mean&#39;</span><span class="p">)</span> <span class="o">-</span>
                         <span class="bp">self</span><span class="o">.</span><span class="n">describe</span><span class="p">(</span><span class="n">qoi</span><span class="p">,</span> <span class="s1">&#39;std&#39;</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">describe</span><span class="p">(</span><span class="n">qoi</span><span class="p">,</span> <span class="s1">&#39;mean&#39;</span><span class="p">)</span> <span class="o">+</span>
                         <span class="bp">self</span><span class="o">.</span><span class="n">describe</span><span class="p">(</span><span class="n">qoi</span><span class="p">,</span> <span class="s1">&#39;std&#39;</span><span class="p">),</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;std&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="n">alpha</span><span class="p">)</span>
@@ -1071,7 +1070,10 @@ surrogate functionality.</p>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        pandas DataFrame or a numpy array</span>
+<span class="sd">        DataFrame or array</span>
+<span class="sd">            If both quantity of interest and the statistic are specified will return</span>
+<span class="sd">            an array with the values for that statistic. Otherwise will return a DataFrame</span>
+<span class="sd">            with more data.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">assert</span><span class="p">(</span><span class="ow">not</span> <span class="p">((</span><span class="n">qoi</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">statistic</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)))</span>
         <span class="n">statistics</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;mean&#39;</span><span class="p">,</span> <span class="s1">&#39;var&#39;</span><span class="p">,</span> <span class="s1">&#39;std&#39;</span><span class="p">,</span> <span class="s1">&#39;1%&#39;</span><span class="p">,</span> <span class="s1">&#39;10%&#39;</span><span class="p">,</span> <span class="s1">&#39;90%&#39;</span><span class="p">,</span> <span class="s1">&#39;99%&#39;</span><span class="p">,</span> <span class="s1">&#39;min&#39;</span><span class="p">,</span> <span class="s1">&#39;max&#39;</span><span class="p">,</span> <span class="s1">&#39;median&#39;</span><span class="p">]</span>
@@ -1266,10 +1268,6 @@ surrogate functionality.</p>
             <span class="n">fig</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">get_figure</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">xvalues</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">xvalues</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">describe</span><span class="p">(</span><span class="n">qoi</span><span class="p">,</span> <span class="s1">&#39;mean&#39;</span><span class="p">)))</span>
-<span class="c1">#        ax.fill_between(</span>
-<span class="c1">#            xvalues, self.describe(</span>
-<span class="c1">#                qoi, &#39;min&#39;), self.describe(</span>
-<span class="c1">#                qoi, &#39;max&#39;), label=&#39;min-max&#39;, alpha=alpha)</span>
         <span class="n">ax</span><span class="o">.</span><span class="n">fill_between</span><span class="p">(</span><span class="n">xvalues</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">describe</span><span class="p">(</span><span class="n">qoi</span><span class="p">,</span> <span class="s1">&#39;mean&#39;</span><span class="p">)</span> <span class="o">-</span>
                         <span class="bp">self</span><span class="o">.</span><span class="n">describe</span><span class="p">(</span><span class="n">qoi</span><span class="p">,</span> <span class="s1">&#39;std&#39;</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">describe</span><span class="p">(</span><span class="n">qoi</span><span class="p">,</span> <span class="s1">&#39;mean&#39;</span><span class="p">)</span> <span class="o">+</span>
                         <span class="bp">self</span><span class="o">.</span><span class="n">describe</span><span class="p">(</span><span class="n">qoi</span><span class="p">,</span> <span class="s1">&#39;std&#39;</span><span class="p">),</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;std&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="n">alpha</span><span class="p">)</span>
@@ -1791,7 +1789,10 @@ to construct the surrogate.</li>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        pandas DataFrame or a numpy array</span>
+<span class="sd">        DataFrame or array</span>
+<span class="sd">            If both quantity of interest and the statistic are specified will return</span>
+<span class="sd">            an array with the values for that statistic. Otherwise will return a DataFrame</span>
+<span class="sd">            with more data.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">assert</span><span class="p">(</span><span class="ow">not</span> <span class="p">((</span><span class="n">qoi</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">statistic</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)))</span>
         <span class="n">statistics</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;mean&#39;</span><span class="p">,</span> <span class="s1">&#39;var&#39;</span><span class="p">,</span> <span class="s1">&#39;std&#39;</span><span class="p">,</span> <span class="s1">&#39;1%&#39;</span><span class="p">,</span> <span class="s1">&#39;10%&#39;</span><span class="p">,</span> <span class="s1">&#39;90%&#39;</span><span class="p">,</span> <span class="s1">&#39;99%&#39;</span><span class="p">,</span> <span class="s1">&#39;min&#39;</span><span class="p">,</span> <span class="s1">&#39;max&#39;</span><span class="p">,</span> <span class="s1">&#39;median&#39;</span><span class="p">]</span>
@@ -1868,7 +1869,9 @@ are: ['mean', 'var', 'std', '10%', '90%', 'min', 'max', 'median']</li>
 <h6 id="returns">Returns</h6>
 
 <ul>
-<li><strong>pandas DataFrame or a numpy array</strong></li>
+<li><strong>DataFrame or array</strong>: If both quantity of interest and the statistic are specified will return
+an array with the values for that statistic. Otherwise will return a DataFrame
+with more data.</li>
 </ul>
 </div>
 
@@ -2151,10 +2154,6 @@ if None, plots to a new axes, otherwise plot to existing axes ax</li>
             <span class="n">fig</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">get_figure</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">xvalues</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">xvalues</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">describe</span><span class="p">(</span><span class="n">qoi</span><span class="p">,</span> <span class="s1">&#39;mean&#39;</span><span class="p">)))</span>
-<span class="c1">#        ax.fill_between(</span>
-<span class="c1">#            xvalues, self.describe(</span>
-<span class="c1">#                qoi, &#39;min&#39;), self.describe(</span>
-<span class="c1">#                qoi, &#39;max&#39;), label=&#39;min-max&#39;, alpha=alpha)</span>
         <span class="n">ax</span><span class="o">.</span><span class="n">fill_between</span><span class="p">(</span><span class="n">xvalues</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">describe</span><span class="p">(</span><span class="n">qoi</span><span class="p">,</span> <span class="s1">&#39;mean&#39;</span><span class="p">)</span> <span class="o">-</span>
                         <span class="bp">self</span><span class="o">.</span><span class="n">describe</span><span class="p">(</span><span class="n">qoi</span><span class="p">,</span> <span class="s1">&#39;std&#39;</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">describe</span><span class="p">(</span><span class="n">qoi</span><span class="p">,</span> <span class="s1">&#39;mean&#39;</span><span class="p">)</span> <span class="o">+</span>
                         <span class="bp">self</span><span class="o">.</span><span class="n">describe</span><span class="p">(</span><span class="n">qoi</span><span class="p">,</span> <span class="s1">&#39;std&#39;</span><span class="p">),</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;std&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="n">alpha</span><span class="p">)</span>
