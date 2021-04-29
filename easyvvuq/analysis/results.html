@@ -25,7 +25,7 @@
 
                     <h2>Contents</h2>
                     <ul>
-  <li><a href="#examples">Examples</a></li>
+  <li><a href="#summary">Summary</a></li>
 </ul>
 
 
@@ -92,32 +92,28 @@
                     <h1 class="modulename">
 <a href="./../../easyvvuq.html">easyvvuq</a>.<a href="./../analysis.html">analysis</a>.results    </h1>
 
-                        <div class="docstring"><p>Represents the results obtained during the analysis stage.
+                        <div class="docstring"><h6 id="summary">Summary</h6>
+
+<p>Represents the results obtained during the analysis stage.
 All the analysis classes should implement this in a way that makes
 most sense. Provides a more unified interface for accessing the results
-in a variety of formats (e.g. NumPy arrays or pandas DataFrames).</p>
-
-<h6 id="examples">Examples</h6>
-
-<div class="codehilite"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">results</span> <span class="o">=</span> <span class="n">PCEAnalysis</span><span class="p">(</span><span class="n">sampler</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">results</span><span class="o">.</span><span class="n">to_pd</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">results</span><span class="o">.</span><span class="n">describe</span><span class="p">()</span>
-</code></pre></div>
+in a variety of formats (e.g. NumPy arrays or pandas DataFrames). This module
+also provides a variety of ways to display results as well as a way to access
+surrogate functionality.</p>
 </div>
 
                         <details>
             <summary>View Source</summary>
-            <div class="codehilite"><pre><span></span><span class="sd">&quot;&quot;&quot;Represents the results obtained during the analysis stage.</span>
+            <div class="codehilite"><pre><span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Summary</span>
+<span class="sd">-------</span>
+
+<span class="sd">Represents the results obtained during the analysis stage.</span>
 <span class="sd">All the analysis classes should implement this in a way that makes</span>
 <span class="sd">most sense. Provides a more unified interface for accessing the results</span>
-<span class="sd">in a variety of formats (e.g. NumPy arrays or pandas DataFrames).</span>
-
-<span class="sd">Examples</span>
-<span class="sd">--------</span>
-
-<span class="sd">&gt;&gt;&gt; results = PCEAnalysis(sampler, [&#39;a&#39;, &#39;b&#39;])</span>
-<span class="sd">&gt;&gt;&gt; results.to_pd()</span>
-<span class="sd">&gt;&gt;&gt; results.describe()</span>
+<span class="sd">in a variety of formats (e.g. NumPy arrays or pandas DataFrames). This module</span>
+<span class="sd">also provides a variety of ways to display results as well as a way to access</span>
+<span class="sd">surrogate functionality.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
@@ -131,10 +127,16 @@ in a variety of formats (e.g. NumPy arrays or pandas DataFrames).</p>
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    raw_data: obj</span>
-<span class="sd">        an arbitrary object that contains raw analysis data</span>
+<span class="sd">        An arbitrary object that contains raw analysis data.</span>
 
 <span class="sd">    samples: pandas DataFrame</span>
-<span class="sd">        collated samples</span>
+<span class="sd">        Collated samples.</span>
+
+<span class="sd">    qois: list of str</span>
+<span class="sd">        List of qoi names used during the analysis.</span>
+<span class="sd">    </span>
+<span class="sd">    inputs: list of str</span>
+<span class="sd">        List of input parameter names used during the analysis.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">all_analysis_methods</span> <span class="o">=</span> <span class="p">[]</span>
@@ -719,10 +721,16 @@ in a variety of formats (e.g. NumPy arrays or pandas DataFrames).</p>
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    raw_data: obj</span>
-<span class="sd">        an arbitrary object that contains raw analysis data</span>
+<span class="sd">        An arbitrary object that contains raw analysis data.</span>
 
 <span class="sd">    samples: pandas DataFrame</span>
-<span class="sd">        collated samples</span>
+<span class="sd">        Collated samples.</span>
+
+<span class="sd">    qois: list of str</span>
+<span class="sd">        List of qoi names used during the analysis.</span>
+<span class="sd">    </span>
+<span class="sd">    inputs: list of str</span>
+<span class="sd">        List of input parameter names used during the analysis.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">all_analysis_methods</span> <span class="o">=</span> <span class="p">[]</span>
@@ -1295,9 +1303,13 @@ in a variety of formats (e.g. NumPy arrays or pandas DataFrames).</p>
 
 <ul>
 <li><strong>raw_data</strong> (obj):
-an arbitrary object that contains raw analysis data</li>
+An arbitrary object that contains raw analysis data.</li>
 <li><strong>samples</strong> (pandas DataFrame):
-collated samples</li>
+Collated samples.</li>
+<li><strong>qois</strong> (list of str):
+List of qoi names used during the analysis.</li>
+<li><strong>inputs</strong> (list of str):
+List of input parameter names used during the analysis.</li>
 </ul>
 </div>
 
