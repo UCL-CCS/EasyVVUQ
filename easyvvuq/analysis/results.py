@@ -1,14 +1,13 @@
-"""Represents the results obtained during the analysis stage.
+"""
+Summary
+-------
+
+Represents the results obtained during the analysis stage.
 All the analysis classes should implement this in a way that makes
 most sense. Provides a more unified interface for accessing the results
-in a variety of formats (e.g. NumPy arrays or pandas DataFrames).
-
-Examples
---------
-
->>> results = PCEAnalysis(sampler, ['a', 'b'])
->>> results.to_pd()
->>> results.describe()
+in a variety of formats (e.g. NumPy arrays or pandas DataFrames). This module
+also provides a variety of ways to display results as well as a way to access
+surrogate functionality.
 """
 
 import pandas as pd
@@ -22,10 +21,16 @@ class AnalysisResults:
     Parameters
     ----------
     raw_data: obj
-        an arbitrary object that contains raw analysis data
+        An arbitrary object that contains raw analysis data.
 
     samples: pandas DataFrame
-        collated samples
+        Collated samples.
+
+    qois: list of str
+        List of qoi names used during the analysis.
+    
+    inputs: list of str
+        List of input parameter names used during the analysis.
     """
 
     all_analysis_methods = []
