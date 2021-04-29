@@ -39,12 +39,6 @@
                                 <a class="function" href="#AnalysisResults.__init__">AnalysisResults</a>
                         </li>
                         <li>
-                                <a class="variable" href="#AnalysisResults.all_analysis_methods">all_analysis_methods</a>
-                        </li>
-                        <li>
-                                <a class="variable" href="#AnalysisResults.implemented">implemented</a>
-                        </li>
-                        <li>
                                 <a class="function" href="#AnalysisResults.supported_stats">supported_stats</a>
                         </li>
                         <li>
@@ -136,27 +130,13 @@ surrogate functionality.</p>
 <span class="sd">        List of qoi names used during the analysis.</span>
 <span class="sd">    </span>
 <span class="sd">    inputs: list of str</span>
-<span class="sd">        List of input parameter names used during the analysis.</span>
+<span class="sd">        List of input names used during the analysis.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="n">all_analysis_methods</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="n">implemented</span> <span class="o">=</span> <span class="p">[]</span>
-
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">raw_data</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">samples</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">qois</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">inputs</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">raw_data</span> <span class="o">=</span> <span class="n">raw_data</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">samples</span> <span class="o">=</span> <span class="n">samples</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">qois</span> <span class="o">=</span> <span class="n">qois</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">inputs</span> <span class="o">=</span> <span class="n">inputs</span>
-
-    <span class="k">def</span> <span class="fm">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">attr</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">all_analysis_methods</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
-                <span class="s2">&quot;analysis results method &#39;</span><span class="si">{}</span><span class="s2">&#39; is not implement in &#39;</span><span class="si">{}</span><span class="s2">&#39;,</span><span class="se">\</span>
-<span class="s2">                 implemented methods are </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-                    <span class="n">attr</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">implemented</span><span class="p">))</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span>
-                <span class="s2">&quot;type object &#39;</span><span class="si">{}</span><span class="s2">&#39; has no attribute &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">attr</span><span class="p">))</span>
 
     <span class="k">def</span> <span class="nf">supported_stats</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">&#39;descriptive statistics not available in this method&#39;</span><span class="p">)</span>
@@ -730,27 +710,13 @@ surrogate functionality.</p>
 <span class="sd">        List of qoi names used during the analysis.</span>
 <span class="sd">    </span>
 <span class="sd">    inputs: list of str</span>
-<span class="sd">        List of input parameter names used during the analysis.</span>
+<span class="sd">        List of input names used during the analysis.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="n">all_analysis_methods</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="n">implemented</span> <span class="o">=</span> <span class="p">[]</span>
-
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">raw_data</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">samples</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">qois</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">inputs</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">raw_data</span> <span class="o">=</span> <span class="n">raw_data</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">samples</span> <span class="o">=</span> <span class="n">samples</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">qois</span> <span class="o">=</span> <span class="n">qois</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">inputs</span> <span class="o">=</span> <span class="n">inputs</span>
-
-    <span class="k">def</span> <span class="fm">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">attr</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">all_analysis_methods</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
-                <span class="s2">&quot;analysis results method &#39;</span><span class="si">{}</span><span class="s2">&#39; is not implement in &#39;</span><span class="si">{}</span><span class="s2">&#39;,</span><span class="se">\</span>
-<span class="s2">                 implemented methods are </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-                    <span class="n">attr</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">implemented</span><span class="p">))</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span>
-                <span class="s2">&quot;type object &#39;</span><span class="si">{}</span><span class="s2">&#39; has no attribute &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">attr</span><span class="p">))</span>
 
     <span class="k">def</span> <span class="nf">supported_stats</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">&#39;descriptive statistics not available in this method&#39;</span><span class="p">)</span>
@@ -1309,7 +1275,7 @@ Collated samples.</li>
 <li><strong>qois</strong> (list of str):
 List of qoi names used during the analysis.</li>
 <li><strong>inputs</strong> (list of str):
-List of input parameter names used during the analysis.</li>
+List of input names used during the analysis.</li>
 </ul>
 </div>
 
@@ -1331,24 +1297,6 @@ List of input parameter names used during the analysis.</li>
 </pre></div>
 
         </details>
-
-    
-
-                            </div>
-                            <div id="AnalysisResults.all_analysis_methods" class="classattr">
-                                            <div class="attr variable"><a class="headerlink" href="#AnalysisResults.all_analysis_methods">#&nbsp;&nbsp</a>
-
-        <span class="name">all_analysis_methods</span><span class="default_value"> = []</span>
-    </div>
-
-    
-
-                            </div>
-                            <div id="AnalysisResults.implemented" class="classattr">
-                                            <div class="attr variable"><a class="headerlink" href="#AnalysisResults.implemented">#&nbsp;&nbsp</a>
-
-        <span class="name">implemented</span><span class="default_value"> = []</span>
-    </div>
 
     
 
