@@ -359,17 +359,23 @@ surrogate functionality.</p>
 <span class="sd">            The name of the quantity of interest or None.</span>
 <span class="sd">            Use a tuple of the form (qoi, index) where index is integer</span>
 <span class="sd">            that means the coordinate index of a vector qoi.</span>
-
 <span class="sd">        input_: str</span>
 <span class="sd">            The name of the input parameter or None.</span>
 
 
 <span class="sd">        Examples</span>
 <span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; results.sobols_total(&#39;g1&#39;)</span>
+<span class="sd">        {&#39;F&#39;: array([0.14299044]),</span>
+<span class="sd">        &#39;L&#39;: array([0.01247877]),</span>
+<span class="sd">        &#39;a&#39;: array([0.7105291]),</span>
+<span class="sd">        &#39;D&#39;: array([0.15018883])}</span>
+<span class="sd">        &gt;&gt;&gt; results.sobols_total(&#39;g1&#39;, &#39;F&#39;)</span>
+<span class="sd">        array([0.14299044])</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        a dictionary or an array</span>
+<span class="sd">        dict or array</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_sobols_general</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_sobols_total</span><span class="p">,</span> <span class="n">qoi</span><span class="p">,</span> <span class="n">input_</span><span class="p">)</span>
 
@@ -984,17 +990,23 @@ surrogate functionality.</p>
 <span class="sd">            The name of the quantity of interest or None.</span>
 <span class="sd">            Use a tuple of the form (qoi, index) where index is integer</span>
 <span class="sd">            that means the coordinate index of a vector qoi.</span>
-
 <span class="sd">        input_: str</span>
 <span class="sd">            The name of the input parameter or None.</span>
 
 
 <span class="sd">        Examples</span>
 <span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; results.sobols_total(&#39;g1&#39;)</span>
+<span class="sd">        {&#39;F&#39;: array([0.14299044]),</span>
+<span class="sd">        &#39;L&#39;: array([0.01247877]),</span>
+<span class="sd">        &#39;a&#39;: array([0.7105291]),</span>
+<span class="sd">        &#39;D&#39;: array([0.15018883])}</span>
+<span class="sd">        &gt;&gt;&gt; results.sobols_total(&#39;g1&#39;, &#39;F&#39;)</span>
+<span class="sd">        array([0.14299044])</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        a dictionary or an array</span>
+<span class="sd">        dict or array</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_sobols_general</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_sobols_total</span><span class="p">,</span> <span class="n">qoi</span><span class="p">,</span> <span class="n">input_</span><span class="p">)</span>
 
@@ -1619,17 +1631,23 @@ all inputs but <code>input_</code>.</li>
 <span class="sd">            The name of the quantity of interest or None.</span>
 <span class="sd">            Use a tuple of the form (qoi, index) where index is integer</span>
 <span class="sd">            that means the coordinate index of a vector qoi.</span>
-
 <span class="sd">        input_: str</span>
 <span class="sd">            The name of the input parameter or None.</span>
 
 
 <span class="sd">        Examples</span>
 <span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; results.sobols_total(&#39;g1&#39;)</span>
+<span class="sd">        {&#39;F&#39;: array([0.14299044]),</span>
+<span class="sd">        &#39;L&#39;: array([0.01247877]),</span>
+<span class="sd">        &#39;a&#39;: array([0.7105291]),</span>
+<span class="sd">        &#39;D&#39;: array([0.15018883])}</span>
+<span class="sd">        &gt;&gt;&gt; results.sobols_total(&#39;g1&#39;, &#39;F&#39;)</span>
+<span class="sd">        array([0.14299044])</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        a dictionary or an array</span>
+<span class="sd">        dict or array</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_sobols_general</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_sobols_total</span><span class="p">,</span> <span class="n">qoi</span><span class="p">,</span> <span class="n">input_</span><span class="p">)</span>
 </pre></div>
@@ -1651,10 +1669,19 @@ The name of the input parameter or None.</li>
 
 <h6 id="examples">Examples</h6>
 
+<div class="codehilite"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">results</span><span class="o">.</span><span class="n">sobols_total</span><span class="p">(</span><span class="s1">&#39;g1&#39;</span><span class="p">)</span>
+<span class="go">{&#39;F&#39;: array([0.14299044]),</span>
+<span class="go">&#39;L&#39;: array([0.01247877]),</span>
+<span class="go">&#39;a&#39;: array([0.7105291]),</span>
+<span class="go">&#39;D&#39;: array([0.15018883])}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">results</span><span class="o">.</span><span class="n">sobols_total</span><span class="p">(</span><span class="s1">&#39;g1&#39;</span><span class="p">,</span> <span class="s1">&#39;F&#39;</span><span class="p">)</span>
+<span class="go">array([0.14299044])</span>
+</code></pre></div>
+
 <h6 id="returns">Returns</h6>
 
 <ul>
-<li><strong>a dictionary or an array</strong></li>
+<li><strong>dict or array</strong></li>
 </ul>
 </div>
 
