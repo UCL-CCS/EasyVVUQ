@@ -266,17 +266,23 @@ class AnalysisResults:
             The name of the quantity of interest or None.
             Use a tuple of the form (qoi, index) where index is integer
             that means the coordinate index of a vector qoi.
-
         input_: str
             The name of the input parameter or None.
 
 
         Examples
         --------
+        >>> results.sobols_total('g1')
+        {'F': array([0.14299044]),
+        'L': array([0.01247877]),
+        'a': array([0.7105291]),
+        'D': array([0.15018883])}
+        >>> results.sobols_total('g1', 'F')
+        array([0.14299044])
 
         Returns
         -------
-        a dictionary or an array
+        dict or array
         """
         return self._get_sobols_general(self._get_sobols_total, qoi, input_)
 
