@@ -63,7 +63,7 @@ class AnalysisResults:
 
         Returns
         -------
-        `np.array`
+        np.array
             An array with first order sobol indices. If the `qoi` is not vector valued the
             array will have one element.
         """
@@ -82,7 +82,7 @@ class AnalysisResults:
 
         Returns
         -------
-        `np.array`
+        np.array
             An array with first order sobol indices. If the `qoi` is not vector valued the
             array will have one element.
         """
@@ -101,7 +101,7 @@ class AnalysisResults:
 
         Returns
         -------
-        `np.array`
+        np.array
             An array with total order sobol indices. If the `qoi` is not vector valued the
             array will have one element.
         """
@@ -121,7 +121,7 @@ class AnalysisResults:
 
         Returns
         -------
-        `list`
+        list
             A list of two floats - lower and upper confidence interval bounds.
         """
         raise NotImplementedError
@@ -140,7 +140,7 @@ class AnalysisResults:
 
         Returns
         -------
-        `list`
+        list
             A list of two floats - lower and upper confidence interval bounds.
         """
         raise NotImplementedError
@@ -164,7 +164,7 @@ class AnalysisResults:
 
         Returns
         -------
-        a dictionary or an array
+        dict or array
         """
         assert(not ((qoi is None) and (input_ is not None)))
         if (qoi is not None) and (qoi not in self.qois):
@@ -212,7 +212,9 @@ class AnalysisResults:
 
         Returns
         -------
-        a dictionary or an array
+        dict or array
+           If both qoi and input_ are specified will return a dictionary,
+           otherwise will return an array.
         """
         return self._get_sobols_general(self._get_sobols_first, qoi, input_)
 
@@ -231,10 +233,27 @@ class AnalysisResults:
 
         Examples
         --------
-
+        >>> results.sobols_second('a')
+        {'F': {'L': array([0.000121]),
+        'a': array([0.00695338]),
+        'D': array([0.00141272])},
+        'L': {'F': array([0.000121]),
+        'a': array([0.00012737]),
+        'D': array([0.00012716])},
+        'a': {'F': array([0.00695338]),
+        'L': array([0.00012737]),
+        'D': array([0.00730415])},
+        'D': {'F': array([0.00141272]),
+        'L': array([0.00012716]),
+        'a': array([0.00730415])}}
+        >>> results.sobols_second('g1', 'L')
+        {'F': array([0.000121]), 'a': array([0.00012737]), 'D': array([0.00012716])}        
         Returns
         -------
-        a dictionary or an array
+        dict
+           Will always return a dictionary unlike first order sobol indices. Because
+           the index is specified by a pair of inputs. The dictionary will include
+           all inputs but `input_`.
         """
         return self._get_sobols_general(self._get_sobols_second, qoi, input_)
 
