@@ -156,7 +156,7 @@ surrogate functionality.</p>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        `np.array`</span>
+<span class="sd">        np.array</span>
 <span class="sd">            An array with first order sobol indices. If the `qoi` is not vector valued the</span>
 <span class="sd">            array will have one element.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -175,7 +175,7 @@ surrogate functionality.</p>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        `np.array`</span>
+<span class="sd">        np.array</span>
 <span class="sd">            An array with first order sobol indices. If the `qoi` is not vector valued the</span>
 <span class="sd">            array will have one element.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -194,7 +194,7 @@ surrogate functionality.</p>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        `np.array`</span>
+<span class="sd">        np.array</span>
 <span class="sd">            An array with total order sobol indices. If the `qoi` is not vector valued the</span>
 <span class="sd">            array will have one element.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -214,7 +214,7 @@ surrogate functionality.</p>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        `list`</span>
+<span class="sd">        list</span>
 <span class="sd">            A list of two floats - lower and upper confidence interval bounds.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
@@ -233,7 +233,7 @@ surrogate functionality.</p>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        `list`</span>
+<span class="sd">        list</span>
 <span class="sd">            A list of two floats - lower and upper confidence interval bounds.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
@@ -257,7 +257,7 @@ surrogate functionality.</p>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        a dictionary or an array</span>
+<span class="sd">        dict or array</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">assert</span><span class="p">(</span><span class="ow">not</span> <span class="p">((</span><span class="n">qoi</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">input_</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)))</span>
         <span class="k">if</span> <span class="p">(</span><span class="n">qoi</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">qoi</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">qois</span><span class="p">):</span>
@@ -305,7 +305,9 @@ surrogate functionality.</p>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        a dictionary or an array</span>
+<span class="sd">        dict or array</span>
+<span class="sd">           If both qoi and input_ are specified will return a dictionary,</span>
+<span class="sd">           otherwise will return an array.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_sobols_general</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_sobols_first</span><span class="p">,</span> <span class="n">qoi</span><span class="p">,</span> <span class="n">input_</span><span class="p">)</span>
 
@@ -324,10 +326,27 @@ surrogate functionality.</p>
 
 <span class="sd">        Examples</span>
 <span class="sd">        --------</span>
-
+<span class="sd">        &gt;&gt;&gt; results.sobols_second(&#39;a&#39;)</span>
+<span class="sd">        {&#39;F&#39;: {&#39;L&#39;: array([0.000121]),</span>
+<span class="sd">        &#39;a&#39;: array([0.00695338]),</span>
+<span class="sd">        &#39;D&#39;: array([0.00141272])},</span>
+<span class="sd">        &#39;L&#39;: {&#39;F&#39;: array([0.000121]),</span>
+<span class="sd">        &#39;a&#39;: array([0.00012737]),</span>
+<span class="sd">        &#39;D&#39;: array([0.00012716])},</span>
+<span class="sd">        &#39;a&#39;: {&#39;F&#39;: array([0.00695338]),</span>
+<span class="sd">        &#39;L&#39;: array([0.00012737]),</span>
+<span class="sd">        &#39;D&#39;: array([0.00730415])},</span>
+<span class="sd">        &#39;D&#39;: {&#39;F&#39;: array([0.00141272]),</span>
+<span class="sd">        &#39;L&#39;: array([0.00012716]),</span>
+<span class="sd">        &#39;a&#39;: array([0.00730415])}}</span>
+<span class="sd">        &gt;&gt;&gt; results.sobols_second(&#39;g1&#39;, &#39;L&#39;)</span>
+<span class="sd">        {&#39;F&#39;: array([0.000121]), &#39;a&#39;: array([0.00012737]), &#39;D&#39;: array([0.00012716])}        </span>
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        a dictionary or an array</span>
+<span class="sd">        dict</span>
+<span class="sd">           Will always return a dictionary unlike first order sobol indices. Because</span>
+<span class="sd">           the index is specified by a pair of inputs. The dictionary will include</span>
+<span class="sd">           all inputs but `input_`.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_sobols_general</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_sobols_second</span><span class="p">,</span> <span class="n">qoi</span><span class="p">,</span> <span class="n">input_</span><span class="p">)</span>
 
@@ -762,7 +781,7 @@ surrogate functionality.</p>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        `np.array`</span>
+<span class="sd">        np.array</span>
 <span class="sd">            An array with first order sobol indices. If the `qoi` is not vector valued the</span>
 <span class="sd">            array will have one element.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -781,7 +800,7 @@ surrogate functionality.</p>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        `np.array`</span>
+<span class="sd">        np.array</span>
 <span class="sd">            An array with first order sobol indices. If the `qoi` is not vector valued the</span>
 <span class="sd">            array will have one element.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -800,7 +819,7 @@ surrogate functionality.</p>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        `np.array`</span>
+<span class="sd">        np.array</span>
 <span class="sd">            An array with total order sobol indices. If the `qoi` is not vector valued the</span>
 <span class="sd">            array will have one element.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -820,7 +839,7 @@ surrogate functionality.</p>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        `list`</span>
+<span class="sd">        list</span>
 <span class="sd">            A list of two floats - lower and upper confidence interval bounds.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
@@ -839,7 +858,7 @@ surrogate functionality.</p>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        `list`</span>
+<span class="sd">        list</span>
 <span class="sd">            A list of two floats - lower and upper confidence interval bounds.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
@@ -863,7 +882,7 @@ surrogate functionality.</p>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        a dictionary or an array</span>
+<span class="sd">        dict or array</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">assert</span><span class="p">(</span><span class="ow">not</span> <span class="p">((</span><span class="n">qoi</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">input_</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)))</span>
         <span class="k">if</span> <span class="p">(</span><span class="n">qoi</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">qoi</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">qois</span><span class="p">):</span>
@@ -911,7 +930,9 @@ surrogate functionality.</p>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        a dictionary or an array</span>
+<span class="sd">        dict or array</span>
+<span class="sd">           If both qoi and input_ are specified will return a dictionary,</span>
+<span class="sd">           otherwise will return an array.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_sobols_general</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_sobols_first</span><span class="p">,</span> <span class="n">qoi</span><span class="p">,</span> <span class="n">input_</span><span class="p">)</span>
 
@@ -930,10 +951,27 @@ surrogate functionality.</p>
 
 <span class="sd">        Examples</span>
 <span class="sd">        --------</span>
-
+<span class="sd">        &gt;&gt;&gt; results.sobols_second(&#39;a&#39;)</span>
+<span class="sd">        {&#39;F&#39;: {&#39;L&#39;: array([0.000121]),</span>
+<span class="sd">        &#39;a&#39;: array([0.00695338]),</span>
+<span class="sd">        &#39;D&#39;: array([0.00141272])},</span>
+<span class="sd">        &#39;L&#39;: {&#39;F&#39;: array([0.000121]),</span>
+<span class="sd">        &#39;a&#39;: array([0.00012737]),</span>
+<span class="sd">        &#39;D&#39;: array([0.00012716])},</span>
+<span class="sd">        &#39;a&#39;: {&#39;F&#39;: array([0.00695338]),</span>
+<span class="sd">        &#39;L&#39;: array([0.00012737]),</span>
+<span class="sd">        &#39;D&#39;: array([0.00730415])},</span>
+<span class="sd">        &#39;D&#39;: {&#39;F&#39;: array([0.00141272]),</span>
+<span class="sd">        &#39;L&#39;: array([0.00012716]),</span>
+<span class="sd">        &#39;a&#39;: array([0.00730415])}}</span>
+<span class="sd">        &gt;&gt;&gt; results.sobols_second(&#39;g1&#39;, &#39;L&#39;)</span>
+<span class="sd">        {&#39;F&#39;: array([0.000121]), &#39;a&#39;: array([0.00012737]), &#39;D&#39;: array([0.00012716])}        </span>
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        a dictionary or an array</span>
+<span class="sd">        dict</span>
+<span class="sd">           Will always return a dictionary unlike first order sobol indices. Because</span>
+<span class="sd">           the index is specified by a pair of inputs. The dictionary will include</span>
+<span class="sd">           all inputs but `input_`.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_sobols_general</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_sobols_second</span><span class="p">,</span> <span class="n">qoi</span><span class="p">,</span> <span class="n">input_</span><span class="p">)</span>
 
@@ -1424,7 +1462,9 @@ List of input names used during the analysis.</li>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        a dictionary or an array</span>
+<span class="sd">        dict or array</span>
+<span class="sd">           If both qoi and input_ are specified will return a dictionary,</span>
+<span class="sd">           otherwise will return an array.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_sobols_general</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_sobols_first</span><span class="p">,</span> <span class="n">qoi</span><span class="p">,</span> <span class="n">input_</span><span class="p">)</span>
 </pre></div>
@@ -1459,7 +1499,8 @@ The name of the input parameter or None.</li>
 <h6 id="returns">Returns</h6>
 
 <ul>
-<li><strong>a dictionary or an array</strong></li>
+<li><strong>dict or array</strong>: If both qoi and input_ are specified will return a dictionary,
+otherwise will return an array.</li>
 </ul>
 </div>
 
@@ -1490,10 +1531,27 @@ The name of the input parameter or None.</li>
 
 <span class="sd">        Examples</span>
 <span class="sd">        --------</span>
-
+<span class="sd">        &gt;&gt;&gt; results.sobols_second(&#39;a&#39;)</span>
+<span class="sd">        {&#39;F&#39;: {&#39;L&#39;: array([0.000121]),</span>
+<span class="sd">        &#39;a&#39;: array([0.00695338]),</span>
+<span class="sd">        &#39;D&#39;: array([0.00141272])},</span>
+<span class="sd">        &#39;L&#39;: {&#39;F&#39;: array([0.000121]),</span>
+<span class="sd">        &#39;a&#39;: array([0.00012737]),</span>
+<span class="sd">        &#39;D&#39;: array([0.00012716])},</span>
+<span class="sd">        &#39;a&#39;: {&#39;F&#39;: array([0.00695338]),</span>
+<span class="sd">        &#39;L&#39;: array([0.00012737]),</span>
+<span class="sd">        &#39;D&#39;: array([0.00730415])},</span>
+<span class="sd">        &#39;D&#39;: {&#39;F&#39;: array([0.00141272]),</span>
+<span class="sd">        &#39;L&#39;: array([0.00012716]),</span>
+<span class="sd">        &#39;a&#39;: array([0.00730415])}}</span>
+<span class="sd">        &gt;&gt;&gt; results.sobols_second(&#39;g1&#39;, &#39;L&#39;)</span>
+<span class="sd">        {&#39;F&#39;: array([0.000121]), &#39;a&#39;: array([0.00012737]), &#39;D&#39;: array([0.00012716])}        </span>
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        a dictionary or an array</span>
+<span class="sd">        dict</span>
+<span class="sd">           Will always return a dictionary unlike first order sobol indices. Because</span>
+<span class="sd">           the index is specified by a pair of inputs. The dictionary will include</span>
+<span class="sd">           all inputs but `input_`.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_sobols_general</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_sobols_second</span><span class="p">,</span> <span class="n">qoi</span><span class="p">,</span> <span class="n">input_</span><span class="p">)</span>
 </pre></div>
@@ -1515,10 +1573,28 @@ The name of the input parameter or None.</li>
 
 <h6 id="examples">Examples</h6>
 
-<h6 id="returns">Returns</h6>
+<div class="codehilite"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">results</span><span class="o">.</span><span class="n">sobols_second</span><span class="p">(</span><span class="s1">&#39;a&#39;</span><span class="p">)</span>
+<span class="go">{&#39;F&#39;: {&#39;L&#39;: array([0.000121]),</span>
+<span class="go">&#39;a&#39;: array([0.00695338]),</span>
+<span class="go">&#39;D&#39;: array([0.00141272])},</span>
+<span class="go">&#39;L&#39;: {&#39;F&#39;: array([0.000121]),</span>
+<span class="go">&#39;a&#39;: array([0.00012737]),</span>
+<span class="go">&#39;D&#39;: array([0.00012716])},</span>
+<span class="go">&#39;a&#39;: {&#39;F&#39;: array([0.00695338]),</span>
+<span class="go">&#39;L&#39;: array([0.00012737]),</span>
+<span class="go">&#39;D&#39;: array([0.00730415])},</span>
+<span class="go">&#39;D&#39;: {&#39;F&#39;: array([0.00141272]),</span>
+<span class="go">&#39;L&#39;: array([0.00012716]),</span>
+<span class="go">&#39;a&#39;: array([0.00730415])}}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">results</span><span class="o">.</span><span class="n">sobols_second</span><span class="p">(</span><span class="s1">&#39;g1&#39;</span><span class="p">,</span> <span class="s1">&#39;L&#39;</span><span class="p">)</span>
+<span class="go">{&#39;F&#39;: array([0.000121]), &#39;a&#39;: array([0.00012737]), &#39;D&#39;: array([0.00012716])}        </span>
+<span class="go">&lt;h6 id=&quot;returns&quot;&gt;Returns&lt;/h6&gt;</span>
+</code></pre></div>
 
 <ul>
-<li><strong>a dictionary or an array</strong></li>
+<li><strong>dict</strong>: Will always return a dictionary unlike first order sobol indices. Because
+the index is specified by a pair of inputs. The dictionary will include
+all inputs but <code>input_</code>.</li>
 </ul>
 </div>
 
