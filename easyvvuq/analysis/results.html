@@ -149,15 +149,16 @@ surrogate functionality.</p>
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        qoi - str or tuple</span>
-<span class="sd">           Quantity of interest or if a tuple quantity of interest plus</span>
-<span class="sd">        coordinate index (for cases where qoi is vector valued.</span>
-
+<span class="sd">            Quantity of interest or if a tuple quantity of interest plus</span>
+<span class="sd">            coordinate index (for cases where qoi is vector valued).</span>
 <span class="sd">        input_ - str</span>
-<span class="sd">           Input variable name.</span>
+<span class="sd">            Input variable name.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        a pandas DataFrame</span>
+<span class="sd">        `np.array`</span>
+<span class="sd">            An array with first order sobol indices. If the `qoi` is not vector valued the</span>
+<span class="sd">            array will have one element.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
 
@@ -168,23 +169,34 @@ surrogate functionality.</p>
 <span class="sd">        ----------</span>
 <span class="sd">        qoi - str or tuple</span>
 <span class="sd">           Quantity of interest or if a tuple quantity of interest plus</span>
-<span class="sd">        coordinate index (for cases where qoi is vector valued.</span>
-
+<span class="sd">           coordinate index (for cases where qoi is vector valued).</span>
 <span class="sd">        input_ - str</span>
 <span class="sd">           Input variable name.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        a pandas DataFrame</span>
+<span class="sd">        `np.array`</span>
+<span class="sd">            An array with first order sobol indices. If the `qoi` is not vector valued the</span>
+<span class="sd">            array will have one element.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
 
     <span class="k">def</span> <span class="nf">_get_sobols_total</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">qoi</span><span class="p">,</span> <span class="n">input_</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Returns total order Sobol indices.</span>
 
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        qoi - str or tuple</span>
+<span class="sd">           Quantity of interest or if a tuple quantity of interest plus</span>
+<span class="sd">           coordinate index (for cases where qoi is vector valued).</span>
+<span class="sd">        input_ - str</span>
+<span class="sd">           Input variable name.</span>
+
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        a pandas DataFrame</span>
+<span class="sd">        `np.array`</span>
+<span class="sd">            An array with total order sobol indices. If the `qoi` is not vector valued the</span>
+<span class="sd">            array will have one element.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
 
@@ -195,14 +207,15 @@ surrogate functionality.</p>
 <span class="sd">        ----------</span>
 <span class="sd">        qoi : str</span>
 <span class="sd">            Name of the qoi for which the first order sensitivity index</span>
-<span class="sd">        confidence interval is requested.</span>
+<span class="sd">            confidence interval is requested.</span>
 <span class="sd">        input_ : str</span>
 <span class="sd">            Name of the input for which the first order sensitivy index</span>
-<span class="sd">        confidence interval is requested.</span>
+<span class="sd">            confidence interval is requested.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        a pandas DataFrame</span>
+<span class="sd">        `list`</span>
+<span class="sd">            A list of two floats - lower and upper confidence interval bounds.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
 
@@ -213,14 +226,15 @@ surrogate functionality.</p>
 <span class="sd">        ----------</span>
 <span class="sd">        qoi : str</span>
 <span class="sd">            Name of the qoi for which the first order sensitivity index</span>
-<span class="sd">        confidence interval is requested.</span>
+<span class="sd">            confidence interval is requested.</span>
 <span class="sd">        input_ : str</span>
 <span class="sd">            Name of the input for which the first order sensitivy index</span>
-<span class="sd">        confidence interval is requested.</span>
+<span class="sd">            confidence interval is requested.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        a pandas DataFrame</span>
+<span class="sd">        `list`</span>
+<span class="sd">            A list of two floats - lower and upper confidence interval bounds.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
 
@@ -741,15 +755,16 @@ surrogate functionality.</p>
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        qoi - str or tuple</span>
-<span class="sd">           Quantity of interest or if a tuple quantity of interest plus</span>
-<span class="sd">        coordinate index (for cases where qoi is vector valued.</span>
-
+<span class="sd">            Quantity of interest or if a tuple quantity of interest plus</span>
+<span class="sd">            coordinate index (for cases where qoi is vector valued).</span>
 <span class="sd">        input_ - str</span>
-<span class="sd">           Input variable name.</span>
+<span class="sd">            Input variable name.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        a pandas DataFrame</span>
+<span class="sd">        `np.array`</span>
+<span class="sd">            An array with first order sobol indices. If the `qoi` is not vector valued the</span>
+<span class="sd">            array will have one element.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
 
@@ -760,23 +775,34 @@ surrogate functionality.</p>
 <span class="sd">        ----------</span>
 <span class="sd">        qoi - str or tuple</span>
 <span class="sd">           Quantity of interest or if a tuple quantity of interest plus</span>
-<span class="sd">        coordinate index (for cases where qoi is vector valued.</span>
-
+<span class="sd">           coordinate index (for cases where qoi is vector valued).</span>
 <span class="sd">        input_ - str</span>
 <span class="sd">           Input variable name.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        a pandas DataFrame</span>
+<span class="sd">        `np.array`</span>
+<span class="sd">            An array with first order sobol indices. If the `qoi` is not vector valued the</span>
+<span class="sd">            array will have one element.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
 
     <span class="k">def</span> <span class="nf">_get_sobols_total</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">qoi</span><span class="p">,</span> <span class="n">input_</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Returns total order Sobol indices.</span>
 
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        qoi - str or tuple</span>
+<span class="sd">           Quantity of interest or if a tuple quantity of interest plus</span>
+<span class="sd">           coordinate index (for cases where qoi is vector valued).</span>
+<span class="sd">        input_ - str</span>
+<span class="sd">           Input variable name.</span>
+
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        a pandas DataFrame</span>
+<span class="sd">        `np.array`</span>
+<span class="sd">            An array with total order sobol indices. If the `qoi` is not vector valued the</span>
+<span class="sd">            array will have one element.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
 
@@ -787,14 +813,15 @@ surrogate functionality.</p>
 <span class="sd">        ----------</span>
 <span class="sd">        qoi : str</span>
 <span class="sd">            Name of the qoi for which the first order sensitivity index</span>
-<span class="sd">        confidence interval is requested.</span>
+<span class="sd">            confidence interval is requested.</span>
 <span class="sd">        input_ : str</span>
 <span class="sd">            Name of the input for which the first order sensitivy index</span>
-<span class="sd">        confidence interval is requested.</span>
+<span class="sd">            confidence interval is requested.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        a pandas DataFrame</span>
+<span class="sd">        `list`</span>
+<span class="sd">            A list of two floats - lower and upper confidence interval bounds.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
 
@@ -805,14 +832,15 @@ surrogate functionality.</p>
 <span class="sd">        ----------</span>
 <span class="sd">        qoi : str</span>
 <span class="sd">            Name of the qoi for which the first order sensitivity index</span>
-<span class="sd">        confidence interval is requested.</span>
+<span class="sd">            confidence interval is requested.</span>
 <span class="sd">        input_ : str</span>
 <span class="sd">            Name of the input for which the first order sensitivy index</span>
-<span class="sd">        confidence interval is requested.</span>
+<span class="sd">            confidence interval is requested.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        a pandas DataFrame</span>
+<span class="sd">        `list`</span>
+<span class="sd">            A list of two floats - lower and upper confidence interval bounds.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
 
