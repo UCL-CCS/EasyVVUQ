@@ -283,19 +283,23 @@ class AnalysisResults:
         Returns
         -------
         dict or array
+           If both qoi and input_ are specified will return a dictionary,
+           otherwise will return an array.
         """
         return self._get_sobols_general(self._get_sobols_total, qoi, input_)
 
     def surrogate(self):
         """Returns the surrogate model as a function from parameter dictionary
-        to pandas DataFrame. This only needs to be implemented if the analysis
+        to output dictionary. This only needs to be implemented if the analysis
         method in question provides surrogate models.
 
 
         Returns
         -------
-        a function that takes a dictionary of parameter - value pairs and returns
-        a pandas DataFrame with the results (same output as decoder)
+        function
+            Returns a function that takes a dictionary and returns a dictionary.
+            These dictionaries use the same format as Encoder and Decoder used
+            to construct the surrogate.
         """
         raise NotImplementedError
 
