@@ -124,23 +124,18 @@ class PCEAnalysisResults(QMCAnalysisResults):
                 raise NotImplementedError
 
     def surrogate(self, qoi, x):
-        """
-        Use PCE fit to provide a surrogate
-
-        Parameters
-        ----------
-        - qoi (str): name of the qoi
-        - x (array): location at which to evaluate the surrogate
-        - L (int): level of the (sparse) grid, default = self.L
+        """Return a PCE surrogate model.
 
         Returns
         -------
-        the interpolated value of qoi at x (float, (N_qoi,))
+        A function that takes a dictionary of parameter - value pairs and returns
+        a dictionary with the results (same output as decoder).
         """
-
-        if qoi not in self.qois:
-            raise RuntimeError('no such quantity of interest - {}'.format(qoi))
-        return self.raw_data['fit'][qoi](*x)
+        def surrogate_fn(self, inputs):
+            values = np.array([inputs[key] for key in self.inputs])
+            results = dict([(qoi, self.raw_data['fit'][qoi](*values)) for qoi in self.qois])
+            return results
+        return surrogate_fn
 
     def get_distribution(self, qoi):
         """Returns a distribution for the given qoi.
