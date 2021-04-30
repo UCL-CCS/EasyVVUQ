@@ -59,7 +59,18 @@ class SCAnalysisResults(AnalysisResults):
             raise NotImplementedError
 
     def surrogate(self):
-        pass
+        """Return an SC surrogate model.
+
+        Returns
+        -------
+        A function that takes a dictionary of parameter - value pairs and returns
+        a dictionary with the results (same output as decoder).
+        """
+        def surrogate_fn(self, inputs):
+            values = np.array([inputs[key] for key in self.inputs])
+            results = dict([(qoi, self.surrogate_(qoi, values)) for qoi in self.qois])
+            return results
+        return surrogate_fn
 
 
 class SCAnalysis(BaseAnalysisElement):
@@ -246,8 +257,10 @@ class SCAnalysis(BaseAnalysisElement):
                     results['sobols_first'][qoi_k][param_name] = \
                         results['sobols'][qoi_k][(idx,)]
 
-        return SCAnalysisResults(raw_data=results, samples=data_frame,
-                                 qois=qoi_cols, inputs=list(self.sampler.vary.get_keys()))
+        results = SCAnalysisResults(raw_data=results, samples=data_frame,
+                                    qois=qoi_cols, inputs=list(self.sampler.vary.get_keys()))
+        results.surrogate_ = surrogate
+        return results
 
     def compute_comb_coef(self, **kwargs):
         """Compute general combination coefficients. These are the coefficients
