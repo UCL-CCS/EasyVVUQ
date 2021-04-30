@@ -58,6 +58,9 @@ class SCAnalysisResults(AnalysisResults):
         else:
             raise NotImplementedError
 
+    def surrogate(self):
+        pass
+
 
 class SCAnalysis(BaseAnalysisElement):
 
