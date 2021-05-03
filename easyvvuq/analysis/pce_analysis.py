@@ -131,7 +131,7 @@ class PCEAnalysisResults(QMCAnalysisResults):
         A function that takes a dictionary of parameter - value pairs and returns
         a dictionary with the results (same output as decoder).
         """
-        def surrogate_fn(self, inputs):
+        def surrogate_fn(inputs):
             values = np.array([inputs[key] for key in self.inputs])
             results = dict([(qoi, self.raw_data['fit'][qoi](*values)) for qoi in self.qois])
             return results

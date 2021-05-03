@@ -51,5 +51,6 @@ def test_surrogate_workflow(tmpdir):
     campaign.execute().collate()
 
     results = campaign.analyse(qoi_cols=output_columns)
+    import pdb; pdb.set_trace()
 
 
