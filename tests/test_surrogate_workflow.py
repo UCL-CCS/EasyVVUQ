@@ -10,7 +10,21 @@ from tests.sc.sobol_model import sobol_g_func
 from easyvvuq.analysis.sc_analysis import SCAnalysisResults
 from easyvvuq.actions import CreateRunDirectory, Encode, Decode, ExecuteLocal, Actions
 
-def test_surrogate_workflow(tmpdir):
+
+@pytest.mark.parametrize('sampler', [
+    uq.sampling.SCSampler(
+        vary={
+            "Pe": cp.Uniform(100.0, 200.0),
+            "f": cp.Uniform(0.95, 1.05)
+        },
+        polynomial_order=[2, 5], quadrature_rule="G"),
+    uq.sampling.PCESampler(
+        vary={
+            "Pe": cp.Uniform(100.0, 200.0),
+            "f": cp.Uniform(0.95, 1.05)
+        },
+        polynomial_order=[2, 5], rule="G")])
+def test_surrogate_workflow(tmpdir, sampler):
     campaign = uq.Campaign(name='sc', work_dir=tmpdir)
     params = {
         "Pe": {
@@ -28,7 +42,6 @@ def test_surrogate_workflow(tmpdir):
             "default": "output.csv"
         }
     }
-
     output_filename = params["out_file"]["default"]
     output_columns = ["u"]
     encoder = uq.encoders.GenericEncoder(
@@ -40,16 +53,8 @@ def test_surrogate_workflow(tmpdir):
     execute = ExecuteLocal("{} ade_in.json".format(os.path.abspath('tests/sc/sc_model.py')))
     actions = Actions(CreateRunDirectory('/tmp'), Encode(encoder), execute, Decode(decoder))
     campaign.add_app(name="sc", params=params, actions=actions)
-
-    vary = {
-        "Pe": cp.Uniform(100.0, 200.0),
-        "f": cp.Uniform(0.95, 1.05)
-    }
-    sampler = uq.sampling.SCSampler(vary=vary, polynomial_order=[2, 5], quadrature_rule="G")
     campaign.set_sampler(sampler)
-
     campaign.execute().collate()
-
     results = campaign.analyse(qoi_cols=output_columns)
     surrogate = results.surrogate()
     df = campaign.get_collation_result()
