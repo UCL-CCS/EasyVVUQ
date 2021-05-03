@@ -259,7 +259,7 @@ class SCAnalysis(BaseAnalysisElement):
 
         results = SCAnalysisResults(raw_data=results, samples=data_frame,
                                     qois=qoi_cols, inputs=list(self.sampler.vary.get_keys()))
-        results.surrogate_ = surrogate
+        results.surrogate_ = self.surrogate
         return results
 
     def compute_comb_coef(self, **kwargs):
