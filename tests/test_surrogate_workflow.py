@@ -51,6 +51,9 @@ def test_surrogate_workflow(tmpdir):
     campaign.execute().collate()
 
     results = campaign.analyse(qoi_cols=output_columns)
-    import pdb; pdb.set_trace()
+    surrogate = results.surrogate()
+    df = campaign.get_collation_result()
+    for index, row in df.iterrows():
+        assert((surrogate({'Pe': row['Pe'][0], 'f': row['f'][0]})['u'] == row['u'].values).all())
 
 
