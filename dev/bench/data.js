@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1620043181769,
+  "lastUpdate": 1620044894489,
   "repoUrl": "https://github.com/UCL-CCS/EasyVVUQ",
   "entries": {
     "Benchmark": [
@@ -10986,6 +10986,68 @@ window.BENCHMARK_DATA = {
             "unit": "iter/sec",
             "range": "stddev: 0.0007388413023884187",
             "extra": "mean: 23.816716341461483 msec\nrounds: 41"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "name": "UCL-CCS",
+            "username": "UCL-CCS"
+          },
+          "committer": {
+            "name": "UCL-CCS",
+            "username": "UCL-CCS"
+          },
+          "id": "9581430314ad29e8d07c2633463f34b5e3ac3635",
+          "message": "added test_surrogate_workflow.py",
+          "timestamp": "2021-05-02T22:20:44Z",
+          "url": "https://github.com/UCL-CCS/EasyVVUQ/pull/339/commits/9581430314ad29e8d07c2633463f34b5e3ac3635"
+        },
+        "date": 1620044891922,
+        "tool": "pytest",
+        "benches": [
+          {
+            "name": "tests/test_db_benchmark.py::test_draw",
+            "value": 0.06629005345266796,
+            "unit": "iter/sec",
+            "range": "stddev: 0.10239326205543295",
+            "extra": "mean: 15.08521939440001 sec\nrounds: 5"
+          },
+          {
+            "name": "tests/test_db_benchmark.py::test_store_results",
+            "value": 0.07287145762107235,
+            "unit": "iter/sec",
+            "range": "stddev: 0.05666273361472566",
+            "extra": "mean: 13.722793980600006 sec\nrounds: 5"
+          },
+          {
+            "name": "tests/test_db_benchmark.py::test_get_collation_result",
+            "value": 74.08742334091812,
+            "unit": "iter/sec",
+            "range": "stddev: 0.00017278487196737744",
+            "extra": "mean: 13.497567534484697 msec\nrounds: 58"
+          },
+          {
+            "name": "tests/test_db_benchmark.py::test_draw_add",
+            "value": 0.06658386087323463,
+            "unit": "iter/sec",
+            "range": "stddev: 0.09396858754650644",
+            "extra": "mean: 15.018654474000016 sec\nrounds: 5"
+          },
+          {
+            "name": "tests/test_db_benchmark.py::test_store_results_add",
+            "value": 0.0729140348496173,
+            "unit": "iter/sec",
+            "range": "stddev: 0.05280217454169242",
+            "extra": "mean: 13.7147807286 sec\nrounds: 5"
+          },
+          {
+            "name": "tests/test_db_benchmark.py::test_get_collation_result_add",
+            "value": 38.65174700318365,
+            "unit": "iter/sec",
+            "range": "stddev: 0.00020983078644891013",
+            "extra": "mean: 25.87205178378179 msec\nrounds: 37"
           }
         ]
       }
