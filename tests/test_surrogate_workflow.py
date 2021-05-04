@@ -137,7 +137,7 @@ def test_surrogate_workflow(tmpdir, sampler):
        0.        ])
     def proposal(x):
         return cp.J(cp.Normal(x['Pe'], 1.0), 
-                    cp.Normal(x['f'], 0.0001))
+                    cp.Normal(x['f'], 0.001))
     def likelihood(x):
         return -((u - x) ** 2).sum()
     init = {'Pe' : [110.0], 'f' : [2.0]}
@@ -145,6 +145,7 @@ def test_surrogate_workflow(tmpdir, sampler):
     iterator = reloaded_campaign.iterate(mark_invalid = True)
     for _ in range(100):
         next(iterator).collate()
-    results = campaign.analyse(qoi='u')
+    results = reloaded_campaign.analyse(qoi='u')
+    
     
 

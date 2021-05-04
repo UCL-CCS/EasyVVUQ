@@ -67,8 +67,13 @@ class SCAnalysisResults(AnalysisResults):
         a dictionary with the results (same output as decoder).
         """
         def surrogate_fn(inputs):
+            def swap(x):
+                if len(x) > 1:
+                    return list(x)
+                else:
+                    return x[0]
             values = np.array([inputs[key] for key in self.inputs])
-            results = dict([(qoi, self.surrogate_(qoi, values)) for qoi in self.qois])
+            results = dict([(qoi, swap(self.surrogate_(qoi, values))) for qoi in self.qois])
             return results
         return surrogate_fn
 
