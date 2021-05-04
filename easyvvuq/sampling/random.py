@@ -19,13 +19,15 @@ __license__ = "LGPL"
 
 class RandomSampler(BaseSamplingElement, sampler_name="random_sampler"):
 
-    def __init__(self, vary=None, count=0, max_num=0):
+    def __init__(self, vary=None, count=0, max_num=0, analysis_class=None):
         """
             Expects dict of var names, and their corresponding distributions
         """
         self.vary = Vary(vary)
         self.count = count
         self.max_num = max_num
+        if analysis_class is not None:
+            self.analysis_class_ = analysis_class
 
     def element_version(self):
         return "0.1"
@@ -34,6 +36,15 @@ class RandomSampler(BaseSamplingElement, sampler_name="random_sampler"):
         if self.max_num > 0:
             return True
         return False
+
+    @property
+    def analysis_class(self):
+        """Return a corresponding analysis class.
+        """
+        if self.analysis_class_ is not None:
+            return self.analysis_class_
+        else:
+            raise NotImplementedError
 
     def n_samples(self):
         """Returns the number of samples in this sampler.

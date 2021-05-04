@@ -11,19 +11,19 @@ from easyvvuq.analysis.sc_analysis import SCAnalysisResults
 from easyvvuq.actions import CreateRunDirectory, Encode, Decode, ExecuteLocal, Actions, ExecutePython
 
 
+VARY = {
+    "Pe": cp.Uniform(100.0, 200.0),
+    "f": cp.Uniform(0.95, 1.05)
+}
+
+
 @pytest.mark.parametrize('sampler', [
+    uq.sampling.RandomSampler(
+        vary=VARY, max_num=100, analysis_class=uq.analysis.GaussianProcessSurrogate),
     uq.sampling.SCSampler(
-        vary={
-            "Pe": cp.Uniform(100.0, 200.0),
-            "f": cp.Uniform(0.95, 1.05)
-        },
-        polynomial_order=[2, 5], quadrature_rule="G"),
+        vary=VARY, polynomial_order=[2, 5], quadrature_rule="G"),
     uq.sampling.PCESampler(
-        vary={
-            "Pe": cp.Uniform(100.0, 200.0),
-            "f": cp.Uniform(0.95, 1.05)
-        },
-        polynomial_order=[2, 5], rule="G")
+        vary=VARY, polynomial_order=[2, 5], rule="G")
 ])
 def test_surrogate_workflow(tmpdir, sampler):
     campaign = uq.Campaign(name='sc', work_dir=tmpdir)
@@ -62,6 +62,7 @@ def test_surrogate_workflow(tmpdir, sampler):
     campaign.execute().collate()
     results = campaign.analyse(qoi_cols=output_columns)
     surrogate = results.surrogate()
+
     df = campaign.get_collation_result()
     for index, row in df.iterrows():
         surrogate_y = surrogate({'Pe': row['Pe'][0], 'f': row['f'][0]})['u']
@@ -138,10 +139,10 @@ def test_surrogate_workflow(tmpdir, sampler):
     def proposal(x):
         return cp.J(cp.Normal(x['Pe'], 1.0), 
                     cp.Normal(x['f'], 0.001))
-    def likelihood(x):
+    def loglikelihood(x):
         return -((u - x) ** 2).sum()
     init = {'Pe' : [110.0], 'f' : [2.0]}
-    reloaded_campaign.set_sampler(uq.sampling.MCMCSampler(init, proposal, 'u', 1, likelihood))
+    reloaded_campaign.set_sampler(uq.sampling.MCMCSampler(init, proposal, 'u', 1, loglikelihood))
     iterator = reloaded_campaign.iterate(mark_invalid = True)
     for _ in range(100):
         next(iterator).collate()
