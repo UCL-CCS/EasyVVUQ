@@ -22,8 +22,8 @@ VARY = {
         vary=VARY, max_num=100, analysis_class=uq.analysis.GaussianProcessSurrogate),
     uq.sampling.SCSampler(
         vary=VARY, polynomial_order=[2, 5], quadrature_rule="G"),
-    uq.sampling.PCESampler(
-        vary=VARY, polynomial_order=[2, 5], rule="G")
+#    uq.sampling.PCESampler(
+#        vary=VARY, polynomial_order=[2, 5], rule="G")
 ])
 def test_surrogate_workflow(tmpdir, sampler):
     campaign = uq.Campaign(name='sc', work_dir=tmpdir)
