@@ -13,7 +13,6 @@ from easyvvuq.constants import default_campaign_prefix, Status
 from easyvvuq.data_structs import RunInfo, CampaignInfo, AppInfo
 from easyvvuq.sampling import BaseSamplingElement
 from easyvvuq.actions import ActionPool
-from easyvvuq.db.sql import CampaignDB
 import easyvvuq.db.sql as db
 
 __copyright__ = """
@@ -46,14 +45,14 @@ class Campaign:
     """Campaigns organise the dataflow in EasyVVUQ workflows.
 
     The Campaign functions as as state machine for the VVUQ workflows. It uses a
-    database (CampaignDB) to store information on both the target application
+    database (db.CampaignDB) to store information on both the target application
     and the VVUQ algorithms being employed. It also collects data from the simulations
     and can be used to store and resume your state.
 
     Notes
     -----
 
-    Multiple campaigns can be combined in a CampaignDB. Hence the particular
+    Multiple campaigns can be combined in a db.CampaignDB. Hence the particular
     campaign we are currently working on will be specified using `campaign_id`.
 
     Parameters
@@ -90,8 +89,8 @@ class Campaign:
         The log of all elements that have been applied, with information about
         their application
     campaign_id : int
-        ID number for the current campaign in the CampaignDB.
-    campaign_db: easyvvuq.db.BaseCampaignDB
+        ID number for the current campaign in the db.CampaignDB.
+    campaign_db: easyvvuq.db.Basedb.CampaignDB
         A campaign database object
     last_analysis:
         The result of the most recent analysis carried out on this campaign
@@ -170,7 +169,7 @@ class Campaign:
         work_dir: str
             work directory, defaults to cwd
         """
-        self.campaign_db = CampaignDB(location=self.db_location)
+        self.campaign_db = db.CampaignDB(location=self.db_location)
         if self.campaign_db.campaign_exists(name):
             self.campaign_id = self.campaign_db.get_campaign_id(name)
             self._active_app_name = self.campaign_db.get_active_app()[0].name
@@ -196,7 +195,7 @@ class Campaign:
             self.campaign_id = self.campaign_db.get_campaign_id(self.campaign_name)
 
     def add_app(self, name=None, params=None, actions=None, set_active=True):
-        """Add an application to the CampaignDB.
+        """Add an application to the db.CampaignDB.
 
         Parameters
         ----------
@@ -394,7 +393,7 @@ class Campaign:
         return new_runs
 
     def list_runs(self, sampler=None, campaign=None, status=None):
-        """Get list of runs in the CampaignDB.
+        """Get list of runs in the db.CampaignDB.
 
         Returns
         -------
@@ -426,7 +425,7 @@ class Campaign:
         return False
 
     def get_campaign_runs_dir(self):
-        """Get the runs directory from the CampaignDB.
+        """Get the runs directory from the db.CampaignDB.
 
         Returns
         -------
