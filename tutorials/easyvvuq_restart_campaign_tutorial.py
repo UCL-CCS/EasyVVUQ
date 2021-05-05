@@ -2,20 +2,37 @@ import os
 import easyvvuq as uq
 import chaospy as cp
 from pprint import pprint
+from shutil import rmtree
 
 # 0. Setup some variables describing app to be run
 #
 #    gauss.py is in current directory and takes one input file
 #    and writes to 'output.csv'.
-cwd = os.getcwd()
-input_filename = 'gauss_in.json'
-cmd = f"{cwd}/gauss.py {input_filename}"
-out_file = "output.csv"
-# Template input to substitute values into for each run
-template = f"{cwd}/gauss.template"
+work_dir = os.path.dirname(os.path.abspath(__file__))
 
-# 1. Create campaign
-my_campaign = uq.Campaign(name='gauss', work_dir=".")
+
+input_filename = 'gauss_in.json'
+out_file = "output.csv"
+template = "{}/gauss.template".format(work_dir)
+
+
+# clear the target campaign dir
+campaign_work_dir = os.path.join(
+    work_dir, "easyvvuq_restart_campaign_tutorial"
+)
+if os.path.exists(campaign_work_dir):
+    rmtree(campaign_work_dir)
+os.makedirs(campaign_work_dir)
+
+
+# 1. Set up a fresh campaign called "gauss"
+db_location = "sqlite:///" + campaign_work_dir + "/campaign.db"
+my_campaign = uq.Campaign(
+    name="gauss",
+    db_location=db_location,
+    work_dir=campaign_work_dir
+)
+
 
 # 2. Parameter space definition
 params = {
@@ -44,20 +61,37 @@ params = {
 }
 
 # 3. Wrap Application
-#    - Define a new application (we'll call it 'gauss'), and the encoding/decoding elements it needs
-#    - Also requires a collation element - his will be responsible for aggregating the results
-encoder = uq.encoders.GenericEncoder(template_fname=template,
-                                     target_filename=input_filename)
+#    - Define a new application (we'll call it 'gauss'),
+#      and the encoding/decoding elements it needs
+#    - Also requires a collation element - his will be responsible for
+#      aggregating the results
+encoder = uq.encoders.GenericEncoder(
+    template_fname=template,
+    target_filename=input_filename
+)
 
 decoder = uq.decoders.SimpleCSV(
-            target_filename=out_file,
-            output_columns=['Step', 'Value'])
+    target_filename=out_file,
+    output_columns=["Step", "Value"]
+)
 
-my_campaign.add_app(name="gauss",
-                    params=params,
-                    encoder=encoder,
-                    decoder=decoder
-                    )
+execute = uq.actions.ExecuteLocal(
+    "python3 {}/gauss.py {}".format(work_dir, input_filename)
+)
+
+actions = uq.actions.Actions(
+    uq.actions.CreateRunDirectory(root=campaign_work_dir, flatten=True),
+    uq.actions.Encode(encoder),
+    execute,
+    uq.actions.Decode(decoder)
+)
+
+my_campaign.add_app(
+    name="gauss",
+    params=params,
+    actions=actions
+)
+
 
 # 4. Specify Sampler
 #    -  vary the `mu` parameter only
@@ -69,40 +103,42 @@ my_sampler = uq.sampling.RandomSampler(vary=vary)
 
 my_campaign.set_sampler(my_sampler)
 
-# 5. Get run parameters
-my_campaign.draw_samples(num_samples=3, replicas=5)
+# 5. Run the cases and Collate output
+my_campaign.execute(nsamples=2).collate()
 
-# 6. Create run input directories
-my_campaign.populate_runs_dir()
-
-# 7. Run Application
-#    - gauss is executed for each sample
-my_campaign.apply_for_each_run_dir(uq.actions.ExecuteLocal(cmd, interpret='python3'))
-
-# 8. Collate output
-my_campaign.collate()
 
 # 9. Print the list of runs
+print("=" * 40)
+print("list of runs in the my_campaign")
+print("=" * 40)
 pprint(my_campaign.list_runs())
 
-# 10. Save the Campaign
-my_campaign.save_state("campaign_state.json")
 
 # 11. Load state in new campaign object
 print("Reloading campaign...")
-reloaded_campaign = uq.Campaign(state_file="campaign_state.json", work_dir=".")
 
-# 12. Draw some more samples, execute the runs, and collate onto existing dataframe
-reloaded_campaign.draw_samples(num_samples=1, replicas=5)
-reloaded_campaign.populate_runs_dir()
-my_campaign.apply_for_each_run_dir(uq.actions.ExecuteLocal(cmd, interpret='python3'))
-reloaded_campaign.collate()
+reloaded_campaign = uq.Campaign(
+    name="gauss",
+    db_location=db_location
+)
+
+sampler = reloaded_campaign.get_active_sampler()
+reloaded_campaign.set_sampler(sampler, update=True)
+
+# 12. Draw some more samples, execute the runs, and collate onto existing
+# dataframe
+
+reloaded_campaign.execute(nsamples=4).collate()
+
 
 # 13. Print the list of runs again
+print("=" * 40)
+print("list of runs in the reloaded_campaign")
+print("=" * 40)
 pprint(reloaded_campaign.list_runs())
 
 # 14. Run Analysis
 #     - Calculate bootstrap statistics for collated data
-stats = uq.analysis.EnsembleBoot(groupby=["mu"], qoi_cols=["Value"])
-my_campaign.apply_analysis(stats)
-print("stats:\n", my_campaign.get_last_analysis())
+# stats = uq.analysis.EnsembleBoot(groupby=["mu"], qoi_cols=["Value"])
+# reloaded_campaign.apply_analysis(stats)
+# print("stats:\n", my_campaign.get_last_analysis())
