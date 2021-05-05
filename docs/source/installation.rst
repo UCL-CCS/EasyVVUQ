@@ -22,7 +22,7 @@ Github as follows::
     git clone https://github.com/UCL-CCS/EasyVVUQ.git
     cd EasyVVUQ
     pip install -r requirements.txt
-    python setupy.py install
+    python setup.py install
 
 .. note:: The above assumes that your default `python` is Python 3. If 
           that is not the case replace `python` with `python3` and `pip` 
