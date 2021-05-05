@@ -1,4 +1,5 @@
-"""Provides element to execute a shell command in a given directory.
+"""This module provides an assortment of actions generally concerned with executing
+simulations locally. Some Actions will also be useful when using Dask.
 """
 
 import os
@@ -29,7 +30,7 @@ def local_execute(encoder, command, decoder, root='/tmp'):
 
     Returns
     -------
-    EasyVVUQ Actions
+    Actions
     """
     return Actions(
         CreateRunDirectory(root),
@@ -39,11 +40,32 @@ def local_execute(encoder, command, decoder, root='/tmp'):
 
 
 class CreateRunDirectory():
+    """Creates a directory structure for storing simulation input and output files.
+
+    Parameters
+    ----------
+    root: str
+        Root directory to create a directory structure in.
+    flatten: bool
+        If set to True will result in a flat directory structure (each run gets a directory
+        under root). If left as False will create a hierarchical structure. This is useful
+        so as not to overload the filesystem.
+    """
     def __init__(self, root, flatten=False):
         self.root = root
         self.flatten = flatten
 
     def start(self, previous=None):
+        """Starts the action.
+
+        Will read a `run_id` from a dictionary supplied by the previous `Action`.
+        Will then create a directory structure based on the numerical value of the `run_id`.
+
+        Returns
+        -------
+        dict
+            A dictionary to be passed to the following `Action`.
+        """
         run_id = previous['run_id']
         level1_a, level1_b = (int(run_id / 100 ** 4) * 100 ** 4,
                               int(run_id / 100 ** 4 + 1) * 100 ** 4)
@@ -68,13 +90,14 @@ class CreateRunDirectory():
         self.result = previous
         return self.result
 
-    def finished(self):
-        return True
-
-    def finalise(self):
-        pass
-
     def succeeded(self):
+        """Has the `Action` finished successfully.
+        
+        Returns
+        -------
+        bool
+            True if `Action` completed successfully. False otherwise.
+        """
         return True
 
 
