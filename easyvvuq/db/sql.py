@@ -208,7 +208,7 @@ class CampaignDB(BaseCampaignDB):
 
         Returns
         -------
-        dict:
+        dict
             Information about the application.
         """
 
@@ -413,7 +413,7 @@ class CampaignDB(BaseCampaignDB):
 
         Returns
         -------
-        dict:
+        dict
             Contains run information (keys = run_name, params, status, sample,
             campaign and app)
         """
@@ -472,7 +472,7 @@ class CampaignDB(BaseCampaignDB):
 
         Returns
         -------
-        status: enum(Status)
+        enum(Status)
             Status of the run.
         """
         filter_options = {'id': run_id}
@@ -507,7 +507,7 @@ class CampaignDB(BaseCampaignDB):
 
         Returns
         -------
-        list:
+        list
             Campaign names.
         """
 
@@ -552,7 +552,7 @@ class CampaignDB(BaseCampaignDB):
 
         Returns
         -------
-        int:
+        int
             The id of the campaign with the specified name
         """
 
@@ -584,7 +584,7 @@ class CampaignDB(BaseCampaignDB):
 
         Returns
         -------
-        int:
+        int
             The id of the sampler set for the specified campaign
         """
         sampler_id = self.session.query(CampaignTable).get(campaign_id).sampler
@@ -613,7 +613,7 @@ class CampaignDB(BaseCampaignDB):
 
         Returns
         -------
-        str:
+        str
             Path to campaign directory.
         """
         return self._get_campaign_info(campaign_name=campaign_name).campaign_dir
@@ -720,7 +720,7 @@ class CampaignDB(BaseCampaignDB):
 
         Yields
         ------
-        dict:
+        dict
             Information on each selected run (key = run_name, value = dict of
             run information fields.), one at a time.
         """
@@ -734,8 +734,7 @@ class CampaignDB(BaseCampaignDB):
             yield r.id, self._run_to_dict(r)
 
     def run_ids(self, campaign=None, sampler=None, status=None, not_status=None, app_id=None):
-        """
-        A generator to return all run IDs for selected `campaign` and `sampler`.
+        """A generator to return all run IDs for selected `campaign` and `sampler`.
 
         Parameters
         ----------
@@ -747,27 +746,25 @@ class CampaignDB(BaseCampaignDB):
             Status string to filter for.
         not_status: enum(Status) or None
             Exclude runs with this status string
+        app_id: int or None
+            App id to filter for.
 
-        Returns
-        -------
-        str:
+        Yields
+        ------
+        str
             run ID for each selected run, one at a time.
-
         """
-
         selected = self._select_runs(
             campaign=campaign,
             sampler=sampler,
             status=status,
             not_status=not_status,
             app_id=app_id)
-
         for r in selected:
             yield r.run_name
 
     def get_num_runs(self, campaign=None, sampler=None, status=None, not_status=None):
-        """
-        Returns the number of runs matching the filtering criteria.
+        """Returns the number of runs matching the filtering criteria.
 
         Parameters
         ----------
@@ -782,22 +779,19 @@ class CampaignDB(BaseCampaignDB):
 
         Returns
         -------
-        int:
+        int
             The number of runs in the database matching the filtering criteria
 
         """
-
         selected = self._select_runs(
             campaign=campaign,
             sampler=sampler,
             status=status,
             not_status=not_status)
-
         return selected.count()
 
     def runs_dir(self, campaign_name=None):
-        """
-        Get the directory used to store run information for `campaign_name`.
+        """Get the directory used to store run information for `campaign_name`.
 
         Parameters
         ----------
@@ -806,15 +800,13 @@ class CampaignDB(BaseCampaignDB):
 
         Returns
         -------
-        str:
+        str
             Path containing run outputs.
         """
-
         return self._get_campaign_info(campaign_name=campaign_name).runs_dir
 
     def store_result(self, run_id, result, change_status=True):
         self.commit_counter += 1
-
         def convert_nonserializable(obj):
             if isinstance(obj, np.int64):
                 return int(obj)
