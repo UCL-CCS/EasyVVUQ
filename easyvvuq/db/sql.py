@@ -396,7 +396,6 @@ class CampaignDB(BaseCampaignDB):
         """
 
         # Add all runs to RunTable
-        runs_dir = self.runs_dir()
         commit_counter = 0
         for run_info in run_info_list:
             run_info.run_name = f"{run_prefix}{self._next_run}"
