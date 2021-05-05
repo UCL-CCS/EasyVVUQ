@@ -1086,6 +1086,20 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_campaign_info</span><span class="p">(</span><span class="n">campaign_name</span><span class="o">=</span><span class="n">campaign_name</span><span class="p">)</span><span class="o">.</span><span class="n">runs_dir</span>
 
     <span class="k">def</span> <span class="nf">store_result</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">run_id</span><span class="p">,</span> <span class="n">result</span><span class="p">,</span> <span class="n">change_status</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Stores results of a simulation inside the RunTable given a run id.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        run_id: int</span>
+<span class="sd">            The id of a run to store the results in. This will be the run with which these</span>
+<span class="sd">            results are associated with. Namely the run that has the inputs used to generate</span>
+<span class="sd">            these results.</span>
+<span class="sd">        result: dict</span>
+<span class="sd">            Results in dictionary form. This is the same format as used by the `Decoder`.</span>
+<span class="sd">        change_status: bool</span>
+<span class="sd">            If set to False will not update the runs&#39; status to COLLATED. This is sometimes</span>
+<span class="sd">            useful in scenarios where you want several apps to work on the same runs.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">commit_counter</span> <span class="o">+=</span> <span class="mi">1</span>
         <span class="k">def</span> <span class="nf">convert_nonserializable</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">):</span>
@@ -1144,10 +1158,15 @@
 <span class="sd">            Name of the app to return data for.</span>
 <span class="sd">        sampler_id: int</span>
 <span class="sd">            ID of the sampler.</span>
+<span class="sd">        status: STATUS</span>
+<span class="sd">            Run status to filter for.</span>
+<span class="sd">        iteration: int</span>
+<span class="sd">            If a positive integer will return the results for a given iteration only.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        pandas DataFrame constructed from the decoder output dictionaries</span>
+<span class="sd">        DataFrame </span>
+<span class="sd">            Will construct a `DataFrame` from the decoder output dictionaries.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">app_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">AppTable</span><span class="p">)</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">AppTable</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="n">app_name</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">id</span>
@@ -1206,6 +1225,11 @@
 
     <span class="k">def</span> <span class="nf">dump</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Dump the database as JSON for debugging purposes.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict</span>
+<span class="sd">            A database dump in JSON format.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">meta</span> <span class="o">=</span> <span class="n">MetaData</span><span class="p">()</span>
         <span class="n">meta</span><span class="o">.</span><span class="n">reflect</span><span class="p">(</span><span class="n">bind</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">engine</span><span class="p">)</span>
@@ -2483,6 +2507,20 @@ for example, any mapped columns or relationships.</p>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_campaign_info</span><span class="p">(</span><span class="n">campaign_name</span><span class="o">=</span><span class="n">campaign_name</span><span class="p">)</span><span class="o">.</span><span class="n">runs_dir</span>
 
     <span class="k">def</span> <span class="nf">store_result</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">run_id</span><span class="p">,</span> <span class="n">result</span><span class="p">,</span> <span class="n">change_status</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Stores results of a simulation inside the RunTable given a run id.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        run_id: int</span>
+<span class="sd">            The id of a run to store the results in. This will be the run with which these</span>
+<span class="sd">            results are associated with. Namely the run that has the inputs used to generate</span>
+<span class="sd">            these results.</span>
+<span class="sd">        result: dict</span>
+<span class="sd">            Results in dictionary form. This is the same format as used by the `Decoder`.</span>
+<span class="sd">        change_status: bool</span>
+<span class="sd">            If set to False will not update the runs&#39; status to COLLATED. This is sometimes</span>
+<span class="sd">            useful in scenarios where you want several apps to work on the same runs.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">commit_counter</span> <span class="o">+=</span> <span class="mi">1</span>
         <span class="k">def</span> <span class="nf">convert_nonserializable</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">):</span>
@@ -2541,10 +2579,15 @@ for example, any mapped columns or relationships.</p>
 <span class="sd">            Name of the app to return data for.</span>
 <span class="sd">        sampler_id: int</span>
 <span class="sd">            ID of the sampler.</span>
+<span class="sd">        status: STATUS</span>
+<span class="sd">            Run status to filter for.</span>
+<span class="sd">        iteration: int</span>
+<span class="sd">            If a positive integer will return the results for a given iteration only.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        pandas DataFrame constructed from the decoder output dictionaries</span>
+<span class="sd">        DataFrame </span>
+<span class="sd">            Will construct a `DataFrame` from the decoder output dictionaries.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">app_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">AppTable</span><span class="p">)</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">AppTable</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="n">app_name</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">id</span>
@@ -2603,6 +2646,11 @@ for example, any mapped columns or relationships.</p>
 
     <span class="k">def</span> <span class="nf">dump</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Dump the database as JSON for debugging purposes.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict</span>
+<span class="sd">            A database dump in JSON format.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">meta</span> <span class="o">=</span> <span class="n">MetaData</span><span class="p">()</span>
         <span class="n">meta</span><span class="o">.</span><span class="n">reflect</span><span class="p">(</span><span class="n">bind</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">engine</span><span class="p">)</span>
@@ -4045,6 +4093,20 @@ Name of the selected campaign.</li>
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">store_result</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">run_id</span><span class="p">,</span> <span class="n">result</span><span class="p">,</span> <span class="n">change_status</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Stores results of a simulation inside the RunTable given a run id.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        run_id: int</span>
+<span class="sd">            The id of a run to store the results in. This will be the run with which these</span>
+<span class="sd">            results are associated with. Namely the run that has the inputs used to generate</span>
+<span class="sd">            these results.</span>
+<span class="sd">        result: dict</span>
+<span class="sd">            Results in dictionary form. This is the same format as used by the `Decoder`.</span>
+<span class="sd">        change_status: bool</span>
+<span class="sd">            If set to False will not update the runs&#39; status to COLLATED. This is sometimes</span>
+<span class="sd">            useful in scenarios where you want several apps to work on the same runs.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">commit_counter</span> <span class="o">+=</span> <span class="mi">1</span>
         <span class="k">def</span> <span class="nf">convert_nonserializable</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">):</span>
@@ -4070,7 +4132,23 @@ Name of the selected campaign.</li>
 
         </details>
 
-    
+            <div class="docstring"><p>Stores results of a simulation inside the RunTable given a run id.</p>
+
+<h6 id="parameters">Parameters</h6>
+
+<ul>
+<li><strong>run_id</strong> (int):
+The id of a run to store the results in. This will be the run with which these
+results are associated with. Namely the run that has the inputs used to generate
+these results.</li>
+<li><strong>result</strong> (dict):
+Results in dictionary form. This is the same format as used by the <code>Decoder</code>.</li>
+<li><strong>change_status</strong> (bool):
+If set to False will not update the runs' status to COLLATED. This is sometimes
+useful in scenarios where you want several apps to work on the same runs.</li>
+</ul>
+</div>
+
 
                             </div>
                             <div id="CampaignDB.store_results" class="classattr">
@@ -4152,10 +4230,15 @@ dictionary with the results (from the decoder)</li>
 <span class="sd">            Name of the app to return data for.</span>
 <span class="sd">        sampler_id: int</span>
 <span class="sd">            ID of the sampler.</span>
+<span class="sd">        status: STATUS</span>
+<span class="sd">            Run status to filter for.</span>
+<span class="sd">        iteration: int</span>
+<span class="sd">            If a positive integer will return the results for a given iteration only.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        pandas DataFrame constructed from the decoder output dictionaries</span>
+<span class="sd">        DataFrame </span>
+<span class="sd">            Will construct a `DataFrame` from the decoder output dictionaries.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">app_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">AppTable</span><span class="p">)</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">AppTable</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="n">app_name</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">id</span>
@@ -4204,12 +4287,16 @@ dictionary with the results (from the decoder)</li>
 Name of the app to return data for.</li>
 <li><strong>sampler_id</strong> (int):
 ID of the sampler.</li>
+<li><strong>status</strong> (STATUS):
+Run status to filter for.</li>
+<li><strong>iteration</strong> (int):
+If a positive integer will return the results for a given iteration only.</li>
 </ul>
 
 <h6 id="returns">Returns</h6>
 
 <ul>
-<li><strong>pandas DataFrame constructed from the decoder output dictionaries</strong></li>
+<li><strong>DataFrame</strong>: Will construct a <code>DataFrame</code> from the decoder output dictionaries.</li>
 </ul>
 </div>
 
@@ -4274,6 +4361,11 @@ name of the campaign</li>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">dump</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Dump the database as JSON for debugging purposes.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict</span>
+<span class="sd">            A database dump in JSON format.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">meta</span> <span class="o">=</span> <span class="n">MetaData</span><span class="p">()</span>
         <span class="n">meta</span><span class="o">.</span><span class="n">reflect</span><span class="p">(</span><span class="n">bind</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">engine</span><span class="p">)</span>
@@ -4286,6 +4378,12 @@ name of the campaign</li>
         </details>
 
             <div class="docstring"><p>Dump the database as JSON for debugging purposes.</p>
+
+<h6 id="returns">Returns</h6>
+
+<ul>
+<li><strong>dict</strong>: A database dump in JSON format.</li>
+</ul>
 </div>
 
 
