@@ -155,7 +155,6 @@ EasyVVUQ workflows.</p>
 <span class="kn">from</span> <span class="nn">easyvvuq.data_structs</span> <span class="kn">import</span> <span class="n">RunInfo</span><span class="p">,</span> <span class="n">CampaignInfo</span><span class="p">,</span> <span class="n">AppInfo</span>
 <span class="kn">from</span> <span class="nn">easyvvuq.sampling</span> <span class="kn">import</span> <span class="n">BaseSamplingElement</span>
 <span class="kn">from</span> <span class="nn">easyvvuq.actions</span> <span class="kn">import</span> <span class="n">ActionPool</span>
-<span class="kn">from</span> <span class="nn">easyvvuq.db.sql</span> <span class="kn">import</span> <span class="n">CampaignDB</span>
 <span class="kn">import</span> <span class="nn">easyvvuq.db.sql</span> <span class="k">as</span> <span class="nn">db</span>
 
 <span class="n">__copyright__</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
@@ -188,14 +187,14 @@ EasyVVUQ workflows.</p>
     <span class="sd">&quot;&quot;&quot;Campaigns organise the dataflow in EasyVVUQ workflows.</span>
 
 <span class="sd">    The Campaign functions as as state machine for the VVUQ workflows. It uses a</span>
-<span class="sd">    database (CampaignDB) to store information on both the target application</span>
+<span class="sd">    database (db.CampaignDB) to store information on both the target application</span>
 <span class="sd">    and the VVUQ algorithms being employed. It also collects data from the simulations</span>
 <span class="sd">    and can be used to store and resume your state.</span>
 
 <span class="sd">    Notes</span>
 <span class="sd">    -----</span>
 
-<span class="sd">    Multiple campaigns can be combined in a CampaignDB. Hence the particular</span>
+<span class="sd">    Multiple campaigns can be combined in a db.CampaignDB. Hence the particular</span>
 <span class="sd">    campaign we are currently working on will be specified using `campaign_id`.</span>
 
 <span class="sd">    Parameters</span>
@@ -232,8 +231,8 @@ EasyVVUQ workflows.</p>
 <span class="sd">        The log of all elements that have been applied, with information about</span>
 <span class="sd">        their application</span>
 <span class="sd">    campaign_id : int</span>
-<span class="sd">        ID number for the current campaign in the CampaignDB.</span>
-<span class="sd">    campaign_db: easyvvuq.db.BaseCampaignDB</span>
+<span class="sd">        ID number for the current campaign in the db.CampaignDB.</span>
+<span class="sd">    campaign_db: easyvvuq.db.Basedb.CampaignDB</span>
 <span class="sd">        A campaign database object</span>
 <span class="sd">    last_analysis:</span>
 <span class="sd">        The result of the most recent analysis carried out on this campaign</span>
@@ -312,7 +311,7 @@ EasyVVUQ workflows.</p>
 <span class="sd">        work_dir: str</span>
 <span class="sd">            work directory, defaults to cwd</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">campaign_db</span> <span class="o">=</span> <span class="n">CampaignDB</span><span class="p">(</span><span class="n">location</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">db_location</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">campaign_db</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">CampaignDB</span><span class="p">(</span><span class="n">location</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">db_location</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">campaign_db</span><span class="o">.</span><span class="n">campaign_exists</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">campaign_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">campaign_db</span><span class="o">.</span><span class="n">get_campaign_id</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_active_app_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">campaign_db</span><span class="o">.</span><span class="n">get_active_app</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">name</span>
@@ -338,7 +337,7 @@ EasyVVUQ workflows.</p>
             <span class="bp">self</span><span class="o">.</span><span class="n">campaign_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">campaign_db</span><span class="o">.</span><span class="n">get_campaign_id</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">campaign_name</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">add_app</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">actions</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">set_active</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Add an application to the CampaignDB.</span>
+        <span class="sd">&quot;&quot;&quot;Add an application to the db.CampaignDB.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -536,7 +535,7 @@ EasyVVUQ workflows.</p>
         <span class="k">return</span> <span class="n">new_runs</span>
 
     <span class="k">def</span> <span class="nf">list_runs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sampler</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">campaign</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">status</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Get list of runs in the CampaignDB.</span>
+        <span class="sd">&quot;&quot;&quot;Get list of runs in the db.CampaignDB.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -568,7 +567,7 @@ EasyVVUQ workflows.</p>
         <span class="k">return</span> <span class="kc">False</span>
 
     <span class="k">def</span> <span class="nf">get_campaign_runs_dir</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Get the runs directory from the CampaignDB.</span>
+        <span class="sd">&quot;&quot;&quot;Get the runs directory from the db.CampaignDB.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -845,14 +844,14 @@ EasyVVUQ workflows.</p>
     <span class="sd">&quot;&quot;&quot;Campaigns organise the dataflow in EasyVVUQ workflows.</span>
 
 <span class="sd">    The Campaign functions as as state machine for the VVUQ workflows. It uses a</span>
-<span class="sd">    database (CampaignDB) to store information on both the target application</span>
+<span class="sd">    database (db.CampaignDB) to store information on both the target application</span>
 <span class="sd">    and the VVUQ algorithms being employed. It also collects data from the simulations</span>
 <span class="sd">    and can be used to store and resume your state.</span>
 
 <span class="sd">    Notes</span>
 <span class="sd">    -----</span>
 
-<span class="sd">    Multiple campaigns can be combined in a CampaignDB. Hence the particular</span>
+<span class="sd">    Multiple campaigns can be combined in a db.CampaignDB. Hence the particular</span>
 <span class="sd">    campaign we are currently working on will be specified using `campaign_id`.</span>
 
 <span class="sd">    Parameters</span>
@@ -889,8 +888,8 @@ EasyVVUQ workflows.</p>
 <span class="sd">        The log of all elements that have been applied, with information about</span>
 <span class="sd">        their application</span>
 <span class="sd">    campaign_id : int</span>
-<span class="sd">        ID number for the current campaign in the CampaignDB.</span>
-<span class="sd">    campaign_db: easyvvuq.db.BaseCampaignDB</span>
+<span class="sd">        ID number for the current campaign in the db.CampaignDB.</span>
+<span class="sd">    campaign_db: easyvvuq.db.Basedb.CampaignDB</span>
 <span class="sd">        A campaign database object</span>
 <span class="sd">    last_analysis:</span>
 <span class="sd">        The result of the most recent analysis carried out on this campaign</span>
@@ -969,7 +968,7 @@ EasyVVUQ workflows.</p>
 <span class="sd">        work_dir: str</span>
 <span class="sd">            work directory, defaults to cwd</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">campaign_db</span> <span class="o">=</span> <span class="n">CampaignDB</span><span class="p">(</span><span class="n">location</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">db_location</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">campaign_db</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">CampaignDB</span><span class="p">(</span><span class="n">location</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">db_location</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">campaign_db</span><span class="o">.</span><span class="n">campaign_exists</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">campaign_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">campaign_db</span><span class="o">.</span><span class="n">get_campaign_id</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_active_app_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">campaign_db</span><span class="o">.</span><span class="n">get_active_app</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">name</span>
@@ -995,7 +994,7 @@ EasyVVUQ workflows.</p>
             <span class="bp">self</span><span class="o">.</span><span class="n">campaign_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">campaign_db</span><span class="o">.</span><span class="n">get_campaign_id</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">campaign_name</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">add_app</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">actions</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">set_active</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Add an application to the CampaignDB.</span>
+        <span class="sd">&quot;&quot;&quot;Add an application to the db.CampaignDB.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -1193,7 +1192,7 @@ EasyVVUQ workflows.</p>
         <span class="k">return</span> <span class="n">new_runs</span>
 
     <span class="k">def</span> <span class="nf">list_runs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sampler</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">campaign</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">status</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Get list of runs in the CampaignDB.</span>
+        <span class="sd">&quot;&quot;&quot;Get list of runs in the db.CampaignDB.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -1225,7 +1224,7 @@ EasyVVUQ workflows.</p>
         <span class="k">return</span> <span class="kc">False</span>
 
     <span class="k">def</span> <span class="nf">get_campaign_runs_dir</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Get the runs directory from the CampaignDB.</span>
+        <span class="sd">&quot;&quot;&quot;Get the runs directory from the db.CampaignDB.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -1489,13 +1488,13 @@ EasyVVUQ workflows.</p>
             <div class="docstring"><p>Campaigns organise the dataflow in EasyVVUQ workflows.</p>
 
 <p>The Campaign functions as as state machine for the VVUQ workflows. It uses a
-database (CampaignDB) to store information on both the target application
+database (db.CampaignDB) to store information on both the target application
 and the VVUQ algorithms being employed. It also collects data from the simulations
 and can be used to store and resume your state.</p>
 
 <h6 id="notes">Notes</h6>
 
-<p>Multiple campaigns can be combined in a CampaignDB. Hence the particular
+<p>Multiple campaigns can be combined in a db.CampaignDB. Hence the particular
 campaign we are currently working on will be specified using <code>campaign_id</code>.</p>
 
 <h6 id="parameters">Parameters</h6>
@@ -1535,8 +1534,8 @@ acceptable URI for SQLAlchemy.</li>
 The log of all elements that have been applied, with information about
 their application</li>
 <li><strong>campaign_id</strong> (int):
-ID number for the current campaign in the CampaignDB.</li>
-<li><strong>campaign_db</strong> (<a href="db.html#BaseCampaignDB">easyvvuq.db.BaseCampaignDB</a>):
+ID number for the current campaign in the db.CampaignDB.</li>
+<li><strong>campaign_db</strong> (<a href="db.html#Basedb.CampaignDB">easyvvuq.db.Basedb.CampaignDB</a>):
 A campaign database object</li>
 <li><strong>last_analysis:</strong>: The result of the most recent analysis carried out on this campaign</li>
 <li><strong>_active_app</strong> (dict):
@@ -1654,7 +1653,7 @@ working directory.</li>
 <span class="sd">        work_dir: str</span>
 <span class="sd">            work directory, defaults to cwd</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">campaign_db</span> <span class="o">=</span> <span class="n">CampaignDB</span><span class="p">(</span><span class="n">location</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">db_location</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">campaign_db</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">CampaignDB</span><span class="p">(</span><span class="n">location</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">db_location</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">campaign_db</span><span class="o">.</span><span class="n">campaign_exists</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">campaign_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">campaign_db</span><span class="o">.</span><span class="n">get_campaign_id</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_active_app_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">campaign_db</span><span class="o">.</span><span class="n">get_active_app</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">name</span>
@@ -1707,7 +1706,7 @@ work directory, defaults to cwd</li>
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">add_app</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">actions</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">set_active</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Add an application to the CampaignDB.</span>
+        <span class="sd">&quot;&quot;&quot;Add an application to the db.CampaignDB.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -1738,7 +1737,7 @@ work directory, defaults to cwd</li>
 
         </details>
 
-            <div class="docstring"><p>Add an application to the CampaignDB.</p>
+            <div class="docstring"><p>Add an application to the db.CampaignDB.</p>
 
 <h6 id="parameters">Parameters</h6>
 
@@ -2109,7 +2108,7 @@ to low probabilities.</li>
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">list_runs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sampler</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">campaign</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">status</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Get list of runs in the CampaignDB.</span>
+        <span class="sd">&quot;&quot;&quot;Get list of runs in the db.CampaignDB.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -2120,7 +2119,7 @@ to low probabilities.</li>
 
         </details>
 
-            <div class="docstring"><p>Get list of runs in the CampaignDB.</p>
+            <div class="docstring"><p>Get list of runs in the db.CampaignDB.</p>
 
 <h6 id="returns">Returns</h6>
 
@@ -2214,7 +2213,7 @@ a completed simulation.</p>
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">get_campaign_runs_dir</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Get the runs directory from the CampaignDB.</span>
+        <span class="sd">&quot;&quot;&quot;Get the runs directory from the db.CampaignDB.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -2226,7 +2225,7 @@ a completed simulation.</p>
 
         </details>
 
-            <div class="docstring"><p>Get the runs directory from the CampaignDB.</p>
+            <div class="docstring"><p>Get the runs directory from the db.CampaignDB.</p>
 
 <h6 id="returns">Returns</h6>
 
