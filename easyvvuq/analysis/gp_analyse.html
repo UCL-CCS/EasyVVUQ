@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="generator" content="pdoc 6.4.4" />
+    <meta name="generator" content="pdoc 6.6.0" />
     <title>easyvvuq.analysis.gp_analyse API documentation</title>
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2264%22%20height%3D%2264%22%20viewBox%3D%2244.5%202.5%2015%2015%22%3E%3Cpath%20d%3D%22M49.351%2021.041c-.233-.721-.546-2.408-.772-4.076-.042-.09-.067-.187-.046-.288-.166-1.347-.277-2.625-.241-3.351-1.378-1.008-2.271-2.586-2.271-4.362%200-.976.272-1.935.788-2.774.057-.094.122-.18.184-.268-.033-.167-.052-.339-.052-.516%200-1.477%201.202-2.679%202.679-2.679.791%200%201.496.352%201.987.9a6.3%206.3%200%200%201%201.001.029c.492-.564%201.207-.929%202.012-.929%201.477%200%202.679%201.202%202.679%202.679a2.65%202.65%200%200%201-.269%201.148c.383.747.595%201.572.595%202.41%200%202.311-1.507%204.29-3.635%205.107.037.699.147%202.27.423%203.294l.137.461c.156%202.136-4.612%205.166-5.199%203.215zm.127-4.919a4.78%204.78%200%200%200%20.775-.584c-.172-.115-.505-.254-.88-.378zm.331%202.302l.828-.502c-.202-.143-.576-.328-.984-.49zm.45%202.157l.701-.403c-.214-.115-.536-.249-.891-.376l.19.779zM49.13%204.141c0%20.152.123.276.276.276s.275-.124.275-.276-.123-.276-.276-.276-.275.124-.275.276zm.735-.389a1.15%201.15%200%200%201%20.314.783%201.16%201.16%200%200%201-1.162%201.162c-.457%200-.842-.27-1.032-.653-.026.117-.042.238-.042.362a1.68%201.68%200%200%200%201.679%201.679%201.68%201.68%200%200%200%201.679-1.679c0-.843-.626-1.535-1.436-1.654zm3.076%201.654a1.68%201.68%200%200%200%201.679%201.679%201.68%201.68%200%200%200%201.679-1.679c0-.037-.009-.072-.011-.109-.21.3-.541.508-.935.508a1.16%201.16%200%200%201-1.162-1.162%201.14%201.14%200%200%201%20.474-.912c-.015%200-.03-.005-.045-.005-.926.001-1.679.754-1.679%201.68zm1.861-1.265c0%20.152.123.276.276.276s.275-.124.275-.276-.123-.276-.276-.276-.275.124-.275.276zm1.823%204.823c0-.52-.103-1.035-.288-1.52-.466.394-1.06.64-1.717.64-1.144%200-2.116-.725-2.499-1.738-.383%201.012-1.355%201.738-2.499%201.738-.867%200-1.631-.421-2.121-1.062-.307.605-.478%201.267-.478%201.942%200%202.486%202.153%204.51%204.801%204.51s4.801-2.023%204.801-4.51zm-3.032%209.156l-.146-.492c-.276-1.02-.395-2.457-.444-3.268a6.11%206.11%200%200%201-1.18.115%206.01%206.01%200%200%201-2.536-.562l.006.175c.802.215%201.848.612%202.021%201.25.079.295-.021.601-.274.837l-.598.501c.667.304%201.243.698%201.311%201.179.02.144.022.507-.393.787l-.564.365c1.285.521%201.361.96%201.381%201.126.018.142.011.496-.427.746l-.854.489c.064-1.19%201.985-2.585%202.697-3.248zM49.34%209.925c0-.667%201-.667%201%200%200%20.653.818%201.205%201.787%201.205s1.787-.552%201.787-1.205c0-.667%201-.667%201%200%200%201.216-1.25%202.205-2.787%202.205s-2.787-.989-2.787-2.205zm-.887-7.633c-.093.077-.205.114-.317.114a.5.5%200%200%201-.318-.886L49.183.397a.5.5%200%200%201%20.703.068.5.5%200%200%201-.069.703zm7.661-.065c-.086%200-.173-.022-.253-.068l-1.523-.893c-.575-.337-.069-1.2.506-.863l1.523.892a.5.5%200%200%201%20.179.685c-.094.158-.261.247-.432.247z%22%20fill%3D%22%233bb300%22/%3E%3C/svg%3E"/>
 
@@ -27,6 +27,18 @@
 
                     <h2>API Documentation</h2>
                         <ul class="memberlist">
+            <li>
+                    <a class="class" href="#GaussianProcessSurrogateResults">GaussianProcessSurrogateResults</a>
+                            <ul class="memberlist">
+                        <li>
+                                <a class="function" href="#GaussianProcessSurrogateResults.__init__">GaussianProcessSurrogateResults</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#GaussianProcessSurrogateResults.surrogate">surrogate</a>
+                        </li>
+                </ul>
+
+            </li>
             <li>
                     <a class="class" href="#GaussianProcessSurrogate">GaussianProcessSurrogate</a>
                             <ul class="memberlist">
@@ -52,7 +64,7 @@
     <main class="pdoc">
             <section>
                     <h1 class="modulename">
-<a href="./../../easyvvuq.html">easyvvuq</a>.<a href="./../analysis.html">analysis</a>.gp_analyse    </h1>
+<a href="./../../easyvvuq.html">easyvvuq</a><wbr>.<a href="./../analysis.html">analysis</a><wbr>.gp_analyse    </h1>
 
                 
                         <details>
@@ -60,11 +72,27 @@
             <div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">easyvvuq</span> <span class="kn">import</span> <span class="n">OutputType</span>
 <span class="kn">from</span> <span class="nn">.base</span> <span class="kn">import</span> <span class="n">BaseAnalysisElement</span>
 <span class="kn">from</span> <span class="nn">sklearn.gaussian_process</span> <span class="kn">import</span> <span class="n">GaussianProcessRegressor</span>
+<span class="kn">from</span> <span class="nn">.results</span> <span class="kn">import</span> <span class="n">AnalysisResults</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+
+<span class="k">class</span> <span class="nc">GaussianProcessSurrogateResults</span><span class="p">(</span><span class="n">AnalysisResults</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gps</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">qoi</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gps</span> <span class="o">=</span> <span class="n">gps</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span> <span class="o">=</span> <span class="n">parameters</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">qoi</span> <span class="o">=</span> <span class="n">qoi</span>
+
+    <span class="k">def</span> <span class="nf">surrogate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">def</span> <span class="nf">surrogate_fn</span><span class="p">(</span><span class="n">inputs</span><span class="p">):</span>
+            <span class="n">values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="n">inputs</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">]])</span>
+            <span class="n">results</span> <span class="o">=</span> <span class="p">[</span><span class="n">gp</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">values</span><span class="p">)</span> <span class="k">for</span> <span class="n">gp</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">gps</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">return</span> <span class="p">{</span><span class="bp">self</span><span class="o">.</span><span class="n">qoi</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">results</span><span class="p">]}</span>
+        <span class="k">return</span> <span class="n">surrogate_fn</span>
 
 
 <span class="k">class</span> <span class="nc">GaussianProcessSurrogate</span><span class="p">(</span><span class="n">BaseAnalysisElement</span><span class="p">):</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr_cols</span><span class="p">,</span> <span class="n">target_cols</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sampler</span><span class="p">,</span> <span class="n">qoi_cols</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Element to calculate basic stats for `qoi_cols` values.</span>
 
 <span class="sd">        This results in values for: count, mean, std, min, max and 25%, 50% &amp;</span>
@@ -77,8 +105,9 @@
 <span class="sd">        target_cols : list</span>
 <span class="sd">            Corresponding target values (can be vectors).</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">attr_cols</span> <span class="o">=</span> <span class="n">attr_cols</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">target_cols</span> <span class="o">=</span> <span class="n">target_cols</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sampler</span> <span class="o">=</span> <span class="n">sampler</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">attr_cols</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">sampler</span><span class="o">.</span><span class="n">vary</span><span class="o">.</span><span class="n">get_keys</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">target_cols</span> <span class="o">=</span> <span class="n">qoi_cols</span>
 
     <span class="k">def</span> <span class="nf">analyse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_frame</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Perform the basis stats analysis on the input `data_frame`.</span>
@@ -104,29 +133,147 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">x</span> <span class="o">=</span> <span class="n">data_frame</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">attr_cols</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
         <span class="n">y</span> <span class="o">=</span> <span class="n">data_frame</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">target_cols</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
-
-        <span class="n">gp</span> <span class="o">=</span> <span class="n">GaussianProcessRegressor</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-        <span class="n">gp</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">gp</span>
+        <span class="n">gps</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">y</span><span class="p">:</span>
+            <span class="n">gp</span> <span class="o">=</span> <span class="n">GaussianProcessRegressor</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="n">gps</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">gp</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">GaussianProcessSurrogateResults</span><span class="p">(</span><span class="n">gps</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">attr_cols</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_cols</span><span class="p">)</span>
 </pre></div>
 
         </details>
 
             </section>
+                <section id="GaussianProcessSurrogateResults">
+                                <div class="attr class">
+        <a class="headerlink" href="#GaussianProcessSurrogateResults">#&nbsp;&nbsp</a>
+
+        
+        <span class="def">class</span>
+        <span class="name">GaussianProcessSurrogateResults</span><wbr>(<span class="base"><a href="results.html#AnalysisResults">easyvvuq.analysis.results.AnalysisResults</a></span>):
+    </div>
+
+                <details>
+            <summary>View Source</summary>
+            <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">GaussianProcessSurrogateResults</span><span class="p">(</span><span class="n">AnalysisResults</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gps</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">qoi</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gps</span> <span class="o">=</span> <span class="n">gps</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span> <span class="o">=</span> <span class="n">parameters</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">qoi</span> <span class="o">=</span> <span class="n">qoi</span>
+
+    <span class="k">def</span> <span class="nf">surrogate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">def</span> <span class="nf">surrogate_fn</span><span class="p">(</span><span class="n">inputs</span><span class="p">):</span>
+            <span class="n">values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="n">inputs</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">]])</span>
+            <span class="n">results</span> <span class="o">=</span> <span class="p">[</span><span class="n">gp</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">values</span><span class="p">)</span> <span class="k">for</span> <span class="n">gp</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">gps</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">return</span> <span class="p">{</span><span class="bp">self</span><span class="o">.</span><span class="n">qoi</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">results</span><span class="p">]}</span>
+        <span class="k">return</span> <span class="n">surrogate_fn</span>
+</pre></div>
+
+        </details>
+
+            <div class="docstring"><p>Contains the analysis results.</p>
+
+<h6 id="parameters">Parameters</h6>
+
+<ul>
+<li><strong>raw_data</strong> (obj):
+An arbitrary object that contains raw analysis data.</li>
+<li><strong>samples</strong> (pandas DataFrame):
+Collated samples.</li>
+<li><strong>qois</strong> (list of str):
+List of qoi names used during the analysis.</li>
+<li><strong>inputs</strong> (list of str):
+List of input names used during the analysis.</li>
+</ul>
+</div>
+
+
+                            <div id="GaussianProcessSurrogateResults.__init__" class="classattr">
+                                        <div class="attr function"><a class="headerlink" href="#GaussianProcessSurrogateResults.__init__">#&nbsp;&nbsp</a>
+
+        
+            <span class="name">GaussianProcessSurrogateResults</span><span class="signature">(gps, parameters, qoi)</span>
+    </div>
+
+                <details>
+            <summary>View Source</summary>
+            <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gps</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">qoi</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gps</span> <span class="o">=</span> <span class="n">gps</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span> <span class="o">=</span> <span class="n">parameters</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">qoi</span> <span class="o">=</span> <span class="n">qoi</span>
+</pre></div>
+
+        </details>
+
+    
+
+                            </div>
+                            <div id="GaussianProcessSurrogateResults.surrogate" class="classattr">
+                                        <div class="attr function"><a class="headerlink" href="#GaussianProcessSurrogateResults.surrogate">#&nbsp;&nbsp</a>
+
+        
+            <span class="def">def</span>
+            <span class="name">surrogate</span><span class="signature">(self)</span>:
+    </div>
+
+                <details>
+            <summary>View Source</summary>
+            <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">surrogate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">def</span> <span class="nf">surrogate_fn</span><span class="p">(</span><span class="n">inputs</span><span class="p">):</span>
+            <span class="n">values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="n">inputs</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">]])</span>
+            <span class="n">results</span> <span class="o">=</span> <span class="p">[</span><span class="n">gp</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">values</span><span class="p">)</span> <span class="k">for</span> <span class="n">gp</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">gps</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">return</span> <span class="p">{</span><span class="bp">self</span><span class="o">.</span><span class="n">qoi</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">results</span><span class="p">]}</span>
+        <span class="k">return</span> <span class="n">surrogate_fn</span>
+</pre></div>
+
+        </details>
+
+            <div class="docstring"><p>Returns the surrogate model as a function from parameter dictionary
+to output dictionary. This only needs to be implemented if the analysis
+method in question provides surrogate models.</p>
+
+<h6 id="returns">Returns</h6>
+
+<ul>
+<li><strong>function</strong>: Returns a function that takes a dictionary and returns a dictionary.
+These dictionaries use the same format as Encoder and Decoder used
+to construct the surrogate.</li>
+</ul>
+</div>
+
+
+                            </div>
+                            <div class="inherited">
+                                <h5>Inherited Members</h5>
+                                <dl>
+                                    <div><dt><a href="results.html#AnalysisResults">easyvvuq.analysis.results.AnalysisResults</a></dt>
+                                <dd id="GaussianProcessSurrogateResults.supported_stats" class="function"><a href="results.html#AnalysisResults.supported_stats">supported_stats</a></dd>
+                <dd id="GaussianProcessSurrogateResults.sobols_first" class="function"><a href="results.html#AnalysisResults.sobols_first">sobols_first</a></dd>
+                <dd id="GaussianProcessSurrogateResults.sobols_second" class="function"><a href="results.html#AnalysisResults.sobols_second">sobols_second</a></dd>
+                <dd id="GaussianProcessSurrogateResults.sobols_total" class="function"><a href="results.html#AnalysisResults.sobols_total">sobols_total</a></dd>
+                <dd id="GaussianProcessSurrogateResults.describe" class="function"><a href="results.html#AnalysisResults.describe">describe</a></dd>
+                <dd id="GaussianProcessSurrogateResults.plot_sobols_treemap" class="function"><a href="results.html#AnalysisResults.plot_sobols_treemap">plot_sobols_treemap</a></dd>
+                <dd id="GaussianProcessSurrogateResults.plot_sobols_first" class="function"><a href="results.html#AnalysisResults.plot_sobols_first">plot_sobols_first</a></dd>
+                <dd id="GaussianProcessSurrogateResults.plot_moments" class="function"><a href="results.html#AnalysisResults.plot_moments">plot_moments</a></dd>
+                <dd id="GaussianProcessSurrogateResults.get_distribution" class="function"><a href="results.html#AnalysisResults.get_distribution">get_distribution</a></dd>
+
+            </div>
+                                </dl>
+                            </div>
+                </section>
                 <section id="GaussianProcessSurrogate">
                                 <div class="attr class">
         <a class="headerlink" href="#GaussianProcessSurrogate">#&nbsp;&nbsp</a>
 
         
         <span class="def">class</span>
-        <span class="name">GaussianProcessSurrogate</span>(<span class="base"><a href="base.html#BaseAnalysisElement">easyvvuq.analysis.base.BaseAnalysisElement</a></span>):
+        <span class="name">GaussianProcessSurrogate</span><wbr>(<span class="base"><a href="base.html#BaseAnalysisElement">easyvvuq.analysis.base.BaseAnalysisElement</a></span>):
     </div>
 
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">GaussianProcessSurrogate</span><span class="p">(</span><span class="n">BaseAnalysisElement</span><span class="p">):</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr_cols</span><span class="p">,</span> <span class="n">target_cols</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sampler</span><span class="p">,</span> <span class="n">qoi_cols</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Element to calculate basic stats for `qoi_cols` values.</span>
 
 <span class="sd">        This results in values for: count, mean, std, min, max and 25%, 50% &amp;</span>
@@ -139,8 +286,9 @@
 <span class="sd">        target_cols : list</span>
 <span class="sd">            Corresponding target values (can be vectors).</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">attr_cols</span> <span class="o">=</span> <span class="n">attr_cols</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">target_cols</span> <span class="o">=</span> <span class="n">target_cols</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sampler</span> <span class="o">=</span> <span class="n">sampler</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">attr_cols</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">sampler</span><span class="o">.</span><span class="n">vary</span><span class="o">.</span><span class="n">get_keys</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">target_cols</span> <span class="o">=</span> <span class="n">qoi_cols</span>
 
     <span class="k">def</span> <span class="nf">analyse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_frame</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Perform the basis stats analysis on the input `data_frame`.</span>
@@ -166,10 +314,11 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">x</span> <span class="o">=</span> <span class="n">data_frame</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">attr_cols</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
         <span class="n">y</span> <span class="o">=</span> <span class="n">data_frame</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">target_cols</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
-
-        <span class="n">gp</span> <span class="o">=</span> <span class="n">GaussianProcessRegressor</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-        <span class="n">gp</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">gp</span>
+        <span class="n">gps</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">y</span><span class="p">:</span>
+            <span class="n">gp</span> <span class="o">=</span> <span class="n">GaussianProcessRegressor</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="n">gps</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">gp</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">GaussianProcessSurrogateResults</span><span class="p">(</span><span class="n">gps</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">attr_cols</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_cols</span><span class="p">)</span>
 </pre></div>
 
         </details>
@@ -184,12 +333,12 @@
                                         <div class="attr function"><a class="headerlink" href="#GaussianProcessSurrogate.__init__">#&nbsp;&nbsp</a>
 
         
-            <span class="name">GaussianProcessSurrogate</span><span class="signature">(attr_cols, target_cols)</span>
+            <span class="name">GaussianProcessSurrogate</span><span class="signature">(sampler, qoi_cols)</span>
     </div>
 
                 <details>
             <summary>View Source</summary>
-            <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr_cols</span><span class="p">,</span> <span class="n">target_cols</span><span class="p">):</span>
+            <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sampler</span><span class="p">,</span> <span class="n">qoi_cols</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Element to calculate basic stats for `qoi_cols` values.</span>
 
 <span class="sd">        This results in values for: count, mean, std, min, max and 25%, 50% &amp;</span>
@@ -202,8 +351,9 @@
 <span class="sd">        target_cols : list</span>
 <span class="sd">            Corresponding target values (can be vectors).</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">attr_cols</span> <span class="o">=</span> <span class="n">attr_cols</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">target_cols</span> <span class="o">=</span> <span class="n">target_cols</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sampler</span> <span class="o">=</span> <span class="n">sampler</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">attr_cols</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">sampler</span><span class="o">.</span><span class="n">vary</span><span class="o">.</span><span class="n">get_keys</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">target_cols</span> <span class="o">=</span> <span class="n">qoi_cols</span>
 </pre></div>
 
         </details>
@@ -259,10 +409,11 @@ Corresponding target values (can be vectors).</li>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">x</span> <span class="o">=</span> <span class="n">data_frame</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">attr_cols</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
         <span class="n">y</span> <span class="o">=</span> <span class="n">data_frame</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">target_cols</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
-
-        <span class="n">gp</span> <span class="o">=</span> <span class="n">GaussianProcessRegressor</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-        <span class="n">gp</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">gp</span>
+        <span class="n">gps</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">y</span><span class="p">:</span>
+            <span class="n">gp</span> <span class="o">=</span> <span class="n">GaussianProcessRegressor</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="n">gps</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">gp</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">GaussianProcessSurrogateResults</span><span class="p">(</span><span class="n">gps</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">attr_cols</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_cols</span><span class="p">)</span>
 </pre></div>
 
         </details>
