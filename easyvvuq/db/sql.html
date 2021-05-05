@@ -712,8 +712,7 @@
         <span class="k">return</span> <span class="n">run_info</span>
 
     <span class="k">def</span> <span class="nf">set_dir_for_run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">run_name</span><span class="p">,</span> <span class="n">run_dir</span><span class="p">,</span> <span class="n">campaign</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">sampler</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Set the &#39;run_dir&#39; path for the specified run in the database.</span>
+        <span class="sd">&quot;&quot;&quot;Set the &#39;run_dir&#39; path for the specified run in the database.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -725,31 +724,21 @@
 <span class="sd">            Campaign id to filter for.</span>
 <span class="sd">        sampler: int or None</span>
 <span class="sd">            Sample id to filter for.</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-
 <span class="sd">        &quot;&quot;&quot;</span>
-
         <span class="n">filter_options</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;run_name&#39;</span><span class="p">:</span> <span class="n">run_name</span><span class="p">}</span>
         <span class="k">if</span> <span class="n">campaign</span><span class="p">:</span>
             <span class="n">filter_options</span><span class="p">[</span><span class="s1">&#39;campaign&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">campaign</span>
         <span class="k">if</span> <span class="n">sampler</span><span class="p">:</span>
             <span class="n">filter_options</span><span class="p">[</span><span class="s1">&#39;sampler&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">sampler</span>
-
         <span class="n">selected</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">RunTable</span><span class="p">)</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="o">**</span><span class="n">filter_options</span><span class="p">)</span>
-
         <span class="k">if</span> <span class="n">selected</span><span class="o">.</span><span class="n">count</span><span class="p">()</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
             <span class="n">logging</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span><span class="s1">&#39;Multiple runs selected - using the first&#39;</span><span class="p">)</span>
-
         <span class="n">selected</span> <span class="o">=</span> <span class="n">selected</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
-
         <span class="n">selected</span><span class="o">.</span><span class="n">run_dir</span> <span class="o">=</span> <span class="n">run_dir</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">get_run_status</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">run_id</span><span class="p">,</span> <span class="n">campaign</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">sampler</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Return the status (enum) for the run with name &#39;run_name&#39; (and, optionally,</span>
+        <span class="sd">&quot;&quot;&quot;Return the status (enum) for the run with name &#39;run_name&#39; (and, optionally,</span>
 <span class="sd">        filtering for campaign and sampler by id)</span>
 
 <span class="sd">        Parameters</span>
@@ -766,19 +755,15 @@
 <span class="sd">        status: enum(Status)</span>
 <span class="sd">            Status of the run.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-
         <span class="n">filter_options</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="n">run_id</span><span class="p">}</span>
         <span class="k">if</span> <span class="n">campaign</span><span class="p">:</span>
             <span class="n">filter_options</span><span class="p">[</span><span class="s1">&#39;campaign&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">campaign</span>
         <span class="k">if</span> <span class="n">sampler</span><span class="p">:</span>
             <span class="n">filter_options</span><span class="p">[</span><span class="s1">&#39;sampler&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">sampler</span>
         <span class="n">selected</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">RunTable</span><span class="p">)</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="o">**</span><span class="n">filter_options</span><span class="p">)</span>
-
         <span class="k">if</span> <span class="n">selected</span><span class="o">.</span><span class="n">count</span><span class="p">()</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
             <span class="n">logging</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span><span class="s1">&#39;Multiple runs selected - using the first&#39;</span><span class="p">)</span>
-
         <span class="n">selected</span> <span class="o">=</span> <span class="n">selected</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
-
         <span class="k">return</span> <span class="n">constants</span><span class="o">.</span><span class="n">Status</span><span class="p">(</span><span class="n">selected</span><span class="o">.</span><span class="n">status</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">set_run_statuses</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">run_id_list</span><span class="p">,</span> <span class="n">status</span><span class="p">):</span>
@@ -2153,8 +2138,7 @@ for example, any mapped columns or relationships.</p>
         <span class="k">return</span> <span class="n">run_info</span>
 
     <span class="k">def</span> <span class="nf">set_dir_for_run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">run_name</span><span class="p">,</span> <span class="n">run_dir</span><span class="p">,</span> <span class="n">campaign</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">sampler</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Set the &#39;run_dir&#39; path for the specified run in the database.</span>
+        <span class="sd">&quot;&quot;&quot;Set the &#39;run_dir&#39; path for the specified run in the database.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -2166,31 +2150,21 @@ for example, any mapped columns or relationships.</p>
 <span class="sd">            Campaign id to filter for.</span>
 <span class="sd">        sampler: int or None</span>
 <span class="sd">            Sample id to filter for.</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-
 <span class="sd">        &quot;&quot;&quot;</span>
-
         <span class="n">filter_options</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;run_name&#39;</span><span class="p">:</span> <span class="n">run_name</span><span class="p">}</span>
         <span class="k">if</span> <span class="n">campaign</span><span class="p">:</span>
             <span class="n">filter_options</span><span class="p">[</span><span class="s1">&#39;campaign&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">campaign</span>
         <span class="k">if</span> <span class="n">sampler</span><span class="p">:</span>
             <span class="n">filter_options</span><span class="p">[</span><span class="s1">&#39;sampler&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">sampler</span>
-
         <span class="n">selected</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">RunTable</span><span class="p">)</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="o">**</span><span class="n">filter_options</span><span class="p">)</span>
-
         <span class="k">if</span> <span class="n">selected</span><span class="o">.</span><span class="n">count</span><span class="p">()</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
             <span class="n">logging</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span><span class="s1">&#39;Multiple runs selected - using the first&#39;</span><span class="p">)</span>
-
         <span class="n">selected</span> <span class="o">=</span> <span class="n">selected</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
-
         <span class="n">selected</span><span class="o">.</span><span class="n">run_dir</span> <span class="o">=</span> <span class="n">run_dir</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">get_run_status</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">run_id</span><span class="p">,</span> <span class="n">campaign</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">sampler</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Return the status (enum) for the run with name &#39;run_name&#39; (and, optionally,</span>
+        <span class="sd">&quot;&quot;&quot;Return the status (enum) for the run with name &#39;run_name&#39; (and, optionally,</span>
 <span class="sd">        filtering for campaign and sampler by id)</span>
 
 <span class="sd">        Parameters</span>
@@ -2207,19 +2181,15 @@ for example, any mapped columns or relationships.</p>
 <span class="sd">        status: enum(Status)</span>
 <span class="sd">            Status of the run.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-
         <span class="n">filter_options</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="n">run_id</span><span class="p">}</span>
         <span class="k">if</span> <span class="n">campaign</span><span class="p">:</span>
             <span class="n">filter_options</span><span class="p">[</span><span class="s1">&#39;campaign&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">campaign</span>
         <span class="k">if</span> <span class="n">sampler</span><span class="p">:</span>
             <span class="n">filter_options</span><span class="p">[</span><span class="s1">&#39;sampler&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">sampler</span>
         <span class="n">selected</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">RunTable</span><span class="p">)</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="o">**</span><span class="n">filter_options</span><span class="p">)</span>
-
         <span class="k">if</span> <span class="n">selected</span><span class="o">.</span><span class="n">count</span><span class="p">()</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
             <span class="n">logging</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span><span class="s1">&#39;Multiple runs selected - using the first&#39;</span><span class="p">)</span>
-
         <span class="n">selected</span> <span class="o">=</span> <span class="n">selected</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
-
         <span class="k">return</span> <span class="n">constants</span><span class="o">.</span><span class="n">Status</span><span class="p">(</span><span class="n">selected</span><span class="o">.</span><span class="n">status</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">set_run_statuses</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">run_id_list</span><span class="p">,</span> <span class="n">status</span><span class="p">):</span>
@@ -3385,8 +3355,7 @@ as default zero in other cases.</li>
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">set_dir_for_run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">run_name</span><span class="p">,</span> <span class="n">run_dir</span><span class="p">,</span> <span class="n">campaign</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">sampler</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Set the &#39;run_dir&#39; path for the specified run in the database.</span>
+        <span class="sd">&quot;&quot;&quot;Set the &#39;run_dir&#39; path for the specified run in the database.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -3398,25 +3367,16 @@ as default zero in other cases.</li>
 <span class="sd">            Campaign id to filter for.</span>
 <span class="sd">        sampler: int or None</span>
 <span class="sd">            Sample id to filter for.</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-
 <span class="sd">        &quot;&quot;&quot;</span>
-
         <span class="n">filter_options</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;run_name&#39;</span><span class="p">:</span> <span class="n">run_name</span><span class="p">}</span>
         <span class="k">if</span> <span class="n">campaign</span><span class="p">:</span>
             <span class="n">filter_options</span><span class="p">[</span><span class="s1">&#39;campaign&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">campaign</span>
         <span class="k">if</span> <span class="n">sampler</span><span class="p">:</span>
             <span class="n">filter_options</span><span class="p">[</span><span class="s1">&#39;sampler&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">sampler</span>
-
         <span class="n">selected</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">RunTable</span><span class="p">)</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="o">**</span><span class="n">filter_options</span><span class="p">)</span>
-
         <span class="k">if</span> <span class="n">selected</span><span class="o">.</span><span class="n">count</span><span class="p">()</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
             <span class="n">logging</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span><span class="s1">&#39;Multiple runs selected - using the first&#39;</span><span class="p">)</span>
-
         <span class="n">selected</span> <span class="o">=</span> <span class="n">selected</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
-
         <span class="n">selected</span><span class="o">.</span><span class="n">run_dir</span> <span class="o">=</span> <span class="n">run_dir</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
 </pre></div>
@@ -3436,10 +3396,7 @@ Directory path associated to set for this run.</li>
 Campaign id to filter for.</li>
 <li><strong>sampler</strong> (int or None):
 Sample id to filter for.</li>
-<li><strong>Returns</strong></li>
 </ul>
-
-<hr />
 </div>
 
 
@@ -3455,8 +3412,7 @@ Sample id to filter for.</li>
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">get_run_status</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">run_id</span><span class="p">,</span> <span class="n">campaign</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">sampler</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Return the status (enum) for the run with name &#39;run_name&#39; (and, optionally,</span>
+        <span class="sd">&quot;&quot;&quot;Return the status (enum) for the run with name &#39;run_name&#39; (and, optionally,</span>
 <span class="sd">        filtering for campaign and sampler by id)</span>
 
 <span class="sd">        Parameters</span>
@@ -3473,19 +3429,15 @@ Sample id to filter for.</li>
 <span class="sd">        status: enum(Status)</span>
 <span class="sd">            Status of the run.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-
         <span class="n">filter_options</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="n">run_id</span><span class="p">}</span>
         <span class="k">if</span> <span class="n">campaign</span><span class="p">:</span>
             <span class="n">filter_options</span><span class="p">[</span><span class="s1">&#39;campaign&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">campaign</span>
         <span class="k">if</span> <span class="n">sampler</span><span class="p">:</span>
             <span class="n">filter_options</span><span class="p">[</span><span class="s1">&#39;sampler&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">sampler</span>
         <span class="n">selected</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">RunTable</span><span class="p">)</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="o">**</span><span class="n">filter_options</span><span class="p">)</span>
-
         <span class="k">if</span> <span class="n">selected</span><span class="o">.</span><span class="n">count</span><span class="p">()</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
             <span class="n">logging</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span><span class="s1">&#39;Multiple runs selected - using the first&#39;</span><span class="p">)</span>
-
         <span class="n">selected</span> <span class="o">=</span> <span class="n">selected</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
-
         <span class="k">return</span> <span class="n">constants</span><span class="o">.</span><span class="n">Status</span><span class="p">(</span><span class="n">selected</span><span class="o">.</span><span class="n">status</span><span class="p">)</span>
 </pre></div>
 
