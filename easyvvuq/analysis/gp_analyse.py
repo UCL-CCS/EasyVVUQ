@@ -63,7 +63,7 @@ class GaussianProcessSurrogate(BaseAnalysisElement):
         x = data_frame[self.attr_cols].values
         y = data_frame[self.target_cols].values
         gps = []
-        for val in y:
+        for _ in y:
             gp = GaussianProcessRegressor(**kwargs)
             gps.append(gp.fit(x, y))
         return GaussianProcessSurrogateResults(gps, self.attr_cols, self.target_cols)
