@@ -767,8 +767,7 @@
         <span class="k">return</span> <span class="n">constants</span><span class="o">.</span><span class="n">Status</span><span class="p">(</span><span class="n">selected</span><span class="o">.</span><span class="n">status</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">set_run_statuses</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">run_id_list</span><span class="p">,</span> <span class="n">status</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Set the specified &#39;status&#39; (enum) for all runs in the list run_id_list</span>
+        <span class="sd">&quot;&quot;&quot;Set the specified &#39;status&#39; (enum) for all runs in the list run_id_list</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -776,9 +775,6 @@
 <span class="sd">            a list of run ids</span>
 <span class="sd">        status: enum(Status)</span>
 <span class="sd">            The new status all listed runs should now have</span>
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">RunTable</span><span class="p">)</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
             <span class="n">RunTable</span><span class="o">.</span><span class="n">id</span><span class="o">.</span><span class="n">in_</span><span class="p">(</span><span class="n">run_id_list</span><span class="p">))</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
@@ -798,25 +794,23 @@
         <span class="k">return</span> <span class="p">[</span><span class="n">c</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">CampaignTable</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()]</span>
 
     <span class="k">def</span> <span class="nf">_get_campaign_info</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">campaign_name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Retrieves Campaign info based on name.</span>
+
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        campaign_name: str</span>
-<span class="sd">            Name of campaign to select</span>
+<span class="sd">            Name of campaign to select.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">            sqlalchemy query for campaign with this name</span>
-
+<span class="sd">            SQLAlchemy query for campaign with this name.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">assert</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">campaign_name</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">or</span> <span class="n">campaign_name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span>
         <span class="n">query</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">CampaignTable</span><span class="p">)</span>
-
         <span class="k">if</span> <span class="n">campaign_name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">campaign_info</span> <span class="o">=</span> <span class="n">query</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">campaign_info</span> <span class="o">=</span> <span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">campaign_name</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
-
         <span class="k">if</span> <span class="n">campaign_name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">campaign_info</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
                 <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
@@ -826,12 +820,10 @@
                 <span class="n">logger</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
                 <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
             <span class="k">return</span> <span class="n">campaign_info</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-
         <span class="k">return</span> <span class="n">campaign_info</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">get_campaign_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Return the (database) id corresponding to the campaign with name &#39;name&#39;.</span>
+        <span class="sd">&quot;&quot;&quot;Return the (database) id corresponding to the campaign with name &#39;name&#39;.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -858,13 +850,11 @@
             <span class="p">)</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
             <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-
         <span class="c1"># Return the database ID for the specified campaign</span>
         <span class="k">return</span> <span class="n">selected</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
 
     <span class="k">def</span> <span class="nf">get_sampler_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">campaign_id</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Return the (database) id corresponding to the sampler currently set</span>
+        <span class="sd">&quot;&quot;&quot;Return the (database) id corresponding to the sampler currently set</span>
 <span class="sd">        for the campaign with id &#39;campaign_id&#39;</span>
 
 <span class="sd">        Parameters</span>
@@ -877,13 +867,11 @@
 <span class="sd">        int:</span>
 <span class="sd">            The id of the sampler set for the specified campaign</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-
         <span class="n">sampler_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">CampaignTable</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">campaign_id</span><span class="p">)</span><span class="o">.</span><span class="n">sampler</span>
         <span class="k">return</span> <span class="n">sampler_id</span>
 
     <span class="k">def</span> <span class="nf">set_sampler</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">campaign_id</span><span class="p">,</span> <span class="n">sampler_id</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Set specified campaign to be using specified sampler</span>
+        <span class="sd">&quot;&quot;&quot;Set specified campaign to be using specified sampler</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -891,11 +879,7 @@
 <span class="sd">            ID of the campaign.</span>
 <span class="sd">        sampler_id: int</span>
 <span class="sd">            ID of the sampler.</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-
         <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">CampaignTable</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">campaign_id</span><span class="p">)</span><span class="o">.</span><span class="n">sampler</span> <span class="o">=</span> <span class="n">sampler_id</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
 
@@ -912,7 +896,6 @@
 <span class="sd">        str:</span>
 <span class="sd">            Path to campaign directory.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_campaign_info</span><span class="p">(</span><span class="n">campaign_name</span><span class="o">=</span><span class="n">campaign_name</span><span class="p">)</span><span class="o">.</span><span class="n">campaign_dir</span>
 
     <span class="k">def</span> <span class="nf">_select_runs</span><span class="p">(</span>
@@ -923,8 +906,7 @@
             <span class="n">status</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
             <span class="n">not_status</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
             <span class="n">app_id</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Select all runs in the database which match the input criteria.</span>
+        <span class="sd">&quot;&quot;&quot;Select all runs in the database which match the input criteria.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -938,6 +920,8 @@
 <span class="sd">            Status string to filter for.</span>
 <span class="sd">        not_status: enum(Status) or None</span>
 <span class="sd">            Exclude runs with this status string</span>
+<span class="sd">        app_id: int or None</span>
+<span class="sd">            App id to filter for.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -963,8 +947,7 @@
         <span class="k">return</span> <span class="n">selected</span>
 
     <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">campaign</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">sampler</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">status</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">not_status</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">app_id</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Get the information for a specified run.</span>
+        <span class="sd">&quot;&quot;&quot;Get the information for a specified run.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -978,6 +961,8 @@
 <span class="sd">            Status string to filter for.</span>
 <span class="sd">        not_status: enum(Status) or None</span>
 <span class="sd">            Exclude runs with this status string</span>
+<span class="sd">        app_id: int or None</span>
+<span class="sd">            App id to filter for.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -985,7 +970,6 @@
 <span class="sd">            Containing run information (run_name, params, status, sample,</span>
 <span class="sd">            campaign, app)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-
         <span class="n">selected</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_select_runs</span><span class="p">(</span>
             <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
             <span class="n">campaign</span><span class="o">=</span><span class="n">campaign</span><span class="p">,</span>
@@ -993,17 +977,13 @@
             <span class="n">status</span><span class="o">=</span><span class="n">status</span><span class="p">,</span>
             <span class="n">not_status</span><span class="o">=</span><span class="n">not_status</span><span class="p">,</span>
             <span class="n">app_id</span><span class="o">=</span><span class="n">app_id</span><span class="p">)</span>
-
         <span class="k">if</span> <span class="n">selected</span><span class="o">.</span><span class="n">count</span><span class="p">()</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
             <span class="n">logging</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s1">&#39;Multiple runs selected - using the first&#39;</span><span class="p">)</span>
-
         <span class="n">selected</span> <span class="o">=</span> <span class="n">selected</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
-
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_run_to_dict</span><span class="p">(</span><span class="n">selected</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">runs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">campaign</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">sampler</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">status</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">not_status</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">app_id</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        A generator to return all run information for selected `campaign` and `sampler`.</span>
+        <span class="sd">&quot;&quot;&quot;A generator to return all run information for selected `campaign` and `sampler`.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -1015,22 +995,21 @@
 <span class="sd">            Status string to filter for.</span>
 <span class="sd">        not_status: enum(Status) or None</span>
 <span class="sd">            Exclude runs with this status string</span>
+<span class="sd">        app_id: int or None</span>
+<span class="sd">            App id to filter for.</span>
 
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
+<span class="sd">        Yields</span>
+<span class="sd">        ------</span>
 <span class="sd">        dict:</span>
 <span class="sd">            Information on each selected run (key = run_name, value = dict of</span>
 <span class="sd">            run information fields.), one at a time.</span>
-
 <span class="sd">        &quot;&quot;&quot;</span>
-
         <span class="n">selected</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_select_runs</span><span class="p">(</span>
             <span class="n">campaign</span><span class="o">=</span><span class="n">campaign</span><span class="p">,</span>
             <span class="n">sampler</span><span class="o">=</span><span class="n">sampler</span><span class="p">,</span>
             <span class="n">status</span><span class="o">=</span><span class="n">status</span><span class="p">,</span>
             <span class="n">not_status</span><span class="o">=</span><span class="n">not_status</span><span class="p">,</span>
             <span class="n">app_id</span><span class="o">=</span><span class="n">app_id</span><span class="p">)</span>
-
         <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">selected</span><span class="p">:</span>
             <span class="k">yield</span> <span class="n">r</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_run_to_dict</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
 
@@ -2193,8 +2172,7 @@ for example, any mapped columns or relationships.</p>
         <span class="k">return</span> <span class="n">constants</span><span class="o">.</span><span class="n">Status</span><span class="p">(</span><span class="n">selected</span><span class="o">.</span><span class="n">status</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">set_run_statuses</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">run_id_list</span><span class="p">,</span> <span class="n">status</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Set the specified &#39;status&#39; (enum) for all runs in the list run_id_list</span>
+        <span class="sd">&quot;&quot;&quot;Set the specified &#39;status&#39; (enum) for all runs in the list run_id_list</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -2202,9 +2180,6 @@ for example, any mapped columns or relationships.</p>
 <span class="sd">            a list of run ids</span>
 <span class="sd">        status: enum(Status)</span>
 <span class="sd">            The new status all listed runs should now have</span>
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">RunTable</span><span class="p">)</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
             <span class="n">RunTable</span><span class="o">.</span><span class="n">id</span><span class="o">.</span><span class="n">in_</span><span class="p">(</span><span class="n">run_id_list</span><span class="p">))</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
@@ -2224,25 +2199,23 @@ for example, any mapped columns or relationships.</p>
         <span class="k">return</span> <span class="p">[</span><span class="n">c</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">CampaignTable</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()]</span>
 
     <span class="k">def</span> <span class="nf">_get_campaign_info</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">campaign_name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Retrieves Campaign info based on name.</span>
+
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        campaign_name: str</span>
-<span class="sd">            Name of campaign to select</span>
+<span class="sd">            Name of campaign to select.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">            sqlalchemy query for campaign with this name</span>
-
+<span class="sd">            SQLAlchemy query for campaign with this name.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">assert</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">campaign_name</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">or</span> <span class="n">campaign_name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span>
         <span class="n">query</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">CampaignTable</span><span class="p">)</span>
-
         <span class="k">if</span> <span class="n">campaign_name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">campaign_info</span> <span class="o">=</span> <span class="n">query</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">campaign_info</span> <span class="o">=</span> <span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">campaign_name</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
-
         <span class="k">if</span> <span class="n">campaign_name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">campaign_info</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
                 <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
@@ -2252,12 +2225,10 @@ for example, any mapped columns or relationships.</p>
                 <span class="n">logger</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
                 <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
             <span class="k">return</span> <span class="n">campaign_info</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-
         <span class="k">return</span> <span class="n">campaign_info</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">get_campaign_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Return the (database) id corresponding to the campaign with name &#39;name&#39;.</span>
+        <span class="sd">&quot;&quot;&quot;Return the (database) id corresponding to the campaign with name &#39;name&#39;.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -2284,13 +2255,11 @@ for example, any mapped columns or relationships.</p>
             <span class="p">)</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
             <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-
         <span class="c1"># Return the database ID for the specified campaign</span>
         <span class="k">return</span> <span class="n">selected</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
 
     <span class="k">def</span> <span class="nf">get_sampler_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">campaign_id</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Return the (database) id corresponding to the sampler currently set</span>
+        <span class="sd">&quot;&quot;&quot;Return the (database) id corresponding to the sampler currently set</span>
 <span class="sd">        for the campaign with id &#39;campaign_id&#39;</span>
 
 <span class="sd">        Parameters</span>
@@ -2303,13 +2272,11 @@ for example, any mapped columns or relationships.</p>
 <span class="sd">        int:</span>
 <span class="sd">            The id of the sampler set for the specified campaign</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-
         <span class="n">sampler_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">CampaignTable</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">campaign_id</span><span class="p">)</span><span class="o">.</span><span class="n">sampler</span>
         <span class="k">return</span> <span class="n">sampler_id</span>
 
     <span class="k">def</span> <span class="nf">set_sampler</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">campaign_id</span><span class="p">,</span> <span class="n">sampler_id</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Set specified campaign to be using specified sampler</span>
+        <span class="sd">&quot;&quot;&quot;Set specified campaign to be using specified sampler</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -2317,11 +2284,7 @@ for example, any mapped columns or relationships.</p>
 <span class="sd">            ID of the campaign.</span>
 <span class="sd">        sampler_id: int</span>
 <span class="sd">            ID of the sampler.</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-
         <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">CampaignTable</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">campaign_id</span><span class="p">)</span><span class="o">.</span><span class="n">sampler</span> <span class="o">=</span> <span class="n">sampler_id</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
 
@@ -2338,7 +2301,6 @@ for example, any mapped columns or relationships.</p>
 <span class="sd">        str:</span>
 <span class="sd">            Path to campaign directory.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_campaign_info</span><span class="p">(</span><span class="n">campaign_name</span><span class="o">=</span><span class="n">campaign_name</span><span class="p">)</span><span class="o">.</span><span class="n">campaign_dir</span>
 
     <span class="k">def</span> <span class="nf">_select_runs</span><span class="p">(</span>
@@ -2349,8 +2311,7 @@ for example, any mapped columns or relationships.</p>
             <span class="n">status</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
             <span class="n">not_status</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
             <span class="n">app_id</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Select all runs in the database which match the input criteria.</span>
+        <span class="sd">&quot;&quot;&quot;Select all runs in the database which match the input criteria.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -2364,6 +2325,8 @@ for example, any mapped columns or relationships.</p>
 <span class="sd">            Status string to filter for.</span>
 <span class="sd">        not_status: enum(Status) or None</span>
 <span class="sd">            Exclude runs with this status string</span>
+<span class="sd">        app_id: int or None</span>
+<span class="sd">            App id to filter for.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -2389,8 +2352,7 @@ for example, any mapped columns or relationships.</p>
         <span class="k">return</span> <span class="n">selected</span>
 
     <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">campaign</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">sampler</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">status</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">not_status</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">app_id</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Get the information for a specified run.</span>
+        <span class="sd">&quot;&quot;&quot;Get the information for a specified run.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -2404,6 +2366,8 @@ for example, any mapped columns or relationships.</p>
 <span class="sd">            Status string to filter for.</span>
 <span class="sd">        not_status: enum(Status) or None</span>
 <span class="sd">            Exclude runs with this status string</span>
+<span class="sd">        app_id: int or None</span>
+<span class="sd">            App id to filter for.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -2411,7 +2375,6 @@ for example, any mapped columns or relationships.</p>
 <span class="sd">            Containing run information (run_name, params, status, sample,</span>
 <span class="sd">            campaign, app)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-
         <span class="n">selected</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_select_runs</span><span class="p">(</span>
             <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
             <span class="n">campaign</span><span class="o">=</span><span class="n">campaign</span><span class="p">,</span>
@@ -2419,17 +2382,13 @@ for example, any mapped columns or relationships.</p>
             <span class="n">status</span><span class="o">=</span><span class="n">status</span><span class="p">,</span>
             <span class="n">not_status</span><span class="o">=</span><span class="n">not_status</span><span class="p">,</span>
             <span class="n">app_id</span><span class="o">=</span><span class="n">app_id</span><span class="p">)</span>
-
         <span class="k">if</span> <span class="n">selected</span><span class="o">.</span><span class="n">count</span><span class="p">()</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
             <span class="n">logging</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s1">&#39;Multiple runs selected - using the first&#39;</span><span class="p">)</span>
-
         <span class="n">selected</span> <span class="o">=</span> <span class="n">selected</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
-
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_run_to_dict</span><span class="p">(</span><span class="n">selected</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">runs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">campaign</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">sampler</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">status</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">not_status</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">app_id</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        A generator to return all run information for selected `campaign` and `sampler`.</span>
+        <span class="sd">&quot;&quot;&quot;A generator to return all run information for selected `campaign` and `sampler`.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -2441,22 +2400,21 @@ for example, any mapped columns or relationships.</p>
 <span class="sd">            Status string to filter for.</span>
 <span class="sd">        not_status: enum(Status) or None</span>
 <span class="sd">            Exclude runs with this status string</span>
+<span class="sd">        app_id: int or None</span>
+<span class="sd">            App id to filter for.</span>
 
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
+<span class="sd">        Yields</span>
+<span class="sd">        ------</span>
 <span class="sd">        dict:</span>
 <span class="sd">            Information on each selected run (key = run_name, value = dict of</span>
 <span class="sd">            run information fields.), one at a time.</span>
-
 <span class="sd">        &quot;&quot;&quot;</span>
-
         <span class="n">selected</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_select_runs</span><span class="p">(</span>
             <span class="n">campaign</span><span class="o">=</span><span class="n">campaign</span><span class="p">,</span>
             <span class="n">sampler</span><span class="o">=</span><span class="n">sampler</span><span class="p">,</span>
             <span class="n">status</span><span class="o">=</span><span class="n">status</span><span class="p">,</span>
             <span class="n">not_status</span><span class="o">=</span><span class="n">not_status</span><span class="p">,</span>
             <span class="n">app_id</span><span class="o">=</span><span class="n">app_id</span><span class="p">)</span>
-
         <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">selected</span><span class="p">:</span>
             <span class="k">yield</span> <span class="n">r</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_run_to_dict</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
 
@@ -3478,8 +3436,7 @@ Status of the run.</li>
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">set_run_statuses</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">run_id_list</span><span class="p">,</span> <span class="n">status</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Set the specified &#39;status&#39; (enum) for all runs in the list run_id_list</span>
+        <span class="sd">&quot;&quot;&quot;Set the specified &#39;status&#39; (enum) for all runs in the list run_id_list</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -3487,9 +3444,6 @@ Status of the run.</li>
 <span class="sd">            a list of run ids</span>
 <span class="sd">        status: enum(Status)</span>
 <span class="sd">            The new status all listed runs should now have</span>
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">RunTable</span><span class="p">)</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
             <span class="n">RunTable</span><span class="o">.</span><span class="n">id</span><span class="o">.</span><span class="n">in_</span><span class="p">(</span><span class="n">run_id_list</span><span class="p">))</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
@@ -3508,10 +3462,7 @@ Status of the run.</li>
 a list of run ids</li>
 <li><strong>status</strong> (enum(Status)):
 The new status all listed runs should now have</li>
-<li><strong>Returns</strong></li>
 </ul>
-
-<hr />
 </div>
 
 
@@ -3564,8 +3515,7 @@ database.</p>
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">get_campaign_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Return the (database) id corresponding to the campaign with name &#39;name&#39;.</span>
+        <span class="sd">&quot;&quot;&quot;Return the (database) id corresponding to the campaign with name &#39;name&#39;.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -3592,7 +3542,6 @@ database.</p>
             <span class="p">)</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
             <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-
         <span class="c1"># Return the database ID for the specified campaign</span>
         <span class="k">return</span> <span class="n">selected</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
 </pre></div>
@@ -3628,8 +3577,7 @@ Name of the campaign.</li>
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">get_sampler_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">campaign_id</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Return the (database) id corresponding to the sampler currently set</span>
+        <span class="sd">&quot;&quot;&quot;Return the (database) id corresponding to the sampler currently set</span>
 <span class="sd">        for the campaign with id &#39;campaign_id&#39;</span>
 
 <span class="sd">        Parameters</span>
@@ -3642,7 +3590,6 @@ Name of the campaign.</li>
 <span class="sd">        int:</span>
 <span class="sd">            The id of the sampler set for the specified campaign</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-
         <span class="n">sampler_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">CampaignTable</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">campaign_id</span><span class="p">)</span><span class="o">.</span><span class="n">sampler</span>
         <span class="k">return</span> <span class="n">sampler_id</span>
 </pre></div>
@@ -3679,8 +3626,7 @@ ID of the campaign.</li>
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">set_sampler</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">campaign_id</span><span class="p">,</span> <span class="n">sampler_id</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Set specified campaign to be using specified sampler</span>
+        <span class="sd">&quot;&quot;&quot;Set specified campaign to be using specified sampler</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -3688,11 +3634,7 @@ ID of the campaign.</li>
 <span class="sd">            ID of the campaign.</span>
 <span class="sd">        sampler_id: int</span>
 <span class="sd">            ID of the sampler.</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-
         <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">CampaignTable</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">campaign_id</span><span class="p">)</span><span class="o">.</span><span class="n">sampler</span> <span class="o">=</span> <span class="n">sampler_id</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
 </pre></div>
@@ -3708,10 +3650,7 @@ ID of the campaign.</li>
 ID of the campaign.</li>
 <li><strong>sampler_id</strong> (int):
 ID of the sampler.</li>
-<li><strong>Returns</strong></li>
 </ul>
-
-<hr />
 </div>
 
 
@@ -3739,7 +3678,6 @@ ID of the sampler.</li>
 <span class="sd">        str:</span>
 <span class="sd">            Path to campaign directory.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_campaign_info</span><span class="p">(</span><span class="n">campaign_name</span><span class="o">=</span><span class="n">campaign_name</span><span class="p">)</span><span class="o">.</span><span class="n">campaign_dir</span>
 </pre></div>
 
@@ -3782,8 +3720,7 @@ Name of campaign to select</li>
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">campaign</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">sampler</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">status</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">not_status</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">app_id</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Get the information for a specified run.</span>
+        <span class="sd">&quot;&quot;&quot;Get the information for a specified run.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -3797,6 +3734,8 @@ Name of campaign to select</li>
 <span class="sd">            Status string to filter for.</span>
 <span class="sd">        not_status: enum(Status) or None</span>
 <span class="sd">            Exclude runs with this status string</span>
+<span class="sd">        app_id: int or None</span>
+<span class="sd">            App id to filter for.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -3804,7 +3743,6 @@ Name of campaign to select</li>
 <span class="sd">            Containing run information (run_name, params, status, sample,</span>
 <span class="sd">            campaign, app)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-
         <span class="n">selected</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_select_runs</span><span class="p">(</span>
             <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
             <span class="n">campaign</span><span class="o">=</span><span class="n">campaign</span><span class="p">,</span>
@@ -3812,12 +3750,9 @@ Name of campaign to select</li>
             <span class="n">status</span><span class="o">=</span><span class="n">status</span><span class="p">,</span>
             <span class="n">not_status</span><span class="o">=</span><span class="n">not_status</span><span class="p">,</span>
             <span class="n">app_id</span><span class="o">=</span><span class="n">app_id</span><span class="p">)</span>
-
         <span class="k">if</span> <span class="n">selected</span><span class="o">.</span><span class="n">count</span><span class="p">()</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
             <span class="n">logging</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s1">&#39;Multiple runs selected - using the first&#39;</span><span class="p">)</span>
-
         <span class="n">selected</span> <span class="o">=</span> <span class="n">selected</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
-
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_run_to_dict</span><span class="p">(</span><span class="n">selected</span><span class="p">)</span>
 </pre></div>
 
@@ -3838,6 +3773,8 @@ Sampler id to filter for.</li>
 Status string to filter for.</li>
 <li><strong>not_status</strong> (enum(Status) or None):
 Exclude runs with this status string</li>
+<li><strong>app_id</strong> (int or None):
+App id to filter for.</li>
 </ul>
 
 <h6 id="returns">Returns</h6>
@@ -3868,8 +3805,7 @@ campaign, app)</li>
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">runs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">campaign</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">sampler</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">status</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">not_status</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">app_id</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        A generator to return all run information for selected `campaign` and `sampler`.</span>
+        <span class="sd">&quot;&quot;&quot;A generator to return all run information for selected `campaign` and `sampler`.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -3881,22 +3817,21 @@ campaign, app)</li>
 <span class="sd">            Status string to filter for.</span>
 <span class="sd">        not_status: enum(Status) or None</span>
 <span class="sd">            Exclude runs with this status string</span>
+<span class="sd">        app_id: int or None</span>
+<span class="sd">            App id to filter for.</span>
 
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
+<span class="sd">        Yields</span>
+<span class="sd">        ------</span>
 <span class="sd">        dict:</span>
 <span class="sd">            Information on each selected run (key = run_name, value = dict of</span>
 <span class="sd">            run information fields.), one at a time.</span>
-
 <span class="sd">        &quot;&quot;&quot;</span>
-
         <span class="n">selected</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_select_runs</span><span class="p">(</span>
             <span class="n">campaign</span><span class="o">=</span><span class="n">campaign</span><span class="p">,</span>
             <span class="n">sampler</span><span class="o">=</span><span class="n">sampler</span><span class="p">,</span>
             <span class="n">status</span><span class="o">=</span><span class="n">status</span><span class="p">,</span>
             <span class="n">not_status</span><span class="o">=</span><span class="n">not_status</span><span class="p">,</span>
             <span class="n">app_id</span><span class="o">=</span><span class="n">app_id</span><span class="p">)</span>
-
         <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">selected</span><span class="p">:</span>
             <span class="k">yield</span> <span class="n">r</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_run_to_dict</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
 </pre></div>
@@ -3916,9 +3851,11 @@ Sampler id to filter for.</li>
 Status string to filter for.</li>
 <li><strong>not_status</strong> (enum(Status) or None):
 Exclude runs with this status string</li>
+<li><strong>app_id</strong> (int or None):
+App id to filter for.</li>
 </ul>
 
-<h6 id="returns">Returns</h6>
+<h6 id="yields">Yields</h6>
 
 <ul>
 <li><strong>dict:</strong>: Information on each selected run (key = run_name, value = dict of
