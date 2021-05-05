@@ -404,8 +404,7 @@ class CampaignDB(BaseCampaignDB):
 
     @staticmethod
     def _run_to_dict(run_row):
-        """
-        Convert the provided row from 'runs' table into a dictionary
+        """Convert the provided row from 'runs' table into a dictionary
 
         Parameters
         ----------
@@ -417,7 +416,6 @@ class CampaignDB(BaseCampaignDB):
         dict:
             Contains run information (keys = run_name, params, status, sample,
             campaign and app)
-
         """
 
         run_info = {
