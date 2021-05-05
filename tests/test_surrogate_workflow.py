@@ -146,6 +146,9 @@ def test_surrogate_workflow(tmpdir, sampler):
     iterator = reloaded_campaign.iterate(mark_invalid = True)
     for _ in range(100):
         next(iterator).collate()
+    df = reloaded_campaign.get_collation_result()
+    assert(len(df) > 0)
+    assert(len(df) <= 100)
     results = reloaded_campaign.analyse(qoi='u')
     
     
