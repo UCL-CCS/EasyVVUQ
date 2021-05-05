@@ -1,4 +1,6 @@
-"""Provides class that allows access to an SQL format CampaignDB.
+"""Provides class that allows access to an SQL Database that serves as the back-end to EasyVVUQ.
+
+
 """
 import os
 import json
@@ -139,6 +141,7 @@ class CampaignDB(BaseCampaignDB):
         Parameters
         ----------
         name: str
+           Name of the Campaign to resume. Must already exist in the database.
         """
         info = self.session.query(
             CampaignTable).filter_by(name=name).first()
@@ -153,6 +156,8 @@ class CampaignDB(BaseCampaignDB):
         Parameters
         ----------
         info: CampaignInfo
+            This `easyvvuq.data_structs.CampaignInfo` will contain information 
+            needed to construct the Campaign table.
         """
         is_db_empty = (self.session.query(CampaignTable).first() is None)
         version_check = self.session.query(
@@ -192,8 +197,7 @@ class CampaignDB(BaseCampaignDB):
         return len(result) > 0
 
     def app(self, name=None):
-        """
-        Get app information. Specific applications selected by `name`,
+        """Get app information. Specific applications selected by `name`,
         otherwise first entry in database 'app' selected.
 
         Parameters
@@ -205,7 +209,7 @@ class CampaignDB(BaseCampaignDB):
         Returns
         -------
         dict:
-            Application information.
+            Information about the application.
         """
 
         if name is None:
@@ -250,8 +254,7 @@ class CampaignDB(BaseCampaignDB):
         self.session.commit()
 
     def add_app(self, app_info):
-        """
-        Add application to the 'app' table.
+        """Add application to the 'app' table.
 
         Parameters
         ----------
@@ -285,7 +288,7 @@ class CampaignDB(BaseCampaignDB):
         app_name: str
             Name of the app.
         actions: Actions
-            `Actions instance, will replace the current `Actions` of an app.
+            `Actions` instance, will replace the current `Actions` of an app.
         """
         self.session.query(AppTable).filter_by(name=app_name).update(
             {'actions': easyvvuq_serialize(actions)})
@@ -293,16 +296,17 @@ class CampaignDB(BaseCampaignDB):
 
 
     def add_sampler(self, sampler_element):
-        """
-        Add new Sampler to the 'sampler' table.
+        """Add new Sampler to the 'sampler' table.
 
         Parameters
         ----------
-        sampler_element: BaseSamplingElement
+        sampler_element: Sampler
+            An EasyVVUQ sampler.
 
         Returns
         -------
-
+        int
+            The sampler `id` in the database.
         """
         db_entry = SamplerTable(sampler=easyvvuq_serialize(sampler_element))
 
@@ -312,20 +316,15 @@ class CampaignDB(BaseCampaignDB):
         return db_entry.id
 
     def update_sampler(self, sampler_id, sampler_element):
-        """
-        Update the state of the Sampler with id 'sampler_id' to
+        """Update the state of the Sampler with id 'sampler_id' to
         that in the passed 'sampler_element'
 
         Parameters
         ----------
         sampler_id: int
             The id of the sampler in the db to update
-        sampler_element: BaseSamplingElement
-            The sampler whose state should be used as the new state
-
-        Returns
-        -------
-
+        sampler_element: Sampler
+            The sampler that should be used as the new state
         """
 
         selected = self.session.query(SamplerTable).get(sampler_id)
@@ -333,8 +332,7 @@ class CampaignDB(BaseCampaignDB):
         self.session.commit()
 
     def resurrect_sampler(self, sampler_id):
-        """
-        Return the sampler object corresponding to id sampler_id in the database.
+        """Return the sampler object corresponding to id sampler_id in the database.
         It is deserialized from the state stored in the database.
 
         Parameters
@@ -344,9 +342,8 @@ class CampaignDB(BaseCampaignDB):
 
         Returns
         -------
-        BaseSamplingElement
+        Sampler
             The 'live' sampler object, deserialized from the state in the db
-
         """
         try:
             serialized_sampler = self.session.query(SamplerTable).get(sampler_id).sampler
@@ -356,8 +353,7 @@ class CampaignDB(BaseCampaignDB):
         return sampler
 
     def resurrect_app(self, app_name):
-        """
-        Return the 'live' encoder, decoder and collation objects corresponding to the app with
+        """Return the 'live' encoder, decoder and collation objects corresponding to the app with
         name 'app_name' in the database. They are deserialized from the states previously
         stored in the database.
 
@@ -368,19 +364,16 @@ class CampaignDB(BaseCampaignDB):
 
         Returns
         -------
-        BaseEncoder, BaseDecoder, BaseCollationElement
-            The 'live' encoder and decoder objects associated with this app
-
+        Actions
+            The 'live' `Actions` object associated with this app. Used to execute the simulation
+            associated with the app as well as do any pre- and post-processing.
         """
-
         app_info = self.app(app_name)
-
         actions = easyvvuq_deserialize(app_info['actions'])
         return actions
 
     def add_runs(self, run_info_list=None, run_prefix='run_', iteration=0):
-        """
-        Add list of runs to the `runs` table in the database.
+        """Add list of runs to the `runs` table in the database.
 
         Parameters
         ----------
@@ -388,13 +381,11 @@ class CampaignDB(BaseCampaignDB):
             Each RunInfo object contains relevant run fields: params, status (where in the
             EasyVVUQ workflow is this RunTable), campaign (id number), sample, app
         run_prefix: str
-            Prefix for run id
-
-        Returns
-        -------
-
+            Prefix for run name
+        iteration: int
+            Iteration number used by iterative workflows. For example, MCMC. Can be left
+            as default zero in other cases.
         """
-
         # Add all runs to RunTable
         commit_counter = 0
         for run_info in run_info_list:
@@ -406,11 +397,9 @@ class CampaignDB(BaseCampaignDB):
             commit_counter += 1
             if commit_counter % COMMIT_RATE == 0:
                 self.session.commit()
-
         # Update run and ensemble counters in db
         db_info = self.session.query(DBInfoTable).first()
         db_info.next_run = self._next_run
-
         self.session.commit()
 
     @staticmethod
