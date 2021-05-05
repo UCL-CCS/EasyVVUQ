@@ -806,6 +806,20 @@ class CampaignDB(BaseCampaignDB):
         return self._get_campaign_info(campaign_name=campaign_name).runs_dir
 
     def store_result(self, run_id, result, change_status=True):
+        """Stores results of a simulation inside the RunTable given a run id.
+
+        Parameters
+        ----------
+        run_id: int
+            The id of a run to store the results in. This will be the run with which these
+            results are associated with. Namely the run that has the inputs used to generate
+            these results.
+        result: dict
+            Results in dictionary form. This is the same format as used by the `Decoder`.
+        change_status: bool
+            If set to False will not update the runs' status to COLLATED. This is sometimes
+            useful in scenarios where you want several apps to work on the same runs.
+        """
         self.commit_counter += 1
         def convert_nonserializable(obj):
             if isinstance(obj, np.int64):
@@ -864,10 +878,15 @@ class CampaignDB(BaseCampaignDB):
             Name of the app to return data for.
         sampler_id: int
             ID of the sampler.
+        status: STATUS
+            Run status to filter for.
+        iteration: int
+            If a positive integer will return the results for a given iteration only.
 
         Returns
         -------
-        pandas DataFrame constructed from the decoder output dictionaries
+        DataFrame 
+            Will construct a `DataFrame` from the decoder output dictionaries.
         """
         try:
             app_id = self.session.query(AppTable).filter(AppTable.name == app_name).all()[0].id
@@ -926,6 +945,11 @@ class CampaignDB(BaseCampaignDB):
 
     def dump(self):
         """Dump the database as JSON for debugging purposes.
+
+        Returns
+        -------
+        dict
+            A database dump in JSON format.
         """
         meta = MetaData()
         meta.reflect(bind=self.engine)
