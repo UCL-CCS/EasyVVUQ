@@ -48,5 +48,5 @@ def test_gp(tmp_path):
     campaign.set_sampler(sampler)
     campaign.execute(nsamples=100).collate()
     df = campaign.get_collation_result()
-    analysis = uq.analysis.gp_analyse.GaussianProcessSurrogate(['kappa', 't_env'], ['te'])
+    analysis = uq.analysis.gp_analyse.GaussianProcessSurrogate(sampler, ['te'])
     result = analysis.analyse(df)
