@@ -1,73 +1,140 @@
 import os
+from shutil import rmtree
 import easyvvuq as uq
 import chaospy as cp
-from dask.distributed import Client
-from dask_jobqueue import SLURMCluster
+import argparse
+
+
+parser = argparse.ArgumentParser(
+    description="EasyVVUQ applied (using DASK) to a cylindrical tokamak",
+    epilog="",
+    formatter_class=argparse.RawTextHelpFormatter
+)
+
+parser.add_argument("--local", "-l", action="store_true", default=True)
+args = parser.parse_args()
+
+if args.local:
+    print("Running locally")
+    from dask.distributed import Client, LocalCluster
+else:
+    print("Running using SLURM")
+    from dask.distributed import Client
+    from dask_jobqueue import SLURMCluster
+
 
 if __name__ == '__main__':
+
+    work_dir = os.path.dirname(os.path.abspath(__file__))
+    campaign_work_dir = os.path.join(work_dir, "easyvvuq_dask_tutorial")
+    # clear the target campaign dir
+    if os.path.exists(campaign_work_dir):
+        rmtree(campaign_work_dir)
+    os.makedirs(campaign_work_dir)
+
     # Set up a fresh campaign called "coffee_pce"
-    my_campaign = uq.CampaignDask(name='coffee_pce')
+    db_location = "sqlite:///" + campaign_work_dir + "/campaign.db"
+    my_campaign = uq.Campaign(
+        name='coffee_pce',
+        db_location=db_location,
+        work_dir=campaign_work_dir
+    )
     # Define parameter space
     params = {
-        "temp_init": {"type": "float", "min": 0.0, "max": 100.0, "default": 95.0},
-        "kappa": {"type": "float", "min": 0.0, "max": 0.1, "default": 0.025},
-        "t_env": {"type": "float", "min": 0.0, "max": 40.0, "default": 15.0},
-        "out_file": {"type": "string", "default": "output.csv"}
+        "temp_init": {
+            "type": "float", "min": 0.0, "max": 100.0, "default": 95.0
+        },
+        "kappa": {
+            "type": "float", "min": 0.0, "max": 0.1, "default": 0.025
+        },
+        "t_env": {
+            "type": "float", "min": 0.0, "max": 40.0, "default": 15.0
+        },
+        "out_file": {
+            "type": "string", "default": "output.csv"
+        }
     }
     # Create an encoder, decoder and collater for PCE test app
     encoder = uq.encoders.GenericEncoder(
         template_fname='cooling.template',
         delimiter='$',
-        target_filename='cooling_in.json')
+        target_filename='cooling_in.json'
+    )
 
-    decoder = uq.decoders.SimpleCSV(target_filename="output.csv",
-                                    output_columns=["te"])
+    decoder = uq.decoders.SimpleCSV(
+        target_filename="output.csv",
+        output_columns=["te"]
+    )
 
-    collater = uq.collate.AggregateSamples(average=False)
+    execute = uq.actions.ExecuteLocal(
+        "python3 {}/cooling_model.py cooling_in.json".format(work_dir)
+    )
+
+    actions = uq.actions.Actions(
+        uq.actions.CreateRunDirectory(root=campaign_work_dir, flatten=True),
+        uq.actions.Encode(encoder),
+        execute,
+        uq.actions.Decode(decoder)
+    )
+
+    if args.local:
+        from dask.distributed import Client
+        client = Client(processes=True, threads_per_worker=1)
+    else:
+        cluster = SLURMCluster(
+            job_extra=['--cluster=mpp2'],
+            queue='mpp2_batch',
+            cores=28,
+            memory='1 GB'
+        )
+        cluster.scale(1)
+        print(cluster)
+        print(cluster.job_script())
+        client = Client(cluster)
+    print(client)
 
     # Add the app (automatically set as current app)
-    my_campaign.add_app(name="cooling",
-                        params=params,
-                        encoder=encoder,
-                        decoder=decoder)
+    my_campaign.add_app(
+        name="cooling",
+        params=params,
+        actions=actions
+    )
 
     # Create the sampler
     vary = {
         "kappa": cp.Uniform(0.025, 0.075),
         "t_env": cp.Uniform(15, 25)
     }
-    my_sampler = uq.sampling.PCESampler(vary=vary,
-                                        polynomial_order=3)
+    my_sampler = uq.sampling.PCESampler(vary=vary, polynomial_order=3)
 
     # Associate the sampler with the campaign
     my_campaign.set_sampler(my_sampler)
 
     # Will draw all (of the finite set of samples)
     my_campaign.draw_samples()
+    print("Number of samples = %s" % my_campaign.get_active_sampler().count)
 
-    cluster = SLURMCluster(job_extra=['--cluster=mpp2'], queue='mpp2_batch',
-                           cores=28, memory='1 GB')
-    cluster.scale(1)
-    print(cluster.job_script())
-    client = Client(cluster)
+    # Run the cases
+    my_campaign.execute(pool=client).collate()
 
-    my_campaign.populate_runs_dir()
+    client.close()
+    if not args.local:
+        client.shutdown()
 
-    cwd = os.getcwd()
-    cmd = f"{cwd}/cooling_model.py cooling_in.json"
-    my_campaign.apply_for_each_run_dir(uq.actions.ExecuteLocal(cmd, interpret='python3'), client)
-    my_campaign.collate()
+    # Collate the results
+    my_campaign.execute().collate()
 
     # Post-processing analysis
-    my_analysis = uq.analysis.PCEAnalysis(sampler=my_sampler,
-                                          qoi_cols=["te"])
+    my_analysis = uq.analysis.PCEAnalysis(
+        sampler=my_sampler,
+        qoi_cols=["te"]
+    )
     my_campaign.apply_analysis(my_analysis)
 
     # Get Descriptive Statistics
     results = my_campaign.get_last_analysis()
-    stats = results['statistical_moments']['te']
-    per = results['percentiles']['te']
-    sobols = results['sobols_first']['te']
-    print(stats)
-    print(per)
-    print(sobols)
+
+    print("descriptive statistics :")
+    print(results.describe("te"))
+    print("the first order sobol index :")
+    print(results.sobols_first()['te'])
