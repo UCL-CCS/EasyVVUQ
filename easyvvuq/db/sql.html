@@ -273,12 +273,14 @@
                     <h1 class="modulename">
 <a href="./../../easyvvuq.html">easyvvuq</a><wbr>.<a href="./../db.html">db</a><wbr>.sql    </h1>
 
-                        <div class="docstring"><p>Provides class that allows access to an SQL format CampaignDB.</p>
+                        <div class="docstring"><p>Provides class that allows access to an SQL Database that serves as the back-end to EasyVVUQ.</p>
 </div>
 
                         <details>
             <summary>View Source</summary>
-            <div class="codehilite"><pre><span></span><span class="sd">&quot;&quot;&quot;Provides class that allows access to an SQL format CampaignDB.</span>
+            <div class="codehilite"><pre><span></span><span class="sd">&quot;&quot;&quot;Provides class that allows access to an SQL Database that serves as the back-end to EasyVVUQ.</span>
+
+
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">json</span>
@@ -419,6 +421,7 @@
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        name: str</span>
+<span class="sd">           Name of the Campaign to resume. Must already exist in the database.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span>
             <span class="n">CampaignTable</span><span class="p">)</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
@@ -433,6 +436,8 @@
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        info: CampaignInfo</span>
+<span class="sd">            This `easyvvuq.data_structs.CampaignInfo` will contain information </span>
+<span class="sd">            needed to construct the Campaign table.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">is_db_empty</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">CampaignTable</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span>
         <span class="n">version_check</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span>
@@ -472,8 +477,7 @@
         <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span>
 
     <span class="k">def</span> <span class="nf">app</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Get app information. Specific applications selected by `name`,</span>
+        <span class="sd">&quot;&quot;&quot;Get app information. Specific applications selected by `name`,</span>
 <span class="sd">        otherwise first entry in database &#39;app&#39; selected.</span>
 
 <span class="sd">        Parameters</span>
@@ -485,7 +489,7 @@
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        dict:</span>
-<span class="sd">            Application information.</span>
+<span class="sd">            Information about the application.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="n">name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -530,8 +534,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">add_app</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">app_info</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Add application to the &#39;app&#39; table.</span>
+        <span class="sd">&quot;&quot;&quot;Add application to the &#39;app&#39; table.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -565,7 +568,7 @@
 <span class="sd">        app_name: str</span>
 <span class="sd">            Name of the app.</span>
 <span class="sd">        actions: Actions</span>
-<span class="sd">            `Actions instance, will replace the current `Actions` of an app.</span>
+<span class="sd">            `Actions` instance, will replace the current `Actions` of an app.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">AppTable</span><span class="p">)</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">app_name</span><span class="p">)</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
             <span class="p">{</span><span class="s1">&#39;actions&#39;</span><span class="p">:</span> <span class="n">easyvvuq_serialize</span><span class="p">(</span><span class="n">actions</span><span class="p">)})</span>
@@ -573,16 +576,17 @@
 
 
     <span class="k">def</span> <span class="nf">add_sampler</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sampler_element</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Add new Sampler to the &#39;sampler&#39; table.</span>
+        <span class="sd">&quot;&quot;&quot;Add new Sampler to the &#39;sampler&#39; table.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        sampler_element: BaseSamplingElement</span>
+<span class="sd">        sampler_element: Sampler</span>
+<span class="sd">            An EasyVVUQ sampler.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-
+<span class="sd">        int</span>
+<span class="sd">            The sampler `id` in the database.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">db_entry</span> <span class="o">=</span> <span class="n">SamplerTable</span><span class="p">(</span><span class="n">sampler</span><span class="o">=</span><span class="n">easyvvuq_serialize</span><span class="p">(</span><span class="n">sampler_element</span><span class="p">))</span>
 
@@ -592,20 +596,15 @@
         <span class="k">return</span> <span class="n">db_entry</span><span class="o">.</span><span class="n">id</span>
 
     <span class="k">def</span> <span class="nf">update_sampler</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sampler_id</span><span class="p">,</span> <span class="n">sampler_element</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Update the state of the Sampler with id &#39;sampler_id&#39; to</span>
+        <span class="sd">&quot;&quot;&quot;Update the state of the Sampler with id &#39;sampler_id&#39; to</span>
 <span class="sd">        that in the passed &#39;sampler_element&#39;</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        sampler_id: int</span>
 <span class="sd">            The id of the sampler in the db to update</span>
-<span class="sd">        sampler_element: BaseSamplingElement</span>
-<span class="sd">            The sampler whose state should be used as the new state</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-
+<span class="sd">        sampler_element: Sampler</span>
+<span class="sd">            The sampler that should be used as the new state</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">selected</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">SamplerTable</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">sampler_id</span><span class="p">)</span>
@@ -613,8 +612,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">resurrect_sampler</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sampler_id</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Return the sampler object corresponding to id sampler_id in the database.</span>
+        <span class="sd">&quot;&quot;&quot;Return the sampler object corresponding to id sampler_id in the database.</span>
 <span class="sd">        It is deserialized from the state stored in the database.</span>
 
 <span class="sd">        Parameters</span>
@@ -624,9 +622,8 @@
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        BaseSamplingElement</span>
+<span class="sd">        Sampler</span>
 <span class="sd">            The &#39;live&#39; sampler object, deserialized from the state in the db</span>
-
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">serialized_sampler</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">SamplerTable</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">sampler_id</span><span class="p">)</span><span class="o">.</span><span class="n">sampler</span>
@@ -636,8 +633,7 @@
         <span class="k">return</span> <span class="n">sampler</span>
 
     <span class="k">def</span> <span class="nf">resurrect_app</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">app_name</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Return the &#39;live&#39; encoder, decoder and collation objects corresponding to the app with</span>
+        <span class="sd">&quot;&quot;&quot;Return the &#39;live&#39; encoder, decoder and collation objects corresponding to the app with</span>
 <span class="sd">        name &#39;app_name&#39; in the database. They are deserialized from the states previously</span>
 <span class="sd">        stored in the database.</span>
 
@@ -648,19 +644,16 @@
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        BaseEncoder, BaseDecoder, BaseCollationElement</span>
-<span class="sd">            The &#39;live&#39; encoder and decoder objects associated with this app</span>
-
+<span class="sd">        Actions</span>
+<span class="sd">            The &#39;live&#39; `Actions` object associated with this app. Used to execute the simulation</span>
+<span class="sd">            associated with the app as well as do any pre- and post-processing.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-
         <span class="n">app_info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">app</span><span class="p">(</span><span class="n">app_name</span><span class="p">)</span>
-
         <span class="n">actions</span> <span class="o">=</span> <span class="n">easyvvuq_deserialize</span><span class="p">(</span><span class="n">app_info</span><span class="p">[</span><span class="s1">&#39;actions&#39;</span><span class="p">])</span>
         <span class="k">return</span> <span class="n">actions</span>
 
     <span class="k">def</span> <span class="nf">add_runs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">run_info_list</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">run_prefix</span><span class="o">=</span><span class="s1">&#39;run_&#39;</span><span class="p">,</span> <span class="n">iteration</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Add list of runs to the `runs` table in the database.</span>
+        <span class="sd">&quot;&quot;&quot;Add list of runs to the `runs` table in the database.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -668,13 +661,11 @@
 <span class="sd">            Each RunInfo object contains relevant run fields: params, status (where in the</span>
 <span class="sd">            EasyVVUQ workflow is this RunTable), campaign (id number), sample, app</span>
 <span class="sd">        run_prefix: str</span>
-<span class="sd">            Prefix for run id</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-
+<span class="sd">            Prefix for run name</span>
+<span class="sd">        iteration: int</span>
+<span class="sd">            Iteration number used by iterative workflows. For example, MCMC. Can be left</span>
+<span class="sd">            as default zero in other cases.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-
         <span class="c1"># Add all runs to RunTable</span>
         <span class="n">commit_counter</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="k">for</span> <span class="n">run_info</span> <span class="ow">in</span> <span class="n">run_info_list</span><span class="p">:</span>
@@ -686,11 +677,9 @@
             <span class="n">commit_counter</span> <span class="o">+=</span> <span class="mi">1</span>
             <span class="k">if</span> <span class="n">commit_counter</span> <span class="o">%</span> <span class="n">COMMIT_RATE</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
-
         <span class="c1"># Update run and ensemble counters in db</span>
         <span class="n">db_info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">DBInfoTable</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
         <span class="n">db_info</span><span class="o">.</span><span class="n">next_run</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_next_run</span>
-
         <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
 
     <span class="nd">@staticmethod</span>
@@ -1875,6 +1864,7 @@ for example, any mapped columns or relationships.</p>
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        name: str</span>
+<span class="sd">           Name of the Campaign to resume. Must already exist in the database.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span>
             <span class="n">CampaignTable</span><span class="p">)</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
@@ -1889,6 +1879,8 @@ for example, any mapped columns or relationships.</p>
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        info: CampaignInfo</span>
+<span class="sd">            This `easyvvuq.data_structs.CampaignInfo` will contain information </span>
+<span class="sd">            needed to construct the Campaign table.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">is_db_empty</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">CampaignTable</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span>
         <span class="n">version_check</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span>
@@ -1928,8 +1920,7 @@ for example, any mapped columns or relationships.</p>
         <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span>
 
     <span class="k">def</span> <span class="nf">app</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Get app information. Specific applications selected by `name`,</span>
+        <span class="sd">&quot;&quot;&quot;Get app information. Specific applications selected by `name`,</span>
 <span class="sd">        otherwise first entry in database &#39;app&#39; selected.</span>
 
 <span class="sd">        Parameters</span>
@@ -1941,7 +1932,7 @@ for example, any mapped columns or relationships.</p>
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        dict:</span>
-<span class="sd">            Application information.</span>
+<span class="sd">            Information about the application.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="n">name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -1986,8 +1977,7 @@ for example, any mapped columns or relationships.</p>
         <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">add_app</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">app_info</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Add application to the &#39;app&#39; table.</span>
+        <span class="sd">&quot;&quot;&quot;Add application to the &#39;app&#39; table.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -2021,7 +2011,7 @@ for example, any mapped columns or relationships.</p>
 <span class="sd">        app_name: str</span>
 <span class="sd">            Name of the app.</span>
 <span class="sd">        actions: Actions</span>
-<span class="sd">            `Actions instance, will replace the current `Actions` of an app.</span>
+<span class="sd">            `Actions` instance, will replace the current `Actions` of an app.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">AppTable</span><span class="p">)</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">app_name</span><span class="p">)</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
             <span class="p">{</span><span class="s1">&#39;actions&#39;</span><span class="p">:</span> <span class="n">easyvvuq_serialize</span><span class="p">(</span><span class="n">actions</span><span class="p">)})</span>
@@ -2029,16 +2019,17 @@ for example, any mapped columns or relationships.</p>
 
 
     <span class="k">def</span> <span class="nf">add_sampler</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sampler_element</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Add new Sampler to the &#39;sampler&#39; table.</span>
+        <span class="sd">&quot;&quot;&quot;Add new Sampler to the &#39;sampler&#39; table.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        sampler_element: BaseSamplingElement</span>
+<span class="sd">        sampler_element: Sampler</span>
+<span class="sd">            An EasyVVUQ sampler.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-
+<span class="sd">        int</span>
+<span class="sd">            The sampler `id` in the database.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">db_entry</span> <span class="o">=</span> <span class="n">SamplerTable</span><span class="p">(</span><span class="n">sampler</span><span class="o">=</span><span class="n">easyvvuq_serialize</span><span class="p">(</span><span class="n">sampler_element</span><span class="p">))</span>
 
@@ -2048,20 +2039,15 @@ for example, any mapped columns or relationships.</p>
         <span class="k">return</span> <span class="n">db_entry</span><span class="o">.</span><span class="n">id</span>
 
     <span class="k">def</span> <span class="nf">update_sampler</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sampler_id</span><span class="p">,</span> <span class="n">sampler_element</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Update the state of the Sampler with id &#39;sampler_id&#39; to</span>
+        <span class="sd">&quot;&quot;&quot;Update the state of the Sampler with id &#39;sampler_id&#39; to</span>
 <span class="sd">        that in the passed &#39;sampler_element&#39;</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        sampler_id: int</span>
 <span class="sd">            The id of the sampler in the db to update</span>
-<span class="sd">        sampler_element: BaseSamplingElement</span>
-<span class="sd">            The sampler whose state should be used as the new state</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-
+<span class="sd">        sampler_element: Sampler</span>
+<span class="sd">            The sampler that should be used as the new state</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">selected</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">SamplerTable</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">sampler_id</span><span class="p">)</span>
@@ -2069,8 +2055,7 @@ for example, any mapped columns or relationships.</p>
         <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">resurrect_sampler</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sampler_id</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Return the sampler object corresponding to id sampler_id in the database.</span>
+        <span class="sd">&quot;&quot;&quot;Return the sampler object corresponding to id sampler_id in the database.</span>
 <span class="sd">        It is deserialized from the state stored in the database.</span>
 
 <span class="sd">        Parameters</span>
@@ -2080,9 +2065,8 @@ for example, any mapped columns or relationships.</p>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        BaseSamplingElement</span>
+<span class="sd">        Sampler</span>
 <span class="sd">            The &#39;live&#39; sampler object, deserialized from the state in the db</span>
-
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">serialized_sampler</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">SamplerTable</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">sampler_id</span><span class="p">)</span><span class="o">.</span><span class="n">sampler</span>
@@ -2092,8 +2076,7 @@ for example, any mapped columns or relationships.</p>
         <span class="k">return</span> <span class="n">sampler</span>
 
     <span class="k">def</span> <span class="nf">resurrect_app</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">app_name</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Return the &#39;live&#39; encoder, decoder and collation objects corresponding to the app with</span>
+        <span class="sd">&quot;&quot;&quot;Return the &#39;live&#39; encoder, decoder and collation objects corresponding to the app with</span>
 <span class="sd">        name &#39;app_name&#39; in the database. They are deserialized from the states previously</span>
 <span class="sd">        stored in the database.</span>
 
@@ -2104,19 +2087,16 @@ for example, any mapped columns or relationships.</p>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        BaseEncoder, BaseDecoder, BaseCollationElement</span>
-<span class="sd">            The &#39;live&#39; encoder and decoder objects associated with this app</span>
-
+<span class="sd">        Actions</span>
+<span class="sd">            The &#39;live&#39; `Actions` object associated with this app. Used to execute the simulation</span>
+<span class="sd">            associated with the app as well as do any pre- and post-processing.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-
         <span class="n">app_info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">app</span><span class="p">(</span><span class="n">app_name</span><span class="p">)</span>
-
         <span class="n">actions</span> <span class="o">=</span> <span class="n">easyvvuq_deserialize</span><span class="p">(</span><span class="n">app_info</span><span class="p">[</span><span class="s1">&#39;actions&#39;</span><span class="p">])</span>
         <span class="k">return</span> <span class="n">actions</span>
 
     <span class="k">def</span> <span class="nf">add_runs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">run_info_list</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">run_prefix</span><span class="o">=</span><span class="s1">&#39;run_&#39;</span><span class="p">,</span> <span class="n">iteration</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Add list of runs to the `runs` table in the database.</span>
+        <span class="sd">&quot;&quot;&quot;Add list of runs to the `runs` table in the database.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -2124,13 +2104,11 @@ for example, any mapped columns or relationships.</p>
 <span class="sd">            Each RunInfo object contains relevant run fields: params, status (where in the</span>
 <span class="sd">            EasyVVUQ workflow is this RunTable), campaign (id number), sample, app</span>
 <span class="sd">        run_prefix: str</span>
-<span class="sd">            Prefix for run id</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-
+<span class="sd">            Prefix for run name</span>
+<span class="sd">        iteration: int</span>
+<span class="sd">            Iteration number used by iterative workflows. For example, MCMC. Can be left</span>
+<span class="sd">            as default zero in other cases.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-
         <span class="c1"># Add all runs to RunTable</span>
         <span class="n">commit_counter</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="k">for</span> <span class="n">run_info</span> <span class="ow">in</span> <span class="n">run_info_list</span><span class="p">:</span>
@@ -2142,11 +2120,9 @@ for example, any mapped columns or relationships.</p>
             <span class="n">commit_counter</span> <span class="o">+=</span> <span class="mi">1</span>
             <span class="k">if</span> <span class="n">commit_counter</span> <span class="o">%</span> <span class="n">COMMIT_RATE</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
-
         <span class="c1"># Update run and ensemble counters in db</span>
         <span class="n">db_info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">DBInfoTable</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
         <span class="n">db_info</span><span class="o">.</span><span class="n">next_run</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_next_run</span>
-
         <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
 
     <span class="nd">@staticmethod</span>
@@ -2782,6 +2758,7 @@ database URI as needed by SQLAlchemy</li>
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        name: str</span>
+<span class="sd">           Name of the Campaign to resume. Must already exist in the database.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span>
             <span class="n">CampaignTable</span><span class="p">)</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
@@ -2798,7 +2775,8 @@ database URI as needed by SQLAlchemy</li>
 <h6 id="parameters">Parameters</h6>
 
 <ul>
-<li><strong>name</strong> (str):</li>
+<li><strong>name</strong> (str):
+Name of the Campaign to resume. Must already exist in the database.</li>
 </ul>
 </div>
 
@@ -2820,6 +2798,8 @@ database URI as needed by SQLAlchemy</li>
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        info: CampaignInfo</span>
+<span class="sd">            This `easyvvuq.data_structs.CampaignInfo` will contain information </span>
+<span class="sd">            needed to construct the Campaign table.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">is_db_empty</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">CampaignTable</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span>
         <span class="n">version_check</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span>
@@ -2840,7 +2820,9 @@ database URI as needed by SQLAlchemy</li>
 <h6 id="parameters">Parameters</h6>
 
 <ul>
-<li><strong>info</strong> (CampaignInfo):</li>
+<li><strong>info</strong> (CampaignInfo):
+This <code><a href="../data_structs.html#CampaignInfo">easyvvuq.data_structs.CampaignInfo</a></code> will contain information 
+needed to construct the Campaign table.</li>
 </ul>
 </div>
 
@@ -2937,8 +2919,7 @@ database URI as needed by SQLAlchemy</li>
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">app</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Get app information. Specific applications selected by `name`,</span>
+        <span class="sd">&quot;&quot;&quot;Get app information. Specific applications selected by `name`,</span>
 <span class="sd">        otherwise first entry in database &#39;app&#39; selected.</span>
 
 <span class="sd">        Parameters</span>
@@ -2950,7 +2931,7 @@ database URI as needed by SQLAlchemy</li>
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        dict:</span>
-<span class="sd">            Application information.</span>
+<span class="sd">            Information about the application.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="n">name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -2995,7 +2976,7 @@ selected.</li>
 <h6 id="returns">Returns</h6>
 
 <ul>
-<li><strong>dict:</strong>: Application information.</li>
+<li><strong>dict:</strong>: Information about the application.</li>
 </ul>
 </div>
 
@@ -3053,8 +3034,7 @@ name of the app to set as active</li>
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">add_app</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">app_info</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Add application to the &#39;app&#39; table.</span>
+        <span class="sd">&quot;&quot;&quot;Add application to the &#39;app&#39; table.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -3112,7 +3092,7 @@ Application definition.</li>
 <span class="sd">        app_name: str</span>
 <span class="sd">            Name of the app.</span>
 <span class="sd">        actions: Actions</span>
-<span class="sd">            `Actions instance, will replace the current `Actions` of an app.</span>
+<span class="sd">            `Actions` instance, will replace the current `Actions` of an app.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">AppTable</span><span class="p">)</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">app_name</span><span class="p">)</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
             <span class="p">{</span><span class="s1">&#39;actions&#39;</span><span class="p">:</span> <span class="n">easyvvuq_serialize</span><span class="p">(</span><span class="n">actions</span><span class="p">)})</span>
@@ -3129,7 +3109,7 @@ Application definition.</li>
 <li><strong>app_name</strong> (str):
 Name of the app.</li>
 <li><strong>actions</strong> (Actions):
-<code>Actions instance, will replace the current</code>Actions` of an app.</li>
+<code>Actions</code> instance, will replace the current <code>Actions</code> of an app.</li>
 </ul>
 </div>
 
@@ -3146,16 +3126,17 @@ Name of the app.</li>
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">add_sampler</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sampler_element</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Add new Sampler to the &#39;sampler&#39; table.</span>
+        <span class="sd">&quot;&quot;&quot;Add new Sampler to the &#39;sampler&#39; table.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        sampler_element: BaseSamplingElement</span>
+<span class="sd">        sampler_element: Sampler</span>
+<span class="sd">            An EasyVVUQ sampler.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-
+<span class="sd">        int</span>
+<span class="sd">            The sampler `id` in the database.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">db_entry</span> <span class="o">=</span> <span class="n">SamplerTable</span><span class="p">(</span><span class="n">sampler</span><span class="o">=</span><span class="n">easyvvuq_serialize</span><span class="p">(</span><span class="n">sampler_element</span><span class="p">))</span>
 
@@ -3172,11 +3153,15 @@ Name of the app.</li>
 <h6 id="parameters">Parameters</h6>
 
 <ul>
-<li><p><strong>sampler_element</strong> (BaseSamplingElement):</p></li>
-<li><p><strong>Returns</strong></p></li>
+<li><strong>sampler_element</strong> (Sampler):
+An EasyVVUQ sampler.</li>
 </ul>
 
-<hr />
+<h6 id="returns">Returns</h6>
+
+<ul>
+<li><strong>int</strong>: The sampler <code>id</code> in the database.</li>
+</ul>
 </div>
 
 
@@ -3192,20 +3177,15 @@ Name of the app.</li>
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">update_sampler</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sampler_id</span><span class="p">,</span> <span class="n">sampler_element</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Update the state of the Sampler with id &#39;sampler_id&#39; to</span>
+        <span class="sd">&quot;&quot;&quot;Update the state of the Sampler with id &#39;sampler_id&#39; to</span>
 <span class="sd">        that in the passed &#39;sampler_element&#39;</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        sampler_id: int</span>
 <span class="sd">            The id of the sampler in the db to update</span>
-<span class="sd">        sampler_element: BaseSamplingElement</span>
-<span class="sd">            The sampler whose state should be used as the new state</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-
+<span class="sd">        sampler_element: Sampler</span>
+<span class="sd">            The sampler that should be used as the new state</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">selected</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">SamplerTable</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">sampler_id</span><span class="p">)</span>
@@ -3223,12 +3203,9 @@ that in the passed 'sampler_element'</p>
 <ul>
 <li><strong>sampler_id</strong> (int):
 The id of the sampler in the db to update</li>
-<li><strong>sampler_element</strong> (BaseSamplingElement):
-The sampler whose state should be used as the new state</li>
-<li><strong>Returns</strong></li>
+<li><strong>sampler_element</strong> (Sampler):
+The sampler that should be used as the new state</li>
 </ul>
-
-<hr />
 </div>
 
 
@@ -3244,8 +3221,7 @@ The sampler whose state should be used as the new state</li>
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">resurrect_sampler</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sampler_id</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Return the sampler object corresponding to id sampler_id in the database.</span>
+        <span class="sd">&quot;&quot;&quot;Return the sampler object corresponding to id sampler_id in the database.</span>
 <span class="sd">        It is deserialized from the state stored in the database.</span>
 
 <span class="sd">        Parameters</span>
@@ -3255,9 +3231,8 @@ The sampler whose state should be used as the new state</li>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        BaseSamplingElement</span>
+<span class="sd">        Sampler</span>
 <span class="sd">            The &#39;live&#39; sampler object, deserialized from the state in the db</span>
-
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">serialized_sampler</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">SamplerTable</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">sampler_id</span><span class="p">)</span><span class="o">.</span><span class="n">sampler</span>
@@ -3282,7 +3257,7 @@ The id of the sampler to resurrect</li>
 <h6 id="returns">Returns</h6>
 
 <ul>
-<li><strong>BaseSamplingElement</strong>: The 'live' sampler object, deserialized from the state in the db</li>
+<li><strong>Sampler</strong>: The 'live' sampler object, deserialized from the state in the db</li>
 </ul>
 </div>
 
@@ -3299,8 +3274,7 @@ The id of the sampler to resurrect</li>
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">resurrect_app</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">app_name</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Return the &#39;live&#39; encoder, decoder and collation objects corresponding to the app with</span>
+        <span class="sd">&quot;&quot;&quot;Return the &#39;live&#39; encoder, decoder and collation objects corresponding to the app with</span>
 <span class="sd">        name &#39;app_name&#39; in the database. They are deserialized from the states previously</span>
 <span class="sd">        stored in the database.</span>
 
@@ -3311,13 +3285,11 @@ The id of the sampler to resurrect</li>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        BaseEncoder, BaseDecoder, BaseCollationElement</span>
-<span class="sd">            The &#39;live&#39; encoder and decoder objects associated with this app</span>
-
+<span class="sd">        Actions</span>
+<span class="sd">            The &#39;live&#39; `Actions` object associated with this app. Used to execute the simulation</span>
+<span class="sd">            associated with the app as well as do any pre- and post-processing.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-
         <span class="n">app_info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">app</span><span class="p">(</span><span class="n">app_name</span><span class="p">)</span>
-
         <span class="n">actions</span> <span class="o">=</span> <span class="n">easyvvuq_deserialize</span><span class="p">(</span><span class="n">app_info</span><span class="p">[</span><span class="s1">&#39;actions&#39;</span><span class="p">])</span>
         <span class="k">return</span> <span class="n">actions</span>
 </pre></div>
@@ -3338,7 +3310,8 @@ Name of the app to resurrect</li>
 <h6 id="returns">Returns</h6>
 
 <ul>
-<li><strong>BaseEncoder, BaseDecoder, BaseCollationElement</strong>: The 'live' encoder and decoder objects associated with this app</li>
+<li><strong>Actions</strong>: The 'live' <code>Actions</code> object associated with this app. Used to execute the simulation
+associated with the app as well as do any pre- and post-processing.</li>
 </ul>
 </div>
 
@@ -3355,8 +3328,7 @@ Name of the app to resurrect</li>
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">add_runs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">run_info_list</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">run_prefix</span><span class="o">=</span><span class="s1">&#39;run_&#39;</span><span class="p">,</span> <span class="n">iteration</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Add list of runs to the `runs` table in the database.</span>
+        <span class="sd">&quot;&quot;&quot;Add list of runs to the `runs` table in the database.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -3364,13 +3336,11 @@ Name of the app to resurrect</li>
 <span class="sd">            Each RunInfo object contains relevant run fields: params, status (where in the</span>
 <span class="sd">            EasyVVUQ workflow is this RunTable), campaign (id number), sample, app</span>
 <span class="sd">        run_prefix: str</span>
-<span class="sd">            Prefix for run id</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-
+<span class="sd">            Prefix for run name</span>
+<span class="sd">        iteration: int</span>
+<span class="sd">            Iteration number used by iterative workflows. For example, MCMC. Can be left</span>
+<span class="sd">            as default zero in other cases.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-
         <span class="c1"># Add all runs to RunTable</span>
         <span class="n">commit_counter</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="k">for</span> <span class="n">run_info</span> <span class="ow">in</span> <span class="n">run_info_list</span><span class="p">:</span>
@@ -3382,11 +3352,9 @@ Name of the app to resurrect</li>
             <span class="n">commit_counter</span> <span class="o">+=</span> <span class="mi">1</span>
             <span class="k">if</span> <span class="n">commit_counter</span> <span class="o">%</span> <span class="n">COMMIT_RATE</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
-
         <span class="c1"># Update run and ensemble counters in db</span>
         <span class="n">db_info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">DBInfoTable</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
         <span class="n">db_info</span><span class="o">.</span><span class="n">next_run</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_next_run</span>
-
         <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
 </pre></div>
 
@@ -3401,11 +3369,11 @@ Name of the app to resurrect</li>
 Each RunInfo object contains relevant run fields: params, status (where in the
 EasyVVUQ workflow is this RunTable), campaign (id number), sample, app</li>
 <li><strong>run_prefix</strong> (str):
-Prefix for run id</li>
-<li><strong>Returns</strong></li>
+Prefix for run name</li>
+<li><strong>iteration</strong> (int):
+Iteration number used by iterative workflows. For example, MCMC. Can be left
+as default zero in other cases.</li>
 </ul>
-
-<hr />
 </div>
 
 
