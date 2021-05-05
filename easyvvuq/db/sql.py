@@ -432,8 +432,7 @@ class CampaignDB(BaseCampaignDB):
         return run_info
 
     def set_dir_for_run(self, run_name, run_dir, campaign=None, sampler=None):
-        """
-        Set the 'run_dir' path for the specified run in the database.
+        """Set the 'run_dir' path for the specified run in the database.
 
         Parameters
         ----------
@@ -445,31 +444,21 @@ class CampaignDB(BaseCampaignDB):
             Campaign id to filter for.
         sampler: int or None
             Sample id to filter for.
-
-        Returns
-        -------
-
         """
-
         filter_options = {'run_name': run_name}
         if campaign:
             filter_options['campaign'] = campaign
         if sampler:
             filter_options['sampler'] = sampler
-
         selected = self.session.query(RunTable).filter_by(**filter_options)
-
         if selected.count() != 1:
             logging.critical('Multiple runs selected - using the first')
-
         selected = selected.first()
-
         selected.run_dir = run_dir
         self.session.commit()
 
     def get_run_status(self, run_id, campaign=None, sampler=None):
-        """
-        Return the status (enum) for the run with name 'run_name' (and, optionally,
+        """Return the status (enum) for the run with name 'run_name' (and, optionally,
         filtering for campaign and sampler by id)
 
         Parameters
@@ -486,19 +475,15 @@ class CampaignDB(BaseCampaignDB):
         status: enum(Status)
             Status of the run.
         """
-
         filter_options = {'id': run_id}
         if campaign:
             filter_options['campaign'] = campaign
         if sampler:
             filter_options['sampler'] = sampler
         selected = self.session.query(RunTable).filter_by(**filter_options)
-
         if selected.count() != 1:
             logging.critical('Multiple runs selected - using the first')
-
         selected = selected.first()
-
         return constants.Status(selected.status)
 
     def set_run_statuses(self, run_id_list, status):
