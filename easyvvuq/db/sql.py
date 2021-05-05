@@ -487,8 +487,7 @@ class CampaignDB(BaseCampaignDB):
         return constants.Status(selected.status)
 
     def set_run_statuses(self, run_id_list, status):
-        """
-        Set the specified 'status' (enum) for all runs in the list run_id_list
+        """Set the specified 'status' (enum) for all runs in the list run_id_list
 
         Parameters
         ----------
@@ -496,9 +495,6 @@ class CampaignDB(BaseCampaignDB):
             a list of run ids
         status: enum(Status)
             The new status all listed runs should now have
-        Returns
-        -------
-
         """
         self.session.query(RunTable).filter(
             RunTable.id.in_(run_id_list)).update(
@@ -518,25 +514,23 @@ class CampaignDB(BaseCampaignDB):
         return [c.name for c in self.session.query(CampaignTable).all()]
 
     def _get_campaign_info(self, campaign_name=None):
-        """
+        """Retrieves Campaign info based on name.
+
         Parameters
         ----------
         campaign_name: str
-            Name of campaign to select
+            Name of campaign to select.
 
         Returns
         -------
-            sqlalchemy query for campaign with this name
-
+            SQLAlchemy query for campaign with this name.
         """
         assert(isinstance(campaign_name, str) or campaign_name is None)
         query = self.session.query(CampaignTable)
-
         if campaign_name is None:
             campaign_info = query
         else:
             campaign_info = query.filter_by(name=campaign_name).all()
-
         if campaign_name is not None:
             if len(campaign_info) > 1:
                 logger.warning(
@@ -546,12 +540,10 @@ class CampaignDB(BaseCampaignDB):
                 logger.critical(message)
                 raise RuntimeError(message)
             return campaign_info[0]
-
         return campaign_info.first()
 
     def get_campaign_id(self, name):
-        """
-        Return the (database) id corresponding to the campaign with name 'name'.
+        """Return the (database) id corresponding to the campaign with name 'name'.
 
         Parameters
         ----------
@@ -578,13 +570,11 @@ class CampaignDB(BaseCampaignDB):
             )
             logger.error(msg)
             raise RuntimeError(msg)
-
         # Return the database ID for the specified campaign
         return selected[0][1]
 
     def get_sampler_id(self, campaign_id):
-        """
-        Return the (database) id corresponding to the sampler currently set
+        """Return the (database) id corresponding to the sampler currently set
         for the campaign with id 'campaign_id'
 
         Parameters
@@ -597,13 +587,11 @@ class CampaignDB(BaseCampaignDB):
         int:
             The id of the sampler set for the specified campaign
         """
-
         sampler_id = self.session.query(CampaignTable).get(campaign_id).sampler
         return sampler_id
 
     def set_sampler(self, campaign_id, sampler_id):
-        """
-        Set specified campaign to be using specified sampler
+        """Set specified campaign to be using specified sampler
 
         Parameters
         ----------
@@ -611,11 +599,7 @@ class CampaignDB(BaseCampaignDB):
             ID of the campaign.
         sampler_id: int
             ID of the sampler.
-
-        Returns
-        -------
         """
-
         self.session.query(CampaignTable).get(campaign_id).sampler = sampler_id
         self.session.commit()
 
@@ -632,7 +616,6 @@ class CampaignDB(BaseCampaignDB):
         str:
             Path to campaign directory.
         """
-
         return self._get_campaign_info(campaign_name=campaign_name).campaign_dir
 
     def _select_runs(
@@ -643,8 +626,7 @@ class CampaignDB(BaseCampaignDB):
             status=None,
             not_status=None,
             app_id=None):
-        """
-        Select all runs in the database which match the input criteria.
+        """Select all runs in the database which match the input criteria.
 
         Parameters
         ----------
@@ -658,6 +640,8 @@ class CampaignDB(BaseCampaignDB):
             Status string to filter for.
         not_status: enum(Status) or None
             Exclude runs with this status string
+        app_id: int or None
+            App id to filter for.
 
         Returns
         -------
@@ -683,8 +667,7 @@ class CampaignDB(BaseCampaignDB):
         return selected
 
     def run(self, name, campaign=None, sampler=None, status=None, not_status=None, app_id=None):
-        """
-        Get the information for a specified run.
+        """Get the information for a specified run.
 
         Parameters
         ----------
@@ -698,6 +681,8 @@ class CampaignDB(BaseCampaignDB):
             Status string to filter for.
         not_status: enum(Status) or None
             Exclude runs with this status string
+        app_id: int or None
+            App id to filter for.
 
         Returns
         -------
@@ -705,7 +690,6 @@ class CampaignDB(BaseCampaignDB):
             Containing run information (run_name, params, status, sample,
             campaign, app)
         """
-
         selected = self._select_runs(
             name=name,
             campaign=campaign,
@@ -713,17 +697,13 @@ class CampaignDB(BaseCampaignDB):
             status=status,
             not_status=not_status,
             app_id=app_id)
-
         if selected.count() != 1:
             logging.warning('Multiple runs selected - using the first')
-
         selected = selected.first()
-
         return self._run_to_dict(selected)
 
     def runs(self, campaign=None, sampler=None, status=None, not_status=None, app_id=None):
-        """
-        A generator to return all run information for selected `campaign` and `sampler`.
+        """A generator to return all run information for selected `campaign` and `sampler`.
 
         Parameters
         ----------
@@ -735,22 +715,21 @@ class CampaignDB(BaseCampaignDB):
             Status string to filter for.
         not_status: enum(Status) or None
             Exclude runs with this status string
+        app_id: int or None
+            App id to filter for.
 
-        Returns
-        -------
+        Yields
+        ------
         dict:
             Information on each selected run (key = run_name, value = dict of
             run information fields.), one at a time.
-
         """
-
         selected = self._select_runs(
             campaign=campaign,
             sampler=sampler,
             status=status,
             not_status=not_status,
             app_id=app_id)
-
         for r in selected:
             yield r.id, self._run_to_dict(r)
 
