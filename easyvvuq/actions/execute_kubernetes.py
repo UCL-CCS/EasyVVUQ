@@ -29,7 +29,6 @@ import time
 from kubernetes.client.api import core_v1_api
 from kubernetes import config
 from kubernetes.client import V1ConfigMap, V1ObjectMeta
-from . import BaseAction
 
 __copyright__ = """
 
