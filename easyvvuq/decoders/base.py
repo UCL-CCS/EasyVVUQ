@@ -10,7 +10,6 @@ AVAILABLE_DECODERS : dict
     Registers all imported decoders.
 """
 from easyvvuq.base_element import BaseElement
-import json
 
 __copyright__ = """
 
