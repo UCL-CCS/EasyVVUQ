@@ -1,8 +1,6 @@
 #! /usr/bin/env python
-import os
 import easyvvuq as uq
 import chaospy as cp
-import pickle
 import time
 import numpy as np
 import matplotlib.pylab as plt
