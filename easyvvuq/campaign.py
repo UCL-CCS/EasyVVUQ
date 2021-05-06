@@ -198,9 +198,9 @@ class Campaign:
         Parameters
         ----------
         name: str
-            name of the campaign
+            Name of the campaign.
         work_dir: str
-            work directory, defaults to cwd
+            Work directory, defaults to cwd.
         """
         self.campaign_db = db.CampaignDB(location=self.db_location)
         if self.campaign_db.campaign_exists(name):
@@ -228,7 +228,7 @@ class Campaign:
             self.campaign_id = self.campaign_db.get_campaign_id(self.campaign_name)
 
     def add_app(self, name=None, params=None, actions=None, set_active=True):
-        """Add an application to the db.CampaignDB.
+        """Add an application to the CampaignDB.
 
         Parameters
         ----------
@@ -241,17 +241,14 @@ class Campaign:
         set_active: bool
             Should the added app be set to be the currently active app?
         """
-
         # Verify input parameters dict
         paramsspec = ParamsSpecification(params, appname=name)
-
         # validate application input
         app = AppInfo(
             name=name,
             paramsspec=paramsspec,
             actions=actions,
         )
-
         self.campaign_db.add_app(app)
         if set_active:
             self.set_app(app.name)
@@ -263,15 +260,13 @@ class Campaign:
 
         Parameters
         ----------
-        app_name: str or None
+        app_name: str
             Name of selected app, if `None` given then first app will be
             selected.
         """
-
         self._active_app_name = app_name
         self._active_app = self.campaign_db.app(name=app_name)
         self.campaign_db.set_active_app(app_name)
-
         # Resurrect the app encoder, decoder and collation elements
         self._active_app_actions = self.campaign_db.resurrect_app(app_name)
 
@@ -283,7 +278,7 @@ class Campaign:
         app_name: str
             Name of the app.
         actions: Actions
-            `Actions instance, will replace the current `Actions` of an app.
+            `Actions` instance, will replace the current `Actions` of an app.
         """
         self.campaign_db.replace_actions(app_name, actions)
         self._active_app_actions = actions
@@ -296,13 +291,13 @@ class Campaign:
         sampler : Sampler
             Sampler that will be used to create runs for the current campaign.
         update : bool
-            If set to True it will not add the sampler to the database, just change it as the active sampler.
+            If set to True it will not add the sampler to the database, just change 
+            it as the active sampler.
         """
         if not isinstance(sampler, BaseSamplingElement):
             msg = "set_sampler() must be passed a sampling element"
             logging.error(msg)
             raise Exception(msg)
-
         self._active_sampler = sampler
         if not update:
             self._active_sampler_id = self.campaign_db.add_sampler(sampler)
@@ -311,7 +306,7 @@ class Campaign:
         self.campaign_db.set_sampler(self.campaign_id, self._active_sampler.sampler_id)
 
     def add_runs(self, runs, mark_invalid=False):
-        """Add a new run to the queue.
+        """Add runs to the database.
 
         Parameters
         ----------
@@ -321,23 +316,18 @@ class Campaign:
         mark_invalid : bool
             Will mark runs that fail verification as invalid (but will not raise an exception)
         """
-
         if self._active_app is None:
             msg = ("No app is currently set for this campaign. "
                    "Use set_app('name_of_app').")
             logging.error(msg)
             raise Exception(msg)
-
         app_default_params = self._active_app["params"]
-
         run_info_list = []
         for new_run in runs:
-
             if new_run is None:
                 msg = ("add_run() was passed new_run of type None. Bad sampler?")
                 logging.error(msg)
                 raise Exception(msg)
-
             # Verify and complete run with missing/default param values
             status = Status.NEW
             try:
@@ -348,24 +338,14 @@ class Campaign:
                     status = Status.INVALID
                 else:
                     raise
-
             # Add to run queue
             run_info = RunInfo(app=self._active_app['id'],
                                params=new_run,
                                sample=self._active_sampler_id,
                                campaign=self.campaign_id,
                                status=status)
-
             run_info_list.append(run_info)
-
         self.campaign_db.add_runs(run_info_list, iteration=self._active_sampler.iteration)
-
-    def add_default_run(self):
-        """Add a single new run to the queue, using only default values for
-        all parameters.
-        """
-        new_run = {}
-        self.add_runs([new_run])
 
     def draw_samples(self, num_samples=0, replicas=1, mark_invalid=False):
         """Draws `num_samples` sets of parameters from the currently set
