@@ -55,9 +55,6 @@
                                 <a class="function" href="#Campaign.add_runs">add_runs</a>
                         </li>
                         <li>
-                                <a class="function" href="#Campaign.add_default_run">add_default_run</a>
-                        </li>
-                        <li>
                                 <a class="function" href="#Campaign.draw_samples">draw_samples</a>
                         </li>
                         <li>
@@ -340,9 +337,9 @@ EasyVVUQ workflows.</p>
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        name: str</span>
-<span class="sd">            name of the campaign</span>
+<span class="sd">            Name of the campaign.</span>
 <span class="sd">        work_dir: str</span>
-<span class="sd">            work directory, defaults to cwd</span>
+<span class="sd">            Work directory, defaults to cwd.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">campaign_db</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">CampaignDB</span><span class="p">(</span><span class="n">location</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">db_location</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">campaign_db</span><span class="o">.</span><span class="n">campaign_exists</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
@@ -370,7 +367,7 @@ EasyVVUQ workflows.</p>
             <span class="bp">self</span><span class="o">.</span><span class="n">campaign_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">campaign_db</span><span class="o">.</span><span class="n">get_campaign_id</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">campaign_name</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">add_app</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">actions</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">set_active</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Add an application to the db.CampaignDB.</span>
+        <span class="sd">&quot;&quot;&quot;Add an application to the CampaignDB.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -383,17 +380,14 @@ EasyVVUQ workflows.</p>
 <span class="sd">        set_active: bool</span>
 <span class="sd">            Should the added app be set to be the currently active app?</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-
         <span class="c1"># Verify input parameters dict</span>
         <span class="n">paramsspec</span> <span class="o">=</span> <span class="n">ParamsSpecification</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">appname</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
-
         <span class="c1"># validate application input</span>
         <span class="n">app</span> <span class="o">=</span> <span class="n">AppInfo</span><span class="p">(</span>
             <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
             <span class="n">paramsspec</span><span class="o">=</span><span class="n">paramsspec</span><span class="p">,</span>
             <span class="n">actions</span><span class="o">=</span><span class="n">actions</span><span class="p">,</span>
         <span class="p">)</span>
-
         <span class="bp">self</span><span class="o">.</span><span class="n">campaign_db</span><span class="o">.</span><span class="n">add_app</span><span class="p">(</span><span class="n">app</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">set_active</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">set_app</span><span class="p">(</span><span class="n">app</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
@@ -405,15 +399,13 @@ EasyVVUQ workflows.</p>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        app_name: str or None</span>
+<span class="sd">        app_name: str</span>
 <span class="sd">            Name of selected app, if `None` given then first app will be</span>
 <span class="sd">            selected.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-
         <span class="bp">self</span><span class="o">.</span><span class="n">_active_app_name</span> <span class="o">=</span> <span class="n">app_name</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_active_app</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">campaign_db</span><span class="o">.</span><span class="n">app</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">app_name</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">campaign_db</span><span class="o">.</span><span class="n">set_active_app</span><span class="p">(</span><span class="n">app_name</span><span class="p">)</span>
-
         <span class="c1"># Resurrect the app encoder, decoder and collation elements</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_active_app_actions</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">campaign_db</span><span class="o">.</span><span class="n">resurrect_app</span><span class="p">(</span><span class="n">app_name</span><span class="p">)</span>
 
@@ -425,7 +417,7 @@ EasyVVUQ workflows.</p>
 <span class="sd">        app_name: str</span>
 <span class="sd">            Name of the app.</span>
 <span class="sd">        actions: Actions</span>
-<span class="sd">            `Actions instance, will replace the current `Actions` of an app.</span>
+<span class="sd">            `Actions` instance, will replace the current `Actions` of an app.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">campaign_db</span><span class="o">.</span><span class="n">replace_actions</span><span class="p">(</span><span class="n">app_name</span><span class="p">,</span> <span class="n">actions</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_active_app_actions</span> <span class="o">=</span> <span class="n">actions</span>
@@ -438,13 +430,13 @@ EasyVVUQ workflows.</p>
 <span class="sd">        sampler : Sampler</span>
 <span class="sd">            Sampler that will be used to create runs for the current campaign.</span>
 <span class="sd">        update : bool</span>
-<span class="sd">            If set to True it will not add the sampler to the database, just change it as the active sampler.</span>
+<span class="sd">            If set to True it will not add the sampler to the database, just change </span>
+<span class="sd">            it as the active sampler.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">sampler</span><span class="p">,</span> <span class="n">BaseSamplingElement</span><span class="p">):</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;set_sampler() must be passed a sampling element&quot;</span>
             <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
             <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-
         <span class="bp">self</span><span class="o">.</span><span class="n">_active_sampler</span> <span class="o">=</span> <span class="n">sampler</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">update</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_active_sampler_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">campaign_db</span><span class="o">.</span><span class="n">add_sampler</span><span class="p">(</span><span class="n">sampler</span><span class="p">)</span>
@@ -453,7 +445,7 @@ EasyVVUQ workflows.</p>
         <span class="bp">self</span><span class="o">.</span><span class="n">campaign_db</span><span class="o">.</span><span class="n">set_sampler</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">campaign_id</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_active_sampler</span><span class="o">.</span><span class="n">sampler_id</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">add_runs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">runs</span><span class="p">,</span> <span class="n">mark_invalid</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Add a new run to the queue.</span>
+        <span class="sd">&quot;&quot;&quot;Add runs to the database.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -463,23 +455,18 @@ EasyVVUQ workflows.</p>
 <span class="sd">        mark_invalid : bool</span>
 <span class="sd">            Will mark runs that fail verification as invalid (but will not raise an exception)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_active_app</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;No app is currently set for this campaign. &quot;</span>
                    <span class="s2">&quot;Use set_app(&#39;name_of_app&#39;).&quot;</span><span class="p">)</span>
             <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
             <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-
         <span class="n">app_default_params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_active_app</span><span class="p">[</span><span class="s2">&quot;params&quot;</span><span class="p">]</span>
-
         <span class="n">run_info_list</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">new_run</span> <span class="ow">in</span> <span class="n">runs</span><span class="p">:</span>
-
             <span class="k">if</span> <span class="n">new_run</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;add_run() was passed new_run of type None. Bad sampler?&quot;</span><span class="p">)</span>
                 <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
                 <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-
             <span class="c1"># Verify and complete run with missing/default param values</span>
             <span class="n">status</span> <span class="o">=</span> <span class="n">Status</span><span class="o">.</span><span class="n">NEW</span>
             <span class="k">try</span><span class="p">:</span>
@@ -490,24 +477,14 @@ EasyVVUQ workflows.</p>
                     <span class="n">status</span> <span class="o">=</span> <span class="n">Status</span><span class="o">.</span><span class="n">INVALID</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="k">raise</span>
-
             <span class="c1"># Add to run queue</span>
             <span class="n">run_info</span> <span class="o">=</span> <span class="n">RunInfo</span><span class="p">(</span><span class="n">app</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_active_app</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">],</span>
                                <span class="n">params</span><span class="o">=</span><span class="n">new_run</span><span class="p">,</span>
                                <span class="n">sample</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_active_sampler_id</span><span class="p">,</span>
                                <span class="n">campaign</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">campaign_id</span><span class="p">,</span>
                                <span class="n">status</span><span class="o">=</span><span class="n">status</span><span class="p">)</span>
-
             <span class="n">run_info_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">run_info</span><span class="p">)</span>
-
         <span class="bp">self</span><span class="o">.</span><span class="n">campaign_db</span><span class="o">.</span><span class="n">add_runs</span><span class="p">(</span><span class="n">run_info_list</span><span class="p">,</span> <span class="n">iteration</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_active_sampler</span><span class="o">.</span><span class="n">iteration</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">add_default_run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Add a single new run to the queue, using only default values for</span>
-<span class="sd">        all parameters.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">new_run</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">add_runs</span><span class="p">([</span><span class="n">new_run</span><span class="p">])</span>
 
     <span class="k">def</span> <span class="nf">draw_samples</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num_samples</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">replicas</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">mark_invalid</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Draws `num_samples` sets of parameters from the currently set</span>
@@ -1030,9 +1007,9 @@ EasyVVUQ workflows.</p>
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        name: str</span>
-<span class="sd">            name of the campaign</span>
+<span class="sd">            Name of the campaign.</span>
 <span class="sd">        work_dir: str</span>
-<span class="sd">            work directory, defaults to cwd</span>
+<span class="sd">            Work directory, defaults to cwd.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">campaign_db</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">CampaignDB</span><span class="p">(</span><span class="n">location</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">db_location</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">campaign_db</span><span class="o">.</span><span class="n">campaign_exists</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
@@ -1060,7 +1037,7 @@ EasyVVUQ workflows.</p>
             <span class="bp">self</span><span class="o">.</span><span class="n">campaign_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">campaign_db</span><span class="o">.</span><span class="n">get_campaign_id</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">campaign_name</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">add_app</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">actions</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">set_active</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Add an application to the db.CampaignDB.</span>
+        <span class="sd">&quot;&quot;&quot;Add an application to the CampaignDB.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -1073,17 +1050,14 @@ EasyVVUQ workflows.</p>
 <span class="sd">        set_active: bool</span>
 <span class="sd">            Should the added app be set to be the currently active app?</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-
         <span class="c1"># Verify input parameters dict</span>
         <span class="n">paramsspec</span> <span class="o">=</span> <span class="n">ParamsSpecification</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">appname</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
-
         <span class="c1"># validate application input</span>
         <span class="n">app</span> <span class="o">=</span> <span class="n">AppInfo</span><span class="p">(</span>
             <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
             <span class="n">paramsspec</span><span class="o">=</span><span class="n">paramsspec</span><span class="p">,</span>
             <span class="n">actions</span><span class="o">=</span><span class="n">actions</span><span class="p">,</span>
         <span class="p">)</span>
-
         <span class="bp">self</span><span class="o">.</span><span class="n">campaign_db</span><span class="o">.</span><span class="n">add_app</span><span class="p">(</span><span class="n">app</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">set_active</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">set_app</span><span class="p">(</span><span class="n">app</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
@@ -1095,15 +1069,13 @@ EasyVVUQ workflows.</p>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        app_name: str or None</span>
+<span class="sd">        app_name: str</span>
 <span class="sd">            Name of selected app, if `None` given then first app will be</span>
 <span class="sd">            selected.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-
         <span class="bp">self</span><span class="o">.</span><span class="n">_active_app_name</span> <span class="o">=</span> <span class="n">app_name</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_active_app</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">campaign_db</span><span class="o">.</span><span class="n">app</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">app_name</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">campaign_db</span><span class="o">.</span><span class="n">set_active_app</span><span class="p">(</span><span class="n">app_name</span><span class="p">)</span>
-
         <span class="c1"># Resurrect the app encoder, decoder and collation elements</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_active_app_actions</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">campaign_db</span><span class="o">.</span><span class="n">resurrect_app</span><span class="p">(</span><span class="n">app_name</span><span class="p">)</span>
 
@@ -1115,7 +1087,7 @@ EasyVVUQ workflows.</p>
 <span class="sd">        app_name: str</span>
 <span class="sd">            Name of the app.</span>
 <span class="sd">        actions: Actions</span>
-<span class="sd">            `Actions instance, will replace the current `Actions` of an app.</span>
+<span class="sd">            `Actions` instance, will replace the current `Actions` of an app.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">campaign_db</span><span class="o">.</span><span class="n">replace_actions</span><span class="p">(</span><span class="n">app_name</span><span class="p">,</span> <span class="n">actions</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_active_app_actions</span> <span class="o">=</span> <span class="n">actions</span>
@@ -1128,13 +1100,13 @@ EasyVVUQ workflows.</p>
 <span class="sd">        sampler : Sampler</span>
 <span class="sd">            Sampler that will be used to create runs for the current campaign.</span>
 <span class="sd">        update : bool</span>
-<span class="sd">            If set to True it will not add the sampler to the database, just change it as the active sampler.</span>
+<span class="sd">            If set to True it will not add the sampler to the database, just change </span>
+<span class="sd">            it as the active sampler.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">sampler</span><span class="p">,</span> <span class="n">BaseSamplingElement</span><span class="p">):</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;set_sampler() must be passed a sampling element&quot;</span>
             <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
             <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-
         <span class="bp">self</span><span class="o">.</span><span class="n">_active_sampler</span> <span class="o">=</span> <span class="n">sampler</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">update</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_active_sampler_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">campaign_db</span><span class="o">.</span><span class="n">add_sampler</span><span class="p">(</span><span class="n">sampler</span><span class="p">)</span>
@@ -1143,7 +1115,7 @@ EasyVVUQ workflows.</p>
         <span class="bp">self</span><span class="o">.</span><span class="n">campaign_db</span><span class="o">.</span><span class="n">set_sampler</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">campaign_id</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_active_sampler</span><span class="o">.</span><span class="n">sampler_id</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">add_runs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">runs</span><span class="p">,</span> <span class="n">mark_invalid</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Add a new run to the queue.</span>
+        <span class="sd">&quot;&quot;&quot;Add runs to the database.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -1153,23 +1125,18 @@ EasyVVUQ workflows.</p>
 <span class="sd">        mark_invalid : bool</span>
 <span class="sd">            Will mark runs that fail verification as invalid (but will not raise an exception)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_active_app</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;No app is currently set for this campaign. &quot;</span>
                    <span class="s2">&quot;Use set_app(&#39;name_of_app&#39;).&quot;</span><span class="p">)</span>
             <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
             <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-
         <span class="n">app_default_params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_active_app</span><span class="p">[</span><span class="s2">&quot;params&quot;</span><span class="p">]</span>
-
         <span class="n">run_info_list</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">new_run</span> <span class="ow">in</span> <span class="n">runs</span><span class="p">:</span>
-
             <span class="k">if</span> <span class="n">new_run</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;add_run() was passed new_run of type None. Bad sampler?&quot;</span><span class="p">)</span>
                 <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
                 <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-
             <span class="c1"># Verify and complete run with missing/default param values</span>
             <span class="n">status</span> <span class="o">=</span> <span class="n">Status</span><span class="o">.</span><span class="n">NEW</span>
             <span class="k">try</span><span class="p">:</span>
@@ -1180,24 +1147,14 @@ EasyVVUQ workflows.</p>
                     <span class="n">status</span> <span class="o">=</span> <span class="n">Status</span><span class="o">.</span><span class="n">INVALID</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="k">raise</span>
-
             <span class="c1"># Add to run queue</span>
             <span class="n">run_info</span> <span class="o">=</span> <span class="n">RunInfo</span><span class="p">(</span><span class="n">app</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_active_app</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">],</span>
                                <span class="n">params</span><span class="o">=</span><span class="n">new_run</span><span class="p">,</span>
                                <span class="n">sample</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_active_sampler_id</span><span class="p">,</span>
                                <span class="n">campaign</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">campaign_id</span><span class="p">,</span>
                                <span class="n">status</span><span class="o">=</span><span class="n">status</span><span class="p">)</span>
-
             <span class="n">run_info_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">run_info</span><span class="p">)</span>
-
         <span class="bp">self</span><span class="o">.</span><span class="n">campaign_db</span><span class="o">.</span><span class="n">add_runs</span><span class="p">(</span><span class="n">run_info_list</span><span class="p">,</span> <span class="n">iteration</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_active_sampler</span><span class="o">.</span><span class="n">iteration</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">add_default_run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Add a single new run to the queue, using only default values for</span>
-<span class="sd">        all parameters.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">new_run</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">add_runs</span><span class="p">([</span><span class="n">new_run</span><span class="p">])</span>
 
     <span class="k">def</span> <span class="nf">draw_samples</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num_samples</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">replicas</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">mark_invalid</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Draws `num_samples` sets of parameters from the currently set</span>
@@ -1752,9 +1709,9 @@ working directory.</li>
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        name: str</span>
-<span class="sd">            name of the campaign</span>
+<span class="sd">            Name of the campaign.</span>
 <span class="sd">        work_dir: str</span>
-<span class="sd">            work directory, defaults to cwd</span>
+<span class="sd">            Work directory, defaults to cwd.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">campaign_db</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">CampaignDB</span><span class="p">(</span><span class="n">location</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">db_location</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">campaign_db</span><span class="o">.</span><span class="n">campaign_exists</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
@@ -1790,9 +1747,9 @@ working directory.</li>
 
 <ul>
 <li><strong>name</strong> (str):
-name of the campaign</li>
+Name of the campaign.</li>
 <li><strong>work_dir</strong> (str):
-work directory, defaults to cwd</li>
+Work directory, defaults to cwd.</li>
 </ul>
 </div>
 
@@ -1809,7 +1766,7 @@ work directory, defaults to cwd</li>
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">add_app</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">actions</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">set_active</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Add an application to the db.CampaignDB.</span>
+        <span class="sd">&quot;&quot;&quot;Add an application to the CampaignDB.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -1822,17 +1779,14 @@ work directory, defaults to cwd</li>
 <span class="sd">        set_active: bool</span>
 <span class="sd">            Should the added app be set to be the currently active app?</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-
         <span class="c1"># Verify input parameters dict</span>
         <span class="n">paramsspec</span> <span class="o">=</span> <span class="n">ParamsSpecification</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">appname</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
-
         <span class="c1"># validate application input</span>
         <span class="n">app</span> <span class="o">=</span> <span class="n">AppInfo</span><span class="p">(</span>
             <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
             <span class="n">paramsspec</span><span class="o">=</span><span class="n">paramsspec</span><span class="p">,</span>
             <span class="n">actions</span><span class="o">=</span><span class="n">actions</span><span class="p">,</span>
         <span class="p">)</span>
-
         <span class="bp">self</span><span class="o">.</span><span class="n">campaign_db</span><span class="o">.</span><span class="n">add_app</span><span class="p">(</span><span class="n">app</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">set_active</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">set_app</span><span class="p">(</span><span class="n">app</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
@@ -1840,7 +1794,7 @@ work directory, defaults to cwd</li>
 
         </details>
 
-            <div class="docstring"><p>Add an application to the db.CampaignDB.</p>
+            <div class="docstring"><p>Add an application to the CampaignDB.</p>
 
 <h6 id="parameters">Parameters</h6>
 
@@ -1875,15 +1829,13 @@ Should the added app be set to be the currently active app?</li>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        app_name: str or None</span>
+<span class="sd">        app_name: str</span>
 <span class="sd">            Name of selected app, if `None` given then first app will be</span>
 <span class="sd">            selected.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-
         <span class="bp">self</span><span class="o">.</span><span class="n">_active_app_name</span> <span class="o">=</span> <span class="n">app_name</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_active_app</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">campaign_db</span><span class="o">.</span><span class="n">app</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">app_name</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">campaign_db</span><span class="o">.</span><span class="n">set_active_app</span><span class="p">(</span><span class="n">app_name</span><span class="p">)</span>
-
         <span class="c1"># Resurrect the app encoder, decoder and collation elements</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_active_app_actions</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">campaign_db</span><span class="o">.</span><span class="n">resurrect_app</span><span class="p">(</span><span class="n">app_name</span><span class="p">)</span>
 </pre></div>
@@ -1897,7 +1849,7 @@ Should the added app be set to be the currently active app?</li>
 <h6 id="parameters">Parameters</h6>
 
 <ul>
-<li><strong>app_name</strong> (str or None):
+<li><strong>app_name</strong> (str):
 Name of selected app, if <code>None</code> given then first app will be
 selected.</li>
 </ul>
@@ -1923,7 +1875,7 @@ selected.</li>
 <span class="sd">        app_name: str</span>
 <span class="sd">            Name of the app.</span>
 <span class="sd">        actions: Actions</span>
-<span class="sd">            `Actions instance, will replace the current `Actions` of an app.</span>
+<span class="sd">            `Actions` instance, will replace the current `Actions` of an app.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">campaign_db</span><span class="o">.</span><span class="n">replace_actions</span><span class="p">(</span><span class="n">app_name</span><span class="p">,</span> <span class="n">actions</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_active_app_actions</span> <span class="o">=</span> <span class="n">actions</span>
@@ -1939,7 +1891,7 @@ selected.</li>
 <li><strong>app_name</strong> (str):
 Name of the app.</li>
 <li><strong>actions</strong> (Actions):
-<code>Actions instance, will replace the current</code>Actions` of an app.</li>
+<code>Actions</code> instance, will replace the current <code>Actions</code> of an app.</li>
 </ul>
 </div>
 
@@ -1963,13 +1915,13 @@ Name of the app.</li>
 <span class="sd">        sampler : Sampler</span>
 <span class="sd">            Sampler that will be used to create runs for the current campaign.</span>
 <span class="sd">        update : bool</span>
-<span class="sd">            If set to True it will not add the sampler to the database, just change it as the active sampler.</span>
+<span class="sd">            If set to True it will not add the sampler to the database, just change </span>
+<span class="sd">            it as the active sampler.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">sampler</span><span class="p">,</span> <span class="n">BaseSamplingElement</span><span class="p">):</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;set_sampler() must be passed a sampling element&quot;</span>
             <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
             <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-
         <span class="bp">self</span><span class="o">.</span><span class="n">_active_sampler</span> <span class="o">=</span> <span class="n">sampler</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">update</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_active_sampler_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">campaign_db</span><span class="o">.</span><span class="n">add_sampler</span><span class="p">(</span><span class="n">sampler</span><span class="p">)</span>
@@ -1988,7 +1940,8 @@ Name of the app.</li>
 <li><strong>sampler</strong> (Sampler):
 Sampler that will be used to create runs for the current campaign.</li>
 <li><strong>update</strong> (bool):
-If set to True it will not add the sampler to the database, just change it as the active sampler.</li>
+If set to True it will not add the sampler to the database, just change 
+it as the active sampler.</li>
 </ul>
 </div>
 
@@ -2005,7 +1958,7 @@ If set to True it will not add the sampler to the database, just change it as th
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">add_runs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">runs</span><span class="p">,</span> <span class="n">mark_invalid</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Add a new run to the queue.</span>
+        <span class="sd">&quot;&quot;&quot;Add runs to the database.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -2015,23 +1968,18 @@ If set to True it will not add the sampler to the database, just change it as th
 <span class="sd">        mark_invalid : bool</span>
 <span class="sd">            Will mark runs that fail verification as invalid (but will not raise an exception)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_active_app</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;No app is currently set for this campaign. &quot;</span>
                    <span class="s2">&quot;Use set_app(&#39;name_of_app&#39;).&quot;</span><span class="p">)</span>
             <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
             <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-
         <span class="n">app_default_params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_active_app</span><span class="p">[</span><span class="s2">&quot;params&quot;</span><span class="p">]</span>
-
         <span class="n">run_info_list</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">new_run</span> <span class="ow">in</span> <span class="n">runs</span><span class="p">:</span>
-
             <span class="k">if</span> <span class="n">new_run</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;add_run() was passed new_run of type None. Bad sampler?&quot;</span><span class="p">)</span>
                 <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
                 <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-
             <span class="c1"># Verify and complete run with missing/default param values</span>
             <span class="n">status</span> <span class="o">=</span> <span class="n">Status</span><span class="o">.</span><span class="n">NEW</span>
             <span class="k">try</span><span class="p">:</span>
@@ -2042,22 +1990,19 @@ If set to True it will not add the sampler to the database, just change it as th
                     <span class="n">status</span> <span class="o">=</span> <span class="n">Status</span><span class="o">.</span><span class="n">INVALID</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="k">raise</span>
-
             <span class="c1"># Add to run queue</span>
             <span class="n">run_info</span> <span class="o">=</span> <span class="n">RunInfo</span><span class="p">(</span><span class="n">app</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_active_app</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">],</span>
                                <span class="n">params</span><span class="o">=</span><span class="n">new_run</span><span class="p">,</span>
                                <span class="n">sample</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_active_sampler_id</span><span class="p">,</span>
                                <span class="n">campaign</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">campaign_id</span><span class="p">,</span>
                                <span class="n">status</span><span class="o">=</span><span class="n">status</span><span class="p">)</span>
-
             <span class="n">run_info_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">run_info</span><span class="p">)</span>
-
         <span class="bp">self</span><span class="o">.</span><span class="n">campaign_db</span><span class="o">.</span><span class="n">add_runs</span><span class="p">(</span><span class="n">run_info_list</span><span class="p">,</span> <span class="n">iteration</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_active_sampler</span><span class="o">.</span><span class="n">iteration</span><span class="p">)</span>
 </pre></div>
 
         </details>
 
-            <div class="docstring"><p>Add a new run to the queue.</p>
+            <div class="docstring"><p>Add runs to the database.</p>
 
 <h6 id="parameters">Parameters</h6>
 
@@ -2068,32 +2013,6 @@ self.params_info for a run to be added to self.runs</li>
 <li><strong>mark_invalid</strong> (bool):
 Will mark runs that fail verification as invalid (but will not raise an exception)</li>
 </ul>
-</div>
-
-
-                            </div>
-                            <div id="Campaign.add_default_run" class="classattr">
-                                        <div class="attr function"><a class="headerlink" href="#Campaign.add_default_run">#&nbsp;&nbsp</a>
-
-        
-            <span class="def">def</span>
-            <span class="name">add_default_run</span><span class="signature">(self)</span>:
-    </div>
-
-                <details>
-            <summary>View Source</summary>
-            <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">add_default_run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Add a single new run to the queue, using only default values for</span>
-<span class="sd">        all parameters.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">new_run</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">add_runs</span><span class="p">([</span><span class="n">new_run</span><span class="p">])</span>
-</pre></div>
-
-        </details>
-
-            <div class="docstring"><p>Add a single new run to the queue, using only default values for
-all parameters.</p>
 </div>
 
 
