@@ -1,4 +1,3 @@
-from easyvvuq import OutputType
 from .base import BaseAnalysisElement
 from sklearn.gaussian_process import GaussianProcessRegressor
 from .results import AnalysisResults
