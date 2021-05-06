@@ -45,29 +45,38 @@ class Campaign:
     """Campaigns organise the dataflow in EasyVVUQ workflows.
 
     The Campaign functions as as state machine for the VVUQ workflows. It uses a
-    database (db.CampaignDB) to store information on both the target application
+    database (CampaignDB) to store information on both the target application
     and the VVUQ algorithms being employed. It also collects data from the simulations
     and can be used to store and resume your state.
 
     Notes
     -----
 
-    Multiple campaigns can be combined in a db.CampaignDB. Hence the particular
+    Multiple campaigns can be combined in a CampaignDB. Hence the particular
     campaign we are currently working on will be specified using `campaign_id`.
 
     Parameters
     ----------
-    name : str, optional
-    params : dict
-        Description of the parameters to associate with the application.
-    db_location : str, optional
+    name: str
+        Name of the Campaign. Freely chosen, serves as a human-readable way of distinguishing
+        between several campaigns in the same database.
+    params: dict, optional
+        Description of the parameters to associated with the application. Will be used to create
+        an app when creating the campaign. It is also possible to add apps manually using `add_app`
+        method of the Campaign class. But this can be a useful shorthand when working with single
+        app campaigns. To use this functionality both `params` and `actions` has to be specified.
+        The name of this app will be the same as the name of the Campaign.
+    actions: Actions, optional
+        Actions object associated with an application. See description of the `params` parameter 
+        for more details.
+    db_location: str, optional
         Location of the underlying campaign database - either a path or
         acceptable URI for SQLAlchemy.
-    work_dir : str, optional, default='./'
+    work_dir: str, optional, default='./'
         Path to working directory - used to store campaign directory.
-    state_file : str, optional
+    state_file: str, optional
         Path to serialised state - used to initialise the Campaign.
-    change_to_state : bool, optional, default=False
+    change_to_state: bool, optional, default=False
         Should we change to the directory containing any specified `state_file`
         in order to make relative paths work.
     verify_all_runs: bool, optional, default=True
@@ -101,6 +110,30 @@ class Campaign:
     _active_sampler_id: int
         The database id of the currently set Sampler object
 
+    Examples
+    --------
+    A typical instantiation might look like this.
+
+    >>> params = {
+            "S0": {"type": "float", "default": 997}, 
+            "I0": {"type": "float", "default": 3}, 
+            "beta": {"type": "float", "default": 0.2}, 
+            "gamma": {"type": "float", "default": 0.04, "min": 0.0, "max": 1.0},
+            "iterations": {"type": "integer", "default": 100},
+            "outfile": {"type": "string", "default": "output.csv"}
+        }
+    >>> encoder = uq.encoders.GenericEncoder(template_fname='sir.template', delimiter='$', target_filename='input.json')
+    >>> decoder = uq.decoders.SimpleCSV(target_filename='output.csv', output_columns=['I'])
+    >>> actions = uq.actions.local_execute(encoder, os.path.abspath('sir') + ' input.json', decoder)
+    >>> campaign = uq.Campaign(name='sir', params=params, actions=actions)
+
+    A simplified one (without an app) might look simply like this.
+
+    >>> campaign = Campaign('simple')
+
+    An app then can be added.
+
+    >>> campaign.add_app('simple_app', params=params, actions=actions)
     """
 
     def __init__(
