@@ -187,29 +187,38 @@ EasyVVUQ workflows.</p>
     <span class="sd">&quot;&quot;&quot;Campaigns organise the dataflow in EasyVVUQ workflows.</span>
 
 <span class="sd">    The Campaign functions as as state machine for the VVUQ workflows. It uses a</span>
-<span class="sd">    database (db.CampaignDB) to store information on both the target application</span>
+<span class="sd">    database (CampaignDB) to store information on both the target application</span>
 <span class="sd">    and the VVUQ algorithms being employed. It also collects data from the simulations</span>
 <span class="sd">    and can be used to store and resume your state.</span>
 
 <span class="sd">    Notes</span>
 <span class="sd">    -----</span>
 
-<span class="sd">    Multiple campaigns can be combined in a db.CampaignDB. Hence the particular</span>
+<span class="sd">    Multiple campaigns can be combined in a CampaignDB. Hence the particular</span>
 <span class="sd">    campaign we are currently working on will be specified using `campaign_id`.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    name : str, optional</span>
-<span class="sd">    params : dict</span>
-<span class="sd">        Description of the parameters to associate with the application.</span>
-<span class="sd">    db_location : str, optional</span>
+<span class="sd">    name: str</span>
+<span class="sd">        Name of the Campaign. Freely chosen, serves as a human-readable way of distinguishing</span>
+<span class="sd">        between several campaigns in the same database.</span>
+<span class="sd">    params: dict, optional</span>
+<span class="sd">        Description of the parameters to associated with the application. Will be used to create</span>
+<span class="sd">        an app when creating the campaign. It is also possible to add apps manually using `add_app`</span>
+<span class="sd">        method of the Campaign class. But this can be a useful shorthand when working with single</span>
+<span class="sd">        app campaigns. To use this functionality both `params` and `actions` has to be specified.</span>
+<span class="sd">        The name of this app will be the same as the name of the Campaign.</span>
+<span class="sd">    actions: Actions, optional</span>
+<span class="sd">        Actions object associated with an application. See description of the `params` parameter </span>
+<span class="sd">        for more details.</span>
+<span class="sd">    db_location: str, optional</span>
 <span class="sd">        Location of the underlying campaign database - either a path or</span>
 <span class="sd">        acceptable URI for SQLAlchemy.</span>
-<span class="sd">    work_dir : str, optional, default=&#39;./&#39;</span>
+<span class="sd">    work_dir: str, optional, default=&#39;./&#39;</span>
 <span class="sd">        Path to working directory - used to store campaign directory.</span>
-<span class="sd">    state_file : str, optional</span>
+<span class="sd">    state_file: str, optional</span>
 <span class="sd">        Path to serialised state - used to initialise the Campaign.</span>
-<span class="sd">    change_to_state : bool, optional, default=False</span>
+<span class="sd">    change_to_state: bool, optional, default=False</span>
 <span class="sd">        Should we change to the directory containing any specified `state_file`</span>
 <span class="sd">        in order to make relative paths work.</span>
 <span class="sd">    verify_all_runs: bool, optional, default=True</span>
@@ -243,6 +252,30 @@ EasyVVUQ workflows.</p>
 <span class="sd">    _active_sampler_id: int</span>
 <span class="sd">        The database id of the currently set Sampler object</span>
 
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    A typical instantiation might look like this.</span>
+
+<span class="sd">    &gt;&gt;&gt; params = {</span>
+<span class="sd">            &quot;S0&quot;: {&quot;type&quot;: &quot;float&quot;, &quot;default&quot;: 997}, </span>
+<span class="sd">            &quot;I0&quot;: {&quot;type&quot;: &quot;float&quot;, &quot;default&quot;: 3}, </span>
+<span class="sd">            &quot;beta&quot;: {&quot;type&quot;: &quot;float&quot;, &quot;default&quot;: 0.2}, </span>
+<span class="sd">            &quot;gamma&quot;: {&quot;type&quot;: &quot;float&quot;, &quot;default&quot;: 0.04, &quot;min&quot;: 0.0, &quot;max&quot;: 1.0},</span>
+<span class="sd">            &quot;iterations&quot;: {&quot;type&quot;: &quot;integer&quot;, &quot;default&quot;: 100},</span>
+<span class="sd">            &quot;outfile&quot;: {&quot;type&quot;: &quot;string&quot;, &quot;default&quot;: &quot;output.csv&quot;}</span>
+<span class="sd">        }</span>
+<span class="sd">    &gt;&gt;&gt; encoder = uq.encoders.GenericEncoder(template_fname=&#39;sir.template&#39;, delimiter=&#39;$&#39;, target_filename=&#39;input.json&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; decoder = uq.decoders.SimpleCSV(target_filename=&#39;output.csv&#39;, output_columns=[&#39;I&#39;])</span>
+<span class="sd">    &gt;&gt;&gt; actions = uq.actions.local_execute(encoder, os.path.abspath(&#39;sir&#39;) + &#39; input.json&#39;, decoder)</span>
+<span class="sd">    &gt;&gt;&gt; campaign = uq.Campaign(name=&#39;sir&#39;, params=params, actions=actions)</span>
+
+<span class="sd">    A simplified one (without an app) might look simply like this.</span>
+
+<span class="sd">    &gt;&gt;&gt; campaign = Campaign(&#39;simple&#39;)</span>
+
+<span class="sd">    An app then can be added.</span>
+
+<span class="sd">    &gt;&gt;&gt; campaign.add_app(&#39;simple_app&#39;, params=params, actions=actions)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
@@ -844,29 +877,38 @@ EasyVVUQ workflows.</p>
     <span class="sd">&quot;&quot;&quot;Campaigns organise the dataflow in EasyVVUQ workflows.</span>
 
 <span class="sd">    The Campaign functions as as state machine for the VVUQ workflows. It uses a</span>
-<span class="sd">    database (db.CampaignDB) to store information on both the target application</span>
+<span class="sd">    database (CampaignDB) to store information on both the target application</span>
 <span class="sd">    and the VVUQ algorithms being employed. It also collects data from the simulations</span>
 <span class="sd">    and can be used to store and resume your state.</span>
 
 <span class="sd">    Notes</span>
 <span class="sd">    -----</span>
 
-<span class="sd">    Multiple campaigns can be combined in a db.CampaignDB. Hence the particular</span>
+<span class="sd">    Multiple campaigns can be combined in a CampaignDB. Hence the particular</span>
 <span class="sd">    campaign we are currently working on will be specified using `campaign_id`.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    name : str, optional</span>
-<span class="sd">    params : dict</span>
-<span class="sd">        Description of the parameters to associate with the application.</span>
-<span class="sd">    db_location : str, optional</span>
+<span class="sd">    name: str</span>
+<span class="sd">        Name of the Campaign. Freely chosen, serves as a human-readable way of distinguishing</span>
+<span class="sd">        between several campaigns in the same database.</span>
+<span class="sd">    params: dict, optional</span>
+<span class="sd">        Description of the parameters to associated with the application. Will be used to create</span>
+<span class="sd">        an app when creating the campaign. It is also possible to add apps manually using `add_app`</span>
+<span class="sd">        method of the Campaign class. But this can be a useful shorthand when working with single</span>
+<span class="sd">        app campaigns. To use this functionality both `params` and `actions` has to be specified.</span>
+<span class="sd">        The name of this app will be the same as the name of the Campaign.</span>
+<span class="sd">    actions: Actions, optional</span>
+<span class="sd">        Actions object associated with an application. See description of the `params` parameter </span>
+<span class="sd">        for more details.</span>
+<span class="sd">    db_location: str, optional</span>
 <span class="sd">        Location of the underlying campaign database - either a path or</span>
 <span class="sd">        acceptable URI for SQLAlchemy.</span>
-<span class="sd">    work_dir : str, optional, default=&#39;./&#39;</span>
+<span class="sd">    work_dir: str, optional, default=&#39;./&#39;</span>
 <span class="sd">        Path to working directory - used to store campaign directory.</span>
-<span class="sd">    state_file : str, optional</span>
+<span class="sd">    state_file: str, optional</span>
 <span class="sd">        Path to serialised state - used to initialise the Campaign.</span>
-<span class="sd">    change_to_state : bool, optional, default=False</span>
+<span class="sd">    change_to_state: bool, optional, default=False</span>
 <span class="sd">        Should we change to the directory containing any specified `state_file`</span>
 <span class="sd">        in order to make relative paths work.</span>
 <span class="sd">    verify_all_runs: bool, optional, default=True</span>
@@ -900,6 +942,30 @@ EasyVVUQ workflows.</p>
 <span class="sd">    _active_sampler_id: int</span>
 <span class="sd">        The database id of the currently set Sampler object</span>
 
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    A typical instantiation might look like this.</span>
+
+<span class="sd">    &gt;&gt;&gt; params = {</span>
+<span class="sd">            &quot;S0&quot;: {&quot;type&quot;: &quot;float&quot;, &quot;default&quot;: 997}, </span>
+<span class="sd">            &quot;I0&quot;: {&quot;type&quot;: &quot;float&quot;, &quot;default&quot;: 3}, </span>
+<span class="sd">            &quot;beta&quot;: {&quot;type&quot;: &quot;float&quot;, &quot;default&quot;: 0.2}, </span>
+<span class="sd">            &quot;gamma&quot;: {&quot;type&quot;: &quot;float&quot;, &quot;default&quot;: 0.04, &quot;min&quot;: 0.0, &quot;max&quot;: 1.0},</span>
+<span class="sd">            &quot;iterations&quot;: {&quot;type&quot;: &quot;integer&quot;, &quot;default&quot;: 100},</span>
+<span class="sd">            &quot;outfile&quot;: {&quot;type&quot;: &quot;string&quot;, &quot;default&quot;: &quot;output.csv&quot;}</span>
+<span class="sd">        }</span>
+<span class="sd">    &gt;&gt;&gt; encoder = uq.encoders.GenericEncoder(template_fname=&#39;sir.template&#39;, delimiter=&#39;$&#39;, target_filename=&#39;input.json&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; decoder = uq.decoders.SimpleCSV(target_filename=&#39;output.csv&#39;, output_columns=[&#39;I&#39;])</span>
+<span class="sd">    &gt;&gt;&gt; actions = uq.actions.local_execute(encoder, os.path.abspath(&#39;sir&#39;) + &#39; input.json&#39;, decoder)</span>
+<span class="sd">    &gt;&gt;&gt; campaign = uq.Campaign(name=&#39;sir&#39;, params=params, actions=actions)</span>
+
+<span class="sd">    A simplified one (without an app) might look simply like this.</span>
+
+<span class="sd">    &gt;&gt;&gt; campaign = Campaign(&#39;simple&#39;)</span>
+
+<span class="sd">    An app then can be added.</span>
+
+<span class="sd">    &gt;&gt;&gt; campaign.add_app(&#39;simple_app&#39;, params=params, actions=actions)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
@@ -1488,21 +1554,30 @@ EasyVVUQ workflows.</p>
             <div class="docstring"><p>Campaigns organise the dataflow in EasyVVUQ workflows.</p>
 
 <p>The Campaign functions as as state machine for the VVUQ workflows. It uses a
-database (db.CampaignDB) to store information on both the target application
+database (CampaignDB) to store information on both the target application
 and the VVUQ algorithms being employed. It also collects data from the simulations
 and can be used to store and resume your state.</p>
 
 <h6 id="notes">Notes</h6>
 
-<p>Multiple campaigns can be combined in a db.CampaignDB. Hence the particular
+<p>Multiple campaigns can be combined in a CampaignDB. Hence the particular
 campaign we are currently working on will be specified using <code>campaign_id</code>.</p>
 
 <h6 id="parameters">Parameters</h6>
 
 <ul>
-<li><p><strong>name</strong> (str, optional):</p></li>
-<li><p><strong>params</strong> (dict):
-Description of the parameters to associate with the application.</p></li>
+<li><strong>name</strong> (str):
+Name of the Campaign. Freely chosen, serves as a human-readable way of distinguishing
+between several campaigns in the same database.</li>
+<li><strong>params</strong> (dict, optional):
+Description of the parameters to associated with the application. Will be used to create
+an app when creating the campaign. It is also possible to add apps manually using <code><a href="#Campaign.add_app">add_app</a></code>
+method of the Campaign class. But this can be a useful shorthand when working with single
+app campaigns. To use this functionality both <code>params</code> and <code>actions</code> has to be specified.
+The name of this app will be the same as the name of the Campaign.</li>
+<li><strong>actions</strong> (Actions, optional):
+Actions object associated with an application. See description of the <code>params</code> parameter 
+for more details.</li>
 <li><strong>db_location</strong> (str, optional):
 Location of the underlying campaign database - either a path or
 acceptable URI for SQLAlchemy.</li>
@@ -1545,6 +1620,34 @@ Name of currently set app</li>
 <li><strong>_active_sampler_id</strong> (int):
 The database id of the currently set Sampler object</li>
 </ul>
+
+<h6 id="examples">Examples</h6>
+
+<p>A typical instantiation might look like this.</p>
+
+<div class="codehilite"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
+<span class="go">        &quot;S0&quot;: {&quot;type&quot;: &quot;float&quot;, &quot;default&quot;: 997}, </span>
+<span class="go">        &quot;I0&quot;: {&quot;type&quot;: &quot;float&quot;, &quot;default&quot;: 3}, </span>
+<span class="go">        &quot;beta&quot;: {&quot;type&quot;: &quot;float&quot;, &quot;default&quot;: 0.2}, </span>
+<span class="go">        &quot;gamma&quot;: {&quot;type&quot;: &quot;float&quot;, &quot;default&quot;: 0.04, &quot;min&quot;: 0.0, &quot;max&quot;: 1.0},</span>
+<span class="go">        &quot;iterations&quot;: {&quot;type&quot;: &quot;integer&quot;, &quot;default&quot;: 100},</span>
+<span class="go">        &quot;outfile&quot;: {&quot;type&quot;: &quot;string&quot;, &quot;default&quot;: &quot;output.csv&quot;}</span>
+<span class="go">    }</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">encoder</span> <span class="o">=</span> <span class="n">uq</span><span class="o">.</span><span class="n">encoders</span><span class="o">.</span><span class="n">GenericEncoder</span><span class="p">(</span><span class="n">template_fname</span><span class="o">=</span><span class="s1">&#39;sir.template&#39;</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s1">&#39;$&#39;</span><span class="p">,</span> <span class="n">target_filename</span><span class="o">=</span><span class="s1">&#39;input.json&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">decoder</span> <span class="o">=</span> <span class="n">uq</span><span class="o">.</span><span class="n">decoders</span><span class="o">.</span><span class="n">SimpleCSV</span><span class="p">(</span><span class="n">target_filename</span><span class="o">=</span><span class="s1">&#39;output.csv&#39;</span><span class="p">,</span> <span class="n">output_columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;I&#39;</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">actions</span> <span class="o">=</span> <span class="n">uq</span><span class="o">.</span><span class="n">actions</span><span class="o">.</span><span class="n">local_execute</span><span class="p">(</span><span class="n">encoder</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="s1">&#39;sir&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39; input.json&#39;</span><span class="p">,</span> <span class="n">decoder</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">campaign</span> <span class="o">=</span> <span class="n">uq</span><span class="o">.</span><span class="n">Campaign</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;sir&#39;</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">,</span> <span class="n">actions</span><span class="o">=</span><span class="n">actions</span><span class="p">)</span>
+</code></pre></div>
+
+<p>A simplified one (without an app) might look simply like this.</p>
+
+<div class="codehilite"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">campaign</span> <span class="o">=</span> <span class="n">Campaign</span><span class="p">(</span><span class="s1">&#39;simple&#39;</span><span class="p">)</span>
+</code></pre></div>
+
+<p>An app then can be added.</p>
+
+<div class="codehilite"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">campaign</span><span class="o">.</span><span class="n">add_app</span><span class="p">(</span><span class="s1">&#39;simple_app&#39;</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">,</span> <span class="n">actions</span><span class="o">=</span><span class="n">actions</span><span class="p">)</span>
+</code></pre></div>
 </div>
 
 
