@@ -1,6 +1,5 @@
 import os
 from .base import BaseEncoder
-import logging
 
 __copyright__ = """
 
