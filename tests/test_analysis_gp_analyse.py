@@ -5,6 +5,7 @@ import pytest
 import shutil
 from easyvvuq.actions import CreateRunDirectory, Encode, ExecuteLocal, Decode, Actions
 
+
 def test_gp(tmp_path):
     campaign = uq.Campaign(name='test', work_dir=tmp_path)
     params = {
@@ -35,14 +36,15 @@ def test_gp(tmp_path):
         target_filename='cooling_in.json')
     decoder = uq.decoders.SimpleCSV(target_filename=output_filename,
                                     output_columns=output_columns)
-    execute = ExecuteLocal("{} cooling_in.json".format(os.path.abspath("tests/cooling/cooling_model.py")))
+    execute = ExecuteLocal("{} cooling_in.json".format(
+        os.path.abspath("tests/cooling/cooling_model.py")))
     actions = Actions(CreateRunDirectory('/tmp'), Encode(encoder), execute, Decode(decoder))
     vary = {
         "kappa": cp.Uniform(0.025, 0.075),
         "t_env": cp.Uniform(15, 25)
     }
     sampler = uq.sampling.quasirandom.LHCSampler(vary=vary)
-    
+
     campaign.add_app(name='test_app', params=params, actions=actions)
     campaign.set_app('test_app')
     campaign.set_sampler(sampler)

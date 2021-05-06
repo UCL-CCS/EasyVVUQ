@@ -67,7 +67,7 @@ class Campaign:
         app campaigns. To use this functionality both `params` and `actions` has to be specified.
         The name of this app will be the same as the name of the Campaign.
     actions: Actions, optional
-        Actions object associated with an application. See description of the `params` parameter 
+        Actions object associated with an application. See description of the `params` parameter
         for more details.
     db_location: str, optional
         Location of the underlying campaign database - either a path or
@@ -115,9 +115,9 @@ class Campaign:
     A typical instantiation might look like this.
 
     >>> params = {
-            "S0": {"type": "float", "default": 997}, 
-            "I0": {"type": "float", "default": 3}, 
-            "beta": {"type": "float", "default": 0.2}, 
+            "S0": {"type": "float", "default": 997},
+            "I0": {"type": "float", "default": 3},
+            "beta": {"type": "float", "default": 0.2},
             "gamma": {"type": "float", "default": 0.04, "min": 0.0, "max": 1.0},
             "iterations": {"type": "integer", "default": 100},
             "outfile": {"type": "string", "default": "output.csv"}
@@ -272,7 +272,7 @@ class Campaign:
 
     def replace_actions(self, app_name, actions):
         """Replace actions for an app with a given name.
-        
+
         Parameters
         ----------
         app_name: str
@@ -291,7 +291,7 @@ class Campaign:
         sampler : Sampler
             Sampler that will be used to create runs for the current campaign.
         update : bool
-            If set to True it will not add the sampler to the database, just change 
+            If set to True it will not add the sampler to the database, just change
             it as the active sampler.
         """
         if not isinstance(sampler, BaseSamplingElement):
@@ -432,7 +432,7 @@ class Campaign:
         Parameters
         ----------
         nsamples: int
-            Number of samples to draw. For infinite samplers or when you want to process 
+            Number of samples to draw. For infinite samplers or when you want to process
             samples in batches.
         pool: Executor
             A pool object to be used when processing runs (e.g. instance of `ThreadPoolExecutor` or
@@ -537,7 +537,7 @@ class Campaign:
         Returns
         -------
         DataFrame
-            A DataFrame with the simulation results along with the inputs 
+            A DataFrame with the simulation results along with the inputs
             used to produce them.
         """
         if last_iteration:
@@ -593,7 +593,7 @@ class Campaign:
         -------
         AnalysisResults
             An object representing analysis results. Can be used to interact with those results
-            in some way. Plot, retrieve surrogate models and so on. 
+            in some way. Plot, retrieve surrogate models and so on.
             See `easyvvuq.analysis.AnalysisResults` for further information.
         """
         collation_result = self.get_collation_result()

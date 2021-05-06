@@ -14,6 +14,7 @@ __license__ = "LGPL"
 
 logger = logging.getLogger(__name__)
 
+
 class ExecuteSLURM():
     """An Action to launch and track the execution of a SLURM job.
 
@@ -56,7 +57,7 @@ class ExecuteSLURM():
                 ['squeue', '-j', self.job_id],
                 cwd=target_dir, check=True, capture_output=True)
             stdout = result.stdout.decode('utf-8')
-            if not self.job_id in stdout:
+            if self.job_id not in stdout:
                 break
             time.sleep(random.randint(1, 600))
         return previous

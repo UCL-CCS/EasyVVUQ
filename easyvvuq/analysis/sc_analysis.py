@@ -123,7 +123,7 @@ class SCAnalysis(BaseAnalysisElement):
 
         Parameters
         ----------
-        filename : string 
+        filename : string
             name to the file to write the state to
         """
         logging.debug("Saving analysis state to %s" % filename)
@@ -140,7 +140,7 @@ class SCAnalysis(BaseAnalysisElement):
 
         Parameters
         ----------
-        filename : string 
+        filename : string
             name of the file to load
         """
         logging.debug("Loading analysis state from %s" % filename)
@@ -313,13 +313,13 @@ class SCAnalysis(BaseAnalysisElement):
             the name of the quantity of interest which is used
             to base the adaptation metric on.
         data_frame : pandas.DataFrame
-        store_stats_history : bool 
-            store the mean and variance at each refinement in self.mean_history 
-            and self.std_history. Used for checking convergence in the statistics 
+        store_stats_history : bool
+            store the mean and variance at each refinement in self.mean_history
+            and self.std_history. Used for checking convergence in the statistics
             over the refinement iterations
         method : string
-            name of the refinement error, default is 'surplus'. In this case the 
-            error is based on the hierarchical surplus, which is an interpolation 
+            name of the refinement error, default is 'surplus'. In this case the
+            error is based on the hierarchical surplus, which is an interpolation
             based error. Other possibilities are 'mean' and 'var',
             in which case the error is based on the difference in the mean or
             variance between the current estimate and the estimate obtained
@@ -586,7 +586,7 @@ class SCAnalysis(BaseAnalysisElement):
             name of the qoi
 
         samples: array
-            compute the mean by setting samples = self.samples. 
+            compute the mean by setting samples = self.samples.
             To compute the variance, set samples = (self.samples - mean)**2
 
         Returns
@@ -609,8 +609,8 @@ class SCAnalysis(BaseAnalysisElement):
         qoi : str
             name of the qoi
 
-        samples : array 
-            compute the mean by setting samples = self.samples. 
+        samples : array
+            compute the mean by setting samples = self.samples.
             To compute the variance, set samples = (self.samples - mean)**2
         """
 
@@ -686,7 +686,7 @@ class SCAnalysis(BaseAnalysisElement):
 
         Parameters
         ----------
-        samples: array 
+        samples: array
             array of code samples
         x (float (N,)): location in stochastic space at which to eval
           the surrogate
@@ -1019,7 +1019,7 @@ class SCAnalysis(BaseAnalysisElement):
             name of the Quantity of Interest for which to compute the indices
         typ : str
             Default = 'first_order'. 'all' is also possible
-        **kwargs : dict 
+        **kwargs : dict
             if this contains 'samples', use these instead of the SC samples ]
             in the database
 

@@ -156,7 +156,7 @@ class CampaignDB(BaseCampaignDB):
         Parameters
         ----------
         info: CampaignInfo
-            This `easyvvuq.data_structs.CampaignInfo` will contain information 
+            This `easyvvuq.data_structs.CampaignInfo` will contain information
             needed to construct the Campaign table.
         """
         is_db_empty = (self.session.query(CampaignTable).first() is None)
@@ -279,10 +279,9 @@ class CampaignDB(BaseCampaignDB):
         self.session.add(db_entry)
         self.session.commit()
 
-
     def replace_actions(self, app_name, actions):
         """Replace actions for an app with a given name.
-        
+
         Parameters
         ----------
         app_name: str
@@ -293,7 +292,6 @@ class CampaignDB(BaseCampaignDB):
         self.session.query(AppTable).filter_by(name=app_name).update(
             {'actions': easyvvuq_serialize(actions)})
         self.session.commit()
-
 
     def add_sampler(self, sampler_element):
         """Add new Sampler to the 'sampler' table.
@@ -821,6 +819,7 @@ class CampaignDB(BaseCampaignDB):
             useful in scenarios where you want several apps to work on the same runs.
         """
         self.commit_counter += 1
+
         def convert_nonserializable(obj):
             if isinstance(obj, np.int64):
                 return int(obj)
@@ -838,7 +837,7 @@ class CampaignDB(BaseCampaignDB):
             self.session.query(RunTable).\
                 filter(RunTable.id == run_id).\
                 update({'result': json.dumps(result_, default=convert_nonserializable),
-                        'run_dir': result['rundir']})            
+                        'run_dir': result['rundir']})
         if self.commit_counter % COMMIT_RATE == 0:
             self.session.commit()
 
@@ -885,7 +884,7 @@ class CampaignDB(BaseCampaignDB):
 
         Returns
         -------
-        DataFrame 
+        DataFrame
             Will construct a `DataFrame` from the decoder output dictionaries.
         """
         try:
@@ -921,7 +920,8 @@ class CampaignDB(BaseCampaignDB):
         try:
             return pd.DataFrame(pd_result)
         except ValueError:
-            raise RuntimeError('the results received from the database seem to be malformed - commonly because a vector quantity of interest changes dimensionality')
+            raise RuntimeError(
+                'the results received from the database seem to be malformed - commonly because a vector quantity of interest changes dimensionality')
 
     def relocate(self, new_path, campaign_name):
         """Update all runs in the db with the new campaign path.

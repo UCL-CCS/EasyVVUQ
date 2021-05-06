@@ -51,6 +51,7 @@ class CreateRunDirectory():
         under root). If left as False will create a hierarchical structure. This is useful
         so as not to overload the filesystem.
     """
+
     def __init__(self, root, flatten=False):
         self.root = root
         self.flatten = flatten
@@ -92,7 +93,7 @@ class CreateRunDirectory():
 
     def succeeded(self):
         """Has the `Action` finished successfully.
-        
+
         Returns
         -------
         bool

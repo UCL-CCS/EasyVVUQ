@@ -33,5 +33,5 @@ def test_action_status_slurm(mock_subprocess_run):
 
     action = ExecuteSLURM('tutorials/epidemic/example.slurm', '$target_dir')
     previous = {'rundir': '/tmp'}
-    #action.start(previous)
+    # action.start(previous)
     #assert(status.job_id == '65541')

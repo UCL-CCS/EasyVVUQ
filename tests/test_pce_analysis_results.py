@@ -119,7 +119,7 @@ def test_distribution(results):
         results.get_distribution('z')
     assert(results.get_distribution('f').pdf([0, 0]) == pytest.approx([0.44296863, 0.44296863]))
 
-    
+
 def test_describe(results_vectors):
     assert(
         results_vectors.describe()[

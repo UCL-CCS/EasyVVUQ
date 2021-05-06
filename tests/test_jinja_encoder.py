@@ -132,5 +132,6 @@ def test_jinjaencoder(tmpdir):
     encoder.encode(params, tmpdir)
     assert(os.path.isfile(os.path.join(tmpdir, 'namoptions.001')))
 
+
 if __name__ == "__main__":
     test_jinjaencoder("/tmp/")

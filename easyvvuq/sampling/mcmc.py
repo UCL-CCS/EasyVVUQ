@@ -24,9 +24,11 @@ class MCMCSampler(BaseSamplingElement, sampler_name='mcmc_sampler'):
     def __init__(self, init, q, qoi, n_chains=1, likelihood=lambda x: x[0], estimator=None):
         for param in init:
             if not hasattr(init[param], '__iter__'):
-                raise RuntimeError('all input intializations should be iterables of same length as there are chains')
+                raise RuntimeError(
+                    'all input intializations should be iterables of same length as there are chains')
             if len(init[param]) != n_chains:
-                raise RuntimeError('initialization dictionary should have separate values for each chain')
+                raise RuntimeError(
+                    'initialization dictionary should have separate values for each chain')
         self.init = dict(init)
         self.inputs = list(self.init.keys())
         for input_ in self.inputs:

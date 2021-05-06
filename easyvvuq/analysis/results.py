@@ -25,10 +25,11 @@ class AnalysisResults:
 
     qois: list of str
         List of qoi names used during the analysis.
-    
+
     inputs: list of str
         List of input names used during the analysis.
     """
+
     def __init__(self, raw_data=None, samples=None, qois=None, inputs=None):
         self.raw_data = raw_data
         self.samples = samples
@@ -247,7 +248,7 @@ class AnalysisResults:
         'L': array([0.00012716]),
         'a': array([0.00730415])}}
         >>> results.sobols_second('g1', 'L')
-        {'F': array([0.000121]), 'a': array([0.00012737]), 'D': array([0.00012716])}        
+        {'F': array([0.000121]), 'a': array([0.00012737]), 'D': array([0.00012716])}
         Returns
         -------
         dict
@@ -568,7 +569,7 @@ class AnalysisResults:
         ----------
         qoi: str
             QoI name
-        
+
         Returns
         -------
         A ChaosPy distribution
@@ -630,4 +631,3 @@ class AnalysisResults:
             return (key, 0)
         else:
             raise RuntimeError("this method expects either a string or tuple")
-

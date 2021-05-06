@@ -149,7 +149,7 @@ class PCEAnalysisResults(QMCAnalysisResults):
         ----------
         qoi: str
             QoI name
-        
+
         Returns
         -------
         A ChaosPy PDF

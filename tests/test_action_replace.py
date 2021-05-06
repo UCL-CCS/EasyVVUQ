@@ -10,6 +10,7 @@ import glob
 import subprocess
 import pytest
 
+
 @pytest.mark.skip(reason="fipy nonsense")
 def test_action_replace():
     params = {
@@ -54,8 +55,8 @@ def test_action_replace():
     input_json_files_PATH = [
         os.path.dirname(p)
         for p in glob.glob(
-                campaign._campaign_dir + '/**/fusion_in.json',
-                recursive=True
+            campaign._campaign_dir + '/**/fusion_in.json',
+            recursive=True
         )]
     curr_dir = os.getcwd()
     for run_dir in input_json_files_PATH:
