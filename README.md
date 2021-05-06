@@ -8,6 +8,8 @@
 [![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/3796/badge)](https://bestpractices.coreinfrastructure.org/projects/3796)
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/UCL-CCS/EasyVVUQ/dev?filepath=tutorials)
 
+You can find the API Documentation on our [GitHub Pages](https://ucl-ccs.github.io/EasyVVUQ/).
+
 The aim of EasyVVUQ is to facilitate verification, validation and 
 uncertainty quantification (VVUQ) for a wide variety of
 simulations. While very convenient for simple cases, EasyVVUQ is particularly well suited in situations where the simulations are computationally expensive, 
@@ -23,8 +25,6 @@ It also lets you construct surrogate models that are cheaper to evaluate than th
 
 Basic concepts are introduced [here](https://mybinder.org/v2/gh/UCL-CCS/EasyVVUQ/a6852d6c5ba36f15579e601d7a8d074505f31084?filepath=tutorials%2Fbasic_tutorial.ipynb) and [here](https://mybinder.org/v2/gh/UCL-CCS/EasyVVUQ/74d6a9f4b0eecc754918de2f3795395d35ac4875?filepath=tutorials%2Fvector_qoi_tutorial.ipynb). For an introduction for interfacing your simulation to EasyVVUQ see [this](
 https://mybinder.org/v2/gh/UCL-CCS/EasyVVUQ/bdd866c5d5d1f61140b776ec9ac47791b928a7cf?filepath=tutorials%2Fencoder_decoder_tutorial.ipynb) notebook.
-
-You can find the API Documentation on our [GitHub Pages](https://ucl-ccs.github.io/EasyVVUQ/).
 
 Available analysis and sampling methods:
 
