@@ -79,6 +79,7 @@ execute your simulation on a SLURM cluster.</p>
 
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
+
 <span class="k">class</span> <span class="nc">ExecuteSLURM</span><span class="p">():</span>
     <span class="sd">&quot;&quot;&quot;An Action to launch and track the execution of a SLURM job.</span>
 
@@ -121,7 +122,7 @@ execute your simulation on a SLURM cluster.</p>
                 <span class="p">[</span><span class="s1">&#39;squeue&#39;</span><span class="p">,</span> <span class="s1">&#39;-j&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">job_id</span><span class="p">],</span>
                 <span class="n">cwd</span><span class="o">=</span><span class="n">target_dir</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">capture_output</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
             <span class="n">stdout</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">job_id</span> <span class="ow">in</span> <span class="n">stdout</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">job_id</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">stdout</span><span class="p">:</span>
                 <span class="k">break</span>
             <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">600</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">previous</span>
@@ -188,7 +189,7 @@ execute your simulation on a SLURM cluster.</p>
                 <span class="p">[</span><span class="s1">&#39;squeue&#39;</span><span class="p">,</span> <span class="s1">&#39;-j&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">job_id</span><span class="p">],</span>
                 <span class="n">cwd</span><span class="o">=</span><span class="n">target_dir</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">capture_output</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
             <span class="n">stdout</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">job_id</span> <span class="ow">in</span> <span class="n">stdout</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">job_id</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">stdout</span><span class="p">:</span>
                 <span class="k">break</span>
             <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">600</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">previous</span>
@@ -270,7 +271,7 @@ where to put output files.</li>
                 <span class="p">[</span><span class="s1">&#39;squeue&#39;</span><span class="p">,</span> <span class="s1">&#39;-j&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">job_id</span><span class="p">],</span>
                 <span class="n">cwd</span><span class="o">=</span><span class="n">target_dir</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">capture_output</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
             <span class="n">stdout</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">job_id</span> <span class="ow">in</span> <span class="n">stdout</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">job_id</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">stdout</span><span class="p">:</span>
                 <span class="k">break</span>
             <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">600</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">previous</span>

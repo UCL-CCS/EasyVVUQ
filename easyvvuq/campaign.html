@@ -200,7 +200,7 @@ EasyVVUQ workflows.</p>
 <span class="sd">        app campaigns. To use this functionality both `params` and `actions` has to be specified.</span>
 <span class="sd">        The name of this app will be the same as the name of the Campaign.</span>
 <span class="sd">    actions: Actions, optional</span>
-<span class="sd">        Actions object associated with an application. See description of the `params` parameter </span>
+<span class="sd">        Actions object associated with an application. See description of the `params` parameter</span>
 <span class="sd">        for more details.</span>
 <span class="sd">    db_location: str, optional</span>
 <span class="sd">        Location of the underlying campaign database - either a path or</span>
@@ -248,9 +248,9 @@ EasyVVUQ workflows.</p>
 <span class="sd">    A typical instantiation might look like this.</span>
 
 <span class="sd">    &gt;&gt;&gt; params = {</span>
-<span class="sd">            &quot;S0&quot;: {&quot;type&quot;: &quot;float&quot;, &quot;default&quot;: 997}, </span>
-<span class="sd">            &quot;I0&quot;: {&quot;type&quot;: &quot;float&quot;, &quot;default&quot;: 3}, </span>
-<span class="sd">            &quot;beta&quot;: {&quot;type&quot;: &quot;float&quot;, &quot;default&quot;: 0.2}, </span>
+<span class="sd">            &quot;S0&quot;: {&quot;type&quot;: &quot;float&quot;, &quot;default&quot;: 997},</span>
+<span class="sd">            &quot;I0&quot;: {&quot;type&quot;: &quot;float&quot;, &quot;default&quot;: 3},</span>
+<span class="sd">            &quot;beta&quot;: {&quot;type&quot;: &quot;float&quot;, &quot;default&quot;: 0.2},</span>
 <span class="sd">            &quot;gamma&quot;: {&quot;type&quot;: &quot;float&quot;, &quot;default&quot;: 0.04, &quot;min&quot;: 0.0, &quot;max&quot;: 1.0},</span>
 <span class="sd">            &quot;iterations&quot;: {&quot;type&quot;: &quot;integer&quot;, &quot;default&quot;: 100},</span>
 <span class="sd">            &quot;outfile&quot;: {&quot;type&quot;: &quot;string&quot;, &quot;default&quot;: &quot;output.csv&quot;}</span>
@@ -405,7 +405,7 @@ EasyVVUQ workflows.</p>
 
     <span class="k">def</span> <span class="nf">replace_actions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">app_name</span><span class="p">,</span> <span class="n">actions</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Replace actions for an app with a given name.</span>
-<span class="sd">        </span>
+
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        app_name: str</span>
@@ -424,7 +424,7 @@ EasyVVUQ workflows.</p>
 <span class="sd">        sampler : Sampler</span>
 <span class="sd">            Sampler that will be used to create runs for the current campaign.</span>
 <span class="sd">        update : bool</span>
-<span class="sd">            If set to True it will not add the sampler to the database, just change </span>
+<span class="sd">            If set to True it will not add the sampler to the database, just change</span>
 <span class="sd">            it as the active sampler.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">sampler</span><span class="p">,</span> <span class="n">BaseSamplingElement</span><span class="p">):</span>
@@ -565,7 +565,7 @@ EasyVVUQ workflows.</p>
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        nsamples: int</span>
-<span class="sd">            Number of samples to draw. For infinite samplers or when you want to process </span>
+<span class="sd">            Number of samples to draw. For infinite samplers or when you want to process</span>
 <span class="sd">            samples in batches.</span>
 <span class="sd">        pool: Executor</span>
 <span class="sd">            A pool object to be used when processing runs (e.g. instance of `ThreadPoolExecutor` or</span>
@@ -670,7 +670,7 @@ EasyVVUQ workflows.</p>
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        DataFrame</span>
-<span class="sd">            A DataFrame with the simulation results along with the inputs </span>
+<span class="sd">            A DataFrame with the simulation results along with the inputs</span>
 <span class="sd">            used to produce them.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">last_iteration</span><span class="p">:</span>
@@ -726,7 +726,7 @@ EasyVVUQ workflows.</p>
 <span class="sd">        -------</span>
 <span class="sd">        AnalysisResults</span>
 <span class="sd">            An object representing analysis results. Can be used to interact with those results</span>
-<span class="sd">            in some way. Plot, retrieve surrogate models and so on. </span>
+<span class="sd">            in some way. Plot, retrieve surrogate models and so on.</span>
 <span class="sd">            See `easyvvuq.analysis.AnalysisResults` for further information.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">collation_result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_collation_result</span><span class="p">()</span>
@@ -843,7 +843,7 @@ EasyVVUQ workflows.</p>
 <span class="sd">        app campaigns. To use this functionality both `params` and `actions` has to be specified.</span>
 <span class="sd">        The name of this app will be the same as the name of the Campaign.</span>
 <span class="sd">    actions: Actions, optional</span>
-<span class="sd">        Actions object associated with an application. See description of the `params` parameter </span>
+<span class="sd">        Actions object associated with an application. See description of the `params` parameter</span>
 <span class="sd">        for more details.</span>
 <span class="sd">    db_location: str, optional</span>
 <span class="sd">        Location of the underlying campaign database - either a path or</span>
@@ -891,9 +891,9 @@ EasyVVUQ workflows.</p>
 <span class="sd">    A typical instantiation might look like this.</span>
 
 <span class="sd">    &gt;&gt;&gt; params = {</span>
-<span class="sd">            &quot;S0&quot;: {&quot;type&quot;: &quot;float&quot;, &quot;default&quot;: 997}, </span>
-<span class="sd">            &quot;I0&quot;: {&quot;type&quot;: &quot;float&quot;, &quot;default&quot;: 3}, </span>
-<span class="sd">            &quot;beta&quot;: {&quot;type&quot;: &quot;float&quot;, &quot;default&quot;: 0.2}, </span>
+<span class="sd">            &quot;S0&quot;: {&quot;type&quot;: &quot;float&quot;, &quot;default&quot;: 997},</span>
+<span class="sd">            &quot;I0&quot;: {&quot;type&quot;: &quot;float&quot;, &quot;default&quot;: 3},</span>
+<span class="sd">            &quot;beta&quot;: {&quot;type&quot;: &quot;float&quot;, &quot;default&quot;: 0.2},</span>
 <span class="sd">            &quot;gamma&quot;: {&quot;type&quot;: &quot;float&quot;, &quot;default&quot;: 0.04, &quot;min&quot;: 0.0, &quot;max&quot;: 1.0},</span>
 <span class="sd">            &quot;iterations&quot;: {&quot;type&quot;: &quot;integer&quot;, &quot;default&quot;: 100},</span>
 <span class="sd">            &quot;outfile&quot;: {&quot;type&quot;: &quot;string&quot;, &quot;default&quot;: &quot;output.csv&quot;}</span>
@@ -1048,7 +1048,7 @@ EasyVVUQ workflows.</p>
 
     <span class="k">def</span> <span class="nf">replace_actions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">app_name</span><span class="p">,</span> <span class="n">actions</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Replace actions for an app with a given name.</span>
-<span class="sd">        </span>
+
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        app_name: str</span>
@@ -1067,7 +1067,7 @@ EasyVVUQ workflows.</p>
 <span class="sd">        sampler : Sampler</span>
 <span class="sd">            Sampler that will be used to create runs for the current campaign.</span>
 <span class="sd">        update : bool</span>
-<span class="sd">            If set to True it will not add the sampler to the database, just change </span>
+<span class="sd">            If set to True it will not add the sampler to the database, just change</span>
 <span class="sd">            it as the active sampler.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">sampler</span><span class="p">,</span> <span class="n">BaseSamplingElement</span><span class="p">):</span>
@@ -1208,7 +1208,7 @@ EasyVVUQ workflows.</p>
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        nsamples: int</span>
-<span class="sd">            Number of samples to draw. For infinite samplers or when you want to process </span>
+<span class="sd">            Number of samples to draw. For infinite samplers or when you want to process</span>
 <span class="sd">            samples in batches.</span>
 <span class="sd">        pool: Executor</span>
 <span class="sd">            A pool object to be used when processing runs (e.g. instance of `ThreadPoolExecutor` or</span>
@@ -1313,7 +1313,7 @@ EasyVVUQ workflows.</p>
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        DataFrame</span>
-<span class="sd">            A DataFrame with the simulation results along with the inputs </span>
+<span class="sd">            A DataFrame with the simulation results along with the inputs</span>
 <span class="sd">            used to produce them.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">last_iteration</span><span class="p">:</span>
@@ -1369,7 +1369,7 @@ EasyVVUQ workflows.</p>
 <span class="sd">        -------</span>
 <span class="sd">        AnalysisResults</span>
 <span class="sd">            An object representing analysis results. Can be used to interact with those results</span>
-<span class="sd">            in some way. Plot, retrieve surrogate models and so on. </span>
+<span class="sd">            in some way. Plot, retrieve surrogate models and so on.</span>
 <span class="sd">            See `easyvvuq.analysis.AnalysisResults` for further information.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">collation_result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_collation_result</span><span class="p">()</span>
@@ -1473,7 +1473,7 @@ method of the Campaign class. But this can be a useful shorthand when working wi
 app campaigns. To use this functionality both <code>params</code> and <code>actions</code> has to be specified.
 The name of this app will be the same as the name of the Campaign.</li>
 <li><strong>actions</strong> (Actions, optional):
-Actions object associated with an application. See description of the <code>params</code> parameter 
+Actions object associated with an application. See description of the <code>params</code> parameter
 for more details.</li>
 <li><strong>db_location</strong> (str, optional):
 Location of the underlying campaign database - either a path or
@@ -1523,9 +1523,9 @@ The database id of the currently set Sampler object</li>
 <p>A typical instantiation might look like this.</p>
 
 <div class="codehilite"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
-<span class="go">        &quot;S0&quot;: {&quot;type&quot;: &quot;float&quot;, &quot;default&quot;: 997}, </span>
-<span class="go">        &quot;I0&quot;: {&quot;type&quot;: &quot;float&quot;, &quot;default&quot;: 3}, </span>
-<span class="go">        &quot;beta&quot;: {&quot;type&quot;: &quot;float&quot;, &quot;default&quot;: 0.2}, </span>
+<span class="go">        &quot;S0&quot;: {&quot;type&quot;: &quot;float&quot;, &quot;default&quot;: 997},</span>
+<span class="go">        &quot;I0&quot;: {&quot;type&quot;: &quot;float&quot;, &quot;default&quot;: 3},</span>
+<span class="go">        &quot;beta&quot;: {&quot;type&quot;: &quot;float&quot;, &quot;default&quot;: 0.2},</span>
 <span class="go">        &quot;gamma&quot;: {&quot;type&quot;: &quot;float&quot;, &quot;default&quot;: 0.04, &quot;min&quot;: 0.0, &quot;max&quot;: 1.0},</span>
 <span class="go">        &quot;iterations&quot;: {&quot;type&quot;: &quot;integer&quot;, &quot;default&quot;: 100},</span>
 <span class="go">        &quot;outfile&quot;: {&quot;type&quot;: &quot;string&quot;, &quot;default&quot;: &quot;output.csv&quot;}</span>
@@ -1809,7 +1809,7 @@ selected.</li>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">replace_actions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">app_name</span><span class="p">,</span> <span class="n">actions</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Replace actions for an app with a given name.</span>
-<span class="sd">        </span>
+
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        app_name: str</span>
@@ -1855,7 +1855,7 @@ Name of the app.</li>
 <span class="sd">        sampler : Sampler</span>
 <span class="sd">            Sampler that will be used to create runs for the current campaign.</span>
 <span class="sd">        update : bool</span>
-<span class="sd">            If set to True it will not add the sampler to the database, just change </span>
+<span class="sd">            If set to True it will not add the sampler to the database, just change</span>
 <span class="sd">            it as the active sampler.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">sampler</span><span class="p">,</span> <span class="n">BaseSamplingElement</span><span class="p">):</span>
@@ -1880,7 +1880,7 @@ Name of the app.</li>
 <li><strong>sampler</strong> (Sampler):
 Sampler that will be used to create runs for the current campaign.</li>
 <li><strong>update</strong> (bool):
-If set to True it will not add the sampler to the database, just change 
+If set to True it will not add the sampler to the database, just change
 it as the active sampler.</li>
 </ul>
 </div>
@@ -2172,7 +2172,7 @@ new runs directory</li>
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        nsamples: int</span>
-<span class="sd">            Number of samples to draw. For infinite samplers or when you want to process </span>
+<span class="sd">            Number of samples to draw. For infinite samplers or when you want to process</span>
 <span class="sd">            samples in batches.</span>
 <span class="sd">        pool: Executor</span>
 <span class="sd">            A pool object to be used when processing runs (e.g. instance of `ThreadPoolExecutor` or</span>
@@ -2197,7 +2197,7 @@ new runs directory</li>
 
 <ul>
 <li><strong>nsamples</strong> (int):
-Number of samples to draw. For infinite samplers or when you want to process 
+Number of samples to draw. For infinite samplers or when you want to process
 samples in batches.</li>
 <li><strong>pool</strong> (Executor):
 A pool object to be used when processing runs (e.g. instance of <code>ThreadPoolExecutor</code> or
@@ -2407,7 +2407,7 @@ back to ENCODED, then runs collate() again</p>
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        DataFrame</span>
-<span class="sd">            A DataFrame with the simulation results along with the inputs </span>
+<span class="sd">            A DataFrame with the simulation results along with the inputs</span>
 <span class="sd">            used to produce them.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">last_iteration</span><span class="p">:</span>
@@ -2432,7 +2432,7 @@ Will only return the result of the last iteration.</li>
 <h6 id="returns">Returns</h6>
 
 <ul>
-<li><strong>DataFrame</strong>: A DataFrame with the simulation results along with the inputs 
+<li><strong>DataFrame</strong>: A DataFrame with the simulation results along with the inputs
 used to produce them.</li>
 </ul>
 </div>
@@ -2554,7 +2554,7 @@ run outputs.</li>
 <span class="sd">        -------</span>
 <span class="sd">        AnalysisResults</span>
 <span class="sd">            An object representing analysis results. Can be used to interact with those results</span>
-<span class="sd">            in some way. Plot, retrieve surrogate models and so on. </span>
+<span class="sd">            in some way. Plot, retrieve surrogate models and so on.</span>
 <span class="sd">            See `easyvvuq.analysis.AnalysisResults` for further information.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">collation_result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_collation_result</span><span class="p">()</span>
@@ -2580,7 +2580,7 @@ Argument to the analysis class constructor (after sampler).</li>
 
 <ul>
 <li><strong>AnalysisResults</strong>: An object representing analysis results. Can be used to interact with those results
-in some way. Plot, retrieve surrogate models and so on. 
+in some way. Plot, retrieve surrogate models and so on.
 See <code><a href="analysis.html#AnalysisResults">easyvvuq.analysis.AnalysisResults</a></code> for further information.</li>
 </ul>
 </div>

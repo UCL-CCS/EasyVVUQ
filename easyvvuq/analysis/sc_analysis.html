@@ -281,7 +281,7 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        filename : string </span>
+<span class="sd">        filename : string</span>
 <span class="sd">            name to the file to write the state to</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Saving analysis state to </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">filename</span><span class="p">)</span>
@@ -298,7 +298,7 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        filename : string </span>
+<span class="sd">        filename : string</span>
 <span class="sd">            name of the file to load</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Loading analysis state from </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">filename</span><span class="p">)</span>
@@ -471,13 +471,13 @@
 <span class="sd">            the name of the quantity of interest which is used</span>
 <span class="sd">            to base the adaptation metric on.</span>
 <span class="sd">        data_frame : pandas.DataFrame</span>
-<span class="sd">        store_stats_history : bool </span>
-<span class="sd">            store the mean and variance at each refinement in self.mean_history </span>
-<span class="sd">            and self.std_history. Used for checking convergence in the statistics </span>
+<span class="sd">        store_stats_history : bool</span>
+<span class="sd">            store the mean and variance at each refinement in self.mean_history</span>
+<span class="sd">            and self.std_history. Used for checking convergence in the statistics</span>
 <span class="sd">            over the refinement iterations</span>
 <span class="sd">        method : string</span>
-<span class="sd">            name of the refinement error, default is &#39;surplus&#39;. In this case the </span>
-<span class="sd">            error is based on the hierarchical surplus, which is an interpolation </span>
+<span class="sd">            name of the refinement error, default is &#39;surplus&#39;. In this case the</span>
+<span class="sd">            error is based on the hierarchical surplus, which is an interpolation</span>
 <span class="sd">            based error. Other possibilities are &#39;mean&#39; and &#39;var&#39;,</span>
 <span class="sd">            in which case the error is based on the difference in the mean or</span>
 <span class="sd">            variance between the current estimate and the estimate obtained</span>
@@ -744,7 +744,7 @@
 <span class="sd">            name of the qoi</span>
 
 <span class="sd">        samples: array</span>
-<span class="sd">            compute the mean by setting samples = self.samples. </span>
+<span class="sd">            compute the mean by setting samples = self.samples.</span>
 <span class="sd">            To compute the variance, set samples = (self.samples - mean)**2</span>
 
 <span class="sd">        Returns</span>
@@ -767,8 +767,8 @@
 <span class="sd">        qoi : str</span>
 <span class="sd">            name of the qoi</span>
 
-<span class="sd">        samples : array </span>
-<span class="sd">            compute the mean by setting samples = self.samples. </span>
+<span class="sd">        samples : array</span>
+<span class="sd">            compute the mean by setting samples = self.samples.</span>
 <span class="sd">            To compute the variance, set samples = (self.samples - mean)**2</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
@@ -844,7 +844,7 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        samples: array </span>
+<span class="sd">        samples: array</span>
 <span class="sd">            array of code samples</span>
 <span class="sd">        x (float (N,)): location in stochastic space at which to eval</span>
 <span class="sd">          the surrogate</span>
@@ -1177,7 +1177,7 @@
 <span class="sd">            name of the Quantity of Interest for which to compute the indices</span>
 <span class="sd">        typ : str</span>
 <span class="sd">            Default = &#39;first_order&#39;. &#39;all&#39; is also possible</span>
-<span class="sd">        **kwargs : dict </span>
+<span class="sd">        **kwargs : dict</span>
 <span class="sd">            if this contains &#39;samples&#39;, use these instead of the SC samples ]</span>
 <span class="sd">            in the database</span>
 
@@ -1773,7 +1773,7 @@ List of input names used during the analysis.</li>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        filename : string </span>
+<span class="sd">        filename : string</span>
 <span class="sd">            name to the file to write the state to</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Saving analysis state to </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">filename</span><span class="p">)</span>
@@ -1790,7 +1790,7 @@ List of input names used during the analysis.</li>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        filename : string </span>
+<span class="sd">        filename : string</span>
 <span class="sd">            name of the file to load</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Loading analysis state from </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">filename</span><span class="p">)</span>
@@ -1963,13 +1963,13 @@ List of input names used during the analysis.</li>
 <span class="sd">            the name of the quantity of interest which is used</span>
 <span class="sd">            to base the adaptation metric on.</span>
 <span class="sd">        data_frame : pandas.DataFrame</span>
-<span class="sd">        store_stats_history : bool </span>
-<span class="sd">            store the mean and variance at each refinement in self.mean_history </span>
-<span class="sd">            and self.std_history. Used for checking convergence in the statistics </span>
+<span class="sd">        store_stats_history : bool</span>
+<span class="sd">            store the mean and variance at each refinement in self.mean_history</span>
+<span class="sd">            and self.std_history. Used for checking convergence in the statistics</span>
 <span class="sd">            over the refinement iterations</span>
 <span class="sd">        method : string</span>
-<span class="sd">            name of the refinement error, default is &#39;surplus&#39;. In this case the </span>
-<span class="sd">            error is based on the hierarchical surplus, which is an interpolation </span>
+<span class="sd">            name of the refinement error, default is &#39;surplus&#39;. In this case the</span>
+<span class="sd">            error is based on the hierarchical surplus, which is an interpolation</span>
 <span class="sd">            based error. Other possibilities are &#39;mean&#39; and &#39;var&#39;,</span>
 <span class="sd">            in which case the error is based on the difference in the mean or</span>
 <span class="sd">            variance between the current estimate and the estimate obtained</span>
@@ -2236,7 +2236,7 @@ List of input names used during the analysis.</li>
 <span class="sd">            name of the qoi</span>
 
 <span class="sd">        samples: array</span>
-<span class="sd">            compute the mean by setting samples = self.samples. </span>
+<span class="sd">            compute the mean by setting samples = self.samples.</span>
 <span class="sd">            To compute the variance, set samples = (self.samples - mean)**2</span>
 
 <span class="sd">        Returns</span>
@@ -2259,8 +2259,8 @@ List of input names used during the analysis.</li>
 <span class="sd">        qoi : str</span>
 <span class="sd">            name of the qoi</span>
 
-<span class="sd">        samples : array </span>
-<span class="sd">            compute the mean by setting samples = self.samples. </span>
+<span class="sd">        samples : array</span>
+<span class="sd">            compute the mean by setting samples = self.samples.</span>
 <span class="sd">            To compute the variance, set samples = (self.samples - mean)**2</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
@@ -2336,7 +2336,7 @@ List of input names used during the analysis.</li>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        samples: array </span>
+<span class="sd">        samples: array</span>
 <span class="sd">            array of code samples</span>
 <span class="sd">        x (float (N,)): location in stochastic space at which to eval</span>
 <span class="sd">          the surrogate</span>
@@ -2669,7 +2669,7 @@ List of input names used during the analysis.</li>
 <span class="sd">            name of the Quantity of Interest for which to compute the indices</span>
 <span class="sd">        typ : str</span>
 <span class="sd">            Default = &#39;first_order&#39;. &#39;all&#39; is also possible</span>
-<span class="sd">        **kwargs : dict </span>
+<span class="sd">        **kwargs : dict</span>
 <span class="sd">            if this contains &#39;samples&#39;, use these instead of the SC samples ]</span>
 <span class="sd">            in the database</span>
 
@@ -3084,7 +3084,7 @@ performed).</li>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        filename : string </span>
+<span class="sd">        filename : string</span>
 <span class="sd">            name to the file to write the state to</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Saving analysis state to </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">filename</span><span class="p">)</span>
@@ -3127,7 +3127,7 @@ name to the file to write the state to</li>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        filename : string </span>
+<span class="sd">        filename : string</span>
 <span class="sd">            name of the file to load</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Loading analysis state from </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">filename</span><span class="p">)</span>
@@ -3386,13 +3386,13 @@ see page 12 Gerstner &amp; Griebel, numerical integration using sparse grids</p>
 <span class="sd">            the name of the quantity of interest which is used</span>
 <span class="sd">            to base the adaptation metric on.</span>
 <span class="sd">        data_frame : pandas.DataFrame</span>
-<span class="sd">        store_stats_history : bool </span>
-<span class="sd">            store the mean and variance at each refinement in self.mean_history </span>
-<span class="sd">            and self.std_history. Used for checking convergence in the statistics </span>
+<span class="sd">        store_stats_history : bool</span>
+<span class="sd">            store the mean and variance at each refinement in self.mean_history</span>
+<span class="sd">            and self.std_history. Used for checking convergence in the statistics</span>
 <span class="sd">            over the refinement iterations</span>
 <span class="sd">        method : string</span>
-<span class="sd">            name of the refinement error, default is &#39;surplus&#39;. In this case the </span>
-<span class="sd">            error is based on the hierarchical surplus, which is an interpolation </span>
+<span class="sd">            name of the refinement error, default is &#39;surplus&#39;. In this case the</span>
+<span class="sd">            error is based on the hierarchical surplus, which is an interpolation</span>
 <span class="sd">            based error. Other possibilities are &#39;mean&#39; and &#39;var&#39;,</span>
 <span class="sd">            in which case the error is based on the difference in the mean or</span>
 <span class="sd">            variance between the current estimate and the estimate obtained</span>
@@ -3540,12 +3540,12 @@ the name of the quantity of interest which is used
 to base the adaptation metric on.</li>
 <li><p><strong>data_frame</strong> (pandas.DataFrame):</p></li>
 <li><p><strong>store_stats_history</strong> (bool):
-store the mean and variance at each refinement in self.mean_history 
-and self.std_history. Used for checking convergence in the statistics 
+store the mean and variance at each refinement in self.mean_history
+and self.std_history. Used for checking convergence in the statistics
 over the refinement iterations</p></li>
 <li><strong>method</strong> (string):
-name of the refinement error, default is 'surplus'. In this case the 
-error is based on the hierarchical surplus, which is an interpolation 
+name of the refinement error, default is 'surplus'. In this case the
+error is based on the hierarchical surplus, which is an interpolation
 based error. Other possibilities are 'mean' and 'var',
 in which case the error is based on the difference in the mean or
 variance between the current estimate and the estimate obtained
@@ -3832,7 +3832,7 @@ level of the (sparse) grid, default = self.L</li>
 <span class="sd">            name of the qoi</span>
 
 <span class="sd">        samples: array</span>
-<span class="sd">            compute the mean by setting samples = self.samples. </span>
+<span class="sd">            compute the mean by setting samples = self.samples.</span>
 <span class="sd">            To compute the variance, set samples = (self.samples - mean)**2</span>
 
 <span class="sd">        Returns</span>
@@ -3855,7 +3855,7 @@ level of the (sparse) grid, default = self.L</li>
 <li><strong>qoi</strong> (str):
 name of the qoi</li>
 <li><strong>samples</strong> (array):
-compute the mean by setting samples = self.samples. 
+compute the mean by setting samples = self.samples.
 To compute the variance, set samples = (self.samples - mean)**2</li>
 </ul>
 
@@ -3889,8 +3889,8 @@ To compute the variance, set samples = (self.samples - mean)**2</li>
 <span class="sd">        qoi : str</span>
 <span class="sd">            name of the qoi</span>
 
-<span class="sd">        samples : array </span>
-<span class="sd">            compute the mean by setting samples = self.samples. </span>
+<span class="sd">        samples : array</span>
+<span class="sd">            compute the mean by setting samples = self.samples.</span>
 <span class="sd">            To compute the variance, set samples = (self.samples - mean)**2</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
@@ -3954,7 +3954,7 @@ Uses the general combination technique (page 12).
 <li><strong>qoi</strong> (str):
 name of the qoi</li>
 <li><strong>samples</strong> (array):
-compute the mean by setting samples = self.samples. 
+compute the mean by setting samples = self.samples.
 To compute the variance, set samples = (self.samples - mean)**2</li>
 </ul>
 </div>
@@ -4027,7 +4027,7 @@ name of the qoi</li>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        samples: array </span>
+<span class="sd">        samples: array</span>
 <span class="sd">            array of code samples</span>
 <span class="sd">        x (float (N,)): location in stochastic space at which to eval</span>
 <span class="sd">          the surrogate</span>
@@ -4568,7 +4568,7 @@ tuple of combination coefficients computed by compute_comb_coef</li>
 <span class="sd">            name of the Quantity of Interest for which to compute the indices</span>
 <span class="sd">        typ : str</span>
 <span class="sd">            Default = &#39;first_order&#39;. &#39;all&#39; is also possible</span>
-<span class="sd">        **kwargs : dict </span>
+<span class="sd">        **kwargs : dict</span>
 <span class="sd">            if this contains &#39;samples&#39;, use these instead of the SC samples ]</span>
 <span class="sd">            in the database</span>
 

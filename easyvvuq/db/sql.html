@@ -436,7 +436,7 @@
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        info: CampaignInfo</span>
-<span class="sd">            This `easyvvuq.data_structs.CampaignInfo` will contain information </span>
+<span class="sd">            This `easyvvuq.data_structs.CampaignInfo` will contain information</span>
 <span class="sd">            needed to construct the Campaign table.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">is_db_empty</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">CampaignTable</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span>
@@ -559,10 +559,9 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">db_entry</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
 
-
     <span class="k">def</span> <span class="nf">replace_actions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">app_name</span><span class="p">,</span> <span class="n">actions</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Replace actions for an app with a given name.</span>
-<span class="sd">        </span>
+
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        app_name: str</span>
@@ -573,7 +572,6 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">AppTable</span><span class="p">)</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">app_name</span><span class="p">)</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
             <span class="p">{</span><span class="s1">&#39;actions&#39;</span><span class="p">:</span> <span class="n">easyvvuq_serialize</span><span class="p">(</span><span class="n">actions</span><span class="p">)})</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
-
 
     <span class="k">def</span> <span class="nf">add_sampler</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sampler_element</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Add new Sampler to the &#39;sampler&#39; table.</span>
@@ -1101,6 +1099,7 @@
 <span class="sd">            useful in scenarios where you want several apps to work on the same runs.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">commit_counter</span> <span class="o">+=</span> <span class="mi">1</span>
+
         <span class="k">def</span> <span class="nf">convert_nonserializable</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">):</span>
                 <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
@@ -1118,7 +1117,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">RunTable</span><span class="p">)</span><span class="o">.</span>\
                 <span class="nb">filter</span><span class="p">(</span><span class="n">RunTable</span><span class="o">.</span><span class="n">id</span> <span class="o">==</span> <span class="n">run_id</span><span class="p">)</span><span class="o">.</span>\
                 <span class="n">update</span><span class="p">({</span><span class="s1">&#39;result&#39;</span><span class="p">:</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">result_</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">convert_nonserializable</span><span class="p">),</span>
-                        <span class="s1">&#39;run_dir&#39;</span><span class="p">:</span> <span class="n">result</span><span class="p">[</span><span class="s1">&#39;rundir&#39;</span><span class="p">]})</span>            
+                        <span class="s1">&#39;run_dir&#39;</span><span class="p">:</span> <span class="n">result</span><span class="p">[</span><span class="s1">&#39;rundir&#39;</span><span class="p">]})</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">commit_counter</span> <span class="o">%</span> <span class="n">COMMIT_RATE</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
 
@@ -1165,7 +1164,7 @@
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        DataFrame </span>
+<span class="sd">        DataFrame</span>
 <span class="sd">            Will construct a `DataFrame` from the decoder output dictionaries.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
@@ -1201,7 +1200,8 @@
         <span class="k">try</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">pd_result</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;the results received from the database seem to be malformed - commonly because a vector quantity of interest changes dimensionality&#39;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+                <span class="s1">&#39;the results received from the database seem to be malformed - commonly because a vector quantity of interest changes dimensionality&#39;</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">relocate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_path</span><span class="p">,</span> <span class="n">campaign_name</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Update all runs in the db with the new campaign path.</span>
@@ -1857,7 +1857,7 @@ for example, any mapped columns or relationships.</p>
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        info: CampaignInfo</span>
-<span class="sd">            This `easyvvuq.data_structs.CampaignInfo` will contain information </span>
+<span class="sd">            This `easyvvuq.data_structs.CampaignInfo` will contain information</span>
 <span class="sd">            needed to construct the Campaign table.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">is_db_empty</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">CampaignTable</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span>
@@ -1980,10 +1980,9 @@ for example, any mapped columns or relationships.</p>
         <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">db_entry</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
 
-
     <span class="k">def</span> <span class="nf">replace_actions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">app_name</span><span class="p">,</span> <span class="n">actions</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Replace actions for an app with a given name.</span>
-<span class="sd">        </span>
+
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        app_name: str</span>
@@ -1994,7 +1993,6 @@ for example, any mapped columns or relationships.</p>
         <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">AppTable</span><span class="p">)</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">app_name</span><span class="p">)</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
             <span class="p">{</span><span class="s1">&#39;actions&#39;</span><span class="p">:</span> <span class="n">easyvvuq_serialize</span><span class="p">(</span><span class="n">actions</span><span class="p">)})</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
-
 
     <span class="k">def</span> <span class="nf">add_sampler</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sampler_element</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Add new Sampler to the &#39;sampler&#39; table.</span>
@@ -2522,6 +2520,7 @@ for example, any mapped columns or relationships.</p>
 <span class="sd">            useful in scenarios where you want several apps to work on the same runs.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">commit_counter</span> <span class="o">+=</span> <span class="mi">1</span>
+
         <span class="k">def</span> <span class="nf">convert_nonserializable</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">):</span>
                 <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
@@ -2539,7 +2538,7 @@ for example, any mapped columns or relationships.</p>
             <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">RunTable</span><span class="p">)</span><span class="o">.</span>\
                 <span class="nb">filter</span><span class="p">(</span><span class="n">RunTable</span><span class="o">.</span><span class="n">id</span> <span class="o">==</span> <span class="n">run_id</span><span class="p">)</span><span class="o">.</span>\
                 <span class="n">update</span><span class="p">({</span><span class="s1">&#39;result&#39;</span><span class="p">:</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">result_</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">convert_nonserializable</span><span class="p">),</span>
-                        <span class="s1">&#39;run_dir&#39;</span><span class="p">:</span> <span class="n">result</span><span class="p">[</span><span class="s1">&#39;rundir&#39;</span><span class="p">]})</span>            
+                        <span class="s1">&#39;run_dir&#39;</span><span class="p">:</span> <span class="n">result</span><span class="p">[</span><span class="s1">&#39;rundir&#39;</span><span class="p">]})</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">commit_counter</span> <span class="o">%</span> <span class="n">COMMIT_RATE</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
 
@@ -2586,7 +2585,7 @@ for example, any mapped columns or relationships.</p>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        DataFrame </span>
+<span class="sd">        DataFrame</span>
 <span class="sd">            Will construct a `DataFrame` from the decoder output dictionaries.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
@@ -2622,7 +2621,8 @@ for example, any mapped columns or relationships.</p>
         <span class="k">try</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">pd_result</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;the results received from the database seem to be malformed - commonly because a vector quantity of interest changes dimensionality&#39;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+                <span class="s1">&#39;the results received from the database seem to be malformed - commonly because a vector quantity of interest changes dimensionality&#39;</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">relocate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_path</span><span class="p">,</span> <span class="n">campaign_name</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Update all runs in the db with the new campaign path.</span>
@@ -2754,7 +2754,7 @@ Name of the Campaign to resume. Must already exist in the database.</li>
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        info: CampaignInfo</span>
-<span class="sd">            This `easyvvuq.data_structs.CampaignInfo` will contain information </span>
+<span class="sd">            This `easyvvuq.data_structs.CampaignInfo` will contain information</span>
 <span class="sd">            needed to construct the Campaign table.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">is_db_empty</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">CampaignTable</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span>
@@ -2777,7 +2777,7 @@ Name of the Campaign to resume. Must already exist in the database.</li>
 
 <ul>
 <li><strong>info</strong> (CampaignInfo):
-This <code><a href="../data_structs.html#CampaignInfo">easyvvuq.data_structs.CampaignInfo</a></code> will contain information 
+This <code><a href="../data_structs.html#CampaignInfo">easyvvuq.data_structs.CampaignInfo</a></code> will contain information
 needed to construct the Campaign table.</li>
 </ul>
 </div>
@@ -3042,7 +3042,7 @@ Application definition.</li>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">replace_actions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">app_name</span><span class="p">,</span> <span class="n">actions</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Replace actions for an app with a given name.</span>
-<span class="sd">        </span>
+
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        app_name: str</span>
@@ -4108,6 +4108,7 @@ Name of the selected campaign.</li>
 <span class="sd">            useful in scenarios where you want several apps to work on the same runs.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">commit_counter</span> <span class="o">+=</span> <span class="mi">1</span>
+
         <span class="k">def</span> <span class="nf">convert_nonserializable</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">):</span>
                 <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
@@ -4125,7 +4126,7 @@ Name of the selected campaign.</li>
             <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">RunTable</span><span class="p">)</span><span class="o">.</span>\
                 <span class="nb">filter</span><span class="p">(</span><span class="n">RunTable</span><span class="o">.</span><span class="n">id</span> <span class="o">==</span> <span class="n">run_id</span><span class="p">)</span><span class="o">.</span>\
                 <span class="n">update</span><span class="p">({</span><span class="s1">&#39;result&#39;</span><span class="p">:</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">result_</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">convert_nonserializable</span><span class="p">),</span>
-                        <span class="s1">&#39;run_dir&#39;</span><span class="p">:</span> <span class="n">result</span><span class="p">[</span><span class="s1">&#39;rundir&#39;</span><span class="p">]})</span>            
+                        <span class="s1">&#39;run_dir&#39;</span><span class="p">:</span> <span class="n">result</span><span class="p">[</span><span class="s1">&#39;rundir&#39;</span><span class="p">]})</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">commit_counter</span> <span class="o">%</span> <span class="n">COMMIT_RATE</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
 </pre></div>
@@ -4237,7 +4238,7 @@ dictionary with the results (from the decoder)</li>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        DataFrame </span>
+<span class="sd">        DataFrame</span>
 <span class="sd">            Will construct a `DataFrame` from the decoder output dictionaries.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
@@ -4273,7 +4274,8 @@ dictionary with the results (from the decoder)</li>
         <span class="k">try</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">pd_result</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;the results received from the database seem to be malformed - commonly because a vector quantity of interest changes dimensionality&#39;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+                <span class="s1">&#39;the results received from the database seem to be malformed - commonly because a vector quantity of interest changes dimensionality&#39;</span><span class="p">)</span>
 </pre></div>
 
         </details>

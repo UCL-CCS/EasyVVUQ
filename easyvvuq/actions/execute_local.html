@@ -245,6 +245,7 @@ simulations locally. Some Actions will also be useful when using Dask.</p>
 <span class="sd">        under root). If left as False will create a hierarchical structure. This is useful</span>
 <span class="sd">        so as not to overload the filesystem.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">root</span><span class="p">,</span> <span class="n">flatten</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">root</span> <span class="o">=</span> <span class="n">root</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">flatten</span> <span class="o">=</span> <span class="n">flatten</span>
@@ -286,7 +287,7 @@ simulations locally. Some Actions will also be useful when using Dask.</p>
 
     <span class="k">def</span> <span class="nf">succeeded</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Has the `Action` finished successfully.</span>
-<span class="sd">        </span>
+
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        bool</span>
@@ -552,6 +553,7 @@ root folder, for example '/tmp' or if you want to use ram based filesystem it co
 <span class="sd">        under root). If left as False will create a hierarchical structure. This is useful</span>
 <span class="sd">        so as not to overload the filesystem.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">root</span><span class="p">,</span> <span class="n">flatten</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">root</span> <span class="o">=</span> <span class="n">root</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">flatten</span> <span class="o">=</span> <span class="n">flatten</span>
@@ -593,7 +595,7 @@ root folder, for example '/tmp' or if you want to use ram based filesystem it co
 
     <span class="k">def</span> <span class="nf">succeeded</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Has the `Action` finished successfully.</span>
-<span class="sd">        </span>
+
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        bool</span>
@@ -712,7 +714,7 @@ Will then create a directory structure based on the numerical value of the <code
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">succeeded</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Has the `Action` finished successfully.</span>
-<span class="sd">        </span>
+
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        bool</span>

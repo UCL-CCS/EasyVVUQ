@@ -118,10 +118,11 @@ surrogate functionality.</p>
 
 <span class="sd">    qois: list of str</span>
 <span class="sd">        List of qoi names used during the analysis.</span>
-<span class="sd">    </span>
+
 <span class="sd">    inputs: list of str</span>
 <span class="sd">        List of input names used during the analysis.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">raw_data</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">samples</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">qois</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">inputs</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">raw_data</span> <span class="o">=</span> <span class="n">raw_data</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">samples</span> <span class="o">=</span> <span class="n">samples</span>
@@ -340,7 +341,7 @@ surrogate functionality.</p>
 <span class="sd">        &#39;L&#39;: array([0.00012716]),</span>
 <span class="sd">        &#39;a&#39;: array([0.00730415])}}</span>
 <span class="sd">        &gt;&gt;&gt; results.sobols_second(&#39;g1&#39;, &#39;L&#39;)</span>
-<span class="sd">        {&#39;F&#39;: array([0.000121]), &#39;a&#39;: array([0.00012737]), &#39;D&#39;: array([0.00012716])}        </span>
+<span class="sd">        {&#39;F&#39;: array([0.000121]), &#39;a&#39;: array([0.00012737]), &#39;D&#39;: array([0.00012716])}</span>
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        dict</span>
@@ -661,7 +662,7 @@ surrogate functionality.</p>
 <span class="sd">        ----------</span>
 <span class="sd">        qoi: str</span>
 <span class="sd">            QoI name</span>
-<span class="sd">        </span>
+
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        A ChaosPy distribution</span>
@@ -752,10 +753,11 @@ surrogate functionality.</p>
 
 <span class="sd">    qois: list of str</span>
 <span class="sd">        List of qoi names used during the analysis.</span>
-<span class="sd">    </span>
+
 <span class="sd">    inputs: list of str</span>
 <span class="sd">        List of input names used during the analysis.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">raw_data</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">samples</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">qois</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">inputs</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">raw_data</span> <span class="o">=</span> <span class="n">raw_data</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">samples</span> <span class="o">=</span> <span class="n">samples</span>
@@ -974,7 +976,7 @@ surrogate functionality.</p>
 <span class="sd">        &#39;L&#39;: array([0.00012716]),</span>
 <span class="sd">        &#39;a&#39;: array([0.00730415])}}</span>
 <span class="sd">        &gt;&gt;&gt; results.sobols_second(&#39;g1&#39;, &#39;L&#39;)</span>
-<span class="sd">        {&#39;F&#39;: array([0.000121]), &#39;a&#39;: array([0.00012737]), &#39;D&#39;: array([0.00012716])}        </span>
+<span class="sd">        {&#39;F&#39;: array([0.000121]), &#39;a&#39;: array([0.00012737]), &#39;D&#39;: array([0.00012716])}</span>
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        dict</span>
@@ -1295,7 +1297,7 @@ surrogate functionality.</p>
 <span class="sd">        ----------</span>
 <span class="sd">        qoi: str</span>
 <span class="sd">            QoI name</span>
-<span class="sd">        </span>
+
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        A ChaosPy distribution</span>
@@ -1563,7 +1565,7 @@ otherwise will return an array.</li>
 <span class="sd">        &#39;L&#39;: array([0.00012716]),</span>
 <span class="sd">        &#39;a&#39;: array([0.00730415])}}</span>
 <span class="sd">        &gt;&gt;&gt; results.sobols_second(&#39;g1&#39;, &#39;L&#39;)</span>
-<span class="sd">        {&#39;F&#39;: array([0.000121]), &#39;a&#39;: array([0.00012737]), &#39;D&#39;: array([0.00012716])}        </span>
+<span class="sd">        {&#39;F&#39;: array([0.000121]), &#39;a&#39;: array([0.00012737]), &#39;D&#39;: array([0.00012716])}</span>
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        dict</span>
@@ -1605,7 +1607,7 @@ The name of the input parameter or None.</li>
 <span class="go">&#39;L&#39;: array([0.00012716]),</span>
 <span class="go">&#39;a&#39;: array([0.00730415])}}</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">results</span><span class="o">.</span><span class="n">sobols_second</span><span class="p">(</span><span class="s1">&#39;g1&#39;</span><span class="p">,</span> <span class="s1">&#39;L&#39;</span><span class="p">)</span>
-<span class="go">{&#39;F&#39;: array([0.000121]), &#39;a&#39;: array([0.00012737]), &#39;D&#39;: array([0.00012716])}        </span>
+<span class="go">{&#39;F&#39;: array([0.000121]), &#39;a&#39;: array([0.00012737]), &#39;D&#39;: array([0.00012716])}</span>
 <span class="go">&lt;h6 id=&quot;returns&quot;&gt;Returns&lt;/h6&gt;</span>
 </code></pre></div>
 
@@ -2227,7 +2229,7 @@ if None, plots to a new axes, otherwise plot to existing axes ax</li>
 <span class="sd">        ----------</span>
 <span class="sd">        qoi: str</span>
 <span class="sd">            QoI name</span>
-<span class="sd">        </span>
+
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        A ChaosPy distribution</span>
