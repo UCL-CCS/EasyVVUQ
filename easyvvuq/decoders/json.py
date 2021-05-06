@@ -3,7 +3,6 @@ import logging
 from easyvvuq import OutputType
 from .base import BaseDecoder
 import json
-import numpy as np
 
 __copyright__ = """
 
