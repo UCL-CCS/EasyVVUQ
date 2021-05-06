@@ -347,34 +347,23 @@ class Campaign:
             run_info_list.append(run_info)
         self.campaign_db.add_runs(run_info_list, iteration=self._active_sampler.iteration)
 
-    def draw_samples(self, num_samples=0, replicas=1, mark_invalid=False):
+    def draw_samples(self, num_samples=0, mark_invalid=False):
         """Draws `num_samples` sets of parameters from the currently set
-        sampler, resulting in `num_samples` * `replicas` new runs added to the
+        sampler, resulting in `num_samples` new runs added to the
         runs list. If `num_samples` is 0 (its default value) then
         this method draws ALL samples from the sampler, until exhaustion (this
         will fail if the sampler is not finite).
-
-        Notes
-        -----
-        Do NOT use this in cases where you need 'replicas' with a different
-        random seed. In those cases need to sample from a uniform_integer
-        distribution and filter at analysis step.
 
         Parameters
         ----------
         num_samples : int
             Number of samples to draw from the active sampling element.
             By default is 0 (draw ALL samples)
-        replicas : int
-            Number of replica runs to create with each set of parameters.
-            Default is 1 - so only a single run added for each set of
-            parameters.
         mark_invalid : bool
             If True will mark runs that go outside valid parameter range as INVALID.
             This is useful for MCMC style methods where you want those runs to evaluate
             to low probabilities.
         """
-
         # Make sure `num_samples` is not 0 for an infinite generator
         # (this would add runs forever...)
         if not self._active_sampler.is_finite() and num_samples <= 0:
@@ -382,23 +371,13 @@ class Campaign:
                    f"is an infinite generator, therefore a finite number of "
                    f"draws (n > 0) must be specified.")
             raise RuntimeError(msg)
-
-        if replicas < 1:
-            msg = "Number of replicas ({replicas}) must be at least 1"
-            raise RuntimeError(msg)
-
         num_added = 0
         new_runs = []
         for new_run in self._active_sampler:
-
-            list_of_runs = [new_run for i in range(replicas)]
-            new_runs += list_of_runs
-
+            new_runs.append(new_run)
             num_added += 1
-
             if num_samples != 0 and num_added >= num_samples:
                 break
-
         self.add_runs(new_runs, mark_invalid)
 
         # Write sampler's new state to database
