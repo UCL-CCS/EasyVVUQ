@@ -486,34 +486,23 @@ EasyVVUQ workflows.</p>
             <span class="n">run_info_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">run_info</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">campaign_db</span><span class="o">.</span><span class="n">add_runs</span><span class="p">(</span><span class="n">run_info_list</span><span class="p">,</span> <span class="n">iteration</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_active_sampler</span><span class="o">.</span><span class="n">iteration</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">draw_samples</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num_samples</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">replicas</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">mark_invalid</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">draw_samples</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num_samples</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">mark_invalid</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Draws `num_samples` sets of parameters from the currently set</span>
-<span class="sd">        sampler, resulting in `num_samples` * `replicas` new runs added to the</span>
+<span class="sd">        sampler, resulting in `num_samples` new runs added to the</span>
 <span class="sd">        runs list. If `num_samples` is 0 (its default value) then</span>
 <span class="sd">        this method draws ALL samples from the sampler, until exhaustion (this</span>
 <span class="sd">        will fail if the sampler is not finite).</span>
-
-<span class="sd">        Notes</span>
-<span class="sd">        -----</span>
-<span class="sd">        Do NOT use this in cases where you need &#39;replicas&#39; with a different</span>
-<span class="sd">        random seed. In those cases need to sample from a uniform_integer</span>
-<span class="sd">        distribution and filter at analysis step.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        num_samples : int</span>
 <span class="sd">            Number of samples to draw from the active sampling element.</span>
 <span class="sd">            By default is 0 (draw ALL samples)</span>
-<span class="sd">        replicas : int</span>
-<span class="sd">            Number of replica runs to create with each set of parameters.</span>
-<span class="sd">            Default is 1 - so only a single run added for each set of</span>
-<span class="sd">            parameters.</span>
 <span class="sd">        mark_invalid : bool</span>
 <span class="sd">            If True will mark runs that go outside valid parameter range as INVALID.</span>
 <span class="sd">            This is useful for MCMC style methods where you want those runs to evaluate</span>
 <span class="sd">            to low probabilities.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-
         <span class="c1"># Make sure `num_samples` is not 0 for an infinite generator</span>
         <span class="c1"># (this would add runs forever...)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_active_sampler</span><span class="o">.</span><span class="n">is_finite</span><span class="p">()</span> <span class="ow">and</span> <span class="n">num_samples</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
@@ -521,23 +510,13 @@ EasyVVUQ workflows.</p>
                    <span class="sa">f</span><span class="s2">&quot;is an infinite generator, therefore a finite number of &quot;</span>
                    <span class="sa">f</span><span class="s2">&quot;draws (n &gt; 0) must be specified.&quot;</span><span class="p">)</span>
             <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="n">replicas</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Number of replicas (</span><span class="si">{replicas}</span><span class="s2">) must be at least 1&quot;</span>
-            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-
         <span class="n">num_added</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="n">new_runs</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">new_run</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_active_sampler</span><span class="p">:</span>
-
-            <span class="n">list_of_runs</span> <span class="o">=</span> <span class="p">[</span><span class="n">new_run</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">replicas</span><span class="p">)]</span>
-            <span class="n">new_runs</span> <span class="o">+=</span> <span class="n">list_of_runs</span>
-
+            <span class="n">new_runs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_run</span><span class="p">)</span>
             <span class="n">num_added</span> <span class="o">+=</span> <span class="mi">1</span>
-
             <span class="k">if</span> <span class="n">num_samples</span> <span class="o">!=</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">num_added</span> <span class="o">&gt;=</span> <span class="n">num_samples</span><span class="p">:</span>
                 <span class="k">break</span>
-
         <span class="bp">self</span><span class="o">.</span><span class="n">add_runs</span><span class="p">(</span><span class="n">new_runs</span><span class="p">,</span> <span class="n">mark_invalid</span><span class="p">)</span>
 
         <span class="c1"># Write sampler&#39;s new state to database</span>
@@ -1156,34 +1135,23 @@ EasyVVUQ workflows.</p>
             <span class="n">run_info_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">run_info</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">campaign_db</span><span class="o">.</span><span class="n">add_runs</span><span class="p">(</span><span class="n">run_info_list</span><span class="p">,</span> <span class="n">iteration</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_active_sampler</span><span class="o">.</span><span class="n">iteration</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">draw_samples</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num_samples</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">replicas</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">mark_invalid</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">draw_samples</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num_samples</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">mark_invalid</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Draws `num_samples` sets of parameters from the currently set</span>
-<span class="sd">        sampler, resulting in `num_samples` * `replicas` new runs added to the</span>
+<span class="sd">        sampler, resulting in `num_samples` new runs added to the</span>
 <span class="sd">        runs list. If `num_samples` is 0 (its default value) then</span>
 <span class="sd">        this method draws ALL samples from the sampler, until exhaustion (this</span>
 <span class="sd">        will fail if the sampler is not finite).</span>
-
-<span class="sd">        Notes</span>
-<span class="sd">        -----</span>
-<span class="sd">        Do NOT use this in cases where you need &#39;replicas&#39; with a different</span>
-<span class="sd">        random seed. In those cases need to sample from a uniform_integer</span>
-<span class="sd">        distribution and filter at analysis step.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        num_samples : int</span>
 <span class="sd">            Number of samples to draw from the active sampling element.</span>
 <span class="sd">            By default is 0 (draw ALL samples)</span>
-<span class="sd">        replicas : int</span>
-<span class="sd">            Number of replica runs to create with each set of parameters.</span>
-<span class="sd">            Default is 1 - so only a single run added for each set of</span>
-<span class="sd">            parameters.</span>
 <span class="sd">        mark_invalid : bool</span>
 <span class="sd">            If True will mark runs that go outside valid parameter range as INVALID.</span>
 <span class="sd">            This is useful for MCMC style methods where you want those runs to evaluate</span>
 <span class="sd">            to low probabilities.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-
         <span class="c1"># Make sure `num_samples` is not 0 for an infinite generator</span>
         <span class="c1"># (this would add runs forever...)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_active_sampler</span><span class="o">.</span><span class="n">is_finite</span><span class="p">()</span> <span class="ow">and</span> <span class="n">num_samples</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
@@ -1191,23 +1159,13 @@ EasyVVUQ workflows.</p>
                    <span class="sa">f</span><span class="s2">&quot;is an infinite generator, therefore a finite number of &quot;</span>
                    <span class="sa">f</span><span class="s2">&quot;draws (n &gt; 0) must be specified.&quot;</span><span class="p">)</span>
             <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="n">replicas</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Number of replicas (</span><span class="si">{replicas}</span><span class="s2">) must be at least 1&quot;</span>
-            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-
         <span class="n">num_added</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="n">new_runs</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">new_run</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_active_sampler</span><span class="p">:</span>
-
-            <span class="n">list_of_runs</span> <span class="o">=</span> <span class="p">[</span><span class="n">new_run</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">replicas</span><span class="p">)]</span>
-            <span class="n">new_runs</span> <span class="o">+=</span> <span class="n">list_of_runs</span>
-
+            <span class="n">new_runs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_run</span><span class="p">)</span>
             <span class="n">num_added</span> <span class="o">+=</span> <span class="mi">1</span>
-
             <span class="k">if</span> <span class="n">num_samples</span> <span class="o">!=</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">num_added</span> <span class="o">&gt;=</span> <span class="n">num_samples</span><span class="p">:</span>
                 <span class="k">break</span>
-
         <span class="bp">self</span><span class="o">.</span><span class="n">add_runs</span><span class="p">(</span><span class="n">new_runs</span><span class="p">,</span> <span class="n">mark_invalid</span><span class="p">)</span>
 
         <span class="c1"># Write sampler&#39;s new state to database</span>
@@ -2022,39 +1980,28 @@ Will mark runs that fail verification as invalid (but will not raise an exceptio
 
         
             <span class="def">def</span>
-            <span class="name">draw_samples</span><span class="signature">(self, num_samples=0, replicas=1, mark_invalid=False)</span>:
+            <span class="name">draw_samples</span><span class="signature">(self, num_samples=0, mark_invalid=False)</span>:
     </div>
 
                 <details>
             <summary>View Source</summary>
-            <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">draw_samples</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num_samples</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">replicas</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">mark_invalid</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+            <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">draw_samples</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num_samples</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">mark_invalid</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Draws `num_samples` sets of parameters from the currently set</span>
-<span class="sd">        sampler, resulting in `num_samples` * `replicas` new runs added to the</span>
+<span class="sd">        sampler, resulting in `num_samples` new runs added to the</span>
 <span class="sd">        runs list. If `num_samples` is 0 (its default value) then</span>
 <span class="sd">        this method draws ALL samples from the sampler, until exhaustion (this</span>
 <span class="sd">        will fail if the sampler is not finite).</span>
-
-<span class="sd">        Notes</span>
-<span class="sd">        -----</span>
-<span class="sd">        Do NOT use this in cases where you need &#39;replicas&#39; with a different</span>
-<span class="sd">        random seed. In those cases need to sample from a uniform_integer</span>
-<span class="sd">        distribution and filter at analysis step.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        num_samples : int</span>
 <span class="sd">            Number of samples to draw from the active sampling element.</span>
 <span class="sd">            By default is 0 (draw ALL samples)</span>
-<span class="sd">        replicas : int</span>
-<span class="sd">            Number of replica runs to create with each set of parameters.</span>
-<span class="sd">            Default is 1 - so only a single run added for each set of</span>
-<span class="sd">            parameters.</span>
 <span class="sd">        mark_invalid : bool</span>
 <span class="sd">            If True will mark runs that go outside valid parameter range as INVALID.</span>
 <span class="sd">            This is useful for MCMC style methods where you want those runs to evaluate</span>
 <span class="sd">            to low probabilities.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-
         <span class="c1"># Make sure `num_samples` is not 0 for an infinite generator</span>
         <span class="c1"># (this would add runs forever...)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_active_sampler</span><span class="o">.</span><span class="n">is_finite</span><span class="p">()</span> <span class="ow">and</span> <span class="n">num_samples</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
@@ -2062,23 +2009,13 @@ Will mark runs that fail verification as invalid (but will not raise an exceptio
                    <span class="sa">f</span><span class="s2">&quot;is an infinite generator, therefore a finite number of &quot;</span>
                    <span class="sa">f</span><span class="s2">&quot;draws (n &gt; 0) must be specified.&quot;</span><span class="p">)</span>
             <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="n">replicas</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Number of replicas (</span><span class="si">{replicas}</span><span class="s2">) must be at least 1&quot;</span>
-            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-
         <span class="n">num_added</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="n">new_runs</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">new_run</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_active_sampler</span><span class="p">:</span>
-
-            <span class="n">list_of_runs</span> <span class="o">=</span> <span class="p">[</span><span class="n">new_run</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">replicas</span><span class="p">)]</span>
-            <span class="n">new_runs</span> <span class="o">+=</span> <span class="n">list_of_runs</span>
-
+            <span class="n">new_runs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_run</span><span class="p">)</span>
             <span class="n">num_added</span> <span class="o">+=</span> <span class="mi">1</span>
-
             <span class="k">if</span> <span class="n">num_samples</span> <span class="o">!=</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">num_added</span> <span class="o">&gt;=</span> <span class="n">num_samples</span><span class="p">:</span>
                 <span class="k">break</span>
-
         <span class="bp">self</span><span class="o">.</span><span class="n">add_runs</span><span class="p">(</span><span class="n">new_runs</span><span class="p">,</span> <span class="n">mark_invalid</span><span class="p">)</span>
 
         <span class="c1"># Write sampler&#39;s new state to database</span>
@@ -2089,16 +2026,10 @@ Will mark runs that fail verification as invalid (but will not raise an exceptio
         </details>
 
             <div class="docstring"><p>Draws <code>num_samples</code> sets of parameters from the currently set
-sampler, resulting in <code>num_samples</code> * <code>replicas</code> new runs added to the
+sampler, resulting in <code>num_samples</code> new runs added to the
 runs list. If <code>num_samples</code> is 0 (its default value) then
 this method draws ALL samples from the sampler, until exhaustion (this
 will fail if the sampler is not finite).</p>
-
-<h6 id="notes">Notes</h6>
-
-<p>Do NOT use this in cases where you need 'replicas' with a different
-random seed. In those cases need to sample from a uniform_integer
-distribution and filter at analysis step.</p>
 
 <h6 id="parameters">Parameters</h6>
 
@@ -2106,10 +2037,6 @@ distribution and filter at analysis step.</p>
 <li><strong>num_samples</strong> (int):
 Number of samples to draw from the active sampling element.
 By default is 0 (draw ALL samples)</li>
-<li><strong>replicas</strong> (int):
-Number of replica runs to create with each set of parameters.
-Default is 1 - so only a single run added for each set of
-parameters.</li>
 <li><strong>mark_invalid</strong> (bool):
 If True will mark runs that go outside valid parameter range as INVALID.
 This is useful for MCMC style methods where you want those runs to evaluate
