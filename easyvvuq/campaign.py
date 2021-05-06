@@ -379,19 +379,30 @@ class Campaign:
             if num_samples != 0 and num_added >= num_samples:
                 break
         self.add_runs(new_runs, mark_invalid)
-
         # Write sampler's new state to database
         self.campaign_db.update_sampler(self._active_sampler_id, self._active_sampler)
         return new_runs
 
-    def list_runs(self, sampler=None, campaign=None, status=None):
-        """Get list of runs in the db.CampaignDB.
+    def list_runs(self, sampler=None, campaign=None, app_id=None, status=None):
+        """Get list of runs in the CampaignDB.
+
+        Parameters
+        ----------
+        sampler: int
+            Sampler id to filter for.
+        campaign: int
+            Campaign id to filter for.
+        app_id: int
+            App id to filter for.
+        status: Status
+            Status to filter for.
 
         Returns
         -------
         list of runs
         """
-        return list(self.campaign_db.runs(sampler=sampler, campaign=campaign, status=status))
+        return list(self.campaign_db.runs(
+            sampler=sampler, campaign=campaign, app_id=app_id, status=status))
 
     def scan_completed(self, *args, **kwargs):
         """Check campaign database for completed runs (defined as runs with COLLATED status)
