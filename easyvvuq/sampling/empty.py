@@ -1,6 +1,4 @@
 from .base import BaseSamplingElement
-import itertools
-import logging
 
 __copyright__ = """
 
