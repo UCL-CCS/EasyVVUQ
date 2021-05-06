@@ -5,7 +5,6 @@ execute your simulation on a SLURM cluster.
 import logging
 import re
 import subprocess
-from . import BaseAction
 import time
 import os
 import random
