@@ -141,7 +141,6 @@ EasyVVUQ workflows.</p>
 <span class="kn">import</span> <span class="nn">tempfile</span>
 <span class="kn">import</span> <span class="nn">easyvvuq</span>
 <span class="kn">from</span> <span class="nn">concurrent.futures</span> <span class="kn">import</span> <span class="n">ProcessPoolExecutor</span>
-<span class="kn">from</span> <span class="nn">easyvvuq</span> <span class="kn">import</span> <span class="n">ParamsSpecification</span><span class="p">,</span> <span class="n">constants</span>
 <span class="kn">from</span> <span class="nn">easyvvuq.constants</span> <span class="kn">import</span> <span class="n">default_campaign_prefix</span><span class="p">,</span> <span class="n">Status</span>
 <span class="kn">from</span> <span class="nn">easyvvuq.data_structs</span> <span class="kn">import</span> <span class="n">RunInfo</span><span class="p">,</span> <span class="n">CampaignInfo</span><span class="p">,</span> <span class="n">AppInfo</span>
 <span class="kn">from</span> <span class="nn">easyvvuq.sampling</span> <span class="kn">import</span> <span class="n">BaseSamplingElement</span>
@@ -375,7 +374,7 @@ EasyVVUQ workflows.</p>
 <span class="sd">            Should the added app be set to be the currently active app?</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Verify input parameters dict</span>
-        <span class="n">paramsspec</span> <span class="o">=</span> <span class="n">ParamsSpecification</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">appname</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
+        <span class="n">paramsspec</span> <span class="o">=</span> <span class="n">easyvvuq</span><span class="o">.</span><span class="n">ParamsSpecification</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">appname</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
         <span class="c1"># validate application input</span>
         <span class="n">app</span> <span class="o">=</span> <span class="n">AppInfo</span><span class="p">(</span>
             <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
@@ -648,7 +647,7 @@ EasyVVUQ workflows.</p>
             <span class="k">for</span> <span class="n">run_id</span> <span class="ow">in</span> <span class="n">ignored_runs</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">campaign_db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">RunTable</span><span class="p">)</span><span class="o">.</span>\
                     <span class="nb">filter</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">RunTable</span><span class="o">.</span><span class="n">id</span> <span class="o">==</span> <span class="nb">int</span><span class="p">(</span><span class="n">run_id</span><span class="p">))</span><span class="o">.</span>\
-                    <span class="n">update</span><span class="p">({</span><span class="s1">&#39;status&#39;</span><span class="p">:</span> <span class="n">constants</span><span class="o">.</span><span class="n">Status</span><span class="o">.</span><span class="n">IGNORED</span><span class="p">})</span>
+                    <span class="n">update</span><span class="p">({</span><span class="s1">&#39;status&#39;</span><span class="p">:</span> <span class="n">easyvvuq</span><span class="o">.</span><span class="n">constants</span><span class="o">.</span><span class="n">Status</span><span class="o">.</span><span class="n">IGNORED</span><span class="p">})</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">campaign_db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">recollate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -678,7 +677,7 @@ EasyVVUQ workflows.</p>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">iteration</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">campaign_db</span><span class="o">.</span><span class="n">get_results</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_active_app</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">_active_sampler_id</span><span class="p">,</span>
-                                            <span class="n">status</span><span class="o">=</span><span class="n">constants</span><span class="o">.</span><span class="n">Status</span><span class="o">.</span><span class="n">COLLATED</span><span class="p">,</span> <span class="n">iteration</span><span class="o">=</span><span class="n">iteration</span><span class="p">)</span>
+                                            <span class="n">status</span><span class="o">=</span><span class="n">easyvvuq</span><span class="o">.</span><span class="n">constants</span><span class="o">.</span><span class="n">Status</span><span class="o">.</span><span class="n">COLLATED</span><span class="p">,</span> <span class="n">iteration</span><span class="o">=</span><span class="n">iteration</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">get_invalid_runs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">last_iteration</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Return dataframe containing all results marked as INVALID.</span>
@@ -700,7 +699,7 @@ EasyVVUQ workflows.</p>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">iteration</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">campaign_db</span><span class="o">.</span><span class="n">get_results</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_active_app</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">_active_sampler_id</span><span class="p">,</span>
-                                            <span class="n">status</span><span class="o">=</span><span class="n">constants</span><span class="o">.</span><span class="n">Status</span><span class="o">.</span><span class="n">INVALID</span><span class="p">,</span> <span class="n">iteration</span><span class="o">=</span><span class="n">iteration</span><span class="p">)</span>
+                                            <span class="n">status</span><span class="o">=</span><span class="n">easyvvuq</span><span class="o">.</span><span class="n">constants</span><span class="o">.</span><span class="n">Status</span><span class="o">.</span><span class="n">INVALID</span><span class="p">,</span> <span class="n">iteration</span><span class="o">=</span><span class="n">iteration</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">apply_analysis</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">analysis</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Run the `analysis` element on the output of the last run collation.</span>
@@ -1018,7 +1017,7 @@ EasyVVUQ workflows.</p>
 <span class="sd">            Should the added app be set to be the currently active app?</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Verify input parameters dict</span>
-        <span class="n">paramsspec</span> <span class="o">=</span> <span class="n">ParamsSpecification</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">appname</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
+        <span class="n">paramsspec</span> <span class="o">=</span> <span class="n">easyvvuq</span><span class="o">.</span><span class="n">ParamsSpecification</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">appname</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
         <span class="c1"># validate application input</span>
         <span class="n">app</span> <span class="o">=</span> <span class="n">AppInfo</span><span class="p">(</span>
             <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
@@ -1291,7 +1290,7 @@ EasyVVUQ workflows.</p>
             <span class="k">for</span> <span class="n">run_id</span> <span class="ow">in</span> <span class="n">ignored_runs</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">campaign_db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">RunTable</span><span class="p">)</span><span class="o">.</span>\
                     <span class="nb">filter</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">RunTable</span><span class="o">.</span><span class="n">id</span> <span class="o">==</span> <span class="nb">int</span><span class="p">(</span><span class="n">run_id</span><span class="p">))</span><span class="o">.</span>\
-                    <span class="n">update</span><span class="p">({</span><span class="s1">&#39;status&#39;</span><span class="p">:</span> <span class="n">constants</span><span class="o">.</span><span class="n">Status</span><span class="o">.</span><span class="n">IGNORED</span><span class="p">})</span>
+                    <span class="n">update</span><span class="p">({</span><span class="s1">&#39;status&#39;</span><span class="p">:</span> <span class="n">easyvvuq</span><span class="o">.</span><span class="n">constants</span><span class="o">.</span><span class="n">Status</span><span class="o">.</span><span class="n">IGNORED</span><span class="p">})</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">campaign_db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">recollate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -1321,7 +1320,7 @@ EasyVVUQ workflows.</p>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">iteration</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">campaign_db</span><span class="o">.</span><span class="n">get_results</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_active_app</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">_active_sampler_id</span><span class="p">,</span>
-                                            <span class="n">status</span><span class="o">=</span><span class="n">constants</span><span class="o">.</span><span class="n">Status</span><span class="o">.</span><span class="n">COLLATED</span><span class="p">,</span> <span class="n">iteration</span><span class="o">=</span><span class="n">iteration</span><span class="p">)</span>
+                                            <span class="n">status</span><span class="o">=</span><span class="n">easyvvuq</span><span class="o">.</span><span class="n">constants</span><span class="o">.</span><span class="n">Status</span><span class="o">.</span><span class="n">COLLATED</span><span class="p">,</span> <span class="n">iteration</span><span class="o">=</span><span class="n">iteration</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">get_invalid_runs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">last_iteration</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Return dataframe containing all results marked as INVALID.</span>
@@ -1343,7 +1342,7 @@ EasyVVUQ workflows.</p>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">iteration</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">campaign_db</span><span class="o">.</span><span class="n">get_results</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_active_app</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">_active_sampler_id</span><span class="p">,</span>
-                                            <span class="n">status</span><span class="o">=</span><span class="n">constants</span><span class="o">.</span><span class="n">Status</span><span class="o">.</span><span class="n">INVALID</span><span class="p">,</span> <span class="n">iteration</span><span class="o">=</span><span class="n">iteration</span><span class="p">)</span>
+                                            <span class="n">status</span><span class="o">=</span><span class="n">easyvvuq</span><span class="o">.</span><span class="n">constants</span><span class="o">.</span><span class="n">Status</span><span class="o">.</span><span class="n">INVALID</span><span class="p">,</span> <span class="n">iteration</span><span class="o">=</span><span class="n">iteration</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">apply_analysis</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">analysis</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Run the `analysis` element on the output of the last run collation.</span>
@@ -1720,7 +1719,7 @@ Work directory, defaults to cwd.</li>
 <span class="sd">            Should the added app be set to be the currently active app?</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Verify input parameters dict</span>
-        <span class="n">paramsspec</span> <span class="o">=</span> <span class="n">ParamsSpecification</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">appname</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
+        <span class="n">paramsspec</span> <span class="o">=</span> <span class="n">easyvvuq</span><span class="o">.</span><span class="n">ParamsSpecification</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">appname</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
         <span class="c1"># validate application input</span>
         <span class="n">app</span> <span class="o">=</span> <span class="n">AppInfo</span><span class="p">(</span>
             <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
@@ -2326,7 +2325,7 @@ want to avoid the concurrent module for some reason).</li>
             <span class="k">for</span> <span class="n">run_id</span> <span class="ow">in</span> <span class="n">ignored_runs</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">campaign_db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">RunTable</span><span class="p">)</span><span class="o">.</span>\
                     <span class="nb">filter</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">RunTable</span><span class="o">.</span><span class="n">id</span> <span class="o">==</span> <span class="nb">int</span><span class="p">(</span><span class="n">run_id</span><span class="p">))</span><span class="o">.</span>\
-                    <span class="n">update</span><span class="p">({</span><span class="s1">&#39;status&#39;</span><span class="p">:</span> <span class="n">constants</span><span class="o">.</span><span class="n">Status</span><span class="o">.</span><span class="n">IGNORED</span><span class="p">})</span>
+                    <span class="n">update</span><span class="p">({</span><span class="s1">&#39;status&#39;</span><span class="p">:</span> <span class="n">easyvvuq</span><span class="o">.</span><span class="n">constants</span><span class="o">.</span><span class="n">Status</span><span class="o">.</span><span class="n">IGNORED</span><span class="p">})</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">campaign_db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
 </pre></div>
 
@@ -2415,7 +2414,7 @@ back to ENCODED, then runs collate() again</p>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">iteration</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">campaign_db</span><span class="o">.</span><span class="n">get_results</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_active_app</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">_active_sampler_id</span><span class="p">,</span>
-                                            <span class="n">status</span><span class="o">=</span><span class="n">constants</span><span class="o">.</span><span class="n">Status</span><span class="o">.</span><span class="n">COLLATED</span><span class="p">,</span> <span class="n">iteration</span><span class="o">=</span><span class="n">iteration</span><span class="p">)</span>
+                                            <span class="n">status</span><span class="o">=</span><span class="n">easyvvuq</span><span class="o">.</span><span class="n">constants</span><span class="o">.</span><span class="n">Status</span><span class="o">.</span><span class="n">COLLATED</span><span class="p">,</span> <span class="n">iteration</span><span class="o">=</span><span class="n">iteration</span><span class="p">)</span>
 </pre></div>
 
         </details>
@@ -2469,7 +2468,7 @@ used to produce them.</li>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">iteration</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">campaign_db</span><span class="o">.</span><span class="n">get_results</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_active_app</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">_active_sampler_id</span><span class="p">,</span>
-                                            <span class="n">status</span><span class="o">=</span><span class="n">constants</span><span class="o">.</span><span class="n">Status</span><span class="o">.</span><span class="n">INVALID</span><span class="p">,</span> <span class="n">iteration</span><span class="o">=</span><span class="n">iteration</span><span class="p">)</span>
+                                            <span class="n">status</span><span class="o">=</span><span class="n">easyvvuq</span><span class="o">.</span><span class="n">constants</span><span class="o">.</span><span class="n">Status</span><span class="o">.</span><span class="n">INVALID</span><span class="p">,</span> <span class="n">iteration</span><span class="o">=</span><span class="n">iteration</span><span class="p">)</span>
 </pre></div>
 
         </details>
