@@ -66,22 +66,6 @@ class BaseDecoder(BaseElement):
         # Register new decoder
         AVAILABLE_DECODERS[decoder_name] = cls
 
-    def sim_complete(self, run_info=None):
-        """
-        Check whether the simulation specified by `run_info` has completed and
-        produced results.
-
-        Parameters
-        ----------
-        run_info: dict or None
-            Information defining the run to check.
-
-        Returns
-        -------
-
-        """
-        raise NotImplementedError
-
     def parse_sim_output(self, run_info=None):
         """
 

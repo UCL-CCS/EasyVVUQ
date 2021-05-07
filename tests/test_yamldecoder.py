@@ -30,12 +30,6 @@ def test_yaml_nested():
     assert((data['leaf3'] == np.array([0.2, 0.3])).all().all())
 
 
-def test_sim_complete():
-    decoder = YAMLDecoder('nested.yml',
-                          [['root1', 'node1', 'leaf1'], ['root1', 'leaf2'], 'leaf3'])
-    assert(decoder.sim_complete({'run_dir': os.path.join('tests', 'yamldecoder')}))
-
-
 def test_init_exception():
     with pytest.raises(RuntimeError):
         YAMLDecoder(None, output_columns=[['root1', 'node1', 'leaf1'],

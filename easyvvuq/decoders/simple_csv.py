@@ -54,15 +54,6 @@ class SimpleCSV(BaseDecoder, decoder_name="csv"):
 
         return os.path.join(run_path, outfile)
 
-    def sim_complete(self, run_info=None):
-
-        out_path = self._get_output_path(run_info, self.target_filename)
-
-        if not os.path.isfile(out_path):
-            return False
-        else:
-            return True
-
     def parse_sim_output(self, run_info={}):
 
         out_path = self._get_output_path(run_info, self.target_filename)

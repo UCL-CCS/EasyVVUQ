@@ -196,10 +196,6 @@ def test_simple_csv(decoder):
     assert(df['Value'][5] == 25.950662)
 
 
-def test_sim_complete(decoder):
-    assert(decoder.sim_complete({'run_dir': os.path.join('tests', 'simple_csv')}))
-
-
 def test_init_exceptions():
     with pytest.raises(RuntimeError):
         SimpleCSV('test.csv', [])

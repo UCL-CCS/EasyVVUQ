@@ -45,12 +45,6 @@ def test_missing_column():
     assert("['root1', 'node1', 'abcd']" in str(excinfo.value))
 
 
-def test_sim_complete():
-    decoder = JSONDecoder('nested.json',
-                          [['root1', 'node1', 'leaf1'], ['root1', 'leaf2'], 'leaf3'])
-    assert(decoder.sim_complete({'run_dir': os.path.join('tests', 'jsondecoder')}))
-
-
 def test_init_exceptions():
     with pytest.raises(RuntimeError):
         JSONDecoder(None, output_columns=[['root1', 'node1', 'leaf1'],
