@@ -1,3 +1,10 @@
+"""A basic JSON format decoder.
+
+Will read a JSON file and will output select values. Values have to be either
+numeric or lists. In case of lists it will treat those as vector-valued quantities
+of interest.
+"""
+
 import os
 import logging
 from easyvvuq import OutputType
@@ -31,48 +38,20 @@ logger = logging.Logger(__name__)
 
 
 class JSONDecoder(BaseDecoder, decoder_name="json"):
-
-    def __init__(self, target_filename=None, output_columns=None):
-
-        if target_filename is None:
-            msg = (
-                f"target_filename must be set for {self.decoder_name.upper()}Decoder. "
-                f"This should be the name of the output file this decoder "
-                f"acts on."
-            )
-            logging.error(msg)
-            raise RuntimeError(msg)
-
-        if output_columns is None:
-            msg = (
-                f"output_columns must be specified for "
-                f"{self.decoder_name.upper()}Decoder. This should "
-                f"be the names of the output fields this decoder extracts "
-                f"from the target json file. For nested values use arrays "
-                f"e.g. ['root', 'node', 'field'] where field is the leaf "
-                f"that contains the value you need."
-            )
-            logging.error(msg)
-            raise RuntimeError(msg)
-
+    def __init__(self, target_filename, output_columns):
         if len(output_columns) == 0:
             msg = "output_columns cannot be empty."
             logger.error(msg)
             raise RuntimeError(msg)
-
         self.target_filename = target_filename
         self.output_columns = output_columns
-
         self.output_type = OutputType('sample')
 
     @staticmethod
     def _get_output_path(run_info=None, outfile=None):
-
         run_path = run_info['run_dir']
-
         if not os.path.isdir(run_path):
             raise RuntimeError(f"Run directory does not exist: {run_path}")
-
         return os.path.join(run_path, outfile)
 
     def parse_sim_output(self, run_info={}):
@@ -80,10 +59,8 @@ class JSONDecoder(BaseDecoder, decoder_name="json"):
             for node in path:
                 data = data[node]
             return data
-
         out_path = self._get_output_path(run_info, self.target_filename)
         raw_data = self._get_raw_data(out_path)
-
         data = []
         for col in self.output_columns:
             try:
