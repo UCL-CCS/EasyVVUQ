@@ -32,11 +32,4 @@ def test_yaml_nested():
 
 def test_init_exception():
     with pytest.raises(RuntimeError):
-        YAMLDecoder(None, output_columns=[['root1', 'node1', 'leaf1'],
-                                          ['root1', 'leaf2'], 'leaf3'])
-
-    with pytest.raises(RuntimeError):
-        YAMLDecoder('yamldecoder/nested.yaml', None)
-
-    with pytest.raises(RuntimeError):
-        YAMLDecoder('yamldecoder/nested.yaml', None)
+        YAMLDecoder('yamldecoder/nested.yaml', [])

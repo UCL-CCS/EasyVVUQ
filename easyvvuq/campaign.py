@@ -8,7 +8,6 @@ import logging
 import tempfile
 import easyvvuq
 from concurrent.futures import ProcessPoolExecutor
-from easyvvuq import ParamsSpecification, constants
 from easyvvuq.constants import default_campaign_prefix, Status
 from easyvvuq.data_structs import RunInfo, CampaignInfo, AppInfo
 from easyvvuq.sampling import BaseSamplingElement
@@ -242,7 +241,7 @@ class Campaign:
             Should the added app be set to be the currently active app?
         """
         # Verify input parameters dict
-        paramsspec = ParamsSpecification(params, appname=name)
+        paramsspec = easyvvuq.ParamsSpecification(params, appname=name)
         # validate application input
         app = AppInfo(
             name=name,
@@ -515,7 +514,7 @@ class Campaign:
             for run_id in ignored_runs:
                 self.campaign_db.session.query(db.RunTable).\
                     filter(db.RunTable.id == int(run_id)).\
-                    update({'status': constants.Status.IGNORED})
+                    update({'status': easyvvuq.constants.Status.IGNORED})
             self.campaign_db.session.commit()
 
     def recollate(self):
@@ -545,7 +544,7 @@ class Campaign:
         else:
             iteration = -1
         return self.campaign_db.get_results(self._active_app['name'], self._active_sampler_id,
-                                            status=constants.Status.COLLATED, iteration=iteration)
+                                            status=easyvvuq.constants.Status.COLLATED, iteration=iteration)
 
     def get_invalid_runs(self, last_iteration=False):
         """Return dataframe containing all results marked as INVALID.
@@ -567,7 +566,7 @@ class Campaign:
         else:
             iteration = -1
         return self.campaign_db.get_results(self._active_app['name'], self._active_sampler_id,
-                                            status=constants.Status.INVALID, iteration=iteration)
+                                            status=easyvvuq.constants.Status.INVALID, iteration=iteration)
 
     def apply_analysis(self, analysis):
         """Run the `analysis` element on the output of the last run collation.
