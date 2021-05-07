@@ -34,9 +34,6 @@
                                 <a class="function" href="#JSONDecoder.__init__">JSONDecoder</a>
                         </li>
                         <li>
-                                <a class="function" href="#JSONDecoder.sim_complete">sim_complete</a>
-                        </li>
-                        <li>
                                 <a class="function" href="#JSONDecoder.parse_sim_output">parse_sim_output</a>
                         </li>
                         <li>
@@ -140,15 +137,6 @@
 
         <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">run_path</span><span class="p">,</span> <span class="n">outfile</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">sim_complete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">run_info</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-
-        <span class="n">out_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_output_path</span><span class="p">(</span><span class="n">run_info</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_filename</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">out_path</span><span class="p">):</span>
-            <span class="k">return</span> <span class="kc">False</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="kc">True</span>
-
     <span class="k">def</span> <span class="nf">parse_sim_output</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">run_info</span><span class="o">=</span><span class="p">{}):</span>
         <span class="k">def</span> <span class="nf">get_value</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
             <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">path</span><span class="p">:</span>
@@ -232,15 +220,6 @@
             <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Run directory does not exist: </span><span class="si">{</span><span class="n">run_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">run_path</span><span class="p">,</span> <span class="n">outfile</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">sim_complete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">run_info</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-
-        <span class="n">out_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_output_path</span><span class="p">(</span><span class="n">run_info</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_filename</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">out_path</span><span class="p">):</span>
-            <span class="k">return</span> <span class="kc">False</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="kc">True</span>
 
     <span class="k">def</span> <span class="nf">parse_sim_output</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">run_info</span><span class="o">=</span><span class="p">{}):</span>
         <span class="k">def</span> <span class="nf">get_value</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
@@ -330,44 +309,6 @@ contract - <need to define contract>.</p>
         </details>
 
     
-
-                            </div>
-                            <div id="JSONDecoder.sim_complete" class="classattr">
-                                        <div class="attr function"><a class="headerlink" href="#JSONDecoder.sim_complete">#&nbsp;&nbsp</a>
-
-        
-            <span class="def">def</span>
-            <span class="name">sim_complete</span><span class="signature">(self, run_info=None)</span>:
-    </div>
-
-                <details>
-            <summary>View Source</summary>
-            <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">sim_complete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">run_info</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-
-        <span class="n">out_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_output_path</span><span class="p">(</span><span class="n">run_info</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_filename</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">out_path</span><span class="p">):</span>
-            <span class="k">return</span> <span class="kc">False</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="kc">True</span>
-</pre></div>
-
-        </details>
-
-            <div class="docstring"><p>Check whether the simulation specified by <code>run_info</code> has completed and
-produced results.</p>
-
-<h6 id="parameters">Parameters</h6>
-
-<ul>
-<li><strong>run_info</strong> (dict or None):
-Information defining the run to check.</li>
-<li><strong>Returns</strong></li>
-</ul>
-
-<hr />
-</div>
-
 
                             </div>
                             <div id="JSONDecoder.parse_sim_output" class="classattr">

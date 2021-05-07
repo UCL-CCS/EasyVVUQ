@@ -39,9 +39,6 @@
                                 <a class="function" href="#BaseDecoder.__init__">BaseDecoder</a>
                         </li>
                         <li>
-                                <a class="function" href="#BaseDecoder.sim_complete">sim_complete</a>
-                        </li>
-                        <li>
                                 <a class="function" href="#BaseDecoder.parse_sim_output">parse_sim_output</a>
                         </li>
                 </ul>
@@ -146,22 +143,6 @@ Registers all imported decoders.</li>
         <span class="c1"># Register new decoder</span>
         <span class="n">AVAILABLE_DECODERS</span><span class="p">[</span><span class="n">decoder_name</span><span class="p">]</span> <span class="o">=</span> <span class="bp">cls</span>
 
-    <span class="k">def</span> <span class="nf">sim_complete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">run_info</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Check whether the simulation specified by `run_info` has completed and</span>
-<span class="sd">        produced results.</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        run_info: dict or None</span>
-<span class="sd">            Information defining the run to check.</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
-
     <span class="k">def</span> <span class="nf">parse_sim_output</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">run_info</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 
@@ -222,22 +203,6 @@ Registers all imported decoders.</li>
         <span class="c1"># Register new decoder</span>
         <span class="n">AVAILABLE_DECODERS</span><span class="p">[</span><span class="n">decoder_name</span><span class="p">]</span> <span class="o">=</span> <span class="bp">cls</span>
 
-    <span class="k">def</span> <span class="nf">sim_complete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">run_info</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Check whether the simulation specified by `run_info` has completed and</span>
-<span class="sd">        produced results.</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        run_info: dict or None</span>
-<span class="sd">            Information defining the run to check.</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
-
     <span class="k">def</span> <span class="nf">parse_sim_output</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">run_info</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 
@@ -283,51 +248,6 @@ contract - <need to define contract>.</p>
 
         
     
-
-                            </div>
-                            <div id="BaseDecoder.sim_complete" class="classattr">
-                                        <div class="attr function"><a class="headerlink" href="#BaseDecoder.sim_complete">#&nbsp;&nbsp</a>
-
-        
-            <span class="def">def</span>
-            <span class="name">sim_complete</span><span class="signature">(self, run_info=None)</span>:
-    </div>
-
-                <details>
-            <summary>View Source</summary>
-            <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">sim_complete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">run_info</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Check whether the simulation specified by `run_info` has completed and</span>
-<span class="sd">        produced results.</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        run_info: dict or None</span>
-<span class="sd">            Information defining the run to check.</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
-</pre></div>
-
-        </details>
-
-            <div class="docstring"><p>Check whether the simulation specified by <code>run_info</code> has completed and
-produced results.</p>
-
-<h6 id="parameters">Parameters</h6>
-
-<ul>
-<li><strong>run_info</strong> (dict or None):
-Information defining the run to check.</li>
-<li><strong>Returns</strong></li>
-</ul>
-
-<hr />
-</div>
-
 
                             </div>
                             <div id="BaseDecoder.parse_sim_output" class="classattr">
