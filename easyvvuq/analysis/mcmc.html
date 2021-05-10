@@ -69,12 +69,18 @@
                     <h1 class="modulename">
 <a href="./../../easyvvuq.html">easyvvuq</a><wbr>.<a href="./../analysis.html">analysis</a><wbr>.mcmc    </h1>
 
-                        <div class="docstring"><p>Analysis element for Markov Chain Monte Carlo (MCMC).</p>
+                        <div class="docstring"><p>Analysis element for the Markov Chain Monte Carlo (MCMC) method.
+For more details on the method see the <code><a href="../sampling.html#MonteCarloSampler">easyvvuq.sampling.MonteCarloSampler</a></code> class.
+The analysis part of Markov Chain Monte Carlo consists of approximating the distribution
+from the results obtained by evaluating the samples.</p>
 </div>
 
                         <details>
             <summary>View Source</summary>
-            <div class="codehilite"><pre><span></span><span class="sd">&quot;&quot;&quot;Analysis element for Markov Chain Monte Carlo (MCMC).</span>
+            <div class="codehilite"><pre><span></span><span class="sd">&quot;&quot;&quot;Analysis element for the Markov Chain Monte Carlo (MCMC) method.</span>
+<span class="sd">For more details on the method see the `easyvvuq.sampling.MonteCarloSampler` class.</span>
+<span class="sd">The analysis part of Markov Chain Monte Carlo consists of approximating the distribution</span>
+<span class="sd">from the results obtained by evaluating the samples.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">from</span> <span class="nn">.base</span> <span class="kn">import</span> <span class="n">BaseAnalysisElement</span>
@@ -82,19 +88,34 @@
 
 
 <span class="k">class</span> <span class="nc">MCMCAnalysisResults</span><span class="p">(</span><span class="n">AnalysisResults</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;The analysis results class for MCMC.</span>
+    <span class="sd">&quot;&quot;&quot;The analysis results class for MCMC. You will not need to instantiate this</span>
+<span class="sd">    class manually.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    chains: list</span>
-<span class="sd">        A list of</span>
-<span class="sd">    qoi: ndarray of shape (nsamples, 1)</span>
+<span class="sd">    chains: dict</span>
+<span class="sd">        A dictionary with pandas DataFrame that correspond to an MCMC chain each.</span>
+<span class="sd">        A chain consists of points that MCMC has visited. From this a distribution</span>
+<span class="sd">        of the input variables can be constructed by means of a simple histogram.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">chains</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">chains</span> <span class="o">=</span> <span class="n">chains</span>
 
     <span class="k">def</span> <span class="nf">plot_hist</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_parameter</span><span class="p">,</span> <span class="n">chain</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">skip</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">merge</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Will plot a histogram for a given input parameter.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        input_parameter: str</span>
+<span class="sd">            An input parameter name to draw the histogram for.</span>
+<span class="sd">        chain: int, optional</span>
+<span class="sd">            Index of a chain to be plotted.</span>
+<span class="sd">        skip: int</span>
+<span class="sd">            How many steps to skip (for getting rid of burn-in).</span>
+<span class="sd">        merge: bool</span>
+<span class="sd">            If set to True will use all chains to construct the histogram.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
         <span class="n">input_parameter</span> <span class="o">=</span> <span class="p">(</span><span class="n">input_parameter</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">merge</span><span class="p">:</span>
@@ -107,6 +128,15 @@
             <span class="n">plt</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">chains</span><span class="p">[</span><span class="n">chain</span><span class="p">][</span><span class="n">input_parameter</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">skip</span><span class="p">:],</span> <span class="mi">20</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">plot_chains</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_parameter</span><span class="p">,</span> <span class="n">chain</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Will plot the chains with the input parameter value in the y axis.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        input_parameter: str</span>
+<span class="sd">            Input parameter name.</span>
+<span class="sd">        chain: int, optional</span>
+<span class="sd">            The chain number of the chain to plot.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
         <span class="k">if</span> <span class="n">chain</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">chain</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">chains</span><span class="p">:</span>
@@ -121,16 +151,21 @@
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    sampler: MCMCSampler</span>
-<span class="sd">       an instance of MCMCSampler used to generate MCMC samples</span>
-<span class="sd">    qoi: str</span>
-<span class="sd">       name of the qoi</span>
+<span class="sd">       An instance of MCMCSampler used to generate MCMC samples.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sampler</span><span class="p">,</span> <span class="n">qoi</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sampler</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">sampler</span> <span class="o">=</span> <span class="n">sampler</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">qoi</span> <span class="o">=</span> <span class="n">qoi</span>
 
     <span class="k">def</span> <span class="nf">analyse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Performs some pre-processing on the chains in order to be able to construct</span>
+<span class="sd">        the histograms or other methods of distribution estimation.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        df: DataFrame</span>
+<span class="sd">            DataFrame with the results obtained by evaluating the samples generated by the</span>
+<span class="sd">            MCMC sampler.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">chains</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">([(</span><span class="n">chain_id</span><span class="p">,</span> <span class="p">[])</span> <span class="k">for</span> <span class="n">chain_id</span> <span class="ow">in</span> <span class="n">df</span><span class="p">[(</span><span class="s1">&#39;chain_id&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)]</span><span class="o">.</span><span class="n">unique</span><span class="p">()])</span>
         <span class="k">for</span> <span class="n">chain</span> <span class="ow">in</span> <span class="n">chains</span><span class="p">:</span>
             <span class="n">chain_values</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[(</span><span class="s1">&#39;chain_id&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)]</span> <span class="o">==</span> <span class="n">chain</span><span class="p">]</span>
@@ -162,19 +197,34 @@
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">MCMCAnalysisResults</span><span class="p">(</span><span class="n">AnalysisResults</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;The analysis results class for MCMC.</span>
+    <span class="sd">&quot;&quot;&quot;The analysis results class for MCMC. You will not need to instantiate this</span>
+<span class="sd">    class manually.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    chains: list</span>
-<span class="sd">        A list of</span>
-<span class="sd">    qoi: ndarray of shape (nsamples, 1)</span>
+<span class="sd">    chains: dict</span>
+<span class="sd">        A dictionary with pandas DataFrame that correspond to an MCMC chain each.</span>
+<span class="sd">        A chain consists of points that MCMC has visited. From this a distribution</span>
+<span class="sd">        of the input variables can be constructed by means of a simple histogram.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">chains</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">chains</span> <span class="o">=</span> <span class="n">chains</span>
 
     <span class="k">def</span> <span class="nf">plot_hist</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_parameter</span><span class="p">,</span> <span class="n">chain</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">skip</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">merge</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Will plot a histogram for a given input parameter.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        input_parameter: str</span>
+<span class="sd">            An input parameter name to draw the histogram for.</span>
+<span class="sd">        chain: int, optional</span>
+<span class="sd">            Index of a chain to be plotted.</span>
+<span class="sd">        skip: int</span>
+<span class="sd">            How many steps to skip (for getting rid of burn-in).</span>
+<span class="sd">        merge: bool</span>
+<span class="sd">            If set to True will use all chains to construct the histogram.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
         <span class="n">input_parameter</span> <span class="o">=</span> <span class="p">(</span><span class="n">input_parameter</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">merge</span><span class="p">:</span>
@@ -187,6 +237,15 @@
             <span class="n">plt</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">chains</span><span class="p">[</span><span class="n">chain</span><span class="p">][</span><span class="n">input_parameter</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">skip</span><span class="p">:],</span> <span class="mi">20</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">plot_chains</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_parameter</span><span class="p">,</span> <span class="n">chain</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Will plot the chains with the input parameter value in the y axis.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        input_parameter: str</span>
+<span class="sd">            Input parameter name.</span>
+<span class="sd">        chain: int, optional</span>
+<span class="sd">            The chain number of the chain to plot.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
         <span class="k">if</span> <span class="n">chain</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">chain</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">chains</span><span class="p">:</span>
@@ -197,14 +256,16 @@
 
         </details>
 
-            <div class="docstring"><p>The analysis results class for MCMC.</p>
+            <div class="docstring"><p>The analysis results class for MCMC. You will not need to instantiate this
+class manually.</p>
 
 <h6 id="parameters">Parameters</h6>
 
 <ul>
-<li><strong>chains</strong> (list):
-A list of</li>
-<li><strong>qoi</strong> (ndarray of shape (nsamples, 1)):</li>
+<li><strong>chains</strong> (dict):
+A dictionary with pandas DataFrame that correspond to an MCMC chain each.
+A chain consists of points that MCMC has visited. From this a distribution
+of the input variables can be constructed by means of a simple histogram.</li>
 </ul>
 </div>
 
@@ -238,6 +299,19 @@ A list of</li>
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">plot_hist</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_parameter</span><span class="p">,</span> <span class="n">chain</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">skip</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">merge</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Will plot a histogram for a given input parameter.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        input_parameter: str</span>
+<span class="sd">            An input parameter name to draw the histogram for.</span>
+<span class="sd">        chain: int, optional</span>
+<span class="sd">            Index of a chain to be plotted.</span>
+<span class="sd">        skip: int</span>
+<span class="sd">            How many steps to skip (for getting rid of burn-in).</span>
+<span class="sd">        merge: bool</span>
+<span class="sd">            If set to True will use all chains to construct the histogram.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
         <span class="n">input_parameter</span> <span class="o">=</span> <span class="p">(</span><span class="n">input_parameter</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">merge</span><span class="p">:</span>
@@ -252,7 +326,22 @@ A list of</li>
 
         </details>
 
-    
+            <div class="docstring"><p>Will plot a histogram for a given input parameter.</p>
+
+<h6 id="parameters">Parameters</h6>
+
+<ul>
+<li><strong>input_parameter</strong> (str):
+An input parameter name to draw the histogram for.</li>
+<li><strong>chain</strong> (int, optional):
+Index of a chain to be plotted.</li>
+<li><strong>skip</strong> (int):
+How many steps to skip (for getting rid of burn-in).</li>
+<li><strong>merge</strong> (bool):
+If set to True will use all chains to construct the histogram.</li>
+</ul>
+</div>
+
 
                             </div>
                             <div id="MCMCAnalysisResults.plot_chains" class="classattr">
@@ -266,6 +355,15 @@ A list of</li>
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">plot_chains</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_parameter</span><span class="p">,</span> <span class="n">chain</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Will plot the chains with the input parameter value in the y axis.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        input_parameter: str</span>
+<span class="sd">            Input parameter name.</span>
+<span class="sd">        chain: int, optional</span>
+<span class="sd">            The chain number of the chain to plot.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
         <span class="k">if</span> <span class="n">chain</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">chain</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">chains</span><span class="p">:</span>
@@ -276,7 +374,18 @@ A list of</li>
 
         </details>
 
-    
+            <div class="docstring"><p>Will plot the chains with the input parameter value in the y axis.</p>
+
+<h6 id="parameters">Parameters</h6>
+
+<ul>
+<li><strong>input_parameter</strong> (str):
+Input parameter name.</li>
+<li><strong>chain</strong> (int, optional):
+The chain number of the chain to plot.</li>
+</ul>
+</div>
+
 
                             </div>
                             <div class="inherited">
@@ -315,16 +424,21 @@ A list of</li>
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    sampler: MCMCSampler</span>
-<span class="sd">       an instance of MCMCSampler used to generate MCMC samples</span>
-<span class="sd">    qoi: str</span>
-<span class="sd">       name of the qoi</span>
+<span class="sd">       An instance of MCMCSampler used to generate MCMC samples.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sampler</span><span class="p">,</span> <span class="n">qoi</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sampler</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">sampler</span> <span class="o">=</span> <span class="n">sampler</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">qoi</span> <span class="o">=</span> <span class="n">qoi</span>
 
     <span class="k">def</span> <span class="nf">analyse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Performs some pre-processing on the chains in order to be able to construct</span>
+<span class="sd">        the histograms or other methods of distribution estimation.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        df: DataFrame</span>
+<span class="sd">            DataFrame with the results obtained by evaluating the samples generated by the</span>
+<span class="sd">            MCMC sampler.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">chains</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">([(</span><span class="n">chain_id</span><span class="p">,</span> <span class="p">[])</span> <span class="k">for</span> <span class="n">chain_id</span> <span class="ow">in</span> <span class="n">df</span><span class="p">[(</span><span class="s1">&#39;chain_id&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)]</span><span class="o">.</span><span class="n">unique</span><span class="p">()])</span>
         <span class="k">for</span> <span class="n">chain</span> <span class="ow">in</span> <span class="n">chains</span><span class="p">:</span>
             <span class="n">chain_values</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[(</span><span class="s1">&#39;chain_id&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)]</span> <span class="o">==</span> <span class="n">chain</span><span class="p">]</span>
@@ -349,9 +463,7 @@ A list of</li>
 
 <ul>
 <li><strong>sampler</strong> (MCMCSampler):
-an instance of MCMCSampler used to generate MCMC samples</li>
-<li><strong>qoi</strong> (str):
-name of the qoi</li>
+An instance of MCMCSampler used to generate MCMC samples.</li>
 </ul>
 </div>
 
@@ -360,14 +472,13 @@ name of the qoi</li>
                                         <div class="attr function"><a class="headerlink" href="#MCMCAnalysis.__init__">#&nbsp;&nbsp</a>
 
         
-            <span class="name">MCMCAnalysis</span><span class="signature">(sampler, qoi=None)</span>
+            <span class="name">MCMCAnalysis</span><span class="signature">(sampler)</span>
     </div>
 
                 <details>
             <summary>View Source</summary>
-            <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sampler</span><span class="p">,</span> <span class="n">qoi</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+            <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sampler</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">sampler</span> <span class="o">=</span> <span class="n">sampler</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">qoi</span> <span class="o">=</span> <span class="n">qoi</span>
 </pre></div>
 
         </details>
@@ -386,6 +497,15 @@ name of the qoi</li>
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">analyse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Performs some pre-processing on the chains in order to be able to construct</span>
+<span class="sd">        the histograms or other methods of distribution estimation.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        df: DataFrame</span>
+<span class="sd">            DataFrame with the results obtained by evaluating the samples generated by the</span>
+<span class="sd">            MCMC sampler.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">chains</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">([(</span><span class="n">chain_id</span><span class="p">,</span> <span class="p">[])</span> <span class="k">for</span> <span class="n">chain_id</span> <span class="ow">in</span> <span class="n">df</span><span class="p">[(</span><span class="s1">&#39;chain_id&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)]</span><span class="o">.</span><span class="n">unique</span><span class="p">()])</span>
         <span class="k">for</span> <span class="n">chain</span> <span class="ow">in</span> <span class="n">chains</span><span class="p">:</span>
             <span class="n">chain_values</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[(</span><span class="s1">&#39;chain_id&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)]</span> <span class="o">==</span> <span class="n">chain</span><span class="p">]</span>
@@ -404,19 +524,15 @@ name of the qoi</li>
 
         </details>
 
-            <div class="docstring"><p>Perform analysis on input <code>data_frame</code>.</p>
+            <div class="docstring"><p>Performs some pre-processing on the chains in order to be able to construct
+the histograms or other methods of distribution estimation.</p>
 
 <h6 id="parameters">Parameters</h6>
 
 <ul>
-<li><strong>data_frame</strong> (pandas DataFrame):
-Input data for analysis.</li>
-</ul>
-
-<h6 id="returns">Returns</h6>
-
-<ul>
-<li><strong>AnalysisResults instance</strong></li>
+<li><strong>df</strong> (DataFrame):
+DataFrame with the results obtained by evaluating the samples generated by the
+MCMC sampler.</li>
 </ul>
 </div>
 
