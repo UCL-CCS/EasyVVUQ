@@ -59,8 +59,8 @@ class GaussianProcessSurrogate(BaseAnalysisElement):
         easyvvuq.analysis.gp.GaussianProcessSurrogateResults
            GaussianProcessSurrogateResults instance
         """
-        x = data_frame[self.attr_cols].values
-        y = data_frame[self.target_cols].values
+        x = data_frame[self.attr_cols].values #lgtm [py/hash-unhashable-value]
+        y = data_frame[self.target_cols].values #lgtm [py/hash-unhashable-value]
         gps = []
         for _ in y:
             gp = GaussianProcessRegressor(**kwargs)
