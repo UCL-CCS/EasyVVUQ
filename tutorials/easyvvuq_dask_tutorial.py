@@ -102,10 +102,10 @@ if __name__ == '__main__':
         "kappa": cp.Uniform(0.025, 0.075),
         "t_env": cp.Uniform(15, 25)
     }
-    my_sampler = uq.sampling.PCESampler(vary=vary, polynomial_order=3)
+    sampler = uq.sampling.PCESampler(vary=vary, polynomial_order=3)
 
     # Associate the sampler with the campaign
-    campaign.set_sampler(my_sampler)
+    campaign.set_sampler(sampler)
 
     # Run the cases
     campaign.execute(pool=client).collate()
