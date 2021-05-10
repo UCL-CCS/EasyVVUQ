@@ -151,4 +151,4 @@ def test_surrogate_workflow(tmpdir, sampler):
     df = reloaded_campaign.get_collation_result()
     assert(len(df) > 0)
     assert(len(df) <= 100)
-    results = reloaded_campaign.analyse(qoi='u')
+    results = reloaded_campaign.analyse()
