@@ -31,7 +31,7 @@ if __name__ == '__main__':
 
     # Set up a fresh campaign called "coffee_pce"
     db_location = "sqlite:///" + campaign_work_dir + "/campaign.db"
-    my_campaign = uq.Campaign(
+    campaign = uq.Campaign(
         name='coffee_pce',
         db_location=db_location,
         work_dir=campaign_work_dir
@@ -91,7 +91,7 @@ if __name__ == '__main__':
     print(client)
 
     # Add the app (automatically set as current app)
-    my_campaign.add_app(
+    campaign.add_app(
         name="cooling",
         params=params,
         actions=actions
@@ -105,21 +105,21 @@ if __name__ == '__main__':
     my_sampler = uq.sampling.PCESampler(vary=vary, polynomial_order=3)
 
     # Associate the sampler with the campaign
-    my_campaign.set_sampler(my_sampler)
+    campaign.set_sampler(my_sampler)
 
     # Will draw all (of the finite set of samples)
-    my_campaign.draw_samples()
-    print("Number of samples = %s" % my_campaign.get_active_sampler().count)
+    campaign.draw_samples()
+    print("Number of samples = %s" % campaign.get_active_sampler().count)
 
     # Run the cases
-    my_campaign.execute(pool=client).collate()
+    campaign.execute(pool=client).collate()
 
     client.close()
     if not args.local:
         client.shutdown()
 
     # Get Descriptive Statistics
-    results = my_campaign.analyse(qoi_cols=["te"])
+    results = campaign.analyse(qoi_cols=["te"])
 
     print("descriptive statistics :")
     print(results.describe("te"))
