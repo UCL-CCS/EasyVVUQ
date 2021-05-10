@@ -18,7 +18,7 @@ class BuildCannonsimCommand(distutils.cmd.Command):
 
     def run(self):
         self.announce('Building cannonsim')
-        subprocess.check_call(['make'], cwd=os.path.abspath('./tests/cannonsim/src'))
+        subprocess.check_call(['make'], cwd=path.abspath('./tests/cannonsim/src'))
 
 
 class BuildNotebooks(distutils.cmd.Command):
@@ -35,7 +35,7 @@ class BuildNotebooks(distutils.cmd.Command):
         self.announce('Building tutorial as Jupyter notebooks')
         tutorials = ['basic_tutorial.rst', 'cooling_coffee_cup.rst']
         for tutorial in tutorials:
-            subprocess.check_call(['rst2ipynb', tutorial, '-o', os.path.splitext(tutorial)[0] + '.ipynb'], cwd=os.path.abspath('./docs'))
+            subprocess.check_call(['rst2ipynb', tutorial, '-o', path.splitext(tutorial)[0] + '.ipynb'], cwd=path.abspath('./docs'))
 
 
 class BuildPyCommand(setuptools.command.build_py.build_py):
