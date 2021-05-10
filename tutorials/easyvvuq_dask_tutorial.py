@@ -4,26 +4,23 @@ import easyvvuq as uq
 import chaospy as cp
 import argparse
 
-
-parser = argparse.ArgumentParser(
-    description="EasyVVUQ applied (using DASK) to a cylindrical tokamak",
-    epilog="",
-    formatter_class=argparse.RawTextHelpFormatter
-)
-
-parser.add_argument("--local", "-l", action="store_true", default=True)
-args = parser.parse_args()
-
-if args.local:
-    print("Running locally")
-    from dask.distributed import Client
-else:
-    print("Running using SLURM")
-    from dask.distributed import Client
-    from dask_jobqueue import SLURMCluster
-
-
 if __name__ == '__main__':
+    parser = argparse.ArgumentParser(
+        description="EasyVVUQ applied (using DASK) to a cylindrical tokamak",
+        epilog="",
+        formatter_class=argparse.RawTextHelpFormatter
+    )
+
+    parser.add_argument("--local", "-l", action="store_true", default=True)
+    args = parser.parse_args()
+
+    if args.local:
+        print("Running locally")
+        from dask.distributed import Client
+    else:
+        print("Running using SLURM")
+        from dask.distributed import Client
+        from dask_jobqueue import SLURMCluster
 
     work_dir = os.path.dirname(os.path.abspath(__file__))
     campaign_work_dir = os.path.join(work_dir, "easyvvuq_dask_tutorial")
