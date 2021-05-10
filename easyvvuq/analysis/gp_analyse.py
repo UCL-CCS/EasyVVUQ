@@ -1,8 +1,22 @@
-"""Will create a Gaussian Process surrogate of your model.
+"""Will create a Gaussian Process surrogate of your model. For 
+the sampler you can use the random sampler or the quasi-random
+sampler. Don't forget to set the analysis class to GaussianProcessSurrogate
+as is shown in the example below.
+
+This uses the Gaussian Process model from sklearn.
 
 Examples
 --------
-
+>>> campaign = uq.Campaign(name='surrogate')
+>>> sampler = uq.sampling.RandomSampler(
+    vary = {"Pe": cp.Uniform(100.0, 200.0), "f": cp.Uniform(0.95, 1.05)}
+    max_num=100, analysis_class=uq.analysis.GaussianProcessSurrogate)
+>>> campaign.add_app(name="sc", params=params, actions=actions)
+>>> campaign.set_sampler(sampler)
+>>> campaign.execute().collate()
+>>> results = campaign.analyse(qoi_cols=output_columns)
+>>> surrogate = results.surrogate()
+>>> surrogate({'Pe' : 110.0, 'f': 1.0})
 """
 
 from .base import BaseAnalysisElement
@@ -10,14 +24,35 @@ from sklearn.gaussian_process import GaussianProcessRegressor
 from .results import AnalysisResults
 import numpy as np
 
-
 class GaussianProcessSurrogateResults(AnalysisResults):
+    """Gaussian process surrogate results class. You would never
+    create this manually in normal use. It is meant to be returned as the
+    result of GaussianProcessSurrogate analyse method.
+
+    Parameters
+    ----------
+    gps: list
+        This will be one GP model for each coordinate of a vector QoI.
+    parameters: list
+        A list of input parameter names.
+    qoi: str
+        Output variable name.
+    """
     def __init__(self, gps, parameters, qoi):
         self.gps = gps
         self.parameters = parameters
         self.qoi = qoi
 
     def surrogate(self):
+        """Returns the GP surrogate model as a Python function.
+
+        Returns
+        -------
+        function
+            Returns a function that takes a dictionary and returns a dictionary.
+            These dictionaries use the same format as Encoder and Decoder used
+            to construct the surrogate.
+        """
         def surrogate_fn(inputs):
             values = np.array([[inputs[key] for key in self.parameters]])
             results = [gp.predict(values) for gp in self.gps][0][0]
@@ -28,16 +63,14 @@ class GaussianProcessSurrogateResults(AnalysisResults):
 class GaussianProcessSurrogate(BaseAnalysisElement):
 
     def __init__(self, sampler, qoi_cols):
-        """Element to calculate basic stats for `qoi_cols` values.
-
-        This results in values for: count, mean, std, min, max and 25%, 50% &
-        75% percentiles for each value in the analysis.
+        """An analysis class that can construct a Gaussian Process surrogate
+        of your model. Based on the sklearn GaussianProgressRegressor class.
 
         Parameters
         ----------
-        attr_cols : list
-            Attributes used to train the gaussian process regressor.
-        target_cols : list
+        sampler : Sampler
+            `Sampler` that was used to generate samples to train this surrogate model.
+        qoi_cols : list
             Corresponding target values (can be vectors).
         """
         self.sampler = sampler
@@ -45,14 +78,7 @@ class GaussianProcessSurrogate(BaseAnalysisElement):
         self.target_cols = qoi_cols
 
     def analyse(self, data_frame=None, **kwargs):
-        """Perform the basis stats analysis on the input `data_frame`.
-
-        Analysis is based on `pandas.Dataframe.describe` and results in
-        values for: count, mean, std, min, max and 25%, 50% & 75% percentiles
-        for each value in the analysis.
-
-        The data_frame is grouped according to `self.groupby` if specified and
-        analysis is performed on the columns selected in `self.qoi_cols` if set.
+        """Construct a Gaussian Process surrogate based on data in `data_frame`.
 
         Parameters
         ----------
