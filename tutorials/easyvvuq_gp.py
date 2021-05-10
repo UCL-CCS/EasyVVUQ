@@ -2,7 +2,6 @@ import os
 import easyvvuq as uq
 import chaospy as cp
 import matplotlib.pyplot as plt
-import numpy as np
 from shutil import rmtree
 
 
