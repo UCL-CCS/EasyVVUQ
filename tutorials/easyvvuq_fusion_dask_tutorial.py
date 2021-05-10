@@ -30,7 +30,7 @@ args = parser.parse_args()
 
 if args.local:
     print("Running locally")
-    from dask.distributed import Client, LocalCluster
+    from dask.distributed import Client
 else:
     print("Running using SLURM")
     from dask.distributed import Client
