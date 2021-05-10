@@ -121,9 +121,6 @@ if __name__ == '__main__':
     if not args.local:
         client.shutdown()
 
-    # Collate the results
-    my_campaign.execute().collate()
-
     # Post-processing analysis
     my_analysis = uq.analysis.PCEAnalysis(
         sampler=my_sampler,

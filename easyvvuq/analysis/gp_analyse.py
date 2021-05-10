@@ -1,3 +1,10 @@
+"""Will create a Gaussian Process surrogate of your model.
+
+Examples
+--------
+
+"""
+
 from .base import BaseAnalysisElement
 from sklearn.gaussian_process import GaussianProcessRegressor
 from .results import AnalysisResults
@@ -50,14 +57,16 @@ class GaussianProcessSurrogate(BaseAnalysisElement):
         Parameters
         ----------
         data_frame : pandas.DataFrame
-            Summary data produced through collation of simulation output.
+            Data which you want to use to fit the Gaussian Process to.
         kwargs : keyword arguments
-            These arguments will be passed to sklearn's GaussianProcessRegressor
+            These arguments will be passed to sklearn's GaussianProcessRegressor.
+            For details on what this could be, please see
 
         Returns
         -------
         easyvvuq.analysis.gp.GaussianProcessSurrogateResults
-           GaussianProcessSurrogateResults instance
+           `GaussianProcessSurrogateResults` instance. Used to interact with the surrogate
+           model and to possibly access other functionality provided by the fitted model.
         """
         x = data_frame[self.attr_cols].values #lgtm [py/hash-unhashable-value]
         y = data_frame[self.target_cols].values #lgtm [py/hash-unhashable-value]
