@@ -4,7 +4,6 @@ from setuptools import setup, find_packages
 import distutils
 import versioneer
 import subprocess
-import os
 
 
 class BuildCannonsimCommand(distutils.cmd.Command):
