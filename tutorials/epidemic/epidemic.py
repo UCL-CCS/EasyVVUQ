@@ -1,6 +1,4 @@
 import numpy as np
-from scipy.spatial.distance import cdist
-import scipy.stats as stats
 import matplotlib.pyplot as plt
 import sys
 import json
