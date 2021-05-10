@@ -14,8 +14,6 @@ https://en.wikipedia.org/wiki/Halton_sequence
 
 
 from .random import RandomSampler
-import numpy as np
-import chaospy as cp
 
 
 class LHCSampler(RandomSampler, sampler_name='lhc_sampler'):
