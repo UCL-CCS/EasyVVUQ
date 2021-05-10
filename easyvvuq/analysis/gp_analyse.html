@@ -71,18 +71,49 @@
                     <h1 class="modulename">
 <a href="./../../easyvvuq.html">easyvvuq</a><wbr>.<a href="./../analysis.html">analysis</a><wbr>.gp_analyse    </h1>
 
-                        <div class="docstring"><p>Will create a Gaussian Process surrogate of your model.</p>
+                        <div class="docstring"><p>Will create a Gaussian Process surrogate of your model. For 
+the sampler you can use the random sampler or the quasi-random
+sampler. Don't forget to set the analysis class to GaussianProcessSurrogate
+as is shown in the example below.</p>
 
-<h2 id="examples">Examples</h2>
+<p>This uses the Gaussian Process model from sklearn.</p>
+
+<h6 id="examples">Examples</h6>
+
+<div class="codehilite"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">campaign</span> <span class="o">=</span> <span class="n">uq</span><span class="o">.</span><span class="n">Campaign</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;surrogate&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sampler</span> <span class="o">=</span> <span class="n">uq</span><span class="o">.</span><span class="n">sampling</span><span class="o">.</span><span class="n">RandomSampler</span><span class="p">(</span>
+<span class="go">    vary = {&quot;Pe&quot;: cp.Uniform(100.0, 200.0), &quot;f&quot;: cp.Uniform(0.95, 1.05)}</span>
+<span class="go">    max_num=100, analysis_class=uq.analysis.GaussianProcessSurrogate)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">campaign</span><span class="o">.</span><span class="n">add_app</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;sc&quot;</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">,</span> <span class="n">actions</span><span class="o">=</span><span class="n">actions</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">campaign</span><span class="o">.</span><span class="n">set_sampler</span><span class="p">(</span><span class="n">sampler</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">campaign</span><span class="o">.</span><span class="n">execute</span><span class="p">()</span><span class="o">.</span><span class="n">collate</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">results</span> <span class="o">=</span> <span class="n">campaign</span><span class="o">.</span><span class="n">analyse</span><span class="p">(</span><span class="n">qoi_cols</span><span class="o">=</span><span class="n">output_columns</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">surrogate</span> <span class="o">=</span> <span class="n">results</span><span class="o">.</span><span class="n">surrogate</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">surrogate</span><span class="p">({</span><span class="s1">&#39;Pe&#39;</span> <span class="p">:</span> <span class="mf">110.0</span><span class="p">,</span> <span class="s1">&#39;f&#39;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">})</span>
+</code></pre></div>
 </div>
 
                         <details>
             <summary>View Source</summary>
-            <div class="codehilite"><pre><span></span><span class="sd">&quot;&quot;&quot;Will create a Gaussian Process surrogate of your model.</span>
+            <div class="codehilite"><pre><span></span><span class="sd">&quot;&quot;&quot;Will create a Gaussian Process surrogate of your model. For </span>
+<span class="sd">the sampler you can use the random sampler or the quasi-random</span>
+<span class="sd">sampler. Don&#39;t forget to set the analysis class to GaussianProcessSurrogate</span>
+<span class="sd">as is shown in the example below.</span>
+
+<span class="sd">This uses the Gaussian Process model from sklearn.</span>
 
 <span class="sd">Examples</span>
 <span class="sd">--------</span>
-
+<span class="sd">&gt;&gt;&gt; campaign = uq.Campaign(name=&#39;surrogate&#39;)</span>
+<span class="sd">&gt;&gt;&gt; sampler = uq.sampling.RandomSampler(</span>
+<span class="sd">    vary = {&quot;Pe&quot;: cp.Uniform(100.0, 200.0), &quot;f&quot;: cp.Uniform(0.95, 1.05)}</span>
+<span class="sd">    max_num=100, analysis_class=uq.analysis.GaussianProcessSurrogate)</span>
+<span class="sd">&gt;&gt;&gt; campaign.add_app(name=&quot;sc&quot;, params=params, actions=actions)</span>
+<span class="sd">&gt;&gt;&gt; campaign.set_sampler(sampler)</span>
+<span class="sd">&gt;&gt;&gt; campaign.execute().collate()</span>
+<span class="sd">&gt;&gt;&gt; results = campaign.analyse(qoi_cols=output_columns)</span>
+<span class="sd">&gt;&gt;&gt; surrogate = results.surrogate()</span>
+<span class="sd">&gt;&gt;&gt; surrogate({&#39;Pe&#39; : 110.0, &#39;f&#39;: 1.0})</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="kn">from</span> <span class="nn">.base</span> <span class="kn">import</span> <span class="n">BaseAnalysisElement</span>
@@ -90,14 +121,35 @@
 <span class="kn">from</span> <span class="nn">.results</span> <span class="kn">import</span> <span class="n">AnalysisResults</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
-
 <span class="k">class</span> <span class="nc">GaussianProcessSurrogateResults</span><span class="p">(</span><span class="n">AnalysisResults</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Gaussian process surrogate results class. You would never</span>
+<span class="sd">    create this manually in normal use. It is meant to be returned as the</span>
+<span class="sd">    result of GaussianProcessSurrogate analyse method.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    gps: list</span>
+<span class="sd">        This will be one GP model for each coordinate of a vector QoI.</span>
+<span class="sd">    parameters: list</span>
+<span class="sd">        A list of input parameter names.</span>
+<span class="sd">    qoi: str</span>
+<span class="sd">        Output variable name.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gps</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">qoi</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">gps</span> <span class="o">=</span> <span class="n">gps</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span> <span class="o">=</span> <span class="n">parameters</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">qoi</span> <span class="o">=</span> <span class="n">qoi</span>
 
     <span class="k">def</span> <span class="nf">surrogate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns the GP surrogate model as a Python function.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        function</span>
+<span class="sd">            Returns a function that takes a dictionary and returns a dictionary.</span>
+<span class="sd">            These dictionaries use the same format as Encoder and Decoder used</span>
+<span class="sd">            to construct the surrogate.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">def</span> <span class="nf">surrogate_fn</span><span class="p">(</span><span class="n">inputs</span><span class="p">):</span>
             <span class="n">values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="n">inputs</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">]])</span>
             <span class="n">results</span> <span class="o">=</span> <span class="p">[</span><span class="n">gp</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">values</span><span class="p">)</span> <span class="k">for</span> <span class="n">gp</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">gps</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
@@ -108,16 +160,14 @@
 <span class="k">class</span> <span class="nc">GaussianProcessSurrogate</span><span class="p">(</span><span class="n">BaseAnalysisElement</span><span class="p">):</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sampler</span><span class="p">,</span> <span class="n">qoi_cols</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Element to calculate basic stats for `qoi_cols` values.</span>
-
-<span class="sd">        This results in values for: count, mean, std, min, max and 25%, 50% &amp;</span>
-<span class="sd">        75% percentiles for each value in the analysis.</span>
+        <span class="sd">&quot;&quot;&quot;An analysis class that can construct a Gaussian Process surrogate</span>
+<span class="sd">        of your model. Based on the sklearn GaussianProgressRegressor class.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        attr_cols : list</span>
-<span class="sd">            Attributes used to train the gaussian process regressor.</span>
-<span class="sd">        target_cols : list</span>
+<span class="sd">        sampler : Sampler</span>
+<span class="sd">            `Sampler` that was used to generate samples to train this surrogate model.</span>
+<span class="sd">        qoi_cols : list</span>
 <span class="sd">            Corresponding target values (can be vectors).</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">sampler</span> <span class="o">=</span> <span class="n">sampler</span>
@@ -125,14 +175,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">target_cols</span> <span class="o">=</span> <span class="n">qoi_cols</span>
 
     <span class="k">def</span> <span class="nf">analyse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_frame</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Perform the basis stats analysis on the input `data_frame`.</span>
-
-<span class="sd">        Analysis is based on `pandas.Dataframe.describe` and results in</span>
-<span class="sd">        values for: count, mean, std, min, max and 25%, 50% &amp; 75% percentiles</span>
-<span class="sd">        for each value in the analysis.</span>
-
-<span class="sd">        The data_frame is grouped according to `self.groupby` if specified and</span>
-<span class="sd">        analysis is performed on the columns selected in `self.qoi_cols` if set.</span>
+        <span class="sd">&quot;&quot;&quot;Construct a Gaussian Process surrogate based on data in `data_frame`.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -172,12 +215,34 @@
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">GaussianProcessSurrogateResults</span><span class="p">(</span><span class="n">AnalysisResults</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Gaussian process surrogate results class. You would never</span>
+<span class="sd">    create this manually in normal use. It is meant to be returned as the</span>
+<span class="sd">    result of GaussianProcessSurrogate analyse method.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    gps: list</span>
+<span class="sd">        This will be one GP model for each coordinate of a vector QoI.</span>
+<span class="sd">    parameters: list</span>
+<span class="sd">        A list of input parameter names.</span>
+<span class="sd">    qoi: str</span>
+<span class="sd">        Output variable name.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gps</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">qoi</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">gps</span> <span class="o">=</span> <span class="n">gps</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span> <span class="o">=</span> <span class="n">parameters</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">qoi</span> <span class="o">=</span> <span class="n">qoi</span>
 
     <span class="k">def</span> <span class="nf">surrogate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns the GP surrogate model as a Python function.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        function</span>
+<span class="sd">            Returns a function that takes a dictionary and returns a dictionary.</span>
+<span class="sd">            These dictionaries use the same format as Encoder and Decoder used</span>
+<span class="sd">            to construct the surrogate.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">def</span> <span class="nf">surrogate_fn</span><span class="p">(</span><span class="n">inputs</span><span class="p">):</span>
             <span class="n">values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="n">inputs</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">]])</span>
             <span class="n">results</span> <span class="o">=</span> <span class="p">[</span><span class="n">gp</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">values</span><span class="p">)</span> <span class="k">for</span> <span class="n">gp</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">gps</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
@@ -187,19 +252,19 @@
 
         </details>
 
-            <div class="docstring"><p>Contains the analysis results.</p>
+            <div class="docstring"><p>Gaussian process surrogate results class. You would never
+create this manually in normal use. It is meant to be returned as the
+result of GaussianProcessSurrogate analyse method.</p>
 
 <h6 id="parameters">Parameters</h6>
 
 <ul>
-<li><strong>raw_data</strong> (obj):
-An arbitrary object that contains raw analysis data.</li>
-<li><strong>samples</strong> (pandas DataFrame):
-Collated samples.</li>
-<li><strong>qois</strong> (list of str):
-List of qoi names used during the analysis.</li>
-<li><strong>inputs</strong> (list of str):
-List of input names used during the analysis.</li>
+<li><strong>gps</strong> (list):
+This will be one GP model for each coordinate of a vector QoI.</li>
+<li><strong>parameters</strong> (list):
+A list of input parameter names.</li>
+<li><strong>qoi</strong> (str):
+Output variable name.</li>
 </ul>
 </div>
 
@@ -235,6 +300,15 @@ List of input names used during the analysis.</li>
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">surrogate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns the GP surrogate model as a Python function.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        function</span>
+<span class="sd">            Returns a function that takes a dictionary and returns a dictionary.</span>
+<span class="sd">            These dictionaries use the same format as Encoder and Decoder used</span>
+<span class="sd">            to construct the surrogate.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">def</span> <span class="nf">surrogate_fn</span><span class="p">(</span><span class="n">inputs</span><span class="p">):</span>
             <span class="n">values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="n">inputs</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">]])</span>
             <span class="n">results</span> <span class="o">=</span> <span class="p">[</span><span class="n">gp</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">values</span><span class="p">)</span> <span class="k">for</span> <span class="n">gp</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">gps</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
@@ -244,9 +318,7 @@ List of input names used during the analysis.</li>
 
         </details>
 
-            <div class="docstring"><p>Returns the surrogate model as a function from parameter dictionary
-to output dictionary. This only needs to be implemented if the analysis
-method in question provides surrogate models.</p>
+            <div class="docstring"><p>Returns the GP surrogate model as a Python function.</p>
 
 <h6 id="returns">Returns</h6>
 
@@ -291,16 +363,14 @@ to construct the surrogate.</li>
             <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">GaussianProcessSurrogate</span><span class="p">(</span><span class="n">BaseAnalysisElement</span><span class="p">):</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sampler</span><span class="p">,</span> <span class="n">qoi_cols</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Element to calculate basic stats for `qoi_cols` values.</span>
-
-<span class="sd">        This results in values for: count, mean, std, min, max and 25%, 50% &amp;</span>
-<span class="sd">        75% percentiles for each value in the analysis.</span>
+        <span class="sd">&quot;&quot;&quot;An analysis class that can construct a Gaussian Process surrogate</span>
+<span class="sd">        of your model. Based on the sklearn GaussianProgressRegressor class.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        attr_cols : list</span>
-<span class="sd">            Attributes used to train the gaussian process regressor.</span>
-<span class="sd">        target_cols : list</span>
+<span class="sd">        sampler : Sampler</span>
+<span class="sd">            `Sampler` that was used to generate samples to train this surrogate model.</span>
+<span class="sd">        qoi_cols : list</span>
 <span class="sd">            Corresponding target values (can be vectors).</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">sampler</span> <span class="o">=</span> <span class="n">sampler</span>
@@ -308,14 +378,7 @@ to construct the surrogate.</li>
         <span class="bp">self</span><span class="o">.</span><span class="n">target_cols</span> <span class="o">=</span> <span class="n">qoi_cols</span>
 
     <span class="k">def</span> <span class="nf">analyse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_frame</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Perform the basis stats analysis on the input `data_frame`.</span>
-
-<span class="sd">        Analysis is based on `pandas.Dataframe.describe` and results in</span>
-<span class="sd">        values for: count, mean, std, min, max and 25%, 50% &amp; 75% percentiles</span>
-<span class="sd">        for each value in the analysis.</span>
-
-<span class="sd">        The data_frame is grouped according to `self.groupby` if specified and</span>
-<span class="sd">        analysis is performed on the columns selected in `self.qoi_cols` if set.</span>
+        <span class="sd">&quot;&quot;&quot;Construct a Gaussian Process surrogate based on data in `data_frame`.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -358,16 +421,14 @@ to construct the surrogate.</li>
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sampler</span><span class="p">,</span> <span class="n">qoi_cols</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Element to calculate basic stats for `qoi_cols` values.</span>
-
-<span class="sd">        This results in values for: count, mean, std, min, max and 25%, 50% &amp;</span>
-<span class="sd">        75% percentiles for each value in the analysis.</span>
+        <span class="sd">&quot;&quot;&quot;An analysis class that can construct a Gaussian Process surrogate</span>
+<span class="sd">        of your model. Based on the sklearn GaussianProgressRegressor class.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        attr_cols : list</span>
-<span class="sd">            Attributes used to train the gaussian process regressor.</span>
-<span class="sd">        target_cols : list</span>
+<span class="sd">        sampler : Sampler</span>
+<span class="sd">            `Sampler` that was used to generate samples to train this surrogate model.</span>
+<span class="sd">        qoi_cols : list</span>
 <span class="sd">            Corresponding target values (can be vectors).</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">sampler</span> <span class="o">=</span> <span class="n">sampler</span>
@@ -377,17 +438,15 @@ to construct the surrogate.</li>
 
         </details>
 
-            <div class="docstring"><p>Element to calculate basic stats for <code>qoi_cols</code> values.</p>
-
-<p>This results in values for: count, mean, std, min, max and 25%, 50% &amp;
-75% percentiles for each value in the analysis.</p>
+            <div class="docstring"><p>An analysis class that can construct a Gaussian Process surrogate
+of your model. Based on the sklearn GaussianProgressRegressor class.</p>
 
 <h6 id="parameters">Parameters</h6>
 
 <ul>
-<li><strong>attr_cols</strong> (list):
-Attributes used to train the gaussian process regressor.</li>
-<li><strong>target_cols</strong> (list):
+<li><strong>sampler</strong> (Sampler):
+<code>Sampler</code> that was used to generate samples to train this surrogate model.</li>
+<li><strong>qoi_cols</strong> (list):
 Corresponding target values (can be vectors).</li>
 </ul>
 </div>
@@ -405,14 +464,7 @@ Corresponding target values (can be vectors).</li>
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">analyse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_frame</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Perform the basis stats analysis on the input `data_frame`.</span>
-
-<span class="sd">        Analysis is based on `pandas.Dataframe.describe` and results in</span>
-<span class="sd">        values for: count, mean, std, min, max and 25%, 50% &amp; 75% percentiles</span>
-<span class="sd">        for each value in the analysis.</span>
-
-<span class="sd">        The data_frame is grouped according to `self.groupby` if specified and</span>
-<span class="sd">        analysis is performed on the columns selected in `self.qoi_cols` if set.</span>
+        <span class="sd">&quot;&quot;&quot;Construct a Gaussian Process surrogate based on data in `data_frame`.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -439,14 +491,7 @@ Corresponding target values (can be vectors).</li>
 
         </details>
 
-            <div class="docstring"><p>Perform the basis stats analysis on the input <code>data_frame</code>.</p>
-
-<p>Analysis is based on <code>pandas.Dataframe.describe</code> and results in
-values for: count, mean, std, min, max and 25%, 50% &amp; 75% percentiles
-for each value in the analysis.</p>
-
-<p>The data_frame is grouped according to <code>self.groupby</code> if specified and
-analysis is performed on the columns selected in <code>self.qoi_cols</code> if set.</p>
+            <div class="docstring"><p>Construct a Gaussian Process surrogate based on data in <code>data_frame</code>.</p>
 
 <h6 id="parameters">Parameters</h6>
 
