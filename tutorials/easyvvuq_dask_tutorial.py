@@ -121,15 +121,8 @@ if __name__ == '__main__':
     if not args.local:
         client.shutdown()
 
-    # Post-processing analysis
-    my_analysis = uq.analysis.PCEAnalysis(
-        sampler=my_sampler,
-        qoi_cols=["te"]
-    )
-    my_campaign.apply_analysis(my_analysis)
-
     # Get Descriptive Statistics
-    results = my_campaign.get_last_analysis()
+    results = my_campaign.analyse(qoi_cols=["te"])
 
     print("descriptive statistics :")
     print(results.describe("te"))
