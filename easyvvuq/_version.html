@@ -609,7 +609,7 @@
         <span class="c1"># versionfile_source is the relative path from the top of the source</span>
         <span class="c1"># tree (where the .git directory might live) to this file. Invert</span>
         <span class="c1"># this to find the root from __file__.</span>
-        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">cfg</span><span class="o">.</span><span class="n">versionfile_source</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">cfg</span><span class="o">.</span><span class="n">versionfile_source</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">):</span>
             <span class="n">root</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">root</span><span class="p">)</span>
     <span class="k">except</span> <span class="ne">NameError</span><span class="p">:</span>
         <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;0+unknown&quot;</span><span class="p">,</span> <span class="s2">&quot;full-revisionid&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
@@ -1497,7 +1497,7 @@ The distance/hash is unconditional.</p>
         <span class="c1"># versionfile_source is the relative path from the top of the source</span>
         <span class="c1"># tree (where the .git directory might live) to this file. Invert</span>
         <span class="c1"># this to find the root from __file__.</span>
-        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">cfg</span><span class="o">.</span><span class="n">versionfile_source</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">cfg</span><span class="o">.</span><span class="n">versionfile_source</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">):</span>
             <span class="n">root</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">root</span><span class="p">)</span>
     <span class="k">except</span> <span class="ne">NameError</span><span class="p">:</span>
         <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;0+unknown&quot;</span><span class="p">,</span> <span class="s2">&quot;full-revisionid&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
