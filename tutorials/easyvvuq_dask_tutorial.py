@@ -107,10 +107,6 @@ if __name__ == '__main__':
     # Associate the sampler with the campaign
     campaign.set_sampler(my_sampler)
 
-    # Will draw all (of the finite set of samples)
-    campaign.draw_samples()
-    print("Number of samples = %s" % campaign.get_active_sampler().count)
-
     # Run the cases
     campaign.execute(pool=client).collate()
 
