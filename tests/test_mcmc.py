@@ -44,7 +44,7 @@ def test_mcmc(tmp_path):
     for _ in range(200):
         next(iterator).collate()
     df = campaign.get_collation_result()
-    analysis = uq.analysis.MCMCAnalysis(sampler, 'value')
+    analysis = uq.analysis.MCMCAnalysis(sampler)
     result = analysis.analyse(df)
     result.plot_hist('x1')
     result.plot_hist('x2')
