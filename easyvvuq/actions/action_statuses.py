@@ -1,3 +1,9 @@
+"""Implements ActionPool - a thin wrapper around the Python Executor interface
+that is meant to simplify the execution of actions and retrieval of results.
+This object is instantiated by the Campaign. The user would never instantiate it
+manually. The user does interact with it to track the progress of execution.
+"""
+
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from dask.distributed import Client
 from tqdm import tqdm
@@ -27,17 +33,18 @@ __license__ = "LGPL"
 
 
 class ActionPool:
-    """A class that handles the execution of actions.
+    """A class that handles the execution of Actions.
 
     Parameters
     ----------
     campaign: Campaign
         An instance of an EasyVVUQ campaign.
     actions: Actions
-        An instance of Actions containing things to be done as part of the simulation.
+        An instance of `Actions` containing things to be done as part of the simulation.
     inits: iterable
-        Initial inputs to be passed to each Actions representing a sample. Will usually contain
-        dictionaries with the following information: {'run_id': ..., 'campaign_dir': ..., 'run_info': ...}.
+        Initial inputs to be passed to each `Actions` representing a sample. Will usually contain
+        dictionaries with the following information: {'run_id': ..., 'campaign_dir': ..., 
+        'run_info': ...}.
     sequential: bool
         Will run the actions sequentially.
     """
@@ -60,6 +67,8 @@ class ActionPool:
         Returns
         -------
         ActionPool
+            Starts execution and returns a reference to itself for tracking progress 
+            and for collation.
         """
         if pool is None:
             pool = ThreadPoolExecutor()
@@ -79,7 +88,10 @@ class ActionPool:
 
         Returns
         -------
-        A dictionary with four keys - 'ready', 'active' and 'finished', 'failed'.
+        dict
+            A dictionary with four keys - 'ready', 'active' and 'finished', 'failed'. 
+            Values under "ready" correspond to `Actions` waiting for execution, "active"
+            corresponds to the number of currently running tasks.
         """
         ready = 0
         running = 0
@@ -98,8 +110,8 @@ class ActionPool:
         return {'ready': ready, 'active': running, 'finished': done, 'failed': failed}
 
     def collate(self, progress_bar=False):
-        """A command that will block untill al futures in the pool have finished.
-        It will also store the results in the database.
+        """A command that will block untill all Futures in the pool have finished.
+        It will also store the results gather from `Actions` in the database.
 
         Parameters
         ----------
