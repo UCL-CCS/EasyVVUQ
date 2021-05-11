@@ -1,3 +1,11 @@
+"""This module contains implementations of various Actions. Actions in
+EasyVVUQ are responsible for anything that is related to the execution of
+the simulation. It include: actually executing the simulation, preparing
+the input files, parsing the output files, creating directory structures
+necessary to execute the simulation, cleaning up after, delegating work
+to external execution back-ends such as Dask, etc.
+"""
+
 from .base import BaseAction
 from .execute_local import ExecuteLocal, ExecutePython, CreateRunDirectory, Encode, Decode, local_execute
 from .execute_local import CleanUp, Actions
