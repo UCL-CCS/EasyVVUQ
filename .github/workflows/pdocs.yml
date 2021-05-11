@@ -25,12 +25,14 @@ jobs:
         python setup.py develop
         python setup.py build_cannonsim
         pip install pdoc
-    - name: Build and publish
+    - name: Checkout
+      uses: actions/checkout@v2.3.1
+    - name: Build
       run: |
         pdoc -d numpy -o ./pdocs easyvvuq
     - name: Publish generated content to GitHub Pages
-      uses: tsunematsu21/actions-publish-gh-pages@v1.0.1
+      uses: JamesIves/github-pages-deploy-action@4.1.2
       with:
-        dir: pdocs
+        folder: pdocs
         branch: gh-pages
         token: ${{ secrets.PERSONAL_GITHUB_TOKEN }}
