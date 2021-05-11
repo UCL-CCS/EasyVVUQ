@@ -1,4 +1,3 @@
-from .base import BaseEncoder
 import logging
 
 __copyright__ = """
@@ -26,7 +25,7 @@ __license__ = "LGPL"
 logger = logging.getLogger(__name__)
 
 
-class MultiEncoder(BaseEncoder, encoder_name="multiencoder"):
+class MultiEncoder:
 
     def __init__(self, *encoders):
         """

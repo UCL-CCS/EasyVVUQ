@@ -16,10 +16,9 @@ Examples
 
 import os
 import shutil
-from .base import BaseEncoder
 
 
-class CopyEncoder(BaseEncoder, encoder_name="copy_encoder"):
+class CopyEncoder:
     """An Encoder to copy an input file to a simulation.
 
     Parameters

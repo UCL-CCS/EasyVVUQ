@@ -1,7 +1,6 @@
 import os
 #from string import Template
 from jinja2 import Template
-from .base import BaseEncoder
 import logging
 
 __copyright__ = """
@@ -27,7 +26,7 @@ __copyright__ = """
 __license__ = "LGPL"
 
 
-class JinjaEncoder(BaseEncoder, encoder_name="jinja_template"):
+class JinjaEncoder:
     """JinjaEncoder for substituting values into application template input.
     Uses the jinja2 template system, which supports more complex expressions than
     the GenericEncoder.

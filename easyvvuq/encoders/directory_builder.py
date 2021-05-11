@@ -1,5 +1,4 @@
 import os
-from .base import BaseEncoder
 
 __copyright__ = """
 
@@ -24,7 +23,7 @@ __copyright__ = """
 __license__ = "LGPL"
 
 
-class DirectoryBuilder(BaseEncoder, encoder_name="directory_builder"):
+class DirectoryBuilder:
     """DirectoryBuilder builds the specified directory structure for a Run.
 
     The dir structure is specified by the 'tree' parameter. This should be a dict of dicts,

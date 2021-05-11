@@ -1,6 +1,5 @@
 import os
 from string import Template
-from .base import BaseEncoder
 import logging
 
 __copyright__ = """
@@ -32,7 +31,7 @@ def get_custom_template(template_txt, custom_delimiter='$'):
     return CustomTemplate(template_txt)
 
 
-class GenericEncoder(BaseEncoder, encoder_name="generic_template"):
+class GenericEncoder:
     """GenericEncoder for substituting values into application template input.
 
     Parameters
