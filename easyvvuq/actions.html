@@ -46,10 +46,25 @@
                     <h1 class="modulename">
 <a href="./../easyvvuq.html">easyvvuq</a><wbr>.actions    </h1>
 
-                
+                        <div class="docstring"><p>This module contains implementations of various Actions. Actions in
+EasyVVUQ are responsible for anything that is related to the execution of
+the simulation. It include: actually executing the simulation, preparing
+the input files, parsing the output files, creating directory structures
+necessary to execute the simulation, cleaning up after, delegating work
+to external execution back-ends such as Dask, etc.</p>
+</div>
+
                         <details>
             <summary>View Source</summary>
-            <div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">.base</span> <span class="kn">import</span> <span class="n">BaseAction</span>
+            <div class="codehilite"><pre><span></span><span class="sd">&quot;&quot;&quot;This module contains implementations of various Actions. Actions in</span>
+<span class="sd">EasyVVUQ are responsible for anything that is related to the execution of</span>
+<span class="sd">the simulation. It include: actually executing the simulation, preparing</span>
+<span class="sd">the input files, parsing the output files, creating directory structures</span>
+<span class="sd">necessary to execute the simulation, cleaning up after, delegating work</span>
+<span class="sd">to external execution back-ends such as Dask, etc.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">.base</span> <span class="kn">import</span> <span class="n">BaseAction</span>
 <span class="kn">from</span> <span class="nn">.execute_local</span> <span class="kn">import</span> <span class="n">ExecuteLocal</span><span class="p">,</span> <span class="n">ExecutePython</span><span class="p">,</span> <span class="n">CreateRunDirectory</span><span class="p">,</span> <span class="n">Encode</span><span class="p">,</span> <span class="n">Decode</span><span class="p">,</span> <span class="n">local_execute</span>
 <span class="kn">from</span> <span class="nn">.execute_local</span> <span class="kn">import</span> <span class="n">CleanUp</span><span class="p">,</span> <span class="n">Actions</span>
 <span class="kn">from</span> <span class="nn">.execute_kubernetes</span> <span class="kn">import</span> <span class="n">ExecuteKubernetes</span>
