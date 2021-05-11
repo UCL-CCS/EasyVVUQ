@@ -8,7 +8,6 @@ of interest.
 import os
 import logging
 from easyvvuq import OutputType
-from .base import BaseDecoder
 import json
 
 __copyright__ = """
@@ -37,7 +36,7 @@ __license__ = "LGPL"
 logger = logging.Logger(__name__)
 
 
-class JSONDecoder(BaseDecoder, decoder_name="json"):
+class JSONDecoder:
     def __init__(self, target_filename, output_columns):
         if len(output_columns) == 0:
             msg = "output_columns cannot be empty."

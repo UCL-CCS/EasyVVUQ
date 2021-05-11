@@ -5,7 +5,6 @@ import os
 import logging
 import csv
 from easyvvuq import OutputType
-from .base import BaseDecoder
 
 __copyright__ = """
 
@@ -33,7 +32,7 @@ __license__ = "LGPL"
 logger = logging.Logger(__name__)
 
 
-class SimpleCSV(BaseDecoder, decoder_name="csv"):
+class SimpleCSV:
     """CSV Decoder.
 
     Parameters

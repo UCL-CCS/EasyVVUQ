@@ -33,7 +33,7 @@ __license__ = "LGPL"
 logger = logging.Logger(__name__)
 
 
-class YAMLDecoder(JSONDecoder, decoder_name="yaml"):
+class YAMLDecoder(JSONDecoder):
     def _get_raw_data(self, out_path):
         """Reads in data from a YAML file.
 
