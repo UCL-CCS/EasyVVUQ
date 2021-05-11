@@ -39,9 +39,6 @@
                         <li>
                                 <a class="function" href="#MultiEncoder.is_restartable">is_restartable</a>
                         </li>
-                        <li>
-                                <a class="variable" href="#MultiEncoder.encoder_name">encoder_name</a>
-                        </li>
                 </ul>
 
             </li>
@@ -63,8 +60,7 @@
                 
                         <details>
             <summary>View Source</summary>
-            <div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">.base</span> <span class="kn">import</span> <span class="n">BaseEncoder</span>
-<span class="kn">import</span> <span class="nn">logging</span>
+            <div class="codehilite"><pre><span></span><span class="kn">import</span> <span class="nn">logging</span>
 
 <span class="n">__copyright__</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
 
@@ -91,7 +87,7 @@
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
 
-<span class="k">class</span> <span class="nc">MultiEncoder</span><span class="p">(</span><span class="n">BaseEncoder</span><span class="p">,</span> <span class="n">encoder_name</span><span class="o">=</span><span class="s2">&quot;multiencoder&quot;</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">MultiEncoder</span><span class="p">:</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">encoders</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -119,12 +115,12 @@
 
         
         <span class="def">class</span>
-        <span class="name">MultiEncoder</span><wbr>(<span class="base"><a href="base.html#BaseEncoder">easyvvuq.encoders.base.BaseEncoder</a></span>):
+        <span class="name">MultiEncoder</span>:
     </div>
 
                 <details>
             <summary>View Source</summary>
-            <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">MultiEncoder</span><span class="p">(</span><span class="n">BaseEncoder</span><span class="p">,</span> <span class="n">encoder_name</span><span class="o">=</span><span class="s2">&quot;multiencoder&quot;</span><span class="p">):</span>
+            <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">MultiEncoder</span><span class="p">:</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">encoders</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -145,21 +141,7 @@
 
         </details>
 
-            <div class="docstring"><p>Baseclass for all EasyVVUQ encoders.</p>
-
-<p>Skeleton encoder which establishes the format and provides the basis of our
-contract - provide an <code><a href="#MultiEncoder.encode">encode</a></code>
-method to parse these and write relevant run file to a target directory.</p>
-
-<h6 id="parameters">Parameters</h6>
-
-<ul>
-<li><strong>Attributes</strong></li>
-</ul>
-
-<hr />
-</div>
-
+    
 
                             <div id="MultiEncoder.__init__" class="classattr">
                                         <div class="attr function"><a class="headerlink" href="#MultiEncoder.__init__">#&nbsp;&nbsp</a>
@@ -227,26 +209,6 @@ method to parse these and write relevant run file to a target directory.</p>
 
     
 
-                            </div>
-                            <div id="MultiEncoder.encoder_name" class="classattr">
-                                            <div class="attr variable"><a class="headerlink" href="#MultiEncoder.encoder_name">#&nbsp;&nbsp</a>
-
-        <span class="name">encoder_name</span><span class="default_value"> = &#39;multiencoder&#39;</span>
-    </div>
-
-    
-
-                            </div>
-                            <div class="inherited">
-                                <h5>Inherited Members</h5>
-                                <dl>
-                                    <div><dt><a href="../base_element.html#BaseElement">easyvvuq.base_element.BaseElement</a></dt>
-                                <dd id="MultiEncoder.element_name" class="function"><a href="../base_element.html#BaseElement.element_name">element_name</a></dd>
-                <dd id="MultiEncoder.element_version" class="function"><a href="../base_element.html#BaseElement.element_version">element_version</a></dd>
-                <dd id="MultiEncoder.element_category" class="function"><a href="../base_element.html#BaseElement.element_category">element_category</a></dd>
-
-            </div>
-                                </dl>
                             </div>
                 </section>
     </main>

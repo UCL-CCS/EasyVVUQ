@@ -36,9 +36,6 @@
                         <li>
                                 <a class="function" href="#JinjaEncoder.encode">encode</a>
                         </li>
-                        <li>
-                                <a class="variable" href="#JinjaEncoder.encoder_name">encoder_name</a>
-                        </li>
                 </ul>
 
             </li>
@@ -63,7 +60,6 @@
             <div class="codehilite"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
 <span class="c1">#from string import Template</span>
 <span class="kn">from</span> <span class="nn">jinja2</span> <span class="kn">import</span> <span class="n">Template</span>
-<span class="kn">from</span> <span class="nn">.base</span> <span class="kn">import</span> <span class="n">BaseEncoder</span>
 <span class="kn">import</span> <span class="nn">logging</span>
 
 <span class="n">__copyright__</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
@@ -89,7 +85,7 @@
 <span class="n">__license__</span> <span class="o">=</span> <span class="s2">&quot;LGPL&quot;</span>
 
 
-<span class="k">class</span> <span class="nc">JinjaEncoder</span><span class="p">(</span><span class="n">BaseEncoder</span><span class="p">,</span> <span class="n">encoder_name</span><span class="o">=</span><span class="s2">&quot;jinja_template&quot;</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">JinjaEncoder</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;JinjaEncoder for substituting values into application template input.</span>
 <span class="sd">    Uses the jinja2 template system, which supports more complex expressions than</span>
 <span class="sd">    the GenericEncoder.</span>
@@ -163,12 +159,12 @@
 
         
         <span class="def">class</span>
-        <span class="name">JinjaEncoder</span><wbr>(<span class="base"><a href="base.html#BaseEncoder">easyvvuq.encoders.base.BaseEncoder</a></span>):
+        <span class="name">JinjaEncoder</span>:
     </div>
 
                 <details>
             <summary>View Source</summary>
-            <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">JinjaEncoder</span><span class="p">(</span><span class="n">BaseEncoder</span><span class="p">,</span> <span class="n">encoder_name</span><span class="o">=</span><span class="s2">&quot;jinja_template&quot;</span><span class="p">):</span>
+            <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">JinjaEncoder</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;JinjaEncoder for substituting values into application template input.</span>
 <span class="sd">    Uses the jinja2 template system, which supports more complex expressions than</span>
 <span class="sd">    the GenericEncoder.</span>
@@ -334,26 +330,6 @@ Path to directory where application input will be written.</li>
 </div>
 
 
-                            </div>
-                            <div id="JinjaEncoder.encoder_name" class="classattr">
-                                            <div class="attr variable"><a class="headerlink" href="#JinjaEncoder.encoder_name">#&nbsp;&nbsp</a>
-
-        <span class="name">encoder_name</span><span class="default_value"> = &#39;jinja_template&#39;</span>
-    </div>
-
-    
-
-                            </div>
-                            <div class="inherited">
-                                <h5>Inherited Members</h5>
-                                <dl>
-                                    <div><dt><a href="../base_element.html#BaseElement">easyvvuq.base_element.BaseElement</a></dt>
-                                <dd id="JinjaEncoder.element_name" class="function"><a href="../base_element.html#BaseElement.element_name">element_name</a></dd>
-                <dd id="JinjaEncoder.element_version" class="function"><a href="../base_element.html#BaseElement.element_version">element_version</a></dd>
-                <dd id="JinjaEncoder.element_category" class="function"><a href="../base_element.html#BaseElement.element_category">element_category</a></dd>
-
-            </div>
-                                </dl>
                             </div>
                 </section>
     </main>
