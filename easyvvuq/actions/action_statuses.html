@@ -60,10 +60,21 @@
                     <h1 class="modulename">
 <a href="./../../easyvvuq.html">easyvvuq</a><wbr>.<a href="./../actions.html">actions</a><wbr>.action_statuses    </h1>
 
-                
+                        <div class="docstring"><p>Implements ActionPool - a thin wrapper around the Python Executor interface
+that is meant to simplify the execution of actions and retrieval of results.
+This object is instantiated by the Campaign. The user would never instantiate it
+manually. The user does interact with it to track the progress of execution.</p>
+</div>
+
                         <details>
             <summary>View Source</summary>
-            <div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">concurrent.futures</span> <span class="kn">import</span> <span class="n">ThreadPoolExecutor</span><span class="p">,</span> <span class="n">as_completed</span>
+            <div class="codehilite"><pre><span></span><span class="sd">&quot;&quot;&quot;Implements ActionPool - a thin wrapper around the Python Executor interface</span>
+<span class="sd">that is meant to simplify the execution of actions and retrieval of results.</span>
+<span class="sd">This object is instantiated by the Campaign. The user would never instantiate it</span>
+<span class="sd">manually. The user does interact with it to track the progress of execution.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">concurrent.futures</span> <span class="kn">import</span> <span class="n">ThreadPoolExecutor</span><span class="p">,</span> <span class="n">as_completed</span>
 <span class="kn">from</span> <span class="nn">dask.distributed</span> <span class="kn">import</span> <span class="n">Client</span>
 <span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">tqdm</span>
 <span class="kn">import</span> <span class="nn">copy</span>
@@ -92,17 +103,18 @@
 
 
 <span class="k">class</span> <span class="nc">ActionPool</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;A class that handles the execution of actions.</span>
+    <span class="sd">&quot;&quot;&quot;A class that handles the execution of Actions.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    campaign: Campaign</span>
 <span class="sd">        An instance of an EasyVVUQ campaign.</span>
 <span class="sd">    actions: Actions</span>
-<span class="sd">        An instance of Actions containing things to be done as part of the simulation.</span>
+<span class="sd">        An instance of `Actions` containing things to be done as part of the simulation.</span>
 <span class="sd">    inits: iterable</span>
-<span class="sd">        Initial inputs to be passed to each Actions representing a sample. Will usually contain</span>
-<span class="sd">        dictionaries with the following information: {&#39;run_id&#39;: ..., &#39;campaign_dir&#39;: ..., &#39;run_info&#39;: ...}.</span>
+<span class="sd">        Initial inputs to be passed to each `Actions` representing a sample. Will usually contain</span>
+<span class="sd">        dictionaries with the following information: {&#39;run_id&#39;: ..., &#39;campaign_dir&#39;: ..., </span>
+<span class="sd">        &#39;run_info&#39;: ...}.</span>
 <span class="sd">    sequential: bool</span>
 <span class="sd">        Will run the actions sequentially.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -125,6 +137,8 @@
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        ActionPool</span>
+<span class="sd">            Starts execution and returns a reference to itself for tracking progress </span>
+<span class="sd">            and for collation.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">pool</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">pool</span> <span class="o">=</span> <span class="n">ThreadPoolExecutor</span><span class="p">()</span>
@@ -144,7 +158,10 @@
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        A dictionary with four keys - &#39;ready&#39;, &#39;active&#39; and &#39;finished&#39;, &#39;failed&#39;.</span>
+<span class="sd">        dict</span>
+<span class="sd">            A dictionary with four keys - &#39;ready&#39;, &#39;active&#39; and &#39;finished&#39;, &#39;failed&#39;. </span>
+<span class="sd">            Values under &quot;ready&quot; correspond to `Actions` waiting for execution, &quot;active&quot;</span>
+<span class="sd">            corresponds to the number of currently running tasks.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">ready</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="n">running</span> <span class="o">=</span> <span class="mi">0</span>
@@ -163,8 +180,8 @@
         <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;ready&#39;</span><span class="p">:</span> <span class="n">ready</span><span class="p">,</span> <span class="s1">&#39;active&#39;</span><span class="p">:</span> <span class="n">running</span><span class="p">,</span> <span class="s1">&#39;finished&#39;</span><span class="p">:</span> <span class="n">done</span><span class="p">,</span> <span class="s1">&#39;failed&#39;</span><span class="p">:</span> <span class="n">failed</span><span class="p">}</span>
 
     <span class="k">def</span> <span class="nf">collate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">progress_bar</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;A command that will block untill al futures in the pool have finished.</span>
-<span class="sd">        It will also store the results in the database.</span>
+        <span class="sd">&quot;&quot;&quot;A command that will block untill all Futures in the pool have finished.</span>
+<span class="sd">        It will also store the results gather from `Actions` in the database.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -204,17 +221,18 @@
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">ActionPool</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;A class that handles the execution of actions.</span>
+    <span class="sd">&quot;&quot;&quot;A class that handles the execution of Actions.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    campaign: Campaign</span>
 <span class="sd">        An instance of an EasyVVUQ campaign.</span>
 <span class="sd">    actions: Actions</span>
-<span class="sd">        An instance of Actions containing things to be done as part of the simulation.</span>
+<span class="sd">        An instance of `Actions` containing things to be done as part of the simulation.</span>
 <span class="sd">    inits: iterable</span>
-<span class="sd">        Initial inputs to be passed to each Actions representing a sample. Will usually contain</span>
-<span class="sd">        dictionaries with the following information: {&#39;run_id&#39;: ..., &#39;campaign_dir&#39;: ..., &#39;run_info&#39;: ...}.</span>
+<span class="sd">        Initial inputs to be passed to each `Actions` representing a sample. Will usually contain</span>
+<span class="sd">        dictionaries with the following information: {&#39;run_id&#39;: ..., &#39;campaign_dir&#39;: ..., </span>
+<span class="sd">        &#39;run_info&#39;: ...}.</span>
 <span class="sd">    sequential: bool</span>
 <span class="sd">        Will run the actions sequentially.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -237,6 +255,8 @@
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        ActionPool</span>
+<span class="sd">            Starts execution and returns a reference to itself for tracking progress </span>
+<span class="sd">            and for collation.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">pool</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">pool</span> <span class="o">=</span> <span class="n">ThreadPoolExecutor</span><span class="p">()</span>
@@ -256,7 +276,10 @@
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        A dictionary with four keys - &#39;ready&#39;, &#39;active&#39; and &#39;finished&#39;, &#39;failed&#39;.</span>
+<span class="sd">        dict</span>
+<span class="sd">            A dictionary with four keys - &#39;ready&#39;, &#39;active&#39; and &#39;finished&#39;, &#39;failed&#39;. </span>
+<span class="sd">            Values under &quot;ready&quot; correspond to `Actions` waiting for execution, &quot;active&quot;</span>
+<span class="sd">            corresponds to the number of currently running tasks.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">ready</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="n">running</span> <span class="o">=</span> <span class="mi">0</span>
@@ -275,8 +298,8 @@
         <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;ready&#39;</span><span class="p">:</span> <span class="n">ready</span><span class="p">,</span> <span class="s1">&#39;active&#39;</span><span class="p">:</span> <span class="n">running</span><span class="p">,</span> <span class="s1">&#39;finished&#39;</span><span class="p">:</span> <span class="n">done</span><span class="p">,</span> <span class="s1">&#39;failed&#39;</span><span class="p">:</span> <span class="n">failed</span><span class="p">}</span>
 
     <span class="k">def</span> <span class="nf">collate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">progress_bar</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;A command that will block untill al futures in the pool have finished.</span>
-<span class="sd">        It will also store the results in the database.</span>
+        <span class="sd">&quot;&quot;&quot;A command that will block untill all Futures in the pool have finished.</span>
+<span class="sd">        It will also store the results gather from `Actions` in the database.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -303,7 +326,7 @@
 
         </details>
 
-            <div class="docstring"><p>A class that handles the execution of actions.</p>
+            <div class="docstring"><p>A class that handles the execution of Actions.</p>
 
 <h6 id="parameters">Parameters</h6>
 
@@ -311,10 +334,11 @@
 <li><strong>campaign</strong> (Campaign):
 An instance of an EasyVVUQ campaign.</li>
 <li><strong>actions</strong> (Actions):
-An instance of Actions containing things to be done as part of the simulation.</li>
+An instance of <code>Actions</code> containing things to be done as part of the simulation.</li>
 <li><strong>inits</strong> (iterable):
-Initial inputs to be passed to each Actions representing a sample. Will usually contain
-dictionaries with the following information: {'run_id': ..., 'campaign_dir': ..., 'run_info': ...}.</li>
+Initial inputs to be passed to each <code>Actions</code> representing a sample. Will usually contain
+dictionaries with the following information: {'run_id': ..., 'campaign_dir': ..., 
+'run_info': ...}.</li>
 <li><strong>sequential</strong> (bool):
 Will run the actions sequentially.</li>
 </ul>
@@ -364,6 +388,8 @@ Will run the actions sequentially.</li>
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        ActionPool</span>
+<span class="sd">            Starts execution and returns a reference to itself for tracking progress </span>
+<span class="sd">            and for collation.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">pool</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">pool</span> <span class="o">=</span> <span class="n">ThreadPoolExecutor</span><span class="p">()</span>
@@ -392,7 +418,8 @@ Will run the actions sequentially.</li>
 <h6 id="returns">Returns</h6>
 
 <ul>
-<li><strong>ActionPool</strong></li>
+<li><strong>ActionPool</strong>: Starts execution and returns a reference to itself for tracking progress 
+and for collation.</li>
 </ul>
 </div>
 
@@ -413,7 +440,10 @@ Will run the actions sequentially.</li>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        A dictionary with four keys - &#39;ready&#39;, &#39;active&#39; and &#39;finished&#39;, &#39;failed&#39;.</span>
+<span class="sd">        dict</span>
+<span class="sd">            A dictionary with four keys - &#39;ready&#39;, &#39;active&#39; and &#39;finished&#39;, &#39;failed&#39;. </span>
+<span class="sd">            Values under &quot;ready&quot; correspond to `Actions` waiting for execution, &quot;active&quot;</span>
+<span class="sd">            corresponds to the number of currently running tasks.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">ready</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="n">running</span> <span class="o">=</span> <span class="mi">0</span>
@@ -439,7 +469,9 @@ Will run the actions sequentially.</li>
 <h6 id="returns">Returns</h6>
 
 <ul>
-<li><strong>A dictionary with four keys - 'ready', 'active' and 'finished', 'failed'.</strong></li>
+<li><strong>dict</strong>: A dictionary with four keys - 'ready', 'active' and 'finished', 'failed'. 
+Values under "ready" correspond to <code>Actions</code> waiting for execution, "active"
+corresponds to the number of currently running tasks.</li>
 </ul>
 </div>
 
@@ -456,8 +488,8 @@ Will run the actions sequentially.</li>
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">collate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">progress_bar</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;A command that will block untill al futures in the pool have finished.</span>
-<span class="sd">        It will also store the results in the database.</span>
+        <span class="sd">&quot;&quot;&quot;A command that will block untill all Futures in the pool have finished.</span>
+<span class="sd">        It will also store the results gather from `Actions` in the database.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -484,8 +516,8 @@ Will run the actions sequentially.</li>
 
         </details>
 
-            <div class="docstring"><p>A command that will block untill al futures in the pool have finished.
-It will also store the results in the database.</p>
+            <div class="docstring"><p>A command that will block untill all Futures in the pool have finished.
+It will also store the results gather from <code>Actions</code> in the database.</p>
 
 <h6 id="parameters">Parameters</h6>
 
