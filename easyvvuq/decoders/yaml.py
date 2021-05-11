@@ -1,3 +1,8 @@
+"""A Decoder that can be used to get information from a YAML file.
+Works identically to the JSON decoder. Look at the documentation of that
+class for more information
+"""
+
 from easyvvuq.decoders.json import JSONDecoder
 import logging
 import yaml
@@ -30,5 +35,12 @@ logger = logging.Logger(__name__)
 
 class YAMLDecoder(JSONDecoder, decoder_name="yaml"):
     def _get_raw_data(self, out_path):
+        """Reads in data from a YAML file.
+
+        Parameters
+        ----------
+        out_path: str
+            File name of a YAML file produced by the simulation code.
+        """
         with open(out_path) as fd:
             return yaml.load(fd, yaml.SafeLoader)

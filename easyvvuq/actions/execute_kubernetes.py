@@ -187,5 +187,4 @@ class ExecuteKubernetes():
                 data={os.path.basename(file_name): data},
                 metadata=metadata
             )
-            print(configmap)
             self.core_v1.create_namespaced_config_map(namespace='default', body=configmap)
