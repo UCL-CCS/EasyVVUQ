@@ -36,9 +36,6 @@
                         <li>
                                 <a class="function" href="#JSONDecoder.parse_sim_output">parse_sim_output</a>
                         </li>
-                        <li>
-                                <a class="variable" href="#JSONDecoder.decoder_name">decoder_name</a>
-                        </li>
                 </ul>
 
             </li>
@@ -76,7 +73,6 @@ of interest.</p>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">from</span> <span class="nn">easyvvuq</span> <span class="kn">import</span> <span class="n">OutputType</span>
-<span class="kn">from</span> <span class="nn">.base</span> <span class="kn">import</span> <span class="n">BaseDecoder</span>
 <span class="kn">import</span> <span class="nn">json</span>
 
 <span class="n">__copyright__</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
@@ -105,7 +101,7 @@ of interest.</p>
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">Logger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
 
-<span class="k">class</span> <span class="nc">JSONDecoder</span><span class="p">(</span><span class="n">BaseDecoder</span><span class="p">,</span> <span class="n">decoder_name</span><span class="o">=</span><span class="s2">&quot;json&quot;</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">JSONDecoder</span><span class="p">:</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target_filename</span><span class="p">,</span> <span class="n">output_columns</span><span class="p">):</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">output_columns</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;output_columns cannot be empty.&quot;</span>
@@ -154,12 +150,12 @@ of interest.</p>
 
         
         <span class="def">class</span>
-        <span class="name">JSONDecoder</span><wbr>(<span class="base"><a href="base.html#BaseDecoder">easyvvuq.decoders.base.BaseDecoder</a></span>):
+        <span class="name">JSONDecoder</span>:
     </div>
 
                 <details>
             <summary>View Source</summary>
-            <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">JSONDecoder</span><span class="p">(</span><span class="n">BaseDecoder</span><span class="p">,</span> <span class="n">decoder_name</span><span class="o">=</span><span class="s2">&quot;json&quot;</span><span class="p">):</span>
+            <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">JSONDecoder</span><span class="p">:</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target_filename</span><span class="p">,</span> <span class="n">output_columns</span><span class="p">):</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">output_columns</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;output_columns cannot be empty.&quot;</span>
@@ -201,20 +197,7 @@ of interest.</p>
 
         </details>
 
-            <div class="docstring"><p>Baseclass for all EasyVVUQ decoders.</p>
-
-<p>Skeleton decoder which establishes the format and provides the basis of our
-contract - <need to define contract>.</p>
-
-<h6 id="parameters">Parameters</h6>
-
-<ul>
-<li><strong>Attributes</strong></li>
-</ul>
-
-<hr />
-</div>
-
+    
 
                             <div id="JSONDecoder.__init__" class="classattr">
                                         <div class="attr function"><a class="headerlink" href="#JSONDecoder.__init__">#&nbsp;&nbsp</a>
@@ -271,40 +254,8 @@ contract - <need to define contract>.</p>
 
         </details>
 
-            <div class="docstring"><h6 id="parameters">Parameters</h6>
-
-<ul>
-<li><strong>run_info</strong> (dict or None):
-Information defining the run for which we want to parse the output.</li>
-<li><strong>*args</strong>: Variable length argument list.</li>
-<li><strong>**kwargs</strong>: Arbitrary keyword arguments.</li>
-<li><strong>Returns</strong></li>
-</ul>
-
-<hr />
-</div>
-
-
-                            </div>
-                            <div id="JSONDecoder.decoder_name" class="classattr">
-                                            <div class="attr variable"><a class="headerlink" href="#JSONDecoder.decoder_name">#&nbsp;&nbsp</a>
-
-        <span class="name">decoder_name</span><span class="default_value"> = &#39;json&#39;</span>
-    </div>
-
     
 
-                            </div>
-                            <div class="inherited">
-                                <h5>Inherited Members</h5>
-                                <dl>
-                                    <div><dt><a href="../base_element.html#BaseElement">easyvvuq.base_element.BaseElement</a></dt>
-                                <dd id="JSONDecoder.element_name" class="function"><a href="../base_element.html#BaseElement.element_name">element_name</a></dd>
-                <dd id="JSONDecoder.element_version" class="function"><a href="../base_element.html#BaseElement.element_version">element_version</a></dd>
-                <dd id="JSONDecoder.element_category" class="function"><a href="../base_element.html#BaseElement.element_category">element_category</a></dd>
-
-            </div>
-                                </dl>
                             </div>
                 </section>
     </main>
