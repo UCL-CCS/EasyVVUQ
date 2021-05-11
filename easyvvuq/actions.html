@@ -27,7 +27,6 @@
                     <h2>Submodules</h2>
                     <ul>
                             <li><a href="actions/action_statuses.html">easyvvuq.actions.action_statuses</a></li>
-                            <li><a href="actions/base.html">easyvvuq.actions.base</a></li>
                             <li><a href="actions/execute_kubernetes.html">easyvvuq.actions.execute_kubernetes</a></li>
                             <li><a href="actions/execute_local.html">easyvvuq.actions.execute_local</a></li>
                             <li><a href="actions/execute_slurm.html">easyvvuq.actions.execute_slurm</a></li>
@@ -64,7 +63,6 @@ to external execution back-ends such as Dask, etc.</p>
 <span class="sd">to external execution back-ends such as Dask, etc.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="kn">from</span> <span class="nn">.base</span> <span class="kn">import</span> <span class="n">BaseAction</span>
 <span class="kn">from</span> <span class="nn">.execute_local</span> <span class="kn">import</span> <span class="n">ExecuteLocal</span><span class="p">,</span> <span class="n">ExecutePython</span><span class="p">,</span> <span class="n">CreateRunDirectory</span><span class="p">,</span> <span class="n">Encode</span><span class="p">,</span> <span class="n">Decode</span><span class="p">,</span> <span class="n">local_execute</span>
 <span class="kn">from</span> <span class="nn">.execute_local</span> <span class="kn">import</span> <span class="n">CleanUp</span><span class="p">,</span> <span class="n">Actions</span>
 <span class="kn">from</span> <span class="nn">.execute_kubernetes</span> <span class="kn">import</span> <span class="n">ExecuteKubernetes</span>
