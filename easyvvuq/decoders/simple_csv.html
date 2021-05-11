@@ -57,10 +57,15 @@
                     <h1 class="modulename">
 <a href="./../../easyvvuq.html">easyvvuq</a><wbr>.<a href="./../decoders.html">decoders</a><wbr>.simple_csv    </h1>
 
-                
+                        <div class="docstring"><p>A Decoder for CSV format files.</p>
+</div>
+
                         <details>
             <summary>View Source</summary>
-            <div class="codehilite"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
+            <div class="codehilite"><pre><span></span><span class="sd">&quot;&quot;&quot;A Decoder for CSV format files.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">import</span> <span class="nn">csv</span>
 <span class="kn">from</span> <span class="nn">easyvvuq</span> <span class="kn">import</span> <span class="n">OutputType</span>
@@ -93,37 +98,69 @@
 
 
 <span class="k">class</span> <span class="nc">SimpleCSV</span><span class="p">(</span><span class="n">BaseDecoder</span><span class="p">,</span> <span class="n">decoder_name</span><span class="o">=</span><span class="s2">&quot;csv&quot;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;CSV Decoder.</span>
 
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    target_filename: str</span>
+<span class="sd">        Filename of a CSV file to decode.</span>
+<span class="sd">    ouput_columns: list</span>
+<span class="sd">        A list of column names that will be selected to appear in the output.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target_filename</span><span class="p">,</span> <span class="n">output_columns</span><span class="p">):</span>
-
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">output_columns</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;output_columns cannot be empty.&quot;</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
             <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-
         <span class="bp">self</span><span class="o">.</span><span class="n">target_filename</span> <span class="o">=</span> <span class="n">target_filename</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">output_columns</span> <span class="o">=</span> <span class="n">output_columns</span>
-
         <span class="bp">self</span><span class="o">.</span><span class="n">output_type</span> <span class="o">=</span> <span class="n">OutputType</span><span class="p">(</span><span class="s1">&#39;sample&#39;</span><span class="p">)</span>
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">_get_output_path</span><span class="p">(</span><span class="n">run_info</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">outfile</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Constructs absolute path from the `target_filename` and the `run_dir` parameter</span>
+<span class="sd">        in the `run_info` retrieved from the database.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        run_info: dict</span>
+<span class="sd">            Run info as retrieved from the database.</span>
+<span class="sd">        outfile: str</span>
+<span class="sd">            Filename of the file to be parsed.</span>
 
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+<span class="sd">            An absolute path to the output file in the run directory.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">run_path</span> <span class="o">=</span> <span class="n">run_info</span><span class="p">[</span><span class="s1">&#39;run_dir&#39;</span><span class="p">]</span>
-
         <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">run_path</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Run directory does not exist: </span><span class="si">{</span><span class="n">run_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-
         <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">run_path</span><span class="p">,</span> <span class="n">outfile</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">parse_sim_output</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">run_info</span><span class="o">=</span><span class="p">{}):</span>
+        <span class="sd">&quot;&quot;&quot;Parses the CSV file and converts it to the EasyVVUQ internal dictionary based</span>
+<span class="sd">        format. The file is parsed in such a way that each column will appear as a vector</span>
+<span class="sd">        QoI in the output dictionary.</span>
 
+<span class="sd">        For example if the file contains the following data</span>
+<span class="sd">        a,b</span>
+<span class="sd">        1,2</span>
+<span class="sd">        3,4</span>
+
+<span class="sd">        And both `a` and `b` are specified as `output_columns` the output will look as follows</span>
+<span class="sd">        {&#39;a&#39;: [1, 3], &#39;b&#39;: [2, 4]}.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        run_info: dict</span>
+<span class="sd">            Information about the run (used to retrieve construct the absolute path</span>
+<span class="sd">            to the CSV file that needs decoding.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">out_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_output_path</span><span class="p">(</span><span class="n">run_info</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_filename</span><span class="p">)</span>
-
         <span class="n">results</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">for</span> <span class="n">column</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_columns</span><span class="p">:</span>
             <span class="n">results</span><span class="p">[</span><span class="n">column</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">out_path</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">,</span> <span class="n">newline</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">csvfile</span><span class="p">:</span>
             <span class="n">reader</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">DictReader</span><span class="p">(</span><span class="n">csvfile</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">reader</span><span class="p">:</span>
@@ -134,7 +171,6 @@
                         <span class="n">results</span><span class="p">[</span><span class="n">column</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="n">column</span><span class="p">])</span>
                     <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
                         <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;column not found in the csv file: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">column</span><span class="p">))</span>
-
         <span class="k">return</span> <span class="n">results</span>
 </pre></div>
 
@@ -153,37 +189,69 @@
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">SimpleCSV</span><span class="p">(</span><span class="n">BaseDecoder</span><span class="p">,</span> <span class="n">decoder_name</span><span class="o">=</span><span class="s2">&quot;csv&quot;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;CSV Decoder.</span>
 
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    target_filename: str</span>
+<span class="sd">        Filename of a CSV file to decode.</span>
+<span class="sd">    ouput_columns: list</span>
+<span class="sd">        A list of column names that will be selected to appear in the output.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target_filename</span><span class="p">,</span> <span class="n">output_columns</span><span class="p">):</span>
-
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">output_columns</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;output_columns cannot be empty.&quot;</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
             <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-
         <span class="bp">self</span><span class="o">.</span><span class="n">target_filename</span> <span class="o">=</span> <span class="n">target_filename</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">output_columns</span> <span class="o">=</span> <span class="n">output_columns</span>
-
         <span class="bp">self</span><span class="o">.</span><span class="n">output_type</span> <span class="o">=</span> <span class="n">OutputType</span><span class="p">(</span><span class="s1">&#39;sample&#39;</span><span class="p">)</span>
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">_get_output_path</span><span class="p">(</span><span class="n">run_info</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">outfile</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Constructs absolute path from the `target_filename` and the `run_dir` parameter</span>
+<span class="sd">        in the `run_info` retrieved from the database.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        run_info: dict</span>
+<span class="sd">            Run info as retrieved from the database.</span>
+<span class="sd">        outfile: str</span>
+<span class="sd">            Filename of the file to be parsed.</span>
 
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+<span class="sd">            An absolute path to the output file in the run directory.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">run_path</span> <span class="o">=</span> <span class="n">run_info</span><span class="p">[</span><span class="s1">&#39;run_dir&#39;</span><span class="p">]</span>
-
         <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">run_path</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Run directory does not exist: </span><span class="si">{</span><span class="n">run_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-
         <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">run_path</span><span class="p">,</span> <span class="n">outfile</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">parse_sim_output</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">run_info</span><span class="o">=</span><span class="p">{}):</span>
+        <span class="sd">&quot;&quot;&quot;Parses the CSV file and converts it to the EasyVVUQ internal dictionary based</span>
+<span class="sd">        format. The file is parsed in such a way that each column will appear as a vector</span>
+<span class="sd">        QoI in the output dictionary.</span>
 
+<span class="sd">        For example if the file contains the following data</span>
+<span class="sd">        a,b</span>
+<span class="sd">        1,2</span>
+<span class="sd">        3,4</span>
+
+<span class="sd">        And both `a` and `b` are specified as `output_columns` the output will look as follows</span>
+<span class="sd">        {&#39;a&#39;: [1, 3], &#39;b&#39;: [2, 4]}.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        run_info: dict</span>
+<span class="sd">            Information about the run (used to retrieve construct the absolute path</span>
+<span class="sd">            to the CSV file that needs decoding.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">out_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_output_path</span><span class="p">(</span><span class="n">run_info</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_filename</span><span class="p">)</span>
-
         <span class="n">results</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">for</span> <span class="n">column</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_columns</span><span class="p">:</span>
             <span class="n">results</span><span class="p">[</span><span class="n">column</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">out_path</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">,</span> <span class="n">newline</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">csvfile</span><span class="p">:</span>
             <span class="n">reader</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">DictReader</span><span class="p">(</span><span class="n">csvfile</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">reader</span><span class="p">:</span>
@@ -194,24 +262,21 @@
                         <span class="n">results</span><span class="p">[</span><span class="n">column</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="n">column</span><span class="p">])</span>
                     <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
                         <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;column not found in the csv file: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">column</span><span class="p">))</span>
-
         <span class="k">return</span> <span class="n">results</span>
 </pre></div>
 
         </details>
 
-            <div class="docstring"><p>Baseclass for all EasyVVUQ decoders.</p>
-
-<p>Skeleton decoder which establishes the format and provides the basis of our
-contract - <need to define contract>.</p>
+            <div class="docstring"><p>CSV Decoder.</p>
 
 <h6 id="parameters">Parameters</h6>
 
 <ul>
-<li><strong>Attributes</strong></li>
+<li><strong>target_filename</strong> (str):
+Filename of a CSV file to decode.</li>
+<li><strong>ouput_columns</strong> (list):
+A list of column names that will be selected to appear in the output.</li>
 </ul>
-
-<hr />
 </div>
 
 
@@ -225,15 +290,12 @@ contract - <need to define contract>.</p>
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target_filename</span><span class="p">,</span> <span class="n">output_columns</span><span class="p">):</span>
-
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">output_columns</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;output_columns cannot be empty.&quot;</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
             <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-
         <span class="bp">self</span><span class="o">.</span><span class="n">target_filename</span> <span class="o">=</span> <span class="n">target_filename</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">output_columns</span> <span class="o">=</span> <span class="n">output_columns</span>
-
         <span class="bp">self</span><span class="o">.</span><span class="n">output_type</span> <span class="o">=</span> <span class="n">OutputType</span><span class="p">(</span><span class="s1">&#39;sample&#39;</span><span class="p">)</span>
 </pre></div>
 
@@ -253,13 +315,28 @@ contract - <need to define contract>.</p>
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">parse_sim_output</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">run_info</span><span class="o">=</span><span class="p">{}):</span>
+        <span class="sd">&quot;&quot;&quot;Parses the CSV file and converts it to the EasyVVUQ internal dictionary based</span>
+<span class="sd">        format. The file is parsed in such a way that each column will appear as a vector</span>
+<span class="sd">        QoI in the output dictionary.</span>
 
+<span class="sd">        For example if the file contains the following data</span>
+<span class="sd">        a,b</span>
+<span class="sd">        1,2</span>
+<span class="sd">        3,4</span>
+
+<span class="sd">        And both `a` and `b` are specified as `output_columns` the output will look as follows</span>
+<span class="sd">        {&#39;a&#39;: [1, 3], &#39;b&#39;: [2, 4]}.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        run_info: dict</span>
+<span class="sd">            Information about the run (used to retrieve construct the absolute path</span>
+<span class="sd">            to the CSV file that needs decoding.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">out_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_output_path</span><span class="p">(</span><span class="n">run_info</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_filename</span><span class="p">)</span>
-
         <span class="n">results</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">for</span> <span class="n">column</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_columns</span><span class="p">:</span>
             <span class="n">results</span><span class="p">[</span><span class="n">column</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">out_path</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">,</span> <span class="n">newline</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">csvfile</span><span class="p">:</span>
             <span class="n">reader</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">DictReader</span><span class="p">(</span><span class="n">csvfile</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">reader</span><span class="p">:</span>
@@ -270,23 +347,30 @@ contract - <need to define contract>.</p>
                         <span class="n">results</span><span class="p">[</span><span class="n">column</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="n">column</span><span class="p">])</span>
                     <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
                         <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;column not found in the csv file: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">column</span><span class="p">))</span>
-
         <span class="k">return</span> <span class="n">results</span>
 </pre></div>
 
         </details>
 
-            <div class="docstring"><h6 id="parameters">Parameters</h6>
+            <div class="docstring"><p>Parses the CSV file and converts it to the EasyVVUQ internal dictionary based
+format. The file is parsed in such a way that each column will appear as a vector
+QoI in the output dictionary.</p>
+
+<p>For example if the file contains the following data
+a,b
+1,2
+3,4</p>
+
+<p>And both <code>a</code> and <code>b</code> are specified as <code>output_columns</code> the output will look as follows
+{'a': [1, 3], 'b': [2, 4]}.</p>
+
+<h6 id="parameters">Parameters</h6>
 
 <ul>
-<li><strong>run_info</strong> (dict or None):
-Information defining the run for which we want to parse the output.</li>
-<li><strong>*args</strong>: Variable length argument list.</li>
-<li><strong>**kwargs</strong>: Arbitrary keyword arguments.</li>
-<li><strong>Returns</strong></li>
+<li><strong>run_info</strong> (dict):
+Information about the run (used to retrieve construct the absolute path
+to the CSV file that needs decoding.</li>
 </ul>
-
-<hr />
 </div>
 
 
