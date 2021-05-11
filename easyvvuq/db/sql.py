@@ -64,7 +64,7 @@ class CampaignTable(Base):
     """
     __tablename__ = 'campaign_info'
     id = Column(Integer, primary_key=True)
-    name = Column(String)
+    name = Column(String, unique=True)
     easyvvuq_version = Column(String)
     campaign_dir_prefix = Column(String)
     campaign_dir = Column(String)
@@ -78,7 +78,7 @@ class AppTable(Base):
     """
     __tablename__ = 'app'
     id = Column(Integer, primary_key=True)
-    name = Column(String)
+    name = Column(String, unique=True)
     params = Column(String)
     actions = Column(String)
 
@@ -219,10 +219,6 @@ class CampaignDB(BaseCampaignDB):
 
         if len(selected) == 0:
             message = f'No entry for app: ({name}).'
-            logger.critical(message)
-            raise RuntimeError(message)
-        if len(selected) > 1:
-            message = f'Too many apps called: ({name}).'
             logger.critical(message)
             raise RuntimeError(message)
 
