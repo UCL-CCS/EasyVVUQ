@@ -6,6 +6,8 @@ import json
 import matplotlib.pyplot as plt
 import sys
 from easyvvuq.actions import ExecutePython, Actions
+from dask.distributed import Client
+
 
 HOME = os.path.abspath(os.path.dirname(__file__))
 
@@ -40,9 +42,9 @@ def test_mcmc(tmp_path):
     np.random.seed(1969)
     sampler = uq.sampling.MCMCSampler(vary_init, q, 'value', 5)
     campaign.set_sampler(sampler)
-    iterator = campaign.iterate()
+    iterator = campaign.iterate(pool=Client())
     for _ in range(200):
-        next(iterator).collate()
+        next(iterator).collate(progress_bar=True)
     df = campaign.get_collation_result()
     analysis = uq.analysis.MCMCAnalysis(sampler)
     result = analysis.analyse(df)
