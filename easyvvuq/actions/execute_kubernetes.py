@@ -56,21 +56,18 @@ logger = logging.getLogger(__name__)
 
 
 class ExecuteKubernetes():
-    """Provides a way to track the status of an on-going Kubernetes
-    action.
+    """
 
     Parameters
     ----------
-    api : CoreV1Api
-        will be used to communicate with the cluster
-    pod_name : str
-        pod identifier
-    config_names : list of str
-        list of ConfigMap identifiers
-    namespace : str
-        Kubernetes namespace
-    outfile : str
-        a filename to write the output of the simulation
+    image: str
+        Name of the repository e.g. orbitfold/easyvvuq:tagname.
+    command: str
+        A command to run the simulation from within the container.
+    input_file_names: list
+        A list of input files.
+    output_file_names: list
+        A list of output files.
     """
 
     def __init__(self, image, command, input_file_names=None, output_file_name=None):

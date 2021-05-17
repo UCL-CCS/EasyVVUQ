@@ -244,6 +244,17 @@ class ExecuteLocal():
 class Actions():
     def __init__(self, *args):
         self.actions = list(args)
+        self.wrapper = lambda action, previous: action.start(previous)
+
+    def set_wrapper(self, wrapper):
+        """Adds a wrapper to be called on each Action.
+
+        Parameters
+        ----------
+        wrapper: callable
+            A function to call on each Action. Should pass through the return of the start method.
+        """
+        self.wrapper = wrapper
 
     def start(self, previous=None):
         for action in self.actions:
@@ -252,7 +263,7 @@ class Actions():
         previous = copy.copy(previous)
         run_id = previous['run_id']
         for action in self.actions:
-            previous = action.start(previous)
+            previous = self.wrapper(action, previous)
         self.result = previous
         assert(self.result['run_id'] == run_id)
         return previous
