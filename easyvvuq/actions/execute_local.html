@@ -160,6 +160,9 @@
                                 <a class="function" href="#Actions.__init__">Actions</a>
                         </li>
                         <li>
+                                <a class="function" href="#Actions.set_wrapper">set_wrapper</a>
+                        </li>
+                        <li>
                                 <a class="function" href="#Actions.start">start</a>
                         </li>
                         <li>
@@ -441,6 +444,17 @@ simulations locally. Some Actions will also be useful when using Dask.</p>
 <span class="k">class</span> <span class="nc">Actions</span><span class="p">():</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">actions</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">wrapper</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">action</span><span class="p">,</span> <span class="n">previous</span><span class="p">:</span> <span class="n">action</span><span class="o">.</span><span class="n">start</span><span class="p">(</span><span class="n">previous</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">set_wrapper</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">wrapper</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Adds a wrapper to be called on each Action.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        wrapper: callable</span>
+<span class="sd">            A function to call on each Action. Should pass through the return of the start method.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">wrapper</span> <span class="o">=</span> <span class="n">wrapper</span>
 
     <span class="k">def</span> <span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">previous</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="k">for</span> <span class="n">action</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">actions</span><span class="p">:</span>
@@ -449,7 +463,7 @@ simulations locally. Some Actions will also be useful when using Dask.</p>
         <span class="n">previous</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">previous</span><span class="p">)</span>
         <span class="n">run_id</span> <span class="o">=</span> <span class="n">previous</span><span class="p">[</span><span class="s1">&#39;run_id&#39;</span><span class="p">]</span>
         <span class="k">for</span> <span class="n">action</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">actions</span><span class="p">:</span>
-            <span class="n">previous</span> <span class="o">=</span> <span class="n">action</span><span class="o">.</span><span class="n">start</span><span class="p">(</span><span class="n">previous</span><span class="p">)</span>
+            <span class="n">previous</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">wrapper</span><span class="p">(</span><span class="n">action</span><span class="p">,</span> <span class="n">previous</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">result</span> <span class="o">=</span> <span class="n">previous</span>
         <span class="k">assert</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">result</span><span class="p">[</span><span class="s1">&#39;run_id&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">run_id</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">previous</span>
@@ -1503,6 +1517,17 @@ if that code is not zero.</p>
             <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">Actions</span><span class="p">():</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">actions</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">wrapper</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">action</span><span class="p">,</span> <span class="n">previous</span><span class="p">:</span> <span class="n">action</span><span class="o">.</span><span class="n">start</span><span class="p">(</span><span class="n">previous</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">set_wrapper</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">wrapper</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Adds a wrapper to be called on each Action.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        wrapper: callable</span>
+<span class="sd">            A function to call on each Action. Should pass through the return of the start method.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">wrapper</span> <span class="o">=</span> <span class="n">wrapper</span>
 
     <span class="k">def</span> <span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">previous</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="k">for</span> <span class="n">action</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">actions</span><span class="p">:</span>
@@ -1511,7 +1536,7 @@ if that code is not zero.</p>
         <span class="n">previous</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">previous</span><span class="p">)</span>
         <span class="n">run_id</span> <span class="o">=</span> <span class="n">previous</span><span class="p">[</span><span class="s1">&#39;run_id&#39;</span><span class="p">]</span>
         <span class="k">for</span> <span class="n">action</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">actions</span><span class="p">:</span>
-            <span class="n">previous</span> <span class="o">=</span> <span class="n">action</span><span class="o">.</span><span class="n">start</span><span class="p">(</span><span class="n">previous</span><span class="p">)</span>
+            <span class="n">previous</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">wrapper</span><span class="p">(</span><span class="n">action</span><span class="p">,</span> <span class="n">previous</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">result</span> <span class="o">=</span> <span class="n">previous</span>
         <span class="k">assert</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">result</span><span class="p">[</span><span class="s1">&#39;run_id&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">run_id</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">previous</span>
@@ -1542,11 +1567,47 @@ if that code is not zero.</p>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">actions</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">wrapper</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">action</span><span class="p">,</span> <span class="n">previous</span><span class="p">:</span> <span class="n">action</span><span class="o">.</span><span class="n">start</span><span class="p">(</span><span class="n">previous</span><span class="p">)</span>
 </pre></div>
 
         </details>
 
     
+
+                            </div>
+                            <div id="Actions.set_wrapper" class="classattr">
+                                        <div class="attr function"><a class="headerlink" href="#Actions.set_wrapper">#&nbsp;&nbsp</a>
+
+        
+            <span class="def">def</span>
+            <span class="name">set_wrapper</span><span class="signature">(self, wrapper)</span>:
+    </div>
+
+                <details>
+            <summary>View Source</summary>
+            <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">set_wrapper</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">wrapper</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Adds a wrapper to be called on each Action.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        wrapper: callable</span>
+<span class="sd">            A function to call on each Action. Should pass through the return of the start method.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">wrapper</span> <span class="o">=</span> <span class="n">wrapper</span>
+</pre></div>
+
+        </details>
+
+            <div class="docstring"><p>Adds a wrapper to be called on each Action.</p>
+
+<h6 id="parameters">Parameters</h6>
+
+<ul>
+<li><strong>wrapper</strong> (callable):
+A function to call on each Action. Should pass through the return of the start method.</li>
+</ul>
+</div>
+
 
                             </div>
                             <div id="Actions.start" class="classattr">
@@ -1566,7 +1627,7 @@ if that code is not zero.</p>
         <span class="n">previous</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">previous</span><span class="p">)</span>
         <span class="n">run_id</span> <span class="o">=</span> <span class="n">previous</span><span class="p">[</span><span class="s1">&#39;run_id&#39;</span><span class="p">]</span>
         <span class="k">for</span> <span class="n">action</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">actions</span><span class="p">:</span>
-            <span class="n">previous</span> <span class="o">=</span> <span class="n">action</span><span class="o">.</span><span class="n">start</span><span class="p">(</span><span class="n">previous</span><span class="p">)</span>
+            <span class="n">previous</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">wrapper</span><span class="p">(</span><span class="n">action</span><span class="p">,</span> <span class="n">previous</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">result</span> <span class="o">=</span> <span class="n">previous</span>
         <span class="k">assert</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">result</span><span class="p">[</span><span class="s1">&#39;run_id&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">run_id</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">previous</span>

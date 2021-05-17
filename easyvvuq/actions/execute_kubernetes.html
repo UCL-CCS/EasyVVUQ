@@ -157,21 +157,18 @@ kind of script and print them to stdout.</p>
 
 
 <span class="k">class</span> <span class="nc">ExecuteKubernetes</span><span class="p">():</span>
-    <span class="sd">&quot;&quot;&quot;Provides a way to track the status of an on-going Kubernetes</span>
-<span class="sd">    action.</span>
+    <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    api : CoreV1Api</span>
-<span class="sd">        will be used to communicate with the cluster</span>
-<span class="sd">    pod_name : str</span>
-<span class="sd">        pod identifier</span>
-<span class="sd">    config_names : list of str</span>
-<span class="sd">        list of ConfigMap identifiers</span>
-<span class="sd">    namespace : str</span>
-<span class="sd">        Kubernetes namespace</span>
-<span class="sd">    outfile : str</span>
-<span class="sd">        a filename to write the output of the simulation</span>
+<span class="sd">    image: str</span>
+<span class="sd">        Name of the repository e.g. orbitfold/easyvvuq:tagname.</span>
+<span class="sd">    command: str</span>
+<span class="sd">        A command to run the simulation from within the container.</span>
+<span class="sd">    input_file_names: list</span>
+<span class="sd">        A list of input files.</span>
+<span class="sd">    output_file_names: list</span>
+<span class="sd">        A list of output files.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">image</span><span class="p">,</span> <span class="n">command</span><span class="p">,</span> <span class="n">input_file_names</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">output_file_name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
@@ -306,21 +303,18 @@ kind of script and print them to stdout.</p>
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">ExecuteKubernetes</span><span class="p">():</span>
-    <span class="sd">&quot;&quot;&quot;Provides a way to track the status of an on-going Kubernetes</span>
-<span class="sd">    action.</span>
+    <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    api : CoreV1Api</span>
-<span class="sd">        will be used to communicate with the cluster</span>
-<span class="sd">    pod_name : str</span>
-<span class="sd">        pod identifier</span>
-<span class="sd">    config_names : list of str</span>
-<span class="sd">        list of ConfigMap identifiers</span>
-<span class="sd">    namespace : str</span>
-<span class="sd">        Kubernetes namespace</span>
-<span class="sd">    outfile : str</span>
-<span class="sd">        a filename to write the output of the simulation</span>
+<span class="sd">    image: str</span>
+<span class="sd">        Name of the repository e.g. orbitfold/easyvvuq:tagname.</span>
+<span class="sd">    command: str</span>
+<span class="sd">        A command to run the simulation from within the container.</span>
+<span class="sd">    input_file_names: list</span>
+<span class="sd">        A list of input files.</span>
+<span class="sd">    output_file_names: list</span>
+<span class="sd">        A list of output files.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">image</span><span class="p">,</span> <span class="n">command</span><span class="p">,</span> <span class="n">input_file_names</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">output_file_name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
@@ -442,22 +436,17 @@ kind of script and print them to stdout.</p>
 
         </details>
 
-            <div class="docstring"><p>Provides a way to track the status of an on-going Kubernetes
-action.</p>
-
-<h6 id="parameters">Parameters</h6>
+            <div class="docstring"><h6 id="parameters">Parameters</h6>
 
 <ul>
-<li><strong>api</strong> (CoreV1Api):
-will be used to communicate with the cluster</li>
-<li><strong>pod_name</strong> (str):
-pod identifier</li>
-<li><strong>config_names</strong> (list of str):
-list of ConfigMap identifiers</li>
-<li><strong>namespace</strong> (str):
-Kubernetes namespace</li>
-<li><strong>outfile</strong> (str):
-a filename to write the output of the simulation</li>
+<li><strong>image</strong> (str):
+Name of the repository e.g. orbitfold/easyvvuq:tagname.</li>
+<li><strong>command</strong> (str):
+A command to run the simulation from within the container.</li>
+<li><strong>input_file_names</strong> (list):
+A list of input files.</li>
+<li><strong>output_file_names</strong> (list):
+A list of output files.</li>
 </ul>
 </div>
 
