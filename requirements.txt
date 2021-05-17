@@ -9,7 +9,6 @@ pytest-pep8
 pytest-benchmark
 pytest-dependency
 SQLAlchemy
-jsonpickle
 cerberus
 dask[complete]
 dask_jobqueue
