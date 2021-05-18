@@ -120,9 +120,7 @@ class ExecuteKubernetes():
         dep = copy.deepcopy(self.body)
         dep['metadata']['name'] = str(uuid.uuid4())
         self.create_config_maps(self.config_names)
-        print('configmaps created')
         self.create_volumes(self.config_names, dep)
-        print('configs and volumes created')
         self.core_v1.create_namespaced_pod(body=dep, namespace="default")
         self._started = True
         self.result = previous
