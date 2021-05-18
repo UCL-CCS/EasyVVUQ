@@ -2,14 +2,14 @@ name: Push to Docker Hub
 on:
   push:
     branches: [ dev ]
-
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v2
-      
+      name: Copy Dockerfile
+      run: |
+        cp tutorials/kubernetes/Dockerfile .
     - uses: mr-smithers-excellent/docker-build-push@v3.3
       name: Docker Build & Push
       with:
