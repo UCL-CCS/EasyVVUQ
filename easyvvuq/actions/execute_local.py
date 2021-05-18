@@ -252,7 +252,8 @@ class Actions():
         Parameters
         ----------
         wrapper: callable
-            A function to call on each Action. Should pass through the return of the start method.
+            A function to call on each Action. Should pass through the return of the 
+            start method.
         """
         self.wrapper = wrapper
 

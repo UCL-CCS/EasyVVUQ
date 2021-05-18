@@ -98,6 +98,16 @@ class ExecuteKubernetes():
 
     def start(self, previous=None):
         """Will create the Kubernetes pod and hence start the action.
+
+        Parameters
+        ----------
+        previous: dict
+            Data from previous Action.
+
+        Returns
+        -------
+        dict
+            Data from previous Action appended with data from this Action.
         """
         target_dir = previous['rundir']
         if self.input_file_names is None:
@@ -157,6 +167,11 @@ class ExecuteKubernetes():
 
     def create_volumes(self, file_names, dep):
         """Create descriptions of Volumes that will hold the input files.
+
+        Parameters
+        ----------
+        filenames: list
+            A list of file names to be mounted under /config/ in the running image.
         """
         volumes = [{'name': id_ + '-volume', 'configMap': {'name': id_}}
                    for _, id_ in file_names]
@@ -170,6 +185,12 @@ class ExecuteKubernetes():
 
     def create_config_maps(self, file_names):
         """Create Kubernetes ConfigMaps for the input files to the simulation.
+
+        Parameters
+        ----------
+        file_names: list
+            Will go through every filename in this list and create a Kubernetes
+            ConfigMap with it's contents.
         """
         for file_name, id_ in file_names:
             with open(file_name, 'r') as fd:
