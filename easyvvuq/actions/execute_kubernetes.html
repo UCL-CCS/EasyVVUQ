@@ -199,6 +199,16 @@ kind of script and print them to stdout.</p>
 
     <span class="k">def</span> <span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">previous</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Will create the Kubernetes pod and hence start the action.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        previous: dict</span>
+<span class="sd">            Data from previous Action.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict</span>
+<span class="sd">            Data from previous Action appended with data from this Action.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">target_dir</span> <span class="o">=</span> <span class="n">previous</span><span class="p">[</span><span class="s1">&#39;rundir&#39;</span><span class="p">]</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_file_names</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -258,6 +268,11 @@ kind of script and print them to stdout.</p>
 
     <span class="k">def</span> <span class="nf">create_volumes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_names</span><span class="p">,</span> <span class="n">dep</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Create descriptions of Volumes that will hold the input files.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        filenames: list</span>
+<span class="sd">            A list of file names to be mounted under /config/ in the running image.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">volumes</span> <span class="o">=</span> <span class="p">[{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="n">id_</span> <span class="o">+</span> <span class="s1">&#39;-volume&#39;</span><span class="p">,</span> <span class="s1">&#39;configMap&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="n">id_</span><span class="p">}}</span>
                    <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">id_</span> <span class="ow">in</span> <span class="n">file_names</span><span class="p">]</span>
@@ -271,6 +286,12 @@ kind of script and print them to stdout.</p>
 
     <span class="k">def</span> <span class="nf">create_config_maps</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_names</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Create Kubernetes ConfigMaps for the input files to the simulation.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        file_names: list</span>
+<span class="sd">            Will go through every filename in this list and create a Kubernetes</span>
+<span class="sd">            ConfigMap with it&#39;s contents.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">for</span> <span class="n">file_name</span><span class="p">,</span> <span class="n">id_</span> <span class="ow">in</span> <span class="n">file_names</span><span class="p">:</span>
             <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fd</span><span class="p">:</span>
@@ -345,6 +366,16 @@ kind of script and print them to stdout.</p>
 
     <span class="k">def</span> <span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">previous</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Will create the Kubernetes pod and hence start the action.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        previous: dict</span>
+<span class="sd">            Data from previous Action.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict</span>
+<span class="sd">            Data from previous Action appended with data from this Action.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">target_dir</span> <span class="o">=</span> <span class="n">previous</span><span class="p">[</span><span class="s1">&#39;rundir&#39;</span><span class="p">]</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_file_names</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -404,6 +435,11 @@ kind of script and print them to stdout.</p>
 
     <span class="k">def</span> <span class="nf">create_volumes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_names</span><span class="p">,</span> <span class="n">dep</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Create descriptions of Volumes that will hold the input files.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        filenames: list</span>
+<span class="sd">            A list of file names to be mounted under /config/ in the running image.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">volumes</span> <span class="o">=</span> <span class="p">[{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="n">id_</span> <span class="o">+</span> <span class="s1">&#39;-volume&#39;</span><span class="p">,</span> <span class="s1">&#39;configMap&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="n">id_</span><span class="p">}}</span>
                    <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">id_</span> <span class="ow">in</span> <span class="n">file_names</span><span class="p">]</span>
@@ -417,6 +453,12 @@ kind of script and print them to stdout.</p>
 
     <span class="k">def</span> <span class="nf">create_config_maps</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_names</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Create Kubernetes ConfigMaps for the input files to the simulation.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        file_names: list</span>
+<span class="sd">            Will go through every filename in this list and create a Kubernetes</span>
+<span class="sd">            ConfigMap with it&#39;s contents.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">for</span> <span class="n">file_name</span><span class="p">,</span> <span class="n">id_</span> <span class="ow">in</span> <span class="n">file_names</span><span class="p">:</span>
             <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fd</span><span class="p">:</span>
@@ -504,6 +546,16 @@ A list of output files.</li>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">previous</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Will create the Kubernetes pod and hence start the action.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        previous: dict</span>
+<span class="sd">            Data from previous Action.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict</span>
+<span class="sd">            Data from previous Action appended with data from this Action.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">target_dir</span> <span class="o">=</span> <span class="n">previous</span><span class="p">[</span><span class="s1">&#39;rundir&#39;</span><span class="p">]</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_file_names</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -531,6 +583,19 @@ A list of output files.</li>
         </details>
 
             <div class="docstring"><p>Will create the Kubernetes pod and hence start the action.</p>
+
+<h6 id="parameters">Parameters</h6>
+
+<ul>
+<li><strong>previous</strong> (dict):
+Data from previous Action.</li>
+</ul>
+
+<h6 id="returns">Returns</h6>
+
+<ul>
+<li><strong>dict</strong>: Data from previous Action appended with data from this Action.</li>
+</ul>
 </div>
 
 
@@ -637,6 +702,11 @@ If the job hasn't finished yet will return False.</p>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">create_volumes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_names</span><span class="p">,</span> <span class="n">dep</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Create descriptions of Volumes that will hold the input files.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        filenames: list</span>
+<span class="sd">            A list of file names to be mounted under /config/ in the running image.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">volumes</span> <span class="o">=</span> <span class="p">[{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="n">id_</span> <span class="o">+</span> <span class="s1">&#39;-volume&#39;</span><span class="p">,</span> <span class="s1">&#39;configMap&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="n">id_</span><span class="p">}}</span>
                    <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">id_</span> <span class="ow">in</span> <span class="n">file_names</span><span class="p">]</span>
@@ -652,6 +722,13 @@ If the job hasn't finished yet will return False.</p>
         </details>
 
             <div class="docstring"><p>Create descriptions of Volumes that will hold the input files.</p>
+
+<h6 id="parameters">Parameters</h6>
+
+<ul>
+<li><strong>filenames</strong> (list):
+A list of file names to be mounted under /config/ in the running image.</li>
+</ul>
 </div>
 
 
@@ -668,6 +745,12 @@ If the job hasn't finished yet will return False.</p>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">create_config_maps</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_names</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Create Kubernetes ConfigMaps for the input files to the simulation.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        file_names: list</span>
+<span class="sd">            Will go through every filename in this list and create a Kubernetes</span>
+<span class="sd">            ConfigMap with it&#39;s contents.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">for</span> <span class="n">file_name</span><span class="p">,</span> <span class="n">id_</span> <span class="ow">in</span> <span class="n">file_names</span><span class="p">:</span>
             <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fd</span><span class="p">:</span>
@@ -688,6 +771,14 @@ If the job hasn't finished yet will return False.</p>
         </details>
 
             <div class="docstring"><p>Create Kubernetes ConfigMaps for the input files to the simulation.</p>
+
+<h6 id="parameters">Parameters</h6>
+
+<ul>
+<li><strong>file_names</strong> (list):
+Will go through every filename in this list and create a Kubernetes
+ConfigMap with it's contents.</li>
+</ul>
 </div>
 
 
