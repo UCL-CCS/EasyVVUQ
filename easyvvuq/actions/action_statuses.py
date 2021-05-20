@@ -9,6 +9,8 @@ from dask.distributed import Client
 from tqdm import tqdm
 import copy
 
+from actions import QCGPJPool
+
 __copyright__ = """
 
     Copyright 2020 Vytautas Jancauskas
@@ -126,6 +128,11 @@ class ActionPool:
             self.results = self.pool.gather(self.futures)
         if self.sequential or isinstance(self.pool, Client):
             for result in tqdm_(self.results, total=len(self.results)):
+                self.campaign.campaign_db.store_result(
+                    result['run_id'], result, change_status=result['collated'])
+        elif isinstance(self.pool, QCGPJPool):
+            for future in tqdm_(QCGPJPool.as_completed(self.futures), total=len(self.futures)):
+                result = future.result()
                 self.campaign.campaign_db.store_result(
                     result['run_id'], result, change_status=result['collated'])
         else:
