@@ -44,6 +44,9 @@
                         <li>
                                 <a class="function" href="#GaussianProcessSurrogateResults.surrogate">surrogate</a>
                         </li>
+                        <li>
+                                <a class="function" href="#GaussianProcessSurrogateResults.get_params">get_params</a>
+                        </li>
                 </ul>
 
             </li>
@@ -138,8 +141,8 @@ as is shown in the example below.</p>
 <span class="sd">    qoi: str</span>
 <span class="sd">        Output variable name.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gps</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">qoi</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">gps</span> <span class="o">=</span> <span class="n">gps</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gp</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">qoi</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gp</span> <span class="o">=</span> <span class="n">gp</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span> <span class="o">=</span> <span class="n">parameters</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">qoi</span> <span class="o">=</span> <span class="n">qoi</span>
 
@@ -155,9 +158,11 @@ as is shown in the example below.</p>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">def</span> <span class="nf">surrogate_fn</span><span class="p">(</span><span class="n">inputs</span><span class="p">):</span>
             <span class="n">values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="n">inputs</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">]])</span>
-            <span class="n">results</span> <span class="o">=</span> <span class="p">[</span><span class="n">gp</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">values</span><span class="p">)</span> <span class="k">for</span> <span class="n">gp</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">gps</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
-            <span class="k">return</span> <span class="p">{</span><span class="bp">self</span><span class="o">.</span><span class="n">qoi</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">results</span><span class="p">]}</span>
+            <span class="k">return</span> <span class="p">{</span><span class="bp">self</span><span class="o">.</span><span class="n">qoi</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">gp</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">values</span><span class="p">)[</span><span class="mi">0</span><span class="p">]]}</span>
         <span class="k">return</span> <span class="n">surrogate_fn</span>
+
+    <span class="k">def</span> <span class="nf">get_params</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">gp</span><span class="o">.</span><span class="n">get_params</span><span class="p">()</span>
 
 
 <span class="k">class</span> <span class="nc">GaussianProcessSurrogate</span><span class="p">(</span><span class="n">BaseAnalysisElement</span><span class="p">):</span>
@@ -197,11 +202,9 @@ as is shown in the example below.</p>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">x</span> <span class="o">=</span> <span class="n">data_frame</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">attr_cols</span><span class="p">]</span><span class="o">.</span><span class="n">values</span> <span class="c1">#lgtm [py/hash-unhashable-value]</span>
         <span class="n">y</span> <span class="o">=</span> <span class="n">data_frame</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">target_cols</span><span class="p">]</span><span class="o">.</span><span class="n">values</span> <span class="c1">#lgtm [py/hash-unhashable-value]</span>
-        <span class="n">gps</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">y</span><span class="p">:</span>
-            <span class="n">gp</span> <span class="o">=</span> <span class="n">GaussianProcessRegressor</span><span class="p">(</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="p">)</span>
-            <span class="n">gps</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">gp</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">))</span>
-        <span class="k">return</span> <span class="n">GaussianProcessSurrogateResults</span><span class="p">(</span><span class="n">gps</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">attr_cols</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_cols</span><span class="p">)</span>
+        <span class="n">gp</span> <span class="o">=</span> <span class="n">GaussianProcessRegressor</span><span class="p">(</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">gp</span> <span class="o">=</span> <span class="n">gp</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">GaussianProcessSurrogateResults</span><span class="p">(</span><span class="n">gp</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">attr_cols</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_cols</span><span class="p">)</span>
 </pre></div>
 
         </details>
@@ -232,8 +235,8 @@ as is shown in the example below.</p>
 <span class="sd">    qoi: str</span>
 <span class="sd">        Output variable name.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gps</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">qoi</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">gps</span> <span class="o">=</span> <span class="n">gps</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gp</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">qoi</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gp</span> <span class="o">=</span> <span class="n">gp</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span> <span class="o">=</span> <span class="n">parameters</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">qoi</span> <span class="o">=</span> <span class="n">qoi</span>
 
@@ -249,9 +252,11 @@ as is shown in the example below.</p>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">def</span> <span class="nf">surrogate_fn</span><span class="p">(</span><span class="n">inputs</span><span class="p">):</span>
             <span class="n">values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="n">inputs</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">]])</span>
-            <span class="n">results</span> <span class="o">=</span> <span class="p">[</span><span class="n">gp</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">values</span><span class="p">)</span> <span class="k">for</span> <span class="n">gp</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">gps</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
-            <span class="k">return</span> <span class="p">{</span><span class="bp">self</span><span class="o">.</span><span class="n">qoi</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">results</span><span class="p">]}</span>
+            <span class="k">return</span> <span class="p">{</span><span class="bp">self</span><span class="o">.</span><span class="n">qoi</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">gp</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">values</span><span class="p">)[</span><span class="mi">0</span><span class="p">]]}</span>
         <span class="k">return</span> <span class="n">surrogate_fn</span>
+
+    <span class="k">def</span> <span class="nf">get_params</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">gp</span><span class="o">.</span><span class="n">get_params</span><span class="p">()</span>
 </pre></div>
 
         </details>
@@ -277,13 +282,13 @@ Output variable name.</li>
                                         <div class="attr function"><a class="headerlink" href="#GaussianProcessSurrogateResults.__init__">#&nbsp;&nbsp</a>
 
         
-            <span class="name">GaussianProcessSurrogateResults</span><span class="signature">(gps, parameters, qoi)</span>
+            <span class="name">GaussianProcessSurrogateResults</span><span class="signature">(gp, parameters, qoi)</span>
     </div>
 
                 <details>
             <summary>View Source</summary>
-            <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gps</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">qoi</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">gps</span> <span class="o">=</span> <span class="n">gps</span>
+            <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gp</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">qoi</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gp</span> <span class="o">=</span> <span class="n">gp</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span> <span class="o">=</span> <span class="n">parameters</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">qoi</span> <span class="o">=</span> <span class="n">qoi</span>
 </pre></div>
@@ -315,8 +320,7 @@ Output variable name.</li>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">def</span> <span class="nf">surrogate_fn</span><span class="p">(</span><span class="n">inputs</span><span class="p">):</span>
             <span class="n">values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="n">inputs</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">]])</span>
-            <span class="n">results</span> <span class="o">=</span> <span class="p">[</span><span class="n">gp</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">values</span><span class="p">)</span> <span class="k">for</span> <span class="n">gp</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">gps</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
-            <span class="k">return</span> <span class="p">{</span><span class="bp">self</span><span class="o">.</span><span class="n">qoi</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">results</span><span class="p">]}</span>
+            <span class="k">return</span> <span class="p">{</span><span class="bp">self</span><span class="o">.</span><span class="n">qoi</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">gp</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">values</span><span class="p">)[</span><span class="mi">0</span><span class="p">]]}</span>
         <span class="k">return</span> <span class="n">surrogate_fn</span>
 </pre></div>
 
@@ -333,6 +337,25 @@ to construct the surrogate.</li>
 </ul>
 </div>
 
+
+                            </div>
+                            <div id="GaussianProcessSurrogateResults.get_params" class="classattr">
+                                        <div class="attr function"><a class="headerlink" href="#GaussianProcessSurrogateResults.get_params">#&nbsp;&nbsp</a>
+
+        
+            <span class="def">def</span>
+            <span class="name">get_params</span><span class="signature">(self)</span>:
+    </div>
+
+                <details>
+            <summary>View Source</summary>
+            <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">get_params</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">gp</span><span class="o">.</span><span class="n">get_params</span><span class="p">()</span>
+</pre></div>
+
+        </details>
+
+    
 
                             </div>
                             <div class="inherited">
@@ -401,11 +424,9 @@ to construct the surrogate.</li>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">x</span> <span class="o">=</span> <span class="n">data_frame</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">attr_cols</span><span class="p">]</span><span class="o">.</span><span class="n">values</span> <span class="c1">#lgtm [py/hash-unhashable-value]</span>
         <span class="n">y</span> <span class="o">=</span> <span class="n">data_frame</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">target_cols</span><span class="p">]</span><span class="o">.</span><span class="n">values</span> <span class="c1">#lgtm [py/hash-unhashable-value]</span>
-        <span class="n">gps</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">y</span><span class="p">:</span>
-            <span class="n">gp</span> <span class="o">=</span> <span class="n">GaussianProcessRegressor</span><span class="p">(</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="p">)</span>
-            <span class="n">gps</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">gp</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">))</span>
-        <span class="k">return</span> <span class="n">GaussianProcessSurrogateResults</span><span class="p">(</span><span class="n">gps</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">attr_cols</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_cols</span><span class="p">)</span>
+        <span class="n">gp</span> <span class="o">=</span> <span class="n">GaussianProcessRegressor</span><span class="p">(</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">gp</span> <span class="o">=</span> <span class="n">gp</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">GaussianProcessSurrogateResults</span><span class="p">(</span><span class="n">gp</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">attr_cols</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_cols</span><span class="p">)</span>
 </pre></div>
 
         </details>
@@ -488,11 +509,9 @@ Corresponding target values (can be vectors).</li>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">x</span> <span class="o">=</span> <span class="n">data_frame</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">attr_cols</span><span class="p">]</span><span class="o">.</span><span class="n">values</span> <span class="c1">#lgtm [py/hash-unhashable-value]</span>
         <span class="n">y</span> <span class="o">=</span> <span class="n">data_frame</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">target_cols</span><span class="p">]</span><span class="o">.</span><span class="n">values</span> <span class="c1">#lgtm [py/hash-unhashable-value]</span>
-        <span class="n">gps</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">y</span><span class="p">:</span>
-            <span class="n">gp</span> <span class="o">=</span> <span class="n">GaussianProcessRegressor</span><span class="p">(</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="p">)</span>
-            <span class="n">gps</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">gp</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">))</span>
-        <span class="k">return</span> <span class="n">GaussianProcessSurrogateResults</span><span class="p">(</span><span class="n">gps</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">attr_cols</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_cols</span><span class="p">)</span>
+        <span class="n">gp</span> <span class="o">=</span> <span class="n">GaussianProcessRegressor</span><span class="p">(</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">gp</span> <span class="o">=</span> <span class="n">gp</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">GaussianProcessSurrogateResults</span><span class="p">(</span><span class="n">gp</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">attr_cols</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_cols</span><span class="p">)</span>
 </pre></div>
 
         </details>
