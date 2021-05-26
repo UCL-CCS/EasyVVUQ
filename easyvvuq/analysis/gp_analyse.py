@@ -62,7 +62,7 @@ class GaussianProcessSurrogateResults(AnalysisResults):
 
 class GaussianProcessSurrogate(BaseAnalysisElement):
 
-    def __init__(self, sampler, qoi_cols):
+    def __init__(self, sampler, qoi_cols, **kwargs):
         """An analysis class that can construct a Gaussian Process surrogate
         of your model. Based on the sklearn GaussianProgressRegressor class.
 
@@ -76,8 +76,9 @@ class GaussianProcessSurrogate(BaseAnalysisElement):
         self.sampler = sampler
         self.attr_cols = list(sampler.vary.get_keys())
         self.target_cols = qoi_cols
+        self.kwargs = kwargs
 
-    def analyse(self, data_frame=None, **kwargs):
+    def analyse(self, data_frame=None):
         """Construct a Gaussian Process surrogate based on data in `data_frame`.
 
         Parameters
@@ -98,6 +99,6 @@ class GaussianProcessSurrogate(BaseAnalysisElement):
         y = data_frame[self.target_cols].values #lgtm [py/hash-unhashable-value]
         gps = []
         for _ in y:
-            gp = GaussianProcessRegressor(**kwargs)
+            gp = GaussianProcessRegressor(**self.kwargs)
             gps.append(gp.fit(x, y))
         return GaussianProcessSurrogateResults(gps, self.attr_cols, self.target_cols)
