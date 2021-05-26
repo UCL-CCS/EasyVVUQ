@@ -38,8 +38,8 @@ class GaussianProcessSurrogateResults(AnalysisResults):
     qoi: str
         Output variable name.
     """
-    def __init__(self, gps, parameters, qoi):
-        self.gps = gps
+    def __init__(self, gp, parameters, qoi):
+        self.gp = gp
         self.parameters = parameters
         self.qoi = qoi
 
@@ -55,9 +55,11 @@ class GaussianProcessSurrogateResults(AnalysisResults):
         """
         def surrogate_fn(inputs):
             values = np.array([[inputs[key] for key in self.parameters]])
-            results = [gp.predict(values) for gp in self.gps][0][0]
-            return {self.qoi[0]: [x for x in results]}
+            return {self.qoi[0]: [x for x in self.gp.predict(values)[0]]}
         return surrogate_fn
+
+    def get_params(self):
+        return self.gp.kernel_.get_params()
 
 
 class GaussianProcessSurrogate(BaseAnalysisElement):
@@ -97,8 +99,6 @@ class GaussianProcessSurrogate(BaseAnalysisElement):
         """
         x = data_frame[self.attr_cols].values #lgtm [py/hash-unhashable-value]
         y = data_frame[self.target_cols].values #lgtm [py/hash-unhashable-value]
-        gps = []
-        for _ in y:
-            gp = GaussianProcessRegressor(**self.kwargs)
-            gps.append(gp.fit(x, y))
-        return GaussianProcessSurrogateResults(gps, self.attr_cols, self.target_cols)
+        gp = GaussianProcessRegressor(**self.kwargs)
+        gp = gp.fit(x, y)
+        return GaussianProcessSurrogateResults(gp, self.attr_cols, self.target_cols)
