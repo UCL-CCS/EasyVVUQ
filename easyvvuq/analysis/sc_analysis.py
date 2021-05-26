@@ -1,3 +1,7 @@
+"""
+ANALYSIS CLASS FOR THE SC SAMPLER
+"""
+
 import numpy as np
 import chaospy as cp
 from itertools import product, chain, combinations
@@ -320,10 +324,10 @@ class SCAnalysis(BaseAnalysisElement):
         method : string
             name of the refinement error, default is 'surplus'. In this case the
             error is based on the hierarchical surplus, which is an interpolation
-            based error. Other possibilities are 'mean' and 'var',
-            in which case the error is based on the difference in the mean or
+            based error. Another possibility is 'var',
+            in which case the error is based on the difference in the 
             variance between the current estimate and the estimate obtained
-             when a particular candidate direction is added.
+            when a particular candidate direction is added.
         """
         logging.debug('Refining sampling plan...')
         # load the code samples
@@ -333,21 +337,7 @@ class SCAnalysis(BaseAnalysisElement):
                 values = data_frame.loc[data_frame[('run_id', 0)] == run_id][qoi].values
                 samples.append(values.flatten())
 
-        # elif isinstance(data_frame, dict):
-        #     # dict is not sorted, make sure the runs are processed in ascending order
-        #     run_id_int = [int(run_id.split('Run_')[-1]) for run_id in data_frame[qoi].keys()]
-        #     for run_id in range(1, np.max(run_id_int) + 1):
-        #         values = data_frame[qoi]['Run_' + str(run_id)]
-        #         samples.append(values)
-
-        # if the refinement error is based upon on quadrature, compute the
-        # mean of the current setup, to be used as a reference
-        if method == 'mean':
-            mean_l = self.combination_technique(qoi)
-            # already need next 1d weights and points for quadrature-based refinement
-            self.xi_1d = self.sampler.xi_1d
-            self.wi_1d = self.compute_SC_weights(rule=self.sampler.quad_rule)
-        elif method == 'var':
+        if method == 'var':
             all_idx = np.concatenate((self.l_norm, self.sampler.admissible_idx))
             self.xi_1d = self.sampler.xi_1d
             self.wi_1d = self.sampler.wi_1d
@@ -381,23 +371,6 @@ class SCAnalysis(BaseAnalysisElement):
                         error[tuple(l)].append(np.linalg.norm(hier_surplus, np.inf))
                 # compute mean error over all points in X_l
                 error[tuple(l)] = np.mean(error[tuple(l)])
-           # compute the error based on quadrature of the mean
-            elif method == 'mean':
-                # create a candidate set of multi indices by adding the current
-                # admissible index to l_norm
-                candidate_l_norm = np.concatenate((self.l_norm, l.reshape([1, self.N])))
-                # now we must recompute the combination coefficients
-                c_l = self.compute_comb_coef(l_norm=candidate_l_norm)
-                # compute the new mean based on the candidate l_norm. To do so we must
-                # pass the new comb coef, but also the samples and grid of the
-                # next level
-                mean_candidate_l = self.combination_technique(qoi,
-                                                              samples=samples,
-                                                              l_norm=candidate_l_norm,
-                                                              comb_coef=c_l,
-                                                              xi_d=self.sampler.xi_d)
-                #error in mean
-                error[tuple(l)] = np.linalg.norm(mean_candidate_l - mean_l, np.inf)
             # compute the error based on quadrature of the variance
             elif method == 'var':
                 # create a candidate set of multi indices by adding the current
@@ -679,22 +652,76 @@ class SCAnalysis(BaseAnalysisElement):
         logging.debug('done')
         return mean_f, var_f
 
+    # def sc_expansion(self, samples, x):
+    #     """Non recursive implementation of the SC expansion.
+    #     (Default setting of surrogate)
+    #     Performs interpolation for both full and sparse grids.
+
+    #     Parameters
+    #     ----------
+    #     samples: array
+    #         array of code samples
+    #     x (float (N,)): location in stochastic space at which to eval
+    #       the surrogate
+
+    #     Returns
+    #     -------
+
+    #     surr (float, (N_qoi,)): the interpolated value of qoi at x
+
+    #     """
+    #     # Computing the tensor grid of each multiindex l (xi_d below)
+    #     # every time is slow. Instead store it globally, and only recompute when
+    #     # self.l_norm has changed, when the flag init_interpolation = True.
+    #     # This flag is set to True when self.analyse is executed
+    #     if self.init_interpolation:
+    #         self.xi_d_per_l = {}
+    #         for l in self.l_norm:
+    #             # all points corresponding to l
+    #             xi = [self.xi_1d[n][l[n]] for n in range(self.N)]
+    #             self.xi_d_per_l[tuple(l)] = np.array(list(product(*xi)))
+    #         self.init_interpolation = False
+
+    #     surr = 0.0
+    #     for l in self.l_norm:
+    #         # all points corresponding to l
+    #         # xi = [self.xi_1d[n][l[n]] for n in range(self.N)]
+    #         # xi_d = np.array(list(product(*xi)))
+    #         xi_d = self.xi_d_per_l[tuple(l)]
+
+    #         for xi in xi_d:
+    #             # indices of current collocation point
+    #             # in corresponding 1d colloc points (self.xi_1d[n][l[n]])
+    #             # These are the j of the 1D lagrange polynomials l_j(x), see
+    #             # lagrange_poly subroutine
+    #             idx = [(self.xi_1d[n][l[n]] == xi[n]).nonzero()[0][0] for n in range(self.N)]
+    #             # values of Lagrange polynomials at x
+    #             weight = [lagrange_poly(x[n], self.xi_1d[n][l[n]], idx[n]) for n in range(self.N)]
+
+    #             idx = np.where((xi == self.xi_d).all(axis=1))[0][0]
+
+    #             surr += self.comb_coef[tuple(l)] * samples[idx] * np.prod(weight)
+
+    #     return surr
+
     def sc_expansion(self, samples, x):
-        """Non recursive implementation of the SC expansion.
-        (Default setting of surrogate)
-        Performs interpolation for both full and sparse grids.
+        """
+        Non recursive implementation of the SC expansion. Performs interpolation
+        of code output samples for both full and sparse grids.
 
         Parameters
         ----------
-        samples: array
-            array of code samples
-        x (float (N,)): location in stochastic space at which to eval
-          the surrogate
+        samples : list
+            list of code output samples.
+        x : array
+            One or more locations in stochastic space at which to evaluate
+            the surrogate.
 
         Returns
         -------
-
-        surr (float, (N_qoi,)): the interpolated value of qoi at x
+        surr : array
+            The interpolated values of the code output at input locations
+            specified by x.
 
         """
         # Computing the tensor grid of each multiindex l (xi_d below)
@@ -722,12 +749,18 @@ class SCAnalysis(BaseAnalysisElement):
                 # These are the j of the 1D lagrange polynomials l_j(x), see
                 # lagrange_poly subroutine
                 idx = [(self.xi_1d[n][l[n]] == xi[n]).nonzero()[0][0] for n in range(self.N)]
+                sample_idx = np.where((xi == self.xi_d).all(axis=1))[0][0]
+
                 # values of Lagrange polynomials at x
-                weight = [lagrange_poly(x[n], self.xi_1d[n][l[n]], idx[n]) for n in range(self.N)]
-
-                idx = np.where((xi == self.xi_d).all(axis=1))[0][0]
-
-                surr += self.comb_coef[tuple(l)] * samples[idx] * np.prod(weight)
+                if x.ndim == 1:
+                    weight = [lagrange_poly(x[n], self.xi_1d[n][l[n]], idx[n])
+                              for n in range(self.N)]
+                    surr += self.comb_coef[tuple(l)] * samples[sample_idx] * np.prod(weight, axis=0)
+                else:
+                    weight = [lagrange_poly(x[:, n], self.xi_1d[n][l[n]], idx[n])
+                              for n in range(self.N)]
+                    surr += self.comb_coef[tuple(l)] * samples[sample_idx] * \
+                        np.prod(weight, axis=0).reshape([-1, 1])
 
         return surr
 
@@ -1380,7 +1413,7 @@ def setdiff2d(X, Y):
 
     Returns
     -------
-    The difference X \ Y as a 2D array
+    The difference X \\ Y as a 2D array
 
     """
     diff = set(map(tuple, X)) - set(map(tuple, Y))
