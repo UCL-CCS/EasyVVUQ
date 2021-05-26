@@ -77,6 +77,7 @@ class SCAnalysisResults(AnalysisResults):
                 else:
                     return x[0]
             values = np.array([inputs[key] for key in self.inputs])
+            values = values.reshape([values.shape[1], values.shape[0]])
             results = dict([(qoi, swap(self.surrogate_(qoi, values))) for qoi in self.qois])
             return results
         return surrogate_fn
