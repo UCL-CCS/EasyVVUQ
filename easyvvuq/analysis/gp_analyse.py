@@ -59,7 +59,7 @@ class GaussianProcessSurrogateResults(AnalysisResults):
         return surrogate_fn
 
     def get_params(self):
-        return self.gp.get_params()
+        return self.gp.kernel_.get_params()
 
 
 class GaussianProcessSurrogate(BaseAnalysisElement):
