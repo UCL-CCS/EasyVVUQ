@@ -56,6 +56,7 @@ class ActionPool:
         self.sequential = sequential
         self.futures = []
         self.results = []
+        self._collate_callback = lambda previous: previous
 
     def start(self, pool=None):
         """Start the actions.
@@ -108,6 +109,15 @@ class ActionPool:
             else:
                 ready += 1
         return {'ready': ready, 'active': running, 'finished': done, 'failed': failed}
+
+    def add_collate_callback(self, fn):
+        """Adds a callback to be called after collation is done.
+        
+        Parameters
+        ----------
+        fn - A callable that takes previous as it's only input.
+        """
+        self._collate_callback = fn
 
     def collate(self, progress_bar=False):
         """A command that will block untill all Futures in the pool have finished.
