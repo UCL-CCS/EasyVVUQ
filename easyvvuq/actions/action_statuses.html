@@ -43,6 +43,9 @@
                                 <a class="function" href="#ActionPool.progress">progress</a>
                         </li>
                         <li>
+                                <a class="function" href="#ActionPool.add_collate_callback">add_collate_callback</a>
+                        </li>
+                        <li>
                                 <a class="function" href="#ActionPool.collate">collate</a>
                         </li>
                 </ul>
@@ -129,6 +132,7 @@ manually. The user does interact with it to track the progress of execution.</p>
         <span class="bp">self</span><span class="o">.</span><span class="n">sequential</span> <span class="o">=</span> <span class="n">sequential</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">futures</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_collate_callback</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">previous</span><span class="p">:</span> <span class="n">previous</span>
 
     <span class="k">def</span> <span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pool</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Start the actions.</span>
@@ -181,6 +185,15 @@ manually. The user does interact with it to track the progress of execution.</p>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">ready</span> <span class="o">+=</span> <span class="mi">1</span>
         <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;ready&#39;</span><span class="p">:</span> <span class="n">ready</span><span class="p">,</span> <span class="s1">&#39;active&#39;</span><span class="p">:</span> <span class="n">running</span><span class="p">,</span> <span class="s1">&#39;finished&#39;</span><span class="p">:</span> <span class="n">done</span><span class="p">,</span> <span class="s1">&#39;failed&#39;</span><span class="p">:</span> <span class="n">failed</span><span class="p">}</span>
+
+    <span class="k">def</span> <span class="nf">add_collate_callback</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fn</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Adds a callback to be called after collation is done.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        fn - A callable that takes previous as it&#39;s only input.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_collate_callback</span> <span class="o">=</span> <span class="n">fn</span>
 
     <span class="k">def</span> <span class="nf">collate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">progress_bar</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;A command that will block untill all Futures in the pool have finished.</span>
@@ -247,6 +260,7 @@ manually. The user does interact with it to track the progress of execution.</p>
         <span class="bp">self</span><span class="o">.</span><span class="n">sequential</span> <span class="o">=</span> <span class="n">sequential</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">futures</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_collate_callback</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">previous</span><span class="p">:</span> <span class="n">previous</span>
 
     <span class="k">def</span> <span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pool</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Start the actions.</span>
@@ -299,6 +313,15 @@ manually. The user does interact with it to track the progress of execution.</p>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">ready</span> <span class="o">+=</span> <span class="mi">1</span>
         <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;ready&#39;</span><span class="p">:</span> <span class="n">ready</span><span class="p">,</span> <span class="s1">&#39;active&#39;</span><span class="p">:</span> <span class="n">running</span><span class="p">,</span> <span class="s1">&#39;finished&#39;</span><span class="p">:</span> <span class="n">done</span><span class="p">,</span> <span class="s1">&#39;failed&#39;</span><span class="p">:</span> <span class="n">failed</span><span class="p">}</span>
+
+    <span class="k">def</span> <span class="nf">add_collate_callback</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fn</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Adds a callback to be called after collation is done.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        fn - A callable that takes previous as it&#39;s only input.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_collate_callback</span> <span class="o">=</span> <span class="n">fn</span>
 
     <span class="k">def</span> <span class="nf">collate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">progress_bar</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;A command that will block untill all Futures in the pool have finished.</span>
@@ -364,6 +387,7 @@ Will run the actions sequentially.</li>
         <span class="bp">self</span><span class="o">.</span><span class="n">sequential</span> <span class="o">=</span> <span class="n">sequential</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">futures</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_collate_callback</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">previous</span><span class="p">:</span> <span class="n">previous</span>
 </pre></div>
 
         </details>
@@ -475,6 +499,39 @@ and for collation.</li>
 <li><strong>dict</strong>: A dictionary with four keys - 'ready', 'active' and 'finished', 'failed'. 
 Values under "ready" correspond to <code>Actions</code> waiting for execution, "active"
 corresponds to the number of currently running tasks.</li>
+</ul>
+</div>
+
+
+                            </div>
+                            <div id="ActionPool.add_collate_callback" class="classattr">
+                                        <div class="attr function"><a class="headerlink" href="#ActionPool.add_collate_callback">#&nbsp;&nbsp</a>
+
+        
+            <span class="def">def</span>
+            <span class="name">add_collate_callback</span><span class="signature">(self, fn)</span>:
+    </div>
+
+                <details>
+            <summary>View Source</summary>
+            <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">add_collate_callback</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fn</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Adds a callback to be called after collation is done.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        fn - A callable that takes previous as it&#39;s only input.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_collate_callback</span> <span class="o">=</span> <span class="n">fn</span>
+</pre></div>
+
+        </details>
+
+            <div class="docstring"><p>Adds a callback to be called after collation is done.</p>
+
+<h6 id="parameters">Parameters</h6>
+
+<ul>
+<li><strong>fn - A callable that takes previous as it's only input.</strong></li>
 </ul>
 </div>
 
