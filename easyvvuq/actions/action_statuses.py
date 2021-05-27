@@ -136,11 +136,12 @@ class ActionPool:
             self.results = self.pool.gather(self.futures)
         if self.sequential or isinstance(self.pool, Client):
             for result in tqdm_(self.results, total=len(self.results)):
+                result = self._collate_callback(result)
                 self.campaign.campaign_db.store_result(
                     result['run_id'], result, change_status=result['collated'])
         else:
             for future in tqdm_(as_completed(self.futures), total=len(self.futures)):
-                result = future.result()
+                result = self._collate_callback(future.result())
                 self.campaign.campaign_db.store_result(
                     result['run_id'], result, change_status=result['collated'])
         self.campaign.campaign_db.session.commit()
