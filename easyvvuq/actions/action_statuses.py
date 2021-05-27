@@ -146,6 +146,11 @@ class ActionPool:
                 result = future.result()
                 self.campaign.campaign_db.store_result(
                     result['run_id'], result, change_status=result['collated'])
+        elif isinstance(self.pool, QCGPJPool):
+            for future in tqdm_(QCGPJPool.as_completed(self.futures), total=len(self.futures)):
+                result = future.result()
+                self.campaign.campaign_db.store_result(
+                    result['run_id'], result, change_status=result['collated'])
         else:
             for future in tqdm_(as_completed(self.futures), total=len(self.futures)):
                 result = self._collate_callback(future.result())
