@@ -652,58 +652,6 @@ class SCAnalysis(BaseAnalysisElement):
         logging.debug('done')
         return mean_f, var_f
 
-    # def sc_expansion(self, samples, x):
-    #     """Non recursive implementation of the SC expansion.
-    #     (Default setting of surrogate)
-    #     Performs interpolation for both full and sparse grids.
-
-    #     Parameters
-    #     ----------
-    #     samples: array
-    #         array of code samples
-    #     x (float (N,)): location in stochastic space at which to eval
-    #       the surrogate
-
-    #     Returns
-    #     -------
-
-    #     surr (float, (N_qoi,)): the interpolated value of qoi at x
-
-    #     """
-    #     # Computing the tensor grid of each multiindex l (xi_d below)
-    #     # every time is slow. Instead store it globally, and only recompute when
-    #     # self.l_norm has changed, when the flag init_interpolation = True.
-    #     # This flag is set to True when self.analyse is executed
-    #     if self.init_interpolation:
-    #         self.xi_d_per_l = {}
-    #         for l in self.l_norm:
-    #             # all points corresponding to l
-    #             xi = [self.xi_1d[n][l[n]] for n in range(self.N)]
-    #             self.xi_d_per_l[tuple(l)] = np.array(list(product(*xi)))
-    #         self.init_interpolation = False
-
-    #     surr = 0.0
-    #     for l in self.l_norm:
-    #         # all points corresponding to l
-    #         # xi = [self.xi_1d[n][l[n]] for n in range(self.N)]
-    #         # xi_d = np.array(list(product(*xi)))
-    #         xi_d = self.xi_d_per_l[tuple(l)]
-
-    #         for xi in xi_d:
-    #             # indices of current collocation point
-    #             # in corresponding 1d colloc points (self.xi_1d[n][l[n]])
-    #             # These are the j of the 1D lagrange polynomials l_j(x), see
-    #             # lagrange_poly subroutine
-    #             idx = [(self.xi_1d[n][l[n]] == xi[n]).nonzero()[0][0] for n in range(self.N)]
-    #             # values of Lagrange polynomials at x
-    #             weight = [lagrange_poly(x[n], self.xi_1d[n][l[n]], idx[n]) for n in range(self.N)]
-
-    #             idx = np.where((xi == self.xi_d).all(axis=1))[0][0]
-
-    #             surr += self.comb_coef[tuple(l)] * samples[idx] * np.prod(weight)
-
-    #     return surr
-
     def sc_expansion(self, samples, x):
         """
         Non recursive implementation of the SC expansion. Performs interpolation
@@ -749,6 +697,7 @@ class SCAnalysis(BaseAnalysisElement):
                 # These are the j of the 1D lagrange polynomials l_j(x), see
                 # lagrange_poly subroutine
                 idx = [(self.xi_1d[n][l[n]] == xi[n]).nonzero()[0][0] for n in range(self.N)]
+                # index of the code sample
                 sample_idx = np.where((xi == self.xi_d).all(axis=1))[0][0]
 
                 # values of Lagrange polynomials at x
@@ -756,6 +705,7 @@ class SCAnalysis(BaseAnalysisElement):
                     weight = [lagrange_poly(x[n], self.xi_1d[n][l[n]], idx[n])
                               for n in range(self.N)]
                     surr += self.comb_coef[tuple(l)] * samples[sample_idx] * np.prod(weight, axis=0)
+                # batch setting, if multiple x values are presribed
                 else:
                     weight = [lagrange_poly(x[:, n], self.xi_1d[n][l[n]], idx[n])
                               for n in range(self.N)]
