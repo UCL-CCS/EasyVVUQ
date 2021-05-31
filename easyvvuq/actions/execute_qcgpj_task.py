@@ -1,9 +1,11 @@
 import base64
+import json
+import os
 import sys
 
 import dill
 
-from actions import Actions
+from . import Actions
 
 if __name__ == "__main__":
 
@@ -13,6 +15,11 @@ if __name__ == "__main__":
         sys.exit(
             "Usage: python3 encoded_actions_object encoded_previous_object"
         )
+
+    if 'QCG_PM_EXEC_API_JOB_ID' not in os.environ:
+        sys.exit("The required environment variable QCG_PM_STEP_ID not set")
+
+    jobid = os.environ['QCG_PM_EXEC_API_JOB_ID']
 
     pickled_actions = sys.argv[1]
     pickled_actions_b64 = pickled_actions.encode('ascii')
@@ -25,4 +32,6 @@ if __name__ == "__main__":
     previous = dill.loads(pickled_previous_b)
 
     previous_next = actions.start(previous)
-    print(previous_next)
+
+    with open(f'{previous_next["campaign_dir"]}/.qcgpj_result_{jobid}', 'w') as f:
+        json.dump(previous_next, f)

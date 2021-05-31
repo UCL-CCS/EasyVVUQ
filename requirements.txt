@@ -20,3 +20,5 @@ autopep8
 squarify
 dill
 tqdm
+qcg-pilotjob @ git+https://github.com/vecma-project/QCG-PilotJob.git@namespaces#subdirectory=components/core&egg=qcg-pilotjob
+qcg-pilotjob-executor-api @ git+https://github.com/vecma-project/QCG-PilotJob.git@namespaces#subdirectory=components/executor_api&egg=qcg-pilotjob-executor-api

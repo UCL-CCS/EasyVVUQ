@@ -1,4 +1,6 @@
 import base64
+import json
+
 import time
 
 import dill
@@ -45,6 +47,7 @@ class QCGPJPool(Executor):
         self._qcgpj_executor = qcgpj_executor
         self._template = template
         self._template_params = template_params
+        self._campaign_dir = None
 
     def submit(self, fn, *args, **kwargs):
         actions = fn.__self__
@@ -54,13 +57,15 @@ class QCGPJPool(Executor):
         pickled_actions = base64.b64encode(dill.dumps(actions)).decode('ascii')
         pickled_previous = base64.b64encode(dill.dumps(args[0])).decode('ascii')
 
+        self._campaign_dir = args[0]['campaign_dir']
+
         return self._qcgpj_executor.submit(
             self._template.template,
             self._template_params,
             exec=exec,
             name=args[0]['run_id'],
-            stdout=f"stdout_{args[0]['run_id']}",
-            stderr=f"stderr_{args[0]['run_id']}",
+            stdout=f"{self._campaign_dir}/stdout_{args[0]['run_id']}",
+            stderr=f"{self._campaign_dir}/stderr_{args[0]['run_id']}",
             args=[pickled_actions, pickled_previous])
 
     def shutdown(self, **kwargs):
@@ -80,7 +85,7 @@ class QCGPJPool(Executor):
         while finished:
             yield finished.pop()
 
-        while pending != 0:
+        while pending:
             for f in pending:
                 if f.done():
                     finished.add(f)
@@ -91,8 +96,15 @@ class QCGPJPool(Executor):
 
             time.sleep(1)
 
+    def convert_results(self, result_qcgpj):
+        for key, value in result_qcgpj.items():
+            if value != 'SUCCEED':
+                print(f"Exit status for task {key}: {value}")
+            assert value == 'SUCCEED'
+            with open(f'{self._campaign_dir}/.qcgpj_result_{key}', 'r') as f:
+                previous = json.load(f)
+                return previous
+
     @staticmethod
     def _wrapper(action, previous):
-        print("TESTING WRAPPER")
         return action.start(previous)
-
