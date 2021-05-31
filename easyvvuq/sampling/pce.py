@@ -94,7 +94,7 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
         self.distribution = cp.J(*params_distribution)
 
         # The orthogonal polynomials corresponding to the joint distribution
-        self.P = cp.orth_ttr(polynomial_order, self.distribution, normed=True)
+        self.P = cp.expansion.stieltjes(polynomial_order, self.distribution, normed=True)
 
         # The quadrature information
         self.quad_sparse = sparse
