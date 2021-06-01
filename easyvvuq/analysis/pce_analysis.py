@@ -138,7 +138,7 @@ class PCEAnalysisResults(QMCAnalysisResults):
                 else:
                     return x[0]
             values = np.array([inputs[key] for key in self.inputs])
-            results = dict([(qoi, swap(self.raw_data['fit'][qoi](*values))) for qoi in self.qois])
+            results = dict([(qoi, swap((self.raw_data['fit'][qoi](*values)).T)) for qoi in self.qois])
             return results
         return surrogate_fn
 
