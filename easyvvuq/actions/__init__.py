@@ -6,7 +6,7 @@ necessary to execute the simulation, cleaning up after, delegating work
 to external execution back-ends such as Dask, etc.
 """
 
-from .execute_local import ExecuteLocal, ExecutePython, CreateRunDirectory, Encode, Decode, local_execute
+from .execute_local import ExecuteLocal, ExecutePython, ExecuteQCGPJ, CreateRunDirectory, Encode, Decode, local_execute
 from .execute_local import CleanUp, Actions
 from .execute_qcgpj import QCGPJPool, EasyVVUQBasicTemplate
 from .execute_kubernetes import ExecuteKubernetes
