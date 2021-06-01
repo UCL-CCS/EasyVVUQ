@@ -3,8 +3,7 @@ import easyvvuq as uq
 import chaospy as cp
 import matplotlib.pyplot as plt
 
-from actions.execute_local import ExecuteQCGPJ
-from easyvvuq.actions import QCGPJPool
+from easyvvuq.actions import QCGPJPool, ExecuteQCGPJ
 from easyvvuq.actions import CreateRunDirectory, Encode, Decode, ExecuteLocal, Actions
 
 params = {

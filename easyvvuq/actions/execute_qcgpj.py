@@ -9,7 +9,6 @@ from typing import Tuple, Dict, Any
 
 from concurrent.futures import Executor
 
-from actions.execute_local import ExecuteQCGPJ
 from qcg.pilotjob.executor_api.qcgpj_executor import QCGPJExecutor
 from qcg.pilotjob.executor_api.templates.qcgpj_template import QCGPJTemplate
 
@@ -178,3 +177,27 @@ class QCGPJPool(Executor):
                 return
 
         return action.start(previous)
+
+
+class ExecuteQCGPJ:
+    """A utility decorator over action that marks the action to enable parallel execution by QCG-PilotJob
+
+    Parameters
+    ----------
+    action: Action
+        an action that will be decorated in order to enable parallel execution inside a QCG-PilotJob task.
+    """
+    def __init__(self, action):
+        self._action = action
+
+    def start(self, previous=None):
+        return self._action.start(previous)
+
+    def finished(self):
+        return self._action.finished()
+
+    def finalise(self):
+        return self._action.finalise()
+
+    def succeeded(self):
+        return self._action.succeeded()
