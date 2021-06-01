@@ -293,10 +293,6 @@ class Campaign:
             If set to True it will not add the sampler to the database, just change
             it as the active sampler.
         """
-        if not isinstance(sampler, BaseSamplingElement):
-            msg = "set_sampler() must be passed a sampling element"
-            logging.error(msg)
-            raise Exception(msg)
         self._active_sampler = sampler
         if not update:
             self._active_sampler_id = self.campaign_db.add_sampler(sampler)
