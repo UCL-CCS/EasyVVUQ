@@ -42,7 +42,7 @@ class SimpleCSV:
     ouput_columns: list
         A list of column names that will be selected to appear in the output.
     """
-    def __init__(self, target_filename, output_columns):
+    def __init__(self, target_filename, output_columns, dialect='excel'):
         if len(output_columns) == 0:
             msg = "output_columns cannot be empty."
             logger.error(msg)
@@ -50,6 +50,7 @@ class SimpleCSV:
         self.target_filename = target_filename
         self.output_columns = output_columns
         self.output_type = OutputType('sample')
+        self.dialect = dialect
 
     @staticmethod
     def _get_output_path(run_info=None, outfile=None):
@@ -97,7 +98,7 @@ class SimpleCSV:
         for column in self.output_columns:
             results[column] = []
         with open(out_path, 'r', newline='') as csvfile:
-            reader = csv.DictReader(csvfile)
+            reader = csv.DictReader(csvfile, dialect=dialect)
             for row in reader:
                 for column in self.output_columns:
                     try:
