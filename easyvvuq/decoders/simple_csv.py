@@ -98,7 +98,7 @@ class SimpleCSV:
         for column in self.output_columns:
             results[column] = []
         with open(out_path, 'r', newline='') as csvfile:
-            reader = csv.DictReader(csvfile, dialect=dialect)
+            reader = csv.DictReader(csvfile, dialect=self.dialect)
             for row in reader:
                 for column in self.output_columns:
                     try:
