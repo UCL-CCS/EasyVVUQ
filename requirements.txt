@@ -1,8 +1,9 @@
-numpy==1.19.5
+numpy
 pandas
 scipy
 wheel
 chaospy==4.3.2
+numpoly==1.1.3
 SALib
 pytest
 pytest-pep8
