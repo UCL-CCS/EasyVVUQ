@@ -241,6 +241,30 @@ class ExecuteLocal():
             return True
 
 
+class ExecuteQCGPJ:
+    """A utility decorator over action that marks the action to enable parallel execution by QCG-PilotJob
+
+    Parameters
+    ----------
+    action: Action
+        an action that will be decorated in order to enable parallel execution inside a QCG-PilotJob task.
+    """
+    def __init__(self, action):
+        self._action = action
+
+    def start(self, previous=None):
+        return self._action.start(previous)
+
+    def finished(self):
+        return self._action.finished()
+
+    def finalise(self):
+        return self._action.finalise()
+
+    def succeeded(self):
+        return self._action.succeeded()
+
+
 class Actions():
     def __init__(self, *args):
         self.actions = list(args)

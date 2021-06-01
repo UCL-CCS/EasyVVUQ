@@ -1,5 +1,6 @@
 import base64
 import json
+from os import environ
 
 import time
 
@@ -7,6 +8,8 @@ import dill
 from typing import Tuple, Dict, Any
 
 from concurrent.futures import Executor
+
+from actions.execute_local import ExecuteQCGPJ
 from qcg.pilotjob.executor_api.qcgpj_executor import QCGPJExecutor
 from qcg.pilotjob.executor_api.templates.qcgpj_template import QCGPJTemplate
 
@@ -60,8 +63,10 @@ class QCGPJPool(Executor):
     template_params: dict
         A dictionary that contains parameters that will be used to substitute placeholders
         defined in the template
+    polling_interval: int
+        An interval between queries to QCG-PilotJob manager about state of the tasks, in seconds.
     """
-    def __init__(self, qcgpj_executor=None, template=None, template_params=None):
+    def __init__(self, qcgpj_executor=None, template=None, template_params=None, polling_interval=1):
         if qcgpj_executor is None:
             qcgpj_executor = QCGPJExecutor()
         if template is None:
@@ -70,6 +75,7 @@ class QCGPJPool(Executor):
         self._qcgpj_executor = qcgpj_executor
         self._template = template
         self._template_params = template_params
+        self._polling_interval = polling_interval
         self._campaign_dir = None
 
     def submit(self, fn, *args, **kwargs):
@@ -83,6 +89,7 @@ class QCGPJPool(Executor):
             QCGPJFuture representing the given call.
         """
         actions = fn.__self__
+        actions.set_wrapper(QCGPJPool._wrapper)
         exec = 'python3 -m easyvvuq.actions.execute_qcgpj_task'
 
         pickled_actions = base64.b64encode(dill.dumps(actions)).decode('ascii')
@@ -129,8 +136,8 @@ class QCGPJPool(Executor):
         return self._qcgpj_executor.shutdown()
 
     @staticmethod
-    def as_completed(features):
-        """Checks for status of features and yields those that are finished
+    def as_completed(self, features):
+        """Checks for the status of features and yields those that are finished
         """
 
         pending = set(features)
@@ -153,4 +160,21 @@ class QCGPJPool(Executor):
             while finished:
                 yield finished.pop()
 
-            time.sleep(1)
+            time.sleep(self._polling_interval)
+
+    @staticmethod
+    def _wrapper(action, previous):
+        """For the actions other than ExecuteQCGPJ ensures that the MPI code is invoked in a serial mode
+        """
+        if not isinstance(action, ExecuteQCGPJ):
+            rank = 0
+            if 'OMPI_COMM_WORLD_RANK' in environ:
+                rank = environ.get('OMPI_COMM_WORLD_RANK')
+            elif 'PMI_RANK' in environ:
+                rank = environ.get('PMI_RANK')
+
+            if rank != 0:
+                # This is not an instance of ExecuteQCGPJ,We don't execute processes with ranks other than 0
+                return
+
+        return action.start(previous)

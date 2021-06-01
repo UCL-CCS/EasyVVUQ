@@ -3,6 +3,7 @@ import easyvvuq as uq
 import chaospy as cp
 import matplotlib.pyplot as plt
 
+from actions.execute_local import ExecuteQCGPJ
 from easyvvuq.actions import QCGPJPool
 from easyvvuq.actions import CreateRunDirectory, Encode, Decode, ExecuteLocal, Actions
 
@@ -18,7 +19,7 @@ params = {
 
 encoder = uq.encoders.GenericEncoder(template_fname='beam.template', delimiter='$', target_filename='input.json')
 decoder = uq.decoders.JSONDecoder(target_filename='output.json', output_columns=['g1'])
-execute = ExecuteLocal('{}/beam input.json'.format(os.getcwd()))
+execute = ExecuteQCGPJ(ExecuteLocal('{}/beam input.json'.format(os.getcwd())))
 
 actions = Actions(CreateRunDirectory('/tmp'),
                   Encode(encoder), execute, Decode(decoder))
@@ -35,7 +36,7 @@ vary = {
 
 campaign.set_sampler(uq.sampling.PCESampler(vary=vary, polynomial_order=1))
 
-# with QCGPJPool(template_params={'venv': '/home/bartek/.virtualenv/easy-qcgpj-executor-test3'}) as qcgpj:
+#with QCGPJPool(template_params={'venv': '/home/bartek/.virtualenv/easy-qcgpj-executor-test3'}) as qcgpj:
 with QCGPJPool() as qcgpj:
     campaign.execute(pool=qcgpj).collate()
 

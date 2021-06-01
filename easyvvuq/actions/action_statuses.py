@@ -143,7 +143,7 @@ class ActionPool:
                     result['run_id'], result, change_status=result['collated'])
         else:
             if isinstance(self.pool, QCGPJPool):
-                as_completed_fn = QCGPJPool.as_completed
+                as_completed_fn = self.pool.as_completed
                 self.add_collate_callback(self.pool.convert_results)
             else:
                 as_completed_fn = concurrent.futures.as_completed
