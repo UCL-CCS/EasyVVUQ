@@ -156,10 +156,16 @@
                     <h1 class="modulename">
 <a href="./../../easyvvuq.html">easyvvuq</a><wbr>.<a href="./../analysis.html">analysis</a><wbr>.sc_analysis    </h1>
 
-                
+                        <div class="docstring"><p>ANALYSIS CLASS FOR THE SC SAMPLER</p>
+</div>
+
                         <details>
             <summary>View Source</summary>
-            <div class="codehilite"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+            <div class="codehilite"><pre><span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">ANALYSIS CLASS FOR THE SC SAMPLER</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">chaospy</span> <span class="k">as</span> <span class="nn">cp</span>
 <span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">product</span><span class="p">,</span> <span class="n">chain</span><span class="p">,</span> <span class="n">combinations</span>
 <span class="kn">import</span> <span class="nn">pickle</span>
@@ -233,7 +239,7 @@
                     <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="k">return</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-            <span class="n">values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">inputs</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">inputs</span><span class="p">])</span>
+            <span class="n">values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">inputs</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">inputs</span><span class="p">]))</span><span class="o">.</span><span class="n">T</span>
             <span class="n">results</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">([(</span><span class="n">qoi</span><span class="p">,</span> <span class="n">swap</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">surrogate_</span><span class="p">(</span><span class="n">qoi</span><span class="p">,</span> <span class="n">values</span><span class="p">)))</span> <span class="k">for</span> <span class="n">qoi</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">qois</span><span class="p">])</span>
             <span class="k">return</span> <span class="n">results</span>
         <span class="k">return</span> <span class="n">surrogate_fn</span>
@@ -481,10 +487,10 @@
 <span class="sd">        method : string</span>
 <span class="sd">            name of the refinement error, default is &#39;surplus&#39;. In this case the</span>
 <span class="sd">            error is based on the hierarchical surplus, which is an interpolation</span>
-<span class="sd">            based error. Other possibilities are &#39;mean&#39; and &#39;var&#39;,</span>
-<span class="sd">            in which case the error is based on the difference in the mean or</span>
+<span class="sd">            based error. Another possibility is &#39;var&#39;,</span>
+<span class="sd">            in which case the error is based on the difference in the </span>
 <span class="sd">            variance between the current estimate and the estimate obtained</span>
-<span class="sd">             when a particular candidate direction is added.</span>
+<span class="sd">            when a particular candidate direction is added.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Refining sampling plan...&#39;</span><span class="p">)</span>
         <span class="c1"># load the code samples</span>
@@ -494,21 +500,7 @@
                 <span class="n">values</span> <span class="o">=</span> <span class="n">data_frame</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">data_frame</span><span class="p">[(</span><span class="s1">&#39;run_id&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)]</span> <span class="o">==</span> <span class="n">run_id</span><span class="p">][</span><span class="n">qoi</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
                 <span class="n">samples</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">values</span><span class="o">.</span><span class="n">flatten</span><span class="p">())</span>
 
-        <span class="c1"># elif isinstance(data_frame, dict):</span>
-        <span class="c1">#     # dict is not sorted, make sure the runs are processed in ascending order</span>
-        <span class="c1">#     run_id_int = [int(run_id.split(&#39;Run_&#39;)[-1]) for run_id in data_frame[qoi].keys()]</span>
-        <span class="c1">#     for run_id in range(1, np.max(run_id_int) + 1):</span>
-        <span class="c1">#         values = data_frame[qoi][&#39;Run_&#39; + str(run_id)]</span>
-        <span class="c1">#         samples.append(values)</span>
-
-        <span class="c1"># if the refinement error is based upon on quadrature, compute the</span>
-        <span class="c1"># mean of the current setup, to be used as a reference</span>
-        <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;mean&#39;</span><span class="p">:</span>
-            <span class="n">mean_l</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">combination_technique</span><span class="p">(</span><span class="n">qoi</span><span class="p">)</span>
-            <span class="c1"># already need next 1d weights and points for quadrature-based refinement</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">xi_1d</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sampler</span><span class="o">.</span><span class="n">xi_1d</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">wi_1d</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">compute_SC_weights</span><span class="p">(</span><span class="n">rule</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">sampler</span><span class="o">.</span><span class="n">quad_rule</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;var&#39;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;var&#39;</span><span class="p">:</span>
             <span class="n">all_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">l_norm</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sampler</span><span class="o">.</span><span class="n">admissible_idx</span><span class="p">))</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">xi_1d</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sampler</span><span class="o">.</span><span class="n">xi_1d</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">wi_1d</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sampler</span><span class="o">.</span><span class="n">wi_1d</span>
@@ -542,23 +534,6 @@
                         <span class="n">error</span><span class="p">[</span><span class="nb">tuple</span><span class="p">(</span><span class="n">l</span><span class="p">)]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">hier_surplus</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">))</span>
                 <span class="c1"># compute mean error over all points in X_l</span>
                 <span class="n">error</span><span class="p">[</span><span class="nb">tuple</span><span class="p">(</span><span class="n">l</span><span class="p">)]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">error</span><span class="p">[</span><span class="nb">tuple</span><span class="p">(</span><span class="n">l</span><span class="p">)])</span>
-           <span class="c1"># compute the error based on quadrature of the mean</span>
-            <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;mean&#39;</span><span class="p">:</span>
-                <span class="c1"># create a candidate set of multi indices by adding the current</span>
-                <span class="c1"># admissible index to l_norm</span>
-                <span class="n">candidate_l_norm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">l_norm</span><span class="p">,</span> <span class="n">l</span><span class="o">.</span><span class="n">reshape</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">N</span><span class="p">])))</span>
-                <span class="c1"># now we must recompute the combination coefficients</span>
-                <span class="n">c_l</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">compute_comb_coef</span><span class="p">(</span><span class="n">l_norm</span><span class="o">=</span><span class="n">candidate_l_norm</span><span class="p">)</span>
-                <span class="c1"># compute the new mean based on the candidate l_norm. To do so we must</span>
-                <span class="c1"># pass the new comb coef, but also the samples and grid of the</span>
-                <span class="c1"># next level</span>
-                <span class="n">mean_candidate_l</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">combination_technique</span><span class="p">(</span><span class="n">qoi</span><span class="p">,</span>
-                                                              <span class="n">samples</span><span class="o">=</span><span class="n">samples</span><span class="p">,</span>
-                                                              <span class="n">l_norm</span><span class="o">=</span><span class="n">candidate_l_norm</span><span class="p">,</span>
-                                                              <span class="n">comb_coef</span><span class="o">=</span><span class="n">c_l</span><span class="p">,</span>
-                                                              <span class="n">xi_d</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">sampler</span><span class="o">.</span><span class="n">xi_d</span><span class="p">)</span>
-                <span class="c1">#error in mean</span>
-                <span class="n">error</span><span class="p">[</span><span class="nb">tuple</span><span class="p">(</span><span class="n">l</span><span class="p">)]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">mean_candidate_l</span> <span class="o">-</span> <span class="n">mean_l</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">)</span>
             <span class="c1"># compute the error based on quadrature of the variance</span>
             <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;var&#39;</span><span class="p">:</span>
                 <span class="c1"># create a candidate set of multi indices by adding the current</span>
@@ -841,21 +816,23 @@
         <span class="k">return</span> <span class="n">mean_f</span><span class="p">,</span> <span class="n">var_f</span>
 
     <span class="k">def</span> <span class="nf">sc_expansion</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">samples</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Non recursive implementation of the SC expansion.</span>
-<span class="sd">        (Default setting of surrogate)</span>
-<span class="sd">        Performs interpolation for both full and sparse grids.</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Non recursive implementation of the SC expansion. Performs interpolation</span>
+<span class="sd">        of code output samples for both full and sparse grids.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        samples: array</span>
-<span class="sd">            array of code samples</span>
-<span class="sd">        x (float (N,)): location in stochastic space at which to eval</span>
-<span class="sd">          the surrogate</span>
+<span class="sd">        samples : list</span>
+<span class="sd">            list of code output samples.</span>
+<span class="sd">        x : array</span>
+<span class="sd">            One or more locations in stochastic space at which to evaluate</span>
+<span class="sd">            the surrogate.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-
-<span class="sd">        surr (float, (N_qoi,)): the interpolated value of qoi at x</span>
+<span class="sd">        surr : array</span>
+<span class="sd">            The interpolated values of the code output at input locations</span>
+<span class="sd">            specified by x.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Computing the tensor grid of each multiindex l (xi_d below)</span>
@@ -883,12 +860,20 @@
                 <span class="c1"># These are the j of the 1D lagrange polynomials l_j(x), see</span>
                 <span class="c1"># lagrange_poly subroutine</span>
                 <span class="n">idx</span> <span class="o">=</span> <span class="p">[(</span><span class="bp">self</span><span class="o">.</span><span class="n">xi_1d</span><span class="p">[</span><span class="n">n</span><span class="p">][</span><span class="n">l</span><span class="p">[</span><span class="n">n</span><span class="p">]]</span> <span class="o">==</span> <span class="n">xi</span><span class="p">[</span><span class="n">n</span><span class="p">])</span><span class="o">.</span><span class="n">nonzero</span><span class="p">()[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">N</span><span class="p">)]</span>
+                <span class="c1"># index of the code sample</span>
+                <span class="n">sample_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">((</span><span class="n">xi</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">xi_d</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">))[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+
                 <span class="c1"># values of Lagrange polynomials at x</span>
-                <span class="n">weight</span> <span class="o">=</span> <span class="p">[</span><span class="n">lagrange_poly</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">n</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">xi_1d</span><span class="p">[</span><span class="n">n</span><span class="p">][</span><span class="n">l</span><span class="p">[</span><span class="n">n</span><span class="p">]],</span> <span class="n">idx</span><span class="p">[</span><span class="n">n</span><span class="p">])</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">N</span><span class="p">)]</span>
-
-                <span class="n">idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">((</span><span class="n">xi</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">xi_d</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">))[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
-
-                <span class="n">surr</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">comb_coef</span><span class="p">[</span><span class="nb">tuple</span><span class="p">(</span><span class="n">l</span><span class="p">)]</span> <span class="o">*</span> <span class="n">samples</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">prod</span><span class="p">(</span><span class="n">weight</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="n">weight</span> <span class="o">=</span> <span class="p">[</span><span class="n">lagrange_poly</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">n</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">xi_1d</span><span class="p">[</span><span class="n">n</span><span class="p">][</span><span class="n">l</span><span class="p">[</span><span class="n">n</span><span class="p">]],</span> <span class="n">idx</span><span class="p">[</span><span class="n">n</span><span class="p">])</span>
+                              <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">N</span><span class="p">)]</span>
+                    <span class="n">surr</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">comb_coef</span><span class="p">[</span><span class="nb">tuple</span><span class="p">(</span><span class="n">l</span><span class="p">)]</span> <span class="o">*</span> <span class="n">samples</span><span class="p">[</span><span class="n">sample_idx</span><span class="p">]</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">prod</span><span class="p">(</span><span class="n">weight</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+                <span class="c1"># batch setting, if multiple x values are presribed</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">weight</span> <span class="o">=</span> <span class="p">[</span><span class="n">lagrange_poly</span><span class="p">(</span><span class="n">x</span><span class="p">[:,</span> <span class="n">n</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">xi_1d</span><span class="p">[</span><span class="n">n</span><span class="p">][</span><span class="n">l</span><span class="p">[</span><span class="n">n</span><span class="p">]],</span> <span class="n">idx</span><span class="p">[</span><span class="n">n</span><span class="p">])</span>
+                              <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">N</span><span class="p">)]</span>
+                    <span class="n">surr</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">comb_coef</span><span class="p">[</span><span class="nb">tuple</span><span class="p">(</span><span class="n">l</span><span class="p">)]</span> <span class="o">*</span> <span class="n">samples</span><span class="p">[</span><span class="n">sample_idx</span><span class="p">]</span> <span class="o">*</span> \
+                        <span class="n">np</span><span class="o">.</span><span class="n">prod</span><span class="p">(</span><span class="n">weight</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">([</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
 
         <span class="k">return</span> <span class="n">surr</span>
 
@@ -1066,7 +1051,7 @@
                     <span class="c1">#[[phi_k[0]*a_1d[0]], ..., [phi_k[N-1]*a_1d[N-1]]]</span>
 
                     <span class="c1"># orthogonal polynomial generated by chaospy</span>
-                    <span class="n">phi_k</span> <span class="o">=</span> <span class="p">[</span><span class="n">cp</span><span class="o">.</span><span class="n">orth_ttr</span><span class="p">(</span><span class="n">k</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span>
+                    <span class="n">phi_k</span> <span class="o">=</span> <span class="p">[</span><span class="n">cp</span><span class="o">.</span><span class="n">expansion</span><span class="o">.</span><span class="n">stieltjes</span><span class="p">(</span><span class="n">k</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span>
                                          <span class="n">dist</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">sampler</span><span class="o">.</span><span class="n">params_distribution</span><span class="p">[</span><span class="n">n</span><span class="p">],</span>
                                          <span class="n">normed</span><span class="o">=</span><span class="kc">True</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">N</span><span class="p">)]</span>
 
@@ -1541,7 +1526,7 @@
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">    The difference X \ Y as a 2D array</span>
+<span class="sd">    The difference X \\ Y as a 2D array</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">diff</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">tuple</span><span class="p">,</span> <span class="n">X</span><span class="p">))</span> <span class="o">-</span> <span class="nb">set</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">tuple</span><span class="p">,</span> <span class="n">Y</span><span class="p">))</span>
@@ -1600,7 +1585,7 @@
                     <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="k">return</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-            <span class="n">values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">inputs</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">inputs</span><span class="p">])</span>
+            <span class="n">values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">inputs</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">inputs</span><span class="p">]))</span><span class="o">.</span><span class="n">T</span>
             <span class="n">results</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">([(</span><span class="n">qoi</span><span class="p">,</span> <span class="n">swap</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">surrogate_</span><span class="p">(</span><span class="n">qoi</span><span class="p">,</span> <span class="n">values</span><span class="p">)))</span> <span class="k">for</span> <span class="n">qoi</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">qois</span><span class="p">])</span>
             <span class="k">return</span> <span class="n">results</span>
         <span class="k">return</span> <span class="n">surrogate_fn</span>
@@ -1682,7 +1667,7 @@ List of input names used during the analysis.</li>
                     <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="k">return</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-            <span class="n">values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">inputs</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">inputs</span><span class="p">])</span>
+            <span class="n">values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">inputs</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">inputs</span><span class="p">]))</span><span class="o">.</span><span class="n">T</span>
             <span class="n">results</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">([(</span><span class="n">qoi</span><span class="p">,</span> <span class="n">swap</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">surrogate_</span><span class="p">(</span><span class="n">qoi</span><span class="p">,</span> <span class="n">values</span><span class="p">)))</span> <span class="k">for</span> <span class="n">qoi</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">qois</span><span class="p">])</span>
             <span class="k">return</span> <span class="n">results</span>
         <span class="k">return</span> <span class="n">surrogate_fn</span>
@@ -1973,10 +1958,10 @@ List of input names used during the analysis.</li>
 <span class="sd">        method : string</span>
 <span class="sd">            name of the refinement error, default is &#39;surplus&#39;. In this case the</span>
 <span class="sd">            error is based on the hierarchical surplus, which is an interpolation</span>
-<span class="sd">            based error. Other possibilities are &#39;mean&#39; and &#39;var&#39;,</span>
-<span class="sd">            in which case the error is based on the difference in the mean or</span>
+<span class="sd">            based error. Another possibility is &#39;var&#39;,</span>
+<span class="sd">            in which case the error is based on the difference in the </span>
 <span class="sd">            variance between the current estimate and the estimate obtained</span>
-<span class="sd">             when a particular candidate direction is added.</span>
+<span class="sd">            when a particular candidate direction is added.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Refining sampling plan...&#39;</span><span class="p">)</span>
         <span class="c1"># load the code samples</span>
@@ -1986,21 +1971,7 @@ List of input names used during the analysis.</li>
                 <span class="n">values</span> <span class="o">=</span> <span class="n">data_frame</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">data_frame</span><span class="p">[(</span><span class="s1">&#39;run_id&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)]</span> <span class="o">==</span> <span class="n">run_id</span><span class="p">][</span><span class="n">qoi</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
                 <span class="n">samples</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">values</span><span class="o">.</span><span class="n">flatten</span><span class="p">())</span>
 
-        <span class="c1"># elif isinstance(data_frame, dict):</span>
-        <span class="c1">#     # dict is not sorted, make sure the runs are processed in ascending order</span>
-        <span class="c1">#     run_id_int = [int(run_id.split(&#39;Run_&#39;)[-1]) for run_id in data_frame[qoi].keys()]</span>
-        <span class="c1">#     for run_id in range(1, np.max(run_id_int) + 1):</span>
-        <span class="c1">#         values = data_frame[qoi][&#39;Run_&#39; + str(run_id)]</span>
-        <span class="c1">#         samples.append(values)</span>
-
-        <span class="c1"># if the refinement error is based upon on quadrature, compute the</span>
-        <span class="c1"># mean of the current setup, to be used as a reference</span>
-        <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;mean&#39;</span><span class="p">:</span>
-            <span class="n">mean_l</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">combination_technique</span><span class="p">(</span><span class="n">qoi</span><span class="p">)</span>
-            <span class="c1"># already need next 1d weights and points for quadrature-based refinement</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">xi_1d</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sampler</span><span class="o">.</span><span class="n">xi_1d</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">wi_1d</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">compute_SC_weights</span><span class="p">(</span><span class="n">rule</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">sampler</span><span class="o">.</span><span class="n">quad_rule</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;var&#39;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;var&#39;</span><span class="p">:</span>
             <span class="n">all_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">l_norm</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sampler</span><span class="o">.</span><span class="n">admissible_idx</span><span class="p">))</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">xi_1d</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sampler</span><span class="o">.</span><span class="n">xi_1d</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">wi_1d</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sampler</span><span class="o">.</span><span class="n">wi_1d</span>
@@ -2034,23 +2005,6 @@ List of input names used during the analysis.</li>
                         <span class="n">error</span><span class="p">[</span><span class="nb">tuple</span><span class="p">(</span><span class="n">l</span><span class="p">)]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">hier_surplus</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">))</span>
                 <span class="c1"># compute mean error over all points in X_l</span>
                 <span class="n">error</span><span class="p">[</span><span class="nb">tuple</span><span class="p">(</span><span class="n">l</span><span class="p">)]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">error</span><span class="p">[</span><span class="nb">tuple</span><span class="p">(</span><span class="n">l</span><span class="p">)])</span>
-           <span class="c1"># compute the error based on quadrature of the mean</span>
-            <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;mean&#39;</span><span class="p">:</span>
-                <span class="c1"># create a candidate set of multi indices by adding the current</span>
-                <span class="c1"># admissible index to l_norm</span>
-                <span class="n">candidate_l_norm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">l_norm</span><span class="p">,</span> <span class="n">l</span><span class="o">.</span><span class="n">reshape</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">N</span><span class="p">])))</span>
-                <span class="c1"># now we must recompute the combination coefficients</span>
-                <span class="n">c_l</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">compute_comb_coef</span><span class="p">(</span><span class="n">l_norm</span><span class="o">=</span><span class="n">candidate_l_norm</span><span class="p">)</span>
-                <span class="c1"># compute the new mean based on the candidate l_norm. To do so we must</span>
-                <span class="c1"># pass the new comb coef, but also the samples and grid of the</span>
-                <span class="c1"># next level</span>
-                <span class="n">mean_candidate_l</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">combination_technique</span><span class="p">(</span><span class="n">qoi</span><span class="p">,</span>
-                                                              <span class="n">samples</span><span class="o">=</span><span class="n">samples</span><span class="p">,</span>
-                                                              <span class="n">l_norm</span><span class="o">=</span><span class="n">candidate_l_norm</span><span class="p">,</span>
-                                                              <span class="n">comb_coef</span><span class="o">=</span><span class="n">c_l</span><span class="p">,</span>
-                                                              <span class="n">xi_d</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">sampler</span><span class="o">.</span><span class="n">xi_d</span><span class="p">)</span>
-                <span class="c1">#error in mean</span>
-                <span class="n">error</span><span class="p">[</span><span class="nb">tuple</span><span class="p">(</span><span class="n">l</span><span class="p">)]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">mean_candidate_l</span> <span class="o">-</span> <span class="n">mean_l</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">)</span>
             <span class="c1"># compute the error based on quadrature of the variance</span>
             <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;var&#39;</span><span class="p">:</span>
                 <span class="c1"># create a candidate set of multi indices by adding the current</span>
@@ -2333,21 +2287,23 @@ List of input names used during the analysis.</li>
         <span class="k">return</span> <span class="n">mean_f</span><span class="p">,</span> <span class="n">var_f</span>
 
     <span class="k">def</span> <span class="nf">sc_expansion</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">samples</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Non recursive implementation of the SC expansion.</span>
-<span class="sd">        (Default setting of surrogate)</span>
-<span class="sd">        Performs interpolation for both full and sparse grids.</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Non recursive implementation of the SC expansion. Performs interpolation</span>
+<span class="sd">        of code output samples for both full and sparse grids.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        samples: array</span>
-<span class="sd">            array of code samples</span>
-<span class="sd">        x (float (N,)): location in stochastic space at which to eval</span>
-<span class="sd">          the surrogate</span>
+<span class="sd">        samples : list</span>
+<span class="sd">            list of code output samples.</span>
+<span class="sd">        x : array</span>
+<span class="sd">            One or more locations in stochastic space at which to evaluate</span>
+<span class="sd">            the surrogate.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-
-<span class="sd">        surr (float, (N_qoi,)): the interpolated value of qoi at x</span>
+<span class="sd">        surr : array</span>
+<span class="sd">            The interpolated values of the code output at input locations</span>
+<span class="sd">            specified by x.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Computing the tensor grid of each multiindex l (xi_d below)</span>
@@ -2375,12 +2331,20 @@ List of input names used during the analysis.</li>
                 <span class="c1"># These are the j of the 1D lagrange polynomials l_j(x), see</span>
                 <span class="c1"># lagrange_poly subroutine</span>
                 <span class="n">idx</span> <span class="o">=</span> <span class="p">[(</span><span class="bp">self</span><span class="o">.</span><span class="n">xi_1d</span><span class="p">[</span><span class="n">n</span><span class="p">][</span><span class="n">l</span><span class="p">[</span><span class="n">n</span><span class="p">]]</span> <span class="o">==</span> <span class="n">xi</span><span class="p">[</span><span class="n">n</span><span class="p">])</span><span class="o">.</span><span class="n">nonzero</span><span class="p">()[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">N</span><span class="p">)]</span>
+                <span class="c1"># index of the code sample</span>
+                <span class="n">sample_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">((</span><span class="n">xi</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">xi_d</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">))[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+
                 <span class="c1"># values of Lagrange polynomials at x</span>
-                <span class="n">weight</span> <span class="o">=</span> <span class="p">[</span><span class="n">lagrange_poly</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">n</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">xi_1d</span><span class="p">[</span><span class="n">n</span><span class="p">][</span><span class="n">l</span><span class="p">[</span><span class="n">n</span><span class="p">]],</span> <span class="n">idx</span><span class="p">[</span><span class="n">n</span><span class="p">])</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">N</span><span class="p">)]</span>
-
-                <span class="n">idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">((</span><span class="n">xi</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">xi_d</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">))[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
-
-                <span class="n">surr</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">comb_coef</span><span class="p">[</span><span class="nb">tuple</span><span class="p">(</span><span class="n">l</span><span class="p">)]</span> <span class="o">*</span> <span class="n">samples</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">prod</span><span class="p">(</span><span class="n">weight</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="n">weight</span> <span class="o">=</span> <span class="p">[</span><span class="n">lagrange_poly</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">n</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">xi_1d</span><span class="p">[</span><span class="n">n</span><span class="p">][</span><span class="n">l</span><span class="p">[</span><span class="n">n</span><span class="p">]],</span> <span class="n">idx</span><span class="p">[</span><span class="n">n</span><span class="p">])</span>
+                              <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">N</span><span class="p">)]</span>
+                    <span class="n">surr</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">comb_coef</span><span class="p">[</span><span class="nb">tuple</span><span class="p">(</span><span class="n">l</span><span class="p">)]</span> <span class="o">*</span> <span class="n">samples</span><span class="p">[</span><span class="n">sample_idx</span><span class="p">]</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">prod</span><span class="p">(</span><span class="n">weight</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+                <span class="c1"># batch setting, if multiple x values are presribed</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">weight</span> <span class="o">=</span> <span class="p">[</span><span class="n">lagrange_poly</span><span class="p">(</span><span class="n">x</span><span class="p">[:,</span> <span class="n">n</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">xi_1d</span><span class="p">[</span><span class="n">n</span><span class="p">][</span><span class="n">l</span><span class="p">[</span><span class="n">n</span><span class="p">]],</span> <span class="n">idx</span><span class="p">[</span><span class="n">n</span><span class="p">])</span>
+                              <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">N</span><span class="p">)]</span>
+                    <span class="n">surr</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">comb_coef</span><span class="p">[</span><span class="nb">tuple</span><span class="p">(</span><span class="n">l</span><span class="p">)]</span> <span class="o">*</span> <span class="n">samples</span><span class="p">[</span><span class="n">sample_idx</span><span class="p">]</span> <span class="o">*</span> \
+                        <span class="n">np</span><span class="o">.</span><span class="n">prod</span><span class="p">(</span><span class="n">weight</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">([</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
 
         <span class="k">return</span> <span class="n">surr</span>
 
@@ -2558,7 +2522,7 @@ List of input names used during the analysis.</li>
                     <span class="c1">#[[phi_k[0]*a_1d[0]], ..., [phi_k[N-1]*a_1d[N-1]]]</span>
 
                     <span class="c1"># orthogonal polynomial generated by chaospy</span>
-                    <span class="n">phi_k</span> <span class="o">=</span> <span class="p">[</span><span class="n">cp</span><span class="o">.</span><span class="n">orth_ttr</span><span class="p">(</span><span class="n">k</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span>
+                    <span class="n">phi_k</span> <span class="o">=</span> <span class="p">[</span><span class="n">cp</span><span class="o">.</span><span class="n">expansion</span><span class="o">.</span><span class="n">stieltjes</span><span class="p">(</span><span class="n">k</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span>
                                          <span class="n">dist</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">sampler</span><span class="o">.</span><span class="n">params_distribution</span><span class="p">[</span><span class="n">n</span><span class="p">],</span>
                                          <span class="n">normed</span><span class="o">=</span><span class="kc">True</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">N</span><span class="p">)]</span>
 
@@ -3396,10 +3360,10 @@ see page 12 Gerstner &amp; Griebel, numerical integration using sparse grids</p>
 <span class="sd">        method : string</span>
 <span class="sd">            name of the refinement error, default is &#39;surplus&#39;. In this case the</span>
 <span class="sd">            error is based on the hierarchical surplus, which is an interpolation</span>
-<span class="sd">            based error. Other possibilities are &#39;mean&#39; and &#39;var&#39;,</span>
-<span class="sd">            in which case the error is based on the difference in the mean or</span>
+<span class="sd">            based error. Another possibility is &#39;var&#39;,</span>
+<span class="sd">            in which case the error is based on the difference in the </span>
 <span class="sd">            variance between the current estimate and the estimate obtained</span>
-<span class="sd">             when a particular candidate direction is added.</span>
+<span class="sd">            when a particular candidate direction is added.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Refining sampling plan...&#39;</span><span class="p">)</span>
         <span class="c1"># load the code samples</span>
@@ -3409,21 +3373,7 @@ see page 12 Gerstner &amp; Griebel, numerical integration using sparse grids</p>
                 <span class="n">values</span> <span class="o">=</span> <span class="n">data_frame</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">data_frame</span><span class="p">[(</span><span class="s1">&#39;run_id&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)]</span> <span class="o">==</span> <span class="n">run_id</span><span class="p">][</span><span class="n">qoi</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
                 <span class="n">samples</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">values</span><span class="o">.</span><span class="n">flatten</span><span class="p">())</span>
 
-        <span class="c1"># elif isinstance(data_frame, dict):</span>
-        <span class="c1">#     # dict is not sorted, make sure the runs are processed in ascending order</span>
-        <span class="c1">#     run_id_int = [int(run_id.split(&#39;Run_&#39;)[-1]) for run_id in data_frame[qoi].keys()]</span>
-        <span class="c1">#     for run_id in range(1, np.max(run_id_int) + 1):</span>
-        <span class="c1">#         values = data_frame[qoi][&#39;Run_&#39; + str(run_id)]</span>
-        <span class="c1">#         samples.append(values)</span>
-
-        <span class="c1"># if the refinement error is based upon on quadrature, compute the</span>
-        <span class="c1"># mean of the current setup, to be used as a reference</span>
-        <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;mean&#39;</span><span class="p">:</span>
-            <span class="n">mean_l</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">combination_technique</span><span class="p">(</span><span class="n">qoi</span><span class="p">)</span>
-            <span class="c1"># already need next 1d weights and points for quadrature-based refinement</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">xi_1d</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sampler</span><span class="o">.</span><span class="n">xi_1d</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">wi_1d</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">compute_SC_weights</span><span class="p">(</span><span class="n">rule</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">sampler</span><span class="o">.</span><span class="n">quad_rule</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;var&#39;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;var&#39;</span><span class="p">:</span>
             <span class="n">all_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">l_norm</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sampler</span><span class="o">.</span><span class="n">admissible_idx</span><span class="p">))</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">xi_1d</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sampler</span><span class="o">.</span><span class="n">xi_1d</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">wi_1d</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sampler</span><span class="o">.</span><span class="n">wi_1d</span>
@@ -3457,23 +3407,6 @@ see page 12 Gerstner &amp; Griebel, numerical integration using sparse grids</p>
                         <span class="n">error</span><span class="p">[</span><span class="nb">tuple</span><span class="p">(</span><span class="n">l</span><span class="p">)]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">hier_surplus</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">))</span>
                 <span class="c1"># compute mean error over all points in X_l</span>
                 <span class="n">error</span><span class="p">[</span><span class="nb">tuple</span><span class="p">(</span><span class="n">l</span><span class="p">)]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">error</span><span class="p">[</span><span class="nb">tuple</span><span class="p">(</span><span class="n">l</span><span class="p">)])</span>
-           <span class="c1"># compute the error based on quadrature of the mean</span>
-            <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;mean&#39;</span><span class="p">:</span>
-                <span class="c1"># create a candidate set of multi indices by adding the current</span>
-                <span class="c1"># admissible index to l_norm</span>
-                <span class="n">candidate_l_norm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">l_norm</span><span class="p">,</span> <span class="n">l</span><span class="o">.</span><span class="n">reshape</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">N</span><span class="p">])))</span>
-                <span class="c1"># now we must recompute the combination coefficients</span>
-                <span class="n">c_l</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">compute_comb_coef</span><span class="p">(</span><span class="n">l_norm</span><span class="o">=</span><span class="n">candidate_l_norm</span><span class="p">)</span>
-                <span class="c1"># compute the new mean based on the candidate l_norm. To do so we must</span>
-                <span class="c1"># pass the new comb coef, but also the samples and grid of the</span>
-                <span class="c1"># next level</span>
-                <span class="n">mean_candidate_l</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">combination_technique</span><span class="p">(</span><span class="n">qoi</span><span class="p">,</span>
-                                                              <span class="n">samples</span><span class="o">=</span><span class="n">samples</span><span class="p">,</span>
-                                                              <span class="n">l_norm</span><span class="o">=</span><span class="n">candidate_l_norm</span><span class="p">,</span>
-                                                              <span class="n">comb_coef</span><span class="o">=</span><span class="n">c_l</span><span class="p">,</span>
-                                                              <span class="n">xi_d</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">sampler</span><span class="o">.</span><span class="n">xi_d</span><span class="p">)</span>
-                <span class="c1">#error in mean</span>
-                <span class="n">error</span><span class="p">[</span><span class="nb">tuple</span><span class="p">(</span><span class="n">l</span><span class="p">)]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">mean_candidate_l</span> <span class="o">-</span> <span class="n">mean_l</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">)</span>
             <span class="c1"># compute the error based on quadrature of the variance</span>
             <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;var&#39;</span><span class="p">:</span>
                 <span class="c1"># create a candidate set of multi indices by adding the current</span>
@@ -3549,8 +3482,8 @@ over the refinement iterations</p></li>
 <li><strong>method</strong> (string):
 name of the refinement error, default is 'surplus'. In this case the
 error is based on the hierarchical surplus, which is an interpolation
-based error. Other possibilities are 'mean' and 'var',
-in which case the error is based on the difference in the mean or
+based error. Another possibility is 'var',
+in which case the error is based on the difference in the 
 variance between the current estimate and the estimate obtained
 when a particular candidate direction is added.</li>
 </ul>
@@ -4024,21 +3957,23 @@ name of the qoi</li>
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">sc_expansion</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">samples</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Non recursive implementation of the SC expansion.</span>
-<span class="sd">        (Default setting of surrogate)</span>
-<span class="sd">        Performs interpolation for both full and sparse grids.</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Non recursive implementation of the SC expansion. Performs interpolation</span>
+<span class="sd">        of code output samples for both full and sparse grids.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        samples: array</span>
-<span class="sd">            array of code samples</span>
-<span class="sd">        x (float (N,)): location in stochastic space at which to eval</span>
-<span class="sd">          the surrogate</span>
+<span class="sd">        samples : list</span>
+<span class="sd">            list of code output samples.</span>
+<span class="sd">        x : array</span>
+<span class="sd">            One or more locations in stochastic space at which to evaluate</span>
+<span class="sd">            the surrogate.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-
-<span class="sd">        surr (float, (N_qoi,)): the interpolated value of qoi at x</span>
+<span class="sd">        surr : array</span>
+<span class="sd">            The interpolated values of the code output at input locations</span>
+<span class="sd">            specified by x.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Computing the tensor grid of each multiindex l (xi_d below)</span>
@@ -4066,35 +4001,45 @@ name of the qoi</li>
                 <span class="c1"># These are the j of the 1D lagrange polynomials l_j(x), see</span>
                 <span class="c1"># lagrange_poly subroutine</span>
                 <span class="n">idx</span> <span class="o">=</span> <span class="p">[(</span><span class="bp">self</span><span class="o">.</span><span class="n">xi_1d</span><span class="p">[</span><span class="n">n</span><span class="p">][</span><span class="n">l</span><span class="p">[</span><span class="n">n</span><span class="p">]]</span> <span class="o">==</span> <span class="n">xi</span><span class="p">[</span><span class="n">n</span><span class="p">])</span><span class="o">.</span><span class="n">nonzero</span><span class="p">()[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">N</span><span class="p">)]</span>
+                <span class="c1"># index of the code sample</span>
+                <span class="n">sample_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">((</span><span class="n">xi</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">xi_d</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">))[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+
                 <span class="c1"># values of Lagrange polynomials at x</span>
-                <span class="n">weight</span> <span class="o">=</span> <span class="p">[</span><span class="n">lagrange_poly</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">n</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">xi_1d</span><span class="p">[</span><span class="n">n</span><span class="p">][</span><span class="n">l</span><span class="p">[</span><span class="n">n</span><span class="p">]],</span> <span class="n">idx</span><span class="p">[</span><span class="n">n</span><span class="p">])</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">N</span><span class="p">)]</span>
-
-                <span class="n">idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">((</span><span class="n">xi</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">xi_d</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">))[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
-
-                <span class="n">surr</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">comb_coef</span><span class="p">[</span><span class="nb">tuple</span><span class="p">(</span><span class="n">l</span><span class="p">)]</span> <span class="o">*</span> <span class="n">samples</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">prod</span><span class="p">(</span><span class="n">weight</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="n">weight</span> <span class="o">=</span> <span class="p">[</span><span class="n">lagrange_poly</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">n</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">xi_1d</span><span class="p">[</span><span class="n">n</span><span class="p">][</span><span class="n">l</span><span class="p">[</span><span class="n">n</span><span class="p">]],</span> <span class="n">idx</span><span class="p">[</span><span class="n">n</span><span class="p">])</span>
+                              <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">N</span><span class="p">)]</span>
+                    <span class="n">surr</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">comb_coef</span><span class="p">[</span><span class="nb">tuple</span><span class="p">(</span><span class="n">l</span><span class="p">)]</span> <span class="o">*</span> <span class="n">samples</span><span class="p">[</span><span class="n">sample_idx</span><span class="p">]</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">prod</span><span class="p">(</span><span class="n">weight</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+                <span class="c1"># batch setting, if multiple x values are presribed</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">weight</span> <span class="o">=</span> <span class="p">[</span><span class="n">lagrange_poly</span><span class="p">(</span><span class="n">x</span><span class="p">[:,</span> <span class="n">n</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">xi_1d</span><span class="p">[</span><span class="n">n</span><span class="p">][</span><span class="n">l</span><span class="p">[</span><span class="n">n</span><span class="p">]],</span> <span class="n">idx</span><span class="p">[</span><span class="n">n</span><span class="p">])</span>
+                              <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">N</span><span class="p">)]</span>
+                    <span class="n">surr</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">comb_coef</span><span class="p">[</span><span class="nb">tuple</span><span class="p">(</span><span class="n">l</span><span class="p">)]</span> <span class="o">*</span> <span class="n">samples</span><span class="p">[</span><span class="n">sample_idx</span><span class="p">]</span> <span class="o">*</span> \
+                        <span class="n">np</span><span class="o">.</span><span class="n">prod</span><span class="p">(</span><span class="n">weight</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">([</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
 
         <span class="k">return</span> <span class="n">surr</span>
 </pre></div>
 
         </details>
 
-            <div class="docstring"><p>Non recursive implementation of the SC expansion.
-(Default setting of surrogate)
-Performs interpolation for both full and sparse grids.</p>
+            <div class="docstring"><p>Non recursive implementation of the SC expansion. Performs interpolation
+of code output samples for both full and sparse grids.</p>
 
 <h6 id="parameters">Parameters</h6>
 
 <ul>
-<li><strong>samples</strong> (array):
-array of code samples</li>
-<li><strong>x (float (N,))</strong> (location in stochastic space at which to eval):
-the surrogate</li>
+<li><strong>samples</strong> (list):
+list of code output samples.</li>
+<li><strong>x</strong> (array):
+One or more locations in stochastic space at which to evaluate
+the surrogate.</li>
 </ul>
 
 <h6 id="returns">Returns</h6>
 
 <ul>
-<li><strong>surr (float, (N_qoi,))</strong> (the interpolated value of qoi at x):</li>
+<li><strong>surr</strong> (array):
+The interpolated values of the code output at input locations
+specified by x.</li>
 </ul>
 </div>
 
@@ -4388,7 +4333,7 @@ adaptation_histogram, this also shows higher-order refinements.</p>
                     <span class="c1">#[[phi_k[0]*a_1d[0]], ..., [phi_k[N-1]*a_1d[N-1]]]</span>
 
                     <span class="c1"># orthogonal polynomial generated by chaospy</span>
-                    <span class="n">phi_k</span> <span class="o">=</span> <span class="p">[</span><span class="n">cp</span><span class="o">.</span><span class="n">orth_ttr</span><span class="p">(</span><span class="n">k</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span>
+                    <span class="n">phi_k</span> <span class="o">=</span> <span class="p">[</span><span class="n">cp</span><span class="o">.</span><span class="n">expansion</span><span class="o">.</span><span class="n">stieltjes</span><span class="p">(</span><span class="n">k</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span>
                                          <span class="n">dist</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">sampler</span><span class="o">.</span><span class="n">params_distribution</span><span class="p">[</span><span class="n">n</span><span class="p">],</span>
                                          <span class="n">normed</span><span class="o">=</span><span class="kc">True</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">N</span><span class="p">)]</span>
 
@@ -5181,7 +5126,7 @@ index of node at which l_j(x_j) = 1</li>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">    The difference X \ Y as a 2D array</span>
+<span class="sd">    The difference X \\ Y as a 2D array</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">diff</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">tuple</span><span class="p">,</span> <span class="n">X</span><span class="p">))</span> <span class="o">-</span> <span class="nb">set</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">tuple</span><span class="p">,</span> <span class="n">Y</span><span class="p">))</span>

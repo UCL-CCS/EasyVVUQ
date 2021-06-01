@@ -165,7 +165,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">distribution</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">J</span><span class="p">(</span><span class="o">*</span><span class="n">params_distribution</span><span class="p">)</span>
 
         <span class="c1"># The orthogonal polynomials corresponding to the joint distribution</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">P</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">orth_ttr</span><span class="p">(</span><span class="n">polynomial_order</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">distribution</span><span class="p">,</span> <span class="n">normed</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">P</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">expansion</span><span class="o">.</span><span class="n">stieltjes</span><span class="p">(</span><span class="n">polynomial_order</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">distribution</span><span class="p">,</span> <span class="n">normed</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
         <span class="c1"># The quadrature information</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">quad_sparse</span> <span class="o">=</span> <span class="n">sparse</span>
@@ -335,7 +335,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">distribution</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">J</span><span class="p">(</span><span class="o">*</span><span class="n">params_distribution</span><span class="p">)</span>
 
         <span class="c1"># The orthogonal polynomials corresponding to the joint distribution</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">P</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">orth_ttr</span><span class="p">(</span><span class="n">polynomial_order</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">distribution</span><span class="p">,</span> <span class="n">normed</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">P</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">expansion</span><span class="o">.</span><span class="n">stieltjes</span><span class="p">(</span><span class="n">polynomial_order</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">distribution</span><span class="p">,</span> <span class="n">normed</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
         <span class="c1"># The quadrature information</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">quad_sparse</span> <span class="o">=</span> <span class="n">sparse</span>
@@ -520,7 +520,7 @@ Name of the particular sampler.</li>
         <span class="bp">self</span><span class="o">.</span><span class="n">distribution</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">J</span><span class="p">(</span><span class="o">*</span><span class="n">params_distribution</span><span class="p">)</span>
 
         <span class="c1"># The orthogonal polynomials corresponding to the joint distribution</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">P</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">orth_ttr</span><span class="p">(</span><span class="n">polynomial_order</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">distribution</span><span class="p">,</span> <span class="n">normed</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">P</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">expansion</span><span class="o">.</span><span class="n">stieltjes</span><span class="p">(</span><span class="n">polynomial_order</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">distribution</span><span class="p">,</span> <span class="n">normed</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
         <span class="c1"># The quadrature information</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">quad_sparse</span> <span class="o">=</span> <span class="n">sparse</span>
