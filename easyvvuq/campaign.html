@@ -429,10 +429,6 @@ EasyVVUQ workflows.</p>
 <span class="sd">            If set to True it will not add the sampler to the database, just change</span>
 <span class="sd">            it as the active sampler.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">sampler</span><span class="p">,</span> <span class="n">BaseSamplingElement</span><span class="p">):</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;set_sampler() must be passed a sampling element&quot;</span>
-            <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_active_sampler</span> <span class="o">=</span> <span class="n">sampler</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">update</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_active_sampler_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">campaign_db</span><span class="o">.</span><span class="n">add_sampler</span><span class="p">(</span><span class="n">sampler</span><span class="p">)</span>
@@ -1072,10 +1068,6 @@ EasyVVUQ workflows.</p>
 <span class="sd">            If set to True it will not add the sampler to the database, just change</span>
 <span class="sd">            it as the active sampler.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">sampler</span><span class="p">,</span> <span class="n">BaseSamplingElement</span><span class="p">):</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;set_sampler() must be passed a sampling element&quot;</span>
-            <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_active_sampler</span> <span class="o">=</span> <span class="n">sampler</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">update</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_active_sampler_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">campaign_db</span><span class="o">.</span><span class="n">add_sampler</span><span class="p">(</span><span class="n">sampler</span><span class="p">)</span>
@@ -1860,10 +1852,6 @@ Name of the app.</li>
 <span class="sd">            If set to True it will not add the sampler to the database, just change</span>
 <span class="sd">            it as the active sampler.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">sampler</span><span class="p">,</span> <span class="n">BaseSamplingElement</span><span class="p">):</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;set_sampler() must be passed a sampling element&quot;</span>
-            <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_active_sampler</span> <span class="o">=</span> <span class="n">sampler</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">update</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_active_sampler_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">campaign_db</span><span class="o">.</span><span class="n">add_sampler</span><span class="p">(</span><span class="n">sampler</span><span class="p">)</span>
