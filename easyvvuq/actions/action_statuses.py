@@ -150,7 +150,7 @@ class ActionPool:
 
             for future in tqdm_(as_completed_fn(self.futures), total=len(self.futures)):
                 result = self._collate_callback(future.result())
-
-                self.campaign.campaign_db.store_result(
-                    result['run_id'], result, change_status=result['collated'])
+                if result is not None:
+                    self.campaign.campaign_db.store_result(
+                        result['run_id'], result, change_status=result['collated'])
         self.campaign.campaign_db.session.commit()

@@ -1,5 +1,6 @@
 import base64
 import json
+import logging
 from os import environ
 
 import time
@@ -12,6 +13,8 @@ from concurrent.futures import Executor
 from qcg.pilotjob.executor_api.qcgpj_executor import QCGPJExecutor
 from qcg.pilotjob.executor_api.templates.qcgpj_template import QCGPJTemplate
 
+
+logger = logging.getLogger(__name__)
 
 class EasyVVUQBasicTemplate(QCGPJTemplate):
     """A basic template class for submission of QCG-PilotJob tasks
@@ -113,8 +116,9 @@ class QCGPJPool(Executor):
 
         Parameters
         ----------
-        result_qcgpj: list
-            A list of results returned by QCG-PilotJob task (only the first element will be used)
+        result_qcgpj: list or None
+            A list of results returned by a QCG-PilotJob task (only the first element will be used),
+            or None if the task hasn't finished with the status SUCCEED
 
         Returns
         -------
@@ -123,8 +127,8 @@ class QCGPJPool(Executor):
 
         for key, value in result_qcgpj.items():
             if value != 'SUCCEED':
-                print(f"Exit status for task {key}: {value}")
-            assert value == 'SUCCEED'
+                logging.error(f"Task {key} finished with the status: {value}")
+                return None
             with open(f'{self._campaign_dir}/.qcgpj_result_{key}', 'r') as f:
                 previous = json.load(f)
                 return previous
@@ -135,14 +139,14 @@ class QCGPJPool(Executor):
         return self._qcgpj_executor.shutdown()
 
     @staticmethod
-    def as_completed(self, features):
+    def as_completed(self, futures):
         """Checks for the status of features and yields those that are finished
         """
 
-        pending = set(features)
+        pending = set(futures)
         finished = set()
 
-        for f in features:
+        for f in futures:
             if f.done():
                 finished.add(f)
         pending = pending - finished
