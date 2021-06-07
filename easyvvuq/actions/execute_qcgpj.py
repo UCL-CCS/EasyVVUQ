@@ -42,7 +42,8 @@ class EasyVVUQBasicTemplate(QCGPJTemplate):
         defaults = {
             'args': [],
             'stdout': 'stdout',
-            'stderr': 'stderr'
+            'stderr': 'stderr',
+            'venv': ''
         }
 
         return template, defaults
@@ -138,7 +139,6 @@ class QCGPJPool(Executor):
         """
         return self._qcgpj_executor.shutdown()
 
-    @staticmethod
     def as_completed(self, futures):
         """Checks for the status of features and yields those that are finished
         """
