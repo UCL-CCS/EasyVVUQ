@@ -129,7 +129,7 @@ class QCGPJPool(Executor):
         for key, value in result_qcgpj.items():
             if value != 'SUCCEED':
                 logging.error(f"Task {key} finished with the status: {value}")
-                return None
+                raise RuntimeError(f"QCG-PilotJob task {key} finished with the status: {value}")
             with open(f'{self._campaign_dir}/.qcgpj_result_{key}', 'r') as f:
                 previous = json.load(f)
                 return previous
