@@ -16,8 +16,9 @@ from qcg.pilotjob.executor_api.templates.qcgpj_template import QCGPJTemplate
 
 logger = logging.getLogger(__name__)
 
+
 class EasyVVUQBasicTemplate(QCGPJTemplate):
-    """A basic template class for submission of QCG-PilotJob tasks
+    """A basic template class for submission of QCG-PilotJob tasks that run on a single core
 
     The class can be used only for the most simple use-cases. For example it doesn't allow
     to specify resource requirements. Thus, for more advanced use-cases, it is recommended to provide custom
@@ -44,6 +45,48 @@ class EasyVVUQBasicTemplate(QCGPJTemplate):
             'stdout': 'stdout',
             'stderr': 'stderr',
             'venv': ''
+        }
+
+        return template, defaults
+
+
+class EasyVVUQParallelTemplate(QCGPJTemplate):
+    """A template class for submission of QCG-PilotJob tasks that run on exact number cores / nodes
+
+    With this class it is possible to define basic resource requirements for tasks.
+    For advanced use-cases, it is recommended to provide custom implementation of QCGPJTemplate.
+    For complete reference of QCG-PilotJob task's description parameters
+    please look at https://qcg-pilotjob.readthedocs.io/en/latest/fileinterface.html#submit
+    """
+    @staticmethod
+    def template() -> Tuple[str, Dict[str, Any]]:
+        template = """
+            {
+                'name': '${name}',
+                'execution': {
+                    'exec': '${exec}',
+                    'args': ${args},
+                    'stdout': '${stdout}',
+                    'stderr': '${stderr}',
+                    'venv': '${venv}'
+                },
+                'resources': {
+                    'numCores': {
+                        'exact': ${numCores}
+                    },
+                    'numNodes': {
+                        'exact': ${numNodes}
+                    }
+                }
+            }
+             """
+
+        defaults = {
+            'args': [],
+            'stdout': 'stdout',
+            'stderr': 'stderr',
+            'numCores': 1,
+            'numNodes': 1
         }
 
         return template, defaults
