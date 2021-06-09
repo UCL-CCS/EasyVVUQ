@@ -49,7 +49,7 @@ print('Time for phase 2 = %.3f' % (time_end-time_start))
 
 # Post-processing analysis
 time_start = time.time()
-analysis = uq.analysis.PCEAnalysis(sampler=old_campaign.get_active_sampler(), qoi_cols=["te", "ne", "rho", "rho_norm"], sampling=True)
+analysis = uq.analysis.PCEAnalysis(sampler=old_campaign.get_active_sampler(), qoi_cols=["te", "ne", "rho", "rho_norm"], sampling=False)
 old_campaign.apply_analysis(analysis)
 time_end = time.time()
 print('Time for phase 3 = %.3f' % (time_end-time_start))
@@ -129,7 +129,7 @@ plt.title(old_campaign.campaign_dir)
 plt.savefig('distribution_functions.png')
 
 te_dist = results.raw_data['output_distributions']['te']
-for i in [np.maximum(0, np.int(i-1)) for i in np.linspace(0,1,5) * rho_norm.shape]:
+for i in [np.maximum(0, int(i-1)) for i in np.linspace(0,1,5) * rho_norm.shape]:
     plt.figure()
     pdf_raw_samples = cp.GaussianKDE(results_df.te[i])
     pdf_kde_samples = cp.GaussianKDE(te_dist.samples[i])

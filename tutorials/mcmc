@@ -3,6 +3,8 @@
 import sys
 import numpy as np
 import json
+import pandas as pd
+import os
 
 def model(a, b, c, d):
     a = int(a)
@@ -28,6 +30,7 @@ if __name__ == '__main__':
     d = inputs['d']
     outfile = inputs['outfile']
     data = pd.DataFrame({"Values": model(a, b, c, d)})
+    directory="."
     data.to_csv(os.path.join(directory, outfile), index=False)
 
     
