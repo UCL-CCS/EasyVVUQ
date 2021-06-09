@@ -85,6 +85,7 @@ class EasyVVUQParallelTemplate(QCGPJTemplate):
             'args': [],
             'stdout': 'stdout',
             'stderr': 'stderr',
+            'venv': '',
             'numCores': 1,
             'numNodes': 1
         }
