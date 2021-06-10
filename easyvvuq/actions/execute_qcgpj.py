@@ -35,7 +35,9 @@ class EasyVVUQBasicTemplate(QCGPJTemplate):
                     'args': ${args},
                     'stdout': '${stdout}',
                     'stderr': '${stderr}',
-                    'venv': '${venv}'
+                    'venv': '${venv}',
+                    'model': '${model}',
+                    'model_opts': ${model_opts}
                 }
             }
              """
@@ -44,7 +46,9 @@ class EasyVVUQBasicTemplate(QCGPJTemplate):
             'args': [],
             'stdout': 'stdout',
             'stderr': 'stderr',
-            'venv': ''
+            'venv': '',
+            'model': 'default',
+            'model_opts': {}
         }
 
         return template, defaults
@@ -68,7 +72,9 @@ class EasyVVUQParallelTemplate(QCGPJTemplate):
                     'args': ${args},
                     'stdout': '${stdout}',
                     'stderr': '${stderr}',
-                    'venv': '${venv}'
+                    'venv': '${venv}',
+                    'model': '${model}',
+                    'model_opts': ${model_opts}
                 },
                 'resources': {
                     'numCores': {
@@ -86,6 +92,8 @@ class EasyVVUQParallelTemplate(QCGPJTemplate):
             'stdout': 'stdout',
             'stderr': 'stderr',
             'venv': '',
+            'model': 'default',
+            'model_opts': {},
             'numCores': 1,
             'numNodes': 1
         }
