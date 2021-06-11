@@ -20,7 +20,7 @@ from .empty import EmptySampler
 from .replica_sampler import ReplicaSampler
 from .mc_sampler import MCSampler
 from .csv_sampler import CSVSampler
-from .data_frame_sampler import DataFrameSampler
+from .dataframe_sampler import DataFrameSampler
 
 __copyright__ = """
 
