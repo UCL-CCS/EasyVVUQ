@@ -16,9 +16,9 @@ In order to use QCG-PilotJob as the job executor within EasyVVUQ, you need to im
 
 Usage:
 ------
-In order to setup the job submission with QCG-PilotJob, you need to follow these steps::
+In order to setup the job submission with QCG-PilotJob, you need to follow these steps:
 
-1. Wrap the task that need to be processed with QCG-PilotJob in the ExecuteQCGPJ decorator:
+1. Wrap the task that need to be processed with QCG-PilotJob in the ExecuteQCGPJ decorator::
 
     qcg_pj_action = ExecuteQCGPJ(ExecuteLocal(app_exe_cmd))
 
