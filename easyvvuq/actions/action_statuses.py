@@ -3,11 +3,13 @@ that is meant to simplify the execution of actions and retrieval of results.
 This object is instantiated by the Campaign. The user would never instantiate it
 manually. The user does interact with it to track the progress of execution.
 """
-
-from concurrent.futures import ThreadPoolExecutor, as_completed
+import concurrent
+from concurrent.futures import ThreadPoolExecutor
 from dask.distributed import Client
 from tqdm import tqdm
 import copy
+
+from . import QCGPJPool
 
 __copyright__ = """
 
@@ -140,7 +142,13 @@ class ActionPool:
                 self.campaign.campaign_db.store_result(
                     result['run_id'], result, change_status=result['collated'])
         else:
-            for future in tqdm_(as_completed(self.futures), total=len(self.futures)):
+            if isinstance(self.pool, QCGPJPool):
+                as_completed_fn = self.pool.as_completed
+                self.add_collate_callback(self.pool.convert_results)
+            else:
+                as_completed_fn = concurrent.futures.as_completed
+
+            for future in tqdm_(as_completed_fn(self.futures), total=len(self.futures)):
                 result = self._collate_callback(future.result())
                 self.campaign.campaign_db.store_result(
                     result['run_id'], result, change_status=result['collated'])
