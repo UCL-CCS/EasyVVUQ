@@ -4,6 +4,7 @@ This module contains the Campaign class that is used to coordinate all
 EasyVVUQ workflows.
 """
 import os
+import json
 import logging
 import tempfile
 import easyvvuq
@@ -315,8 +316,8 @@ class Campaign:
         inputs = []
         for input_file in input_files:
             input_decoder.target_filename = os.path.basename(input_file)
-            input_params = input_decoder.parse_sim_output({'run_dir': os.path.dirname(input_file)})
-            inputs.append(result)
+            params = input_decoder.parse_sim_output({'run_dir': os.path.dirname(input_file)})
+            inputs.append(params)
         outputs = []
         for output_file in output_files:
             output_decoder.target_filename = os.path.basename(output_file)
@@ -326,15 +327,15 @@ class Campaign:
         for params, result in zip(inputs, outputs):
             i += 1
             table = db.RunTable(run_name='run_{}'.format(i),
-                                app=self._active_app,
-                                params=params,
+                                app=self._active_app['id'],
+                                params=json.dumps(params),
                                 status=Status.COLLATED,
-                                run_dir=self.rundir,
-                                result=result,
+                                run_dir=self.get_campaign_runs_dir(),
+                                result=json.dumps(result),
                                 campaign=self.campaign_id,
-                                sampler=self._active_sampler)
+                                sampler=self._active_sampler_id)
             self.campaign_db.session.add(table)
-            self.campaign_db.commit()
+            self.campaign_db.session.commit()
 
     def add_runs(self, runs, mark_invalid=False):
         """Add runs to the database.
