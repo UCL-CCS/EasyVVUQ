@@ -136,3 +136,15 @@ def test_get_active_sampler(tmp_path):
 
 def test_get_active_app(campaign):
     assert campaign.get_active_app() == campaign._active_app
+
+
+def test_add_external_runs(campaign):
+    input_decoder = uq.decoders.JSONDecoder('', ['outfile', 'S0', 'I0', 'beta', 'gamma', 'iterations'])
+    output_decoder = uq.decoders.JSONDecoder('', ['S', 'I', 'R', 'r0', 't'])
+    campaign.add_external_runs(['tests/add_files/input_1.json',
+                                'tests/add_files/input_2.json',
+                                'tests/add_files/input_3.json'],
+                               ['tests/add_files/output_1.csv',
+                                'tests/add_files/output_2.csv',
+                                'tests/add_files/output_3.csv'],
+                               input_decoder, output_decoder)
