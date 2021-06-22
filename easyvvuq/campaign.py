@@ -326,13 +326,13 @@ class Campaign:
         for params, result in zip(inputs, outputs):
             i += 1
             table = db.RunTable(run_name='run_{}'.format(i),
-                                app = self._active_app,
-                                params = params,
-                                status = Status.COLLATED,
-                                run_dir = self.rundir,
-                                result = result,
-                                campaign = self.campaign_id,
-                                sampler = self._active_sampler)
+                                app=self._active_app,
+                                params=params,
+                                status=Status.COLLATED,
+                                run_dir=self.rundir,
+                                result=result,
+                                campaign=self.campaign_id,
+                                sampler=self._active_sampler)
             self.campaign_db.session.add(table)
             self.campaign_db.commit()
 
