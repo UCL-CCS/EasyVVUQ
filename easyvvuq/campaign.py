@@ -300,6 +300,42 @@ class Campaign:
         self._active_sampler_id = self._active_sampler.sampler_id
         self.campaign_db.set_sampler(self.campaign_id, self._active_sampler.sampler_id)
 
+    def add_external_runs(self, input_files, output_files, input_decoder, output_decoder):
+        """Takes a list of files and adds them to the database. This method is to be
+        used when adding runs to the EasyVVUQ database that were not executed using
+        EasyVVUQ.
+
+        Parameters
+        ----------
+        output_files: list of str
+            A list of output file paths to be loaded to the database.
+        decoder: Decoder
+            A decoder that will be used to parse these files.
+        """
+        inputs = []
+        for input_file in input_files:
+            input_decoder.target_filename = os.path.basename(input_file)
+            input_params = input_decoder.parse_sim_output({'run_dir': os.path.dirname(input_file)})
+            inputs.append(result)
+        outputs = []
+        for output_file in output_files:
+            output_decoder.target_filename = os.path.basename(output_file)
+            result = output_decoder.parse_sim_output({'run_dir': os.path.dirname(output_file)})
+            outputs.append(result)
+        i = 0
+        for params, result in zip(inputs, outputs):
+            i += 1
+            table = db.RunTable(run_name='run_{}'.format(i),
+                                app = self._active_app,
+                                params = params,
+                                status = Status.COLLATED,
+                                run_dir = self.rundir,
+                                result = result,
+                                campaign = self.campaign_id,
+                                sampler = self._active_sampler)
+            self.campaign_db.session.add(table)
+            self.campaign_db.commit()
+
     def add_runs(self, runs, mark_invalid=False):
         """Add runs to the database.
 
