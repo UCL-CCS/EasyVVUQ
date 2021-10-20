@@ -51,7 +51,7 @@ Development was funded by the EU Horizon 2020 project [VECMA](http://www.vecma.e
 
 ## Requirements
 
-To use the library you will need Python 3.6+.
+To use the library you will need Python 3.7+.
 
 ## Installation using pip
 
