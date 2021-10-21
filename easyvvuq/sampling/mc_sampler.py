@@ -108,8 +108,12 @@ class MCSampler(RandomSampler, sampler_name='mc_sampler'):
         # number of different sampling matrices
         step = self.n_params + 2
         # store M2 first, with entries separated by step places
+        if M_2.ndim == 1:
+            M_2 = M_2.reshape([-1, 1])
         self.xi_mc[0:self.max_num:step] = M_2
         # store M1 entries last
+        if M_1.ndim == 1:
+            M_1 = M_1.reshape([-1, 1])
         self.xi_mc[(step - 1):self.max_num:step] = M_1
         # store N_i entries between M2 and M1
         for i in range(self.n_params):
