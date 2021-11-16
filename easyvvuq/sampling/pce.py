@@ -2,6 +2,11 @@ import logging
 import chaospy as cp
 from .base import BaseSamplingElement, Vary
 
+# DEBUG USI
+from os import stat, path
+from time import ctime
+import json
+
 __author__ = "Jalal Lakhlili"
 __copyright__ = """
 
@@ -29,6 +34,7 @@ __license__ = "LGPL"
 class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
     def __init__(self,
                  vary=None,
+                 distribution=None,
                  count=0,
                  polynomial_order=4,
                  regression=False,
@@ -43,6 +49,9 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
         ----------
         vary: dict or None
             keys = parameters to be sampled, values = distributions.
+
+        distribution: cp.MvNormal
+            distribution specifying dependency between the parameters in vary
 
         count : int, optional
             Specified counter for Fast forward, default is 0.
@@ -67,6 +76,22 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
             If True, quadrature point became nested.
         """
 
+        #%%%%%%%%%%%%%%%%%  USI DEBUG INFO   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        samplerFile_src = "/Users/Juraj/Documents/DXT/EasyVVUQ-fork/easyvvuq/sampling/pce.py"
+        fileStatsObj = stat(samplerFile_src)
+        modificationTime1 = ctime(fileStatsObj.st_mtime)
+        print("Using USI version of the PCE Sampler %s" % (samplerFile_src))
+        print("Last Modified Time of the source file : ", modificationTime1 )
+
+        samplerFile_lib = path.dirname(path.abspath(__file__))
+        fileStatsObj = stat(samplerFile_lib)
+        modificationTime2 = ctime(fileStatsObj.st_mtime)
+        print("Last Time of the EasyVVUQ library build : ", modificationTime2)
+
+        if (modificationTime1 > modificationTime2):
+            print("Warning: The EasyVVUQ library does not contain the latest changes in the src")
+        #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
         if vary is None:
             msg = ("'vary' cannot be None. RandomSampler must be passed a "
                    "dict of the names of the parameters you want to vary, "
@@ -89,9 +114,22 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
 
         # List of the probability distributions of uncertain parameters
         params_distribution = list(vary.values())
+        params_num = len(params_distribution)
 
         # Multivariate distribution
-        self.distribution = cp.J(*params_distribution)
+        self._is_dependent = False
+        if distribution == None: 
+            self.distribution = cp.J(*params_distribution)
+        elif distribution.stochastic_dependent:
+            assert(isinstance(distribution, cp.MvNormal))
+            assert(len(distribution._parameters['mean']) == params_num) # all parameters listed in vary must be in the cp.MvNormal
+            self._is_dependent = True
+            self.distribution_dep = distribution
+            # Build joint multivariate distribution considering each uncertain paramter as a unit Normal
+            params_distribution = [cp.Normal() for i in range(params_num)]
+            self.distribution = cp.J(*params_distribution)
+        else:
+            self.distribution = distribution
 
         # The orthogonal polynomials corresponding to the joint distribution
         self.P = cp.expansion.stieltjes(polynomial_order, self.distribution, normed=True)
@@ -117,10 +155,25 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
 
             # Generates samples
             self._n_samples = 2 * len(self.P)
+            print("Generating %d samples using %s rule" % (self._n_samples, self.rule))
             self._nodes = cp.generate_samples(order=self._n_samples,
                                               domain=self.distribution,
                                               rule=self.rule)
+
             self._weights = None
+
+            # Rosenblatt transformation
+            if self._is_dependent:
+                print("Performing Rosenblatt transformation")
+                self._nodes_dep = self.distribution_dep.inv(self.distribution.fwd(self._nodes))
+
+            #%%%%%%%%%%%%%%%%%  USI DEBUG INFO   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+            print("Dumping nodes to /Users/Juraj/Documents/DXT/EasyVVUQ-fork/nodes_EasyVVUQ.txt")
+            f = open("/Users/Juraj/Documents/DXT/EasyVVUQ-fork/nodes_EasyVVUQ.txt", "w")
+            f.write(json.dumps(list(list(r) for r in self._nodes)))
+            f.close()
+            #diff /Users/Juraj/Documents/DXT/MPSProject_USI/github/MPSProject_Standalone/chaospy/nodes_chaospy.txt /Users/Juraj/Documents/DXT/EasyVVUQ-fork/nodes_EasyVVUQ.txt
+            #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
         # Projection variante (Pseudo-spectral method)
         else:
@@ -132,6 +185,13 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
                                                                 growth=self.quad_growth)
             # Number of samples
             self._n_samples = len(self._nodes[0])
+            print("Generated %d nodes/weights pairs using %s rule" % (self._n_samples, self.rule))
+
+            # Rosenblatt transformation
+            if self._is_dependent:
+                print("Performing Rosenblatt transformation")
+                self._nodes_dep = self.distribution_dep.inv(self.distribution.fwd(self._nodes))
+                self._weights_dep = self._weights * self.distribution_dep.pdf(self._nodes_dep)/self.distribution.pdf(self._nodes)
 
         # Fast forward to specified count, if possible
         self.count = 0
@@ -175,7 +235,13 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
         if self.count < self._n_samples:
             run_dict = {}
             for i, param_name in enumerate(self.vary.vary_dict):
-                run_dict[param_name] = self._nodes[i][self.count]
+                # These are nodes that need to be returned as samples o be used for the model execution,
+                # for the SA in EasyVVUQ we will use only the raw independent nodes
+                if self._is_dependent:
+                    # Return transformed nodes reflecting the dependencies
+                    run_dict[param_name] = self._nodes_dep[i][self.count]
+                else:
+                    run_dict[param_name] = self._nodes[i][self.count]
             self.count += 1
             return run_dict
         else:
