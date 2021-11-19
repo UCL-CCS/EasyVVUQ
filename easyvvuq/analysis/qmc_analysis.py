@@ -51,12 +51,19 @@ class QMCAnalysisResults(AnalysisResults):
         -------
         list of str
         """
-        return ['mean', 'var', 'std']
+        return ['mean', 'var', 'std', 'percentiles', '10%', '50%', '90%']
 
     def _describe(self, qoi, statistic):
         if statistic not in self.supported_stats():
             raise NotImplementedError
-        return self.raw_data['statistical_moments'][qoi][statistic][0]
+        if statistic == '10%':
+            return self.raw_data['percentiles'][qoi]['p10']
+        elif statistic == '50%':
+            return self.raw_data['percentiles'][qoi]['p50']
+        elif statistic == '90%':
+            return self.raw_data['percentiles'][qoi]['p90']
+        else:
+            return self.raw_data['statistical_moments'][qoi][statistic][0]
 
 
 class QMCAnalysis(BaseAnalysisElement):
@@ -122,6 +129,7 @@ class QMCAnalysis(BaseAnalysisElement):
 
         results = {
             'statistical_moments': {k: {} for k in qoi_cols},
+            'percentiles': {k: {} for k in qoi_cols},
             'sobols_first': {k: {} for k in qoi_cols},
             'sobols_total': {k: {} for k in qoi_cols},
             'conf_sobols_first': {k: {} for k in qoi_cols},
@@ -136,6 +144,9 @@ class QMCAnalysis(BaseAnalysisElement):
             results['statistical_moments'][k] = {'mean': np.mean(samples[k], axis=0),
                                                  'var': np.var(samples[k], axis=0),
                                                  'std': np.std(samples[k], axis=0)}
+            results['percentiles'][k] = {'p10': np.percentile(samples[k], 10, 0)[0],
+                                         'p50': np.percentile(samples[k], 50, 0)[0],
+                                         'p90': np.percentile(samples[k], 90, 0)[0]}                                                 
             sobols_first, conf_first, sobols_total, conf_total = \
                 self.sobol_bootstrap(samples[k])
             results['sobols_first'][k] = sobols_first

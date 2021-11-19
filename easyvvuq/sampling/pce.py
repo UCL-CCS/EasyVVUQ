@@ -50,8 +50,8 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
         vary: dict or None
             keys = parameters to be sampled, values = distributions.
 
-        distribution: cp.MvNormal
-            distribution specifying dependency between the parameters in vary
+        distribution: cp.Distribution
+            Joint distribution specifying dependency between the parameters in vary
 
         count : int, optional
             Specified counter for Fast forward, default is 0.
