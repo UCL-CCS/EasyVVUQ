@@ -118,9 +118,11 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
 
         # Multivariate distribution
         self._is_dependent = False
-        if distribution == None: 
+        if distribution == None:
+            print("Using default joint distribution")
             self.distribution = cp.J(*params_distribution)
         elif distribution.stochastic_dependent:
+            print("Using user provided joint distribution with Rosenblatt transformation")
             assert(isinstance(distribution, cp.MvNormal))
             assert(len(distribution._parameters['mean']) == params_num) # all parameters listed in vary must be in the cp.MvNormal
             self._is_dependent = True
@@ -129,6 +131,7 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
             params_distribution = [cp.Normal() for i in range(params_num)]
             self.distribution = cp.J(*params_distribution)
         else:
+            print("Using user provided joint distribution without any transformation")
             self.distribution = distribution
 
         # The orthogonal polynomials corresponding to the joint distribution
