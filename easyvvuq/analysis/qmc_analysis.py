@@ -108,6 +108,65 @@ class QMCAnalysis(BaseAnalysisElement):
         """
         return "0.2"
 
+    def contains_nan(self, values):
+        """
+        Checks if ``None`` or ``numpy.nan`` exists in `values`. Returns ``True`` if
+        any there are at least one occurrence of ``None`` or ``numpy.nan``.
+        Parameters
+        ----------
+        values : array_like, list, number
+            `values` where to check for occurrences of ``None`` or ``np.nan``.
+            Can be irregular and have any number of nested elements.
+        Returns
+        -------
+        bool
+            ``True`` if `values` has at least one occurrence of ``None`` or
+            ``numpy.nan``.
+        """
+        # To speed up we first try the fast option np.any(np.isnan(values))
+        try:
+            return np.any(np.isnan(values))
+        except (ValueError, TypeError):
+            if values is None or values is np.nan:
+                return True
+            # To solve the problem of float/int as well as numpy int/flaot
+            elif np.isscalar(values) and np.isnan(values):
+                return True
+            elif hasattr(values, "__iter__"):
+                for value in values:
+                    if self.contains_nan(value):
+                        return True
+
+                return False
+            else:
+                return False
+
+    def create_mask(self, samples):
+        """
+        Mask samples that do not give results (anything but np.nan or None).
+        Parameters
+        ----------
+        samples : array_like
+            Evaluations for the model.
+        Returns
+        -------
+        masked_samples : list
+            The evaluations that have results (not numpy.nan or None).
+        mask : boolean array
+            The mask itself, used to create the masked arrays.
+        """
+        masked_samples = []
+        mask = np.ones(len(samples), dtype=bool)
+
+        for i, result in enumerate(samples):
+            # if np.any(np.isnan(result)):
+            if self.contains_nan(result):
+                mask[i] = False
+            else:
+                masked_samples.append(result)
+
+        return masked_samples, mask     
+
     def analyse(self, data_frame):
         """Perform QMC analysis on a given pandas DataFrame.
 
@@ -141,12 +200,30 @@ class QMCAnalysis(BaseAnalysisElement):
 
         # Compute descriptive statistics for each quantity of interest
         for k in qoi_cols:
-            results['statistical_moments'][k] = {'mean': np.mean(samples[k], axis=0),
-                                                 'var': np.var(samples[k], axis=0),
-                                                 'std': np.std(samples[k], axis=0)}
-            results['percentiles'][k] = {'p10': np.percentile(samples[k], 10, 0)[0],
-                                         'p50': np.percentile(samples[k], 50, 0)[0],
-                                         'p90': np.percentile(samples[k], 90, 0)[0]}                                                 
+            # Find NaNs and create a mask excluding these samples from the analysis
+            # https://github.com/simetenn/uncertainpy/blob/ffb2400289743066265b9a8561cdf3b72e478a28/src/uncertainpy/core/uncertainty_calculations.py#L1532
+            masked_samples, mask = self.create_mask(samples[k])
+
+            results['statistical_moments'][k] = {'mean': np.mean(masked_samples, axis=0),
+                                                 'var': np.var(masked_samples, axis=0),
+                                                 'std': np.std(masked_samples, axis=0)}
+            results['percentiles'][k] = {'p10': np.percentile(masked_samples, 10, 0)[0],
+                                         'p50': np.percentile(masked_samples, 50, 0)[0],
+                                         'p90': np.percentile(masked_samples, 90, 0)[0]}                                                 
+
+            # Replace Nan values by the mean before proceeding with the SA
+            indices = np.where(mask == 0)[0] # samples[~mask] = results[k].mean
+            for i in indices:
+                samples[k][i] = results['statistical_moments'][k]['mean']
+
+            if not np.all(mask):
+                print("Warning: QoI \"{}\" only yields ".format(k) +
+                    "results for {}/{} ".format(sum(mask), len(mask)) +
+                    "parameter combinations. " +
+                    "Runs {} are not valid. ".format(indices+1) +
+                    "NaN results are set to the mean when calculating the Sobol indices. " +
+                    "This might affect the Sobol indices.")
+            
             sobols_first, conf_first, sobols_total, conf_total = \
                 self.sobol_bootstrap(samples[k])
             results['sobols_first'][k] = sobols_first
