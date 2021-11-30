@@ -1,5 +1,6 @@
 import logging
 import chaospy as cp
+import numpy as np
 from .base import BaseSamplingElement, Vary
 
 # DEBUG USI
@@ -50,8 +51,11 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
         vary: dict or None
             keys = parameters to be sampled, values = distributions.
 
-        distribution: cp.Distribution
-            Joint distribution specifying dependency between the parameters in vary
+        distribution: cp.Distribution or matrix-like
+            Joint distribution specifying dependency between the parameters in vary or
+            correlation matrix of the variables. Depending on the type of the parameter
+            either Rosenblatt or Cholesky transformation will be used to handle the
+            dependent parameters.
 
         count : int, optional
             Specified counter for Fast forward, default is 0.
@@ -118,21 +122,39 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
 
         # Multivariate distribution
         self._is_dependent = False
-        if distribution == None:
+        self._transformation = None
+        self.distribution_dep = None
+        if distribution is None:
             print("Using default joint distribution")
             self.distribution = cp.J(*params_distribution)
-        elif distribution.stochastic_dependent:
-            print("Using user provided joint distribution with Rosenblatt transformation")
-            assert(isinstance(distribution, cp.MvNormal))
-            assert(len(distribution._parameters['mean']) == params_num) # all parameters listed in vary must be in the cp.MvNormal
+        elif 'distributions' in str(type(distribution)):
+            if distribution.stochastic_dependent:
+                assert(isinstance(distribution, cp.MvNormal))
+                assert(len(distribution._parameters['mean']) == params_num) # all parameters listed in vary must be in the cp.MvNormal
+                print("Using user provided joint distribution with Rosenblatt transformation")
+                self._is_dependent = True
+                self._transformation = "Rosenblatt"
+                self.distribution_dep = distribution
+                # Build joint multivariate distribution considering each uncertain paramter as a unit Normal
+                params_distribution = [cp.Normal() for i in range(params_num)]
+                self.distribution = cp.J(*params_distribution)
+            else:
+                print("Using user provided joint distribution without any transformation")
+                self.distribution = distribution
+        elif 'list' in str(type(distribution)) or 'ndarray' in str(type(distribution)):
+            assert(len(distribution) == params_num) # check the correct size of the corr
+            for i in range(params_num):
+                assert(distribution[i][i] == 1.0) # must be correlation matrix
+            print("Using user provided correlation matrix for Cholesky transformation")
             self._is_dependent = True
-            self.distribution_dep = distribution
+            self._transformation = "Cholesky"
+            self.distribution_dep = np.array(distribution)
             # Build joint multivariate distribution considering each uncertain paramter as a unit Normal
             params_distribution = [cp.Normal() for i in range(params_num)]
             self.distribution = cp.J(*params_distribution)
         else:
-            print("Using user provided joint distribution without any transformation")
-            self.distribution = distribution
+            print("Unsupported type of the distribution argument. It should be either cp.distribution or a matrix-like array")
+            exit()
 
         # The orthogonal polynomials corresponding to the joint distribution
         self.P = cp.expansion.stieltjes(polynomial_order, self.distribution, normed=True)
@@ -165,10 +187,23 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
 
             self._weights = None
 
-            # Rosenblatt transformation
+            # Nodes transformation
             if self._is_dependent:
-                print("Performing Rosenblatt transformation")
-                self._nodes_dep = self.distribution_dep.inv(self.distribution.fwd(self._nodes))
+                if self._transformation == "Rosenblatt":
+                    print("Performing Rosenblatt transformation")
+                    self._nodes_dep = self.distribution_dep.inv(self.distribution.fwd(self._nodes))
+                elif self._transformation == "Cholesky":
+                    print("Performing Cholesky transformation")
+                    L = np.linalg.cholesky(self.distribution_dep)
+                    self._nodes_dep = np.matmul(L, self._nodes)
+                    for i, key in enumerate(vary.keys()):
+                        a = vary[key]._parameters['shift'] #mu
+                        b = vary[key]._parameters['scale'] #sigma
+                        self._nodes_dep[i] = a + b*self._nodes_dep[i]
+                else:
+                    print("Error: How did this happen?")
+                    exit()
+
 
             #%%%%%%%%%%%%%%%%%  USI DEBUG INFO   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
             print("Dumping nodes to /Users/Juraj/Documents/DXT/EasyVVUQ-fork/nodes_EasyVVUQ.txt")
@@ -190,11 +225,20 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
             self._n_samples = len(self._nodes[0])
             print("Generated %d nodes/weights pairs using %s rule" % (self._n_samples, self.rule))
 
-            # Rosenblatt transformation
+            # Nodes transformation
             if self._is_dependent:
-                print("Performing Rosenblatt transformation")
-                self._nodes_dep = self.distribution_dep.inv(self.distribution.fwd(self._nodes))
-                self._weights_dep = self._weights * self.distribution_dep.pdf(self._nodes_dep)/self.distribution.pdf(self._nodes)
+                if self._transformation == "Rosenblatt":
+                    print("Performing Rosenblatt transformation")
+                    self._nodes_dep = self.distribution_dep.inv(self.distribution.fwd(self._nodes))
+                    self._weights_dep = self._weights * self.distribution_dep.pdf(self._nodes_dep)/self.distribution.pdf(self._nodes)
+                elif self._transformation == "Cholesky":
+                    print("Performing Cholesky transformation")
+                    print("Error: not implemented with pseudo-spectral method")
+                    exit()
+                else:
+                    print("Error: How did this happen?")
+                    exit()
+                
 
         # Fast forward to specified count, if possible
         self.count = 0
