@@ -155,7 +155,7 @@ class Campaign:
         self._campaign_dir = None
 
         if db_location is None:
-            self._campaign_dir = tempfile.mkdtemp(prefix=name, dir=work_dir)
+            self._campaign_dir = tempfile.mkdtemp(prefix=name, dir=self.work_dir)
             self.db_location = "sqlite:///" + self._campaign_dir + "/campaign.db"
         else:
             self.db_location = db_location
