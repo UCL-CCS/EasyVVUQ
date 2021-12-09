@@ -2,6 +2,7 @@ import base64
 import json
 import logging
 from os import environ
+from os import remove
 
 import time
 
@@ -147,10 +148,19 @@ class QCGPJPool(Executor):
         actions.set_wrapper(QCGPJPool._wrapper)
         exec = 'python3 -m easyvvuq.actions.execute_qcgpj_task'
 
+        self._campaign_dir = args[0]['campaign_dir']
+
         pickled_actions = base64.b64encode(dill.dumps(actions)).decode('ascii')
         pickled_previous = base64.b64encode(dill.dumps(args[0])).decode('ascii')
 
-        self._campaign_dir = args[0]['campaign_dir']
+        actions_file = f'{self._campaign_dir}/.qcgpj_in_act_{args[0]["run_id"]}'
+        previous_file = f'{self._campaign_dir}/.qcgpj_in_prev_{args[0]["run_id"]}'
+
+        with open(actions_file, 'w') as f:
+            f.write(pickled_actions)
+
+        with open(previous_file, 'w') as f:
+            f.write(pickled_previous)
 
         return self._qcgpj_executor.submit(
             self._template.template,
@@ -159,7 +169,7 @@ class QCGPJPool(Executor):
             name=args[0]['run_id'],
             stdout=f"{self._campaign_dir}/stdout_{args[0]['run_id']}",
             stderr=f"{self._campaign_dir}/stderr_{args[0]['run_id']}",
-            args=[pickled_actions, pickled_previous])
+            args=[actions_file, previous_file])
 
     @property
     def executor(self):
@@ -191,9 +201,13 @@ class QCGPJPool(Executor):
             if value != 'SUCCEED':
                 logging.error(f"Task {key} finished with the status: {value}")
                 raise RuntimeError(f"QCG-PilotJob task {key} finished with the status: {value}")
-            with open(f'{self._campaign_dir}/.qcgpj_result_{key}', 'r') as f:
+
+            result_file = f'{self._campaign_dir}/.qcgpj_result_{key}'
+            with open(result_file, 'r') as f:
                 previous = json.load(f)
-                return previous
+            remove(result_file)
+
+            return previous
 
     def shutdown(self, **kwargs):
         """Clean-up the resources associated with the QCGPJPool.
