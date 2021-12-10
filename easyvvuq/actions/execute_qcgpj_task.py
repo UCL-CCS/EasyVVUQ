@@ -13,9 +13,9 @@ if __name__ == "__main__":
 
     print("Invoking execute_qcgpj_task with arguments: " + str(sys.argv))
 
-    if len(sys.argv) != 3 and len(sys.argv) != 5:
+    if len(sys.argv) <= 3:
         sys.exit(
-            "Usage: python3 [-m module] encoded_actions_object encoded_previous_object"
+            "Usage: python3 encoded_actions_object encoded_previous_object"
         )
 
     actions_f = None
@@ -24,10 +24,6 @@ if __name__ == "__main__":
     if len(sys.argv) == 3:
         actions_f = sys.argv[1]
         previous_f = sys.argv[2]
-
-    if len(sys.argv) == 5:
-        actions_f = sys.argv[3]
-        previous_f = sys.argv[4]
 
     if 'QCG_PM_EXEC_API_JOB_ID' not in os.environ:
         sys.exit("The required environment variable QCG_PM_STEP_ID not set")
