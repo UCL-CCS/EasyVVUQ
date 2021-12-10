@@ -13,7 +13,7 @@ if __name__ == "__main__":
 
     print("Invoking execute_qcgpj_task with arguments: " + str(sys.argv))
 
-    if len(sys.argv) <= 3:
+    if len(sys.argv) < 3:
         sys.exit(
             "Usage: python3 encoded_actions_object encoded_previous_object"
         )
