@@ -31,14 +31,12 @@ if __name__ == "__main__":
         pickled_actions_b64 = pickled_actions.encode('ascii')
         pickled_actions_b = base64.b64decode(pickled_actions_b64)
         actions = dill.loads(pickled_actions_b)
-    os.remove(actions_f)
 
     with open(previous_f) as f:
         pickled_previous = f.read()
         pickled_previous_b64 = pickled_previous.encode('ascii')
         pickled_previous_b = base64.b64decode(pickled_previous_b64)
         previous = dill.loads(pickled_previous_b)
-    os.remove(previous_f)
 
     previous_next = actions.start(previous)
 
