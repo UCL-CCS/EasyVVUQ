@@ -18,12 +18,8 @@ if __name__ == "__main__":
             "Usage: python3 encoded_actions_object encoded_previous_object"
         )
 
-    actions_f = None
-    previous_f = None
-
-    if len(sys.argv) == 3:
-        actions_f = sys.argv[1]
-        previous_f = sys.argv[2]
+    actions_f = sys.argv[1]
+    previous_f = sys.argv[2]
 
     if 'QCG_PM_EXEC_API_JOB_ID' not in os.environ:
         sys.exit("The required environment variable QCG_PM_STEP_ID not set")
