@@ -146,7 +146,9 @@ class QCGPJPool(Executor):
         """
         actions = fn.__self__
         actions.set_wrapper(QCGPJPool._wrapper)
-        exec = 'python3 -m easyvvuq.actions.execute_qcgpj_task'
+        exec = 'python3'
+        arg1 = "-m"
+        arg2 = "easyvvuq.actions.execute_qcgpj_task"
 
         self._campaign_dir = args[0]['campaign_dir']
 
@@ -169,7 +171,7 @@ class QCGPJPool(Executor):
             name=args[0]['run_id'],
             stdout=f"{self._campaign_dir}/stdout_{args[0]['run_id']}",
             stderr=f"{self._campaign_dir}/stderr_{args[0]['run_id']}",
-            args=[actions_file, previous_file])
+            args=[arg1, arg2, actions_file, previous_file])
 
     @property
     def executor(self):
@@ -242,7 +244,7 @@ class QCGPJPool(Executor):
 
     @staticmethod
     def _wrapper(action, previous):
-        """For the actions other than ExecuteQCGPJ ensures that the MPI code is invoked in a serial mode
+        """For the actions other than ExecuteQCGPJ ensures that the code is invoked only once
         """
         if not isinstance(action, ExecuteQCGPJ):
             rank = 0
@@ -259,7 +261,7 @@ class QCGPJPool(Executor):
 
 
 class ExecuteQCGPJ:
-    """A utility decorator over action that marks the action to enable parallel execution by QCG-PilotJob
+    """A utility decorator over action that marks the action as configured for parallel execution by QCG-PilotJob
 
     Parameters
     ----------
