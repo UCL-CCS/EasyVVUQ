@@ -244,24 +244,24 @@ class QCGPJPool(Executor):
 
     @staticmethod
     def _wrapper(action, previous):
-        """For the actions other than ExecuteQCGPJ ensures that the code is invoked only once
-        """
-        if not isinstance(action, ExecuteQCGPJ):
-            rank = 0
-            if 'OMPI_COMM_WORLD_RANK' in environ:
-                rank = environ.get('OMPI_COMM_WORLD_RANK')
-            elif 'PMI_RANK' in environ:
-                rank = environ.get('PMI_RANK')
-
-            if rank != 0:
-                # This is not an instance of ExecuteQCGPJ,We don't execute processes with ranks other than 0
-                return
-
+        # TODO: Implement support for specialised execution models of QCG-PilotJob
+        # """For the actions other than ExecuteQCGPJ ensures that the code is invoked only once
+        # """
+        # if not isinstance(action, ExecuteQCGPJ):
+        #     rank = 0
+        #     if 'OMPI_COMM_WORLD_RANK' in environ:
+        #         rank = environ.get('OMPI_COMM_WORLD_RANK')
+        #     elif 'PMI_RANK' in environ:
+        #         rank = environ.get('PMI_RANK')
+        #
+        #     if rank != 0:
+        #         return
         return action.start(previous)
 
 
 class ExecuteQCGPJ:
     """A utility decorator over action that marks the action as configured for parallel execution by QCG-PilotJob
+    Currently it has no influence on the processing.
 
     Parameters
     ----------

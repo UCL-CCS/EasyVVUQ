@@ -1,7 +1,7 @@
 import pytest
 
 import easyvvuq as uq
-from easyvvuq.actions import Actions, Encode, Decode, CreateRunDirectory, ExecuteQCGPJ, QCGPJPool
+from easyvvuq.actions import Actions, Encode, Decode, CreateRunDirectory, QCGPJPool
 import chaospy as cp
 import os
 
@@ -62,10 +62,9 @@ def test_qcgpj(settings):
     cooling_action = uq.actions.ExecuteLocal(os.path.abspath("tests/cooling/cooling_model.py") +
                                              " cooling_in.json")
 
-    qcgpj_action = ExecuteQCGPJ(cooling_action)
     actions = Actions(CreateRunDirectory('/tmp'),
                       Encode(settings['encoder']),
-                      qcgpj_action,
+                      cooling_action,
                       Decode(settings['decoder']))
 
     campaign = uq.Campaign(name='beam', params=settings['params'], actions=actions)

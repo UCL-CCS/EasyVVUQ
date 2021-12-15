@@ -9,30 +9,12 @@ efficient processing of their jobs on HPC resources, the two tools has been inte
 
 Preparation:
 ------------
-In order to use QCG-PilotJob as the job executor within EasyVVUQ, you need to import these two main modules::
+In order to use QCG-PilotJob as the job executor within EasyVVUQ, you need to import the following module::
 
-    from easyvvuq.actions import QCGPJPool, ExecuteQCGPJ
+    from easyvvuq.actions import QCGPJPool
 
-
-Usage:
-------
-In order to setup the job submission with QCG-PilotJob, you need to follow these steps:
-
-1. Wrap the task that need to be processed with QCG-PilotJob in the ExecuteQCGPJ decorator::
-
-    qcg_pj_action = ExecuteQCGPJ(ExecuteLocal(app_exe_cmd))
-
-where ``app_exe_cmd`` is the execution command for target application, e.g., ``app_exe_cmd = '{}/beam input.json'.format(os.getcwd())``
-
-2. Pass this wrapped action as an ``action`` to EasyVVUQ ``campaign`` object::
-
-    app_actions = Actions(...,qcg_pj_action)
-    ...
-    app_campaign = uq.Campaign(...,actions=app_actions)
-
-3. The last step is submitting all campaign jobs to QCG-PilotJob for execution.
-This can be done by crating a ``QCGPJPool`` object and use it as the campaign's execute method.
-The ``QCGPJPool`` will submit all the jobs directly to the QCG-PilotJob toolkit.::
+and then to use ``QCGPJPool`` object as an execution engine for the campaign, which is done by the passing it to the
+``execute`` method. ``QCGPJPool`` will submit all the jobs directly to the QCG-PilotJob toolkit::
 
     with QCGPJPool() as qcgpj:
         app_campaign.execute(pool=qcgpj).collate()
