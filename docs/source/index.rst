@@ -29,6 +29,8 @@ machines.
 
 For technical details please see :ref:`api-ref`.
 
+We also provide a range of interactive tutorials within the repository. This collection changes over time, but can be found here: https://github.com/UCL-CCS/EasyVVUQ/tree/dev/tutorials .
+
 .. _toc:
 
 Table of contents
