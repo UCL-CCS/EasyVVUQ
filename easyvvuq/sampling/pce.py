@@ -79,38 +79,57 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
         growth (bool, None), optional
             If True, quadrature point became nested.
         """
+        # Create and initialize the logger
+        self.logger = logging.getLogger(__name__)
+        self.logger.setLevel(logging.DEBUG)
+
+        # Logger is already configured, remove all handlers
+        if self.logger.hasHandlers():
+            self.logger.handlers = []
+        
+        formatter = logging.Formatter('%(asctime)s:%(name)s:%(levelname)s:%(message)s')
+
+        file_handler = logging.FileHandler('PCE.log')
+        file_handler.setLevel(logging.DEBUG)
+        file_handler.setFormatter(formatter)
+
+        stream_handler = logging.StreamHandler()
+        stream_handler.setFormatter(formatter)
+
+        self.logger.addHandler(file_handler)
+        self.logger.addHandler(stream_handler)
 
         #%%%%%%%%%%%%%%%%%  USI DEBUG INFO   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         samplerFile_src = "/Users/Juraj/Documents/DXT/EasyVVUQ-fork/easyvvuq/sampling/pce.py"
         fileStatsObj = stat(samplerFile_src)
         modificationTime1 = ctime(fileStatsObj.st_mtime)
-        print("Using USI version of the PCE Sampler %s" % (samplerFile_src))
-        print("Last Modified Time of the source file : ", modificationTime1 )
+        self.logger.info(f"Using USI version of the PCE Sampler {samplerFile_src}")
 
         samplerFile_lib = path.dirname(path.abspath(__file__))
         fileStatsObj = stat(samplerFile_lib)
         modificationTime2 = ctime(fileStatsObj.st_mtime)
-        print("Last Time of the EasyVVUQ library build : ", modificationTime2)
 
         if (modificationTime1 > modificationTime2):
-            print("Warning: The EasyVVUQ library does not contain the latest changes in the src")
+            self.logger.warning("The EasyVVUQ library does not contain the latest changes in the src")
+            self.logger.info(f"Last Modified Time of the source file : {modificationTime1}")
+            self.logger.info(f"Last Time of the EasyVVUQ library build : {modificationTime2}")
         #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
         if vary is None:
             msg = ("'vary' cannot be None. RandomSampler must be passed a "
                    "dict of the names of the parameters you want to vary, "
                    "and their corresponding distributions.")
-            logging.error(msg)
+            self.logger.error(msg)
             raise Exception(msg)
         if not isinstance(vary, dict):
             msg = ("'vary' must be a dictionary of the names of the "
                    "parameters you want to vary, and their corresponding "
                    "distributions.")
-            logging.error(msg)
+            self.logger.error(msg)
             raise Exception(msg)
         if len(vary) == 0:
             msg = "'vary' cannot be empty."
-            logging.error(msg)
+            self.logger.error(msg)
             raise Exception(msg)
 
         self.vary = Vary(vary)
@@ -129,29 +148,29 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
         self._transformation = None
         self.distribution_dep = None
         if distribution is None:
-            print("Using default joint distribution")
+            self.logger.info("Using default joint distribution")
             self.distribution = cp.J(*params_distribution)
         elif 'distributions' in str(type(distribution)):
             if distribution.stochastic_dependent:
                 assert(isinstance(distribution, cp.MvNormal))
                 assert(len(distribution._parameters['mean']) == params_num) # all parameters listed in vary must be in the cp.MvNormal
-                print("Using user provided joint distribution with Rosenblatt transformation")
+                self.logger.info("Using user provided joint distribution with Rosenblatt transformation")
                 self._is_dependent = True
                 self._transformation = "Rosenblatt"
                 self.distribution_dep = distribution
             else:
-                print("Using user provided joint distribution without any transformation")
+                self.logger.info("Using user provided joint distribution without any transformation")
                 self.distribution = distribution
         elif 'list' in str(type(distribution)) or 'ndarray' in str(type(distribution)):
             assert(len(distribution) == params_num) # check the correct size of the corr
             for i in range(params_num):
                 assert(distribution[i][i] == 1.0) # must be correlation matrix
-            print("Using user provided correlation matrix for Cholesky transformation")
+            self.logger.info("Using user provided correlation matrix for Cholesky transformation")
             self._is_dependent = True
             self._transformation = "Cholesky"
             self.distribution_dep = np.array(distribution)
         else:
-            print("Unsupported type of the distribution argument. It should be either cp.distribution or a matrix-like array")
+            self.logger.error("Unsupported type of the distribution argument. It should be either cp.Distribution or a matrix-like array")
             exit()
 
 
@@ -164,6 +183,7 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
                                    else cp.Normal()
                                    for vary_dist in vary.values()]
             self.distribution = cp.J(*params_distribution)
+            self.logger.debug(f"The independent distribution consists of: {self.distribution}")
 
         # The orthogonal polynomials corresponding to the joint distribution
         self.P = cp.expansion.stieltjes(polynomial_order, self.distribution, normed=True)
@@ -189,7 +209,7 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
 
             # Generates samples
             self._n_samples = 2 * len(self.P)
-            print("Generating %d samples using %s rule" % (self._n_samples, self.rule))
+            self.logger.info(f"Generating {self._n_samples} samples using {self.rule} rule")
             self._nodes = cp.generate_samples(order=self._n_samples,
                                               domain=self.distribution,
                                               rule=self.rule)
@@ -202,7 +222,7 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
 
 
             #%%%%%%%%%%%%%%%%%  USI DEBUG INFO   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-            print("Dumping nodes to /Users/Juraj/Documents/DXT/EasyVVUQ-fork/nodes_EasyVVUQ.txt")
+            self.logger.info("Dumping nodes to /Users/Juraj/Documents/DXT/EasyVVUQ-fork/nodes_EasyVVUQ.txt")
             f = open("/Users/Juraj/Documents/DXT/EasyVVUQ-fork/nodes_EasyVVUQ.txt", "w")
             f.write(json.dumps(list(list(r) for r in self._nodes)))
             f.close()
@@ -219,7 +239,7 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
                                                                 growth=self.quad_growth)
             # Number of samples
             self._n_samples = len(self._nodes[0])
-            print("Generated %d nodes/weights pairs using %s rule" % (self._n_samples, self.rule))
+            self.logger.info(f"Generated {self._n_samples} nodes/weights pairs using {self.rule} rule")
 
             # Nodes transformation
             if self._is_dependent:
@@ -233,7 +253,7 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
             msg = (f"Attempt to start sampler fastforwarded to count {self.count}, "
                    f"but sampler only has {self.n_samples} samples, therefore"
                    f"this sampler will not provide any more samples.")
-            logging.warning(msg)
+            self.logger.warning(msg)
         else:
             for i in range(count):
                 self.__next__()
@@ -295,7 +315,7 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
         transformed_nodes = []
 
         if self._transformation == "Rosenblatt":
-            print("Performing Rosenblatt transformation")
+            self.logger.info("Performing Rosenblatt transformation")
             transformed_nodes = self.distribution_dep.inv(self.distribution.fwd(nodes))
 
             # Transform node weights in the pseudo-spectral method
@@ -308,7 +328,7 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
             # the node weights, which requires some additional care,
             assert(self.regression)
 
-            print("Performing Cholesky transformation")
+            self.logger.info("Performing Cholesky transformation")
             L = np.linalg.cholesky(self.distribution_dep)
             transformed_nodes = np.matmul(L, nodes)
 
@@ -324,7 +344,7 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
                     b = vary[key]._parameters['scale'] #sigma
                     transformed_nodes[i] = a + b*transformed_nodes[i]
         else:
-            print("Error: How did this happen? We are transforming the nodes but not with Rosenblatt nor Cholesky")
+            self.logger.critical("Error: How did this happen? We are transforming the nodes but not with Rosenblatt nor Cholesky")
             exit()
 
         return transformed_nodes
