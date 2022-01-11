@@ -212,20 +212,30 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
 
             # Nodes transformation
             if self._is_dependent:
-                if self._transformation == "Rosenblatt":
-                    print("Performing Rosenblatt transformation")
-                    self._nodes_dep = self.distribution_dep.inv(self.distribution.fwd(self._nodes))
-                elif self._transformation == "Cholesky":
-                    print("Performing Cholesky transformation")
-                    L = np.linalg.cholesky(self.distribution_dep)
-                    self._nodes_dep = np.matmul(L, self._nodes)
-                    for i, key in enumerate(vary.keys()):
-                        a = vary[key]._parameters['shift'] #mu
-                        b = vary[key]._parameters['scale'] #sigma
-                        self._nodes_dep[i] = a + b*self._nodes_dep[i]
-                else:
-                    print("Error: How did this happen?")
-                    exit()
+                self._nodes_dep = self.transform_nodes(self._nodes, vary)
+                # if self._transformation == "Rosenblatt":
+                #     print("Performing Rosenblatt transformation")
+                #     self._nodes_dep = self.distribution_dep.inv(self.distribution.fwd(self._nodes))
+                # elif self._transformation == "Cholesky":
+                #     print("Performing Cholesky transformation")
+                #     L = np.linalg.cholesky(self.distribution_dep)
+                #     self._nodes_dep = np.matmul(L, self._nodes)
+                #     for i, key in enumerate(vary.keys()):
+                #         if type(vary[key]).__name__ == "Normal":
+                #             a = vary[key]._parameters['shift'] #mu
+                #             b = vary[key]._parameters['scale'] #sigma
+                #             self._nodes_dep[i] = a + b*self._nodes_dep[i]
+                #         elif type(vary[key]).__name__ == "Uniform":
+                #             a = vary[key]._parameters['lower'] #lower
+                #             b = vary[key]._parameters['upper'] #upper
+                #             self._nodes_dep[i] = a + (b-a)*self._nodes_dep[i]
+                #         else:
+                #             a = 0
+                #             b = 1
+                #             self._nodes_dep[i] = a + b*self._nodes_dep[i]
+                # else:
+                #     print("Error: How did this happen?")
+                #     exit()
 
 
             #%%%%%%%%%%%%%%%%%  USI DEBUG INFO   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -250,17 +260,19 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
 
             # Nodes transformation
             if self._is_dependent:
-                if self._transformation == "Rosenblatt":
-                    print("Performing Rosenblatt transformation")
-                    self._nodes_dep = self.distribution_dep.inv(self.distribution.fwd(self._nodes))
-                    self._weights_dep = self._weights * self.distribution_dep.pdf(self._nodes_dep)/self.distribution.pdf(self._nodes)
-                elif self._transformation == "Cholesky":
-                    print("Performing Cholesky transformation")
-                    print("Error: not implemented with pseudo-spectral method")
-                    exit()
-                else:
-                    print("Error: How did this happen?")
-                    exit()
+                # Node weights are transformed quietly within the method
+                self._nodes_dep = self.transform_nodes(self._nodes, vary)
+                # if self._transformation == "Rosenblatt":
+                #     print("Performing Rosenblatt transformation")
+                #     self._nodes_dep = self.distribution_dep.inv(self.distribution.fwd(self._nodes))
+                #     self._weights_dep = self._weights * self.distribution_dep.pdf(self._nodes_dep)/self.distribution.pdf(self._nodes)
+                # elif self._transformation == "Cholesky":
+                #     print("Performing Cholesky transformation")
+                #     print("Error: not implemented with pseudo-spectral method")
+                #     exit()
+                # else:
+                #     print("Error: How did this happen?")
+                #     exit()
                 
 
         # Fast forward to specified count, if possible
@@ -316,3 +328,51 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
             return run_dict
         else:
             raise StopIteration
+
+
+    # Applies Cholesky or Rosenblatt transformation
+    # to the independent nodes.
+    # Returns: The transformed nodes
+    # Args:
+    #   @Nodes - Independent nodes to be transformed
+    #   @Vary  - Vary dict used to get additional information
+    #            about the marginals in order to shift the
+    #            dep. nodes after applying the Cholesky
+    def transform_nodes(self, nodes, vary):
+
+        transformed_nodes = []
+
+        if self._transformation == "Rosenblatt":
+            print("Performing Rosenblatt transformation")
+            transformed_nodes = self.distribution_dep.inv(self.distribution.fwd(nodes))
+
+            # Transform node weights in the pseudo-spectral method
+            if not self.regression:
+                self._weights_dep = self._weights * self.distribution_dep.pdf(transformed_nodes)/self.distribution.pdf(nodes)
+        elif self._transformation == "Cholesky":
+            # TODO:
+            # Tested & implemented only with the point collocation!
+            # For spectral projection we need to work also with
+            # the node weights, which requires some additional care,
+            assert(self.regression)
+
+            print("Performing Cholesky transformation")
+            L = np.linalg.cholesky(self.distribution_dep)
+            transformed_nodes = np.matmul(L, nodes)
+
+            # Shift and stretch the transformed nodes to the target distr.
+            # Until now we had samples from unit uniform (or normal) distributions
+            for i, key in enumerate(vary.keys()):
+                if type(vary[key]).__name__ == "Uniform":
+                    a = vary[key]._parameters['lower'] #lower
+                    b = vary[key]._parameters['upper'] #upper
+                    transformed_nodes[i] = a + (b-a)*transformed_nodes[i]
+                elif type(vary[key]).__name__ == "Normal":
+                    a = vary[key]._parameters['shift'] #mu
+                    b = vary[key]._parameters['scale'] #sigma
+                    transformed_nodes[i] = a + b*transformed_nodes[i]
+        else:
+            print("Error: How did this happen? We are transforming the nodes but not with Rosenblatt nor Cholesky")
+            exit()
+
+        return transformed_nodes
