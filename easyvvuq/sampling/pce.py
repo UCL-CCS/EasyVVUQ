@@ -120,7 +120,11 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
         params_distribution = list(vary.values())
         params_num = len(params_distribution)
 
-        # Multivariate distribution
+        # Multivariate distribution, the behaviour changes based on the
+        # 'distribution' argument, which can be:
+        #   None            - use default joint
+        #   cp.Distribution - use Rosenblatt if the distribution is dependent
+        #   matrix-lie      - use Cholesky
         self._is_dependent = False
         self._transformation = None
         self.distribution_dep = None
@@ -135,9 +139,13 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
                 self._is_dependent = True
                 self._transformation = "Rosenblatt"
                 self.distribution_dep = distribution
-                # Build joint multivariate distribution considering each uncertain paramter as a unit Normal
-                params_distribution = [cp.Normal() for i in range(params_num)]
-                self.distribution = cp.J(*params_distribution)
+                # # Build joint multivariate distribution considering each uncertain paramter as a unit Normal
+                # #params_distribution = [cp.Normal() for i in range(params_num)]
+                # #params_distribution = [cp.Uniform() for i in range(params_num)]
+                # params_distribution = [cp.Uniform() if type(vary[key]).__name__ == "Uniform"
+                #                        else cp.Normal()
+                #                        for key in vary]
+                # self.distribution = cp.J(*params_distribution)
             else:
                 print("Using user provided joint distribution without any transformation")
                 self.distribution = distribution
@@ -149,12 +157,27 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
             self._is_dependent = True
             self._transformation = "Cholesky"
             self.distribution_dep = np.array(distribution)
-            # Build joint multivariate distribution considering each uncertain paramter as a unit Normal
-            params_distribution = [cp.Normal() for i in range(params_num)]
-            self.distribution = cp.J(*params_distribution)
+            # # Build joint multivariate distribution considering each uncertain paramter as a unit Normal
+            # #params_distribution = [cp.Normal() for i in range(params_num)]
+            # #params_distribution = [cp.Uniform() for i in range(params_num)]
+            # params_distribution = [cp.Uniform() if type(vary[key]).__name__ == "Uniform"
+            #                        else cp.Normal()
+            #                        for key in vary]
+            # self.distribution = cp.J(*params_distribution)
         else:
             print("Unsupported type of the distribution argument. It should be either cp.distribution or a matrix-like array")
             exit()
+
+
+        # Build independent joint multivariate distribution considering each uncertain paramter
+        # Use Uniform or Normal distribution depending on the distr. of each parameter
+        if not self.distribution_dep is None:
+            #params_distribution = [cp.Normal() for i in range(params_num)]
+            #params_distribution = [cp.Uniform() for i in range(params_num)]
+            params_distribution = [cp.Uniform() if type(vary_dist).__name__ == "Uniform"
+                                   else cp.Normal()
+                                   for vary_dist in vary.values()]
+            self.distribution = cp.J(*params_distribution)
 
         # The orthogonal polynomials corresponding to the joint distribution
         self.P = cp.expansion.stieltjes(polynomial_order, self.distribution, normed=True)
