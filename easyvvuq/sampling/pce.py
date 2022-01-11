@@ -139,13 +139,6 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
                 self._is_dependent = True
                 self._transformation = "Rosenblatt"
                 self.distribution_dep = distribution
-                # # Build joint multivariate distribution considering each uncertain paramter as a unit Normal
-                # #params_distribution = [cp.Normal() for i in range(params_num)]
-                # #params_distribution = [cp.Uniform() for i in range(params_num)]
-                # params_distribution = [cp.Uniform() if type(vary[key]).__name__ == "Uniform"
-                #                        else cp.Normal()
-                #                        for key in vary]
-                # self.distribution = cp.J(*params_distribution)
             else:
                 print("Using user provided joint distribution without any transformation")
                 self.distribution = distribution
@@ -157,13 +150,6 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
             self._is_dependent = True
             self._transformation = "Cholesky"
             self.distribution_dep = np.array(distribution)
-            # # Build joint multivariate distribution considering each uncertain paramter as a unit Normal
-            # #params_distribution = [cp.Normal() for i in range(params_num)]
-            # #params_distribution = [cp.Uniform() for i in range(params_num)]
-            # params_distribution = [cp.Uniform() if type(vary[key]).__name__ == "Uniform"
-            #                        else cp.Normal()
-            #                        for key in vary]
-            # self.distribution = cp.J(*params_distribution)
         else:
             print("Unsupported type of the distribution argument. It should be either cp.distribution or a matrix-like array")
             exit()
@@ -213,29 +199,6 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
             # Nodes transformation
             if self._is_dependent:
                 self._nodes_dep = self.transform_nodes(self._nodes, vary)
-                # if self._transformation == "Rosenblatt":
-                #     print("Performing Rosenblatt transformation")
-                #     self._nodes_dep = self.distribution_dep.inv(self.distribution.fwd(self._nodes))
-                # elif self._transformation == "Cholesky":
-                #     print("Performing Cholesky transformation")
-                #     L = np.linalg.cholesky(self.distribution_dep)
-                #     self._nodes_dep = np.matmul(L, self._nodes)
-                #     for i, key in enumerate(vary.keys()):
-                #         if type(vary[key]).__name__ == "Normal":
-                #             a = vary[key]._parameters['shift'] #mu
-                #             b = vary[key]._parameters['scale'] #sigma
-                #             self._nodes_dep[i] = a + b*self._nodes_dep[i]
-                #         elif type(vary[key]).__name__ == "Uniform":
-                #             a = vary[key]._parameters['lower'] #lower
-                #             b = vary[key]._parameters['upper'] #upper
-                #             self._nodes_dep[i] = a + (b-a)*self._nodes_dep[i]
-                #         else:
-                #             a = 0
-                #             b = 1
-                #             self._nodes_dep[i] = a + b*self._nodes_dep[i]
-                # else:
-                #     print("Error: How did this happen?")
-                #     exit()
 
 
             #%%%%%%%%%%%%%%%%%  USI DEBUG INFO   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -262,17 +225,6 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
             if self._is_dependent:
                 # Node weights are transformed quietly within the method
                 self._nodes_dep = self.transform_nodes(self._nodes, vary)
-                # if self._transformation == "Rosenblatt":
-                #     print("Performing Rosenblatt transformation")
-                #     self._nodes_dep = self.distribution_dep.inv(self.distribution.fwd(self._nodes))
-                #     self._weights_dep = self._weights * self.distribution_dep.pdf(self._nodes_dep)/self.distribution.pdf(self._nodes)
-                # elif self._transformation == "Cholesky":
-                #     print("Performing Cholesky transformation")
-                #     print("Error: not implemented with pseudo-spectral method")
-                #     exit()
-                # else:
-                #     print("Error: How did this happen?")
-                #     exit()
                 
 
         # Fast forward to specified count, if possible
