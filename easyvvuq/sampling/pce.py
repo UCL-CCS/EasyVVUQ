@@ -101,15 +101,15 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
 
         #%%%%%%%%%%%%%%%%%  USI DEBUG INFO   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         samplerFile_src = "/Users/Juraj/Documents/DXT/EasyVVUQ-fork/easyvvuq/sampling/pce.py"
-        fileStatsObj = stat(samplerFile_src)
-        modificationTime1 = ctime(fileStatsObj.st_mtime)
+        fileStatsObj1 = stat(samplerFile_src)
+        modificationTime1 = ctime(fileStatsObj1.st_mtime)
         self.logger.info(f"Using USI version of the PCE Sampler {samplerFile_src}")
 
         samplerFile_lib = path.dirname(path.abspath(__file__))
-        fileStatsObj = stat(samplerFile_lib)
-        modificationTime2 = ctime(fileStatsObj.st_mtime)
+        fileStatsObj2 = stat(samplerFile_lib)
+        modificationTime2 = ctime(fileStatsObj2.st_mtime)
 
-        if (modificationTime1 > modificationTime2):
+        if (fileStatsObj1.st_mtime > fileStatsObj2.st_mtime):
             self.logger.warning("The EasyVVUQ library does not contain the latest changes in the src")
             self.logger.info(f"Last Modified Time of the source file : {modificationTime1}")
             self.logger.info(f"Last Time of the EasyVVUQ library build : {modificationTime2}")
