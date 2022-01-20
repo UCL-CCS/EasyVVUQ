@@ -3,7 +3,7 @@ import easyvvuq as uq
 import chaospy as cp
 import matplotlib.pyplot as plt
 
-from easyvvuq.actions import QCGPJPool, ExecuteQCGPJ
+from easyvvuq.actions import QCGPJPool
 from easyvvuq.actions import CreateRunDirectory, Encode, Decode, ExecuteLocal, Actions
 
 params = {
@@ -18,7 +18,7 @@ params = {
 
 encoder = uq.encoders.GenericEncoder(template_fname='beam.template', delimiter='$', target_filename='input.json')
 decoder = uq.decoders.JSONDecoder(target_filename='output.json', output_columns=['g1'])
-execute = ExecuteQCGPJ(ExecuteLocal('{}/beam input.json'.format(os.getcwd())))
+execute = ExecuteLocal('{}/beam input.json'.format(os.getcwd()))
 
 actions = Actions(CreateRunDirectory('/tmp'),
                   Encode(encoder), execute, Decode(decoder))
@@ -35,8 +35,8 @@ vary = {
 
 campaign.set_sampler(uq.sampling.PCESampler(vary=vary, polynomial_order=1))
 
-#with QCGPJPool(template_params={'venv': '/home/bartek/.virtualenv/easy-qcgpj-executor-test3'}) as qcgpj:
-with QCGPJPool() as qcgpj:
+with QCGPJPool(template_params={'venv': '/home/bartek/.virtualenv/qcgpj7'}) as qcgpj:
+#with QCGPJPool() as qcgpj:
     campaign.execute(pool=qcgpj).collate()
 
 campaign.get_collation_result()
@@ -50,3 +50,5 @@ results.sobols_first('g1')
 results.supported_stats()
 results._get_sobols_first('g1', 'F')
 results.sobols_total('g1', 'F')
+
+print("success")

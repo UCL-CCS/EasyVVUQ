@@ -1,12 +1,15 @@
+import pytest
+
 import easyvvuq as uq
-from easyvvuq.actions import Actions, Encode, Decode, CreateRunDirectory, ExecuteQCGPJ, QCGPJPool
+from easyvvuq.actions import Actions, Encode, Decode, CreateRunDirectory, QCGPJPool
 import chaospy as cp
 import os
 
 __license__ = "LGPL"
 
 
-def test_qcgpj(tmpdir):
+@pytest.fixture
+def settings(tmpdir):
     params = {
         "temp_init": {
             "type": "float",
@@ -34,7 +37,7 @@ def test_qcgpj(tmpdir):
         delimiter='$',
         target_filename='cooling_in.json')
     decoder = uq.decoders.SimpleCSV(target_filename=output_filename,
-                                output_columns=output_columns)
+                                    output_columns=output_columns)
 
     vary = {
         "kappa": cp.Uniform(0.025, 0.075),
@@ -44,19 +47,34 @@ def test_qcgpj(tmpdir):
     cooling_sampler = uq.sampling.PCESampler(vary=vary, polynomial_order=3)
     cooling_stats = uq.analysis.PCEAnalysis(sampler=cooling_sampler, qoi_cols=output_columns)
 
+    settings = {
+        'params': params,
+        'encoder': encoder,
+        'decoder': decoder,
+        'cooling_sampler': cooling_sampler,
+        'cooling_stats': cooling_stats
+    }
+
+    return settings
+
+
+def test_qcgpj(settings):
     cooling_action = uq.actions.ExecuteLocal(os.path.abspath("tests/cooling/cooling_model.py") +
-                                         " cooling_in.json")
+                                             " cooling_in.json")
 
-    qcgpj_action = ExecuteQCGPJ(cooling_action)
-    actions = Actions(CreateRunDirectory('/tmp'), Encode(encoder), qcgpj_action, Decode(decoder))
+    actions = Actions(CreateRunDirectory('/tmp'),
+                      Encode(settings['encoder']),
+                      cooling_action,
+                      Decode(settings['decoder']))
 
-    campaign = uq.Campaign(name='beam', params=params, actions=actions)
-    campaign.set_sampler(cooling_sampler)
+    campaign = uq.Campaign(name='beam', params=settings['params'], actions=actions)
+    campaign.set_sampler(settings['cooling_sampler'])
 
     with QCGPJPool() as qcgpj:
         campaign.execute(pool=qcgpj).collate()
 
-    campaign.apply_analysis(cooling_stats)
+    campaign.apply_analysis(settings['cooling_stats'])
+
 
 if __name__ == "__main__":
-    test_qcgpj("/tmp/")
+    test_qcgpj(settings)

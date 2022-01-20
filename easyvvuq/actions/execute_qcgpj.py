@@ -2,6 +2,7 @@ import base64
 import json
 import logging
 from os import environ
+from os import remove
 
 import time
 
@@ -145,12 +146,23 @@ class QCGPJPool(Executor):
         """
         actions = fn.__self__
         actions.set_wrapper(QCGPJPool._wrapper)
-        exec = 'python3 -m easyvvuq.actions.execute_qcgpj_task'
+        exec = 'python3'
+        arg1 = "-m"
+        arg2 = "easyvvuq.actions.execute_qcgpj_task"
+
+        self._campaign_dir = args[0]['campaign_dir']
 
         pickled_actions = base64.b64encode(dill.dumps(actions)).decode('ascii')
         pickled_previous = base64.b64encode(dill.dumps(args[0])).decode('ascii')
 
-        self._campaign_dir = args[0]['campaign_dir']
+        actions_file = f'{self._campaign_dir}/.qcgpj_in_act_{args[0]["run_id"]}'
+        previous_file = f'{self._campaign_dir}/.qcgpj_in_prev_{args[0]["run_id"]}'
+
+        with open(actions_file, 'w') as f:
+            f.write(pickled_actions)
+
+        with open(previous_file, 'w') as f:
+            f.write(pickled_previous)
 
         return self._qcgpj_executor.submit(
             self._template.template,
@@ -159,7 +171,7 @@ class QCGPJPool(Executor):
             name=args[0]['run_id'],
             stdout=f"{self._campaign_dir}/stdout_{args[0]['run_id']}",
             stderr=f"{self._campaign_dir}/stderr_{args[0]['run_id']}",
-            args=[pickled_actions, pickled_previous])
+            args=[arg1, arg2, actions_file, previous_file])
 
     @property
     def executor(self):
@@ -191,9 +203,13 @@ class QCGPJPool(Executor):
             if value != 'SUCCEED':
                 logging.error(f"Task {key} finished with the status: {value}")
                 raise RuntimeError(f"QCG-PilotJob task {key} finished with the status: {value}")
-            with open(f'{self._campaign_dir}/.qcgpj_result_{key}', 'r') as f:
+
+            result_file = f'{self._campaign_dir}/.qcgpj_result_{key}'
+            with open(result_file, 'r') as f:
                 previous = json.load(f)
-                return previous
+            remove(result_file)
+
+            return previous
 
     def shutdown(self, **kwargs):
         """Clean-up the resources associated with the QCGPJPool.
@@ -228,24 +244,24 @@ class QCGPJPool(Executor):
 
     @staticmethod
     def _wrapper(action, previous):
-        """For the actions other than ExecuteQCGPJ ensures that the MPI code is invoked in a serial mode
-        """
-        if not isinstance(action, ExecuteQCGPJ):
-            rank = 0
-            if 'OMPI_COMM_WORLD_RANK' in environ:
-                rank = environ.get('OMPI_COMM_WORLD_RANK')
-            elif 'PMI_RANK' in environ:
-                rank = environ.get('PMI_RANK')
-
-            if rank != 0:
-                # This is not an instance of ExecuteQCGPJ,We don't execute processes with ranks other than 0
-                return
-
+        # TODO: Implement support for specialised execution models of QCG-PilotJob
+        # """For the actions other than ExecuteQCGPJ ensures that the code is invoked only once
+        # """
+        # if not isinstance(action, ExecuteQCGPJ):
+        #     rank = 0
+        #     if 'OMPI_COMM_WORLD_RANK' in environ:
+        #         rank = environ.get('OMPI_COMM_WORLD_RANK')
+        #     elif 'PMI_RANK' in environ:
+        #         rank = environ.get('PMI_RANK')
+        #
+        #     if rank != 0:
+        #         return
         return action.start(previous)
 
 
 class ExecuteQCGPJ:
-    """A utility decorator over action that marks the action to enable parallel execution by QCG-PilotJob
+    """A utility decorator over action that marks the action as configured for parallel execution by QCG-PilotJob
+    Currently it has no influence on the processing.
 
     Parameters
     ----------

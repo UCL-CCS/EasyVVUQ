@@ -81,11 +81,13 @@ class CreateRunDirectory():
         level3_dir = "runs_{}-{}/".format(level3_a, level3_b)
         level4_dir = "runs_{}-{}/".format(level4_a, level4_b)
         level5_dir = "run_{}".format(int(run_id))
+        
         if self.flatten:
             path = os.path.join(self.root, previous['campaign_dir'], 'runs', level5_dir)
         else:
             path = os.path.join(self.root, previous['campaign_dir'], 'runs',
                                 level1_dir, level2_dir, level3_dir, level4_dir, level5_dir)
+      
         Path(path).mkdir(parents=True, exist_ok=True)
         previous['rundir'] = path
         self.result = previous
