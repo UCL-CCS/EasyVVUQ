@@ -67,8 +67,6 @@ class CreateRunDirectory():
         dict
             A dictionary to be passed to the following `Action`.
         """
-        print(str(previous))
-        print("CKPT1")
         run_id = previous['run_id']
         level1_a, level1_b = (int(run_id / 100 ** 4) * 100 ** 4,
                               int(run_id / 100 ** 4 + 1) * 100 ** 4)
@@ -83,19 +81,15 @@ class CreateRunDirectory():
         level3_dir = "runs_{}-{}/".format(level3_a, level3_b)
         level4_dir = "runs_{}-{}/".format(level4_a, level4_b)
         level5_dir = "run_{}".format(int(run_id))
-        print("CKPT2")
+        
         if self.flatten:
-            print("CKPT3")
             path = os.path.join(self.root, previous['campaign_dir'], 'runs', level5_dir)
         else:
-            print("CKPT4")
             path = os.path.join(self.root, previous['campaign_dir'], 'runs',
                                 level1_dir, level2_dir, level3_dir, level4_dir, level5_dir)
-        print("CKPT5")
+      
         Path(path).mkdir(parents=True, exist_ok=True)
-        print("CKPT6")
         previous['rundir'] = path
-        print("CKPT7")
         self.result = previous
         return self.result
 
