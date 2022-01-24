@@ -8,8 +8,6 @@
 [![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/3796/badge)](https://bestpractices.coreinfrastructure.org/projects/3796)
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/UCL-CCS/EasyVVUQ/dev?filepath=tutorials)
 
-You can find the API Documentation on our [GitHub Pages](https://ucl-ccs.github.io/EasyVVUQ/).
-
 The aim of EasyVVUQ is to facilitate verification, validation and 
 uncertainty quantification (VVUQ) for a wide variety of
 simulations. While very convenient for simple cases, EasyVVUQ is particularly well suited in situations where the simulations are computationally expensive, 
@@ -23,8 +21,14 @@ Here are some examples of questions EasyVVUQ can answer about your code:
 
 It also lets you construct surrogate models that are cheaper to evaluate than the complete simulation.
 
-Basic concepts are introduced [here](https://mybinder.org/v2/gh/UCL-CCS/EasyVVUQ/a6852d6c5ba36f15579e601d7a8d074505f31084?filepath=tutorials%2Fbasic_tutorial.ipynb) and [here](https://mybinder.org/v2/gh/UCL-CCS/EasyVVUQ/74d6a9f4b0eecc754918de2f3795395d35ac4875?filepath=tutorials%2Fvector_qoi_tutorial.ipynb). For an introduction for interfacing your simulation to EasyVVUQ see [this](
-https://mybinder.org/v2/gh/UCL-CCS/EasyVVUQ/bdd866c5d5d1f61140b776ec9ac47791b928a7cf?filepath=tutorials%2Fencoder_decoder_tutorial.ipynb) notebook.
+The high-level overview of the library is avalable at our [readthedocs](https://easyvvuq.readthedocs.io/en/dev/).
+
+## Getting Started
+
+For the quick start with EasyVVUQ we reccommend to check our basic interactive tutorial available [here](https://mybinder.org/v2/gh/UCL-CCS/EasyVVUQ/a6852d6c5ba36f15579e601d7a8d074505f31084?filepath=tutorials%2Fbasic_tutorial.ipynb).
+
+
+## Functionality
 
 Available analysis and sampling methods:
 
@@ -42,18 +46,18 @@ EasyVVUQ also supports building surrogate models using:
 Supported computing resources:
 
 * Traditional clusters
-* [Kubernetes clusters](https://mybinder.org/v2/gh/UCL-CCS/EasyVVUQ/a9195fa1423d731ed996c9a5e34bb1256c6a0d5b?filepath=tutorials%2Fkubernetes_tutorial.ipynb)
+* Kubernetes clusters
 
-The easiest way to get started is to follow the tutorials in our
+The easiest way to get familiar with the provided functionality is to follow the tutorials (*\*.ipynb* files) in our
 [Binder](https://mybinder.org/v2/gh/UCL-CCS/EasyVVUQ/dev?filepath=tutorials).
 
-Development was funded by the EU Horizon 2020 project [VECMA](http://www.vecma.eu/).
+## Installation instructions
 
-## Requirements
+### Requirements
 
 To use the library you will need Python 3.7+.
 
-## Installation using pip
+### Installation using pip
 
 If you are unsure of the version of python your default `pip` works for type:
 ```
@@ -73,7 +77,7 @@ To upgrade the library use:
 pip install easyvvuq --upgrade
 ```
 
-## Manual installation from repository
+### Manual installation from repository
 
 Alternatively, you can manually install EasyVVUQ.
 First clone the repository to your computer:
@@ -95,9 +99,9 @@ Then the library can be installed using:
 python setup.py install
 ```
 
-## Getting Started
+## API
 
-Documentation, including a basic tutorial, is avalable [here](https://easyvvuq.readthedocs.io/en/dev/).
+You can find the EasyVVUQ API documentation on our [GitHub Pages](https://ucl-ccs.github.io/EasyVVUQ/).
 
 ## Citing EasyVVUQ
 
@@ -108,3 +112,7 @@ Journal of Open Research Software, 8: 11.
 
 > Wright, D.W., Richardson, R.A., Edeling, W., Lakhlili, J., Sinclair, R.C., Jancauskas, V., Suleimenova, D., Bosak, B., Kulczewski, M., Piontek, T., Kopta, P., Chirca, I., Arabnejad, H., Luk, O.O., Hoenen, O., Weglarz, J., Crommelin, D., Groen, D. and Coveney, P.V. (2020), Building Confidence in Simulation: Applications of EasyVVUQ. Adv. Theory Simul., 3: 1900246.
 > [DOI: 10.1002/adts.201900246](https://doi.org/10.1002/adts.201900246).
+
+## Acknowledgments
+
+Development was funded by the EU Horizon 2020 project [VECMA](http://www.vecma.eu/).
