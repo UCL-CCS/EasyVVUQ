@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1643034005874,
+  "lastUpdate": 1643059303075,
   "repoUrl": "https://github.com/UCL-CCS/EasyVVUQ",
   "entries": {
     "Benchmark": [
@@ -2040,6 +2040,72 @@ window.BENCHMARK_DATA = {
             "unit": "iter/sec",
             "range": "stddev: 0.0003933471160991346",
             "extra": "mean: 22.41918152381437 msec\nrounds: 42"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "wouteredeling@gmail.com",
+            "name": "Wouter Edeling",
+            "username": "wedeling"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "7fc359b4880910e2beac467563f06db702b3ef99",
+          "message": "Merge pull request #363 from UCL-CCS/add_Ishigami_with_noise_example\n\nIshigami with noise: use PCE to provide the noise by sampling a unifo…",
+          "timestamp": "2022-01-24T22:13:32+01:00",
+          "tree_id": "2c06ab24bb4cc1d95d8ed6a9cb823bec73bf10a4",
+          "url": "https://github.com/UCL-CCS/EasyVVUQ/commit/7fc359b4880910e2beac467563f06db702b3ef99"
+        },
+        "date": 1643059302112,
+        "tool": "pytest",
+        "benches": [
+          {
+            "name": "tests/test_db_benchmark.py::test_draw",
+            "value": 0.06880564247672791,
+            "unit": "iter/sec",
+            "range": "stddev: 0.03340556067314778",
+            "extra": "mean: 14.533691773000005 sec\nrounds: 5"
+          },
+          {
+            "name": "tests/test_db_benchmark.py::test_store_results",
+            "value": 0.07010119693262416,
+            "unit": "iter/sec",
+            "range": "stddev: 0.04009452878173699",
+            "extra": "mean: 14.26509166400001 sec\nrounds: 5"
+          },
+          {
+            "name": "tests/test_db_benchmark.py::test_get_collation_result",
+            "value": 70.12281801206274,
+            "unit": "iter/sec",
+            "range": "stddev: 0.0001308412698987707",
+            "extra": "mean: 14.260693285714458 msec\nrounds: 56"
+          },
+          {
+            "name": "tests/test_db_benchmark.py::test_draw_add",
+            "value": 0.0690241982244315,
+            "unit": "iter/sec",
+            "range": "stddev: 0.07740368899473303",
+            "extra": "mean: 14.487672812200003 sec\nrounds: 5"
+          },
+          {
+            "name": "tests/test_db_benchmark.py::test_store_results_add",
+            "value": 0.06961982186570664,
+            "unit": "iter/sec",
+            "range": "stddev: 0.038564916976752295",
+            "extra": "mean: 14.363725347200011 sec\nrounds: 5"
+          },
+          {
+            "name": "tests/test_db_benchmark.py::test_get_collation_result_add",
+            "value": 37.13451425826394,
+            "unit": "iter/sec",
+            "range": "stddev: 0.00011805530680268728",
+            "extra": "mean: 26.929125638891566 msec\nrounds: 36"
           }
         ]
       }
