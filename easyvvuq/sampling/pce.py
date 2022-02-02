@@ -2,6 +2,8 @@ import logging
 import chaospy as cp
 import numpy as np
 from .base import BaseSamplingElement, Vary
+from .transformations import Transformations
+
 
 # DEBUG USI
 from os import stat, path
@@ -220,10 +222,10 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
             if self._is_dependent:
                 if self._transformation == "Rosenblatt":
                     self.logger.info("Performing Rosenblatt transformation")
-                    self._nodes_dep = self.transform_nodes_rosenblatt(self._nodes, self.distribution, self.distribution_dep,regression)
+                    self._nodes_dep = Transformations.rosenblatt(self._nodes, self.distribution, self.distribution_dep,regression)
                 elif self._transformation == "Cholesky":
                     self.logger.info("Performing Cholesky transformation")
-                    self._nodes_dep = self.transform_nodes_cholesky(self._nodes, self.vary, self.distribution_dep, regression)
+                    self._nodes_dep = Transformations.cholesky(self._nodes, self.vary, self.distribution_dep, regression)
                 else:
                     self.logger.critical("Error: How did this happen? We are transforming the nodes but not with Rosenblatt nor Cholesky")
                     exit()
@@ -253,10 +255,10 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
             if self._is_dependent:
                 if self._transformation == "Rosenblatt":
                     self.logger.info("Performing Rosenblatt transformation")
-                    self._weights_dep, self._nodes_dep = self.transform_nodes_rosenblatt(self._nodes, self.distribution, self.distribution_dep,regression)
+                    self._weights_dep, self._nodes_dep = Transformations.rosenblatt(self._nodes, self.distribution, self.distribution_dep,regression)
                 elif self._transformation == "Cholesky":
                     self.logger.info("Performing Cholesky transformation")
-                    self._weights_dep, self._nodes_dep = self.transform_nodes_cholesky(self._nodes, self.vary, self.distribution_dep, regression)
+                    self._weights_dep, self._nodes_dep = Transformations.cholesky(self._nodes, self.vary, self.distribution_dep, regression)
                 else:
                     self.logger.critical("Error: How did this happen? We are transforming the nodes but not with Rosenblatt nor Cholesky")
                     exit()
@@ -315,66 +317,3 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
             return run_dict
         else:
             raise StopIteration
-
-
-    # Applies Rosenblatt transformation
-    # to the independent nodes.
-    # Returns: The transformed nodes or transformed (weights, nodes)
-    # Args:
-    #   @Nodes - Independent nodes to be transformed
-    #   @Distribution - PDF of the independent nodes
-    #   @Distribution_dep - PDF of the correlated nodes
-    #   @regression - see PCESampler(regression) parameter
-    def transform_nodes_rosenblatt(nodes, distribution, distribution_dep, regression=True):
-
-        transformed_nodes = []
-
-        transformed_nodes = distribution_dep.inv(distribution.fwd(nodes))
-
-        # Transform node weights in the pseudo-spectral method
-        # This is performed silently (directly modifying self._weights_dep without returning them)
-        if not regression:
-            # The transformed weights are not used
-            transformed_weights = None
-            # TODO: need to add weights argument
-            # transformed_weights = weights * distribution_dep.pdf(transformed_nodes)/distribution.pdf(nodes)
-            return (transformed_weights, transformed_nodes)
-
-        return transformed_nodes
-
-    # Applies Cholesky transformation
-    # to the independent nodes.
-    # Returns: The transformed nodes or transformed (weights, nodes)
-    # Args:
-    #   @Nodes - Independent nodes to be transformed
-    #   @vary - Vary object containing the PDF of the parameters
-    #   @correlation - correlation matrix
-    #   @regression - see PCESampler(regression) parameter
-    def transform_nodes_cholesky(nodes, vary, correlation, regression=True):
-
-        transformed_nodes = []
-
-        L = np.linalg.cholesky(correlation)
-        transformed_nodes = np.matmul(L, nodes)
-
-        # Shift and stretch the transformed nodes to the target distr.
-        # Until now we had samples from unit uniform (or normal) distributions
-        for i, (param, distribution) in enumerate(vary.get_items()):
-            if type(distribution).__name__ == "Uniform":
-                a = distribution._parameters['lower'] #lower
-                b = distribution._parameters['upper'] #upper
-                transformed_nodes[i] = a + (b-a)*transformed_nodes[i]
-            elif type(distribution).__name__ == "Normal":
-                a = distribution._parameters['shift'] #mu
-                b = distribution._parameters['scale'] #sigma
-                transformed_nodes[i] = a + b*transformed_nodes[i]
-
-        # Tested & implemented only with the point collocation!
-        # For spectral projection we need to work also with
-        # the node weights, which requires some additional care
-        # assert(regression)
-        if not regression:
-            transformed_weights = None
-            return (transformed_weights, transformed_nodes)
-
-        return transformed_nodes
