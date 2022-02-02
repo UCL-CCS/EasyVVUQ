@@ -175,7 +175,7 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
             self.logger.error("Unsupported type of the distribution argument. It should be either cp.Distribution or a matrix-like array")
             exit()
 
-
+        # Build independent joint for the dependent distribution
         # Build independent joint multivariate distribution considering each uncertain paramter
         # Use Uniform or Normal distribution depending on the distr. of each parameter
         if not self.distribution_dep is None:
@@ -230,15 +230,6 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
                     self.logger.critical("Error: How did this happen? We are transforming the nodes but not with Rosenblatt nor Cholesky")
                     exit()
 
-
-            #%%%%%%%%%%%%%%%%%  USI DEBUG INFO   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-            self.logger.info("Dumping nodes to /Users/Juraj/Documents/DXT/EasyVVUQ-fork/nodes_EasyVVUQ.txt")
-            f = open("/Users/Juraj/Documents/DXT/EasyVVUQ-fork/nodes_EasyVVUQ.txt", "w")
-            f.write(json.dumps(list(list(r) for r in self._nodes)))
-            f.close()
-            #diff /Users/Juraj/Documents/DXT/MPSProject_USI/github/MPSProject_Standalone/chaospy/nodes_chaospy.txt /Users/Juraj/Documents/DXT/EasyVVUQ-fork/nodes_EasyVVUQ.txt
-            #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
         # Projection variante (Pseudo-spectral method)
         else:
             # Nodes and weights for the integration
@@ -263,6 +254,11 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
                     self.logger.critical("Error: How did this happen? We are transforming the nodes but not with Rosenblatt nor Cholesky")
                     exit()
                 
+
+        #%%%%%%%%%%%%%%%%%  USI DEBUG INFO   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        self.logger.debug(f"Sparse grid:\n{self._nodes}")
+        self.logger.debug(f"Transformed parse grid:\n{self._nodes_dep}")
+        #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
         # Fast forward to specified count, if possible
         self.count = 0

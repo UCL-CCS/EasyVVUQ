@@ -40,9 +40,20 @@ class Transformations:
     @staticmethod
     def rosenblatt(nodes, distribution, distribution_dep, regression=True):
 
+        # Input nodes are expected to be in sape (ndim x nsamples),
+        # but user might have have provided the transposed array
+        do_transpose = False
+        if nodes.shape[0] > nodes.shape[1]:
+            do_transpose = True
+            nodes = nodes.T
+        
         transformed_nodes = []
 
         transformed_nodes = distribution_dep.inv(distribution.fwd(nodes))
+
+        if do_transpose:
+            transformed_nodes = transformed_nodes.T
+            nodes = nodes.T # need to transpose back (args. are passed by reference)
 
         # Transform node weights in the pseudo-spectral method
         if not regression:
@@ -65,6 +76,13 @@ class Transformations:
     @staticmethod
     def cholesky(nodes, vary, correlation, regression=True):
 
+        # Input nodes are expected to be in sape (ndim x nsamples),
+        # but user might have have provided the transposed array
+        do_transpose = False
+        if nodes.shape[0] > nodes.shape[1]:
+            do_transpose = True
+            nodes = nodes.T
+
         transformed_nodes = []
 
         L = np.linalg.cholesky(correlation)
@@ -81,6 +99,10 @@ class Transformations:
                 a = distribution._parameters['shift'] #mu
                 b = distribution._parameters['scale'] #sigma
                 transformed_nodes[i] = a + b*transformed_nodes[i]
+
+        if do_transpose:
+            transformed_nodes = transformed_nodes.T
+            nodes = nodes.T # need to transpose back (args. are passed by reference)
 
         # Tested & implemented only with the point collocation!
         # For spectral projection we need to work also with
