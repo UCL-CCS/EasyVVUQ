@@ -320,13 +320,17 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
 
             # Transform node weights in the pseudo-spectral method
             if not self.regression:
-                self._weights_dep = self._weights * self.distribution_dep.pdf(transformed_nodes)/self.distribution.pdf(nodes)
+                # The transformed weights are not used
+                self._weights_dep = None
+                #self._weights_dep = self._weights * self.distribution_dep.pdf(transformed_nodes)/self.distribution.pdf(nodes)
         elif self._transformation == "Cholesky":
             # TODO:
             # Tested & implemented only with the point collocation!
             # For spectral projection we need to work also with
             # the node weights, which requires some additional care,
-            assert(self.regression)
+            #assert(self.regression)
+            if not self.regression:
+                self._weights_dep = None
 
             self.logger.info("Performing Cholesky transformation")
             L = np.linalg.cholesky(self.distribution_dep)
