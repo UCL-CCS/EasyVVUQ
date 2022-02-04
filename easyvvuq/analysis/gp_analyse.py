@@ -1,4 +1,4 @@
-"""Will create a Gaussian Process surrogate of your model. For 
+"""Will create a Gaussian Process surrogate of your model. For
 the sampler you can use the random sampler or the quasi-random
 sampler. Don't forget to set the analysis class to GaussianProcessSurrogate
 as is shown in the example below.
@@ -24,6 +24,7 @@ from sklearn.gaussian_process import GaussianProcessRegressor
 from .results import AnalysisResults
 import numpy as np
 
+
 class GaussianProcessSurrogateResults(AnalysisResults):
     """Gaussian process surrogate results class. You would never
     create this manually in normal use. It is meant to be returned as the
@@ -38,6 +39,7 @@ class GaussianProcessSurrogateResults(AnalysisResults):
     qoi: str
         Output variable name.
     """
+
     def __init__(self, gp, parameters, qoi):
         self.gp = gp
         self.parameters = parameters
@@ -97,8 +99,8 @@ class GaussianProcessSurrogate(BaseAnalysisElement):
            `GaussianProcessSurrogateResults` instance. Used to interact with the surrogate
            model and to possibly access other functionality provided by the fitted model.
         """
-        x = data_frame[self.attr_cols].values #lgtm [py/hash-unhashable-value]
-        y = data_frame[self.target_cols].values #lgtm [py/hash-unhashable-value]
+        x = data_frame[self.attr_cols].values  # lgtm [py/hash-unhashable-value]
+        y = data_frame[self.target_cols].values  # lgtm [py/hash-unhashable-value]
         gp = GaussianProcessRegressor(**self.kwargs)
         gp = gp.fit(x, y)
         return GaussianProcessSurrogateResults(gp, self.attr_cols, self.target_cols)

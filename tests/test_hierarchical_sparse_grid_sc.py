@@ -108,10 +108,11 @@ def test_next_level_sparse_grid(sparse_campaign):
     """
     sampler, analysis, _ = sparse_campaign
     # we started with a level 5 grid, check if the grid is now level 6
-    assert(np.array_equal(analysis.l_norm, np.array([[1, 1], [1, 2], [1, 3], [1, 4], [1, 5], [1, 6],
-                                                     [2, 1], [2, 2], [2, 3], [2, 4], [2, 5], [3, 1],
-                                                     [3, 2], [3, 3], [3, 4], [4, 1], [4, 2], [4, 3],
-                                                     [5, 1], [5, 2], [6, 1]])))
+    assert(np.array_equal(analysis.l_norm, np.array([[1, 1], [1, 2], [2, 1], [1, 3], [3, 1],
+                                                     [2, 2], [3, 2], [2, 3], [4, 1], [1, 4],
+                                                     [5, 1], [3, 3], [1, 5], [4, 2], [2, 4],
+                                                     [6, 1], [5, 2], [1, 6], [4, 3], [2, 5],
+                                                     [3, 4]])))
     # check if the grid has the right size
     assert(sampler.xi_d.shape[0] == 145)
 

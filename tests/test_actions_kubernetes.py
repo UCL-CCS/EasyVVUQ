@@ -14,5 +14,3 @@ def test_execute_kubernetes():
         "orbitfold/easyvvuq:latest",
         "/EasyVVUQ/tutorials/sir /config/input.json && cat output.csv",
         output_file_name='output.csv')
-
-

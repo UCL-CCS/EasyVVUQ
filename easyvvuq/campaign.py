@@ -576,8 +576,11 @@ class Campaign:
             iteration = self._active_sampler.iteration - 1
         else:
             iteration = -1
-        return self.campaign_db.get_results(self._active_app['name'], self._active_sampler_id,
-                                            status=easyvvuq.constants.Status.COLLATED, iteration=iteration)
+        return self.campaign_db.get_results(
+            self._active_app['name'],
+            self._active_sampler_id,
+            status=easyvvuq.constants.Status.COLLATED,
+            iteration=iteration)
 
     def get_invalid_runs(self, last_iteration=False):
         """Return dataframe containing all results marked as INVALID.
@@ -598,8 +601,11 @@ class Campaign:
             iteration = self._active_sampler.iteration - 1
         else:
             iteration = -1
-        return self.campaign_db.get_results(self._active_app['name'], self._active_sampler_id,
-                                            status=easyvvuq.constants.Status.INVALID, iteration=iteration)
+        return self.campaign_db.get_results(
+            self._active_app['name'],
+            self._active_sampler_id,
+            status=easyvvuq.constants.Status.INVALID,
+            iteration=iteration)
 
     def apply_analysis(self, analysis):
         """Run the `analysis` element on the output of the last run collation.

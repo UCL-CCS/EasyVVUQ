@@ -127,13 +127,10 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
         # sparse grid = a linear combination of tensor products of 1D rules
         # of different order. Use chaospy to compute these 1D quadrature rules
         else:
-
-            # simplex set of multi indices
-            multi_idx = self.compute_sparse_multi_idx(self.L, self.N)
-
+            self.l_norm = self.compute_sparse_multi_idx(self.L, self.N)
             # create sparse grid of dimension N and level q using the 1d
             #rules in self.xi_1d
-            self.xi_d = self.generate_grid(multi_idx)
+            self.xi_d = self.generate_grid(self.l_norm)
 
         self._n_samples = self.xi_d.shape[0]
 
@@ -266,42 +263,14 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
         """
 
         if self.nested is False:
-            logging.debug('Only works for nested sparse grids')
+            print('Only works for nested sparse grids')
             return
 
-        # update level of sparse grid
-        L = np.max(self.polynomial_order) + 1
-        self.L = L
-        self.polynomial_order = [p + 1 for p in self.polynomial_order]
-
-        logging.debug('Moving grid from level %d to level %d' % (L - 1, L))
-
-        # compute all multi indices
-        multi_idx = self.compute_sparse_multi_idx(L, self.N)
-
-        # find only the indices of the new level (|l| = L + N - 1)
-        new = np.where(np.sum(multi_idx, axis=1) == L + self.N - 1)[0]
-
-        # update the 1D points and weights
-        self.compute_1D_points_weights(L, self.N)
-
-        # generate the new N-dimensional collocation points
-        new_grid = self.generate_grid(multi_idx[new])
-
-        # find the new points unique to the new grid
-        new_points = setdiff2d(new_grid, self.xi_d)
-
-        logging.debug('%d new points added' % new_points.shape[0])
-
-        # update the number of samples
-        self._n_samples += new_points.shape[0]
-
-        # update the N-dimensional sparse grid
-        self.xi_d = np.concatenate((self.xi_d, new_points))
+        self.look_ahead(self.l_norm)
 
     def look_ahead(self, current_multi_idx):
         """
-        The look-ahead step in dimension-adaptive sparse grid sampling. Allows
+        The look-ahead step in (dimension-adaptive) sparse grid sampling. Allows
         for anisotropic sampling plans.
 
         Computes the admissible forward neighbors with respect to the current level
@@ -321,9 +290,6 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
         None.
 
         """
-        if not self.dimension_adaptive:
-            logging.debug('Dimension adaptivity is not selected')
-            return
 
         # compute all forward neighbors for every l in current_multi_idx
         forward_neighbor = []
@@ -372,6 +338,9 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
         # compute collocation grid based on the admissible level indices
         admissible_grid = self.generate_grid(self.admissible_idx)
         # remove collocation points which have already been computed
+        if not hasattr(self, 'xi_d'):
+            self.xi_d = self.generate_grid(self.admissible_idx)
+            self._n_samples = self.xi_d.shape[0]
         new_points = setdiff2d(admissible_grid, self.xi_d)
 
         logging.debug('%d new points added' % new_points.shape[0])
@@ -461,11 +430,20 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
         3    *
         2    *    *          (L=3 and N=2)
         1    *    *    *
-             1    2    3
+              1    2    3
         Here |l| is the internal sum of i (l1+...+lN)
         """
-        P = np.array(list(product(range(1, L + 1), repeat=N)))
-        multi_idx = P[np.where(np.sum(P, axis=1) <= L + N - 1)[0]]
+        # old implementation: does not scale well
+        # P = np.array(list(product(range(1, L + 1), repeat=N)))
+        # multi_idx = P[np.where(np.sum(P, axis=1) <= L + N - 1)[0]]
+
+        # use the look_ahead subroutine to build an isotropic sparse grid (faster)
+        multi_idx = np.array([np.ones(self.N, dtype='int')])
+        for l in range(self.L - 1):
+            self.look_ahead(multi_idx)
+            # accept all admissible indices to build an isotropic grid
+            multi_idx = np.append(multi_idx, self.admissible_idx, axis=0)
+
         return multi_idx
 
 
@@ -480,7 +458,7 @@ def setdiff2d(X, Y):
 
     Returns
     -------
-    The difference X \ Y as a 2D array
+    The difference X \\ Y as a 2D array
 
     """
     diff = set(map(tuple, X)) - set(map(tuple, Y))

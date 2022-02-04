@@ -42,6 +42,7 @@ class SimpleCSV:
     ouput_columns: list
         A list of column names that will be selected to appear in the output.
     """
+
     def __init__(self, target_filename, output_columns, dialect='excel'):
         if len(output_columns) == 0:
             msg = "output_columns cannot be empty."
@@ -56,7 +57,7 @@ class SimpleCSV:
     def _get_output_path(run_info=None, outfile=None):
         """Constructs absolute path from the `target_filename` and the `run_dir` parameter
         in the `run_info` retrieved from the database.
-        
+
         Parameters
         ----------
         run_info: dict
