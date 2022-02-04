@@ -267,6 +267,7 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
             return
 
         self.look_ahead(self.l_norm)
+        self.l_norm = np.append(self.l_norm, self.admissible_idx, axis=0)
 
     def look_ahead(self, current_multi_idx):
         """
