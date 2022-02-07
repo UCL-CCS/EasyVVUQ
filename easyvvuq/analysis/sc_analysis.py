@@ -974,7 +974,6 @@ class SCAnalysis(BaseAnalysisElement):
             mean = mean + comb_coef[tuple(l)] * pce_coefs[tuple(l)][k1]
 
         D = 0.0
-        # for k in l_norm[1:]:
         for k in l_norm:
             var_k = 0.0
             print('k = %s' % k)
