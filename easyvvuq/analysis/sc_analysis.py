@@ -246,7 +246,7 @@ class SCAnalysis(BaseAnalysisElement):
                     std_k = np.sqrt(var_k)
                 else:
                     pce_coefs = self.SC2PCE(self.samples[qoi_k])
-                    mean_k, var_k = self.get_pce_stats(self.l_norm, pce_coefs, self.comb_coef)
+                    mean_k, var_k, _ = self.get_pce_stats(self.l_norm, pce_coefs, self.comb_coef)
                     std_k = np.sqrt(var_k)
 
                 # compute statistical moments
@@ -343,7 +343,7 @@ class SCAnalysis(BaseAnalysisElement):
             self.wi_1d = self.sampler.wi_1d
             self.pce_coefs = self.SC2PCE(samples, verbose=True, l_norm=all_idx,
                                          xi_d=self.sampler.xi_d)
-            _, var_l = self.get_pce_stats(self.l_norm, self.pce_coefs, self.comb_coef)
+            _, var_l, _ = self.get_pce_stats(self.l_norm, self.pce_coefs, self.comb_coef)
 
         # the currently accepted grid points
         xi_d_accepted = self.sampler.generate_grid(self.l_norm)
@@ -378,7 +378,7 @@ class SCAnalysis(BaseAnalysisElement):
                 candidate_l_norm = np.concatenate((self.l_norm, l.reshape([1, self.N])))
                 # now we must recompute the combination coefficients
                 c_l = self.compute_comb_coef(l_norm=candidate_l_norm)
-                _, var_candidate_l = self.get_pce_stats(candidate_l_norm, self.pce_coefs, c_l)
+                _, var_candidate_l, _ = self.get_pce_stats(candidate_l_norm, self.pce_coefs, c_l)
                 #error in var
                 error[tuple(l)] = np.linalg.norm(var_candidate_l - var_l, np.inf)
             else:
@@ -413,7 +413,7 @@ class SCAnalysis(BaseAnalysisElement):
             # mean_f, var_f = self.get_moments(qoi)
             logging.debug('Storing moments of iteration %d' % self.sampler.nadaptations)
             pce_coefs = self.SC2PCE(samples, verbose=True)
-            mean_f, var_f = self.get_pce_stats(self.l_norm, pce_coefs, self.comb_coef)
+            mean_f, var_f, _ = self.get_pce_stats(self.l_norm, pce_coefs, self.comb_coef)
             self.mean_history.append(mean_f)
             self.std_history.append(var_f)
             logging.debug('done')
@@ -950,8 +950,48 @@ class SCAnalysis(BaseAnalysisElement):
         logging.debug('done')
         return pce_coefs
 
+    def generalized_pce_coefs(self, l_norm, pce_coefs, comb_coef):
+        """
+        Computes the generalized PCE coefficients, defined as the linear combibation
+        of PCE coefficients which make it possible to write the dimension-adaptive
+        PCE expansion in standard form.
+
+        Parameters
+        ----------
+        l_norm : array
+            array of quadrature order multi indices
+        pce_coefs : tuple
+            tuple of PCE coefficients computed by SC2PCE subroutine
+        comb_coef : tuple
+            tuple of combination coefficients computed by compute_comb_coef
+
+        Returns
+        -------
+        gen_pce_coefs : tuple
+            The generalized PCE coefficients, indexed per multi index.
+
+        """
+        assert self.sparse, "Generalized PCE coeffcients are computed only for sparse grids"
+
+        # the set of all forward neighbours of l: {k | k >= l}
+        F_l = {}
+        # the generalized PCE coefs, which turn the adaptive PCE into a standard PCE expansion
+        gen_pce_coefs = {}
+        for l in l_norm:
+            # {indices of k | k >= l}
+            idx = np.where((l <= l_norm).all(axis=1))[0]
+            F_l[tuple(l)] = l_norm[idx]
+
+            # the generalized PCE coefs are comb_coef[k] * pce_coefs[k][l], summed over k
+            # for a fixed l
+            gen_pce_coefs[tuple(l)] = 0.0
+            for k in F_l[tuple(l)]:
+                gen_pce_coefs[tuple(l)] += comb_coef[tuple(k)] * pce_coefs[tuple(k)][tuple(l)]
+
+        return gen_pce_coefs
+
     def get_pce_stats(self, l_norm, pce_coefs, comb_coef):
-        """Compute the mean and the variance based on the PCE coefficients
+        """Compute the mean and the variance based on the generalized PCE coefficients
 
         Parameters
         ----------
@@ -967,25 +1007,21 @@ class SCAnalysis(BaseAnalysisElement):
         tuple with mean and variance based on the PCE coefficients
         """
 
-        # Compute the PCE mean
-        k1 = tuple(np.ones(self.N, dtype=int))
-        mean = 0.0
-        for l in l_norm:
-            mean = mean + comb_coef[tuple(l)] * pce_coefs[tuple(l)][k1]
+        gen_pce_coefs = self.generalized_pce_coefs(l_norm, pce_coefs, comb_coef)
 
+        # with the generalized pce coefs, the standard PCE formulas for the mean and var
+        # can be used for the dimension-adaptive PCE
+
+        # the PCE mean is just the 1st generalized PCE coef
+        l1 = tuple(np.ones(self.N, dtype=int))
+        mean = gen_pce_coefs[l1]
+
+        # the variance is the sum of the squared generalized PCE coefs, excluding the 1st coef
         D = 0.0
-        for k in l_norm:
-            var_k = 0.0
-            print('k = %s' % k)
-            for l in l_norm[1:]:
-                if tuple(k) in pce_coefs[tuple(l)].keys():
-                    print('l = %s' % l)
-                    eta_k = pce_coefs[tuple(l)][tuple(k)]
-                    var_k = var_k + comb_coef[tuple(l)] * eta_k
-            var_k = var_k**2
-            D = D + var_k
+        for l in l_norm[1:]:
+            D += gen_pce_coefs[tuple(l)] ** 2
 
-        return mean, D
+        return mean, D, gen_pce_coefs
 
     def get_pce_sobol_indices(self, qoi, typ='first_order', **kwargs):
         """Computes Sobol indices using Polynomials Chaos coefficients. These
@@ -1023,27 +1059,9 @@ class SCAnalysis(BaseAnalysisElement):
             samples = self.samples[qoi]
             N_qoi = self.N_qoi
 
-        # compute the PCE coefficients
+        # compute the (generalized) PCE coefficients and stats
         self.pce_coefs = self.SC2PCE(samples)
-
-        # Compute the PCE mean (not really required)
-        k1 = tuple(np.ones(self.N, dtype=int))
-        mean = 0.0
-        for l in self.l_norm:
-            mean = mean + self.comb_coef[tuple(l)] * self.pce_coefs[tuple(l)][k1]
-
-        # dict to hold the variance per multi index k
-        var = {}
-        # D = total PCE variance
-        D = 0.0
-        for k in self.l_norm[1:]:
-            var_k = 0.0
-            for l in self.l_norm[1:]:
-                if tuple(k) in self.pce_coefs[tuple(l)].keys():
-                    eta_k = self.pce_coefs[tuple(l)][tuple(k)]
-                    var_k = var_k + self.comb_coef[tuple(l)] * eta_k
-            var[tuple(k)] = var_k**2
-            D = D + var[tuple(k)]
+        mean, D, gen_pce_coefs = self.get_pce_stats(self.l_norm, self.pce_coefs, self.comb_coef)
 
         logging.debug('Computing Sobol indices...')
         # Universe = (0, 1, ..., N - 1)
@@ -1093,7 +1111,7 @@ class SCAnalysis(BaseAnalysisElement):
             logging.debug('Multi indices of dimension  %s are %s' % (u, k))
             # the partial variance of u is the sum of all variances index by k
             for k_u in k:
-                D_u[u] = D_u[u] + var[tuple(k_u)]
+                D_u[u] = D_u[u] + gen_pce_coefs[tuple(k_u)] ** 2
 
             # normalize D_u by total variance D to get the Sobol index
             S_u[u] = D_u[u] / D
@@ -1286,13 +1304,12 @@ class SCAnalysis(BaseAnalysisElement):
         CV_out = np.mean(CV_out[idx])
         blowup = CV_out / CV_in
 
-        logging.debug('-----------------')
-        logging.debug('Mean CV input = %.4f %%' % (100 * CV_in, ))
-        logging.debug('Mean CV output = %.4f %%' % (100 * CV_out, ))
-        logging.debug(
-            'Uncertainty amplification factor = %.4f/%.4f = %.4f' %
+        print('-----------------')
+        print('Mean CV input = %.4f %%' % (100 * CV_in, ))
+        print('Mean CV output = %.4f %%' % (100 * CV_out, ))
+        print('Uncertainty amplification factor = %.4f/%.4f = %.4f' %
             (CV_out, CV_in, blowup))
-        logging.debug('-----------------')
+        print('-----------------')
 
         return blowup
 
