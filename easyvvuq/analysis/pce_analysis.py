@@ -253,7 +253,7 @@ class PCEAnalysis(BaseAnalysisElement):
                 sobol_idx[i_sobol] = np.array(
                     [i for i, x in enumerate(sobol_idx_bool[i_sobol, :]) if x])
             var = ((coefficients[1:]**2).sum(axis=0))
-            sobol = sobol / var
+            sobol = sobol / (var + np.finfo(float).tiny)
             return sobol, sobol_idx, sobol_idx_bool
 
         if data_frame is None:
@@ -375,8 +375,14 @@ class PCEAnalysis(BaseAnalysisElement):
                 fit, self.sampler.distribution)
 
             # Output distributions
-            results['output_distributions'][k] = cp.QoI_Dist(
-                fit, self.sampler.distribution)
+            try:
+                results['output_distributions'][k] = cp.QoI_Dist(
+                    fit, self.sampler.distribution)
+            except Exception as e:
+                print ('Error %s for %s'% (e.__class__.__name__, k))
+#                from traceback import print_exc
+#                print_exc()
+                results['output_distributions'][k] = None
 
         return PCEAnalysisResults(raw_data=results, samples=data_frame,
                                   qois=self.qoi_cols, inputs=list(self.sampler.vary.get_keys()))

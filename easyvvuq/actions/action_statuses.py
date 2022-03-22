@@ -122,7 +122,7 @@ class ActionPool:
         self._collate_callback = fn
 
     def collate(self, progress_bar=False):
-        """A command that will block untill all Futures in the pool have finished.
+        """A command that will block until all Futures in the pool have finished.
         It will also store the results gather from `Actions` in the database.
 
         Parameters
