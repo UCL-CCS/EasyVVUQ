@@ -89,6 +89,8 @@ They deal with generic information in the sense that all parameters use the
 nomenclature and units provided by the user rather than anything specific to
 any application or workflow.
 
+Detailed information on the Sampler modules is available `here <https://easyvvuq.readthedocs.io/en/dev/_autodoc/easyvvuq.sampling.html#module-easyvvuq.sampling>`_.
+
 .. _encoders:
 
 Encoders
@@ -105,6 +107,8 @@ generic Encoder base class is picked up and may be used.
 This enables EasyVVUQ to be easily extended for new applications by 
 experienced users.
 
+Detailed information on the Encoder modules is available `here <https://easyvvuq.readthedocs.io/en/dev/_autodoc/easyvvuq.encoders.html#module-easyvvuq.encoders>`_.
+
 .. _decoders:
 
 Decoders
@@ -116,7 +120,8 @@ Similarly to an ``Encoder``, a ``Decoder`` is designed to be user extendable to
 facilitate analysis of a wide range of applications. 
 
 The `Encoder-Decoder tutorial <https://github.com/UCL-CCS/EasyVVUQ/blob/dev/tutorials/encoder_decoder_tutorial.ipynb>`_
-provides a good introduction to using Encoders and Decoders within EasyVVUQ.
+provides a good introduction to using Encoders and Decoders within EasyVVUQ. Detailed information on the Decoder modules
+themselves is available `here <https://easyvvuq.readthedocs.io/en/dev/_autodoc/easyvvuq.decoders.html#module-easyvvuq.decoders>`_.
 
 .. _analysis:
 
@@ -127,4 +132,6 @@ The final goal of any VVUQ workflow is an analysis which provided information
 on the simulation output across a range of runs.
 Different types of analysis (for example bootstrapping of multiple runs from
 varied initial conditions) are, or will be,  provided by EasyVVUQ.
+
+Detailed information on the Analysis modules is available `here <https://easyvvuq.readthedocs.io/en/dev/_autodoc/easyvvuq.analysis.html#module-easyvvuq.analysis>`_
 
