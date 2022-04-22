@@ -5,7 +5,7 @@ Conceptual basis
 
 EasyVVUQ was created as part of the `VECMA <http://www.vecma.eu/>`_ project, 
 and is currently maintained and enhanced as part of the
-`SEAVEA <https://www.seavea-project.org>` project.
+`SEAVEA <https://www.seavea-project.org>`_ project.
 The aim of this project was to make state of the art VVUQ algorithms
 available for use in HPC applications (and specifically multiscale models).
 The basis of making generic tools within VECMA is the idea of *Patterns*,
