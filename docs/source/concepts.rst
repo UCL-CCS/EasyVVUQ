@@ -62,7 +62,7 @@ central location where all information about your campaign is
 kept. The `Campaign` handles all validation and is transfers
 information between each stage of the workflow.
 
-The `Basic Tutorial <https://github.com/UCL-CCS/EasyVVUQ/blob/dev/tutorials/basic_tutorial.ipynb>`
+The `Basic Tutorial <https://github.com/UCL-CCS/EasyVVUQ/blob/dev/tutorials/basic_tutorial.ipynb>`_
 gives a good hands-on introduction to defining parameters and 
 creating a campaign.
 
@@ -115,8 +115,7 @@ The role of a ``Decoder`` is twofold, to record simulation completion in the
 Similarly to an ``Encoder``, a ``Decoder`` is designed to be user extendable to 
 facilitate analysis of a wide range of applications. 
 
-The `Encoder-Decoder tutorial 
-<https://github.com/UCL-CCS/EasyVVUQ/blob/dev/tutorials/encoder_decoder_tutorial.ipynb>`
+The `Encoder-Decoder tutorial <https://github.com/UCL-CCS/EasyVVUQ/blob/dev/tutorials/encoder_decoder_tutorial.ipynb>`_
 provides a good introduction to using Encoders and Decoders within EasyVVUQ.
 
 .. _analysis:
