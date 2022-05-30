@@ -33,6 +33,10 @@ We also provide a range of interactive tutorials within the repository.
 This collection changes over time, but can be found 
 here: https://github.com/UCL-CCS/EasyVVUQ/tree/dev/tutorials .
 
+Another point of reference point are the non-regression tests which
+can be found at https://github.com/UCL-CCS/EasyVVUQ/tree/dev/tests .
+These are often useful in showing how pieces of the software work.
+
 
 .. _toc:
 
