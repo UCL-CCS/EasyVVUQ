@@ -74,8 +74,6 @@ class Campaign:
         acceptable URI for SQLAlchemy.
     work_dir: str, optional, default='./'
         Path to working directory - used to store campaign directory.
-    state_file: str, optional
-        Path to serialised state - used to initialise the Campaign.
     change_to_state: bool, optional, default=False
         Should we change to the directory containing any specified `state_file`
         in order to make relative paths work.
@@ -143,7 +141,6 @@ class Campaign:
             actions=None,
             db_location=None,
             work_dir="./",
-            state_file=None,
             change_to_state=False,
             verify_all_runs=True
     ):
