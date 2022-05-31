@@ -954,7 +954,7 @@ class SCAnalysis(BaseAnalysisElement):
         """
         Computes the generalized PCE coefficients, defined as the linear combibation
         of PCE coefficients which make it possible to write the dimension-adaptive
-        PCE expansion in standard form.
+        PCE expansion in standard form. See DOI: 10.13140/RG.2.2.18085.58083/1
 
         Parameters
         ----------
@@ -992,6 +992,7 @@ class SCAnalysis(BaseAnalysisElement):
 
     def get_pce_stats(self, l_norm, pce_coefs, comb_coef):
         """Compute the mean and the variance based on the generalized PCE coefficients
+        See DOI: 10.13140/RG.2.2.18085.58083/1
 
         Parameters
         ----------
@@ -1028,7 +1029,7 @@ class SCAnalysis(BaseAnalysisElement):
         coefficients are computed from the SC expansion via a transformation
         of basis (SC2PCE subroutine). This works better than computing the
         Sobol indices directly from the SC expansion in the case of the
-        dimension-adaptive sampler.
+        dimension-adaptive sampler. See DOI: 10.13140/RG.2.2.18085.58083/1
 
         Method: J.D. Jakeman et al, "Adaptive multi-index collocation
         for uncertainty quantification and sensitivity analysis", 2019.
