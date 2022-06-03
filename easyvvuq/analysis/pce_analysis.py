@@ -422,19 +422,19 @@ class PCEAnalysis(BaseAnalysisElement):
 
                 # Sensitivity Analysis: First, Second and Total Sobol indices
                 sobols_first_narr = cp.Sens_m(fit, self.sampler.distribution)
-                sobols_second_narr = cp.Sens_m2(fit, self.sampler.distribution)
-                sobols_total_narr = cp.Sens_t(fit, self.sampler.distribution)
+                #sobols_second_narr = cp.Sens_m2(fit, self.sampler.distribution)
+                #sobols_total_narr = cp.Sens_t(fit, self.sampler.distribution)
                 sobols_first_dict = {}
                 sobols_second_dict = {}
                 sobols_total_dict = {}
                 for i, param_name in enumerate(self.sampler.vary.vary_dict):
                     sobols_first_dict[param_name] = sobols_first_narr[i]
-                    sobols_second_dict[param_name] = sobols_second_narr[i]
-                    sobols_total_dict[param_name] = sobols_total_narr[i]
+                    #sobols_second_dict[param_name] = sobols_second_narr[i]
+                    #sobols_total_dict[param_name] = sobols_total_narr[i]
 
                 results['sobols_first'][k] = sobols_first_dict
-                results['sobols_second'][k] = sobols_second_dict
-                results['sobols_total'][k] = sobols_total_dict
+                results['sobols_second'][k] = sobols_first_dict #sobols_second_dict
+                results['sobols_total'][k] = sobols_first_dict #sobols_total_dict
 
                 # Sensitivity Analysis: Derivative based
                 dY_hat = build_surrogate_der(fit, verbose=False)
