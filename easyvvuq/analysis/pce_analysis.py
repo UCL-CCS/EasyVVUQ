@@ -200,6 +200,9 @@ class PCEAnalysis(BaseAnalysisElement):
             msg = 'PCE analysis requires a paired sampler to be passed'
             raise RuntimeError(msg)
 
+        # Flag specifing if we should scale the runs but the nominal base run
+        self.relative_analysis = sampler.relative_analysis
+
         if qoi_cols is None:
             raise RuntimeError("Analysis element requires a list of "
                                "quantities of interest (qoi)")
@@ -381,7 +384,16 @@ class PCEAnalysis(BaseAnalysisElement):
 
         samples = {k: [] for k in qoi_cols}
         for k in qoi_cols:
-            samples[k] = data_frame[k].values
+            if self.relative_analysis:
+                # Scale the data to make it relative to the base run
+                base = data_frame[k].values[-1]
+                samples[k] = data_frame[k].values[:-1] / base - 1
+            else:
+                samples[k] = data_frame[k].values
+            
+            #print(f'Original {data_frame[k].values[:-1] = }')
+            #print(f'Base run {data_frame[k].values[-1] = }')
+            #print(f'Scaled {samples[k] = }')
 
         # Compute descriptive statistics for each quantity of interest
         for k in qoi_cols:

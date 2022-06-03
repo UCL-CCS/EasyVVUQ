@@ -43,7 +43,8 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
                  regression=False,
                  rule="G",
                  sparse=False,
-                 growth=False):
+                 growth=False,
+                 relative_analysis=False):
         """
         Create the sampler for the Polynomial Chaos Expansion using
         pseudo-spectral projection or regression (Point Collocation).
@@ -80,6 +81,11 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
 
         growth (bool, None), optional
             If True, quadrature point became nested.
+
+        relative_analysis (bool, None), optional
+            If True, we add one additional sample with all parameters having zero value.
+            This is used in the relative analysis, where parameters represent the delta of
+            the parameter nominal value (i.e. zero represents nominal value)
         """
         # Create and initialize the logger
         self.logger = logging.getLogger(__name__)
@@ -202,9 +208,11 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
 
         # To determinate the PCE vrainte to use
         self.regression = regression
+        
 
         # Regression variante (Point collocation method)
         if regression:
+            self.logger.info(f"Using point collocation method to create PCE")
             # Change the default rule
             if rule == "G":
                 self.rule = "M"
@@ -232,6 +240,7 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
 
         # Projection variante (Pseudo-spectral method)
         else:
+            self.logger.info(f"Using pseudo-spectral method to create PCE")
             # Nodes and weights for the integration
             self._nodes, self._weights = cp.generate_quadrature(order=polynomial_order,
                                                                 dist=self.distribution,
@@ -271,6 +280,10 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
             for i in range(count):
                 self.__next__()
 
+        # Remember whether to add the extra run
+        self.logger.info(f"Performing relative analysis: {relative_analysis}")
+        self.relative_analysis = relative_analysis
+
     def is_finite(self):
         return True
 
@@ -309,6 +322,10 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
                     run_dict[param_name] = self._nodes_dep[i][self.count]
                 else:
                     run_dict[param_name] = self._nodes[i][self.count]
+            self.count += 1
+            return run_dict
+        elif self.relative_analysis and self.count == self._n_samples:
+            run_dict = {param_name:0.0 for param_name in self.vary.vary_dict}
             self.count += 1
             return run_dict
         else:
