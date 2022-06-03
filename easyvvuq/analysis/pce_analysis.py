@@ -4,6 +4,7 @@ under the hood for this functionality.
 import logging
 import chaospy as cp
 import numpy as np
+import numpoly
 from easyvvuq import OutputType
 from .base import BaseAnalysisElement
 from .results import AnalysisResults
@@ -18,6 +19,25 @@ logger = logging.getLogger(__name__)
 class PCEAnalysisResults(QMCAnalysisResults):
     """Analysis results for the PCEAnalysis class.
     """
+
+    def _get_derivatives_first(self, qoi, input_):
+        """Returns the first order derivative-based index for a given qoi wrt input variable.
+
+        Parameters
+        ----------
+        qoi : str
+           Quantity of interest
+        input_ : str
+           Input variable
+
+        Returns
+        -------
+        float
+            First order derivative-based index.
+        """
+
+        raw_dict = AnalysisResults._keys_to_tuples(self.raw_data['derivatives_first'])
+        return raw_dict[AnalysisResults._to_tuple(qoi)][input_]
 
     def _get_sobols_first(self, qoi, input_):
         """Returns the first order sobol index for a given qoi wrt input variable.
@@ -257,6 +277,74 @@ class PCEAnalysis(BaseAnalysisElement):
             sobol = sobol / (var + np.finfo(float).tiny)
             return sobol, sobol_idx, sobol_idx_bool
 
+        def build_surrogate_der(Y_hat, verbose=False):
+            '''Computes derivative of the polynomial Y_hat w.r.t. Vars
+            Parameter T specifies the time dimension
+            '''
+
+            #TODO: build derivative only with respect to a subset of variables
+            dim = len(self.sampler.vary.vary_dict)
+            Vars = [v.names[0] for v in cp.variable(dim)]
+            T = len(Y_hat)
+
+            assert(len(Vars) == len(self.sampler.vary.vary_dict))
+
+            # derivative of the PCE expansion
+            # {dYhat_dx1: [t0, t1, ...],
+            #  dYhat_dx2: [t0, t1, ...],
+            #  ...,
+            #  dYhat_dxN: [t0, t1, ...] }
+            #TODO: Vars can be simplified to simple array of strings ['qi'] instad of {'qi': poly('qi')}
+            dY_hat = {v:[cp.polynomial(0) for t in range(T)] for v in self.sampler.vary.vary_dict}
+
+            for t in range(T):
+
+                for n1, n2 in zip(Y_hat[t].names, Vars):
+                    assert(n1 == n2)
+
+                for d_var_idx, (d_var, d_var_app) in enumerate(zip(Vars, self.sampler.vary.vary_dict)):
+
+                    if verbose:
+                        print(f'Computing derivative d(Y_hat)/d({d_var})')
+                        print('='*40)
+
+                    # Some variables are missing in the expression,
+                    # then they must be constant terms only i.e. sum(exp==0)
+                    if Y_hat[t].exponents.shape[1] < dim:
+                        #exponents.shape: (n_summands, n_variables)
+                        assert(sum(sum(np.array(Y_hat[t].exponents))) == 0)
+                        continue
+                        #print(Y_hat[t])
+                        #print(Y_hat[t].exponents)
+                        #print(d_var_idx)
+
+                    # Consider only polynomial components var^exp where exp > 0 (since the derivative decreases exp by -1)
+                    # 306 ms ± 5.97 ms per loop (mean ± std. dev. of 7 runs, 1 loop each)
+                    components_mask = np.array(Y_hat[t].exponents[:,d_var_idx] > 0)
+                    dY_hat_dvar_exp = Y_hat[t].exponents[components_mask]
+                    dY_hat_dvar_coeff = np.array(Y_hat[t].coefficients)[components_mask]
+
+                    # 911 ms ± 24 ms per loop (mean ± std. dev. of 7 runs, 1 loop each)
+                    #dY_hat_dvar_exp   = [exp for exp in Y_hat[t].exponents if exp[d_var_idx] > 0]
+                    #dY_hat_dvar_coeff = [Y_hat[t].coefficients[i] for i, exp in enumerate(Y_hat[t].exponents) if exp[d_var_idx] > 0]
+
+                    # Iterate over all polynomial components (summands)
+                    for i, (coeff, exp) in enumerate(zip(dY_hat_dvar_coeff, dY_hat_dvar_exp)):
+                        assert(exp[d_var_idx] > 0)
+
+                        # derivative = coeff*exp * var^(exp-1)
+                        dY_hat_dvar_coeff[i] = coeff * exp[d_var_idx]
+                        dY_hat_dvar_exp[i][d_var_idx] = exp[d_var_idx] - 1
+
+                    dY_hat[d_var_app][t] = numpoly.construct.polynomial_from_attributes(
+                                exponents=dY_hat_dvar_exp,
+                                coefficients=dY_hat_dvar_coeff,
+                                names=Y_hat[t].names,
+                                retain_coefficients=True,
+                                retain_names=True)
+
+            return dY_hat
+
         if data_frame is None:
             raise RuntimeError("Analysis element needs a data frame to "
                                "analyse")
@@ -275,6 +363,7 @@ class PCEAnalysis(BaseAnalysisElement):
                    'output_distributions': {},
                    'fit': {},
                    'Fourier_coefficients': {},
+                   'derivatives_first': {k: {} for k in qoi_cols},
                    }
 
         # Get sampler informations
@@ -334,6 +423,16 @@ class PCEAnalysis(BaseAnalysisElement):
                 results['sobols_first'][k] = sobols_first_dict
                 results['sobols_second'][k] = sobols_second_dict
                 results['sobols_total'][k] = sobols_total_dict
+
+                # Sensitivity Analysis: Derivative based
+                dY_hat = build_surrogate_der(fit, verbose=False)
+                derivatives_first_dict = {}
+                Ndimensions = len(self.sampler.vary.vary_dict)
+                for i, param_name in enumerate(self.sampler.vary.vary_dict):
+                    # Evaluate dY_hat['param'] at the origin
+                    derivatives_first_dict[param_name] = cp.polynomial(dY_hat[param_name])(*np.zeros(Ndimensions))
+
+                results['derivatives_first'][k] = derivatives_first_dict
 
             else:  # use PCE coefficients
 

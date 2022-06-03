@@ -256,8 +256,8 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
                 
 
         #%%%%%%%%%%%%%%%%%  USI DEBUG INFO   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        self.logger.debug(f"Sparse grid:\n{self._nodes}")
-        self.logger.debug(f"Transformed parse grid:\n{self._nodes_dep}")
+        # self.logger.debug(f"Sparse grid:\n{self._nodes}")
+        # self.logger.debug(f"Transformed parse grid:\n{self._nodes_dep}")
         #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
         # Fast forward to specified count, if possible
