@@ -410,7 +410,7 @@ class PCEAnalysis(BaseAnalysisElement):
                 fit, [1, 10, 50, 90, 99], self.sampler.distribution).squeeze()
             results['percentiles'][k] = {'p01': P01, 'p10': P10, 'p50': P50, 'p90': P90, 'p99': P99}
 
-            if self.sampling:  # use chaospy's sampling method
+            if self.sampling:  # use Chaospy's sampling method
 
                 # Statistical moments
                 mean = cp.E(fit, self.sampler.distribution)
@@ -421,30 +421,26 @@ class PCEAnalysis(BaseAnalysisElement):
                                                      'std': std}
 
                 # Sensitivity Analysis: First, Second and Total Sobol indices
+                #TODO: there is a bug when the sensitivity indices computed
+                # using Sens_m2() and Sens_t() are recursively calling itself
+                # infinitely, check the Chaospy implementation of these functions!
+                print(f'Warning: second and total order indices computed using \
+                        PCEAnalysis(sampling = True) might result in infinite  \
+                        recusion due to the Chaospy\'s implementation!!!' )
                 sobols_first_narr = cp.Sens_m(fit, self.sampler.distribution)
-                #sobols_second_narr = cp.Sens_m2(fit, self.sampler.distribution)
-                #sobols_total_narr = cp.Sens_t(fit, self.sampler.distribution)
+                sobols_second_narr = cp.Sens_m2(fit, self.sampler.distribution)
+                sobols_total_narr = cp.Sens_t(fit, self.sampler.distribution)
                 sobols_first_dict = {}
                 sobols_second_dict = {}
                 sobols_total_dict = {}
                 for i, param_name in enumerate(self.sampler.vary.vary_dict):
                     sobols_first_dict[param_name] = sobols_first_narr[i]
-                    #sobols_second_dict[param_name] = sobols_second_narr[i]
-                    #sobols_total_dict[param_name] = sobols_total_narr[i]
+                    sobols_second_dict[param_name] = sobols_second_narr[i]
+                    sobols_total_dict[param_name] = sobols_total_narr[i]
 
                 results['sobols_first'][k] = sobols_first_dict
-                results['sobols_second'][k] = sobols_first_dict #sobols_second_dict
-                results['sobols_total'][k] = sobols_first_dict #sobols_total_dict
-
-                # Sensitivity Analysis: Derivative based
-                dY_hat = build_surrogate_der(fit, verbose=False)
-                derivatives_first_dict = {}
-                Ndimensions = len(self.sampler.vary.vary_dict)
-                for i, param_name in enumerate(self.sampler.vary.vary_dict):
-                    # Evaluate dY_hat['param'] at the origin
-                    derivatives_first_dict[param_name] = cp.polynomial(dY_hat[param_name])(*np.zeros(Ndimensions))
-
-                results['derivatives_first'][k] = derivatives_first_dict
+                results['sobols_second'][k] = sobols_second_dict
+                results['sobols_total'][k] = sobols_total_dict
 
             else:  # use PCE coefficients
 
@@ -481,6 +477,16 @@ class PCEAnalysis(BaseAnalysisElement):
                 results['sobols_first'][k] = S1
                 results['sobols_second'][k] = S2
                 results['sobols_total'][k] = ST
+
+            # Sensitivity Analysis: Derivative based
+            dY_hat = build_surrogate_der(fit, verbose=False)
+            derivatives_first_dict = {}
+            Ndimensions = len(self.sampler.vary.vary_dict)
+            for i, param_name in enumerate(self.sampler.vary.vary_dict):
+                # Evaluate dY_hat['param'] at the origin
+                derivatives_first_dict[param_name] = cp.polynomial(dY_hat[param_name])(*np.zeros(Ndimensions))
+
+            results['derivatives_first'][k] = derivatives_first_dict
 
             # Correlation matrix
             results['correlation_matrices'][k] = cp.Corr(
