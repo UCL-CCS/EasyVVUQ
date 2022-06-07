@@ -83,9 +83,10 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
             If True, quadrature point became nested.
 
         relative_analysis (bool, None), optional
-            If True, we add one additional sample with all parameters having zero value.
-            This is used in the relative analysis, where parameters represent the delta of
-            the parameter nominal value (i.e. zero represents nominal value)
+            If True, we add one additional sample with all parameters having zero (nominal) value.
+            This is used in the relative analysis, where the model output is represented
+            relative to the nominal output, and similarly, the parameters represent the delta of
+            the parameter nominal value (i.e. zero represents parameter's nominal value)
         """
         # Create and initialize the logger
         self.logger = logging.getLogger(__name__)
