@@ -5,6 +5,7 @@ import logging
 import chaospy as cp
 import numpy as np
 import numpoly
+import warnings
 from easyvvuq import OutputType
 from .base import BaseAnalysisElement
 from .results import AnalysisResults
@@ -356,17 +357,24 @@ class PCEAnalysis(BaseAnalysisElement):
                 "No data in data frame passed to analyse element")
 
         qoi_cols = self.qoi_cols
+        T = len(data_frame[qoi_cols[0]].values[-1])
 
-        results = {'statistical_moments': {},
-                   'percentiles': {},
-                   'sobols_first': {k: {} for k in qoi_cols},
-                   'sobols_second': {k: {} for k in qoi_cols},
-                   'sobols_total': {k: {} for k in qoi_cols},
-                   'correlation_matrices': {},
-                   'output_distributions': {},
-                   'fit': {},
-                   'Fourier_coefficients': {},
-                   'derivatives_first': {k: {} for k in qoi_cols},
+        results = {'statistical_moments': {k: {'mean':np.zeros(T),
+                                               'var':np.zeros(T),
+                                               'std':np.zeros(T)} for k in qoi_cols},
+                   'percentiles': {k: {'p01': np.zeros(T),
+                                       'p10': np.zeros(T),
+                                       'p50': np.zeros(T),
+                                       'p90': np.zeros(T),
+                                       'p99': np.zeros(T)} for k in qoi_cols},
+                   'sobols_first': {k: {p: np.zeros(T) for p in self.sampler.vary.vary_dict} for k in qoi_cols},
+                   'sobols_second': {k: {p: np.zeros(T) for p in self.sampler.vary.vary_dict} for k in qoi_cols},
+                   'sobols_total': {k: {p: np.zeros(T) for p in self.sampler.vary.vary_dict} for k in qoi_cols},
+                   'correlation_matrices': {k: {} for k in qoi_cols},
+                   'output_distributions': {k: {} for k in qoi_cols},
+                   'fit': {k: cp.polynomial(np.zeros(T)) for k in qoi_cols},
+                   'Fourier_coefficients': {k: {p: np.zeros(T) for p in self.sampler.vary.vary_dict} for k in qoi_cols},
+                   'derivatives_first': {k: {p: np.zeros(T) for p in self.sampler.vary.vary_dict} for k in qoi_cols},
                    }
 
         # Get sampler informations
@@ -385,8 +393,12 @@ class PCEAnalysis(BaseAnalysisElement):
         samples = {k: [] for k in qoi_cols}
         for k in qoi_cols:
             if self.relative_analysis:
-                # Scale the model output to make it relative to the base run
                 base = data_frame[k].values[-1]
+                if np.all(np.array(base) == 0):
+                    warnings.warn(f"Removing QoI {k} from the analysis, contains all zeros", RuntimeWarning)
+                    continue
+
+                # Scale the model output to make it relative to the base run
                 samples[k] = data_frame[k].values[:-1] / base - 1
             else:
                 samples[k] = data_frame[k].values
@@ -395,9 +407,7 @@ class PCEAnalysis(BaseAnalysisElement):
             #print(f'Base run {data_frame[k].values[-1] = }')
             #print(f'Scaled {samples[k] = }')
 
-        # Compute descriptive statistics for each quantity of interest
-        for k in qoi_cols:
-            # Approximation solver
+            # Compute descriptive statistics for each quantity of interest
             if regression:
                 fit, fc = cp.fit_regression(P, nodes, samples[k], retall=1)
             else:
