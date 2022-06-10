@@ -55,8 +55,8 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
             keys = parameters to be sampled, values = distributions.
 
         distribution: cp.Distribution or matrix-like
-            Joint distribution specifying dependency between the parameters in vary or
-            correlation matrix of the variables. Depending on the type of the parameter
+            Joint distribution specifying dependency between the parameters or
+            correlation matrix of the parameters. Depending on the type of the argument
             either Rosenblatt or Cholesky transformation will be used to handle the
             dependent parameters.
 
