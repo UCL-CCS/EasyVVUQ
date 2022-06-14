@@ -6,7 +6,7 @@ EasyVVUQ installation
 Installation
 ------------
 
-.. note:: To use the library you will need Python 3.6+.
+.. note:: To use the library you will need Python 3.7+.
 
 Installation should be straight forward::
 
