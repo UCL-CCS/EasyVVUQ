@@ -158,7 +158,7 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
         self.distribution_dep = None
         if distribution is None:
             self.logger.info("Using default joint distribution")
-            self.distribution = cp.J(*params_distribution)
+            #self.distribution = cp.J(*params_distribution)
         elif 'distributions' in str(type(distribution)):
             if distribution.stochastic_dependent:
                 assert(isinstance(distribution, cp.MvNormal))
@@ -186,14 +186,15 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
         # Build independent joint for the dependent distribution
         # Build independent joint multivariate distribution considering each uncertain paramter
         # Use Uniform or Normal distribution depending on the distr. of each parameter
-        if not self.distribution_dep is None:
-            #params_distribution = [cp.Normal() for i in range(params_num)]
-            #params_distribution = [cp.Uniform() for i in range(params_num)]
-            params_distribution = [cp.Uniform() if type(vary_dist).__name__ == "Uniform"
-                                   else cp.Normal()
-                                   for vary_dist in vary.values()]
-            self.distribution = cp.J(*params_distribution)
-            self.logger.debug(f"The independent distribution consists of: {self.distribution}")
+        #if not self.distribution_dep is None:
+        
+        #params_distribution = [cp.Normal() for i in range(params_num)]
+        #params_distribution = [cp.Uniform() for i in range(params_num)]
+        params_distribution = [cp.Uniform() if type(vary_dist).__name__ == "Uniform"
+                                else cp.Normal()
+                                for vary_dist in vary.values()]
+        self.distribution = cp.J(*params_distribution)
+        self.logger.debug(f"The independent distribution consists of: {self.distribution}")
 
         # The orthogonal polynomials corresponding to the joint distribution
         self.P = cp.expansion.stieltjes(polynomial_order, self.distribution, normed=True)
@@ -240,18 +241,20 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
                     self.logger.critical("Error: How did this happen? We are transforming the nodes but not with Rosenblatt nor Cholesky")
                     exit()
 
-                # Scale the independent nodes
-                for i, param_dist in enumerate(vary.values()):
-                    if type(param_dist).__name__ == "Normal":
-                        mu = param_dist._parameters['shift'][0]
-                        sigma = param_dist._parameters['scale'][0]
-                        self._nodes[i] = sigma*self._nodes[i] + mu
-                    elif type(param_dist).__name__ == "Uniform":
-                        low = param_dist._parameters['lower'][0]
-                        up = param_dist._parameters['upper'][0]
-                        self._nodes[i] = (up - low)*self._nodes[i] + low
-                    else:
-                        raise NotImplementedError(f'Not supported distribution: {type(param_dist)}!')
+            # Scale the independent nodes
+            for i, (param, param_dist) in enumerate(zip(vary.keys(),vary.values())):
+                if type(param_dist).__name__ == "Normal":
+                    mu = param_dist._parameters['shift'][0]
+                    sigma = param_dist._parameters['scale'][0]
+                    self._nodes[i] = sigma*self._nodes[i] + mu
+                    self.logger.info(f"Scaled independet nodes {param} with {mu = } and {sigma = }")
+                elif type(param_dist).__name__ == "Uniform":
+                    low = param_dist._parameters['lower'][0]
+                    up = param_dist._parameters['upper'][0]
+                    self._nodes[i] = (up - low)*self._nodes[i] + low
+                    self.logger.info(f"Scaled independet nodes {param} with {low = } and {up = }")
+                else:
+                    raise NotImplementedError(f'Not supported distribution: {type(param_dist)}!')
 
         # Projection variante (Pseudo-spectral method)
         else:
@@ -278,8 +281,8 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
                     self.logger.critical("Error: How did this happen? We are transforming the nodes but not with Rosenblatt nor Cholesky")
                     exit()
 
-                # Scale the independent nodes
-                raise NotImplementedError(f'Transformation of the independent nodes not supported with {regression = }')
+            # Scale the independent nodes
+            raise NotImplementedError(f'Transformation of the independent nodes not supported with {regression = }')
                 
 
         #%%%%%%%%%%%%%%%%%  USI DEBUG INFO   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
