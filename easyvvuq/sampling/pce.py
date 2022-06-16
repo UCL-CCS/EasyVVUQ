@@ -170,6 +170,7 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
             else:
                 self.logger.info("Using user provided joint distribution without any transformation")
                 self.distribution = distribution
+                assert(self._is_dependent == False)
         elif 'list' in str(type(distribution)) or 'ndarray' in str(type(distribution)):
             assert(len(distribution) == params_num) # check the correct size of the corr
             for i in range(params_num):
@@ -239,6 +240,19 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
                     self.logger.critical("Error: How did this happen? We are transforming the nodes but not with Rosenblatt nor Cholesky")
                     exit()
 
+                # Scale the independent nodes
+                for i, param_dist in enumerate(vary.values()):
+                    if type(param_dist).__name__ == "Normal":
+                        mu = param_dist._parameters['shift'][0]
+                        sigma = param_dist._parameters['scale'][0]
+                        self._nodes[i] = sigma*self._nodes[i] + mu
+                    elif type(param_dist).__name__ == "Uniform":
+                        low = param_dist._parameters['lower'][0]
+                        up = param_dist._parameters['upper'][0]
+                        self._nodes[i] = (up - low)*self._nodes[i] + low
+                    else:
+                        raise NotImplementedError(f'Not supported distribution: {type(param_dist)}!')
+
         # Projection variante (Pseudo-spectral method)
         else:
             self.logger.info(f"Using pseudo-spectral method to create PCE")
@@ -263,6 +277,9 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
                 else:
                     self.logger.critical("Error: How did this happen? We are transforming the nodes but not with Rosenblatt nor Cholesky")
                     exit()
+
+                # Scale the independent nodes
+                raise NotImplementedError(f'Transformation of the independent nodes not supported with {regression = }')
                 
 
         #%%%%%%%%%%%%%%%%%  USI DEBUG INFO   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
