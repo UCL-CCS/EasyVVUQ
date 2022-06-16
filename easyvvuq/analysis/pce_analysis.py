@@ -397,6 +397,9 @@ class PCEAnalysis(BaseAnalysisElement):
                 if np.all(np.array(base) == 0):
                     warnings.warn(f"Removing QoI {k} from the analysis, contains all zeros", RuntimeWarning)
                     continue
+                if np.any(np.array(base) == 0):
+                    warnings.warn(f"Removing QoI {k} from the analysis, contains some zeros", RuntimeWarning)
+                    continue
 
                 # Scale the model output to make it relative to the base run
                 samples[k] = data_frame[k].values[:-1] / base - 1
