@@ -501,6 +501,19 @@ class PCEAnalysis(BaseAnalysisElement):
 
             results['derivatives_first'][k] = derivatives_first_dict
 
+            # Transform the relative numbers back to the absolute values
+            if self.relative_analysis:
+                base = data_frame[k].values[-1]
+
+                results['percentiles'][k]['p01'] = (1.0 + results['percentiles'][k]['p01']) * base
+                results['percentiles'][k]['p10'] = (1.0 + results['percentiles'][k]['p10']) * base
+                results['percentiles'][k]['p50'] = (1.0 + results['percentiles'][k]['p50']) * base
+                results['percentiles'][k]['p90'] = (1.0 + results['percentiles'][k]['p90']) * base
+                results['percentiles'][k]['p99'] = (1.0 + results['percentiles'][k]['p99']) * base
+                results['statistical_moments'][k]['mean'] = (1.0 + results['statistical_moments'][k]['mean']) * base
+                results['statistical_moments'][k]['var']  = (1.0 + results['statistical_moments'][k]['var']) * base
+                results['statistical_moments'][k]['std']  = (1.0 + results['statistical_moments'][k]['std']) * base
+
             # Correlation matrix
             try:
                 warnings.warn(f"Skipping computation of cp.Corr", RuntimeWarning)
