@@ -179,6 +179,7 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
             self._is_dependent = True
             self._transformation = "Cholesky"
             self.distribution_dep = np.array(distribution)
+            raise NotImplementedError(f'Not tested the Cholesky with respect to scaling of the samples!')
         else:
             self.logger.error("Unsupported type of the distribution argument. It should be either cp.Distribution or a matrix-like array")
             exit()
@@ -189,9 +190,10 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
         if not self.distribution_dep is None:
             #params_distribution = [cp.Normal() for i in range(params_num)]
             #params_distribution = [cp.Uniform() for i in range(params_num)]
-            params_distribution = [cp.Uniform() if type(vary_dist).__name__ == "Uniform"
-                                   else cp.Normal()
-                                   for vary_dist in vary.values()]
+            #params_distribution = [cp.Uniform() if type(vary_dist).__name__ == "Uniform"
+            #                       else cp.Normal()
+            #                       for vary_dist in vary.values()]
+            params_distribution = [vary_dist for vary_dist in vary.values()]
             self.distribution = cp.J(*params_distribution)
             self.logger.debug(f"The independent distribution consists of: {self.distribution}")
 
@@ -210,7 +212,6 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
 
         # To determinate the PCE vrainte to use
         self.regression = regression
-        
 
         # Regression variante (Point collocation method)
         if regression:
@@ -232,7 +233,7 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
             if self._is_dependent:
                 if self._transformation == "Rosenblatt":
                     self.logger.info("Performing Rosenblatt transformation")
-                    self._nodes_dep = Transformations.rosenblatt(self._nodes, self.distribution, self.distribution_dep,regression)
+                    self._nodes_dep = Transformations.rosenblatt(self._nodes, self.distribution, self.distribution_dep, regression)
                 elif self._transformation == "Cholesky":
                     self.logger.info("Performing Cholesky transformation")
                     self._nodes_dep = Transformations.cholesky(self._nodes, self.vary, self.distribution_dep, regression)
@@ -240,18 +241,18 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
                     self.logger.critical("Error: How did this happen? We are transforming the nodes but not with Rosenblatt nor Cholesky")
                     exit()
 
-                # Scale the independent nodes
-                for i, param_dist in enumerate(vary.values()):
-                    if type(param_dist).__name__ == "Normal":
-                        mu = param_dist._parameters['shift'][0]
-                        sigma = param_dist._parameters['scale'][0]
-                        self._nodes[i] = sigma*self._nodes[i] + mu
-                    elif type(param_dist).__name__ == "Uniform":
-                        low = param_dist._parameters['lower'][0]
-                        up = param_dist._parameters['upper'][0]
-                        self._nodes[i] = (up - low)*self._nodes[i] + low
-                    else:
-                        raise NotImplementedError(f'Not supported distribution: {type(param_dist)}!')
+                # # Scale the independent nodes
+                # for i, param_dist in enumerate(vary.values()):
+                #     if type(param_dist).__name__ == "Normal":
+                #         mu = param_dist._parameters['shift'][0]
+                #         sigma = param_dist._parameters['scale'][0]
+                #         self._nodes[i] = sigma*self._nodes[i] + mu
+                #     elif type(param_dist).__name__ == "Uniform":
+                #         low = param_dist._parameters['lower'][0]
+                #         up = param_dist._parameters['upper'][0]
+                #         self._nodes[i] = (up - low)*self._nodes[i] + low
+                #     else:
+                #         raise NotImplementedError(f'Not supported distribution: {type(param_dist)}!')
 
         # Projection variante (Pseudo-spectral method)
         else:
