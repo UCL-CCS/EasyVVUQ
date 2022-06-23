@@ -393,7 +393,7 @@ class PCEAnalysis(BaseAnalysisElement):
         samples = {k: [] for k in qoi_cols}
         for k in qoi_cols:
             if self.relative_analysis:
-                base = data_frame[k].values[-1]
+                base = data_frame[k].values[self.sampler.n_samples]
                 if np.all(np.array(base) == 0):
                     warnings.warn(f"Removing QoI {k} from the analysis, contains all zeros", RuntimeWarning)
                     continue
@@ -402,9 +402,9 @@ class PCEAnalysis(BaseAnalysisElement):
                     continue
 
                 # Scale the model output to make it relative to the base run
-                samples[k] = data_frame[k].values[:-1] / base - 1
+                samples[k] = data_frame[k].values[:self.sampler.n_samples] / base - 1
             else:
-                samples[k] = data_frame[k].values
+                samples[k] = data_frame[k].values[:self.sampler.n_samples]
             
             #print(f'Original {data_frame[k].values[:-1] = }')
             #print(f'Base run {data_frame[k].values[-1] = }')
@@ -412,7 +412,8 @@ class PCEAnalysis(BaseAnalysisElement):
 
             # Compute descriptive statistics for each quantity of interest
             if regression:
-                fit, fc = cp.fit_regression(P, nodes, samples[k], retall=1)
+                print(f'Using {self.sampler.n_samples} nodes and {len(samples[k])} evals to fit the polynomial')
+                fit, fc = cp.fit_regression(P, [n[:self.sampler.n_samples] for n in nodes], samples[k], retall=1)
             else:
                 fit, fc = cp.fit_quadrature(P, nodes, weights, samples[k], retall=1)
             results['fit'][k] = fit
