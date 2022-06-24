@@ -67,7 +67,8 @@ def test_surrogate_workflow(tmpdir, sampler):
     for index, row in df.iterrows():
         surrogate_y = surrogate({'Pe': row['Pe'][0], 'f': row['f'][0]})['u']
         model_y = row['u'].values
-        assert(pytest.approx(surrogate_y == model_y))
+        #assert(pytest.approx(surrogate_y == model_y))
+        assert np.max(np.abs(surrogate_y - model_y)) < 1e-6
 
     # Attempt callibration with MCMC
     campaign.add_app(name='surrogate', params=params, actions=Actions(ExecutePython(surrogate)))
