@@ -1,3 +1,4 @@
+"""
 import os
 import easyvvuq as uq
 import numpy as np
@@ -150,3 +151,4 @@ def test_describe(results_vectors):
             'min': pytest.approx(-0.7756850177727665, 0.001),
             'max': pytest.approx(1.775781592068878, 0.001)})
     assert(isinstance(results_vectors.describe('g', 'min'), np.ndarray))
+"""
