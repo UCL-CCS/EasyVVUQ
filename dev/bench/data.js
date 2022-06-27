@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1656087502383,
+  "lastUpdate": 1656337071522,
   "repoUrl": "https://github.com/UCL-CCS/EasyVVUQ",
   "entries": {
     "Benchmark": [
@@ -3894,6 +3894,72 @@ window.BENCHMARK_DATA = {
             "unit": "iter/sec",
             "range": "stddev: 0.00033242282442923096",
             "extra": "mean: 20.823804659091717 msec\nrounds: 44"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "djgroennl@gmail.com",
+            "name": "Derek Groen",
+            "username": "djgroen"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "fd421878b730ca5b685df577349ba390408fc99f",
+          "message": "Merge pull request #364 from UCL-CCS/iso_sparse_scalibility\n\nmore scalable isotropic sparse grid",
+          "timestamp": "2022-06-27T14:31:06+01:00",
+          "tree_id": "671d80167c80a679ebcc915ecc461e1013975604",
+          "url": "https://github.com/UCL-CCS/EasyVVUQ/commit/fd421878b730ca5b685df577349ba390408fc99f"
+        },
+        "date": 1656337069733,
+        "tool": "pytest",
+        "benches": [
+          {
+            "name": "tests/test_db_benchmark.py::test_draw",
+            "value": 0.07793180108141808,
+            "unit": "iter/sec",
+            "range": "stddev: 0.04707482729961997",
+            "extra": "mean: 12.8317321828 sec\nrounds: 5"
+          },
+          {
+            "name": "tests/test_db_benchmark.py::test_store_results",
+            "value": 0.09921033657607302,
+            "unit": "iter/sec",
+            "range": "stddev: 0.0363519592392184",
+            "extra": "mean: 10.079594873999998 sec\nrounds: 5"
+          },
+          {
+            "name": "tests/test_db_benchmark.py::test_get_collation_result",
+            "value": 78.84687593888461,
+            "unit": "iter/sec",
+            "range": "stddev: 0.00040311980684109227",
+            "extra": "mean: 12.682810676926692 msec\nrounds: 65"
+          },
+          {
+            "name": "tests/test_db_benchmark.py::test_draw_add",
+            "value": 0.07795696484757828,
+            "unit": "iter/sec",
+            "range": "stddev: 0.05994101369647763",
+            "extra": "mean: 12.827590221799984 sec\nrounds: 5"
+          },
+          {
+            "name": "tests/test_db_benchmark.py::test_store_results_add",
+            "value": 0.09912847909315345,
+            "unit": "iter/sec",
+            "range": "stddev: 0.056070285763495056",
+            "extra": "mean: 10.087918317200002 sec\nrounds: 5"
+          },
+          {
+            "name": "tests/test_db_benchmark.py::test_get_collation_result_add",
+            "value": 42.32216045983381,
+            "unit": "iter/sec",
+            "range": "stddev: 0.00046855659206592164",
+            "extra": "mean: 23.62828336585175 msec\nrounds: 41"
           }
         ]
       }
