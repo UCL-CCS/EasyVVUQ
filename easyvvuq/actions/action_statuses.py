@@ -45,7 +45,7 @@ class ActionPool:
         An instance of `Actions` containing things to be done as part of the simulation.
     inits: iterable
         Initial inputs to be passed to each `Actions` representing a sample. Will usually contain
-        dictionaries with the following information: {'run_id': ..., 'campaign_dir': ..., 
+        dictionaries with the following information: {'run_id': ..., 'campaign_dir': ...,
         'run_info': ...}.
     sequential: bool
         Will run the actions sequentially.
@@ -70,7 +70,7 @@ class ActionPool:
         Returns
         -------
         ActionPool
-            Starts execution and returns a reference to itself for tracking progress 
+            Starts execution and returns a reference to itself for tracking progress
             and for collation.
         """
         if pool is None:
@@ -92,7 +92,7 @@ class ActionPool:
         Returns
         -------
         dict
-            A dictionary with four keys - 'ready', 'active' and 'finished', 'failed'. 
+            A dictionary with four keys - 'ready', 'active' and 'finished', 'failed'.
             Values under "ready" correspond to `Actions` waiting for execution, "active"
             corresponds to the number of currently running tasks.
         """
@@ -114,7 +114,7 @@ class ActionPool:
 
     def add_collate_callback(self, fn):
         """Adds a callback to be called after collation is done.
-        
+
         Parameters
         ----------
         fn - A callable that takes previous as it's only input.

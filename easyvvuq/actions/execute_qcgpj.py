@@ -122,7 +122,13 @@ class QCGPJPool(Executor):
     polling_interval: int
         An interval between queries to the QCG-PilotJob Manager service about state of the tasks, in seconds.
     """
-    def __init__(self, qcgpj_executor=None, template=None, template_params=None, polling_interval=1):
+
+    def __init__(
+            self,
+            qcgpj_executor=None,
+            template=None,
+            template_params=None,
+            polling_interval=1):
         if qcgpj_executor is None:
             qcgpj_executor = QCGPJExecutor()
         if template is None:
@@ -268,6 +274,7 @@ class ExecuteQCGPJ:
     action: Action
         an action that will be decorated in order to enable parallel execution inside a QCG-PilotJob task.
     """
+
     def __init__(self, action):
         self._action = action
 

@@ -50,7 +50,7 @@ class MCMCAnalysisResults(AnalysisResults):
 
     def plot_chains(self, input_parameter, chain=None):
         """Will plot the chains with the input parameter value in the y axis.
-        
+
         Parameters
         ----------
         input_parameter: str
@@ -74,6 +74,7 @@ class MCMCAnalysis(BaseAnalysisElement):
     sampler: MCMCSampler
        An instance of MCMCSampler used to generate MCMC samples.
     """
+
     def __init__(self, sampler):
         self.sampler = sampler
 
