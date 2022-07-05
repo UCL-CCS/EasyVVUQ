@@ -412,7 +412,7 @@ class PCEAnalysis(BaseAnalysisElement):
 
             # Compute descriptive statistics for each quantity of interest
             if regression:
-                print(f'Using {self.sampler.n_samples} nodes and {len(samples[k])} evals to fit the polynomial')
+                #print(f'Using {self.sampler.n_samples} nodes and {len(samples[k])} evals to fit the polynomial')
                 fit, fc = cp.fit_regression(P, [n[:self.sampler.n_samples] for n in nodes], samples[k], retall=1)
             else:
                 fit, fc = cp.fit_quadrature(P, nodes, weights, samples[k], retall=1)

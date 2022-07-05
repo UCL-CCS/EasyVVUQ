@@ -228,34 +228,37 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
                                               domain=self.distribution,
                                               rule=self.rule)
 
-            # Generate additional 2*N samples as convex combination of existing ones
-            random.seed(0)
-            nodes_extra = np.array([np.zeros(2*self._n_samples) for _ in range(params_num)])
-            for s in range(2*self._n_samples):
-                s1 = random.randint(0, self._n_samples-1)
-                s2 = random.randint(0, self._n_samples-1)
-                while s1 == s2: # make sure that we select 2 different indices
+            # Generate additional test samples to evaluate the PCE fit
+            self.enable_test = False
+            if self.enable_test:
+                # Generate additional 2*N samples as convex combination of existing ones
+                random.seed(0)
+                nodes_extra = np.array([np.zeros(2*self._n_samples) for _ in range(params_num)])
+                for s in range(2*self._n_samples):
+                    s1 = random.randint(0, self._n_samples-1)
                     s2 = random.randint(0, self._n_samples-1)
-                c = random.random() #convex combination constant 
-                for d in range(params_num):
-                    nodes_extra[d][s] = c*self._nodes[d][s1] + (1-c)*self._nodes[d][s2]
-            # Concatenate PCE nodes with the extra 2*N nodes
-            new_nodes = np.array([np.zeros(3*self._n_samples) for _ in range(params_num)])
-            for i in range(params_num):
-                new_nodes[i] = np.concatenate((self._nodes[i], nodes_extra[i]))
-            self._nodes = new_nodes
-            
+                    while s1 == s2: # make sure that we select 2 different indices
+                        s2 = random.randint(0, self._n_samples-1)
+                    c = random.random() #convex combination constant 
+                    for d in range(params_num):
+                        nodes_extra[d][s] = c*self._nodes[d][s1] + (1-c)*self._nodes[d][s2]
+                # Concatenate PCE nodes with the extra 2*N nodes
+                new_nodes = np.array([np.zeros(3*self._n_samples) for _ in range(params_num)])
+                for i in range(params_num):
+                    new_nodes[i] = np.concatenate((self._nodes[i], nodes_extra[i]))
+                self._nodes = new_nodes
+                
 
-            # # Generate 3*N samples
-            # self._nodes = cp.generate_samples(order=3*self._n_samples,
-            #                                   domain=self.distribution,
-            #                                   rule=self.rule)
-            # # Permute the nodes
-            # P = list(range(len(self._nodes[0])))
-            # random.shuffle(P)
-            # self._nodes = np.array([np.array(ni)[P] for ni in self._nodes])
+                # # Generate 3*N samples
+                # self._nodes = cp.generate_samples(order=3*self._n_samples,
+                #                                   domain=self.distribution,
+                #                                   rule=self.rule)
+                # # Permute the nodes
+                # P = list(range(len(self._nodes[0])))
+                # random.shuffle(P)
+                # self._nodes = np.array([np.array(ni)[P] for ni in self._nodes])
 
-            assert(len(self._nodes[0]) == 3*self._n_samples)
+                assert(len(self._nodes[0]) == 3*self._n_samples)
 
             self._weights = None
 
@@ -377,7 +380,7 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
             run_dict = {param_name:0.0 for param_name in self.vary.vary_dict}
             self.count += 1
             return run_dict
-        elif self.regression and self.count > self._n_samples and self.count <= 3*self._n_samples: #extra Test samples used to evaluate the PCE
+        elif self.enable_test and self.regression and self.count > self._n_samples and self.count <= 3*self._n_samples: #extra Test samples used to evaluate the PCE
             run_dict = {}
             for i, param_name in enumerate(self.vary.vary_dict):
                 # These are nodes that need to be returned as samples o be used for the model execution,
