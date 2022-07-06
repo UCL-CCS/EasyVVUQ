@@ -1,3 +1,4 @@
+#from hashlib import shake_128
 import logging
 import chaospy as cp
 import numpy as np
@@ -35,16 +36,12 @@ __copyright__ = """
 __license__ = "LGPL"
 
 
-class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
+class FDSampler(BaseSamplingElement, sampler_name="FD_sampler"):
     def __init__(self,
                  vary=None,
                  distribution=None,
+                 perturbation=0.05,
                  count=0,
-                 polynomial_order=4,
-                 regression=False,
-                 rule="G",
-                 sparse=False,
-                 growth=False,
                  relative_analysis=False):
         """
         Create the sampler for the Polynomial Chaos Expansion using
@@ -61,27 +58,11 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
             either Rosenblatt or Cholesky transformation will be used to handle the
             dependent parameters.
 
+        perturbation: float
+            Perturbation of the parameters used in the finite difference scheme
+
         count : int, optional
             Specified counter for Fast forward, default is 0.
-
-        polynomial_order : int, optional
-            The polynomial order, default is 4.
-
-        regression : bool, optional
-            If True, regression variante (point collecation) will be used,
-            otherwise projection variante (pseud-spectral) will be used.
-            Default value is False.
-
-        rule : char, optional
-            The quadrature method, in case of projection (default is Gaussian "G").
-            The sequence sampler in case of regression (default is Hammersley "M")
-
-        sparse : bool, optional
-            If True, use Smolyak sparse grid instead of normal tensor product
-            grid. Default value is False.
-
-        growth (bool, None), optional
-            If True, quadrature point became nested.
 
         relative_analysis (bool, None), optional
             If True, we add one additional sample with all parameters having zero (nominal) value.
@@ -99,7 +80,7 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
         
         formatter = logging.Formatter('%(asctime)s:%(name)s:%(levelname)s:%(message)s')
 
-        file_handler = logging.FileHandler('PCE.log')
+        file_handler = logging.FileHandler('FD.log')
         file_handler.setLevel(logging.DEBUG)
         file_handler.setFormatter(formatter)
 
@@ -110,10 +91,10 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
         self.logger.addHandler(stream_handler)
 
         #%%%%%%%%%%%%%%%%%  USI DEBUG INFO   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        samplerFile_src = "/Users/Juraj/Documents/DXT/EasyVVUQ-fork/easyvvuq/sampling/pce.py"
+        samplerFile_src = "/Users/Juraj/Documents/DXT/EasyVVUQ-fork/easyvvuq/sampling/FD.py"
         fileStatsObj1 = stat(samplerFile_src)
         modificationTime1 = ctime(fileStatsObj1.st_mtime)
-        self.logger.info(f"Using USI version of the PCE Sampler {samplerFile_src}")
+        self.logger.info(f"Using USI version of the FD Sampler {samplerFile_src}")
 
         samplerFile_lib = path.dirname(path.abspath(__file__))
         fileStatsObj2 = stat(samplerFile_lib)
@@ -143,7 +124,6 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
             raise Exception(msg)
 
         self.vary = Vary(vary)
-        self.polynomial_order = polynomial_order
 
         # List of the probability distributions of uncertain parameters
         params_distribution = list(vary.values())
@@ -198,122 +178,62 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
             self.distribution = cp.J(*params_distribution)
             self.logger.debug(f"The independent distribution consists of: {self.distribution}")
 
-        # The orthogonal polynomials corresponding to the joint distribution
-        self.P = cp.expansion.stieltjes(polynomial_order, self.distribution, normed=True)
+        # Generate the perturbed values of the parameters for the FD
+        #FD = 0.5*(y_pos/y_base-1)/(delta) + 0.5*(y_neg/y_base - 1)/(-delta)
+        self._n_samples = 2*params_num + 1
+        self._perturbation = perturbation
 
-        # The quadrature information
-        self.quad_sparse = sparse
-        self.rule = rule
-
-        # Clenshaw-Curtis should be nested if sparse (#139 chaospy issue)
-        self.quad_growth = growth
-        cc = ['c', 'C', 'clenshaw_curtis', 'Clenshaw_Curtis']
-        if sparse and rule in cc:
-            self.quad_growth = True
-
-        # To determinate the PCE vrainte to use
-        self.regression = regression
-
-        # Regression variante (Point collocation method)
-        if regression:
-            self.logger.info(f"Using point collocation method to create PCE")
-            # Change the default rule
-            if rule == "G":
-                self.rule = "M"
-
-            # Generates samples
-            self._n_samples = 2 * len(self.P)
-            self.logger.info(f"Generating {self._n_samples} samples using {self.rule} rule")
-            self._nodes = cp.generate_samples(order=self._n_samples,
-                                              domain=self.distribution,
-                                              rule=self.rule)
-
-            # Generate additional test samples to evaluate the PCE fit
-            self.enable_test = False # !!! Change the variable also in FabSim mps_*.py scripts
-            if self.enable_test:
-                # Generate additional 2*N samples as convex combination of existing ones
-                random.seed(0)
-                nodes_extra = np.array([np.zeros(2*self._n_samples) for _ in range(params_num)])
-                for s in range(2*self._n_samples):
-                    s1 = random.randint(0, self._n_samples-1)
-                    s2 = random.randint(0, self._n_samples-1)
-                    while s1 == s2: # make sure that we select 2 different indices
-                        s2 = random.randint(0, self._n_samples-1)
-                    c = random.random() #convex combination constant 
-                    for d in range(params_num):
-                        nodes_extra[d][s] = c*self._nodes[d][s1] + (1-c)*self._nodes[d][s2]
-                # Concatenate PCE nodes with the extra 2*N nodes
-                new_nodes = np.array([np.zeros(3*self._n_samples) for _ in range(params_num)])
-                for i in range(params_num):
-                    new_nodes[i] = np.concatenate((self._nodes[i], nodes_extra[i]))
-                self._nodes = new_nodes
-                
-
-                # # Generate 3*N samples
-                # self._nodes = cp.generate_samples(order=3*self._n_samples,
-                #                                   domain=self.distribution,
-                #                                   rule=self.rule)
-                # # Permute the nodes
-                # P = list(range(len(self._nodes[0])))
-                # random.shuffle(P)
-                # self._nodes = np.array([np.array(ni)[P] for ni in self._nodes])
-
-                assert(len(self._nodes[0]) == 3*self._n_samples)
-
-            self._weights = None
-
-            # Nodes transformation
-            if self._is_dependent:
-                if self._transformation == "Rosenblatt":
-                    self.logger.info("Performing Rosenblatt transformation")
-                    self._nodes_dep = Transformations.rosenblatt(self._nodes, self.distribution, self.distribution_dep, regression)
-                elif self._transformation == "Cholesky":
-                    self.logger.info("Performing Cholesky transformation")
-                    self._nodes_dep = Transformations.cholesky(self._nodes, self.vary, self.distribution_dep, regression)
-                else:
-                    self.logger.critical("Error: How did this happen? We are transforming the nodes but not with Rosenblatt nor Cholesky")
-                    exit()
-
-                # # Scale the independent nodes
-                # for i, param_dist in enumerate(vary.values()):
-                #     if type(param_dist).__name__ == "Normal":
-                #         mu = param_dist._parameters['shift'][0]
-                #         sigma = param_dist._parameters['scale'][0]
-                #         self._nodes[i] = sigma*self._nodes[i] + mu
-                #     elif type(param_dist).__name__ == "Uniform":
-                #         low = param_dist._parameters['lower'][0]
-                #         up = param_dist._parameters['upper'][0]
-                #         self._nodes[i] = (up - low)*self._nodes[i] + low
-                #     else:
-                #         raise NotImplementedError(f'Not supported distribution: {type(param_dist)}!')
-
-        # Projection variante (Pseudo-spectral method)
+        # Perturbation of the parameters
+        if relative_analysis:
+            self.logger.info(f"Performing relative perturbation of the nodes, base value = 0, with delta = {perturbation}")
+            base_value = np.zeros(params_num)
         else:
-            self.logger.info(f"Using pseudo-spectral method to create PCE")
-            # Nodes and weights for the integration
-            self._nodes, self._weights = cp.generate_quadrature(order=polynomial_order,
-                                                                dist=self.distribution,
-                                                                rule=self.rule,
-                                                                sparse=sparse,
-                                                                growth=self.quad_growth)
-            # Number of samples
-            self._n_samples = len(self._nodes[0])
-            self.logger.info(f"Generated {self._n_samples} nodes/weights pairs using {self.rule} rule")
+            self.logger.info(f"Performing relative perturbation of the nodes, base value = mean, with delta = {perturbation}")
+            #base_value = mean_of_the_parameters
+            raise NotImplementedError("Set base_value to the mean_of_the_parameters")
 
-            # Nodes transformation
-            if self._is_dependent:
-                if self._transformation == "Rosenblatt":
-                    self.logger.info("Performing Rosenblatt transformation")
-                    self._weights_dep, self._nodes_dep = Transformations.rosenblatt(self._nodes, self.distribution, self.distribution_dep,regression)
-                elif self._transformation == "Cholesky":
-                    self.logger.info("Performing Cholesky transformation")
-                    self._weights_dep, self._nodes_dep = Transformations.cholesky(self._nodes, self.vary, self.distribution_dep, regression)
-                else:
-                    self.logger.critical("Error: How did this happen? We are transforming the nodes but not with Rosenblatt nor Cholesky")
-                    exit()
+        # Create base values of the parameters
+        self._nodes = np.array([ base_value[i] * np.ones(self._n_samples) for i in range(params_num)])
 
-                # Scale the independent nodes
-                raise NotImplementedError(f'Transformation of the independent nodes not supported with {regression = }')
+        offset = 1 #the first sample is the nominal value at x0
+        for p in range(params_num):
+
+            if relative_analysis:
+                self._nodes[p][offset]   = perturbation
+                self._nodes[p][offset+1] = -perturbation
+            else:
+                self._nodes[p][offset]   = self._nodes[p][offset] + perturbation*self._nodes[p][offset]
+                self._nodes[p][offset+1] = self._nodes[p][offset+1] - perturbation*self._nodes[p][offset+1]
+            
+            offset = offset + 2
+        
+        self.logger.info(f"Generated {offset}/{self._n_samples} samples for the FD scheme")
+
+        # Nodes transformation
+        regression = True
+        if self._is_dependent:
+            if self._transformation == "Rosenblatt":
+                self.logger.info("Performing Rosenblatt transformation")
+                self._nodes_dep = Transformations.rosenblatt(self._nodes, self.distribution, self.distribution_dep, regression)
+            elif self._transformation == "Cholesky":
+                self.logger.info("Performing Cholesky transformation")
+                self._nodes_dep = Transformations.cholesky(self._nodes, self.vary, self.distribution_dep, regression)
+            else:
+                self.logger.critical("Error: How did this happen? We are transforming the nodes but not with Rosenblatt nor Cholesky")
+                exit()
+
+            # # Scale the independent nodes
+            # for i, param_dist in enumerate(vary.values()):
+            #     if type(param_dist).__name__ == "Normal":
+            #         mu = param_dist._parameters['shift'][0]
+            #         sigma = param_dist._parameters['scale'][0]
+            #         self._nodes[i] = sigma*self._nodes[i] + mu
+            #     elif type(param_dist).__name__ == "Uniform":
+            #         low = param_dist._parameters['lower'][0]
+            #         up = param_dist._parameters['upper'][0]
+            #         self._nodes[i] = (up - low)*self._nodes[i] + low
+            #     else:
+            #         raise NotImplementedError(f'Not supported distribution: {type(param_dist)}!')
                 
 
         #%%%%%%%%%%%%%%%%%  USI DEBUG INFO   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -360,8 +280,8 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
     def analysis_class(self):
         """Return a corresponding analysis class.
         """
-        from easyvvuq.analysis import PCEAnalysis
-        return PCEAnalysis
+        from easyvvuq.analysis import FDAnalysis
+        return FDAnalysis
 
     def __next__(self):
         if self.count < self._n_samples: #base Train samples used to evaluate the PCE
@@ -374,22 +294,6 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
                     run_dict[param_name] = self._nodes_dep[i][self.count]
                 else:
                     run_dict[param_name] = self._nodes[i][self.count]
-            self.count += 1
-            return run_dict
-        elif self.relative_analysis and self.count == self._n_samples: #extra sample for the nominal case
-            run_dict = {param_name:0.0 for param_name in self.vary.vary_dict}
-            self.count += 1
-            return run_dict
-        elif self.enable_test and self.regression and self.count > self._n_samples and self.count <= 3*self._n_samples: #extra Test samples used to evaluate the PCE
-            run_dict = {}
-            for i, param_name in enumerate(self.vary.vary_dict):
-                # These are nodes that need to be returned as samples o be used for the model execution,
-                # for the SA in EasyVVUQ we will use only the raw independent nodes
-                if self._is_dependent:
-                    # Return transformed nodes reflecting the dependencies
-                    run_dict[param_name] = self._nodes_dep[i][self.count-1]
-                else:
-                    run_dict[param_name] = self._nodes[i][self.count-1]
             self.count += 1
             return run_dict
         else:
