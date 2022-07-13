@@ -18,6 +18,13 @@ if __name__ == "__main__":
             "Usage: python3 encoded_actions_object encoded_previous_object"
         )
 
+    rank = 0
+    if 'OMPI_COMM_WORLD_RANK' in os.environ:
+        rank = os.environ.get('OMPI_COMM_WORLD_RANK')
+    elif 'PMI_RANK' in os.environ:
+        rank = os.environ.get('PMI_RANK')
+    print("Process rank: " + str(rank))
+
     actions_f = sys.argv[1]
     previous_f = sys.argv[2]
 
@@ -40,5 +47,8 @@ if __name__ == "__main__":
 
     previous_next = actions.start(previous)
 
-    with open(f'{previous_next["campaign_dir"]}/.qcgpj_result_{jobid}', 'w') as f:
-        json.dump(previous_next, f)
+    # Store result only in a single process
+    if rank == 0:
+        print("Storing actions processing result in " + f'{previous_next["campaign_dir"]}/.qcgpj_result_{jobid}')
+        with open(f'{previous_next["campaign_dir"]}/.qcgpj_result_{jobid}', 'w') as f:
+            json.dump(previous_next, f)

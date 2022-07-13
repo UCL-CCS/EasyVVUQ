@@ -11,9 +11,9 @@ from typing import Tuple, Dict, Any
 
 from concurrent.futures import Executor
 
+from actions import ExecuteLocal, CreateRunDirectory
 from qcg.pilotjob.executor_api.qcgpj_executor import QCGPJExecutor
 from qcg.pilotjob.executor_api.templates.qcgpj_template import QCGPJTemplate
-
 
 logger = logging.getLogger(__name__)
 
@@ -26,6 +26,7 @@ class EasyVVUQBasicTemplate(QCGPJTemplate):
     implementation of QCGPJTemplate. For complete reference of QCG-PilotJob task's description parameters
     please look at https://qcg-pilotjob.readthedocs.io/en/latest/fileinterface.html#submit
     """
+
     @staticmethod
     def template() -> Tuple[str, Dict[str, Any]]:
         template = """
@@ -63,6 +64,7 @@ class EasyVVUQParallelTemplate(QCGPJTemplate):
     For complete reference of QCG-PilotJob task's description parameters
     please look at https://qcg-pilotjob.readthedocs.io/en/latest/fileinterface.html#submit
     """
+
     @staticmethod
     def template() -> Tuple[str, Dict[str, Any]]:
         template = """
@@ -250,24 +252,29 @@ class QCGPJPool(Executor):
 
     @staticmethod
     def _wrapper(action, previous):
-        # TODO: Implement support for specialised execution models of QCG-PilotJob
-        # """For the actions other than ExecuteQCGPJ ensures that the code is invoked only once
-        # """
-        # if not isinstance(action, ExecuteQCGPJ):
-        #     rank = 0
-        #     if 'OMPI_COMM_WORLD_RANK' in environ:
-        #         rank = environ.get('OMPI_COMM_WORLD_RANK')
-        #     elif 'PMI_RANK' in environ:
-        #         rank = environ.get('PMI_RANK')
-        #
-        #     if rank != 0:
-        #         return
+        """
+        This wrapper is dedicated for specialised models of QCG-PJ that automatically
+        starts many processes (instead of a single process in a default model
+        that need to be manually spawn by a programmer)
+        For the actions other than CreateRunDirectory, ExecuteLocal and ExecuteQCGPJ
+        ensures that the code is invoked only once.
+        """
+
+        if not isinstance(action, (CreateRunDirectory, ExecuteLocal, ExecuteQCGPJ)):
+            rank = 0
+            if 'OMPI_COMM_WORLD_RANK' in environ:
+                rank = environ.get('OMPI_COMM_WORLD_RANK')
+            elif 'PMI_RANK' in environ:
+                rank = environ.get('PMI_RANK')
+
+            if rank != 0:
+                return previous
+
         return action.start(previous)
 
 
 class ExecuteQCGPJ:
     """A utility decorator over action that marks the action as configured for parallel execution by QCG-PilotJob
-    Currently it has no influence on the processing.
 
     Parameters
     ----------
