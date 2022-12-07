@@ -108,15 +108,15 @@ class PCEAnalysisResults(QMCAnalysisResults):
             return np.array([v.upper[0] for _, v in enumerate(
                 self.raw_data['output_distributions'][qoi])])
         elif statistic == '1%':
-            return self.raw_data['percentiles'][qoi]['p01']
+            return np.array([self.raw_data['percentiles'][qoi]['p01']])
         elif statistic == '10%':
-            return self.raw_data['percentiles'][qoi]['p10']
+            return np.array([self.raw_data['percentiles'][qoi]['p10']])
         elif statistic == '90%':
-            return self.raw_data['percentiles'][qoi]['p90']
+            return np.array([self.raw_data['percentiles'][qoi]['p90']])
         elif statistic == '99%':
-            return self.raw_data['percentiles'][qoi]['p99']
+            return np.array([self.raw_data['percentiles'][qoi]['p99']])
         elif statistic == 'median':
-            return self.raw_data['percentiles'][qoi]['p50']
+            return np.array([self.raw_data['percentiles'][qoi]['p50']])
         else:
             try:
                 return self.raw_data['statistical_moments'][qoi][statistic]
