@@ -2,7 +2,7 @@ from .base import BaseSamplingElement, Vary
 # import chaospy as cp
 import numpy as np
 import pickle
-from itertools import product
+from itertools import product, combinations
 import logging
 from scipy.spatial import Delaunay
 from scipy.special import factorial
@@ -39,12 +39,13 @@ class SSCSampler(BaseSamplingElement, sampler_name="ssc_sampler"):
     """
 
     def __init__(self,
-                 vary=None):
+                 vary=None, pmax=4):
         self.n_xi = len(vary)
         self.vary = Vary(vary)
         self.tri = self.init_grid()
         self.count = 0
         self._n_samples = self.tri.points.shape[0]
+        self.set_pmax_cutoff(pmax)
 
     #! TODO change
     # @property
@@ -85,7 +86,7 @@ class SSCSampler(BaseSamplingElement, sampler_name="ssc_sampler"):
 
         return tri
 
-    def find_pmax(n_xi, n_s):
+    def find_pmax(self, n_s):
         """
         Finds the maximum polynomial stencil order that can be sustained
         given the current number of code evaluations. The stencil size
@@ -111,11 +112,30 @@ class SSCSampler(BaseSamplingElement, sampler_name="ssc_sampler"):
 
         """
         p = 1
-        stencil_size = factorial(n_xi + p) / (factorial(n_xi) * factorial(p))
+        stencil_size = factorial(self.n_xi + p) / (factorial(self.n_xi) * factorial(p))
         while stencil_size <= n_s:
             p += 1
-            stencil_size = factorial(n_xi + p) / (factorial(n_xi) * factorial(p))
+            stencil_size = factorial(self.n_xi + p) / (factorial(self.n_xi) * factorial(p))
+
         return p - 1
+
+    def set_pmax_cutoff(self, pmax_cutoff):
+        """
+        Set the maximum allowed polynomial value of the surrogate.
+
+        Parameters
+        ----------
+        p_max_cutoff : int
+            The max polynomial order.
+
+        Returns
+        -------
+        None.
+
+        """
+
+        self.pmax_cutoff = pmax_cutoff
+        self.i_norm_le_pj = self.compute_i_norm_le_pj(pmax_cutoff)
 
     def compute_vol(self):
         """
@@ -164,16 +184,16 @@ class SSCSampler(BaseSamplingElement, sampler_name="ssc_sampler"):
 
         return xi_center_j
 
-    def compute_sub_simplex_vertices(self, xi_k_jl):
+    def compute_sub_simplex_vertices(self, simplex_idx):
         """
-        Compute the vertices of the sub-simplex with vertices xi_k_jl. The
+        Compute the vertices of the sub-simplex. The
         sub simplex is contained in the larger simplex. The larger simplex
         is refined by randomly placing a sample within the sub simplex.
 
         Parameters
         ----------
-        xi_k_jl : array, size (n_xi + 1, n_xi)
-            The vertices of the j-th simplex.
+        simplex_idx : int
+            The index of the simplex
 
         Returns
         -------
@@ -181,7 +201,7 @@ class SSCSampler(BaseSamplingElement, sampler_name="ssc_sampler"):
             The vertices of the sub simplex.
 
         """
-
+        xi_k_jl = self.tri.points[self.tri.simplices[simplex_idx]]
         xi_sub_jl = np.zeros([self.n_xi + 1, self.n_xi])
         for l in range(self.n_xi + 1):
             idx = np.delete(range(self.n_xi + 1), l)
@@ -262,7 +282,7 @@ class SSCSampler(BaseSamplingElement, sampler_name="ssc_sampler"):
 
         return i_norm_le_pj
 
-    def compute_Psi(self, xi_Sj, i_norm_le_pj):
+    def compute_Psi(self, xi_Sj, pmax):
         """
         Compute the Vandermonde matrix Psi, given N + 1 points xi from the
         j-th interpolation stencil, and a multi-index set of polynomial
@@ -273,8 +293,8 @@ class SSCSampler(BaseSamplingElement, sampler_name="ssc_sampler"):
         xi_Sj : array, shape (N + 1, n_xi)
             The simplex n_xi-dimensional points of the j-th interpolation
             stencil S_j.
-        i_norm_le_pj : array, shape (N + 1, n_xi)
-            DESCRIPTION.
+        pmax : int
+            The max polynomial order of the local stencil.
 
         Returns
         -------
@@ -291,11 +311,11 @@ class SSCSampler(BaseSamplingElement, sampler_name="ssc_sampler"):
             for col in range(Np1):
                 for j in range(self.n_xi):
                     # compute monomial xi_1 ** i_1 + ... + xi_{n_xi} ** i_{n_xi}
-                    Psi[row, col] *= xi_Sj[row][j] ** i_norm_le_pj[col][j]
+                    Psi[row, col] *= xi_Sj[row][j] ** self.i_norm_le_pj[pmax][col][j]
 
         return Psi
 
-    def w_j(self, xi, c_jl, i_norm_le_pj):
+    def w_j(self, xi, c_jl, pmax):
         """
         Compute the surrogate local interpolation at point xi.
 
@@ -309,10 +329,8 @@ class SSCSampler(BaseSamplingElement, sampler_name="ssc_sampler"):
         c_jl : array, shape (N + 1,)
             The interpolation coefficients of the j-th stencil, with
             l = 0, ..., N.
-        i_norm_le_pj : array, shape (N + 1, n_xi)
-            The multi-index set {i | |i| = i_1 + ... + i_{n_xi} <= p},
-            p p being the maximum polynomial order sustained by the
-            j-th interpolation stencil.
+        pmax : int
+            The max polynomial order of the local stencil.
 
         Returns
         -------
@@ -329,14 +347,14 @@ class SSCSampler(BaseSamplingElement, sampler_name="ssc_sampler"):
         for i in range(Np1):
             for j in range(self.n_xi):
                 # take the power of xi to multi index entries
-                Psi_xi[i] *= xi[j] ** i_norm_le_pj[i][j]
+                Psi_xi[i] *= xi[j] ** self.i_norm_le_pj[pmax][i][j]
 
         # surrogate prediction
         w_j_at_xi = np.sum(c_jl * Psi_xi)
 
         return w_j_at_xi
 
-    def check_LEC(self, p_j, v, S_j, i_norm_le_pj, n_mc, max_jobs=4):
+    def check_LEC(self, p_j, v, S_j, n_mc, max_jobs=4):
         """
         Check the Local Extremum Conserving propery of all simplex elements.
 
@@ -350,10 +368,6 @@ class SSCSampler(BaseSamplingElement, sampler_name="ssc_sampler"):
             The indices of all nearest neighbours points of each simplex j=1,..,n_e,
             ordered from closest to the neighbour that furthest away. The first
             n_xi + 1 indeces belong to the j-th simplex itself.
-        i_norm_le_pj : dict
-            Each j-th entry in this dict contains the multi-index set
-            {i | |i| = i_1 + ... + i_{n_xi} <= p}, p being the maximum
-            polynomial order sustained by the j-th interpolation stencil.
         n_mc : int
             The number of Monte Carlo samples to use in checking the LEC
             conditions.
@@ -396,8 +410,7 @@ class SSCSampler(BaseSamplingElement, sampler_name="ssc_sampler"):
             while running_jobs < max_jobs and n_jobs > 0:
                 queue = mp.Queue()
                 prcs = mp.Process(target=self.check_LEC_j,
-                                  args=(p_j, v, S_j, n_mc, j, r,
-                                        i_norm_le_pj, queue))
+                                  args=(p_j, v, S_j, n_mc, j, r, queue))
                 prcs.start()
                 running_jobs += 1
                 n_jobs -= 1
@@ -485,7 +498,7 @@ class SSCSampler(BaseSamplingElement, sampler_name="ssc_sampler"):
 
         return idx
 
-    def check_LEC_j(self, p_j, v, S_j, n_mc, j, r, i_norm_le_pj, queue):
+    def check_LEC_j(self, p_j, v, S_j, n_mc, j, r, queue):
         """
         Check the LEC condition of the j-th element.
 
@@ -506,8 +519,6 @@ class SSCSampler(BaseSamplingElement, sampler_name="ssc_sampler"):
         j : TYPE
             DESCRIPTION.
         r : TYPE
-            DESCRIPTION.
-        i_norm_le_pj : TYPE
             DESCRIPTION.
         queue : TYPE
             DESCRIPTION.
@@ -530,10 +541,10 @@ class SSCSampler(BaseSamplingElement, sampler_name="ssc_sampler"):
         v_Sj = v[S_j[j, 0:Np1_j], :]
 
         # the element indices of the simplices in stencil S_j
-        el_idx_j = self.find_simplices(self.tri, S_j[j, 0:Np1_j])
+        el_idx_j = self.find_simplices(S_j[j, 0:Np1_j])
 
         # compute sample matrix
-        Psi = self.compute_Psi(xi_Sj, i_norm_le_pj[p_j[j]])
+        Psi = self.compute_Psi(xi_Sj, p_j[j])
 
         # check if Psi is well poised
         #det_Psi = np.linalg.det(Psi)
@@ -562,7 +573,7 @@ class SSCSampler(BaseSamplingElement, sampler_name="ssc_sampler"):
             # compute interpolation values at MC sample points
             w_j_at_xi = np.zeros([n_mc, N])
             for i in range(n_mc):
-                w_j_at_xi[i, :] = self.w_j(xi_samples[i], c_jl, i_norm_le_pj[p_j[j]])
+                w_j_at_xi[i, :] = self.w_j(xi_samples[i], c_jl, p_j[j])
 
             k += 1
 
@@ -587,7 +598,7 @@ class SSCSampler(BaseSamplingElement, sampler_name="ssc_sampler"):
                 k = 0
 
                 # recompute sample matrix
-                Psi = self.compute_Psi(xi_Sj, i_norm_le_pj[p_j[j]])
+                Psi = self.compute_Psi(xi_Sj, p_j[j])
 
                 # check if Psi is well poised
                 #det_Psi = np.linalg.det(Psi)
@@ -798,15 +809,14 @@ class SSCSampler(BaseSamplingElement, sampler_name="ssc_sampler"):
 
         queue.put({'ENO_S_j': ENO_S_j, 'p_j_new': p_j_new, 'el_idx[j]': np.copy(el_idx[j])})
 
-
     def sample_simplex(self, n_mc, xi_k_jl, check=False):
         """
         Use an analytical map from n_mc uniformly distributed points in the
-        n_xi-dimensional hypercube, to uniformly distributed points in the 
+        n_xi-dimensional hypercube, to uniformly distributed points in the
         target simplex described by the nodes xi_k_jl.
-        
-        Derivation: Edeling, W. N., Dwight, R. P., & Cinnella, P. (2016). 
-        Simplex-stochastic collocation method with improved scalability. 
+
+        Derivation: Edeling, W. N., Dwight, R. P., & Cinnella, P. (2016).
+        Simplex-stochastic collocation method with improved scalability.
         Journal of Computational Physics, 310, 301-328.
 
         Parameters
@@ -829,31 +839,226 @@ class SSCSampler(BaseSamplingElement, sampler_name="ssc_sampler"):
         n_xi = self.n_xi
         P = np.zeros([n_mc, n_xi])
         for k in range(n_mc):
-            #random points inside the hypercube
+            # random points inside the hypercube
             r = np.random.rand(n_xi)
-            
-            #the term of the map is \xi_k_j0
-            sample = np.copy(xi_k_jl[0])
-            for i in range(1, n_xi+1):
-                prod_r = 1.
-                #compute the product of r-terms: prod(r_{n_xi-j+1}^{1/(n_xi-j+1)})
-                for j in range(1,i+1):
-                    prod_r *= r[n_xi - j]**(1./(n_xi - j + 1))
-                #compute the ith term of the sum: prod_r*(\xi_i-\xi_{i-1})
-                sample += prod_r*(xi_k_jl[i] - xi_k_jl[i-1])
-            P[k,:] = sample
 
-        #check if any of the samples are outside the simplex
-        if check == True:
+            # the term of the map is \xi_k_j0
+            sample = np.copy(xi_k_jl[0])
+            for i in range(1, n_xi + 1):
+                prod_r = 1.
+                # compute the product of r-terms: prod(r_{n_xi-j+1}^{1/(n_xi-j+1)})
+                for j in range(1, i + 1):
+                    prod_r *= r[n_xi - j]**(1. / (n_xi - j + 1))
+                # compute the ith term of the sum: prod_r*(\xi_i-\xi_{i-1})
+                sample += prod_r * (xi_k_jl[i] - xi_k_jl[i - 1])
+            P[k, :] = sample
+
+        # check if any of the samples are outside the simplex
+        if check:
             outside_simplex = 0
-            avg = np.sum(xi_k_jl, 0)/(n_xi+1.)
+            avg = np.sum(xi_k_jl, 0) / (n_xi + 1.)
             el = self.tri.find_simplex(avg)
             for i in range(n_mc):
-                if self.tri.find_simplex(P[i,:]) != el:
+                if self.tri.find_simplex(P[i, :]) != el:
                     outside_simplex += 1
             print('Number of samples outside target simplex = ' + str(outside_simplex))
- 
+
         return P
+
+    def sample_simplex_edge(self, simplex_idx, refined_edges):
+        """
+        Refine the longest edge of a simplex.
+
+        # TODO: is allright for 2D, but does this make sense in higher dims?
+
+        Parameters
+        ----------
+        simplex_idx : int
+            The index of the simplex.
+        refined_edges : list
+            Contains the pairs of the point indices, corresponding to edges that
+            have been refined in the current iteration. Simplices share edges,
+            and this list is used to prevent refining the same edge twice within
+            the same iteration of the SSC algorihm.
+
+        Returns
+        -------
+        xi_new : array, shape (n_xi,)
+            The newly added point (along the longest edge).
+        refined_edges : list
+            The updated refined_edges list.
+        already_refined : bool
+            Returns True if the edge already has been refined.
+
+        """
+
+        # the point indices of the simplex selected for refinement
+        simplex_point_idx = self.tri.simplices[simplex_idx]
+        # the points of the simplex selected for refinement
+        xi_k_jl = self.tri.points[simplex_point_idx]
+
+        # find the indices of all edges, i.e. the combination of all possible
+        # 2 distinct elements from range(n_xi + 1)
+        comb = list(combinations(range(self.n_xi + 1), 2))
+
+        # compute all edge lengths, select the largest
+        edge_lengths = np.zeros(len(comb))
+        for i in range(len(comb)):
+            edge_lengths[i] = np.linalg.norm(xi_k_jl[comb[i][1], :] - xi_k_jl[comb[i][0], :])
+        idx = np.argmax(edge_lengths)
+
+        # if there are 2 or more edge lengths that are the same, select the 1st
+        if idx.size > 1:
+            idx = idx[0]
+
+        # edge points
+        xi_0 = xi_k_jl[comb[idx][0], :]
+        xi_1 = xi_k_jl[comb[idx][1], :]
+
+        # simplices share edges, make sure it was not already refined during
+        # this iteration
+        current_edge = np.array([simplex_point_idx[comb[idx][0]],
+                                 simplex_point_idx[comb[idx][1]]])
+        already_refined = False
+
+        for edge in refined_edges:
+            if set(edge) == set(current_edge):
+                already_refined = True
+
+        if not already_refined:
+            refined_edges.append(current_edge)
+
+        # place random sample at +/- 10% of edge center
+        b = 0.6
+        a = 0.4
+        U = np.random.rand() * (b - a) + a
+        xi_new = xi_0 + U * (xi_1 - xi_0)
+
+        return xi_new, refined_edges, already_refined
+
+    def compute_surplus_k(self, xi_k_jref, S_j, p_j, v, v_k_jref):
+        """
+        Compute the hierachical surplus at xi_k_jref (the refinement location),
+        defined as the difference between the new code sample and the (old)
+        surrogate  prediction at the refinement location.
+
+        Parameters
+        ----------
+        xi_k_jref : array, shape (n_xi,)
+            The refinement location.
+        S_j : array, shape (n_e, n_s)
+            The indices of all nearest neighbours points of each simplex j=1,..,n_e,
+            ordered from closest to the neighbour that furthest away. The first
+            n_xi + 1 indeces belong to the j-th simplex itself.
+        p_j : array, shape (n_e,)
+            The polynomial order of each simplex element.
+        v : array, shape (N + 1,)
+            The (scalar) code outputs. #TODO:modify when vectors are allowed
+        v_k_jref : float #TODO:modify when vectors are allowed
+            The code prediction at the refinement location.
+
+        Returns
+        -------
+        surplus : float #TODO:modify when vectors are allowed
+            The hierarchical suplus
+
+        """
+        tri = self.tri
+        n_xi = self.n_xi
+        n_e = tri.nsimplex
+        idx = tri.find_simplex(xi_k_jref)
+
+        # the number of points in S_j
+        Np1_j = int(factorial(n_xi + p_j[idx]) / (factorial(n_xi) * factorial(p_j[idx])))
+        # the vertices of the stencil S_j
+        xi_Sj = tri.points[S_j[idx, 0:Np1_j]]
+        # find the corresponding indices of v
+        v_Sj = v[S_j[idx, 0:Np1_j], :]
+        # compute sample matrix
+        Psi = self.compute_Psi(xi_Sj, p_j[idx])
+
+    #    #check if Psi is well poised, at this point all stencils should be well-poised
+    #    det_Psi = np.linalg.det(Psi)
+    #    if det_Psi == 0:
+    #        print 'Error, det(Psi)=0 in compute_surplus_k() method, should not be possible'
+
+        # compute the coefficients c_jl
+        #c_jl = np.linalg.solve(Psi, v_Sj)
+        c_jl = DAFSILAS(Psi, v_Sj, False)
+
+        # compute the interpolation on the old grid
+        w_k_jref = self.w_j(xi_k_jref, c_jl, p_j[idx])
+
+        # compute the hierarcical surplus between old interpolation and new v value
+        surplus = w_k_jref - v_k_jref
+
+        return surplus
+
+    def compute_eps_bar_j(self, p_j, prob_j):
+        """
+        Compute the geometric refinement measure \bar{\\eps}_j for all elements,
+        Elements with the largest values will be selected for refinement.
+
+        Parameters
+        ----------
+        p_j : array, shape (n_e,)
+            The polynomial order of each simplex element.
+        prob_j : array, shape (n_e,)
+            The probability of each simplex element.
+
+        Returns
+        -------
+        eps_bar_j : array, shape (n_e,)
+            The geometric refinement measure.
+        vol_j : array, shape (n_e,)
+            The volume of each simplex element.
+
+        """
+
+        n_e = self.tri.nsimplex
+        eps_bar_j = np.zeros(n_e)
+        n_xi = self.tri.ndim
+        vol_j = self.compute_vol()
+        vol = np.sum(vol_j)
+
+        for j in range(n_e):
+            O_j = (p_j[j] + 1.0) / n_xi
+            eps_bar_j[j] = prob_j[j] * (vol_j[j] / vol) ** (2 * O_j)
+
+        return eps_bar_j, vol_j
+
+    def find_boundary_simplices(self):
+        """
+        Find the simplices that are on the boundary of the hypercube   .
+
+        Returns
+        -------
+        idx : array
+            Indices of the boundary simplices.
+
+        """
+
+        idx = (self.tri.neighbors == -1).nonzero()[0]
+        return idx
+
+    def update_Delaunay(self, new_points):
+        """
+        Update the Delaunay triangulation with P new points.
+
+        Parameters
+        ----------
+        new_points : array, shape (P, n_xi)
+            P new n_xi-dimensional points.
+
+        Returns
+        -------
+        None.
+
+        """
+
+        xi_k_jl = np.append(self.tri.points, new_points, 0)
+        self.tri = Delaunay(xi_k_jl)
+        self._n_samples = self.tri.npoints
 
     def is_finite(self):
         return True
@@ -864,6 +1069,20 @@ class SSCSampler(BaseSamplingElement, sampler_name="ssc_sampler"):
         Returns the number of samples code samples.
         """
         return self._n_samples
+
+    @property
+    def n_dimensions(self):
+        """
+        Returns the number of uncertain random variables
+        """
+        return self.n_xi
+
+    @property
+    def n_elements(self):
+        """
+        Returns the number of simplex elements
+        """
+        return self.tri.nsimplex
 
     def __next__(self):
         if self.count < self._n_samples:
