@@ -210,6 +210,26 @@ class SSCSampler(BaseSamplingElement, sampler_name="ssc_sampler"):
 
         return xi_sub_jl
 
+    def sample_inputs(self, n_mc):
+        """
+        Draw n_mc random values from the input distribution.
+
+        Parameters
+        ----------
+        n_mc : int
+            The number of Monte Carlo samples.
+
+        Returns
+        -------
+        xi : array, shape(n_mc, n_xi)
+            n_mc random samples from the n_xi input distributions.
+
+        """
+        xi = np.zeros([n_mc, self.n_xi])
+        for i, param in enumerate(self.vary.get_values()):
+            xi[:, i] = param.sample(n_mc)
+        return xi
+
     def compute_probability(self):
         """
         Compute the probability Omega_j for all simplex elements;
@@ -233,10 +253,7 @@ class SSCSampler(BaseSamplingElement, sampler_name="ssc_sampler"):
         # number of MC samples
         n_mc = np.min([10 ** (self.n_xi + 3), 10 ** 7])
 
-        # draw n_mc random values from the input distribution
-        xi = np.zeros([n_mc, self.n_xi])
-        for i, param in enumerate(self.vary.get_values()):
-            xi[:, i] = param.sample(n_mc)
+        xi = self.sample_inputs(n_mc)
 
         # find the simplix indices of xi
         idx = self.tri.find_simplex(xi)
@@ -472,6 +489,7 @@ class SSCSampler(BaseSamplingElement, sampler_name="ssc_sampler"):
     #        el_idx[j] = tmp['el_idx[j]']
     #        idx += 1
 
+        print('done.')
         return {'p_j': p_j, 'S_j': S_j, 'el_idx': el_idx}
 
     def find_simplices(self, S_j):
@@ -963,15 +981,43 @@ class SSCSampler(BaseSamplingElement, sampler_name="ssc_sampler"):
             The hierarchical suplus
 
         """
-        tri = self.tri
+
+        w_k_jref = self.surrogate(xi_k_jref, p_j, S_j, v)
+
+        # compute the hierarcical surplus between old interpolation and new v value
+        surplus = w_k_jref - v_k_jref
+
+        return surplus
+
+    def surrogate(self, xi, S_j, p_j, v):
+        """
+        Evaluate the SSC surrogate at xi.
+
+        Parameters
+        ----------
+        xi : array, shape (n_xi,)
+            The location in the input space at which to evaluate the surrogate.
+        S_j : array, shape (n_e, n_s)
+            The indices of all nearest neighbours points of each simplex j=1,..,n_e,
+            ordered from closest to the neighbour that furthest away. The first
+            n_xi + 1 indeces belong to the j-th simplex itself.
+        p_j : array, shape (n_e,)
+            The polynomial order of each simplex element.
+        v : array, shape (N + 1,)
+            The (scalar) code outputs. #TODO:modify when vectors are allowed
+
+        Returns
+        -------
+        None.
+
+        """
         n_xi = self.n_xi
-        n_e = tri.nsimplex
-        idx = tri.find_simplex(xi_k_jref)
+        idx = self.tri.find_simplex(xi)
 
         # the number of points in S_j
         Np1_j = int(factorial(n_xi + p_j[idx]) / (factorial(n_xi) * factorial(p_j[idx])))
         # the vertices of the stencil S_j
-        xi_Sj = tri.points[S_j[idx, 0:Np1_j]]
+        xi_Sj = self.tri.points[S_j[idx, 0:Np1_j]]
         # find the corresponding indices of v
         v_Sj = v[S_j[idx, 0:Np1_j], :]
         # compute sample matrix
@@ -987,12 +1033,9 @@ class SSCSampler(BaseSamplingElement, sampler_name="ssc_sampler"):
         c_jl = DAFSILAS(Psi, v_Sj, False)
 
         # compute the interpolation on the old grid
-        w_k_jref = self.w_j(xi_k_jref, c_jl, p_j[idx])
+        w_j = self.w_j(xi, c_jl, p_j[idx])
 
-        # compute the hierarcical surplus between old interpolation and new v value
-        surplus = w_k_jref - v_k_jref
-
-        return surplus
+        return w_j
 
     def compute_eps_bar_j(self, p_j, prob_j):
         """
@@ -1097,13 +1140,39 @@ class SSCSampler(BaseSamplingElement, sampler_name="ssc_sampler"):
             raise StopIteration
 
     def save_state(self, filename):
-        logging.debug("Saving sampler state to %s" % filename)
+        """
+        Save the state of the sampler to a pickle file.
+
+        Parameters
+        ----------
+        filename : string
+            File name.
+
+        Returns
+        -------
+        None.
+
+        """
+        print("Saving sampler state to %s" % filename)
         file = open(filename, 'wb')
         pickle.dump(self.__dict__, file)
         file.close()
 
     def load_state(self, filename):
-        logging.debug("Loading sampler state from %s" % filename)
+        """
+        Load the state of the sampler from a pickle file.
+
+        Parameters
+        ----------
+        filename : string
+            File name.
+
+        Returns
+        -------
+        None.
+
+        """
+        print("Loading sampler state from %s" % filename)
         file = open(filename, 'rb')
         self.__dict__ = pickle.load(file)
         file.close()

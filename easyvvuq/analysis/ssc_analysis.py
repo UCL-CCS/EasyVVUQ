@@ -115,8 +115,9 @@ class SSCAnalysis(BaseAnalysisElement):
         return "0.1"
 
     def save_state(self, filename):
-        """Saves the complete state of the analysis object to a pickle file,
-        except the sampler object (self.samples).
+        """
+        Saves the complete state of the analysis object to a pickle file,
+        except the sampler object (self.sampler).
 
         Parameters
         ----------
@@ -132,7 +133,8 @@ class SSCAnalysis(BaseAnalysisElement):
         file.close()
 
     def load_state(self, filename):
-        """Loads the complete state of the analysis object from a
+        """
+        Loads the complete state of the analysis object from a
         pickle file, stored using save_state.
 
         Parameters
@@ -147,17 +149,21 @@ class SSCAnalysis(BaseAnalysisElement):
             self.__dict__[key] = state[key]
         file.close()
 
-    def analyse(self, data_frame=None):
-        """Perform SSC analysis on input `data_frame`.
+    def analyse(self, data_frame=None, compute_moments = True, n_mc = 20000):
+        """
+        Perform SSC analysis on input `data_frame`.
 
         Parameters
         ----------
         data_frame : pandas.DataFrame
             Input data for analysis.
+        compute_moments : bool, optional.
+            Compute the first 2 moments. Default is True.
 
         Returns
         -------
-            #TODO: to be completed
+        results : dict
+            A dictionary containing the statistical moments.
         """
 
         if data_frame is None:
@@ -167,27 +173,27 @@ class SSCAnalysis(BaseAnalysisElement):
             raise RuntimeError(
                 "No data in data frame passed to analyse element")
 
-        # # Extract output values for each quantity of interest from Dataframe
-        # print('Loading samples...')
-        # qoi_cols = self.qoi_cols
-        # samples = {k: [] for k in qoi_cols}
-        # for run_id in data_frame[('run_id', 0)].unique():
-        #     for k in qoi_cols:
-        #         values = data_frame.loc[data_frame[('run_id', 0)] == run_id][k].values
-        #         samples[k].append(values.flatten())
-        # self.samples = samples
-        # print('done')
-
+        self.load_samples(data_frame)
         # # size of one code sample
         # # TODO: change this to include QoI of different size
         # self.N_qoi = self.samples[qoi_cols[0]][0].size
 
-        self.load_samples(data_frame)
+        # Compute descriptive statistics for each quantity of interest
+        results = {'statistical_moments': {}}
+
+        if compute_moments:
+            for qoi_k in self.qoi_cols:
+                mean_k, var_k = self.get_moments(qoi_k, n_mc = n_mc)
+                std_k = var_k ** 0.5
+                # compute statistical moments
+                results['statistical_moments'][qoi_k] = {'mean': mean_k,
+                                                         'var': var_k,
+                                                         'std': std_k}
 
         # results = SCAnalysisResults(raw_data=results, samples=data_frame,
         #                             qois=qoi_cols, inputs=list(self.sampler.vary.get_keys()))
         # results.surrogate_ = self.surrogate
-        # return results
+        return results
 
     def load_samples(self, data_frame):
         """
@@ -206,21 +212,78 @@ class SSCAnalysis(BaseAnalysisElement):
         print('Loading samples...')
         qoi_cols = self.qoi_cols
         samples = {k: [] for k in qoi_cols}
-        for run_id in data_frame[('run_id', 0)].unique():
-            for k in qoi_cols:
+        for k in qoi_cols:
+            for run_id in data_frame[('run_id', 0)].unique():
                 values = data_frame.loc[data_frame[('run_id', 0)] == run_id][k].values
                 samples[k].append(values.flatten())
+            samples[k] = np.array(samples[k])
         self.samples = samples
         print('done')
+    
+    def get_moments(self, qoi, n_mc):
+        """
+        Compute the mean and variance through Monte Carlo sampling of the SSC
+        surrogate. Independent random inputs samples are drawn though the 
+        SSC sampler object.
 
-    def adapt_locally(self, qoi, data_frame, n_new_samples=1,
-                      max_LEC_jobs=4, n_mc_LEC=5):
+        Parameters
+        ----------
+        qoi : string
+            The name of the QoI.
+        n_mc : int
+            The number of Monte Carlo samples.
 
+        Returns
+        -------
+        mean : array
+            The mean of qoi.
+        var : array
+            The variance of qoi.
+
+        """
+        
+        Xi = self.sampler.sample_inputs(n_mc)
+        rvs = [self.surrogate(qoi, xi) for xi in Xi]
+        mean = np.mean(rvs)
+        var = np.var(rvs)
+        return mean, var                
+
+    def update_surrogate(self, qoi, data_frame, max_LEC_jobs=4, n_mc_LEC=5):
+        """
+        Update the SSC surrogate given new data. Given an EasyVVUQ dataframe,
+        check the LEC condition, and compute the ENO interpolation stencils.
+
+        Parameters
+        ----------
+        qoi : string
+            The name of the QoI on the basis of which the sampling plan 
+            is refined.
+        data_frame : EasyVVUQ (pandas) data frame
+            The code samples from the EasyVVUQ data frame.
+        max_LEC_jobs : int, optional
+            The number of LEC checks to perform in parallel. The default is 4.
+        n_mc_LEC : int, optional
+            The number of surrogate evaluations used in the LEC check.
+            The default is 5.
+
+        Returns
+        -------
+        None. Stores the polynomials orders, interpolation stencils and
+        the simplex probabilities in analysis.p_j, analysis.S_j and 
+        analysis.prob_j respectively.
+
+        """
+
+        # the number of code evaluations
         n_s = self.sampler.n_samples
+        # the number of simplex elements
         n_e = self.sampler.n_elements
 
+        # load the EasyVVUQ data frame
         self.load_samples(data_frame)
-        v = np.array(self.samples[qoi])
+        # code outputs
+        # v = np.array(self.samples[qoi])
+        v = self.samples[qoi]
 
         # find the max polynomial order and set the p_j = pmax
         pmax = self.sampler.find_pmax(n_s)
@@ -230,6 +293,7 @@ class SSCAnalysis(BaseAnalysisElement):
         else:
             print('Max. polynomial order allowed by n_s = ' + str(pmax))
 
+        # polynomial order per simplex elememt
         p_j = (np.ones(n_e) * pmax).astype('int')
 
         # compute nearest neighbour stencils
@@ -239,6 +303,8 @@ class SSCAnalysis(BaseAnalysisElement):
         res_LEC = self.sampler.check_LEC(p_j, v, S_j,
                                          n_mc=n_mc_LEC,
                                          max_jobs=max_LEC_jobs)
+        # updated polynomial order, stencil and el_idx are the element indices
+        # per interpolation stencil
         p_j = res_LEC['p_j']
         S_j = res_LEC['S_j']
         el_idx = res_LEC['el_idx']
@@ -250,11 +316,31 @@ class SSCAnalysis(BaseAnalysisElement):
         self.p_j = p_j
         self.S_j = S_j
 
+        print("Updated polynomials orders = %s" % p_j)
+
         # compute the simplex probabilities
         self.prob_j = self.sampler.compute_probability()
 
+
+    def adapt_locally(self, n_new_samples = 1):
+        """
+        Locally refine the sampling plan based on the SSC geometric
+        refinement measure.     
+
+        Parameters
+        ----------
+        n_new_samples : int, optional
+            The number of new code evaulations to perform. The default is 1.
+
+        Returns
+        -------
+        None. Updates the Delaunay triangulation of the SSC sampler with 
+        the new points. A new ensemble must be executed next.
+
+        """       
+
         # compute the refinement measures
-        eps_bar_j, vol_j = self.sampler.compute_eps_bar_j(p_j, self.prob_j)
+        eps_bar_j, vol_j = self.sampler.compute_eps_bar_j(self.p_j, self.prob_j)
 
         # rank elements according to eps_bar_j
         refine_idx = np.flipud(np.argsort(eps_bar_j))
@@ -262,9 +348,11 @@ class SSCAnalysis(BaseAnalysisElement):
         # find the elements at the hypercube boundaries
         bound_simplices = self.sampler.find_boundary_simplices()
 
+        # store which edges are refined, to prevent refining the same edge twice
+        # during the same interation
         refined_edges = []
-        run_idx = []
 
+        # the refinement locations
         xi_k_jref = np.zeros([n_new_samples, self.sampler.n_dimensions])
 
         i = 0
@@ -287,11 +375,6 @@ class SSCAnalysis(BaseAnalysisElement):
                     self.sampler.sample_simplex_edge(refine_idx[j], refined_edges)
 
             if not already_refined:
-
-                # fres = fpool.apply_async(QoI, args = (xi_k_jref[i, :],))
-                # fjobs.append(fres)
-
-                run_idx.append(i)
                 i += 1
                 j += 1
             else:
@@ -299,6 +382,27 @@ class SSCAnalysis(BaseAnalysisElement):
                 j += 1
 
         self.sampler.update_Delaunay(xi_k_jref)
+    
+    def surrogate(self, qoi, xi):
+        """
+        Evaluate the SSC surrogate at xi.
+
+        Parameters
+        ----------
+        qoi : string
+            Name of the QoI.
+        xi : array, shape (n_xi,)
+            The location in the input space at which to evaluate the
+            surrogate.
+
+        Returns
+        -------
+        array
+            The surrogate output at xi
+
+        """
+
+        return self.sampler.surrogate(xi, self.S_j, self.p_j, self.samples[qoi])
 
     def get_sample_array(self, qoi):
         """
@@ -311,4 +415,5 @@ class SSCAnalysis(BaseAnalysisElement):
         -------
         array of all samples of qoi
         """
-        return np.array([self.samples[qoi][k] for k in range(len(self.samples[qoi]))])
+
+        return self.samples[qoi]
