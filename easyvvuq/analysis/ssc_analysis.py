@@ -7,10 +7,12 @@ import pickle
 import copy
 from easyvvuq import OutputType
 from .base import BaseAnalysisElement
-# from .results import AnalysisResults
+from .results import AnalysisResults
 import logging
 # from scipy.special import comb
 import pandas as pd
+import matplotlib.pyplot as plt
+from matplotlib.patches import Polygon
 
 __author__ = "Wouter Edeling"
 __copyright__ = """
@@ -36,49 +38,48 @@ __copyright__ = """
 __license__ = "LGPL"
 
 
-# TODO: complete this
-# class SCAnalysisResults(AnalysisResults):
-#     def _get_sobols_first(self, qoi, input_):
-#         raw_dict = AnalysisResults._keys_to_tuples(self.raw_data['sobols_first'])
-#         result = raw_dict[AnalysisResults._to_tuple(qoi)][input_]
-#         try:
-#             return np.array([float(result)])
-#         except TypeError:
-#             return np.array(result)
+class SSCAnalysisResults(AnalysisResults):
+    # def _get_sobols_first(self, qoi, input_):
+    #     raw_dict = AnalysisResults._keys_to_tuples(self.raw_data['sobols_first'])
+    #     result = raw_dict[AnalysisResults._to_tuple(qoi)][input_]
+    #     try:
+    #         return np.array([float(result)])
+    #     except TypeError:
+    #         return np.array(result)
 
-#     def supported_stats(self):
-#         """Types of statistics supported by the describe method.
+    def supported_stats(self):
+        """Types of statistics supported by the describe method.
 
-#         Returns
-#         -------
-#         list of str
-#         """
-#         return ['mean', 'var', 'std']
+        Returns
+        -------
+        list of str
+        """
+        return ['mean', 'var', 'std']
 
-#     def _describe(self, qoi, statistic):
-#         if statistic in self.supported_stats():
-#             return self.raw_data['statistical_moments'][qoi][statistic]
-#         else:
-#             raise NotImplementedError
+    def _describe(self, qoi, statistic):
+        if statistic in self.supported_stats():
+            return self.raw_data['statistical_moments'][qoi][statistic]
+        else:
+            raise NotImplementedError
 
-#     def surrogate(self):
-#         """Return an SC surrogate model.
+    def surrogate(self):
+        """Return a SSC surrogate model.
 
-#         Returns
-#         -------
-#         A function that takes a dictionary of parameter - value pairs and returns
-#         a dictionary with the results (same output as decoder).
-#         """
-#         def surrogate_fn(inputs):
-#             def swap(x):
-#                 if len(x) > 1:
-#                     return list(x)
-#                 else:
-#                     return x[0]
-#             values = np.squeeze(np.array([inputs[key] for key in self.inputs])).T
-#             results = dict([(qoi, swap(self.surrogate_(qoi, values))) for qoi in self.qois])
-#             return results
-#         return surrogate_fn
+        Returns
+        -------
+        A function that takes a dictionary of parameter - value pairs and returns
+        a dictionary with the results (same output as decoder).
+        """
+        def surrogate_fn(inputs):
+            def swap(x):
+                if x.size > 1:
+                    return list(x)
+                else:
+                    return x[0]
+            values = np.squeeze(np.array([inputs[key] for key in self.inputs])).T
+            results = dict([(qoi, swap(self.surrogate_(qoi, values))) for qoi in self.qois])
+            return results
+        return surrogate_fn
 
 
 class SSCAnalysis(BaseAnalysisElement):
@@ -190,9 +191,9 @@ class SSCAnalysis(BaseAnalysisElement):
                                                          'var': var_k,
                                                          'std': std_k}
 
-        # results = SCAnalysisResults(raw_data=results, samples=data_frame,
-        #                             qois=qoi_cols, inputs=list(self.sampler.vary.get_keys()))
-        # results.surrogate_ = self.surrogate
+        results = SSCAnalysisResults(raw_data=results, samples=data_frame,
+                                    qois=self.qoi_cols, inputs=list(self.sampler.vary.get_keys()))
+        results.surrogate_ = self.surrogate
         return results
 
     def load_samples(self, data_frame):
@@ -241,12 +242,13 @@ class SSCAnalysis(BaseAnalysisElement):
             The variance of qoi.
 
         """
-        
+        print('Computing mean and variance...')
         Xi = self.sampler.sample_inputs(n_mc)
         rvs = [self.surrogate(qoi, xi) for xi in Xi]
         mean = np.mean(rvs)
         var = np.var(rvs)
-        return mean, var                
+        print('done.')
+        return np.array([mean]), np.array([var])                
 
     def update_surrogate(self, qoi, data_frame, max_LEC_jobs=4, n_mc_LEC=5):
         """
@@ -401,8 +403,9 @@ class SSCAnalysis(BaseAnalysisElement):
             The surrogate output at xi
 
         """
-
-        return self.sampler.surrogate(xi, self.S_j, self.p_j, self.samples[qoi])
+        
+        surr = self.sampler.surrogate(xi, self.S_j, self.p_j, self.samples[qoi])
+        return np.array([surr])
 
     def get_sample_array(self, qoi):
         """
@@ -417,3 +420,33 @@ class SSCAnalysis(BaseAnalysisElement):
         """
 
         return self.samples[qoi]
+
+    def plot_2D_triangulation(self):
+        tri = self.sampler.tri
+        # colors = ['b', 'g', 'r', 'c', 'm', 'y', 'w']
+        colors = ["#8dd3c7", "#ffffb3", "#bebada", "#fb8072", "#80b1d3", 
+                  "#fdb462", "#b3de69", "#fccde5", "#d9d9d9"]
+
+        #plot the delaunay grid and color it according to the local p_j
+        fig = plt.figure()
+        ax = fig.add_subplot(111, xlabel=r'$\xi_1$', ylabel=r'$\xi_2$', xlim=[0,1], \
+                             ylim=[0,1])
+        
+        for p in range(np.max(self.p_j)):
+            idx = (self.p_j == p+1).nonzero()[0]
+            first = True
+            for i in idx:
+                vertices = tri.points[tri.simplices[i]]
+                if first == True:
+                    pg = Polygon(vertices, facecolor=colors[p], edgecolor='k',\
+                                 label=r'$p_j = %d$' % (p+1))    
+                    first = False
+                else:
+                    pg = Polygon(vertices, facecolor=colors[p], edgecolor='k')    
+        
+                ax.add_patch(pg)
+
+        leg = plt.legend(loc=0)
+        leg.set_draggable(True)
+        plt.tight_layout()
+        plt.show()

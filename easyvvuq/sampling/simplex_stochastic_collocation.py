@@ -1,9 +1,26 @@
+"""
+-------------------------------------------------------------
+THE SIMPLEX STOCASTIC COLLOCATION SAMPLER OF JEROEN WITTEVEEN
+-------------------------------------------------------------
+
+Source:
+    
+Witteveen, J. A. S., & Iaccarino, G. (2013). 
+Simplex stochastic collocation with ENO-type stencil selection for robust
+uncertainty quantification. Journal of Computational Physics, 239, 1-21.
+
+Edeling, W. N., Dwight, R. P., & Cinnella, P. (2016). 
+Simplex-stochastic collocation method with improved scalability. 
+Journal of Computational Physics, 310, 301-328.
+
+"""
+
 from .base import BaseSamplingElement, Vary
 # import chaospy as cp
 import numpy as np
 import pickle
 from itertools import product, combinations
-import logging
+# import logging
 from scipy.spatial import Delaunay
 from scipy.special import factorial
 import multiprocessing as mp
@@ -46,14 +63,6 @@ class SSCSampler(BaseSamplingElement, sampler_name="ssc_sampler"):
         self.count = 0
         self._n_samples = self.tri.points.shape[0]
         self.set_pmax_cutoff(pmax)
-
-    #! TODO change
-    # @property
-    # def analysis_class(self):
-    #     """Return a corresponding analysis class.
-    #     """
-    #     from easyvvuq.analysis import SCAnalysis
-    #     return SCAnalysis
 
     def init_grid(self):
         """
