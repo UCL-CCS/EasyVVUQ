@@ -243,14 +243,14 @@ def check_LEC_ENO(SSC_campaign):
     el_idx = res_LEC['el_idx']
 
     # convert the nearest-neighbour stencils to ENO stencils
-    S_j, p_j, el_idx = sampler.compute_ENO_stencil(p_j, S_j, el_idx)
+    _, p_j, el_idx = sampler.compute_ENO_stencil(p_j, S_j, el_idx)
 
     # nothing should have changed yet
-    assert (res_LEC['p_j'] == np.array([1, 1, 1, 1])).all()
-    assert res_LEC['el_idx'][0] == np.array([0])
-    assert res_LEC['el_idx'][1] == np.array([1])
-    assert res_LEC['el_idx'][2] == np.array([2])
-    assert res_LEC['el_idx'][3] == np.array([3])
+    assert (p_j == np.array([1, 1, 1, 1])).all()
+    assert el_idx[0] == np.array([0])
+    assert el_idx[1] == np.array([1])
+    assert el_idx[2] == np.array([2])
+    assert el_idx[3] == np.array([3])
 
 
 def test_adapt_locally(SSC_campaign):
