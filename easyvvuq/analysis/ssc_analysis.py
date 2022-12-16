@@ -151,7 +151,7 @@ class SSCAnalysis(BaseAnalysisElement):
         for key in state.keys():
             self.__dict__[key] = state[key]
 
-    def analyse(self, data_frame=None, compute_moments = True, n_mc = 20000):
+    def analyse(self, data_frame=None, compute_moments=True, n_mc=20000):
         """
         Perform SSC analysis on input `data_frame`.
 
@@ -185,7 +185,7 @@ class SSCAnalysis(BaseAnalysisElement):
 
         if compute_moments:
             for qoi_k in self.qoi_cols:
-                mean_k, var_k = self.get_moments(qoi_k, n_mc = n_mc)
+                mean_k, var_k = self.get_moments(qoi_k, n_mc=n_mc)
                 std_k = var_k ** 0.5
                 # compute statistical moments
                 results['statistical_moments'][qoi_k] = {'mean': mean_k,
@@ -193,7 +193,7 @@ class SSCAnalysis(BaseAnalysisElement):
                                                          'std': std_k}
 
         results = SSCAnalysisResults(raw_data=results, samples=data_frame,
-                                    qois=self.qoi_cols, inputs=list(self.sampler.vary.get_keys()))
+                                     qois=self.qoi_cols, inputs=list(self.sampler.vary.get_keys()))
         results.surrogate_ = self.surrogate
         return results
 
@@ -221,11 +221,11 @@ class SSCAnalysis(BaseAnalysisElement):
             samples[k] = np.array(samples[k])
         self.samples = samples
         print('done')
-    
+
     def get_moments(self, qoi, n_mc):
         """
         Compute the mean and variance through Monte Carlo sampling of the SSC
-        surrogate. Independent random inputs samples are drawn though the 
+        surrogate. Independent random inputs samples are drawn though the
         SSC sampler object.
 
         Parameters
@@ -249,7 +249,7 @@ class SSCAnalysis(BaseAnalysisElement):
         mean = np.mean(rvs)
         var = np.var(rvs)
         print('done.')
-        return np.array([mean]), np.array([var])                
+        return np.array([mean]), np.array([var])
 
     def update_surrogate(self, qoi, data_frame, max_LEC_jobs=4, n_mc_LEC=5):
         """
@@ -259,7 +259,7 @@ class SSCAnalysis(BaseAnalysisElement):
         Parameters
         ----------
         qoi : string
-            The name of the QoI on the basis of which the sampling plan 
+            The name of the QoI on the basis of which the sampling plan
             is refined.
         data_frame : EasyVVUQ (pandas) data frame
             The code samples from the EasyVVUQ data frame.
@@ -272,7 +272,7 @@ class SSCAnalysis(BaseAnalysisElement):
         Returns
         -------
         None. Stores the polynomials orders, interpolation stencils and
-        the simplex probabilities in analysis.p_j, analysis.S_j and 
+        the simplex probabilities in analysis.p_j, analysis.S_j and
         analysis.prob_j respectively.
 
         """
@@ -324,11 +324,10 @@ class SSCAnalysis(BaseAnalysisElement):
         # compute the simplex probabilities
         self.prob_j = self.sampler.compute_probability()
 
-
-    def adapt_locally(self, n_new_samples = 1):
+    def adapt_locally(self, n_new_samples=1):
         """
         Locally refine the sampling plan based on the SSC geometric
-        refinement measure.     
+        refinement measure.
 
         Parameters
         ----------
@@ -337,10 +336,10 @@ class SSCAnalysis(BaseAnalysisElement):
 
         Returns
         -------
-        None. Updates the Delaunay triangulation of the SSC sampler with 
+        None. Updates the Delaunay triangulation of the SSC sampler with
         the new points. A new ensemble must be executed next.
 
-        """       
+        """
 
         # compute the refinement measures
         eps_bar_j, vol_j = self.sampler.compute_eps_bar_j(self.p_j, self.prob_j)
@@ -385,7 +384,7 @@ class SSCAnalysis(BaseAnalysisElement):
                 j += 1
 
         self.sampler.update_Delaunay(xi_k_jref)
-    
+
     def surrogate(self, qoi, xi):
         """
         Evaluate the SSC surrogate at xi.
@@ -404,7 +403,7 @@ class SSCAnalysis(BaseAnalysisElement):
             The surrogate output at xi
 
         """
-        
+
         surr = self.sampler.surrogate(xi, self.S_j, self.p_j, self.samples[qoi])
         return np.array([surr])
 
@@ -425,26 +424,26 @@ class SSCAnalysis(BaseAnalysisElement):
     def plot_2D_triangulation(self):
         tri = self.sampler.tri
         # colors = ['b', 'g', 'r', 'c', 'm', 'y', 'w']
-        colors = ["#8dd3c7", "#ffffb3", "#bebada", "#fb8072", "#80b1d3", 
+        colors = ["#8dd3c7", "#ffffb3", "#bebada", "#fb8072", "#80b1d3",
                   "#fdb462", "#b3de69", "#fccde5", "#d9d9d9"]
 
-        #plot the delaunay grid and color it according to the local p_j
+        # plot the delaunay grid and color it according to the local p_j
         fig = plt.figure()
-        ax = fig.add_subplot(111, xlabel=r'$\xi_1$', ylabel=r'$\xi_2$', xlim=[0,1], \
-                             ylim=[0,1])
-        
+        ax = fig.add_subplot(111, xlabel=r'$\xi_1$', ylabel=r'$\xi_2$', xlim=[0, 1],
+                             ylim=[0, 1])
+
         for p in range(np.max(self.p_j)):
-            idx = (self.p_j == p+1).nonzero()[0]
+            idx = (self.p_j == p + 1).nonzero()[0]
             first = True
             for i in idx:
                 vertices = tri.points[tri.simplices[i]]
-                if first == True:
-                    pg = Polygon(vertices, facecolor=colors[p], edgecolor='k',\
-                                 label=r'$p_j = %d$' % (p+1))    
+                if first:
+                    pg = Polygon(vertices, facecolor=colors[p], edgecolor='k',
+                                 label=r'$p_j = %d$' % (p + 1))
                     first = False
                 else:
-                    pg = Polygon(vertices, facecolor=colors[p], edgecolor='k')    
-        
+                    pg = Polygon(vertices, facecolor=colors[p], edgecolor='k')
+
                 ax.add_patch(pg)
 
         leg = plt.legend(loc=0)

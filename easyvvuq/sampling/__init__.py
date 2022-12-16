@@ -10,6 +10,7 @@ to create input files for the simulations.
 from .base import BaseSamplingElement, Vary
 from .random import RandomSampler
 from .stochastic_collocation import SCSampler
+from .simplex_stochastic_collocation import SSCSampler
 from .pce import PCESampler
 from .qmc import QMCSampler
 from .mcmc import MCMCSampler

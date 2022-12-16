@@ -4,13 +4,13 @@ THE SIMPLEX STOCASTIC COLLOCATION SAMPLER OF JEROEN WITTEVEEN (1980-2015)
 -------------------------------------------------------------------------
 
 Source:
-    
-Witteveen, J. A. S., & Iaccarino, G. (2013). 
+
+Witteveen, J. A. S., & Iaccarino, G. (2013).
 Simplex stochastic collocation with ENO-type stencil selection for robust
 uncertainty quantification. Journal of Computational Physics, 239, 1-21.
 
-Edeling, W. N., Dwight, R. P., & Cinnella, P. (2016). 
-Simplex-stochastic collocation method with improved scalability. 
+Edeling, W. N., Dwight, R. P., & Cinnella, P. (2016).
+Simplex-stochastic collocation method with improved scalability.
 Journal of Computational Physics, 310, 301-328.
 
 """
@@ -55,7 +55,7 @@ class SSCSampler(BaseSamplingElement, sampler_name="ssc_sampler"):
     Simplex Stochastic Collocation sampler
     """
 
-    def __init__(self, vary=None, max_polynomial_order = 4):
+    def __init__(self, vary=None, max_polynomial_order=4):
         """
         Create an SSC sampler object.
 
@@ -213,7 +213,7 @@ class SSCSampler(BaseSamplingElement, sampler_name="ssc_sampler"):
     def compute_sub_simplex_vertices(self, simplex_idx):
         """
         Compute the vertices of the sub-simplex. The  sub simplex is contained
-        in the larger simplex. The larger simplex is refined by randomly 
+        in the larger simplex. The larger simplex is refined by randomly
         placing a sample within the sub simplex.
 
         Parameters
@@ -1200,6 +1200,7 @@ class SSCSampler(BaseSamplingElement, sampler_name="ssc_sampler"):
         print("Loading sampler state from %s" % filename)
         with open(filename, 'rb') as fp:
             self.__dict__ = pickle.load(fp)
+
 
 def DAFSILAS(A, b, print_message=False):
     """
