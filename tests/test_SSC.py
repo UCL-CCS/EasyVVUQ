@@ -256,7 +256,6 @@ def check_LEC_ENO(SSC_campaign):
 def test_adapt_locally(SSC_campaign):
     # test of full adaptation workflow
     campaign, sampler, analysis = SSC_campaign
-    data_frame = campaign.get_collation_result()
     np.random.seed(42)
 
     # number of samples used in the LEC check
