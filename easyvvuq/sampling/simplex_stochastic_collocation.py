@@ -1,7 +1,7 @@
 """
--------------------------------------------------------------
-THE SIMPLEX STOCASTIC COLLOCATION SAMPLER OF JEROEN WITTEVEEN
--------------------------------------------------------------
+-------------------------------------------------------------------------
+THE SIMPLEX STOCASTIC COLLOCATION SAMPLER OF JEROEN WITTEVEEN (1980-2015)
+-------------------------------------------------------------------------
 
 Source:
     
@@ -52,17 +52,34 @@ __license__ = "LGPL"
 
 class SSCSampler(BaseSamplingElement, sampler_name="ssc_sampler"):
     """
-    Stochastic Collocation sampler
+    Simplex Stochastic Collocation sampler
     """
 
-    def __init__(self,
-                 vary=None, pmax=4):
+    def __init__(self, vary=None, max_polynomial_order = 4):
+        """
+        Create an SSC sampler object.
+
+        Parameters
+        ----------
+        vary: dict or None
+            keys = parameters to be sampled, values = distributions.
+        max_polynomial_order : int, optional
+            The maximum polynomial order, default is 4.
+        Returns
+        -------
+        None.
+
+        """
+        # number of random inputs
         self.n_xi = len(vary)
+        # vary dictionary of Chaospy input distribution
         self.vary = Vary(vary)
+        # initial Delaunay triangulation
         self.tri = self.init_grid()
+        # code sample counter
         self.count = 0
         self._n_samples = self.tri.points.shape[0]
-        self.set_pmax_cutoff(pmax)
+        self.set_pmax_cutoff(max_polynomial_order)
 
     def init_grid(self):
         """
@@ -72,7 +89,7 @@ class SSCSampler(BaseSamplingElement, sampler_name="ssc_sampler"):
         Returns
         -------
         tri : scipy.spatial.qhull.Delaunay
-            Initial triagulation of 2**n_xi + 1 points.
+            Initial triagulation of 2 ** n_xi + 1 points.
 
         """
 
@@ -117,7 +134,7 @@ class SSCSampler(BaseSamplingElement, sampler_name="ssc_sampler"):
         -------
         int
             The highest polynomial order that can be sustained given
-            the number of code evalautions.
+            the number of code evaluations.
 
         """
         p = 1
@@ -195,9 +212,9 @@ class SSCSampler(BaseSamplingElement, sampler_name="ssc_sampler"):
 
     def compute_sub_simplex_vertices(self, simplex_idx):
         """
-        Compute the vertices of the sub-simplex. The
-        sub simplex is contained in the larger simplex. The larger simplex
-        is refined by randomly placing a sample within the sub simplex.
+        Compute the vertices of the sub-simplex. The  sub simplex is contained
+        in the larger simplex. The larger simplex is refined by randomly 
+        placing a sample within the sub simplex.
 
         Parameters
         ----------
@@ -991,7 +1008,7 @@ class SSCSampler(BaseSamplingElement, sampler_name="ssc_sampler"):
 
         """
 
-        w_k_jref = self.surrogate(xi_k_jref, p_j, S_j, v)
+        w_k_jref = self.surrogate(xi_k_jref, S_j, p_j, v)
 
         # compute the hierarcical surplus between old interpolation and new v value
         surplus = w_k_jref - v_k_jref
@@ -1163,9 +1180,8 @@ class SSCSampler(BaseSamplingElement, sampler_name="ssc_sampler"):
 
         """
         print("Saving sampler state to %s" % filename)
-        file = open(filename, 'wb')
-        pickle.dump(self.__dict__, file)
-        file.close()
+        with open(filename, 'wb') as fp:
+            pickle.dump(self.__dict__, fp)
 
     def load_state(self, filename):
         """
@@ -1182,10 +1198,8 @@ class SSCSampler(BaseSamplingElement, sampler_name="ssc_sampler"):
 
         """
         print("Loading sampler state from %s" % filename)
-        file = open(filename, 'rb')
-        self.__dict__ = pickle.load(file)
-        file.close()
-
+        with open(filename, 'rb') as fp:
+            self.__dict__ = pickle.load(fp)
 
 def DAFSILAS(A, b, print_message=False):
     """

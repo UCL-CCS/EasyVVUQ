@@ -83,6 +83,9 @@ class SSCAnalysisResults(AnalysisResults):
 
 
 class SSCAnalysis(BaseAnalysisElement):
+    """
+    SSc analysis class.
+    """
 
     def __init__(self, sampler=None, qoi_cols=None):
         """
@@ -125,13 +128,12 @@ class SSCAnalysis(BaseAnalysisElement):
         filename : string
             name to the file to write the state to
         """
-        logging.debug("Saving analysis state to %s" % filename)
+        print("Saving analysis state to %s" % filename)
         # make a copy of the state, and do not store the sampler as well
         state = copy.copy(self.__dict__)
         del state['sampler']
-        file = open(filename, 'wb')
-        pickle.dump(state, file)
-        file.close()
+        with open(filename, 'wb') as fp:
+            pickle.dump(state, fp)
 
     def load_state(self, filename):
         """
@@ -143,12 +145,11 @@ class SSCAnalysis(BaseAnalysisElement):
         filename : string
             name of the file to load
         """
-        logging.debug("Loading analysis state from %s" % filename)
-        file = open(filename, 'rb')
-        state = pickle.load(file)
+        print("Loading analysis state from %s" % filename)
+        with open(filename, 'rb') as fp:
+            state = pickle.load(fp)
         for key in state.keys():
             self.__dict__[key] = state[key]
-        file.close()
 
     def analyse(self, data_frame=None, compute_moments = True, n_mc = 20000):
         """
