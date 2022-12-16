@@ -1309,7 +1309,7 @@ class SCAnalysis(BaseAnalysisElement):
         print('Mean CV input = %.4f %%' % (100 * CV_in, ))
         print('Mean CV output = %.4f %%' % (100 * CV_out, ))
         print('Uncertainty amplification factor = %.4f/%.4f = %.4f' %
-            (CV_out, CV_in, blowup))
+              (CV_out, CV_in, blowup))
         print('-----------------')
 
         return blowup

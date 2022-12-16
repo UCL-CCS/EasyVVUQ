@@ -8,7 +8,7 @@ import copy
 from easyvvuq import OutputType
 from .base import BaseAnalysisElement
 from .results import AnalysisResults
-import logging
+# import logging
 # from scipy.special import comb
 import pandas as pd
 import matplotlib.pyplot as plt
