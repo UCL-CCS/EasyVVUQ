@@ -67,8 +67,10 @@ def SSC_campaign():
         target_filename='output.csv',
         output_columns=output_columns)
 
-    actions = Actions(CreateRunDirectory(root='/tmp', flatten=True), Encode(encoder), execute,
-                      Decode(decoder))
+    actions = Actions(CreateRunDirectory('/tmp'), Encode(encoder), execute, Decode(decoder))
+
+    # actions = Actions(CreateRunDirectory(root='/tmp', flatten=True), Encode(encoder), execute,
+    #                   Decode(decoder))
 
     campaign = uq.Campaign(name='foo', work_dir='/tmp', params=params, actions=actions)
 
