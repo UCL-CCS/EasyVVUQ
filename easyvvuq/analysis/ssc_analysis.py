@@ -429,8 +429,11 @@ class SSCAnalysis(BaseAnalysisElement):
 
         # plot the delaunay grid and color it according to the local p_j
         fig = plt.figure()
-        ax = fig.add_subplot(111, xlabel=r'$\xi_1$', ylabel=r'$\xi_2$', xlim=[0, 1],
-                             ylim=[0, 1])
+        ax = fig.add_subplot(111, xlabel=r'$\xi_1$', ylabel=r'$\xi_2$',
+                             xlim=[self.sampler.corners[0][0],
+                                   self.sampler.corners[0][1]],
+                             ylim=[self.sampler.corners[1][0],
+                                   self.sampler.corners[1][1]])
 
         for p in range(np.max(self.p_j)):
             idx = (self.p_j == p + 1).nonzero()[0]
@@ -448,5 +451,5 @@ class SSCAnalysis(BaseAnalysisElement):
 
         leg = plt.legend(loc=0)
         leg.set_draggable(True)
-        plt.tight_layout()
+        # plt.tight_layout()
         plt.show()

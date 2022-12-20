@@ -2,12 +2,14 @@
 
 import numpy as np
 
+
 def f(x1, x2):
 
     if x2 <= -0.6 * x1 + 0.8:
         return x1 + x2 - 1
     else:
         return x1 ** 3 + x2 ** 2 + 1
+
 
 # load inputs
 inputs = np.genfromtxt('input.csv', delimiter=',')

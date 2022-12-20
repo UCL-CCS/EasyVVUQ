@@ -95,10 +95,14 @@ class SSCSampler(BaseSamplingElement, sampler_name="ssc_sampler"):
 
         # create inital hypercube points through n_xi dimensional carthesian product
         #of [0,1]
-        xi_k_jl = np.array([p for p in product([0, 1], repeat=self.n_xi)])
+        # xi_k_jl = np.array([p for p in product([0, 1], repeat=self.n_xi)])
+        corners = [[param.lower[0], param.upper[0]] for param in self.vary.get_values()]
+        self.corners = corners
+        xi_k_jl = np.array(list(product(*corners)))
 
         # add a point in the middle of the hypercube
-        xi_k_jl = np.append(xi_k_jl, np.ones([1, self.n_xi]) * 0.5, 0)
+        # xi_k_jl = np.append(xi_k_jl, np.ones([1, self.n_xi]) * 0.5, 0)
+        xi_k_jl = np.append(xi_k_jl, np.mean(xi_k_jl, axis=0).reshape([1, -1]), 0)
 
         # Create initial Delaunay discretization
         """

@@ -21,7 +21,7 @@ def f(x1, x2):
     if x2 <= -0.6 * x1 + 0.8:
         return x1 + x2 - 1
     else:
-        return x1 ** 3 + x2 ** 2 + 1
+        return x1 ** 3 + np.cos(x2 ** 2) + 1
 
 import numpy as np
 # import matplotlib.pyplot as plt
