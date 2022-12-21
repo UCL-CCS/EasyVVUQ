@@ -93,26 +93,29 @@ class SSCSampler(BaseSamplingElement, sampler_name="ssc_sampler"):
 
         """
 
-        # create inital hypercube points through n_xi dimensional carthesian product
-        #of [0,1]
-        # xi_k_jl = np.array([p for p in product([0, 1], repeat=self.n_xi)])
+        # create inital hypercube points through n_xi dimensional
+        # carthesian product of the lower and upper limits of the
+        # chasopy input distributions
         corners = [[param.lower[0], param.upper[0]] for param in self.vary.get_values()]
         self.corners = corners
         xi_k_jl = np.array(list(product(*corners)))
 
         # add a point in the middle of the hypercube
-        # xi_k_jl = np.append(xi_k_jl, np.ones([1, self.n_xi]) * 0.5, 0)
         xi_k_jl = np.append(xi_k_jl, np.mean(xi_k_jl, axis=0).reshape([1, -1]), 0)
 
-        # Create initial Delaunay discretization
-        """
-        NOTE: FOUND AN ERROR IN THE 'incremental' OPTION. IN A 3D CASE IT USES
-        4 VERTICES TO MAKE A SQUARE IN A PLANE, NOT A 3D SIMPLEX. TURNED IT OFF.
-        CONSEQUENCE: I NEED TO RE-MAKE A NEW 'Delaunay' OBJECT EVERYTIME THE GRID
-        IS REFINED.
-        """
-        #tri = Delaunay(xi_k_jl, incremental=True)
-        tri = Delaunay(xi_k_jl)
+        if self.n_xi > 1:
+            # Create initial Delaunay discretization
+            """
+            NOTE: FOUND AN ERROR IN THE 'incremental' OPTION. IN A 3D CASE IT USES
+            4 VERTICES TO MAKE A SQUARE IN A PLANE, NOT A 3D SIMPLEX. TURNED IT OFF.
+            CONSEQUENCE: I NEED TO RE-MAKE A NEW 'Delaunay' OBJECT EVERYTIME THE GRID
+            IS REFINED.
+            """
+            #tri = Delaunay(xi_k_jl, incremental=True)
+            tri = Delaunay(xi_k_jl)
+
+        else:
+            tri = Tri1D(xi_k_jl)
 
         return tri
 
@@ -441,7 +444,7 @@ class SSCSampler(BaseSamplingElement, sampler_name="ssc_sampler"):
 
         el_idx = {}
 
-        r = np.array(list(product([0.25, 0.75], repeat=self.n_xi)))
+        # r = np.array(list(product([0.25, 0.75], repeat=self.n_xi)))
 
         while n_jobs > 0:
 
@@ -457,13 +460,11 @@ class SSCSampler(BaseSamplingElement, sampler_name="ssc_sampler"):
             while running_jobs < max_jobs and n_jobs > 0:
                 queue = mp.Queue()
                 prcs = mp.Process(target=self.check_LEC_j,
-                                  args=(p_j, v, S_j, n_mc, j, r, queue))
+                                  args=(p_j[j], v, S_j[j, :], n_mc, queue))
                 prcs.start()
                 running_jobs += 1
                 n_jobs -= 1
                 j += 1
-                # print n_jobs
-                # print check_LEC_j(tri, p_j, v, S_j, n_mc, j)
                 jobs.append(prcs)
                 queues.append(queue)
 
@@ -546,35 +547,29 @@ class SSCSampler(BaseSamplingElement, sampler_name="ssc_sampler"):
 
         return idx
 
-    def check_LEC_j(self, p_j, v, S_j, n_mc, j, r, queue):
+    def check_LEC_j(self, p_j, v, S_j, n_mc, queue):
         """
-        Check the LEC condition of the j-th element.
-
-        # TODO: Check if we really need to pass the full S_j, and p_j. Would
-        be more efficient if the element S_j and p_j are passed? Finish
-        docstring when addressed.
+        Check the LEC conditin of the j-th interpolation stencil.
 
         Parameters
         ----------
-        p_j : TYPE
-            DESCRIPTION.
-        v : TYPE
-            DESCRIPTION.
-        S_j : TYPE
-            DESCRIPTION.
-        n_mc : TYPE
-            DESCRIPTION.
-        j : TYPE
-            DESCRIPTION.
-        r : TYPE
-            DESCRIPTION.
-        queue : TYPE
-            DESCRIPTION.
+        p_j : int
+            The polynomial order of the j-th stencil.
+        v : array 
+            The code samples.
+        S_j : array, shape (N + 1,)
+            The interpolation stencil of the j-th simplex element, expressed
+            as the indices of the simplex points.
+        n_mc : int
+            The number of Monte Carlo samples to use in checking the LEC
+            conditions.
+        queue : multiprocessing queue object
+            Used to store the results.
 
         Returns
         -------
-        TYPE
-            DESCRIPTION.
+        None, results (polynomial order and element indices are stored
+                       in the queue)
 
         """
         n_xi = self.n_xi
@@ -582,17 +577,17 @@ class SSCSampler(BaseSamplingElement, sampler_name="ssc_sampler"):
         N = v[0, :].size
 
         # the number of points in S_j
-        Np1_j = int(factorial(n_xi + p_j[j]) / (factorial(n_xi) * factorial(p_j[j])))
+        Np1_j = int(factorial(n_xi + p_j) / (factorial(n_xi) * factorial(p_j)))
         # select the vertices of stencil S_j
-        xi_Sj = self.tri.points[S_j[j, 0:Np1_j]]
+        xi_Sj = self.tri.points[S_j[0:Np1_j]]
         # find the corresponding indices of v
-        v_Sj = v[S_j[j, 0:Np1_j], :]
+        v_Sj = v[S_j[0:Np1_j], :]
 
         # the element indices of the simplices in stencil S_j
-        el_idx_j = self.find_simplices(S_j[j, 0:Np1_j])
+        el_idx_j = self.find_simplices(S_j[0:Np1_j])
 
         # compute sample matrix
-        Psi = self.compute_Psi(xi_Sj, p_j[j])
+        Psi = self.compute_Psi(xi_Sj, p_j)
 
         # check if Psi is well poised
         #det_Psi = np.linalg.det(Psi)
@@ -610,7 +605,7 @@ class SSCSampler(BaseSamplingElement, sampler_name="ssc_sampler"):
         k = 0
         LEC_checked = False
 
-        while LEC_checked == False and p_j[j] != 1:
+        while LEC_checked == False and p_j != 1:
             # sample the simplices in stencil S_j
             xi_samples = self.sample_simplex(n_mc, self.tri.points[self.tri.simplices[el_idx_j[k]]])
 
@@ -621,32 +616,32 @@ class SSCSampler(BaseSamplingElement, sampler_name="ssc_sampler"):
             # compute interpolation values at MC sample points
             w_j_at_xi = np.zeros([n_mc, N])
             for i in range(n_mc):
-                w_j_at_xi[i, :] = self.w_j(xi_samples[i], c_jl, p_j[j])
+                w_j_at_xi[i, :] = self.w_j(xi_samples[i], c_jl, p_j)
 
             k += 1
 
             # if LEC is violated in any of the simplices
             # TODO: make work for vector-valued outputs
             eps = 0
-            if (w_j_at_xi.min() <= v_min - eps or w_j_at_xi.max() >= v_max + eps) and p_j[j] > 1:
+            if (w_j_at_xi.min() <= v_min - eps or w_j_at_xi.max() >= v_max + eps) and p_j > 1:
 
-                p_j[j] -= 1
-
-                if p_j[j] == 1:
-                    return queue.put({'p_j[j]': p_j[j], 'el_idx_j': j})
+                p_j -= 1
 
                 # the new number of points in S_j
-                Np1_j = int(factorial(n_xi + p_j[j]) / (factorial(n_xi) * factorial(p_j[j])))
+                Np1_j = int(factorial(n_xi + p_j) / (factorial(n_xi) * factorial(p_j)))
                 # select the new vertices of stencil S_j
-                xi_Sj = self.tri.points[S_j[j, 0:Np1_j]]
+                xi_Sj = self.tri.points[S_j[0:Np1_j]]
                 # find the new corresponding indices of v
-                v_Sj = v[S_j[j, 0:Np1_j], :]
+                v_Sj = v[S_j[0:Np1_j], :]
                 # the new element indices of the simplices in stencil S_j
-                el_idx_j = self.find_simplices(S_j[j, 0:Np1_j])
+                el_idx_j = self.find_simplices(S_j[0:Np1_j])
                 k = 0
 
+                if p_j == 1:
+                    return queue.put({'p_j[j]': p_j, 'el_idx_j': el_idx_j})
+
                 # recompute sample matrix
-                Psi = self.compute_Psi(xi_Sj, p_j[j])
+                Psi = self.compute_Psi(xi_Sj, p_j)
 
                 # check if Psi is well poised
                 #det_Psi = np.linalg.det(Psi)
@@ -663,8 +658,7 @@ class SSCSampler(BaseSamplingElement, sampler_name="ssc_sampler"):
             if k == el_idx_j.size:
                 LEC_checked = True
 
-        # return {'p_j[j]':p_j[j], 'el_idx_j':el_idx_j}
-        return queue.put({'p_j[j]': p_j[j], 'el_idx_j': el_idx_j})
+        queue.put({'p_j[j]': p_j, 'el_idx_j': el_idx_j})
 
     def compute_stencil_j(self):
         """
@@ -800,28 +794,30 @@ class SSCSampler(BaseSamplingElement, sampler_name="ssc_sampler"):
         """
         Compute the ENO stencil of the j-th element.
 
-        # TODO: Check if we really need to pass the full S_j, and p_j. Would
-        be more efficient if the element S_j and p_j are passed? Finish
-        docstring when addressed.
-
         Parameters
         ----------
-        p_j : TYPE
-            DESCRIPTION.
-        S_j : TYPE
-            DESCRIPTION.
-        xi_centers : TYPE
-            DESCRIPTION.
-        j : TYPE
-            DESCRIPTION.
-        el_idx : TYPE
-            DESCRIPTION.
-        queue : TYPE
-            DESCRIPTION.
+        p_j : array, shape (n_e,)
+            The polynomial order of each simplex element.
+        S_j : array, shape (n_e, n_s)
+            The indices of all nearest neighbours points of each simplex j=1,..,n_e,
+            ordered from closest to the neighbour that furthest away. The first
+            n_xi + 1 indeces belong to the j-th simplex itself.
+        xi_centers : array, shape (n_e, )
+            The center of each simplex.
+        j : int
+            The index of the current simplex.
+        el_idx : dict
+            The element indices for each interpolation stencil.
+            el_idx[2] gives the elements indices of the 3rd interpolation
+            stencil. The number of elements is determined by the local
+            polynomial order.
+        queue : multiprocessing queue object
+            Used to store the results.
 
         Returns
         -------
-        None.
+        None, results (polynomial order and element indices are stored
+                       in the queue)
 
         """
         n_e = self.tri.nsimplex
@@ -1042,7 +1038,7 @@ class SSCSampler(BaseSamplingElement, sampler_name="ssc_sampler"):
 
         """
         n_xi = self.n_xi
-        idx = self.tri.find_simplex(xi)
+        idx = int(self.tri.find_simplex(xi))
 
         # the number of points in S_j
         Np1_j = int(factorial(n_xi + p_j[idx]) / (factorial(n_xi) * factorial(p_j[idx])))
@@ -1130,7 +1126,11 @@ class SSCSampler(BaseSamplingElement, sampler_name="ssc_sampler"):
         """
 
         xi_k_jl = np.append(self.tri.points, new_points, 0)
-        self.tri = Delaunay(xi_k_jl)
+        if self.n_xi > 1:
+            self.tri = Delaunay(xi_k_jl)
+        else:
+            self.tri = Tri1D(xi_k_jl)
+
         self._n_samples = self.tri.npoints
 
     def is_finite(self):
@@ -1323,3 +1323,78 @@ def DAFSILAS(A, b, print_message=False):
     Ap = np.multiply(D, Ap)
     # Calculated solution
     return np.dot(P, Ap[:, n]).reshape([n, 1])
+
+
+class Tri1D:
+    """
+    1D "triangulation" that mimics the following SciPy Delaunay properties:
+        * ndim
+        * points
+        * npoints
+        * nsimplex
+        * simplices
+        * neighbours
+        * the find_simplex subroutine
+    """
+
+    def __init__(self, points):
+        """
+        Create a 1D Triangulation object that can we used by the SSCSampler
+        in the same way as the SciPy Delaunay triangulation.
+
+        Parameters
+        ----------
+        points : array, shape (n_s, )
+            A 1D array of nodes.
+
+        Returns
+        -------
+        None.
+
+        """
+        self.ndim = 1
+        self.points = points
+        self.npoints = points.size
+        self.nsimplex = points.size - 1
+
+        points_sorted = np.sort(self.points.reshape(self.npoints))
+        self.simplices = np.zeros([self.nsimplex, 2])
+        for i in range(self.nsimplex):
+            self.simplices[i, 0] = (self.points == points_sorted[i]).nonzero()[0]
+            self.simplices[i, 1] = (self.points == points_sorted[i + 1]).nonzero()[0]
+        self.simplices = self.simplices.astype('int')
+
+        self.neighbors = np.zeros([self.nsimplex, 2])
+        for i in range(self.nsimplex):
+            self.neighbors[i, 0] = i - 1
+            self.neighbors[i, 1] = i + 1
+        self.neighbors[-1, 1] = -1
+        self.neighbors = self.neighbors.astype('int')
+
+    def find_simplex(self, xi):
+        """
+        Find the simplex indices of nodes xi
+
+        Parameters
+        ----------
+        xi : array, shape (S,)
+            An array if S 1D points.
+
+        Returns
+        -------
+        array
+            An array containing the simplex indices of points xi.
+
+        """
+        Idx = np.zeros(xi.shape[0])
+        points_sorted = np.sort(self.points.reshape(self.npoints))
+
+        for i in range(xi.shape[0]):
+            idx = (points_sorted < xi[i]).argmin() - 1
+            # if xi = 0 idx will be -1
+            if idx == -1:
+                Idx[i] = 0
+            else:
+                Idx[i] = idx
+
+        return Idx.astype('int')

@@ -98,11 +98,75 @@ def SSC_campaign():
 
     campaign.execute().collate()
 
-    # number of samples used in the LEC check
-    # n_mc = 50
+    analysis = uq.analysis.SSCAnalysis(sampler=sampler, qoi_cols=['f'])
 
-    # max number of functions evaluations that can be run in parallel
-    # max_fjobs = 4
+    return campaign, sampler, analysis
+
+
+@pytest.fixture
+def SSC_campaign_1D():
+    ##################################
+    # Define (total) parameter space #
+    ##################################
+
+    # Define parameter space
+    params = {
+        "x1": {
+            "type": "float",
+            "min": 0.0,
+            "max": 1.0,
+            "default": 0.5},
+        "x2": {
+            "type": "float",
+            "min": 0.0,
+            "max": 1.0,
+            "default": 0.5}}
+
+    ###########################
+    # Set up a fresh campaign #
+    ###########################
+
+    encoder = uq.encoders.GenericEncoder(
+        template_fname='tests/discont_model/discont_model.template',
+        delimiter='$',
+        target_filename='input.csv')
+
+    execute = ExecuteLocal(os.path.abspath("tests/discont_model/discont_model.py"))
+
+    output_columns = ["f"]
+    decoder = uq.decoders.SimpleCSV(
+        target_filename='output.csv',
+        output_columns=output_columns)
+
+    actions = Actions(CreateRunDirectory('/tmp'), Encode(encoder), execute, Decode(decoder))
+
+    # actions = Actions(CreateRunDirectory(root='/tmp', flatten=True), Encode(encoder), execute,
+    #                   Decode(decoder))
+
+    campaign = uq.Campaign(name='foo', work_dir='/tmp', params=params, actions=actions)
+
+    #######################
+    # Specify input space #
+    #######################
+
+    vary = {
+        "x1": cp.Uniform(0.0, 1.0),
+    }
+
+    ##################
+    # Select sampler #
+    ##################
+
+    sampler = uq.sampling.SSCSampler(vary=vary)
+
+    # Associate the sampler with the campaign
+    campaign.set_sampler(sampler)
+
+    # ###############################
+    # # execute the defined actions #
+    # ###############################
+
+    campaign.execute().collate()
 
     analysis = uq.analysis.SSCAnalysis(sampler=sampler, qoi_cols=['f'])
 
@@ -279,6 +343,32 @@ def test_adapt_locally(SSC_campaign):
 
     # check if sampler.check_LEC worked
     assert (analysis.p_j == np.array([2, 2, 1, 1, 1, 2, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2])).all()
+
+
+def test_adapt_locally_1D(SSC_campaign_1D):
+    # test of full adaptation workflow with 1 variable (tests Tri1D class
+    # in SSCSampler)
+    campaign, sampler, analysis = SSC_campaign_1D
+    np.random.seed(42)
+
+    # number of samples used in the LEC check
+    n_mc = 50
+
+    # max number of functions evaluations that can be run in parallel
+    max_fjobs = 4
+
+    analysis = uq.analysis.SSCAnalysis(sampler=sampler, qoi_cols=['f'])
+
+    for i in range(2):
+        data_frame = campaign.get_collation_result()
+        analysis.update_surrogate('f', data_frame, n_mc_LEC=n_mc)
+        analysis.adapt_locally(max_fjobs)
+        campaign.execute().collate()
+
+    data_frame = campaign.get_collation_result()
+    analysis.update_surrogate('f', data_frame)
+
+    assert (analysis.p_j == np.array([4, 4, 4, 4, 1, 3, 3, 3])).all()
 
 
 def test_sample_simplex(SSC_campaign):

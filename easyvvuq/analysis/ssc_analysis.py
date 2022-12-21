@@ -341,6 +341,9 @@ class SSCAnalysis(BaseAnalysisElement):
 
         """
 
+        if n_new_samples > self.sampler.n_elements:
+            n_new_samples = self.sampler.n_elements
+
         # compute the refinement measures
         eps_bar_j, vol_j = self.sampler.compute_eps_bar_j(self.p_j, self.prob_j)
 
@@ -404,6 +407,9 @@ class SSCAnalysis(BaseAnalysisElement):
 
         """
 
+        if not isinstance(xi, np.ndarray):
+            xi = np.array([xi])
+
         surr = self.sampler.surrogate(xi, self.S_j, self.p_j, self.samples[qoi])
         return np.array([surr])
 
@@ -421,35 +427,59 @@ class SSCAnalysis(BaseAnalysisElement):
 
         return self.samples[qoi]
 
-    def plot_2D_triangulation(self):
+    def plot_sampling_plan(self):
+        """
+        Plot the 1D or 2D sampling plan and color code the simplices according
+        to their polynomial order.
+
+        Returns
+        -------
+        None.
+
+        """
+
+        assert self.sampler.n_xi == 1 or self.sampler.n_xi == 2, \
+            "Only works for 2D problems"
+
         tri = self.sampler.tri
-        # colors = ['b', 'g', 'r', 'c', 'm', 'y', 'w']
         colors = ["#8dd3c7", "#ffffb3", "#bebada", "#fb8072", "#80b1d3",
                   "#fdb462", "#b3de69", "#fccde5", "#d9d9d9"]
 
-        # plot the delaunay grid and color it according to the local p_j
-        fig = plt.figure()
-        ax = fig.add_subplot(111, xlabel=r'$\xi_1$', ylabel=r'$\xi_2$',
-                             xlim=[self.sampler.corners[0][0],
-                                   self.sampler.corners[0][1]],
-                             ylim=[self.sampler.corners[1][0],
-                                   self.sampler.corners[1][1]])
+        if self.sampler.n_xi == 2:
+            # plot the delaunay grid and color it according to the local p_j
+            fig = plt.figure()
+            ax = fig.add_subplot(111, xlabel=r'$\xi_1$', ylabel=r'$\xi_2$',
+                                 xlim=[self.sampler.corners[0][0],
+                                       self.sampler.corners[0][1]],
+                                 ylim=[self.sampler.corners[1][0],
+                                       self.sampler.corners[1][1]])
 
-        for p in range(np.max(self.p_j)):
-            idx = (self.p_j == p + 1).nonzero()[0]
-            first = True
-            for i in idx:
-                vertices = tri.points[tri.simplices[i]]
-                if first:
-                    pg = Polygon(vertices, facecolor=colors[p], edgecolor='k',
-                                 label=r'$p_j = %d$' % (p + 1))
-                    first = False
-                else:
-                    pg = Polygon(vertices, facecolor=colors[p], edgecolor='k')
+            for p in range(np.max(self.p_j)):
+                idx = (self.p_j == p + 1).nonzero()[0]
+                first = True
+                for i in idx:
+                    vertices = tri.points[tri.simplices[i]]
+                    if first:
+                        pg = Polygon(vertices, facecolor=colors[p], edgecolor='k',
+                                     label=r'$p_j = %d$' % (p + 1))
+                        first = False
+                    else:
+                        pg = Polygon(vertices, facecolor=colors[p], edgecolor='k')
 
-                ax.add_patch(pg)
+                    ax.add_patch(pg)
 
-        leg = plt.legend(loc=0)
-        leg.set_draggable(True)
-        # plt.tight_layout()
+            leg = plt.legend(loc=0)
+            leg.set_draggable(True)
+
+        elif self.sampler.n_xi == 1:
+            fig = plt.figure()
+            ax = fig.add_subplot(111, xlabel='cell center',
+                                 ylabel=r'polynomial order %s' % '$p_j$')
+            ax.plot(self.sampler.compute_xi_center_j(), self.p_j, 'o')
+            ax.vlines(self.sampler.compute_xi_center_j(), np.zeros(self.sampler.n_elements),
+                      self.p_j, linestyles='dashed')
+            ax.vlines(self.sampler.tri.points, -0.05 * np.max(self.p_j),
+                      0.05 * np.max(self.p_j))
+
+        plt.tight_layout()
         plt.show()
