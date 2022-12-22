@@ -251,7 +251,8 @@ class SSCAnalysis(BaseAnalysisElement):
         print('done.')
         return np.array([mean]), np.array([var])
 
-    def update_surrogate(self, qoi, data_frame, max_LEC_jobs=4, n_mc_LEC=5):
+    def update_surrogate(self, qoi, data_frame, max_LEC_jobs=4, n_mc_LEC=5,
+                         max_ENO_jobs=4):
         """
         Update the SSC surrogate given new data. Given an EasyVVUQ dataframe,
         check the LEC condition, and compute the ENO interpolation stencils.
@@ -268,6 +269,8 @@ class SSCAnalysis(BaseAnalysisElement):
         n_mc_LEC : int, optional
             The number of surrogate evaluations used in the LEC check.
             The default is 5.
+        max_LEC_jobs : int, optional
+            The number of ENO stencils to compute in parallel. The default is 4.
 
         Returns
         -------
@@ -314,7 +317,7 @@ class SSCAnalysis(BaseAnalysisElement):
 
         # convert the nearest-neighbour stencils to ENO stencils
         S_j, p_j, el_idx = self.sampler.compute_ENO_stencil(p_j, S_j, el_idx,
-                                                            max_jobs=max_LEC_jobs)
+                                                            max_jobs=max_ENO_jobs)
         # store polynomial orders and stencils
         self.p_j = p_j
         self.S_j = S_j
@@ -427,7 +430,7 @@ class SSCAnalysis(BaseAnalysisElement):
 
         return self.samples[qoi]
 
-    def plot_sampling_plan(self):
+    def plot_grid(self):
         """
         Plot the 1D or 2D sampling plan and color code the simplices according
         to their polynomial order.
@@ -439,7 +442,7 @@ class SSCAnalysis(BaseAnalysisElement):
         """
 
         assert self.sampler.n_xi == 1 or self.sampler.n_xi == 2, \
-            "Only works for 2D problems"
+            "Only works for 1D and 2D problems"
 
         tri = self.sampler.tri
         colors = ["#8dd3c7", "#ffffb3", "#bebada", "#fb8072", "#80b1d3",

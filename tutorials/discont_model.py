@@ -1,27 +1,24 @@
 #!/usr/bin/env python3
 
-def f(x1, x2):
+def f(x):
     """
     Discontinuous test function
 
     Parameters
     ----------
-    x1 : float
-        1st input in [0, 1].
-    x2 : float
-        2nd input in [0, 1]
-
+    x : array
+        input parameters
     Returns
     -------
     float
-        f(x1, x2)
+        f(x)
 
     """
     
-    if x2 <= -0.6 * x1 + 0.8:
-        return x1 + x2 - 1
+    if x[1] <= -0.6 * x[0] + 0.8:
+        return np.sum(x[0:n_xi]) - 1
     else:
-        return x1 ** 3 + np.cos(x2 ** 2) + 1
+        return x[0] ** 3 + np.cos(np.sum(x[1:n_xi] ** 2)) + 1
 
 import numpy as np
 # import matplotlib.pyplot as plt
@@ -29,8 +26,9 @@ import numpy as np
 
 # load inputs
 inputs = np.genfromtxt('input.csv', delimiter=',')
+n_xi = int(inputs[-1])
 
-output = f(inputs[0], inputs[1])
+output = f(inputs)
 
 np.savetxt('output.csv', np.array([output]), header=r"f", comments='')
 

@@ -1133,6 +1133,12 @@ class SSCSampler(BaseSamplingElement, sampler_name="ssc_sampler"):
 
         self._n_samples = self.tri.npoints
 
+    def get_Delaunay(self):
+        """
+        Return the SciPy Delaunay triangulation.
+        """
+        return self.tri
+
     def is_finite(self):
         return True
 
