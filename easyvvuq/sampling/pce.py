@@ -110,7 +110,7 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
         self.logger.addHandler(stream_handler)
 
         #%%%%%%%%%%%%%%%%%  USI DEBUG INFO   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        samplerFile_src = "/Users/Juraj/Documents/DXT/EasyVVUQ-fork/easyvvuq/sampling/pce.py"
+        samplerFile_src = "/Users/usi/switchdrive/Institution/usi/PhD/projects/DXT/sensitivity/code/EasyVVUQ-fork/easyvvuq/sampling/pce.py"
         fileStatsObj1 = stat(samplerFile_src)
         modificationTime1 = ctime(fileStatsObj1.st_mtime)
         self.logger.info(f"Using USI version of the PCE Sampler {samplerFile_src}")
@@ -194,9 +194,17 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
             #params_distribution = [cp.Uniform() if type(vary_dist).__name__ == "Uniform"
             #                       else cp.Normal()
             #                       for vary_dist in vary.values()]
+
+            
             params_distribution = [vary_dist for vary_dist in vary.values()]
             self.distribution = cp.J(*params_distribution)
+            
+            # This assumes that the order of the parameters in distribution and distribution_dep is the same
+            for id_v, v in enumerate(vary):
+                assert(vary[v].get_mom_parameters()['shift'][0] == self.distribution_dep._parameters['mean'][id_v])
+                assert(vary[v].get_mom_parameters()['shift'][0] == self.distribution[id_v].get_mom_parameters()['shift'][0])
             self.logger.debug(f"The independent distribution consists of: {self.distribution}")
+            self.logger.debug(f"Using parameter permutation: {list(vary.keys())}")
 
         # The orthogonal polynomials corresponding to the joint distribution
         self.P = cp.expansion.stieltjes(polynomial_order, self.distribution, normed=True)

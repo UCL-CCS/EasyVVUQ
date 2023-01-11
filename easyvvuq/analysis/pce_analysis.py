@@ -498,7 +498,9 @@ class PCEAnalysis(BaseAnalysisElement):
             Ndimensions = len(self.sampler.vary.vary_dict)
             for i, param_name in enumerate(self.sampler.vary.vary_dict):
                 # Evaluate dY_hat['param'] at the origin
-                derivatives_first_dict[param_name] = cp.polynomial(dY_hat[param_name])(*np.zeros(Ndimensions))
+                #derivatives_first_dict[param_name] = cp.polynomial(dY_hat[param_name])(*np.zeros(Ndimensions))
+                # Evaluate dY_hat['param'] at the mean of the parameters
+                derivatives_first_dict[param_name] = cp.polynomial(dY_hat[param_name])(*[v.get_mom_parameters()["shift"][0] for v in self.sampler.vary.vary_dict.values()])
 
             results['derivatives_first'][k] = derivatives_first_dict
 
