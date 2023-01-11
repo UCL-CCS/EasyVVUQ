@@ -115,10 +115,10 @@ def test_next_level_sparse_grid(sparse_campaign):
                                  [3, 4]])
     all_in = True
     for l in validation_array:
-        if not l in analysis.l_norm:
+        if l not in analysis.l_norm:
             all_in = False
             break
-    assert(all_in == True)
+    assert(all_in)
 
     # check if the grid has the right size
     assert(sampler.xi_d.shape[0] == 145)

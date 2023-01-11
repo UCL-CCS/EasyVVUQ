@@ -135,11 +135,11 @@ def test_SC2PCE(adaptive_campaign):
     Test the conversion from the SC basis to the PCE basis (analysis.SC2PCE)
     """
     _, analysis, _ = adaptive_campaign
-    assert(analysis.pce_coefs[(1, 1, 1)][(1, 1, 1)] ==
+    assert(analysis.pce_coefs['f'][(1, 1, 1)][(1, 1, 1)] ==
            pytest.approx(np.array([0.22204355]), abs=0.0001))
-    assert(analysis.pce_coefs[(2, 1, 1)][(1, 1, 1)] ==
+    assert(analysis.pce_coefs['f'][(2, 1, 1)][(1, 1, 1)] ==
            pytest.approx(np.array([0.25376406]), abs=0.0001))
-    assert(analysis.pce_coefs[(2, 1, 1)][(2, 1, 1)] ==
+    assert(analysis.pce_coefs['f'][(2, 1, 1)][(2, 1, 1)] ==
            pytest.approx(np.array([0.10988306]), abs=0.0001))
 
 

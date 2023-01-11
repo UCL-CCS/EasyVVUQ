@@ -112,6 +112,11 @@ class SCAnalysis(BaseAnalysisElement):
             self.mean_history = []
             self.std_history = []
         self.sparse = sampler.sparse
+        self.pce_coefs = {}
+        self.N_qoi = {}
+        for qoi_k in qoi_cols:
+            self.pce_coefs[qoi_k] = {}
+            self.N_qoi[qoi_k] = 0
 
     def element_name(self):
         """Name for this element for logging purposes"""
@@ -222,17 +227,16 @@ class SCAnalysis(BaseAnalysisElement):
         self.samples = samples
         logging.debug('done')
 
-        # size of one code sample
-        # TODO: change this to include QoI of different size
-        self.N_qoi = self.samples[qoi_cols[0]][0].size
-
         # assume that self.l_norm has changed, and that the interpolation
         # must be initialised, see sc_expansion subroutine
         self.init_interpolation = True
 
-        # TODO: same pce coefs must be computed for every qoi
+        # same pce coefs must be computed for every qoi
         if self.sparse:
-            self.pce_coefs = self.SC2PCE(samples[qoi_cols[0]])
+            for qoi_k in qoi_cols:
+                self.pce_coefs[qoi_k] = self.SC2PCE(samples[qoi_k], qoi_k)
+                # size of one code sample
+                self.N_qoi[qoi_k] = self.samples[qoi_k][0].size
 
         # Compute descriptive statistics for each quantity of interest
         results = {'statistical_moments': {},
@@ -245,8 +249,9 @@ class SCAnalysis(BaseAnalysisElement):
                     mean_k, var_k = self.get_moments(qoi_k)
                     std_k = np.sqrt(var_k)
                 else:
-                    pce_coefs = self.SC2PCE(self.samples[qoi_k])
-                    mean_k, var_k, _ = self.get_pce_stats(self.l_norm, pce_coefs, self.comb_coef)
+                    self.pce_coefs[qoi_k] = self.SC2PCE(self.samples[qoi_k], qoi_k)
+                    mean_k, var_k, _ = self.get_pce_stats(self.l_norm, self.pce_coefs[qoi_k],
+                                                          self.comb_coef)
                     std_k = np.sqrt(var_k)
 
                 # compute statistical moments
@@ -341,9 +346,9 @@ class SCAnalysis(BaseAnalysisElement):
             all_idx = np.concatenate((self.l_norm, self.sampler.admissible_idx))
             self.xi_1d = self.sampler.xi_1d
             self.wi_1d = self.sampler.wi_1d
-            self.pce_coefs = self.SC2PCE(samples, verbose=True, l_norm=all_idx,
-                                         xi_d=self.sampler.xi_d)
-            _, var_l, _ = self.get_pce_stats(self.l_norm, self.pce_coefs, self.comb_coef)
+            self.pce_coefs[qoi] = self.SC2PCE(samples, qoi, verbose=True, l_norm=all_idx,
+                                              xi_d=self.sampler.xi_d)
+            _, var_l, _ = self.get_pce_stats(self.l_norm, self.pce_coefs[qoi], self.comb_coef)
 
         # the currently accepted grid points
         xi_d_accepted = self.sampler.generate_grid(self.l_norm)
@@ -378,7 +383,8 @@ class SCAnalysis(BaseAnalysisElement):
                 candidate_l_norm = np.concatenate((self.l_norm, l.reshape([1, self.N])))
                 # now we must recompute the combination coefficients
                 c_l = self.compute_comb_coef(l_norm=candidate_l_norm)
-                _, var_candidate_l, _ = self.get_pce_stats(candidate_l_norm, self.pce_coefs, c_l)
+                _, var_candidate_l, _ = self.get_pce_stats(
+                    candidate_l_norm, self.pce_coefs[qoi], c_l)
                 #error in var
                 error[tuple(l)] = np.linalg.norm(var_candidate_l - var_l, np.inf)
             else:
@@ -412,7 +418,7 @@ class SCAnalysis(BaseAnalysisElement):
         if store_stats_history:
             # mean_f, var_f = self.get_moments(qoi)
             logging.debug('Storing moments of iteration %d' % self.sampler.nadaptations)
-            pce_coefs = self.SC2PCE(samples, verbose=True)
+            pce_coefs = self.SC2PCE(samples, qoi, verbose=True)
             mean_f, var_f, _ = self.get_pce_stats(self.l_norm, pce_coefs, self.comb_coef)
             self.mean_history.append(mean_f)
             self.std_history.append(var_f)
@@ -828,7 +834,7 @@ class SCAnalysis(BaseAnalysisElement):
         else:
             logging.debug('Will only plot for N = 2 or N = 3.')
 
-    def SC2PCE(self, samples, verbose=True, **kwargs):
+    def SC2PCE(self, samples, qoi, verbose=True, **kwargs):
         """Computes the Polynomials Chaos Expansion coefficients from the SC
         expansion via a transformation of basis (Lagrange polynomials basis -->
         orthonomial basis).
@@ -837,6 +843,9 @@ class SCAnalysis(BaseAnalysisElement):
         ----------
         samples : array
             SC code samples from which to compute the PCE coefficients
+
+        qoi : string
+            Name of the QoI.
 
         Returns
         -------
@@ -855,12 +864,12 @@ class SCAnalysis(BaseAnalysisElement):
         else:
             xi_d = self.xi_d
 
-        if not hasattr(self, 'pce_coefs'):
-            self.pce_coefs = {}
+        # if not hasattr(self, 'pce_coefs'):
+        #     self.pce_coefs = {}
 
         count_l = 1
         for l in l_norm:
-            if not tuple(l) in self.pce_coefs.keys():
+            if not tuple(l) in self.pce_coefs[qoi].keys():
                 # pce coefficients for current multi-index l
                 pce_coefs[tuple(l)] = {}
 
@@ -944,7 +953,7 @@ class SCAnalysis(BaseAnalysisElement):
                     pce_coefs[tuple(l)][tuple(k)] = eta_k
             else:
                 # pce coefs previously computed, just copy result
-                pce_coefs[tuple(l)] = self.pce_coefs[tuple(l)]
+                pce_coefs[tuple(l)] = self.pce_coefs[qoi][tuple(l)]
             count_l += 1
 
         logging.debug('done')
@@ -1058,11 +1067,12 @@ class SCAnalysis(BaseAnalysisElement):
             N_qoi = samples[0].size
         else:
             samples = self.samples[qoi]
-            N_qoi = self.N_qoi
+            N_qoi = self.N_qoi[qoi]
 
         # compute the (generalized) PCE coefficients and stats
-        self.pce_coefs = self.SC2PCE(samples)
-        mean, D, gen_pce_coefs = self.get_pce_stats(self.l_norm, self.pce_coefs, self.comb_coef)
+        self.pce_coefs[qoi] = self.SC2PCE(samples, qoi)
+        mean, D, gen_pce_coefs = self.get_pce_stats(
+            self.l_norm, self.pce_coefs[qoi], self.comb_coef)
 
         logging.debug('Computing Sobol indices...')
         # Universe = (0, 1, ..., N - 1)
@@ -1309,7 +1319,7 @@ class SCAnalysis(BaseAnalysisElement):
         print('Mean CV input = %.4f %%' % (100 * CV_in, ))
         print('Mean CV output = %.4f %%' % (100 * CV_out, ))
         print('Uncertainty amplification factor = %.4f/%.4f = %.4f' %
-            (CV_out, CV_in, blowup))
+              (CV_out, CV_in, blowup))
         print('-----------------')
 
         return blowup
