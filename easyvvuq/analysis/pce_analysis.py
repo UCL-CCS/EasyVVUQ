@@ -380,7 +380,7 @@ class PCEAnalysis(BaseAnalysisElement):
                 results['output_distributions'][k] = cp.QoI_Dist(
                     fit, self.sampler.distribution)
             except Exception as e:
-                print ('Error %s for %s'% (e.__class__.__name__, k))
+                print('Error %s for %s' % (e.__class__.__name__, k))
 #                from traceback import print_exc
 #                print_exc()
                 results['output_distributions'][k] = None

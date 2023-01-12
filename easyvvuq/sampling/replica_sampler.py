@@ -47,7 +47,7 @@ class ReplicaSampler(BaseSamplingElement, sampler_name='replica_sampler'):
         self.size = len(self.history)
         self.cycle = cycle(self.history)
         self.counter = 0
-        if type(self.sampler.n_samples) == int:
+        if isinstance(self.sampler.n_samples, int):
             self.total_counter = self.replicas * self.sampler.n_samples
         else:
             self.total_counter = self.replicas * self.sampler.n_samples()
