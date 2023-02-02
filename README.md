@@ -34,6 +34,8 @@ Available analysis and sampling methods:
 
 * Polynomial Chaos Expansion
 * Stochastic Collocation
+* Dimension-adaptive Stochastic Collocation for high-dimensional inputs
+* Simplex Stochastic Collocation for irregular outputs
 * Monte Carlo Sensitivity Analysis
 * Markov-Chain Monte Carlo
 
