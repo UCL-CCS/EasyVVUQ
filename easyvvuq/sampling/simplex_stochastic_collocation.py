@@ -555,7 +555,7 @@ class SSCSampler(BaseSamplingElement, sampler_name="ssc_sampler"):
         ----------
         p_j : int
             The polynomial order of the j-th stencil.
-        v : array 
+        v : array
             The code samples.
         S_j : array, shape (N + 1,)
             The interpolation stencil of the j-th simplex element, expressed
