@@ -118,10 +118,10 @@ def test_next_level_sparse_grid(sparse_campaign):
         if l not in analysis.l_norm:
             all_in = False
             break
-    assert(all_in)
+    assert (all_in)
 
     # check if the grid has the right size
-    assert(sampler.xi_d.shape[0] == 145)
+    assert (sampler.xi_d.shape[0] == 145)
 
 
 def test_results(sparse_campaign):
@@ -136,4 +136,4 @@ def test_results(sparse_campaign):
         computed_sobol = results._get_sobols_first('f', 'x%d' % (i + 1))
         logging.debug('Exact Sobol indices x%d = %.4f' % (i + 1, ref_sobols[i]))
         logging.debug('Computed Sobol indices x%d = %.4f' % (i + 1, computed_sobol))
-        assert(ref_sobols[i] == pytest.approx(computed_sobol, abs=0.01))
+        assert (ref_sobols[i] == pytest.approx(computed_sobol, abs=0.01))

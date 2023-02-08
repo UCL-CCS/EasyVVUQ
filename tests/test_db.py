@@ -62,26 +62,26 @@ def campaign(tmp_path, app_info):
 
 
 def test_db_file_created(campaign):
-    assert(os.path.isfile('{}/test.sqlite'.format(campaign.tmp_path)))
+    assert (os.path.isfile('{}/test.sqlite'.format(campaign.tmp_path)))
 
 
 def test_get_and_set_status(campaign):
     run_ids = list(range(1, 1011))
-    assert(all([campaign.get_run_status(id_) == Status.NEW for id_ in run_ids]))
+    assert (all([campaign.get_run_status(id_) == Status.NEW for id_ in run_ids]))
     campaign.set_run_statuses(run_ids, Status.ENCODED)
-    assert(all([campaign.get_run_status(id_) == Status.ENCODED for id_ in run_ids]))
+    assert (all([campaign.get_run_status(id_) == Status.ENCODED for id_ in run_ids]))
 
 
 def test_get_num_runs(campaign):
-    assert(campaign.get_num_runs() == 1010)
+    assert (campaign.get_num_runs() == 1010)
 
 
 def test_app(campaign):
     with pytest.raises(RuntimeError):
         campaign.app('test_')
     app_dict = campaign.app('test')
-    assert(app_dict['name'] == 'test')
-    assert(isinstance(app_dict, dict))
+    assert (app_dict['name'] == 'test')
+    assert (isinstance(app_dict, dict))
 
 
 def test_add_app(campaign, app_info):
@@ -90,17 +90,17 @@ def test_add_app(campaign, app_info):
 
 
 def test_campaign(campaign):
-    assert('test' in campaign.campaigns())
+    assert ('test' in campaign.campaigns())
 
 
 def test_get_campaign_id(campaign):
     with pytest.raises(RuntimeError):
         campaign.get_campaign_id('test_')
-    assert(campaign.get_campaign_id('test') == 1)
+    assert (campaign.get_campaign_id('test') == 1)
 
 
 def test_campaign_dir(campaign):
-    assert(campaign.campaign_dir('test') == campaign.tmp_path)
+    assert (campaign.campaign_dir('test') == campaign.tmp_path)
 
 
 def test_version_check(campaign):
@@ -126,11 +126,11 @@ def test_collation(campaign):
     campaign.store_results('test', results)
     campaign.set_run_statuses([run[0] for run in campaign.runs()], Status.COLLATED)
     result = campaign.get_results('test', 1)
-    assert(isinstance(result, pd.DataFrame))
-    assert(list(result.columns) == [('run_id', 0), ('iteration', 0),
-                                    ('a', 0), ('b', 0), ('c', 0), ('c', 1)])
-    assert(list(result.iloc[100].values) == [101, 0, 1, 100, 101, 102])
-    assert(result.count()[0] == 1010)
+    assert (isinstance(result, pd.DataFrame))
+    assert (list(result.columns) == [('run_id', 0), ('iteration', 0),
+                                     ('a', 0), ('b', 0), ('c', 0), ('c', 1)])
+    assert (list(result.iloc[100].values) == [101, 0, 1, 100, 101, 102])
+    assert (result.count()[0] == 1010)
 
 
 def test_mv_collation(tmp_path, app_info):
@@ -309,5 +309,5 @@ def test_mv_collation(tmp_path, app_info):
     campaign.add_app(app_info)
     results = [(0, mv_data), (1, mv_data)]
     campaign.store_results('test', results)
-    assert(not campaign.get_results('test', 1).empty)
+    assert (not campaign.get_results('test', 1).empty)
     return campaign

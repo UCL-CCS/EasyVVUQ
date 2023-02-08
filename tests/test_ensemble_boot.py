@@ -33,26 +33,26 @@ def test_confidence_interval():
         stat, low, high = confidence_interval(dist, 0.0, 0.05)
     dist = np.array([0.0])
     stat, low, high = confidence_interval(dist, 0.0, 0.05)
-    assert(stat == low == high == 0.0)
+    assert (stat == low == high == 0.0)
     stat, low, high = confidence_interval(dist, 0.0, 0.05, pivotal=True)
-    assert(stat == low == high == 0.0)
+    assert (stat == low == high == 0.0)
     stat, low, high = confidence_interval(VALUES, 0.0, 0.05)
-    assert(stat == pytest.approx(-0.06909454))
-    assert(low == pytest.approx(-1.4859470412500002))
-    assert(high == pytest.approx(1.90957202975))
+    assert (stat == pytest.approx(-0.06909454))
+    assert (low == pytest.approx(-1.4859470412500002))
+    assert (high == pytest.approx(1.90957202975))
     stat, low, high = confidence_interval(VALUES, 0.0, 0.05, pivotal=True)
-    assert(stat == 0.0)
-    assert(low == pytest.approx(-1.90957202975))
-    assert(high == pytest.approx(1.4859470412500002))
+    assert (stat == 0.0)
+    assert (low == pytest.approx(-1.90957202975))
+    assert (high == pytest.approx(1.4859470412500002))
 
 
 def test_bootstrap():
     with pytest.raises(RuntimeError):
         bootstrap(pd.DataFrame({}), np.mean)
     stat, low, high = bootstrap(pd.DataFrame({'a': [0.0]}), np.mean)
-    assert(stat == 0.0)
-    assert(low == 0.0)
-    assert(high == 0.0)
+    assert (stat == 0.0)
+    assert (low == 0.0)
+    assert (high == 0.0)
 
 
 def test_ensemble_bootstrap():
@@ -60,18 +60,18 @@ def test_ensemble_bootstrap():
         'a': np.concatenate((VALUES, VALUES)),
         'b': ['group1'] * VALUES.shape[0] + ['group2'] * VALUES.shape[0]})
     results = ensemble_bootstrap(df, groupby=['b'], qoi_cols=['a'])
-    assert(not results.empty)
-    assert(results.values.shape == (2, 3))
+    assert (not results.empty)
+    assert (results.values.shape == (2, 3))
     with pytest.raises(RuntimeError):
         ensemble_bootstrap(df, groupby=['b'], qoi_cols=['c'])
     results = ensemble_bootstrap(df, qoi_cols=['a'])
-    assert(results.values.shape == (1, 3))
+    assert (results.values.shape == (1, 3))
 
 
 def test_ensemble_boot():
     analysis = EnsembleBoot()
-    assert(analysis.element_name() == 'ensemble_boot')
-    assert(analysis.element_version() == '0.1')
+    assert (analysis.element_name() == 'ensemble_boot')
+    assert (analysis.element_version() == '0.1')
     with pytest.raises(RuntimeError):
         analysis.analyse()
     with pytest.raises(RuntimeError):
@@ -81,4 +81,4 @@ def test_ensemble_boot():
         'a': np.concatenate((VALUES, VALUES)),
         'b': ['group1'] * VALUES.shape[0] + ['group2'] * VALUES.shape[0]})
     results = analysis.analyse(df)
-    assert(not results.empty)
+    assert (not results.empty)

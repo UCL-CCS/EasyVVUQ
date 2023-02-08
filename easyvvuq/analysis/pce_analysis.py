@@ -350,8 +350,8 @@ class PCEAnalysis(BaseAnalysisElement):
                 varied = [_ for _ in self.sampler.vary.get_keys()]
                 S1 = {_: np.zeros(sobol.shape[-1]) for _ in varied}
                 ST = {_: np.zeros(sobol.shape[-1]) for _ in varied}
-                #S2 = {_ : {__: np.zeros(sobol.shape[-1]) for __ in varied} for _ in varied}
-                #for v in varied: del S2[v][v]
+                # S2 = {_ : {__: np.zeros(sobol.shape[-1]) for __ in varied} for _ in varied}
+                # for v in varied: del S2[v][v]
                 S2 = {_: np.zeros((len(varied), sobol.shape[-1])) for _ in varied}
                 for n, si in enumerate(sobol_idx):
                     if len(si) == 1:
@@ -360,8 +360,8 @@ class PCEAnalysis(BaseAnalysisElement):
                     elif len(si) == 2:
                         v1 = varied[si[0]]
                         v2 = varied[si[1]]
-                        #S2[v1][v2] = sobol[n]
-                        #S2[v2][v1] = sobol[n]
+                        # S2[v1][v2] = sobol[n]
+                        # S2[v2][v1] = sobol[n]
                         S2[v1][si[1]] = sobol[n]
                         S2[v2][si[0]] = sobol[n]
                     for i in si:

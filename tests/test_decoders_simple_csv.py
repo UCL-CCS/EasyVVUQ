@@ -192,8 +192,8 @@ def test_wrong_column_exception(mv_data_fail):
 
 def test_simple_csv(decoder):
     df = decoder.parse_sim_output({'run_dir': os.path.join('tests', 'simple_csv')})
-    assert(df['Step'][1] == 1)
-    assert(df['Value'][5] == 25.950662)
+    assert (df['Step'][1] == 1)
+    assert (df['Value'][5] == 25.950662)
 
 
 def test_init_exceptions():
@@ -202,7 +202,7 @@ def test_init_exceptions():
 
 
 def test_get_output_path(decoder):
-    assert(decoder._get_output_path(
+    assert (decoder._get_output_path(
         {'run_dir': os.path.join('tests', 'simple_csv')}, 'test.csv') ==
         os.path.join('tests', 'simple_csv', 'test.csv'))
     with pytest.raises(RuntimeError):
@@ -211,6 +211,6 @@ def test_get_output_path(decoder):
 
 def test_mv_data(mv_data):
     data = mv_data.parse_sim_output({'run_dir': 'tests/files'})
-    assert(data == TEST_MV_DATA)
+    assert (data == TEST_MV_DATA)
     for key in data.keys():
-        assert(len(data[key]) == 51)
+        assert (len(data[key]) == 51)

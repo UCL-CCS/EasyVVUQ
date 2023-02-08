@@ -34,8 +34,8 @@ def test_validate_similarity():
 
 def test_validate_similarity_hellinger():
     validator = uq.comparison.validate.ValidateSimilarityHellinger()
-    assert(validator.element_name() == 'validate_similarity_hellinger')
-    assert(validator.element_version() == '0.1')
+    assert (validator.element_name() == 'validate_similarity_hellinger')
+    assert (validator.element_version() == '0.1')
     d1 = cp.Exponential(1)
     d2 = cp.Exponential(2)
     xmin = min(d1.lower[0], d2.lower[0])
@@ -50,8 +50,8 @@ def test_validate_similarity_hellinger():
 
 def test_validate_similarity_jensen_shannon():
     validator = uq.comparison.validate.ValidateSimilarityJensenShannon()
-    assert(validator.element_name() == 'validate_similarity_jensen_shannon')
-    assert(validator.element_version() == '0.1')
+    assert (validator.element_name() == 'validate_similarity_jensen_shannon')
+    assert (validator.element_version() == '0.1')
     d1 = cp.Normal(0, 1)
     d2 = cp.Normal(1, 2)
     xmin = min(d1.lower[0], d2.lower[0])
@@ -65,8 +65,8 @@ def test_validate_similarity_jensen_shannon():
 
 def test_validate_similarity_wasserstein():
     validator = uq.comparison.validate.ValidateSimilarityWasserstein()
-    assert(validator.element_name() == 'validate_similarity_wasserstein')
-    assert(validator.element_version() == '0.1')
+    assert (validator.element_name() == 'validate_similarity_wasserstein')
+    assert (validator.element_version() == '0.1')
     d1 = cp.Normal(0, 1)
     d2 = cp.Normal(1, 2)
     xmin = min(d1.lower[0], d2.lower[0])

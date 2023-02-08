@@ -111,7 +111,7 @@ class SSCSampler(BaseSamplingElement, sampler_name="ssc_sampler"):
             CONSEQUENCE: I NEED TO RE-MAKE A NEW 'Delaunay' OBJECT EVERYTIME THE GRID
             IS REFINED.
             """
-            #tri = Delaunay(xi_k_jl, incremental=True)
+            # tri = Delaunay(xi_k_jl, incremental=True)
             tri = Delaunay(xi_k_jl)
 
         else:
@@ -590,7 +590,7 @@ class SSCSampler(BaseSamplingElement, sampler_name="ssc_sampler"):
         Psi = self.compute_Psi(xi_Sj, p_j)
 
         # check if Psi is well poised
-        #det_Psi = np.linalg.det(Psi)
+        # det_Psi = np.linalg.det(Psi)
         # if det_Psi == 0:
         #    #print 'Warning: determinant Psi is zero.'
         #    #print 'Reducing local p_j from ' + str(p_j[j]) + ' to a lower value.'
@@ -598,7 +598,7 @@ class SSCSampler(BaseSamplingElement, sampler_name="ssc_sampler"):
         #    return queue.put({'p_j[j]':-99, 'el_idx_j':el_idx_j})
 
         # compute the coefficients c_jl
-        #c_jl = np.linalg.solve(Psi, v_Sj)
+        # c_jl = np.linalg.solve(Psi, v_Sj)
         c_jl = DAFSILAS(Psi, v_Sj)
 
         # check the LEC condition for all simplices in the STENCIL S_j
@@ -644,7 +644,7 @@ class SSCSampler(BaseSamplingElement, sampler_name="ssc_sampler"):
                 Psi = self.compute_Psi(xi_Sj, p_j)
 
                 # check if Psi is well poised
-                #det_Psi = np.linalg.det(Psi)
+                # det_Psi = np.linalg.det(Psi)
                 # if det_Psi == 0:
                 #    #print 'Warning: determinant Psi is zero.'
                 #    #print 'Reducing local p_j from ' + str(p_j[j]) + ' to a lower value.'
@@ -652,7 +652,7 @@ class SSCSampler(BaseSamplingElement, sampler_name="ssc_sampler"):
                 #    return queue.put({'p_j[j]':-99, 'el_idx_j':el_idx_j})
 
                 # compute the coefficients c_jl
-                #c_jl = np.linalg.solve(Psi, v_Sj)
+                # c_jl = np.linalg.solve(Psi, v_Sj)
                 c_jl = DAFSILAS(Psi, v_Sj, False)
 
             if k == el_idx_j.size:
@@ -684,7 +684,7 @@ class SSCSampler(BaseSamplingElement, sampler_name="ssc_sampler"):
 
         for j in range(n_e):
             # the number of points in S_j
-            #Np1_j = factorial(n_xi + p_j[j])/(factorial(n_xi)*factorial(p_j[j]))
+            # Np1_j = factorial(n_xi + p_j[j])/(factorial(n_xi)*factorial(p_j[j]))
             # k = {1,...,n_s}\{k_j0, ..., k_jn_xi}
             idx = np.delete(range(n_s), self.tri.simplices[j])
             # store the vertex indices of the element itself
@@ -1055,7 +1055,7 @@ class SSCSampler(BaseSamplingElement, sampler_name="ssc_sampler"):
     #        print 'Error, det(Psi)=0 in compute_surplus_k() method, should not be possible'
 
         # compute the coefficients c_jl
-        #c_jl = np.linalg.solve(Psi, v_Sj)
+        # c_jl = np.linalg.solve(Psi, v_Sj)
         c_jl = DAFSILAS(Psi, v_Sj, False)
 
         # compute the interpolation on the old grid
@@ -1240,7 +1240,7 @@ def DAFSILAS(A, b, print_message=False):
     P = np.eye(n)
 
     # the ill-condition control parameter
-    #epsilon = np.finfo(np.float64).eps
+    # epsilon = np.finfo(np.float64).eps
     epsilon = 10**-14
 
     for i in range(n - 1):
@@ -1266,9 +1266,9 @@ def DAFSILAS(A, b, print_message=False):
         Ap[:, i + col] = tmp
 
         # Also interchange the entries in b
-        #tmp = A[i, n]
+        # tmp = A[i, n]
         # A[i, n] = A[i+col, n]Ap[i+1+j, i:m]
-        #A[i+col, n] = tmp
+        # A[i+col, n] = tmp
 
         # keep track of column switches via a series of permuation matrices P =
         # P1*P2*...*Pi*...*Pn ==> at each iteration x = P*xi
@@ -1305,7 +1305,7 @@ def DAFSILAS(A, b, print_message=False):
 
         # ajj = 1, aij = 0 for j = i...n
         Ap[idx[0]:n, idx[0]:n] = np.eye(nullity)
-        #bj = 0
+        # bj = 0
         Ap[idx[0]:n, n] = 0
         # ejj = 1, eij = 0
         Ap[idx[0]:n, idx[0] + n + 1:m] = np.eye(nullity)

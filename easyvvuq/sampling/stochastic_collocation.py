@@ -129,7 +129,7 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
         else:
             self.l_norm = self.compute_sparse_multi_idx(self.L, self.N)
             # create sparse grid of dimension N and level q using the 1d
-            #rules in self.xi_1d
+            # rules in self.xi_1d
             self.xi_d = self.generate_grid(self.l_norm)
 
         self._n_samples = self.xi_d.shape[0]

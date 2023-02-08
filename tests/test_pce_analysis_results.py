@@ -84,19 +84,19 @@ def results_vectors(data_vectors):
 
 
 def test_results(results):
-    assert(isinstance(results, PCEAnalysisResults))
+    assert (isinstance(results, PCEAnalysisResults))
     sobols_first_x1 = results._get_sobols_first('f', 'x1')
     sobols_first_x2 = results._get_sobols_first('f', 'x2')
     sobols_second_x1 = results._get_sobols_second('f', 'x1')
     sobols_second_x2 = results._get_sobols_second('f', 'x2')
     sobols_total_x1 = results._get_sobols_total('f', 'x1')
     sobols_total_x2 = results._get_sobols_total('f', 'x2')
-    assert(sobols_first_x1 == pytest.approx(0.62644867, 0.001))
-    assert(sobols_first_x2 == pytest.approx(0.26789576, 0.001))
-    assert(sobols_second_x1['x2'] == pytest.approx(0.10565556484738273, 0.001))
-    assert(sobols_second_x2['x1'] == pytest.approx(0.10565556484738273, 0.001))
-    assert(sobols_total_x1 == pytest.approx(0.73210424, 0.001))
-    assert(sobols_total_x2 == pytest.approx(0.37355133, 0.001))
+    assert (sobols_first_x1 == pytest.approx(0.62644867, 0.001))
+    assert (sobols_first_x2 == pytest.approx(0.26789576, 0.001))
+    assert (sobols_second_x1['x2'] == pytest.approx(0.10565556484738273, 0.001))
+    assert (sobols_second_x2['x1'] == pytest.approx(0.10565556484738273, 0.001))
+    assert (sobols_total_x1 == pytest.approx(0.73210424, 0.001))
+    assert (sobols_total_x2 == pytest.approx(0.37355133, 0.001))
 
 
 def test_full_results(results):
@@ -106,22 +106,22 @@ def test_full_results(results):
         results.sobols_first('f', 'y')
     with pytest.raises(AssertionError):
         results.sobols_first(None, 'x1')
-    assert(results.sobols_first()['f']['x1'][0] == pytest.approx(0.6264486733708418))
-    assert(results.sobols_first()['f']['x2'][0] == pytest.approx(0.2678957617817755))
-    assert(results.sobols_first('f')['x1'][0] == pytest.approx(0.6264486733708418))
-    assert(results.sobols_first('f')['x2'][0] == pytest.approx(0.2678957617817755))
-    assert(results.sobols_first('f', 'x1')[0] == pytest.approx(0.6264486733708418))
-    assert(results.sobols_first('f', 'x2')[0] == pytest.approx(0.2678957617817755))
+    assert (results.sobols_first()['f']['x1'][0] == pytest.approx(0.6264486733708418))
+    assert (results.sobols_first()['f']['x2'][0] == pytest.approx(0.2678957617817755))
+    assert (results.sobols_first('f')['x1'][0] == pytest.approx(0.6264486733708418))
+    assert (results.sobols_first('f')['x2'][0] == pytest.approx(0.2678957617817755))
+    assert (results.sobols_first('f', 'x1')[0] == pytest.approx(0.6264486733708418))
+    assert (results.sobols_first('f', 'x2')[0] == pytest.approx(0.2678957617817755))
 
 
 def test_distribution(results):
     with pytest.raises(RuntimeError):
         results.get_distribution('z')
-    assert(results.get_distribution('f').pdf([0, 0]) == pytest.approx([0.44296863, 0.44296863]))
+    assert (results.get_distribution('f').pdf([0, 0]) == pytest.approx([0.44296863, 0.44296863]))
 
 
 def test_describe(results_vectors):
-    assert(
+    assert (
         results_vectors.describe()[
             ('g',
              1)].to_dict() == {
@@ -135,7 +135,7 @@ def test_describe(results_vectors):
             '99%': pytest.approx(0.9905999521854744, 0.001),
             'min': pytest.approx(-0.775685017772766, 0.001),
             'max': pytest.approx(1.775781592068878, 0.001)})
-    assert(
+    assert (
         results_vectors.describe('g').to_dict()[
             ('g',
              1)] == {
@@ -149,4 +149,4 @@ def test_describe(results_vectors):
             '99%': pytest.approx(0.9905999521854744, 0.001),
             'min': pytest.approx(-0.7756850177727665, 0.001),
             'max': pytest.approx(1.775781592068878, 0.001)})
-    assert(isinstance(results_vectors.describe('g', 'min'), np.ndarray))
+    assert (isinstance(results_vectors.describe('g', 'min'), np.ndarray))

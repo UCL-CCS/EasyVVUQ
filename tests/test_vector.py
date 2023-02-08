@@ -126,7 +126,7 @@ def test_gauss_vector_pce(tmpdir):
 
     encoder = uq.encoders.GenericEncoder(template_fname='tests/gauss/gauss.template',
                                          target_filename='gauss_in.json')
-    #decoder = JSONDecoder(target_filename='output.csv.json', output_columns=['numbers'])
+    # decoder = JSONDecoder(target_filename='output.csv.json', output_columns=['numbers'])
     decoder = uq.decoders.SimpleCSV(target_filename="output.csv",
                                     output_columns=["numbers"])
     execute = uq.actions.ExecuteLocal(os.path.abspath(

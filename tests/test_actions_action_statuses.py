@@ -14,7 +14,7 @@ def action_pool():
 
 def test_action_pool_start(action_pool):
     action_pool.start()
-    assert(action_pool.progress()['finished'] == 3)
+    assert (action_pool.progress()['finished'] == 3)
     mock1 = MagicMock()
     mock1.running = MagicMock(return_value=True)
     mock1.done = MagicMock(return_value=False)
@@ -33,7 +33,7 @@ def test_action_pool_start(action_pool):
     mock4.result = MagicMock(return_value=False)
     action_pool.futures = [mock1, mock2, mock3, mock4]
     progress = action_pool.progress()
-    assert(progress['ready'] == 1)
-    assert(progress['active'] == 1)
-    assert(progress['finished'] == 1)
-    assert(progress['failed'] == 1)
+    assert (progress['ready'] == 1)
+    assert (progress['active'] == 1)
+    assert (progress['finished'] == 1)
+    assert (progress['failed'] == 1)

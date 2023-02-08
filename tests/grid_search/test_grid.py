@@ -6,9 +6,9 @@ import numpy as np
 a = $x1
 b = $x2
 
-if b == True:
+if b:
     f = a ** 2
 else:
     f = -a ** 2
-    
+
 np.savetxt("out.csv", np.array([f]), header="f", comments='')

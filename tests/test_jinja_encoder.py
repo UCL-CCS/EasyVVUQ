@@ -130,7 +130,7 @@ def test_jinjaencoder(tmpdir):
     encoder = JinjaEncoder(template_fname='tests/jinjaencoder/namoptions.template',
                            target_filename='namoptions.001')
     encoder.encode(params, tmpdir)
-    assert(os.path.isfile(os.path.join(tmpdir, 'namoptions.001')))
+    assert (os.path.isfile(os.path.join(tmpdir, 'namoptions.001')))
 
 
 if __name__ == "__main__":
