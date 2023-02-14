@@ -133,64 +133,31 @@ class FDSampler(BaseSamplingElement, sampler_name="FD_sampler"):
         # 'distribution' argument, which can be:
         #   None            - use default joint
         #   cp.Distribution - use Rosenblatt if the distribution is dependent
-        #   matrix-lie      - use Cholesky
+        #   matrix-like      - use Cholesky
         self._is_dependent = False
-        self._transformation = None
-        self.distribution_dep = None
-        if distribution is None:
-            self.logger.info("Using default joint distribution")
-            self.distribution = cp.J(*params_distribution)
-        elif 'distributions' in str(type(distribution)):
+        if 'distributions' in str(type(distribution)):
             if distribution.stochastic_dependent:
-                assert(isinstance(distribution, cp.MvNormal))
-                assert(len(distribution._parameters['mean']) == params_num) # all parameters listed in vary must be in the cp.MvNormal
-                self.logger.info("Using user provided joint distribution with Rosenblatt transformation")
-                self._is_dependent = True
-                self._transformation = "Rosenblatt"
-                self.distribution_dep = distribution
-            else:
-                self.logger.info("Using user provided joint distribution without any transformation")
-                self.distribution = distribution
-                assert(self._is_dependent == False)
-        elif 'list' in str(type(distribution)) or 'ndarray' in str(type(distribution)):
+                raise ValueError("It doesn't make sense to use dependent distribution in the FD sampler")
+        if 'list' in str(type(distribution)) or 'ndarray' in str(type(distribution)):
             assert(len(distribution) == params_num) # check the correct size of the corr
             for i in range(params_num):
                 assert(distribution[i][i] == 1.0) # must be correlation matrix
-            self.logger.info("Using user provided correlation matrix for Cholesky transformation")
-            self._is_dependent = True
-            self._transformation = "Cholesky"
-            self.distribution_dep = np.array(distribution)
-            raise NotImplementedError(f'Not tested the Cholesky with respect to scaling of the samples!')
-        else:
-            self.logger.error("Unsupported type of the distribution argument. It should be either cp.Distribution or a matrix-like array")
-            exit()
-
-        # Build independent joint for the dependent distribution
-        # Build independent joint multivariate distribution considering each uncertain paramter
-        # Use Uniform or Normal distribution depending on the distr. of each parameter
-        if not self.distribution_dep is None:
-            #params_distribution = [cp.Normal() for i in range(params_num)]
-            #params_distribution = [cp.Uniform() for i in range(params_num)]
-            #params_distribution = [cp.Uniform() if type(vary_dist).__name__ == "Uniform"
-            #                       else cp.Normal()
-            #                       for vary_dist in vary.values()]
-            params_distribution = [vary_dist for vary_dist in vary.values()]
-            self.distribution = cp.J(*params_distribution)
-            self.logger.debug(f"The independent distribution consists of: {self.distribution}")
-
-        # Generate the perturbed values of the parameters for the FD
-        #FD = 0.5*(y_pos/y_base-1)/(delta) + 0.5*(y_neg/y_base - 1)/(-delta)
-        self._n_samples = 2*params_num + 1
-        self._perturbation = perturbation
+            raise ValueError("It doesn't make sense to use dependent distribution in the FD sampler")
 
         # Perturbation of the parameters
         if relative_analysis:
             self.logger.info(f"Performing relative perturbation of the nodes, base value = 0, with delta = {perturbation}")
             base_value = np.zeros(params_num)
         else:
-            self.logger.info(f"Performing relative perturbation of the nodes, base value = mean, with delta = {perturbation}")
-            #base_value = mean_of_the_parameters
-            raise NotImplementedError("Set base_value to the mean_of_the_parameters")
+            self.logger.info(f"Performing perturbation of the nodes, base value = mean, with delta = {perturbation}")
+            # Assumes that v is cp.Normal()
+            assert(type(vary['kappa']) == type(cp.Normal()))
+            base_value = [v.get_mom_parameters()['shift'][0] for v in vary.values()] #Set base_value to the mean_of_the_parameters
+
+        # Generate the perturbed values of the parameters for the FD
+        #FD = 0.5*(y_pos/y_base-1)/(delta) + 0.5*(y_neg/y_base - 1)/(-delta)
+        self._n_samples = 2*params_num + 1
+        self._perturbation = perturbation
 
         # Create base values of the parameters
         self._nodes = np.array([ base_value[i] * np.ones(self._n_samples) for i in range(params_num)])
@@ -202,44 +169,12 @@ class FDSampler(BaseSamplingElement, sampler_name="FD_sampler"):
                 self._nodes[p][offset]   = perturbation
                 self._nodes[p][offset+1] = -perturbation
             else:
-                self._nodes[p][offset]   = self._nodes[p][offset] + perturbation*self._nodes[p][offset]
-                self._nodes[p][offset+1] = self._nodes[p][offset+1] - perturbation*self._nodes[p][offset+1]
+                self._nodes[p][offset]   = (1 + perturbation) * self._nodes[p][offset]
+                self._nodes[p][offset+1] = (1 - perturbation) * self._nodes[p][offset+1]
             
             offset = offset + 2
-        
+
         self.logger.info(f"Generated {offset}/{self._n_samples} samples for the FD scheme")
-
-        # Nodes transformation
-        regression = True
-        if self._is_dependent:
-            if self._transformation == "Rosenblatt":
-                self.logger.info("Performing Rosenblatt transformation")
-                self._nodes_dep = Transformations.rosenblatt(self._nodes, self.distribution, self.distribution_dep, regression)
-            elif self._transformation == "Cholesky":
-                self.logger.info("Performing Cholesky transformation")
-                self._nodes_dep = Transformations.cholesky(self._nodes, self.vary, self.distribution_dep, regression)
-            else:
-                self.logger.critical("Error: How did this happen? We are transforming the nodes but not with Rosenblatt nor Cholesky")
-                exit()
-
-            # # Scale the independent nodes
-            # for i, param_dist in enumerate(vary.values()):
-            #     if type(param_dist).__name__ == "Normal":
-            #         mu = param_dist._parameters['shift'][0]
-            #         sigma = param_dist._parameters['scale'][0]
-            #         self._nodes[i] = sigma*self._nodes[i] + mu
-            #     elif type(param_dist).__name__ == "Uniform":
-            #         low = param_dist._parameters['lower'][0]
-            #         up = param_dist._parameters['upper'][0]
-            #         self._nodes[i] = (up - low)*self._nodes[i] + low
-            #     else:
-            #         raise NotImplementedError(f'Not supported distribution: {type(param_dist)}!')
-                
-
-        #%%%%%%%%%%%%%%%%%  USI DEBUG INFO   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        # self.logger.debug(f"Sparse grid:\n{self._nodes}")
-        # self.logger.debug(f"Transformed parse grid:\n{self._nodes_dep}")
-        #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
         # Fast forward to specified count, if possible
         self.count = 0

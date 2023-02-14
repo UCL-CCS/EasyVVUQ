@@ -294,15 +294,20 @@ class FDAnalysis(BaseAnalysisElement):
             offset = 1
             for pi, p in enumerate(self.sampler.vary.vary_dict):
                 
-                # assumes ordering of the nodes [0, ..., +delta, -delta, ...]
-                assert(nodes[pi][0] == 0.)
-                assert(nodes[pi][offset] == delta_rel)
                 y_pos = data_frame[k].values[offset]
-                
-                assert(nodes[pi][offset + 1] == -delta_rel)
                 y_neg = data_frame[k].values[offset+1]
+                d_pos = nodes[pi][offset] - nodes[pi][0]
+                d_neg = nodes[pi][offset+1] - nodes[pi][0]
                 
-                results["derivatives_first"][k][p] = 0.5*(y_pos/y_base-1)/(delta_rel) + 0.5*(y_neg/y_base - 1)/(-delta_rel)
+                if self.relative_analysis:
+                    # assumes ordering of the nodes [0, ..., +delta, -delta, ...]
+                    assert(nodes[pi][0] == 0.)
+                    assert(nodes[pi][offset] == delta_rel)
+                    assert(nodes[pi][offset + 1] == -delta_rel)
+                    results["derivatives_first"][k][p] = 0.5*(y_pos/y_base-1)/(delta_rel) + 0.5*(y_neg/y_base - 1)/(-delta_rel)
+                else:
+                    results["derivatives_first"][k][p] = 0.5*(y_pos - y_base)/(d_pos) + 0.5*(y_neg -y_base)/(d_neg)
+
                 offset = offset + 2
 
         return PCEAnalysisResults(raw_data=results, samples=data_frame,
