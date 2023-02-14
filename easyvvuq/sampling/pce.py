@@ -109,22 +109,6 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
         self.logger.addHandler(file_handler)
         self.logger.addHandler(stream_handler)
 
-        #%%%%%%%%%%%%%%%%%  USI DEBUG INFO   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        samplerFile_src = "/Users/usi/switchdrive/Institution/usi/PhD/projects/DXT/sensitivity/code/EasyVVUQ-fork/easyvvuq/sampling/pce.py"
-        fileStatsObj1 = stat(samplerFile_src)
-        modificationTime1 = ctime(fileStatsObj1.st_mtime)
-        self.logger.info(f"Using USI version of the PCE Sampler {samplerFile_src}")
-
-        samplerFile_lib = path.dirname(path.abspath(__file__))
-        fileStatsObj2 = stat(samplerFile_lib)
-        modificationTime2 = ctime(fileStatsObj2.st_mtime)
-
-        if (fileStatsObj1.st_mtime > fileStatsObj2.st_mtime):
-            self.logger.warning("The EasyVVUQ library does not contain the latest changes in the src")
-            self.logger.info(f"Last Modified Time of the source file : {modificationTime1}")
-            self.logger.info(f"Last Time of the EasyVVUQ library build : {modificationTime2}")
-        #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
         if vary is None:
             msg = ("'vary' cannot be None. RandomSampler must be passed a "
                    "dict of the names of the parameters you want to vary, "
@@ -185,16 +169,8 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
             self.logger.error("Unsupported type of the distribution argument. It should be either cp.Distribution or a matrix-like array")
             exit()
 
-        # Build independent joint for the dependent distribution
         # Build independent joint multivariate distribution considering each uncertain paramter
-        # Use Uniform or Normal distribution depending on the distr. of each parameter
         if not self.distribution_dep is None:
-            #params_distribution = [cp.Normal() for i in range(params_num)]
-            #params_distribution = [cp.Uniform() for i in range(params_num)]
-            #params_distribution = [cp.Uniform() if type(vary_dist).__name__ == "Uniform"
-            #                       else cp.Normal()
-            #                       for vary_dist in vary.values()]
-
             
             params_distribution = [vary_dist for vary_dist in vary.values()]
             self.distribution = cp.J(*params_distribution)
@@ -236,38 +212,6 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
                                               domain=self.distribution,
                                               rule=self.rule)
 
-            # Generate additional test samples to evaluate the PCE fit
-            self.enable_test = False # !!! Change the variable also in FabSim mps_*.py scripts
-            if self.enable_test:
-                # Generate additional 2*N samples as convex combination of existing ones
-                random.seed(0)
-                nodes_extra = np.array([np.zeros(2*self._n_samples) for _ in range(params_num)])
-                for s in range(2*self._n_samples):
-                    s1 = random.randint(0, self._n_samples-1)
-                    s2 = random.randint(0, self._n_samples-1)
-                    while s1 == s2: # make sure that we select 2 different indices
-                        s2 = random.randint(0, self._n_samples-1)
-                    c = random.random() #convex combination constant 
-                    for d in range(params_num):
-                        nodes_extra[d][s] = c*self._nodes[d][s1] + (1-c)*self._nodes[d][s2]
-                # Concatenate PCE nodes with the extra 2*N nodes
-                new_nodes = np.array([np.zeros(3*self._n_samples) for _ in range(params_num)])
-                for i in range(params_num):
-                    new_nodes[i] = np.concatenate((self._nodes[i], nodes_extra[i]))
-                self._nodes = new_nodes
-                
-
-                # # Generate 3*N samples
-                # self._nodes = cp.generate_samples(order=3*self._n_samples,
-                #                                   domain=self.distribution,
-                #                                   rule=self.rule)
-                # # Permute the nodes
-                # P = list(range(len(self._nodes[0])))
-                # random.shuffle(P)
-                # self._nodes = np.array([np.array(ni)[P] for ni in self._nodes])
-
-                assert(len(self._nodes[0]) == 3*self._n_samples)
-
             self._weights = None
 
             # Nodes transformation
@@ -281,19 +225,6 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
                 else:
                     self.logger.critical("Error: How did this happen? We are transforming the nodes but not with Rosenblatt nor Cholesky")
                     exit()
-
-                # # Scale the independent nodes
-                # for i, param_dist in enumerate(vary.values()):
-                #     if type(param_dist).__name__ == "Normal":
-                #         mu = param_dist._parameters['shift'][0]
-                #         sigma = param_dist._parameters['scale'][0]
-                #         self._nodes[i] = sigma*self._nodes[i] + mu
-                #     elif type(param_dist).__name__ == "Uniform":
-                #         low = param_dist._parameters['lower'][0]
-                #         up = param_dist._parameters['upper'][0]
-                #         self._nodes[i] = (up - low)*self._nodes[i] + low
-                #     else:
-                #         raise NotImplementedError(f'Not supported distribution: {type(param_dist)}!')
 
         # Projection variante (Pseudo-spectral method)
         else:
@@ -318,16 +249,10 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
                     self._weights_dep, self._nodes_dep = Transformations.cholesky(self._nodes, self.vary, self.distribution_dep, regression)
                 else:
                     self.logger.critical("Error: How did this happen? We are transforming the nodes but not with Rosenblatt nor Cholesky")
-                    exit()
+                    raise ValueError("Error: How did this happen? We are transforming the nodes but not with Rosenblatt nor Cholesky")
 
                 # Scale the independent nodes
                 raise NotImplementedError(f'Transformation of the independent nodes not supported with {regression = }')
-                
-
-        #%%%%%%%%%%%%%%%%%  USI DEBUG INFO   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        # self.logger.debug(f"Sparse grid:\n{self._nodes}")
-        # self.logger.debug(f"Transformed parse grid:\n{self._nodes_dep}")
-        #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
         # Fast forward to specified count, if possible
         self.count = 0
@@ -372,7 +297,7 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
         return PCEAnalysis
 
     def __next__(self):
-        if self.count < self._n_samples: #base Train samples used to evaluate the PCE
+        if self.count < self._n_samples:
             run_dict = {}
             for i, param_name in enumerate(self.vary.vary_dict):
                 # These are nodes that need to be returned as samples o be used for the model execution,
@@ -386,18 +311,6 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
             return run_dict
         elif self.relative_analysis and self.count == self._n_samples: #extra sample for the nominal case
             run_dict = {param_name:0.0 for param_name in self.vary.vary_dict}
-            self.count += 1
-            return run_dict
-        elif self.enable_test and self.regression and self.count > self._n_samples and self.count <= 3*self._n_samples: #extra Test samples used to evaluate the PCE
-            run_dict = {}
-            for i, param_name in enumerate(self.vary.vary_dict):
-                # These are nodes that need to be returned as samples o be used for the model execution,
-                # for the SA in EasyVVUQ we will use only the raw independent nodes
-                if self._is_dependent:
-                    # Return transformed nodes reflecting the dependencies
-                    run_dict[param_name] = self._nodes_dep[i][self.count-1]
-                else:
-                    run_dict[param_name] = self._nodes[i][self.count-1]
             self.count += 1
             return run_dict
         else:

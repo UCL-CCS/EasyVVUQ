@@ -90,22 +90,6 @@ class FDSampler(BaseSamplingElement, sampler_name="FD_sampler"):
         self.logger.addHandler(file_handler)
         self.logger.addHandler(stream_handler)
 
-        #%%%%%%%%%%%%%%%%%  USI DEBUG INFO   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        samplerFile_src = "/Users/usi/switchdrive/Institution/usi/PhD/projects/DXT/sensitivity/code/EasyVVUQ-fork/easyvvuq/sampling/fd.py"
-        fileStatsObj1 = stat(samplerFile_src)
-        modificationTime1 = ctime(fileStatsObj1.st_mtime)
-        self.logger.info(f"Using USI version of the FD Sampler {samplerFile_src}")
-
-        samplerFile_lib = path.dirname(path.abspath(__file__))
-        fileStatsObj2 = stat(samplerFile_lib)
-        modificationTime2 = ctime(fileStatsObj2.st_mtime)
-
-        if (fileStatsObj1.st_mtime > fileStatsObj2.st_mtime):
-            self.logger.warning("The EasyVVUQ library does not contain the latest changes in the src")
-            self.logger.info(f"Last Modified Time of the source file : {modificationTime1}")
-            self.logger.info(f"Last Time of the EasyVVUQ library build : {modificationTime2}")
-        #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
         if vary is None:
             msg = ("'vary' cannot be None. RandomSampler must be passed a "
                    "dict of the names of the parameters you want to vary, "

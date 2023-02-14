@@ -383,13 +383,6 @@ class PCEAnalysis(BaseAnalysisElement):
         weights = self.sampler._weights
         regression = self.sampler.regression
 
-        # Extract output values for each quantity of interest from Dataframe
-#        samples = {k: [] for k in qoi_cols}
-#        for run_id in data_frame[('run_id', 0)].unique():
-#            for k in qoi_cols:
-#                data = data_frame.loc[data_frame[('run_id', 0)] == run_id][k]
-#                samples[k].append(data.values.flatten())
-
         samples = {k: [] for k in qoi_cols}
         for k in qoi_cols:
             if self.relative_analysis:
@@ -405,10 +398,6 @@ class PCEAnalysis(BaseAnalysisElement):
                 samples[k] = data_frame[k].values[:self.sampler.n_samples] / base - 1
             else:
                 samples[k] = data_frame[k].values[:self.sampler.n_samples]
-            
-            #print(f'Original {data_frame[k].values[:-1] = }')
-            #print(f'Base run {data_frame[k].values[-1] = }')
-            #print(f'Scaled {samples[k] = }')
 
             # Compute descriptive statistics for each quantity of interest
             if regression:
