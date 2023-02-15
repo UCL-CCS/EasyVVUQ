@@ -4,12 +4,6 @@ import numpy as np
 import pickle
 from itertools import product, chain
 import logging
-from .transformations import Transformations
-
-# DEBUG USI
-from os import stat, path
-from time import ctime
-import json
 
 __author__ = "Wouter Edeling"
 __copyright__ = """
@@ -42,7 +36,6 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
 
     def __init__(self,
                  vary=None,
-                 distribution=None,
                  polynomial_order=4,
                  quadrature_rule="G",
                  growth=False,
@@ -56,12 +49,6 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
         ----------
         vary: dict or None
             keys = parameters to be sampled, values = distributions.
-        
-        distribution: cp.Distribution or matrix-like
-            Joint distribution specifying dependency between the parameters in vary or
-            correlation matrix of the variables. Depending on the type of the parameter
-            either Rosenblatt or Cholesky transformation will be used to handle the
-            dependent parameters.
 
         polynomial_order : int, optional
             The polynomial order, default is 4.
@@ -99,51 +86,8 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
 
         logging.debug("param dist {}".format(self.params_distribution))
 
-        # Multivariate distribution, the behaviour changes based on the
-        # 'distribution' argument, which can be:
-        #   None            - use default joint
-        #   cp.Distribution - use Rosenblatt if the distribution is dependent
-        #   matrix-lie      - use Cholesky
-        self._is_dependent = False
-        self._transformation = None
-        self.distribution_dep = None
-        if distribution is None:
-            logging.info("Using default joint distribution")
-            self.joint_dist = cp.J(*self.params_distribution)
-        elif 'distributions' in str(type(distribution)):
-            if distribution.stochastic_dependent:
-                assert(isinstance(distribution, cp.MvNormal))
-                assert(len(distribution._parameters['mean']) == self.N) # all parameters listed in vary must be in the cp.MvNormal
-                logging.info("Using user provided joint distribution with Rosenblatt transformation")
-                self._is_dependent = True
-                self._transformation = "Rosenblatt"
-                self.distribution_dep = distribution
-            else:
-                logging.info("Using user provided joint distribution without any transformation")
-                self.joint_dist = distribution
-        elif 'list' in str(type(distribution)) or 'ndarray' in str(type(distribution)):
-            assert(len(distribution) == self.N) # check the correct size of the corr
-            for i in range(self.N):
-                assert(distribution[i][i] == 1.0) # must be correlation matrix
-            logging.info("Using user provided correlation matrix for Cholesky transformation")
-            self._is_dependent = True
-            self._transformation = "Cholesky"
-            self.distribution_dep = np.array(distribution)
-        else:
-            logging.error("Unsupported type of the distribution argument. It should be either cp.Distribution or a matrix-like array")
-            exit()
 
-        # Build independent joint for the dependent distribution
-        # Build independent joint multivariate distribution considering each uncertain paramter
-        # Use Uniform or Normal distribution depending on the distr. of each parameter
-        if not self.distribution_dep is None:
-            #self.params_distribution = [cp.Normal() for i in range(params_num)]
-            #self.params_distribution = [cp.Uniform() for i in range(params_num)]
-            self.params_distribution = [cp.Uniform() if type(vary_dist).__name__ == "Uniform"
-                                   else cp.Normal()
-                                   for vary_dist in vary.values()]
-            self.joint_dist = cp.J(*self.params_distribution)
-            logging.debug(f"The independent distribution consists of: {self.joint_dist}")
+        self.joint_dist = cp.J(*self.params_distribution)
 
         # The quadrature information: order, rule and sparsity
         if isinstance(polynomial_order, int):
@@ -182,7 +126,6 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
 
             # generate collocation as a standard tensor product
             l_norm = np.array([self.polynomial_order])
-            print(f'{l_norm = }')
             self.xi_d = self.generate_grid(l_norm)
 
         else:
@@ -192,22 +135,6 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
             self.xi_d = self.generate_grid(self.l_norm)
 
         self._n_samples = self.xi_d.shape[0]
-
-
-        # Nodes transformation
-        if self._is_dependent:
-            regression = False
-            if self._transformation == "Rosenblatt":
-                logging.info("Performing Rosenblatt transformation")
-                self._weights_dep, self._nodes_dep = Transformations.rosenblatt(self.xi_d, self.joint_dist, self.distribution_dep,regression)
-            elif self._transformation == "Cholesky":
-                logging.info("Performing Cholesky transformation")
-                self._weights_dep, self._nodes_dep = Transformations.cholesky(self.xi_d, self.vary, self.distribution_dep, regression)
-            else:
-                logging.critical("Error: How did this happen? We are transforming the nodes but not with Rosenblatt nor Cholesky")
-                exit()
-
-            print(f"Transformed sparse grid:\n{self._nodes_dep}")
 
         self.count = 0
 
@@ -237,9 +164,6 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
         # quadrature rules of increasing order
         self.xi_1d = [{} for n in range(N)]
         self.wi_1d = [{} for n in range(N)]
-
-        print(f"self.polynomial_order: {self.polynomial_order}")
-        print(f"self.params_distribution: {self.params_distribution}")
 
         if self.sparse:
 
@@ -278,17 +202,10 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
                 xi_i, wi_i = cp.generate_quadrature(self.polynomial_order[n],
                                                     self.params_distribution[n],
                                                     rule=rule,
-                                                    growth=self.growth)
-                
-                # TODO: for isotropic grid, the self.polynomial_order[n] are same for all n
-                # overwrites the previous results? => no, self.polynomial_order is [3, 3] and
-                # n iterates over the two input parameters, creates dict [{3: [nodes_param1]}, {3: [nodes_param2]}]
+                                                    growth=self.growth)   
 
                 self.xi_1d[n][self.polynomial_order[n]] = xi_i[0]
                 self.wi_1d[n][self.polynomial_order[n]] = wi_i
-
-        print(f"Nodes for param i and PO d: {self.xi_1d}")
-        print(f"Weights for param i and PO d: {self.wi_1d}")
 
     def check_max_quad_level(self):
         """
@@ -473,11 +390,7 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
             run_dict = {}
             i_par = 0
             for param_name in self.vary.get_keys():
-                if self._is_dependent:
-                    # Return transformed nodes reflecting the dependencies
-                    run_dict[param_name] = self._nodes_dep[self.count][i_par]
-                else:
-                    run_dict[param_name] = self.xi_d[self.count][i_par]
+                run_dict[param_name] = self.xi_d[self.count][i_par]
                 i_par += 1
             self.count += 1
             return run_dict

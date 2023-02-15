@@ -6,11 +6,6 @@ from SALib.sample import saltelli
 from .base import BaseSamplingElement, Vary
 import logging
 
-# DEBUG USI
-from os import stat, path
-from time import ctime
-import json
-
 __author__ = "Jalal Lakhlili"
 __copyright__ = """
 
@@ -36,7 +31,7 @@ __license__ = "LGPL"
 
 
 class QMCSampler(BaseSamplingElement, sampler_name="QMC_sampler"):
-    def __init__(self, vary, distribution, n_mc_samples, count=0):
+    def __init__(self, vary, n_mc_samples, count=0):
         """Create a Quasi Monte Carlo sampler.
 
         Parameters
@@ -47,30 +42,12 @@ class QMCSampler(BaseSamplingElement, sampler_name="QMC_sampler"):
             (inputs for your simulation that you want to vary during
             sampling) and values are ChaosPy distributions you want to
             sample from.
-        distribution: cp.Distribution
-            Joint distribution specifying dependency between the parameters in vary
         n_mc_samples : int
             An estimate for how many samples the monte carlo run will need.
         count : int
             This is used to resume sampling. It will skip the first
             count samples if this parameter is not zero.
         """
-
-        #%%%%%%%%%%%%%%%%%  USI DEBUG INFO   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        samplerFile_src = "/Users/Juraj/Documents/DXT/EasyVVUQ-fork/easyvvuq/sampling/qmc.py"
-        fileStatsObj = stat(samplerFile_src)
-        modificationTime1 = ctime(fileStatsObj.st_mtime)
-        print("Using USI version of the QMC Sampler %s" % (samplerFile_src))
-        print("Last Modified Time of the source file : ", modificationTime1 )
-
-        samplerFile_lib = path.dirname(path.abspath(__file__))
-        fileStatsObj = stat(samplerFile_lib)
-        modificationTime2 = ctime(fileStatsObj.st_mtime)
-        print("Last Time of the EasyVVUQ library build : ", modificationTime2)
-
-        if (modificationTime1 > modificationTime2):
-            print("Warning: The EasyVVUQ library does not contain the latest changes in the src")
-        #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
         if not isinstance(vary, dict):
             msg = ("'vary' must be a dictionary of the names of the "
@@ -88,12 +65,7 @@ class QMCSampler(BaseSamplingElement, sampler_name="QMC_sampler"):
         params_distribution = list(vary.values())
 
         # Multivariate distribution
-        if distribution == None:
-            print("Using default joint distribution")
-            self.distribution = cp.J(*params_distribution)
-        else:
-            print("Using user provided joint distribution")
-            self.distribution = distribution
+        self.distribution = cp.J(*params_distribution)
 
         # Generate samples
         self.n_params = len(vary)
