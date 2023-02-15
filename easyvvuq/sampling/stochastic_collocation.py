@@ -38,6 +38,7 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
                  vary=None,
                  polynomial_order=4,
                  quadrature_rule="G",
+                 count=0,
                  growth=False,
                  sparse=False,
                  midpoint_level1=True,

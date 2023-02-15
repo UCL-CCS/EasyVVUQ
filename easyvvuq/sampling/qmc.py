@@ -48,7 +48,6 @@ class QMCSampler(BaseSamplingElement, sampler_name="QMC_sampler"):
             This is used to resume sampling. It will skip the first
             count samples if this parameter is not zero.
         """
-
         if not isinstance(vary, dict):
             msg = ("'vary' must be a dictionary of the names of the "
                    "parameters you want to vary, and their corresponding "

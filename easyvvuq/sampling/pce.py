@@ -5,12 +5,6 @@ import random
 from .base import BaseSamplingElement, Vary
 from .transformations import Transformations
 
-
-# DEBUG USI
-from os import stat, path
-from time import ctime
-import json
-
 __author__ = "Jalal Lakhlili"
 __copyright__ = """
 
@@ -89,41 +83,22 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
             relative to the nominal output, and similarly, the parameters represent the delta of
             the parameter nominal value (i.e. zero represents parameter's nominal value, nominal + delta*nominal)
         """
-        # Create and initialize the logger
-        self.logger = logging.getLogger(__name__)
-        self.logger.setLevel(logging.DEBUG)
-
-        # Logger is already configured, remove all handlers
-        if self.logger.hasHandlers():
-            self.logger.handlers = []
-        
-        formatter = logging.Formatter('%(asctime)s:%(name)s:%(levelname)s:%(message)s')
-
-        file_handler = logging.FileHandler('PCE.log')
-        file_handler.setLevel(logging.DEBUG)
-        file_handler.setFormatter(formatter)
-
-        stream_handler = logging.StreamHandler()
-        stream_handler.setFormatter(formatter)
-
-        self.logger.addHandler(file_handler)
-        self.logger.addHandler(stream_handler)
 
         if vary is None:
             msg = ("'vary' cannot be None. RandomSampler must be passed a "
                    "dict of the names of the parameters you want to vary, "
                    "and their corresponding distributions.")
-            self.logger.error(msg)
+            logging.error(msg)
             raise Exception(msg)
         if not isinstance(vary, dict):
             msg = ("'vary' must be a dictionary of the names of the "
                    "parameters you want to vary, and their corresponding "
                    "distributions.")
-            self.logger.error(msg)
+            logging.error(msg)
             raise Exception(msg)
         if len(vary) == 0:
             msg = "'vary' cannot be empty."
-            self.logger.error(msg)
+            logging.error(msg)
             raise Exception(msg)
 
         self.vary = Vary(vary)
@@ -142,30 +117,30 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
         self._transformation = None
         self.distribution_dep = None
         if distribution is None:
-            self.logger.info("Using default joint distribution")
+            logging.info("Using default joint distribution")
             self.distribution = cp.J(*params_distribution)
         elif 'distributions' in str(type(distribution)):
             if distribution.stochastic_dependent:
                 assert(isinstance(distribution, cp.MvNormal))
                 assert(len(distribution._parameters['mean']) == params_num) # all parameters listed in vary must be in the cp.MvNormal
-                self.logger.info("Using user provided joint distribution with Rosenblatt transformation")
+                logging.info("Using user provided joint distribution with Rosenblatt transformation")
                 self._is_dependent = True
                 self._transformation = "Rosenblatt"
                 self.distribution_dep = distribution
             else:
-                self.logger.info("Using user provided joint distribution without any transformation")
+                logging.info("Using user provided joint distribution without any transformation")
                 self.distribution = distribution
                 assert(self._is_dependent == False)
         elif 'list' in str(type(distribution)) or 'ndarray' in str(type(distribution)):
             assert(len(distribution) == params_num) # check the correct size of the corr
             for i in range(params_num):
                 assert(distribution[i][i] == 1.0) # must be correlation matrix
-            self.logger.info("Using user provided correlation matrix for Cholesky transformation")
+            logging.info("Using user provided correlation matrix for Cholesky transformation")
             self._is_dependent = True
             self._transformation = "Cholesky"
             self.distribution_dep = np.array(distribution)
         else:
-            self.logger.error("Unsupported type of the distribution argument. It should be either cp.Distribution or a matrix-like array")
+            logging.error("Unsupported type of the distribution argument. It should be either cp.Distribution or a matrix-like array")
             exit()
 
         # Build independent joint multivariate distribution considering each uncertain paramter
@@ -181,8 +156,8 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
                 if self._transformation == "Rosenblatt":
                     assert(vary[v].get_mom_parameters()['shift'][0] == self.distribution_dep._parameters['mean'][id_v])
                     assert(vary[v].get_mom_parameters()['shift'][0] == self.distribution[id_v].get_mom_parameters()['shift'][0])
-            self.logger.debug(f"The independent distribution consists of: {self.distribution}")
-            self.logger.debug(f"Using parameter permutation: {list(vary.keys())}")
+            logging.debug(f"The independent distribution consists of: {self.distribution}")
+            logging.debug(f"Using parameter permutation: {list(vary.keys())}")
 
         # The orthogonal polynomials corresponding to the joint distribution
         self.P = cp.expansion.stieltjes(polynomial_order, self.distribution, normed=True)
@@ -202,14 +177,14 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
 
         # Regression variante (Point collocation method)
         if regression:
-            self.logger.info(f"Using point collocation method to create PCE")
+            logging.info(f"Using point collocation method to create PCE")
             # Change the default rule
             if rule == "G":
                 self.rule = "M"
 
             # Generates samples
             self._n_samples = 2 * len(self.P)
-            self.logger.info(f"Generating {self._n_samples} samples using {self.rule} rule")
+            logging.info(f"Generating {self._n_samples} samples using {self.rule} rule")
             self._nodes = cp.generate_samples(order=self._n_samples,
                                               domain=self.distribution,
                                               rule=self.rule)
@@ -219,18 +194,18 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
             # Nodes transformation
             if self._is_dependent:
                 if self._transformation == "Rosenblatt":
-                    self.logger.info("Performing Rosenblatt transformation")
+                    logging.info("Performing Rosenblatt transformation")
                     self._nodes_dep = Transformations.rosenblatt(self._nodes, self.distribution, self.distribution_dep, regression)
                 elif self._transformation == "Cholesky":
-                    self.logger.info("Performing Cholesky transformation")
+                    logging.info("Performing Cholesky transformation")
                     self._nodes_dep = Transformations.cholesky(self._nodes, self.vary, self.distribution_dep, regression)
                 else:
-                    self.logger.critical("Error: How did this happen? We are transforming the nodes but not with Rosenblatt nor Cholesky")
+                    logging.critical("Error: How did this happen? We are transforming the nodes but not with Rosenblatt nor Cholesky")
                     exit()
 
         # Projection variante (Pseudo-spectral method)
         else:
-            self.logger.info(f"Using pseudo-spectral method to create PCE")
+            logging.info(f"Using pseudo-spectral method to create PCE")
             # Nodes and weights for the integration
             self._nodes, self._weights = cp.generate_quadrature(order=polynomial_order,
                                                                 dist=self.distribution,
@@ -239,7 +214,7 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
                                                                 growth=self.quad_growth)
             # Number of samples
             self._n_samples = len(self._nodes[0])
-            self.logger.info(f"Generated {self._n_samples} nodes/weights pairs using {self.rule} rule")
+            logging.info(f"Generated {self._n_samples} nodes/weights pairs using {self.rule} rule")
 
             # Nodes transformation
             if self._is_dependent:
@@ -252,13 +227,13 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
             msg = (f"Attempt to start sampler fastforwarded to count {self.count}, "
                    f"but sampler only has {self.n_samples} samples, therefore"
                    f"this sampler will not provide any more samples.")
-            self.logger.warning(msg)
+            logging.warning(msg)
         else:
             for i in range(count):
                 self.__next__()
 
         # Remember whether to add the extra run using the base value of the parameters (0 corresponding to the mean)
-        self.logger.info(f"Performing relative analysis: {relative_analysis}")
+        logging.info(f"Performing relative analysis: {relative_analysis}")
         self.relative_analysis = relative_analysis
 
     def is_finite(self):

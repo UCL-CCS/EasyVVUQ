@@ -517,8 +517,10 @@ class PCEAnalysis(BaseAnalysisElement):
             # Correlation matrix
             try:
                 warnings.warn(f"Skipping computation of cp.Corr", RuntimeWarning)
-                results['correlation_matrices'][k] = None #cp.Corr(fit, self.sampler.distribution)
-                    #TODO: if dependent, we want to return correlation of the self.sampler.distribution_dep?
+                if self.sampler._is_dependent:
+                    results['correlation_matrices'][k] = None
+                else:
+                    results['correlation_matrices'][k] = cp.Corr(fit, self.sampler.distribution)
             except Exception as e:
                 print ('Error %s for %s when computing cp.Corr()'% (e.__class__.__name__, k))
                 results['correlation_matrices'][k] = None
@@ -527,11 +529,14 @@ class PCEAnalysis(BaseAnalysisElement):
             # Output distributions
             try:
                 warnings.warn(f"Skipping computation of cp.QoI_Dist", RuntimeWarning)
-                results['output_distributions'][k] = None #cp.QoI_Dist( fit, self.sampler.distribution)
+                if self.sampler._is_dependent:
+                    results['output_distributions'][k] = None
                     #TODO: When a multivariate distribution is dependent, it means that the pdf and
                     # cdf can only be defined together. If you want to define only one, than you
                     # have to "marginalize", which implies that you are loosing the dependency
                     # relationship. https://github.com/jonathf/chaospy/issues/339
+                else:
+                    results['output_distributions'][k] = cp.QoI_Dist( fit, self.sampler.distribution)
             except Exception as e:
                 print ('Error %s for %s when computing cp.QoI_Dist()'% (e.__class__.__name__, k))
 #                from traceback import print_exc
