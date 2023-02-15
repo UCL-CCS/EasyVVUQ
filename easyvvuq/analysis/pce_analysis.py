@@ -286,8 +286,11 @@ class PCEAnalysis(BaseAnalysisElement):
             Parameter T specifies the time dimension
             '''
 
-            #TODO: build derivative only with respect to a subset of variables
+            # Build derivative with respect to all variables
             dim = len(self.sampler.vary.vary_dict)
+            if dim < 1:
+                return 0
+
             Vars = [v.names[0] for v in cp.variable(dim)]
             T = len(Y_hat)
 
@@ -486,10 +489,15 @@ class PCEAnalysis(BaseAnalysisElement):
             derivatives_first_dict = {}
             Ndimensions = len(self.sampler.vary.vary_dict)
             for i, param_name in enumerate(self.sampler.vary.vary_dict):
-                # Evaluate dY_hat['param'] at the origin
-                #derivatives_first_dict[param_name] = cp.polynomial(dY_hat[param_name])(*np.zeros(Ndimensions))
-                # Evaluate dY_hat['param'] at the mean of the parameters
-                derivatives_first_dict[param_name] = cp.polynomial(dY_hat[param_name])(*[v.get_mom_parameters()["shift"][0] for v in self.sampler.vary.vary_dict.values()])
+                if all([type(v) == type(cp.Normal()) for v in self.sampler.vary.vary_dict.values()]):
+                    # Evaluate dY_hat['param'] at the mean of the parameters
+                    derivatives_first_dict[param_name] = cp.polynomial(dY_hat[param_name])(*[v.get_mom_parameters()["shift"][0] for v in self.sampler.vary.vary_dict.values()])
+                elif all([type(v) == type(cp.Uniform()) for v in self.sampler.vary.vary_dict.values()]):
+                    # Evaluate dY_hat['param'] at the mean of the parameters
+                    derivatives_first_dict[param_name] = cp.polynomial(dY_hat[param_name])(*[(v.lower + v.upper)/2.0 for v in self.sampler.vary.vary_dict.values()])
+                else:
+                    # Evaluate dY_hat['param'] at the zero vector
+                    derivatives_first_dict[param_name] = cp.polynomial(dY_hat[param_name])(*np.zeros(Ndimensions))
 
             results['derivatives_first'][k] = derivatives_first_dict
 
