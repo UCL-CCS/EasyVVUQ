@@ -87,7 +87,7 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
             If True, we add one additional sample with all parameters having zero (nominal) value.
             This is used in the relative analysis, where the model output is represented
             relative to the nominal output, and similarly, the parameters represent the delta of
-            the parameter nominal value (i.e. zero represents parameter's nominal value)
+            the parameter nominal value (i.e. zero represents parameter's nominal value, nominal + delta*nominal)
         """
         # Create and initialize the logger
         self.logger = logging.getLogger(__name__)
@@ -164,7 +164,6 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
             self._is_dependent = True
             self._transformation = "Cholesky"
             self.distribution_dep = np.array(distribution)
-            raise NotImplementedError(f'Not tested the Cholesky with respect to scaling of the samples!')
         else:
             self.logger.error("Unsupported type of the distribution argument. It should be either cp.Distribution or a matrix-like array")
             exit()
@@ -176,9 +175,12 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
             self.distribution = cp.J(*params_distribution)
             
             # This assumes that the order of the parameters in distribution and distribution_dep is the same
+            # and the distribution type is cp.Normal
             for id_v, v in enumerate(vary):
-                assert(vary[v].get_mom_parameters()['shift'][0] == self.distribution_dep._parameters['mean'][id_v])
-                assert(vary[v].get_mom_parameters()['shift'][0] == self.distribution[id_v].get_mom_parameters()['shift'][0])
+                assert(type(vary[v]) == type(cp.Normal()))
+                if self._transformation == "Rosenblatt":
+                    assert(vary[v].get_mom_parameters()['shift'][0] == self.distribution_dep._parameters['mean'][id_v])
+                    assert(vary[v].get_mom_parameters()['shift'][0] == self.distribution[id_v].get_mom_parameters()['shift'][0])
             self.logger.debug(f"The independent distribution consists of: {self.distribution}")
             self.logger.debug(f"Using parameter permutation: {list(vary.keys())}")
 
@@ -241,16 +243,6 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
 
             # Nodes transformation
             if self._is_dependent:
-                if self._transformation == "Rosenblatt":
-                    self.logger.info("Performing Rosenblatt transformation")
-                    self._weights_dep, self._nodes_dep = Transformations.rosenblatt(self._nodes, self.distribution, self.distribution_dep,regression)
-                elif self._transformation == "Cholesky":
-                    self.logger.info("Performing Cholesky transformation")
-                    self._weights_dep, self._nodes_dep = Transformations.cholesky(self._nodes, self.vary, self.distribution_dep, regression)
-                else:
-                    self.logger.critical("Error: How did this happen? We are transforming the nodes but not with Rosenblatt nor Cholesky")
-                    raise ValueError("Error: How did this happen? We are transforming the nodes but not with Rosenblatt nor Cholesky")
-
                 # Scale the independent nodes
                 raise NotImplementedError(f'Transformation of the independent nodes not supported with {regression = }')
 
@@ -265,7 +257,7 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
             for i in range(count):
                 self.__next__()
 
-        # Remember whether to add the extra run
+        # Remember whether to add the extra run using the base value of the parameters (0 corresponding to the mean)
         self.logger.info(f"Performing relative analysis: {relative_analysis}")
         self.relative_analysis = relative_analysis
 

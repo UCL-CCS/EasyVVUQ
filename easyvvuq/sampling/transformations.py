@@ -76,17 +76,29 @@ class Transformations:
     @staticmethod
     def cholesky(nodes, vary, correlation, regression=True):
 
-        # Input nodes are expected to be in sape (ndim x nsamples),
+        # Input nodes are expected to be in shape (ndim x nsamples),
         # but user might have have provided the transposed array
         do_transpose = False
         if nodes.shape[0] > nodes.shape[1]:
             do_transpose = True
             nodes = nodes.T
 
-        transformed_nodes = []
+        # Shift and stretch the nodes to a unit normal distribution
+        # Until now we have samples from a general non-unit normal distribution
+        nodes_unit = np.zeros(nodes.shape)
+        for i, (param, distribution) in enumerate(vary.get_items()):
+            if type(distribution).__name__ == "Uniform":
+                a = distribution._parameters['lower'] #lower
+                b = distribution._parameters['upper'] #upper
+                nodes_unit[i] = (nodes[i] - a) / (b-a)
+            elif type(distribution).__name__ == "Normal":
+                a = distribution._parameters['shift'] #mu
+                b = distribution._parameters['scale'] #sigma
+                nodes_unit[i] = (nodes[i] - a) / b
 
+        transformed_nodes = []
         L = np.linalg.cholesky(correlation)
-        transformed_nodes = np.matmul(L, nodes)
+        transformed_nodes = np.matmul(L, nodes_unit)
 
         # Shift and stretch the transformed nodes to the target distr.
         # Until now we had samples from unit uniform (or normal) distributions

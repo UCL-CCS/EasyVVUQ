@@ -135,7 +135,7 @@ class FDSampler(BaseSamplingElement, sampler_name="FD_sampler"):
         else:
             self.logger.info(f"Performing perturbation of the nodes, base value = mean, with delta = {perturbation}")
             # Assumes that v is cp.Normal()
-            assert(type(vary['kappa']) == type(cp.Normal()))
+            assert(all([type(v) == type(cp.Normal()) for v in vary.values()]))
             base_value = [v.get_mom_parameters()['shift'][0] for v in vary.values()] #Set base_value to the mean_of_the_parameters
 
         # Generate the perturbed values of the parameters for the FD
