@@ -96,6 +96,23 @@ class Grid_Sampler(BaseSamplingElement, sampler_name="grid_sampler"):
         # return self.points.shape[0]
         return self.cumul_sizes[-1]
 
+    def get_param_names(self):
+        """
+        Get the names of all parameters that were varied.
+
+        Returns
+        -------
+        param_names : list
+            List of parameter names.
+
+        """
+        param_names = []
+        for _vary in self.vary:
+            for name in _vary.keys():
+                if not name in param_names:
+                    param_names.append(name)
+        return param_names
+
     def __next__(self):
         """
         Return the next sample from the input distributions.
