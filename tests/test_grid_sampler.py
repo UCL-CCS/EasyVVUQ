@@ -19,7 +19,7 @@ def campaign():
     params["x2"] = {"type": "boolean", "default": True}
 
     # python file is its own template
-    encoder = uq.encoders.GenericEncoder('tests/grid_search/test_grid.py',
+    encoder = uq.encoders.GenericEncoder('tests/grid_search/test_grid.template',
                                          target_filename='test_grid.py')
 
     execute = ExecuteLocal("python3 test_grid.py")
