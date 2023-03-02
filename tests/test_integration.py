@@ -72,7 +72,7 @@ def campaign():
         reloaded_campaign.set_app(app_name)
         reloaded_campaign.execute(nsamples=num_samples).collate()
         # Draw 3 more samples, execute, and collate onto existing dataframe
-        #reloaded_campaign.draw_samples(num_samples=num_samples, replicas=replicas)
+        # reloaded_campaign.draw_samples(num_samples=num_samples, replicas=replicas)
         # reloaded_campaign.collate()
         if stats is not None:
             reloaded_campaign.apply_analysis(stats)

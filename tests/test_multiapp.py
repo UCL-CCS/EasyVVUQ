@@ -185,7 +185,7 @@ def test_multiapp(tmpdir):
 
     cooling_df = campaign.get_collation_result
 
-    assert(not cannonsim_df.equals(cooling_df))
+    assert (not cannonsim_df.equals(cooling_df))
 
 
 if __name__ == "__main__":

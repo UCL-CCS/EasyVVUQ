@@ -115,10 +115,10 @@ def test_look_ahead(adaptive_campaign):
     # This is because the order is not preserved in the setdiff2d subroutine of the
     # analysis class.
     for idx in admissible_idx:
-        assert(idx in sampler.admissible_idx)
+        assert (idx in sampler.admissible_idx)
 
     # check if the right number of new samples were computed during the 1st 3 iterations
-    assert(sampler.n_new_points == [6, 2, 6])
+    assert (sampler.n_new_points == [6, 2, 6])
 
 
 def test_adapt_dimension(adaptive_campaign):
@@ -127,7 +127,7 @@ def test_adapt_dimension(adaptive_campaign):
     """
     _, analysis, _ = adaptive_campaign
     # check if the dimensions were refined in the right order
-    assert(np.array_equal(analysis.l_norm, np.array([[1, 1, 1], [2, 1, 1], [1, 2, 1], [1, 1, 2]])))
+    assert (np.array_equal(analysis.l_norm, np.array([[1, 1, 1], [2, 1, 1], [1, 2, 1], [1, 1, 2]])))
 
 
 def test_SC2PCE(adaptive_campaign):
@@ -135,12 +135,12 @@ def test_SC2PCE(adaptive_campaign):
     Test the conversion from the SC basis to the PCE basis (analysis.SC2PCE)
     """
     _, analysis, _ = adaptive_campaign
-    assert(analysis.pce_coefs['f'][(1, 1, 1)][(1, 1, 1)] ==
-           pytest.approx(np.array([0.22204355]), abs=0.0001))
-    assert(analysis.pce_coefs['f'][(2, 1, 1)][(1, 1, 1)] ==
-           pytest.approx(np.array([0.25376406]), abs=0.0001))
-    assert(analysis.pce_coefs['f'][(2, 1, 1)][(2, 1, 1)] ==
-           pytest.approx(np.array([0.10988306]), abs=0.0001))
+    assert (analysis.pce_coefs['f'][(1, 1, 1)][(1, 1, 1)] ==
+            pytest.approx(np.array([0.22204355]), abs=0.0001))
+    assert (analysis.pce_coefs['f'][(2, 1, 1)][(1, 1, 1)] ==
+            pytest.approx(np.array([0.25376406]), abs=0.0001))
+    assert (analysis.pce_coefs['f'][(2, 1, 1)][(2, 1, 1)] ==
+            pytest.approx(np.array([0.10988306]), abs=0.0001))
 
 
 def test_comb_coef(adaptive_campaign):
@@ -150,8 +150,8 @@ def test_comb_coef(adaptive_campaign):
     _, analysis, _ = adaptive_campaign
     coefs = analysis.compute_comb_coef(l_norm=np.array([[1, 1, 1], [1, 2, 1], [1, 3, 1],
                                                         [2, 1, 1], [2, 2, 1]]))
-    assert(coefs == {(1, 1, 1): 0.0, (1, 2, 1): -1.0,
-                     (1, 3, 1): 1.0, (2, 1, 1): 0.0, (2, 2, 1): 1.0})
+    assert (coefs == {(1, 1, 1): 0.0, (1, 2, 1): -1.0,
+                      (1, 3, 1): 1.0, (2, 1, 1): 0.0, (2, 2, 1): 1.0})
 
 
 def test_error(adaptive_campaign):
@@ -159,7 +159,7 @@ def test_error(adaptive_campaign):
 
     """
     _, analysis, _ = adaptive_campaign
-    assert(np.array_equal(analysis.adaptation_errors, np.array(
+    assert (np.array_equal(analysis.adaptation_errors, np.array(
         [0.19032304687500004, 0.0033058593749999976, 0.0033058593749999976])))
 
 
@@ -180,19 +180,19 @@ def test_results(adaptive_campaign):
     # check moments
     computed_mean = results.describe('f', 'mean')
     computed_std = results.describe('f', 'std')
-    assert(computed_mean == pytest.approx(ref_mean, 0.01))
-    assert(computed_std == pytest.approx(ref_std, 0.1))
+    assert (computed_mean == pytest.approx(ref_mean, 0.01))
+    assert (computed_std == pytest.approx(ref_std, 0.1))
 
     # check sobols, x_1 should be close to 1, others to 0
-    assert(results._get_sobols_first('f', 'x1') == pytest.approx(1.0, abs=0.01))
-    assert(results._get_sobols_first('f', 'x2') == pytest.approx(0.0, abs=0.01))
-    assert(results._get_sobols_first('f', 'x3') == pytest.approx(0.0, abs=0.01))
+    assert (results._get_sobols_first('f', 'x1') == pytest.approx(1.0, abs=0.01))
+    assert (results._get_sobols_first('f', 'x2') == pytest.approx(0.0, abs=0.01))
+    assert (results._get_sobols_first('f', 'x3') == pytest.approx(0.0, abs=0.01))
 
     # check the quality of the polynomial surrogate
     x = np.array([0.2, 0.1, 0.6])
     f_at_x = poly_model(x)
     surrogate_at_x = analysis.surrogate('f', x)
-    assert(f_at_x == pytest.approx(surrogate_at_x, abs=0.01))
+    assert (f_at_x == pytest.approx(surrogate_at_x, abs=0.01))
 
     # check uncertainty magnification factor
-    assert(analysis.get_uncertainty_amplification('f') == pytest.approx(0.8048, abs=1e-4))
+    assert (analysis.get_uncertainty_amplification('f') == pytest.approx(0.8048, abs=1e-4))

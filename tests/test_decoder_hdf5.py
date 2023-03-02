@@ -17,7 +17,7 @@ def test_hdf5(decoder):
 
 
 def test_get_output_path(decoder):
-    assert(decoder._get_output_path(
+    assert (decoder._get_output_path(
         {'run_dir': os.path.join('tests', 'hdf5')}, 'test.hdf5') ==
         os.path.join('tests', 'hdf5', 'test.hdf5'))
     with pytest.raises(RuntimeError):

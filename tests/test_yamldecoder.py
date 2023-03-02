@@ -17,7 +17,7 @@ def test_yamldecoder_data(keys, vals):
     data = decoder.parse_sim_output(run_info)
 
     for k, v in zip(keys, vals):
-        assert((data[k] == np.array([v])).all().all())
+        assert ((data[k] == np.array([v])).all().all())
 
 
 def test_yaml_nested():
@@ -25,9 +25,9 @@ def test_yaml_nested():
                           [['root1', 'node1', 'leaf1'], ['root1', 'leaf2'], 'leaf3'])
     run_info = {'run_dir': 'tests'}
     data = decoder.parse_sim_output(run_info)
-    assert((data['root1.node1.leaf1'] == np.array([0.33])).all().all())
-    assert((data['root1.leaf2'] == np.array([0.32])).all().all())
-    assert((data['leaf3'] == np.array([0.2, 0.3])).all().all())
+    assert ((data['root1.node1.leaf1'] == np.array([0.33])).all().all())
+    assert ((data['root1.leaf2'] == np.array([0.32])).all().all())
+    assert ((data['leaf3'] == np.array([0.2, 0.3])).all().all())
 
 
 def test_init_exception():

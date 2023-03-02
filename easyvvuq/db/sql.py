@@ -244,7 +244,7 @@ class CampaignDB(BaseCampaignDB):
         selected = self.session.query(AppTable).filter_by(name=name).all()
         if len(selected) == 0:
             raise RuntimeError('no such app - {}'.format(name))
-        assert(not (len(selected) > 1))
+        assert (not (len(selected) > 1))
         app = selected[0]
         self.session.query(CampaignTable).update({'active_app': app.id})
         self.session.commit()
@@ -519,7 +519,7 @@ class CampaignDB(BaseCampaignDB):
         -------
             SQLAlchemy query for campaign with this name.
         """
-        assert(isinstance(campaign_name, str) or campaign_name is None)
+        assert (isinstance(campaign_name, str) or campaign_name is None)
         query = self.session.query(CampaignTable)
         if campaign_name is None:
             campaign_info = query

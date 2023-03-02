@@ -16,8 +16,8 @@ import numpy as np
 
 
 def test_lagrange_poly():
-    assert(uq.analysis.sc_analysis.lagrange_poly(2.0, [8, 4, 9], 0) == -3.5)
-    assert(uq.analysis.sc_analysis.lagrange_poly(2.0, [8, 4, 9], 1) == 2.0999999999999996)
-    assert(uq.analysis.sc_analysis.lagrange_poly(2.0, [8, 4, 9], 2) == 2.4000000000000004)
+    assert (uq.analysis.sc_analysis.lagrange_poly(2.0, [8, 4, 9], 0) == -3.5)
+    assert (uq.analysis.sc_analysis.lagrange_poly(2.0, [8, 4, 9], 1) == 2.0999999999999996)
+    assert (uq.analysis.sc_analysis.lagrange_poly(2.0, [8, 4, 9], 2) == 2.4000000000000004)
     with pytest.raises(IndexError):
         uq.analysis.sc_analysis.lagrange_poly(2.0, [8, 4, 9], 3)

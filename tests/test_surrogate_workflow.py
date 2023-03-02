@@ -67,7 +67,7 @@ def test_surrogate_workflow(tmpdir, sampler):
     for index, row in df.iterrows():
         surrogate_y = surrogate({'Pe': row['Pe'][0], 'f': row['f'][0]})['u']
         model_y = row['u'].values
-        #assert(pytest.approx(surrogate_y == model_y))
+        # assert(pytest.approx(surrogate_y == model_y))
         assert np.max(np.abs(surrogate_y - model_y)) < 1e-6
 
     # Attempt callibration with MCMC
@@ -75,7 +75,7 @@ def test_surrogate_workflow(tmpdir, sampler):
     db_location = campaign.db_location
     campaign = None
     reloaded_campaign = uq.Campaign('sc', db_location=db_location)
-    assert(reloaded_campaign._active_app_name == 'surrogate')
+    assert (reloaded_campaign._active_app_name == 'surrogate')
     u = np.array([0., 0.00333333, 0.00666667, 0.01, 0.01333333,
                   0.01666667, 0.02, 0.02333333, 0.02666667, 0.03,
                   0.03333333, 0.03666667, 0.04, 0.04333333, 0.04666667,
@@ -150,6 +150,6 @@ def test_surrogate_workflow(tmpdir, sampler):
     for _ in range(100):
         next(iterator).collate()
     df = reloaded_campaign.get_collation_result()
-    assert(len(df) > 0)
-    assert(len(df) <= 100)
+    assert (len(df) > 0)
+    assert (len(df) <= 100)
     results = reloaded_campaign.analyse()

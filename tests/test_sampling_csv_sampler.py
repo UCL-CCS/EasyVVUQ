@@ -9,8 +9,8 @@ def test_csv_sampler():
     counter = 0
     for sample in sampler:
         if sample['Step'] == 5:
-            assert(sample['Value'] == 25.950662)
+            assert (sample['Value'] == 25.950662)
         counter += 1
-    assert(counter == 10)
-    assert(sampler.n_samples() == 10)
-    assert(sampler.is_finite())
+    assert (counter == 10)
+    assert (sampler.n_samples() == 10)
+    assert (sampler.is_finite())

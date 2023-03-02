@@ -81,11 +81,11 @@ def results_vectors(data_vectors):
 
 
 def test_results(results):
-    assert(isinstance(results, SCAnalysisResults))
+    assert (isinstance(results, SCAnalysisResults))
     sobols_first_x1 = results._get_sobols_first('f', 'x1')
     sobols_first_x2 = results._get_sobols_first('f', 'x2')
-    assert(sobols_first_x1 == pytest.approx(0.610242, 0.001))
-    assert(sobols_first_x2 == pytest.approx(0.26096511, 0.001))
+    assert (sobols_first_x1 == pytest.approx(0.610242, 0.001))
+    assert (sobols_first_x2 == pytest.approx(0.26096511, 0.001))
     with pytest.raises(RuntimeError):
         results.sobols_total()
 
@@ -102,16 +102,16 @@ def test_full_results(results):
         results.sobols_first('f', 'y')
     with pytest.raises(AssertionError):
         results.sobols_first(None, 'x1')
-    assert(results.sobols_first()['f']['x1'][0] == pytest.approx(0.6102419965318732, 0.001))
-    assert(results.sobols_first()['f']['x2'][0] == pytest.approx(0.2609651061314295, 0.001))
-    assert(results.sobols_first('f')['x1'][0] == pytest.approx(0.6102419965318732, 0.001))
-    assert(results.sobols_first('f')['x2'][0] == pytest.approx(0.2609651061314295, 0.001))
-    assert(results.sobols_first('f', 'x1')[0] == pytest.approx(0.6102419965318732, 0.001))
-    assert(results.sobols_first('f', 'x2')[0] == pytest.approx(0.2609651061314295, 0.001))
+    assert (results.sobols_first()['f']['x1'][0] == pytest.approx(0.6102419965318732, 0.001))
+    assert (results.sobols_first()['f']['x2'][0] == pytest.approx(0.2609651061314295, 0.001))
+    assert (results.sobols_first('f')['x1'][0] == pytest.approx(0.6102419965318732, 0.001))
+    assert (results.sobols_first('f')['x2'][0] == pytest.approx(0.2609651061314295, 0.001))
+    assert (results.sobols_first('f', 'x1')[0] == pytest.approx(0.6102419965318732, 0.001))
+    assert (results.sobols_first('f', 'x2')[0] == pytest.approx(0.2609651061314295, 0.001))
 
 
 def test_describe(results):
-    assert(results.describe().to_dict()[('f', 0)] == {
+    assert (results.describe().to_dict()[('f', 0)] == {
         'mean': pytest.approx(0.9101117102420444, 0.001),
         'std': pytest.approx(0.8184617581393419, 0.001),
         'var': pytest.approx(0.6698796495365424, 0.001)
@@ -119,9 +119,9 @@ def test_describe(results):
 
 
 def test_vectors(results_vectors):
-    assert(results_vectors.sobols_first(('g', 0), 'x1') == pytest.approx(1.0))
-    assert(results_vectors.sobols_first(('g', 0), 'x2') == pytest.approx(0.0))
-    assert(results_vectors.sobols_first(('g', 1), 'x1') == pytest.approx(0.0))
-    assert(results_vectors.sobols_first(('g', 1), 'x2') == pytest.approx(1.0))
-    assert(results_vectors.sobols_first(('g', 2), 'x1') == pytest.approx(0.5))
-    assert(results_vectors.sobols_first(('g', 2), 'x2') == pytest.approx(0.5))
+    assert (results_vectors.sobols_first(('g', 0), 'x1') == pytest.approx(1.0))
+    assert (results_vectors.sobols_first(('g', 0), 'x2') == pytest.approx(0.0))
+    assert (results_vectors.sobols_first(('g', 1), 'x1') == pytest.approx(0.0))
+    assert (results_vectors.sobols_first(('g', 1), 'x2') == pytest.approx(1.0))
+    assert (results_vectors.sobols_first(('g', 2), 'x1') == pytest.approx(0.5))
+    assert (results_vectors.sobols_first(('g', 2), 'x2') == pytest.approx(0.5))

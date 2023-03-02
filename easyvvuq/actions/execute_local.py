@@ -268,7 +268,7 @@ class Actions():
         for action in self.actions:
             previous = self.wrapper(action, previous)
         self.result = previous
-        assert(self.result['run_id'] == run_id)
+        assert (self.result['run_id'] == run_id)
         return previous
 
     def finished(self):

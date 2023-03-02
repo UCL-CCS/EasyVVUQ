@@ -77,8 +77,8 @@ def campaign(tmpdir):
 
 def test_campaign_exists(tmp_path):
     campaign = uq.Campaign(name='test', work_dir=tmp_path)
-    assert(campaign.campaign_db.campaign_exists('test'))
-    assert(not campaign.campaign_db.campaign_exists('test2'))
+    assert (campaign.campaign_db.campaign_exists('test'))
+    assert (not campaign.campaign_db.campaign_exists('test2'))
 
 
 def test_invalid_sampler(tmp_path):

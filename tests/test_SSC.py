@@ -177,26 +177,26 @@ def test_init(SSC_campaign):
     # test the grid initialization
     _, sampler, _ = SSC_campaign
     points = sampler.tri.points
-    assert((points == np.array([[0., 0.],
-                               [0., 1.],
-                               [1., 0.],
-                               [1., 1.],
-                               [0.5, 0.5]])).all())
-    assert(sampler.pmax_cutoff == 4)
+    assert ((points == np.array([[0., 0.],
+                                 [0., 1.],
+                                 [1., 0.],
+                                 [1., 1.],
+                                 [0.5, 0.5]])).all())
+    assert (sampler.pmax_cutoff == 4)
 
 
 def test_find_pmax(SSC_campaign):
     # test finding the max polynomials order, given the number of samples
     _, sampler, _ = SSC_campaign
-    assert(sampler.find_pmax(5) == 1)
-    assert(sampler.find_pmax(6) == 2)
-    assert(sampler.find_pmax(10) == 3)
+    assert (sampler.find_pmax(5) == 1)
+    assert (sampler.find_pmax(6) == 2)
+    assert (sampler.find_pmax(10) == 3)
 
 
 def test_compute_vol(SSC_campaign):
     # test simplex volume computation
     _, sampler, _ = SSC_campaign
-    assert((sampler.compute_vol() == np.array([0.25, 0.25, 0.25, 0.25])).all())
+    assert ((sampler.compute_vol() == np.array([0.25, 0.25, 0.25, 0.25])).all())
 
 
 def test_compute_xi_center(SSC_campaign):

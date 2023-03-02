@@ -16,4 +16,4 @@ def test_copy_encoder_encode(tmp_path):
     with pytest.raises(RuntimeError):
         encoder.encode({}, 'axcd')
     encoder.encode({}, tmp_path)
-    assert(os.path.isfile(os.path.join(tmp_path, filename2)))
+    assert (os.path.isfile(os.path.join(tmp_path, filename2)))

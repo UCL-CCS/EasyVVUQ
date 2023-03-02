@@ -167,7 +167,7 @@ class AnalysisResults:
         -------
         dict or array
         """
-        assert(not ((qoi is None) and (input_ is not None)))
+        assert (not ((qoi is None) and (input_ is not None)))
         if (qoi is not None) and (qoi not in self.qois):
             raise RuntimeError('no such qoi in this analysis')
         if (input_ is not None) and (input_ not in self.inputs):
@@ -349,7 +349,7 @@ class AnalysisResults:
             an array with the values for that statistic. Otherwise will return a DataFrame
             with more data.
         """
-        assert(not ((qoi is None) and (statistic is not None)))
+        assert (not ((qoi is None) and (statistic is not None)))
         statistics = ['mean', 'var', 'std', '1%', '10%', '90%', '99%', 'min', 'max', 'median']
         qois = self.qois
         if qoi is not None:
@@ -361,7 +361,7 @@ class AnalysisResults:
             for statistic_ in statistics:
                 try:
                     value = self._describe(qoi, statistic_)
-                    assert(isinstance(value, np.ndarray))
+                    assert (isinstance(value, np.ndarray))
                     for i, x in enumerate(value):
                         try:
                             result[(qoi, i)][statistic_] = x

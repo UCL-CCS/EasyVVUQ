@@ -22,6 +22,7 @@ from .replica_sampler import ReplicaSampler
 from .mc_sampler import MCSampler
 from .csv_sampler import CSVSampler
 from .dataframe_sampler import DataFrameSampler
+from .grid_sampler import Grid_Sampler
 
 __copyright__ = """
 

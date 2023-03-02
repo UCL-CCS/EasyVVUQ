@@ -67,27 +67,27 @@ def test_sobol_bootstrap(data):
     mc_sampler, df = data
     analysis = uq.analysis.QMCAnalysis(sampler=mc_sampler, qoi_cols=['f'])
     s1, s1_conf, st, st_conf = analysis.sobol_bootstrap(df['f'])
-    assert(s1['x1'] == pytest.approx(0.5569058947880715, 0.01))
-    assert(s1['x2'] == pytest.approx(0.20727553481694053, 0.01))
-    assert(st['x1'] == pytest.approx(0.8132793654841785, 0.01))
-    assert(st['x2'] == pytest.approx(0.3804962894947435, 0.01))
-    assert(s1_conf['x1']['low'][0] == pytest.approx(0.14387035, 0.01))
-    assert(s1_conf['x1']['high'][0] == pytest.approx(0.89428774, 0.01))
-    assert(s1_conf['x2']['low'][0] == pytest.approx(-0.11063341, 0.01))
-    assert(s1_conf['x2']['high'][0] == pytest.approx(0.46752829, 0.01))
-    assert(st_conf['x1']['low'][0] == pytest.approx(0.61368887, 0.01))
-    assert(st_conf['x1']['high'][0] == pytest.approx(1.01858671, 0.01))
-    assert(st_conf['x2']['low'][0] == pytest.approx(0.24361207, 0.01))
-    assert(st_conf['x2']['high'][0] == pytest.approx(0.49214117, 0.01))
+    assert (s1['x1'] == pytest.approx(0.5569058947880715, 0.01))
+    assert (s1['x2'] == pytest.approx(0.20727553481694053, 0.01))
+    assert (st['x1'] == pytest.approx(0.8132793654841785, 0.01))
+    assert (st['x2'] == pytest.approx(0.3804962894947435, 0.01))
+    assert (s1_conf['x1']['low'][0] == pytest.approx(0.14387035, 0.01))
+    assert (s1_conf['x1']['high'][0] == pytest.approx(0.89428774, 0.01))
+    assert (s1_conf['x2']['low'][0] == pytest.approx(-0.11063341, 0.01))
+    assert (s1_conf['x2']['high'][0] == pytest.approx(0.46752829, 0.01))
+    assert (st_conf['x1']['low'][0] == pytest.approx(0.61368887, 0.01))
+    assert (st_conf['x1']['high'][0] == pytest.approx(1.01858671, 0.01))
+    assert (st_conf['x2']['low'][0] == pytest.approx(0.24361207, 0.01))
+    assert (st_conf['x2']['high'][0] == pytest.approx(0.49214117, 0.01))
 
 
 def test_separate_output_values(data):
     mc_sampler, df = data
     analysis = uq.analysis.QMCAnalysis(sampler=mc_sampler, qoi_cols=['f'])
     f_M2, f_M1, f_Ni = analysis._separate_output_values(df['f'], 2, 100)
-    assert(f_M2.shape == (100, 1))
-    assert(f_M1.shape == (100, 1))
-    assert(f_Ni.shape == (100, 2, 1))
+    assert (f_M2.shape == (100, 1))
+    assert (f_M1.shape == (100, 1))
+    assert (f_Ni.shape == (100, 2, 1))
 
 
 def test_get_samples(data):
