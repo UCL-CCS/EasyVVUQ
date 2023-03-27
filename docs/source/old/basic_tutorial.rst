@@ -54,13 +54,13 @@ The `gauss.template` is a template input file, in JSON format ::
 The values for each key are tags (signified by the ``$`` delimiter) which will
 be substituted by EasyVVUQ with values to sample the parameter space.
 In the following tutorial, the template will be used to generate files called
-`in_file.json` that will be the input to each run of `gauss.py`.
+`in_file.json` will be the input to each run of `gauss.py`.
 
 Uncertainty Quantification Workflow
 -----------------------------------
 
-In this dummy workflow we will use the *gauss* application to produce values
-from normal distributions centred on 3 different means `mu`), using 5 repeat
+In this dummy workflow, we will use the *gauss* application to produce values
+from normal distributions centered on 3 different means `mu`), using 5 repeat
 ('replica') runs for each one.
 The output will be collected for each run and bootstrap statistics calculated
 for each set of runs.
@@ -75,7 +75,7 @@ Sections 1 to 9 contain the core EasyVVUQ workflow, section 0 sets up
 convenience variables related to the application.
 
 .. note:: In this tutorial application execution is handled locally and by
-          EasyVVUQ functions. In real world applications (especially for HPC
+          EasyVVUQ functions. In real-world applications (especially for HPC
           applications the run step is beyond the scope of EasyVVUQ.
 
 To run the workflow execute the following command ::
@@ -88,7 +88,7 @@ If this works you should see 15 lines that look something like:
 
 where `<run-location>` is the directory in which you ran the script and
 `EasyVVUQ_Campaign_zxe7_cb2` is an example of the unique directory that
-EasyVVUQ created to hold all of the files created relating to a campaign.
+EasyVVUQ was created to hold all of the files created relating to a campaign.
 
 Followed by a results table that looks like:
 
@@ -107,7 +107,7 @@ The statistics represent the variation across the 5 replica runs executed for
 each of the 3 'mu' values sampled.
 
 Below we go through each section of the workflow, explaining each step and the
-EasyVVUQ elements used to perform them.
+EasyVVUQ elements are used to perform them.
 
 Section 0: Application Setup
 -----------------------------------
@@ -140,7 +140,7 @@ Consequently, the first step of an EasyVVUQ workflow is to create a
     my_campaign = uq.Campaign(name='gauss', work_dir=".")
 
 The reason for having a name is that in some cases it may be necessary to
-combine the output of multiple *Campaigns* in a single analysis and having a
+combine the output of multiple *Campaigns* in a single analysis and have a
 name allows the data from each to be identified easily.
 
 Section 2: Define Parameter Space
@@ -193,15 +193,15 @@ The only two parameters which could (somewhat) sensibly be sampled are 'mu'
 Nonetheless we need to provide a range for 'num_steps'.
 Notice that the keys in the parameter description match the tags in the template.
 
-.. note:: The names of parameters here does not need to match the input of the
-          application directly. In the next section we will see how *Decoder*
+.. note:: The name of parameters here does not need to match the input of the
+          application directly. In the next section, we will see how *Decoder*
           elements map the parameter space to the application inputs.
 
 
 Section 3: Wrap Application
 ---------------------------
 
-In order for an application to be used in an EasyVVUQ workflow two processes
+For an application to be used in an EasyVVUQ workflow two processes
 have to be accounted for:
 
 1. the parameters being sampled need to be converted into a format that
@@ -226,7 +226,7 @@ We create the encoder using the following code::
 .. note:: The tags in the template here use the default $ delimiter.
           Different delimiters can be specified using the `delimiter` keyword.
 
-The output of *gauss* is a CSV format files, so we use a *Decoder* called *SimpleCSV*.
+The output of *gauss* is a CSV format file, so we use a *Decoder* called *SimpleCSV*.
 This requires us to specify the file to be read, the location of the header (line 0)
 and the columns to keep in the data for analysis::
 
@@ -265,9 +265,9 @@ In this example we simply pick 'mu' values from a uniform distribution between
 
     my_campaign.set_sampler(my_sampler)
 
-Real world examples are likely to use more complicated algorithms (such as
+Real-world examples are likely to use more complicated algorithms (such as
 quasi-Monte Carlo or stochastic collocation) but the way of specifying
-parameters to vary remains the same.
+parameters to vary remain the same.
 
 Section 5: Get Run Parameters
 -----------------------------
@@ -280,7 +280,7 @@ We draw samples the number of samples we want from the *Sampler*::
                              replicas=5)
 
 Here we have chosen to have 5 replicas (repeats) of each sample drawn.
-At this stage all that happens is the parameter sets are added to the
+At this stage, all that happens is the parameter sets are added to the
 *CampaignDB*, no input files have been generated.
 
 Section 6: Create Input Directories
@@ -306,7 +306,7 @@ command we specified in Step 0::
 Section 8: Collate Output
 -------------------------
 
-The collection of simulation output simply handled by the *Campaign*::
+The collection of simulation output is simply handled by the *Campaign*::
 
     my_campaign.collate()
 

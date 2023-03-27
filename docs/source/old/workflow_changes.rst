@@ -13,7 +13,7 @@ No More Collaters
 
 You don't need to explicitly create a collater anymore. The code that imports collaters will
 fail with an import error. The rest did not change. You still need to call ``campaign.collate()``
-in order to collect all the simulation data from the decoders. You also don't need to and can't
+to collect all the simulation data from the decoders. You also don't need to and can't
 specify a collater when adding an app to a campaign. So, for example ::
     my_campaign.add_app(name="gauss",
                         params=params,
@@ -66,11 +66,11 @@ Here is a valid example of such a DataFrame. ::
     24     24  0.953090  0.953090  0.953090  0.953090  1.906180
 
 It has two input variables ``x1`` and ``x2`` and one vector valued qoi (quantity of interest) 
-`g` with three elements. Any scalar is treated as a vector with one element. This is mainly of interest for people
-developing analysis classes but probably useful to know to users too. If you want to access
-the columns of the qoi you can do so (assuming ``df`` is collation result) ``df[g]`` would
+`g` with three elements. Any scalar is treated as a vector with one element. This is mainly of interest to people
+developing analysis classes but is probably useful to know to users too. If you want to access
+the columns of the qoi you can do so (assuming ``df`` is the collation result) ``df[g]`` would
 return a data frame with the three columns that make up ``g``. You can also call ``df[g, 1]`` to
-get a particular element. In which case it will return a corresponding column (second one in this 
+get a particular element. In this case, it will return a corresponding column (second one in this 
 case).
 
 Decoders Must Return Dictionaries
@@ -84,8 +84,8 @@ An example of a valid dictionary that could be returned by a decoder could be ::
     {'y1': 3.14, 'y2': [1, 2]}
 
 You can also enforce checking the output of your decoders using `Cerberus <https://docs.python-cerberus.org/en/stable/>`_. 
-To this end you need to create a validation dictionary in the Cerberus format. You then need to specify this when 
-calling ``add_app`` on a campaign. For example, if the ouput of the decoder is the dictionary above, you can
+To this end, you need to create a validation dictionary in the Cerberus format. You then need to specify this when 
+calling ``add_app`` on a campaign. For example, if the output of the decoder is the dictionary above, you can
 use the following validator ::
 
     validator = {
@@ -99,13 +99,13 @@ use the following validator ::
                      decoderspec=validator)
                     
 Each time the decoder output is read it will be checked using this specification. This can be used for 
-debugging and validation purposes. For more information for how to write the validator please consult
+debugging and validation purposes. For more information on how to write the validator please consult
 the Cerberus project website.
 
 Analysis Classes Return an AnalysisResults Instance
 ---------------------------------------------------
 
-In an effort to provide a consistent interface to the user, all classes must return the results in the same
+To provide a consistent interface to the user, all classes must return the results in the same
 way. The idea is that the users would not need to modify their code if they want to swap the analysis method
 for another one. Of course, this is to some extent not possible because different analysis methods have different
 capabilities in terms of what information they can provide. But we must strive for a consistent interface
@@ -121,11 +121,11 @@ indices from this object see the example: ::
     >>> results.sobols_first('f', 'x1')
     array([0.610242])
 
-If ``f`` is one your qois and ``x1`` and ``x2`` are your input variables you can get the first order sobol indices for
+If ``f`` is one of your qois and ``x1`` and ``x2`` are your input variables you can get the first order sobol indices for
 all qois and all inputs by calling ``results.sobols_first()``, you can get sobol indices for ``f`` by calling 
 ``results.sobols_first(f)`` and you can get the index for one of the quantities by calling ``results.sobols_first(f, x2)``.
-Also implemented in some of the classes are ``results.sobols_second()`` and ``results.sobols_total()`` which work in a similar way.
+Also implemented in some of the classes are ``results.sobols_second()`` and ``results.sobols_total()`` which work similarly.
 Where make sense the classes will also provide a ``surrogate()`` method which will return an object that will act
 as a surrogate for your simulation.
 
-You can get descriptive statistcs by calling ``results.describe()``.
+You can get descriptive statistics by calling ``results.describe()``.

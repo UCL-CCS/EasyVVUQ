@@ -80,7 +80,7 @@ and
 .. math::
    mtanh(x, b_{slope}) = \frac{(1 + x \cdot b_{slope}) exp(x) - exp(-x)}{exp(x) + exp(-x)}
 
-A typical density profile used in these simulation is shown below:
+A typical density profile used in this simulation is shown below:
 
 .. figure:: ../images/ne.svg
 
@@ -92,7 +92,7 @@ The source is given by
 where :math:`\alpha` is chosen so that :math:`\int\; S(\rho,t) dV =
 Qe_{tot}`, the total heating power.
 
-In this example we will analyze this model using the polynomial chaos
+In this example, we will analyze this model using the polynomial chaos
 expansion (PCE) UQ algorithm.  The parameters that can be varied are:
 
 ==================    =======    =======   =========
@@ -128,13 +128,13 @@ though we will restrict the variation to
 for this analysis.
 
 Below we provide a commented script that shows how the Campaign is built up and then employed.
-We also provide an outline of how each element is setup.
+We also provide an outline of how each element is set up.
 
 EasyVVUQ Script Overview
 ------------------------
 
-We illustrate the intended workflow using the following basic example
-script, a python implementation of the reduced fusion workflow model. 
+We illustrate the intended workflow using the following basic example script, 
+a python implementation of the reduced fusion workflow model. 
 
 The input files for this tutorial are
 
@@ -162,7 +162,7 @@ To run the script execute the following command
 Import necessary libraries
 --------------------------
 
-For this example we import both easyvvuq and chaospy (for the
+For this example, we import both easyvvuq and chaospy (for the
 distributions). EasyVVUQ will be referred to as 'uq' in the code. ::
 
     import easyvvuq as uq
@@ -212,7 +212,7 @@ App Creation
 ------------
 
 In this example the GenericEncoder and SimpleCSV, both included in the
-core EasyVVUQ library, were used as the encoder/decoder pair for this
+core EasyVVUQ library were used as the encoder/decoder pair for this
 application. ::
 
     encoder = uq.encoders.GenericEncoder(
@@ -227,8 +227,8 @@ GenericEncoder performs simple text substitution into a supplied
 template, using a specified delimiter to identify where parameters
 should be placed.  The template is shown below (\$ is used as the
 delimiter).  The template substitution approach is likely to suit most
-simple applications but in practice many large applications have more
-complex requirements, for example the multiple input files or the
+simple applications but in practice, many large applications have more
+complex requirements, for example, the multiple input files or the
 creation of a directory hierarchy.  In such cases, users may write
 their own encoders by extending the BaseEncoder class. ::
 
@@ -289,7 +289,7 @@ Calling the campaign's draw\_samples() method will cause the specified
 number of samples to be added as runs to the campaign database,
 awaiting encoding and execution. If no arguments are passed to
 draw\_samples() then all samples will be drawn, unless the sampler is
-not finite. In this case PCESampler is finite (produces a finite
+not finite. In this case, PCESampler is finite (produces a finite
 number of samples) and we elect to draw all of them at once: ::
 
     my_campaign.draw_samples()
@@ -334,8 +334,8 @@ The output of this is dependent on the type of analysis element. ::
 Typical results
 ---------------
 
-The above workflow calculates the distribution of temeperatures as the
-uncertain parameters are varied.  A typical results is shown below.
+The above workflow calculates the distribution of temperatures as the
+uncertain parameters are varied.  A typical result is shown below.
 
 .. figure:: ../images/Te.svg
 
@@ -343,7 +343,7 @@ Here the mean temperature, the mean plus and minus one sigma, the 10
 and 90 percentiles as well as the complete range are shown as a
 function of :math:`\rho`.
 
-The sensitivity of the results to the varying paramaters can be found
+The sensitivity of the results to the varying parameters can be found
 from the Sobol first
 
 .. figure:: ../images/sobols_first.svg
@@ -383,7 +383,7 @@ in easyvvuq_fusion_dask_tutorial.py and are basically:
   - or using SLURM, here configured to use
     
     - p.tok.openmp.2h QOS
-    - send a mail at completion of the SLURM job(s)
+    - send a mail at the completion of the SLURM job(s)
     - use the p.tok.openmp partition ("queue")
     - 8 cores per job
     - 8 processes per job
@@ -446,7 +446,7 @@ References
 .. [MTANH] |_| See 
 	   
 - E. Stefanikova, M. Peterka, P. Bohm, P. Bilkova, M. Aftanas, M. Sos, J. Urban, M. Hron and R. Panek:
-  Fitting of the Thomson scatteringdensity and temperature profiles on the COMPASS tokamak.
+  Fitting of the Thomson scattering density and temperature profiles on the COMPASS tokamak.
   Presented at 21st Topical Conference on High-Temperature Plasma Diagnostics
   (HTPD 2016) in Madison, Wisconsin, USA and published in
   Review of Scientific Instruments 87, 11E536 (2016); https://doi.org/10.1063/1.4961554.
