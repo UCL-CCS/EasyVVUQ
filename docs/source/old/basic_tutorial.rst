@@ -88,7 +88,7 @@ If this works you should see 15 lines that look something like:
 
 where `<run-location>` is the directory in which you ran the script and
 `EasyVVUQ_Campaign_zxe7_cb2` is an example of the unique directory that
-EasyVVUQ was created to hold all of the files created relating to a campaign.
+EasyVVUQ has created to hold all of the files created relating to a campaign.
 
 Followed by a results table that looks like:
 
