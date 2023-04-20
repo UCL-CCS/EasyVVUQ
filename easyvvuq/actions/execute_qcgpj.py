@@ -37,7 +37,7 @@ class EasyVVUQBasicTemplate(QCGPJTemplate):
                     'stdout': '${stdout}',
                     'stderr': '${stderr}',
                     'venv': '${venv}',
-                    'modules': '${modules}',
+                    'modules': ${modules},
                     'model': '${model}',
                     'model_opts': ${model_opts}
                 }
@@ -76,7 +76,7 @@ class EasyVVUQParallelTemplate(QCGPJTemplate):
                     'stdout': '${stdout}',
                     'stderr': '${stderr}',
                     'venv': '${venv}',
-                    'modules': '${modules}',
+                    'modules': ${modules},
                     'model': '${model}',
                     'model_opts': ${model_opts}
                 },
