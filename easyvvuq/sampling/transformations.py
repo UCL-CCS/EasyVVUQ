@@ -43,9 +43,11 @@ class Transformations:
         # Input nodes are expected to be in sape (ndim x nsamples),
         # but user might have have provided the transposed array
         do_transpose = False
-        if nodes.shape[0] > nodes.shape[1]:
+        if not nodes.shape[0] == len(distribution):
             do_transpose = True
             nodes = nodes.T
+            if not nodes.shape[0] == len(distribution):
+                raise ValueError("Input nodes have wrong shape.")
         
         transformed_nodes = []
 
@@ -76,17 +78,25 @@ class Transformations:
     @staticmethod
     def cholesky(nodes, vary, correlation, regression=True):
 
+        if str(type(vary)) == "<class 'dict'>":
+            items = vary.items() # simple dictionary
+        else:
+            items = vary.get_items() # Vary object
+        nparams = len(items)
+
         # Input nodes are expected to be in shape (ndim x nsamples),
         # but user might have have provided the transposed array
         do_transpose = False
-        if nodes.shape[0] > nodes.shape[1]:
+        if not nodes.shape[0] == nparams:
             do_transpose = True
             nodes = nodes.T
+            if not nodes.shape[0] == nparams:
+                raise ValueError("Input nodes have wrong shape.")
 
         # Shift and stretch the nodes to a unit normal distribution
         # Until now we have samples from a general non-unit normal distribution
         nodes_unit = np.zeros(nodes.shape)
-        for i, (param, distribution) in enumerate(vary.get_items()):
+        for i, (param, distribution) in enumerate(items):
             if type(distribution).__name__ == "Uniform":
                 a = distribution._parameters['lower'] #lower
                 b = distribution._parameters['upper'] #upper
@@ -102,7 +112,7 @@ class Transformations:
 
         # Shift and stretch the transformed nodes to the target distr.
         # Until now we had samples from unit uniform (or normal) distributions
-        for i, (param, distribution) in enumerate(vary.get_items()):
+        for i, (param, distribution) in enumerate(items):
             if type(distribution).__name__ == "Uniform":
                 a = distribution._parameters['lower'] #lower
                 b = distribution._parameters['upper'] #upper
