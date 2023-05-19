@@ -264,7 +264,7 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
         return PCEAnalysis
 
     def __next__(self):
-        if self.count < self._n_samples:
+        if self.count < self._n_samples: #base Train samples used to evaluate the PCE
             run_dict = {}
             for i, param_name in enumerate(self.vary.vary_dict):
                 # These are nodes that need to be returned as samples o be used for the model execution,

@@ -276,6 +276,8 @@ class FDAnalysis(BaseAnalysisElement):
 
         # Get sampler informations
         nodes = self.sampler._nodes
+        if self.sampler._is_dependent:
+            nodes_dep = self.sampler._nodes_dep
 
         for k in qoi_cols:
 
@@ -296,15 +298,31 @@ class FDAnalysis(BaseAnalysisElement):
                 
                 y_pos = data_frame[k].values[offset]
                 y_neg = data_frame[k].values[offset+1]
-                d_pos = nodes[pi][offset] - nodes[pi][0]
-                d_neg = nodes[pi][offset+1] - nodes[pi][0]
+                
+                if self.sampler._is_dependent:
+                    ## norm([dg, dc_i, de_i]) where delta_g induces movement of dc_i and de_i based on the correlation
+                    ## norm([0, 0, de_i]) where delta_g induces movement of dc_i and de_i based on the correlation
+                    ### norm([0, dc, de_i]) where delta_g induces movement of dc_i and de_i based on the correlation
+                    #d_pos = np.linalg.norm([nodes_dep[pidx][offset] - nodes_dep[pidx][0] for pidx, _ in enumerate(self.sampler.vary.vary_dict)])
+                    #d_neg = np.linalg.norm([nodes_dep[pidx][offset+1] - nodes_dep[pidx][0] for pidx, _ in enumerate(self.sampler.vary.vary_dict)])
+
+                    # norm([dg, 0, 0]) = delta_g
+                    d_pos = nodes[pi][offset] - nodes[pi][0]
+                    d_neg = nodes[pi][offset+1] - nodes[pi][0]
+                else:
+                    # norm([dg, 0, 0]) = delta_g
+                    d_pos = nodes[pi][offset] - nodes[pi][0]
+                    d_neg = nodes[pi][offset+1] - nodes[pi][0]
                 
                 if self.relative_analysis:
                     # assumes ordering of the nodes [0, ..., +delta, -delta, ...]
                     assert(nodes[pi][0] == 0.)
+                    if not self.sampler._is_dependent:
+                        assert(d_pos == delta_rel)
+                        assert(d_neg == -delta_rel)
                     assert(nodes[pi][offset] == delta_rel)
                     assert(nodes[pi][offset + 1] == -delta_rel)
-                    results["derivatives_first"][k][p] = 0.5*(y_pos/y_base-1)/(delta_rel) + 0.5*(y_neg/y_base - 1)/(-delta_rel)
+                    results["derivatives_first"][k][p] = 0.5*(y_pos/y_base-1)/(d_pos) + 0.5*(y_neg/y_base - 1)/(d_neg)
                 else:
                     results["derivatives_first"][k][p] = 0.5*(y_pos - y_base)/(d_pos) + 0.5*(y_neg -y_base)/(d_neg)
 

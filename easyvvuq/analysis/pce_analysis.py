@@ -37,6 +37,7 @@ class PCEAnalysisResults(QMCAnalysisResults):
             First order derivative-based index.
         """
 
+        warnings.warn(f"In case of the derivative analyis, the final index (in the absolute units of the targed quantities) needs to be scaled by Y(nominal_p)/nominal_p, where the nominal_p is the nominal value of the parameters.", RuntimeWarning)
         raw_dict = AnalysisResults._keys_to_tuples(self.raw_data['derivatives_first'])
         return raw_dict[AnalysisResults._to_tuple(qoi)][input_]
 
