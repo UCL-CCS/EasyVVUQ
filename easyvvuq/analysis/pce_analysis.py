@@ -302,7 +302,6 @@ class PCEAnalysis(BaseAnalysisElement):
             #  dYhat_dx2: [t0, t1, ...],
             #  ...,
             #  dYhat_dxN: [t0, t1, ...] }
-            #TODO: Vars can be simplified to simple array of strings ['qi'] instad of {'qi': poly('qi')}
             dY_hat = {v:[cp.polynomial(0) for t in range(T)] for v in self.sampler.vary.vary_dict}
 
             for t in range(T):
@@ -327,14 +326,9 @@ class PCEAnalysis(BaseAnalysisElement):
                         #print(d_var_idx)
 
                     # Consider only polynomial components var^exp where exp > 0 (since the derivative decreases exp by -1)
-                    # 306 ms ± 5.97 ms per loop (mean ± std. dev. of 7 runs, 1 loop each)
                     components_mask = np.array(Y_hat[t].exponents[:,d_var_idx] > 0)
                     dY_hat_dvar_exp = Y_hat[t].exponents[components_mask]
                     dY_hat_dvar_coeff = np.array(Y_hat[t].coefficients)[components_mask]
-
-                    # 911 ms ± 24 ms per loop (mean ± std. dev. of 7 runs, 1 loop each)
-                    #dY_hat_dvar_exp   = [exp for exp in Y_hat[t].exponents if exp[d_var_idx] > 0]
-                    #dY_hat_dvar_coeff = [Y_hat[t].coefficients[i] for i, exp in enumerate(Y_hat[t].exponents) if exp[d_var_idx] > 0]
 
                     # Iterate over all polynomial components (summands)
                     for i, (coeff, exp) in enumerate(zip(dY_hat_dvar_coeff, dY_hat_dvar_exp)):
@@ -427,13 +421,6 @@ class PCEAnalysis(BaseAnalysisElement):
                                                      'var': var,
                                                      'std': std}
 
-                # Sensitivity Analysis: First, Second and Total Sobol indices
-                #TODO: there is a bug when the sensitivity indices computed
-                # using Sens_m2() and Sens_t() are recursively calling itself
-                # infinitely, check the Chaospy implementation of these functions!
-                print(f'Warning: second and total order indices computed using \
-                        PCEAnalysis(sampling = True) might result in infinite  \
-                        recusion due to the Chaospy\'s implementation!!!' )
                 sobols_first_narr = cp.Sens_m(fit, self.sampler.distribution)
                 sobols_second_narr = cp.Sens_m2(fit, self.sampler.distribution)
                 sobols_total_narr = cp.Sens_t(fit, self.sampler.distribution)
@@ -532,10 +519,6 @@ class PCEAnalysis(BaseAnalysisElement):
                 warnings.warn(f"Skipping computation of cp.QoI_Dist", RuntimeWarning)
                 if self.sampler._is_dependent:
                     results['output_distributions'][k] = None
-                    #TODO: When a multivariate distribution is dependent, it means that the pdf and
-                    # cdf can only be defined together. If you want to define only one, than you
-                    # have to "marginalize", which implies that you are loosing the dependency
-                    # relationship. https://github.com/jonathf/chaospy/issues/339
                 else:
                     results['output_distributions'][k] = cp.QoI_Dist( fit, self.sampler.distribution)
             except Exception as e:

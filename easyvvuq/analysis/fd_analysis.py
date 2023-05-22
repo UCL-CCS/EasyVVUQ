@@ -300,12 +300,6 @@ class FDAnalysis(BaseAnalysisElement):
                 y_neg = data_frame[k].values[offset+1]
                 
                 if self.sampler._is_dependent:
-                    ## norm([dg, dc_i, de_i]) where delta_g induces movement of dc_i and de_i based on the correlation
-                    ## norm([0, 0, de_i]) where delta_g induces movement of dc_i and de_i based on the correlation
-                    ### norm([0, dc, de_i]) where delta_g induces movement of dc_i and de_i based on the correlation
-                    #d_pos = np.linalg.norm([nodes_dep[pidx][offset] - nodes_dep[pidx][0] for pidx, _ in enumerate(self.sampler.vary.vary_dict)])
-                    #d_neg = np.linalg.norm([nodes_dep[pidx][offset+1] - nodes_dep[pidx][0] for pidx, _ in enumerate(self.sampler.vary.vary_dict)])
-
                     # norm([dg, 0, 0]) = delta_g
                     d_pos = nodes[pi][offset] - nodes[pi][0]
                     d_neg = nodes[pi][offset+1] - nodes[pi][0]

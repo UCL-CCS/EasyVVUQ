@@ -218,72 +218,10 @@ class FDSampler(BaseSamplingElement, sampler_name="FD_sampler"):
             offset = offset + 2
 
         self.logger.info(f"Generated {offset}/{self._n_samples} samples for the FD scheme")
-        
-        # Create perturbed values with correlations
-        # dependent Nodes, where di is the induced movement of the parameter i caused by movement of d
-        #G: [0, -d, d,   -di, di, -di, di]
-        #C: [0, -di, di, -d,  d,  -di, di]
-        #E: [0, -di, di, -di, di, -d,  d]
-        if 0:#self._is_dependent:
-
-            self._nodes_dep = np.array([ base_value[i] * np.ones(self._n_samples) for i in range(params_num)])
-            offset = 1
-
-            #For each parameter generate correlated perturbations
-            for p_idx in range(params_num):
-                # create permutations [0,1,2], [1,2,0], [2,0,1]
-                perm = [(p_idx +i) % params_num for i in range(params_num)]
-                vary_ = {x: vary[x] for i, x in enumerate([list(vary.keys())[i] for i in perm])}
-
-                # Create tmp nodes for +delta/-delta: (delta, 0, 0)
-                s = np.array([ base_value[perm[i]] * np.ones(2) for i in range(params_num)])
-                if self.relative_analysis:
-                    s[0][0] = self._perturbation
-                    s[0][1] = -self._perturbation
-                else:
-                    s[0][0] = (1 + self._perturbation) * s[0][0]
-                    s[0][1] = (1 - self._perturbation) * s[0][1]
-
-                # Create correlated nodes based on +delta/-delta: (delta, 0, 0)
-                if self._transformation == "Rosenblatt":
-                    self.logger.info("Performing Rosenblatt transformation")
-
-                    # Create the dependent distribution
-                    mean_, _, cov_ = self.permute_problem(perm, mu, np.zeros(params_num), cov)
-                    distribution_dep_ = cp.MvNormal(mean_, cov_)
-
-                    # Create the independent distribution
-                    params_distribution = [vary_dist for vary_dist in vary_.values()]
-                    distribution_ = cp.J(*params_distribution)
-                    
-                    # This assumes that the order of the parameters in distribution and distribution_dep is the same
-                    # and the distribution type is cp.Normal
-                    for id_v, v in enumerate(vary_):
-                        assert(type(vary_[v]) == type(cp.Normal()))
-                        assert(vary_[v].get_mom_parameters()['shift'][0] == distribution_dep_._parameters['mean'][id_v])
-                        assert(vary_[v].get_mom_parameters()['shift'][0] == distribution_[id_v].get_mom_parameters()['shift'][0])
-                    self.logger.debug(f"The independent distribution consists of: {distribution_}")
-                    self.logger.debug(f"Using parameter permutation: {list(vary_.keys())}")
-
-                    s_ = Transformations.rosenblatt(s, distribution_, distribution_dep_)
-                elif self._transformation == "Cholesky":
-                    self.logger.info("Performing Cholesky transformation")
-
-                    _, _, distribution_ = self.permute_problem(perm, np.zeros(params_num), np.zeros(params_num), distribution)
-                    s_ = Transformations.cholesky(s, vary_, distribution_)
-                else:
-                    self.logger.critical("Error: How did this happen? We are transforming the nodes but not with Rosenblatt nor Cholesky")
-                    exit()
-
-                # Insert the correlated nodes into the final array of the transformed samples
-                for i in range(params_num):
-                    self._nodes_dep[perm[i]][offset] = s_[i][0]
-                    self._nodes_dep[perm[i]][offset+1] = s_[i][1]
-                offset = offset + 2
 
 
         # Create perturbed values with correlations
-        # dependent Nodes, where di is the induced movement of the parameter i caused by movement of d
+        # dependent Nodes, where di is the induced movement of the parameter i caused by movement in d
         #G: [0, -d,   d,   0, 0,  0, 0]
         #C: [0, -di, di,  -d, d,  0, 0]
         #E: [0, -di, di, -di, di, -d, d]
