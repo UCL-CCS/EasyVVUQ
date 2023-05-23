@@ -282,12 +282,13 @@ class FDAnalysis(BaseAnalysisElement):
         for k in qoi_cols:
 
             base = data_frame[k].values[0]
-            if np.all(np.array(base) == 0):
-                warnings.warn(f"Removing QoI {k} from the analysis, contains all zeros", RuntimeWarning)
-                continue
-            if np.any(np.array(base) == 0):
-                warnings.warn(f"Removing QoI {k} from the analysis, contains some zeros", RuntimeWarning)
-                continue
+            if self.relative_analysis:
+                if np.all(np.array(base) == 0):
+                    warnings.warn(f"Removing QoI {k} from the analysis, contains all zeros", RuntimeWarning)
+                    continue
+                if np.any(np.array(base) == 0):
+                    warnings.warn(f"Removing QoI {k} from the analysis, contains some zeros", RuntimeWarning)
+                    continue
 
             # Compute FD approximation
             y_base = data_frame[k].values[0]
@@ -299,25 +300,22 @@ class FDAnalysis(BaseAnalysisElement):
                 y_pos = data_frame[k].values[offset]
                 y_neg = data_frame[k].values[offset+1]
                 
-                if self.sampler._is_dependent:
-                    # norm([dg, 0, 0]) = delta_g
-                    d_pos = nodes[pi][offset] - nodes[pi][0]
-                    d_neg = nodes[pi][offset+1] - nodes[pi][0]
-                else:
-                    # norm([dg, 0, 0]) = delta_g
-                    d_pos = nodes[pi][offset] - nodes[pi][0]
-                    d_neg = nodes[pi][offset+1] - nodes[pi][0]
-                
                 if self.relative_analysis:
+                    d_pos = nodes[pi][offset]/nodes[pi][0] - 1
+                    d_neg = nodes[pi][offset+1]/nodes[pi][0] - 1
                     # assumes ordering of the nodes [0, ..., +delta, -delta, ...]
-                    assert(nodes[pi][0] == 0.)
+                    # assert(nodes[pi][0] == 0.)
                     if not self.sampler._is_dependent:
-                        assert(d_pos == delta_rel)
-                        assert(d_neg == -delta_rel)
-                    assert(nodes[pi][offset] == delta_rel)
-                    assert(nodes[pi][offset + 1] == -delta_rel)
+                        assert(abs(d_pos - delta_rel) < 1e-10)
+                        assert(abs(d_neg + delta_rel) < 1e-10)
+                    # assert(nodes[pi][offset] == delta_rel)
+                    # assert(nodes[pi][offset + 1] == -delta_rel)
                     results["derivatives_first"][k][p] = 0.5*(y_pos/y_base-1)/(d_pos) + 0.5*(y_neg/y_base - 1)/(d_neg)
                 else:
+                    # norm([dg, 0, 0]) = delta_g
+                    d_pos = nodes[pi][offset] - nodes[pi][0]
+                    d_neg = nodes[pi][offset+1] - nodes[pi][0]
+
                     results["derivatives_first"][k][p] = 0.5*(y_pos - y_base)/(d_pos) + 0.5*(y_neg -y_base)/(d_neg)
 
                 offset = offset + 2

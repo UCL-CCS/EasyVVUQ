@@ -65,10 +65,9 @@ class FDSampler(BaseSamplingElement, sampler_name="FD_sampler"):
             Specified counter for Fast forward, default is 0.
 
         relative_analysis (bool, None), optional
-            If True, we add one additional sample with all parameters having zero (nominal) value.
-            This is used in the relative analysis, where the model output is represented
-            relative to the nominal output, and similarly, the parameters represent the delta of
-            the parameter nominal value (i.e. zero represents parameter's nominal value)
+            Default False, the nodes are perturbed by the value specified in perturbation
+            such that n = n + perturbation. If True, the nodes are perturbed by the relative
+            value specified in perturbation such that n = n * (1 + perturbation).
         """
         # Create and initialize the logger
         self.logger = logging.getLogger(__name__)
@@ -119,14 +118,10 @@ class FDSampler(BaseSamplingElement, sampler_name="FD_sampler"):
         self._perturbation = perturbation
 
         # Perturbation of the parameters
-        if relative_analysis:
-            self.logger.info(f"Performing relative perturbation of the nodes, base value = 0, with delta = {perturbation}")
-            base_value = np.zeros(params_num)
-        else:
-            self.logger.info(f"Performing perturbation of the nodes, base value = mean, with delta = {perturbation}")
-            # Assumes that v is cp.Normal()
-            assert(all([type(v) == type(cp.Normal()) for v in vary.values()]))
-            base_value = [v.get_mom_parameters()['shift'][0] for v in vary.values()] #Set base_value to the mean_of_the_parameters
+        self.logger.info(f"Performing perturbation of the nodes, base value = mean, with delta = {perturbation}")
+        # Assumes that v is cp.Normal()
+        assert(all([type(v) == type(cp.Normal()) for v in vary.values()]))
+        base_value = [v.get_mom_parameters()['shift'][0] for v in vary.values()] #Set base_value to the mean_of_the_parameters
 
         # Generate the perturbed values of the parameters for the FD
         #FD = 0.5*(y_pos/y_base-1)/(delta) + 0.5*(y_neg/y_base - 1)/(-delta)
@@ -209,11 +204,11 @@ class FDSampler(BaseSamplingElement, sampler_name="FD_sampler"):
         for p in range(params_num):
 
             if self.relative_analysis:
-                self._nodes[p][offset]   = self._perturbation
-                self._nodes[p][offset+1] = -self._perturbation
-            else:
                 self._nodes[p][offset]   = (1 + self._perturbation) * self._nodes[p][offset]
                 self._nodes[p][offset+1] = (1 - self._perturbation) * self._nodes[p][offset+1]
+            else:
+                self._nodes[p][offset]   = self._nodes[p][offset] + self._perturbation
+                self._nodes[p][offset+1] = self._nodes[p][offset+1] - self._perturbation
             
             offset = offset + 2
 
