@@ -36,8 +36,6 @@ class PCEAnalysisResults(QMCAnalysisResults):
         float
             First order derivative-based index.
         """
-
-        warnings.warn(f"In case of the derivative analyis, the final index (in the absolute units of the targed quantities) needs to be scaled by Y(nominal_p)/nominal_p, where the nominal_p is the nominal value of the parameters.", RuntimeWarning)
         raw_dict = AnalysisResults._keys_to_tuples(self.raw_data['derivatives_first'])
         return raw_dict[AnalysisResults._to_tuple(qoi)][input_]
 
@@ -321,9 +319,6 @@ class PCEAnalysis(BaseAnalysisElement):
                         #exponents.shape: (n_summands, n_variables)
                         assert(sum(sum(np.array(Y_hat[t].exponents))) == 0)
                         continue
-                        #print(Y_hat[t])
-                        #print(Y_hat[t].exponents)
-                        #print(d_var_idx)
 
                     # Consider only polynomial components var^exp where exp > 0 (since the derivative decreases exp by -1)
                     components_mask = np.array(Y_hat[t].exponents[:,d_var_idx] > 0)
@@ -392,14 +387,10 @@ class PCEAnalysis(BaseAnalysisElement):
                     warnings.warn(f"Removing QoI {k} from the analysis, contains some zeros", RuntimeWarning)
                     continue
 
-                # Scale the model output to make it relative to the base run
-                samples[k] = data_frame[k].values[:self.sampler.n_samples] / base - 1
-            else:
-                samples[k] = data_frame[k].values[:self.sampler.n_samples]
+            samples[k] = data_frame[k].values[:self.sampler.n_samples]
 
             # Compute descriptive statistics for each quantity of interest
             if regression:
-                #print(f'Using {self.sampler.n_samples} nodes and {len(samples[k])} evals to fit the polynomial')
                 fit, fc = cp.fit_regression(P, [n[:self.sampler.n_samples] for n in nodes], samples[k], retall=1)
             else:
                 fit, fc = cp.fit_quadrature(P, nodes, weights, samples[k], retall=1)
@@ -477,14 +468,22 @@ class PCEAnalysis(BaseAnalysisElement):
             derivatives_first_dict = {}
             Ndimensions = len(self.sampler.vary.vary_dict)
             for i, param_name in enumerate(self.sampler.vary.vary_dict):
-                if all([type(v) == type(cp.Normal()) for v in self.sampler.vary.vary_dict.values()]):
+                if self.sampler.nominal_value:
+                    # Evaluate dY_hat['param'] at the nominal value of the parameters
+                    values = self.sampler.nominal_value
+                    logging.info(f"Using nominal value of the parameters to evaluate the derivative ")
+                    derivatives_first_dict[param_name] = cp.polynomial(dY_hat[param_name])(*[v for v in values.values()])
+                elif all([type(v) == type(cp.Normal()) for v in self.sampler.vary.vary_dict.values()]):
                     # Evaluate dY_hat['param'] at the mean of the parameters
+                    logging.info(f"Using mean value of the parameters to evaluate the derivative ")
                     derivatives_first_dict[param_name] = cp.polynomial(dY_hat[param_name])(*[v.get_mom_parameters()["shift"][0] for v in self.sampler.vary.vary_dict.values()])
                 elif all([type(v) == type(cp.Uniform()) for v in self.sampler.vary.vary_dict.values()]):
+                    logging.info(f"Using mean value of the parameters to evaluate the derivative ")
                     # Evaluate dY_hat['param'] at the mean of the parameters
                     derivatives_first_dict[param_name] = cp.polynomial(dY_hat[param_name])(*[(v.lower + v.upper)/2.0 for v in self.sampler.vary.vary_dict.values()])
                 else:
                     # Evaluate dY_hat['param'] at the zero vector
+                    logging.info(f"Using zero vector to evaluate the derivative ")
                     derivatives_first_dict[param_name] = cp.polynomial(dY_hat[param_name])(*np.zeros(Ndimensions))
 
             results['derivatives_first'][k] = derivatives_first_dict

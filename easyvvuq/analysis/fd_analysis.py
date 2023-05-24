@@ -182,7 +182,7 @@ class PCEAnalysisResults(QMCAnalysisResults):
 
 class FDAnalysis(BaseAnalysisElement):
 
-    def __init__(self, sampler=None, qoi_cols=None, sampling=False):
+    def __init__(self, sampler=None, qoi_cols=None):
         """Analysis element for polynomial chaos expansion (PCE).
 
         Parameters
@@ -192,8 +192,6 @@ class FDAnalysis(BaseAnalysisElement):
         qoi_cols : list or None
             Column names for quantities of interest (for which analysis is
             performed).
-        sampling : True if chaospy sampling method to be used for calculating
-            statitical quantities; otherwise [default] the pce coefficients are used
         """
 
         if sampler is None:
@@ -208,7 +206,6 @@ class FDAnalysis(BaseAnalysisElement):
                                "quantities of interest (qoi)")
 
         self.qoi_cols = qoi_cols
-        self.sampling = sampling
         self.output_type = OutputType.SUMMARY
         self.sampler = sampler
 
@@ -276,8 +273,11 @@ class FDAnalysis(BaseAnalysisElement):
 
         # Get sampler informations
         nodes = self.sampler._nodes
+        perturbations = self.sampler._perturbations
         if self.sampler._is_dependent:
             nodes_dep = self.sampler._nodes_dep
+            #perturbations_dep = self.sampler._perturbations_dep
+            
 
         for k in qoi_cols:
 
@@ -290,33 +290,39 @@ class FDAnalysis(BaseAnalysisElement):
                     warnings.warn(f"Removing QoI {k} from the analysis, contains some zeros", RuntimeWarning)
                     continue
 
-            # Compute FD approximation
-            y_base = data_frame[k].values[0]
-            delta_rel = self.sampler._perturbation
+            results['statistical_moments'][k] = {'mean': np.mean(data_frame[k].values, axis=0),
+                                                     'var': np.var(data_frame[k].values, axis=0),
+                                                     'std': np.std(data_frame[k].values, axis=0)}
 
+            # Get the QoI value for the base value of the parameters
+            y_base = data_frame[k].values[0]
+
+            # Compute FD approximation
             offset = 1
             for pi, p in enumerate(self.sampler.vary.vary_dict):
                 
+                # assumes ordering of the nodes [0, ..., +delta, -delta, ...]
                 y_pos = data_frame[k].values[offset]
                 y_neg = data_frame[k].values[offset+1]
                 
                 if self.relative_analysis:
-                    d_pos = nodes[pi][offset]/nodes[pi][0] - 1
-                    d_neg = nodes[pi][offset+1]/nodes[pi][0] - 1
-                    # assumes ordering of the nodes [0, ..., +delta, -delta, ...]
-                    # assert(nodes[pi][0] == 0.)
-                    if not self.sampler._is_dependent:
-                        assert(abs(d_pos - delta_rel) < 1e-10)
-                        assert(abs(d_neg + delta_rel) < 1e-10)
-                    # assert(nodes[pi][offset] == delta_rel)
-                    # assert(nodes[pi][offset + 1] == -delta_rel)
+                    d_pos = perturbations[pi][offset]
+                    d_neg = perturbations[pi][offset+1]
+                    #d_pos = nodes[pi][offset]/nodes[pi][0] - 1
+                    #d_neg = nodes[pi][offset+1]/nodes[pi][0] - 1
+
                     results["derivatives_first"][k][p] = 0.5*(y_pos/y_base-1)/(d_pos) + 0.5*(y_neg/y_base - 1)/(d_neg)
+
+                    # scale the derivatives to the absolute values
+                    x_base = nodes[pi][0] # base value of the parameter
+                    scaling_factor = y_base/x_base
+                    results["derivatives_first"][k][p] *= scaling_factor
                 else:
-                    # norm([dg, 0, 0]) = delta_g
                     d_pos = nodes[pi][offset] - nodes[pi][0]
                     d_neg = nodes[pi][offset+1] - nodes[pi][0]
 
-                    results["derivatives_first"][k][p] = 0.5*(y_pos - y_base)/(d_pos) + 0.5*(y_neg -y_base)/(d_neg)
+                    # norm([dg, 0, 0]) = delta_g
+                    results["derivatives_first"][k][p] = 0.5*(y_pos - y_base)/(d_pos) + 0.5*(y_neg - y_base)/(d_neg)
 
                 offset = offset + 2
 

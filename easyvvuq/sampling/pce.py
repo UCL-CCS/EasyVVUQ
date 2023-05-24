@@ -39,7 +39,8 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
                  rule="G",
                  sparse=False,
                  growth=False,
-                 relative_analysis=False):
+                 relative_analysis=False,
+                 nominal_value=None):
         """
         Create the sampler for the Polynomial Chaos Expansion using
         pseudo-spectral projection or regression (Point Collocation).
@@ -82,6 +83,11 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
             This is used in the relative analysis, where the model output is represented
             relative to the nominal output, and similarly, the parameters represent the delta of
             the parameter nominal value (i.e. zero represents parameter's nominal value, nominal + delta*nominal)
+
+        nominal_value : dict, optional
+            Evaluate derivative of the model at the nominal value of the parameters.
+            It should be a dict with the keys which are present in vary.
+            In case the base_value is None, the mean of the distribution is used (assuming cp.Normal).    
         """
 
         if vary is None:
@@ -101,12 +107,30 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
             logging.error(msg)
             raise Exception(msg)
 
+        # Remember whether to add the extra run using the base value of the parameters (0 corresponding to the mean)
+        logging.info(f"Performing relative analysis: {relative_analysis}")
+        self.relative_analysis = relative_analysis
+
         self.vary = Vary(vary)
         self.polynomial_order = polynomial_order
 
         # List of the probability distributions of uncertain parameters
         params_distribution = list(vary.values())
         params_num = len(params_distribution)
+
+        # Nominal value of the parameters
+        if nominal_value is None:
+            # Assumes that v is cp.Normal()
+            assert(all([type(v) == type(cp.Normal()) for v in vary.values()]))
+            nominal_value = {k: v.get_mom_parameters()['shift'][0] for k,v in vary.items()} #Set nominal_value to the mean_of_the_parameters
+            logging.info(f"Using parameter mean for the relative analysis {nominal_value}")
+        else:
+            if (len(nominal_value) != params_num):
+                msg = ("'nominal_value' must be a 1D array of the same size as the number of parameters.")
+                logging.error(msg)
+                raise ValueError(msg)
+            logging.info(f"Using user-provided nominal value for relative analysis {nominal_value}")
+        self.nominal_value = nominal_value
 
         # Multivariate distribution, the behaviour changes based on the
         # 'distribution' argument, which can be:
@@ -121,9 +145,12 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
             self.distribution = cp.J(*params_distribution)
         elif 'distributions' in str(type(distribution)):
             if distribution.stochastic_dependent:
-                assert(isinstance(distribution, cp.MvNormal))
-                assert(len(distribution._parameters['mean']) == params_num) # all parameters listed in vary must be in the cp.MvNormal
+                if not isinstance(distribution, cp.MvNormal):
+                    raise ValueError("User provided joint distribution needs to be a cp.MvNormal")
+                if not len(distribution._parameters['mean']) == params_num:
+                    raise ValueError("User provided joint distribution does not contain all the parameters listed in vary")
                 logging.info("Using user provided joint distribution with Rosenblatt transformation")
+                
                 self._is_dependent = True
                 self._transformation = "Rosenblatt"
                 self.distribution_dep = distribution
@@ -132,10 +159,13 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
                 self.distribution = distribution
                 assert(self._is_dependent == False)
         elif 'list' in str(type(distribution)) or 'ndarray' in str(type(distribution)):
-            assert(len(distribution) == params_num) # check the correct size of the corr
+            if not len(distribution) == params_num:
+                raise ValueError("User provided correlation matrix does not contain all the parameters listed in vary")
             for i in range(params_num):
-                assert(distribution[i][i] == 1.0) # must be correlation matrix
+                if not distribution[i][i] == 1.0:
+                     raise ValueError("User provided correlation matrix is not a correlation matrix (diagonal elements are not 1.0)")            
             logging.info("Using user provided correlation matrix for Cholesky transformation")
+            
             self._is_dependent = True
             self._transformation = "Cholesky"
             self.distribution_dep = np.array(distribution)
@@ -172,7 +202,7 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
         if sparse and rule in cc:
             self.quad_growth = True
 
-        # To determinate the PCE vrainte to use
+        # To determinate the PCE vraint to use
         self.regression = regression
 
         # Regression variante (Point collocation method)
@@ -188,6 +218,11 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
             self._nodes = cp.generate_samples(order=self._n_samples,
                                               domain=self.distribution,
                                               rule=self.rule)
+            
+            # Transform relative nodes to absolute nodes
+            if self.relative_analysis:
+                for pi,p in enumerate(vary.keys()):
+                    self._nodes[pi] = (1.0 + self._nodes[pi]) * nominal_value[p] 
 
             self._weights = None
 
@@ -221,6 +256,9 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
                 # Scale the independent nodes
                 raise NotImplementedError(f'Transformation of the independent nodes not supported with {regression = }')
 
+            if self.relative_analysis:
+                raise NotImplementedError(f'Transformation of the relative nodes not supported with {regression = }')
+            
         # Fast forward to specified count, if possible
         self.count = 0
         if self.count >= self._n_samples:
@@ -231,10 +269,6 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
         else:
             for i in range(count):
                 self.__next__()
-
-        # Remember whether to add the extra run using the base value of the parameters (0 corresponding to the mean)
-        logging.info(f"Performing relative analysis: {relative_analysis}")
-        self.relative_analysis = relative_analysis
 
     def is_finite(self):
         return True
@@ -277,7 +311,7 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
             self.count += 1
             return run_dict
         elif self.relative_analysis and self.count == self._n_samples: #extra sample for the nominal case
-            run_dict = {param_name:0.0 for param_name in self.vary.vary_dict}
+            run_dict = self.nominal_value
             self.count += 1
             return run_dict
         else:

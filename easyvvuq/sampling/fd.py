@@ -41,6 +41,7 @@ class FDSampler(BaseSamplingElement, sampler_name="FD_sampler"):
                  vary=None,
                  distribution=None,
                  perturbation=0.05,
+                 nominal_value=None,
                  count=0,
                  relative_analysis=False):
         """
@@ -61,13 +62,19 @@ class FDSampler(BaseSamplingElement, sampler_name="FD_sampler"):
         perturbation: float
             Perturbation of the parameters used in the finite difference scheme
 
+        nominal_value : dict, optional
+            FD sampler perturbs the base value (NV) of the parameters by the value specified.
+            It should be a dict with the keys which are present in vary.
+            In case the nominal_value is None, the mean of the distribution is used (assuming cp.Normal).    
+
         count : int, optional
             Specified counter for Fast forward, default is 0.
 
-        relative_analysis (bool, None), optional
+        relative_analysis : bool, optional
             Default False, the nodes are perturbed by the value specified in perturbation
-            such that n = n + perturbation. If True, the nodes are perturbed by the relative
-            value specified in perturbation such that n = n * (1 + perturbation).
+            such that n = NV + perturbation. If True, the nodes are perturbed by the relative
+            value specified in perturbation such that n = NB * (1 + perturbation).
+
         """
         # Create and initialize the logger
         self.logger = logging.getLogger(__name__)
@@ -118,14 +125,21 @@ class FDSampler(BaseSamplingElement, sampler_name="FD_sampler"):
         self._perturbation = perturbation
 
         # Perturbation of the parameters
-        self.logger.info(f"Performing perturbation of the nodes, base value = mean, with delta = {perturbation}")
-        # Assumes that v is cp.Normal()
-        assert(all([type(v) == type(cp.Normal()) for v in vary.values()]))
-        base_value = [v.get_mom_parameters()['shift'][0] for v in vary.values()] #Set base_value to the mean_of_the_parameters
+        if nominal_value is None:
+            self.logger.info(f"Performing perturbation of the nodes, base value = mean, with delta = {perturbation}")
+            # Assumes that v is cp.Normal()
+            assert(all([type(v) == type(cp.Normal()) for v in vary.values()]))
+            nominal_value = {k: v.get_mom_parameters()['shift'][0] for k,v in vary.items()} #Set nominal_value to the mean_of_the_parameters
+        else:
+            if (len(nominal_value) != params_num):
+                msg = ("'nominal_value' must be a 1D array of the same size as the number of parameters.")
+                self.logger.error(msg)
+                raise ValueError(msg)
+            self.logger.info(f"Performing perturbation of the nodes, base value = {nominal_value}, with delta = {perturbation}")            
 
         # Generate the perturbed values of the parameters for the FD
         #FD = 0.5*(y_pos/y_base-1)/(delta) + 0.5*(y_neg/y_base - 1)/(-delta)
-        self.generate_nodes(base_value, vary, distribution)
+        self.generate_nodes(nominal_value, vary, distribution)
 
         # Fast forward to specified count, if possible
         self.count = 0
@@ -155,8 +169,8 @@ class FDSampler(BaseSamplingElement, sampler_name="FD_sampler"):
 
         return mean_, sigma_, cov_
 
-    def generate_nodes(self, base_value, vary, distribution):
-        params_num = len(base_value)
+    def generate_nodes(self, nominal_value, vary, distribution):
+        params_num = len(nominal_value)
         self._n_samples = 2*params_num + 1
 
         # Multivariate distribution, the behaviour changes based on the
@@ -168,23 +182,29 @@ class FDSampler(BaseSamplingElement, sampler_name="FD_sampler"):
         self._transformation = None
         self.distribution_dep = None
         if 'distributions' in str(type(distribution)):
-            if distribution.stochastic_dependent:
-                assert(isinstance(distribution, cp.MvNormal))
-                assert(len(distribution._parameters['mean']) == params_num) # all parameters listed in vary must be in the cp.MvNormal
-                self.logger.info("Using user provided joint distribution with Rosenblatt transformation")
-                self._is_dependent = True
-                self._transformation = "Rosenblatt"
-                self.distribution_dep = distribution
-                
-                mu = distribution._parameters['mean']
-                cov = distribution._covariance
-            else:
+            if not distribution.stochastic_dependent:
                 raise ValueError("User provided joint distribution needs to contain dependency between the parameters")
+            if not isinstance(distribution, cp.MvNormal):
+                raise ValueError("User provided joint distribution needs to be a cp.MvNormal")
+            if not len(distribution._parameters['mean']) == params_num:
+                raise ValueError("User provided joint distribution does not contain all the parameters listed in vary")
+            self.logger.info("Using user provided joint distribution with Rosenblatt transformation")
+            
+            self._is_dependent = True
+            self._transformation = "Rosenblatt"
+            self.distribution_dep = distribution
+            
+            mu = distribution._parameters['mean']
+            cov = distribution._covariance
+                
         elif 'list' in str(type(distribution)) or 'ndarray' in str(type(distribution)):
-            assert(len(distribution) == params_num) # check the correct size of the corr
+            if not len(distribution) == params_num:
+                raise ValueError("User provided correlation matrix does not contain all the parameters listed in vary")
             for i in range(params_num):
-                assert(distribution[i][i] == 1.0) # must be correlation matrix
+                if not distribution[i][i] == 1.0:
+                     raise ValueError("User provided correlation matrix is not a correlation matrix (diagonal elements are not 1.0)")            
             self.logger.info("Using user provided correlation matrix for Cholesky transformation")
+            
             self._is_dependent = True
             self._transformation = "Cholesky"
             self.distribution_dep = np.array(distribution)
@@ -193,27 +213,32 @@ class FDSampler(BaseSamplingElement, sampler_name="FD_sampler"):
         else:
             raise ValueError("Unsupported type of the distribution argument. It should be either cp.Distribution or a matrix-like array")
 
-        # Create base values of the parameters
-        self._nodes = np.array([ base_value[i] * np.ones(self._n_samples) for i in range(params_num)])
-        
-        # Independent Nodes
-        #G: [0, -d, d, 0, 0, 0, 0]
-        #C: [0, 0, 0, -d, d, 0, 0]
-        #E: [0, 0, 0, 0, 0, -d, d]
+        # Set up independent perturbations
+        #G: [0, d, -d, 0, 0, 0, 0]
+        #C: [0, 0, 0, d, -d, 0, 0]
+        #E: [0, 0, 0, 0, 0, d, -d]
+        self._perturbations = np.zeros((params_num, self._n_samples))
+        offset = 1 #the first sample is the nominal value at x0
+        for p in range(params_num):
+            self._perturbations[p][offset]   = + self._perturbation
+            self._perturbations[p][offset+1] = - self._perturbation
+            offset = offset + 2
+
+        # Convert perturbation to absolute values
+        self._nodes = np.array([ nominal_value[p] * np.ones(self._n_samples) for p in vary.keys() ])
         offset = 1 #the first sample is the nominal value at x0
         for p in range(params_num):
 
             if self.relative_analysis:
-                self._nodes[p][offset]   = (1 + self._perturbation) * self._nodes[p][offset]
-                self._nodes[p][offset+1] = (1 - self._perturbation) * self._nodes[p][offset+1]
+                self._nodes[p][offset]   = (1 + self._perturbations[p][offset]) * self._nodes[p][offset]
+                self._nodes[p][offset+1] = (1 + self._perturbations[p][offset+1]) * self._nodes[p][offset+1]
             else:
-                self._nodes[p][offset]   = self._nodes[p][offset] + self._perturbation
-                self._nodes[p][offset+1] = self._nodes[p][offset+1] - self._perturbation
+                self._nodes[p][offset]   = self._nodes[p][offset] + self._perturbations[p][offset]
+                self._nodes[p][offset+1] = self._nodes[p][offset+1] + self._perturbations[p][offset+1]
             
             offset = offset + 2
 
         self.logger.info(f"Generated {offset}/{self._n_samples} samples for the FD scheme")
-
 
         # Create perturbed values with correlations
         # dependent Nodes, where di is the induced movement of the parameter i caused by movement in d
@@ -226,7 +251,6 @@ class FDSampler(BaseSamplingElement, sampler_name="FD_sampler"):
             perm = [(i) % params_num for i in range(params_num)]
             vary_ = {x: vary[x] for i, x in enumerate([list(vary.keys())[i] for i in perm])}
 
-            # Create correlated nodes based on +delta/-delta: (delta, 0, 0)
             if self._transformation == "Rosenblatt":
                 self.logger.info("Performing Rosenblatt transformation")
 
@@ -248,11 +272,13 @@ class FDSampler(BaseSamplingElement, sampler_name="FD_sampler"):
                 self.logger.debug(f"Using parameter permutation: {list(vary_.keys())}")
 
                 self._nodes_dep = Transformations.rosenblatt(self._nodes, distribution_, distribution_dep_)
+                #self._perturbations_dep = Transformations.rosenblatt(self._perturbations, distribution_, distribution_dep_)
             elif self._transformation == "Cholesky":
                 self.logger.info("Performing Cholesky transformation")
 
                 _, _, distribution_ = self.permute_problem(perm, np.zeros(params_num), np.zeros(params_num), distribution)
                 self._nodes_dep = Transformations.cholesky(self._nodes, vary_, distribution_)
+                #self._perturbations_dep = Transformations.cholesky(self._perturbations, vary_, distribution_)
             else:
                 self.logger.critical("Error: How did this happen? We are transforming the nodes but not with Rosenblatt nor Cholesky")
                 exit()
