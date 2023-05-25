@@ -121,9 +121,9 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
         # Nominal value of the parameters
         if nominal_value is None:
             # Assumes that v is cp.Normal()
-            assert(all([type(v) == type(cp.Normal()) for v in vary.values()]))
-            nominal_value = {k: v.get_mom_parameters()['shift'][0] for k,v in vary.items()} #Set nominal_value to the mean_of_the_parameters
-            logging.info(f"Using parameter mean for the relative analysis {nominal_value}")
+            if (all([type(v) == type(cp.Normal()) for v in vary.values()])):
+                nominal_value = {k: v.get_mom_parameters()['shift'][0] for k,v in vary.items()} #Set nominal_value to the mean_of_the_parameters
+                logging.info(f"Using parameter mean for the relative analysis {nominal_value}")
         else:
             if (len(nominal_value) != params_num):
                 msg = ("'nominal_value' must be a 1D array of the same size as the number of parameters.")
