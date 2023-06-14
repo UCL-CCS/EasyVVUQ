@@ -19,7 +19,7 @@ def rosenbrock(inputs):
     return {'value': 300.0 - y}
 
 
-@unittest.skip("Broke due to pandas update. See issue #393.")
+@pytest.mark.skip(reason="Broke due to pandas update. See issue #393.")
 def test_mcmc(tmp_path):
     campaign = uq.Campaign(name="mcmc", work_dir=tmp_path)
     params = {
