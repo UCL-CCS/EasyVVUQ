@@ -24,6 +24,7 @@ jobs:
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
         python setup.py develop
         python setup.py build_cannonsim
+        export PDOC_ALLOW_EXEC=1
         pip install pdoc
     - name: Checkout
       uses: actions/checkout@v2.3.1
