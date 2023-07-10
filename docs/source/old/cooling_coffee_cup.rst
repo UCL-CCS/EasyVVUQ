@@ -3,18 +3,18 @@
 A Cooling Coffee Cup with Polynomial Chaos Expansion
 ====================================================
 
-In this tutorial we will perform a Polynomial Chaos Expansion for a model of a cooling coffee cup.
+In this tutorial, we will perform a Polynomial Chaos Expansion for a model of a cooling coffee cup.
 The model uses Newton's law of cooling to evolve the temperature, :math:`T`, over time (:math:`t`) in an environment at :math:`T_{env}`:
 
 .. math::
     \frac{dT(t)}{dt} = -\kappa (T(t) -T_{env})
 
 The constant :math:`\kappa` characterizes the rate at which the coffee cup transfers heat to the environment.
-In this example we will analyze this model using the polynomial chaos expansion (PCE) UQ algorithm.
+In this example, we will analyze this model using the polynomial chaos expansion (PCE) UQ algorithm.
 e will use a constant initial temperature :math:`T_0 = 95 ^\circ\text{C}`, and vary :math:`\kappa` and :math:`T_{env}` using a uniform distribution in the ranges :math:`0.025-0.075` and :math:`15-25` respectively.
 
 Below we provide a commented script that shows how the Campaign is built up and then employed.
-We also provide an outline of how each element is setup.
+We also provide an outline of how each element is set up.
 
 EasyVVUQ Script Overview
 ------------------------
@@ -31,7 +31,7 @@ To run the script execute the following command
 Import necessary libraries
 --------------------------
 
-For this example we import both easyvvuq and chaospy (for the distributions). EasyVVUQ will be referred to as 'uq' in the code. ::
+For this example, we import both easyvvuq and chaospy (for the distributions). EasyVVUQ will be referred to as 'uq' in the code. ::
 
     import easyvvuq as uq
     import chaospy as cp
@@ -73,7 +73,7 @@ In this example the GenericEncoder and SimpleCSV, both included in the core Easy
 
 GenericEncoder performs simple text substitution into a supplied template, using a specified delimiter to identify where parameters should be placed.
 The template is shown below (\$ is used as the delimiter).
-The template substitution approach is likely to suit most simple applications but in practice many large applications have more complex requirements, for example the multiple input files or the creation of a directory hierarchy.
+The template substitution approach is likely to suit most simple applications but in practice, many large applications have more complex requirements, for example the multiple input files or the creation of a directory hierarchy.
 In such cases, users may write their own encoders by extending the BaseEncoder class. ::
 
     {
@@ -93,7 +93,7 @@ As can be inferred from its name SimpleCSV reads CVS files produced by the cooli
 
 The Sampler
 -----------
-The user specified which parameters will vary and their corresponding distributions. In this case the kappa and t\_env parameters are varied, both according to a uniform distribution: ::
+The user specified which parameters will vary and their corresponding distributions. In this case, the kappa and t\_env parameters are varied, both according to a uniform distribution: ::
 
     vary = {
         "kappa": cp.Uniform(0.025, 0.075),

@@ -54,7 +54,7 @@ A custom decoder can be created in a very similar manner to the encoder: ::
 
 The two methods that must be implemented here are sim_complete(),
 which returns True if the simulation has completed (this is handled by
-the decoder because it is an application specific issue), and
+the decoder because it is an application-specific issue), and
 parse_sim_output(), which returns a dictionary containing the desired
 output, distilled from the simulation output files. This dictionary
 has to follow the following list of restrictions:

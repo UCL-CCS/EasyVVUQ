@@ -6,9 +6,7 @@
 [![Documentation Status](https://readthedocs.org/projects/easyvvuq/badge/?version=latest)](https://easyvvuq.readthedocs.io/)
 [![Coverage Status](https://coveralls.io/repos/github/UCL-CCS/EasyVVUQ/badge.svg?branch=dev&service=github)](https://coveralls.io/github/UCL-CCS/EasyVVUQ?branch=dev)
 [![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/3796/badge)](https://bestpractices.coreinfrastructure.org/projects/3796)
-[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/UCL-CCS/EasyVVUQ/dev?filepath=tutorials)
-
-The aim of EasyVVUQ is to facilitate verification, validation and 
+[![Binder]EasyVVUQ aims to facilitate verification, validation and 
 uncertainty quantification (VVUQ) for a wide variety of
 simulations. While very convenient for simple cases, EasyVVUQ is particularly well suited in situations where the simulations are computationally expensive, 
 heterogeneous computing resources are necessary, the sampling space is very large or book-keeping is prohibitively
@@ -21,11 +19,10 @@ Here are some examples of questions EasyVVUQ can answer about your code:
 
 It also lets you construct surrogate models that are cheaper to evaluate than the complete simulation.
 
-The high-level overview of the library is avalable at our [readthedocs](https://easyvvuq.readthedocs.io/en/dev/).
+The high-level overview of the library is available at our [readthedocs](https://easyvvuq.readthedocs.io/en/dev/).
 
 ## Getting Started
-
-For the quick start with EasyVVUQ we reccommend to check our basic interactive tutorial available [here](https://mybinder.org/v2/gh/UCL-CCS/EasyVVUQ/a6852d6c5ba36f15579e601d7a8d074505f31084?filepath=tutorials%2Fbasic_tutorial.ipynb).
+For a quick start with EasyVVUQ we recommend checking our basic interactive tutorial available [here](https://mybinder.org/v2/gh/UCL-CCS/EasyVVUQ/a6852d6c5ba36f15579e601d7a8d074505f31084?filepath=tutorials%2Fbasic_tutorial.ipynb).
 
 
 ## Functionality
