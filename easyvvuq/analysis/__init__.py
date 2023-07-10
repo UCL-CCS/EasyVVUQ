@@ -3,6 +3,7 @@ from .ensemble_boot import EnsembleBoot
 from .sc_analysis import SCAnalysis
 from .ssc_analysis import SSCAnalysis
 from .pce_analysis import PCEAnalysis
+from .fd_analysis import FDAnalysis
 from .qmc_analysis import QMCAnalysis
 from .mcmc import MCMCAnalysis
 from .gp_analyse import GaussianProcessSurrogate

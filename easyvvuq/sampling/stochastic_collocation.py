@@ -50,6 +50,7 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
         ----------
         vary: dict or None
             keys = parameters to be sampled, values = distributions.
+
         polynomial_order : int, optional
             The polynomial order, default is 4.
 
@@ -64,20 +65,30 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
         sparse : bool, optional
             If True use sparse grid instead of normal tensor product grid,
             default is False.
+
+        midpoint_level1 : bool, optional
+            Used only for sparse=True (or for cp.DiscreteUniform distribution).
+            Determines how many points the 1st level of a sparse grid will have.
+            If True, order 0 quadrature will be generated,
+            default is True.
+
+        dimension_adaptive : bool, optional
+            Determines wether to use an insotropic sparse grid, or to
+            adapt the levels in the sparse grid based on a hierachical
+            error measure, default is False.
         """
 
         self.vary = Vary(vary)
-        self.quadrature_rule = quadrature_rule
 
         # List of the probability distributions of uncertain parameters
-        params_distribution = list(self.vary.get_values())
+        self.params_distribution = list(self.vary.get_values())
         # N = number of uncertain parameters
-        self.N = len(params_distribution)
+        self.N = len(self.params_distribution)
 
-        logging.debug("param dist {}".format(params_distribution))
+        logging.debug("param dist {}".format(self.params_distribution))
 
-        # Multivariate distribution
-        self.joint_dist = cp.J(*params_distribution)
+
+        self.joint_dist = cp.J(*self.params_distribution)
 
         # The quadrature information: order, rule and sparsity
         if isinstance(polynomial_order, int):
@@ -88,16 +99,10 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
 
         self.quad_rule = quadrature_rule
         self.sparse = sparse
-        # determines how many points the 1st level of a sparse grid will have.
-        # If midpoint_level1 = True, order 0 quadrature will be generated
         self.midpoint_level1 = midpoint_level1
-        # determines wether to use an insotropic sparse grid, or to adapt
-        # the levels in the sparse grid based on a hierachical error measure
         self.dimension_adaptive = dimension_adaptive
         self.nadaptations = 0
-        self.quad_sparse = sparse
         self.growth = growth
-        self.params_distribution = params_distribution
         self.check_max_quad_level()
 
         # determine if a nested sparse grid is used
@@ -120,12 +125,10 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
         # compute N-dimensional collocation points
         if not self.sparse:
 
-            # generate collocation grid locally
+            # generate collocation as a standard tensor product
             l_norm = np.array([self.polynomial_order])
             self.xi_d = self.generate_grid(l_norm)
 
-        # sparse grid = a linear combination of tensor products of 1D rules
-        # of different order. Use chaospy to compute these 1D quadrature rules
         else:
             self.l_norm = self.compute_sparse_multi_idx(self.L, self.N)
             # create sparse grid of dimension N and level q using the 1d
@@ -150,7 +153,7 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
 
         Parameters
         ----------
-        L : (int) the max level of the (sparse) grid
+        L : (int) the max polynomial order of the (sparse) grid
         N : (int) the number of uncertain parameters
 
         Returns
@@ -200,7 +203,7 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
                 xi_i, wi_i = cp.generate_quadrature(self.polynomial_order[n],
                                                     self.params_distribution[n],
                                                     rule=rule,
-                                                    growth=self.growth)
+                                                    growth=self.growth)   
 
                 self.xi_1d[n][self.polynomial_order[n]] = xi_i[0]
                 self.wi_1d[n][self.polynomial_order[n]] = wi_i
@@ -227,6 +230,9 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
 
             # if a discrete uniform is specified check max order
             if isinstance(self.params_distribution[n], cp.DiscreteUniform):
+
+                #TODO: it is assumed that self.sparse=True, but this assumption
+                #does not have to hold here!!!
 
                 # if level one of the sparse grid is a midpoint rule, generate
                 # the quadrature with order 0 (1 quad point). Else set order at
@@ -424,6 +430,8 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
         # return unique nodes
         return np.unique(H_L_N, axis=0)
 
+    # L : (int) max polynomial order
+    # N : (int) the number of uncertain parameters
     def compute_sparse_multi_idx(self, L, N):
         """
         computes all N dimensional multi-indices l = (l1,...,lN) such that

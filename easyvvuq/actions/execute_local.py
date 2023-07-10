@@ -8,6 +8,7 @@ import shutil
 import subprocess
 import dill
 import copy
+import logging
 
 __license__ = "LGPL"
 
@@ -208,6 +209,16 @@ class ExecuteLocal():
         self._started = False
         self.stdout = stdout
         self.stderr = stderr
+
+        # Fix for the Matlab command, do not split: -r 'test(); quit'
+        # matlab -nodesktop  -nojvm -r 'test(); quit'"
+        if "-r" in self.full_cmd:
+            start = full_cmd.find("-r ")
+            cmd = full_cmd[:start].split()
+            cmd.append(full_cmd[start:])
+            self.full_cmd = cmd
+            logging.info(f"Updating the split of the command for the Matlab's -r argument.")
+            logging.info(f"Full command reads: {cmd}")
 
     def start(self, previous=None):
         target_dir = previous['rundir']
