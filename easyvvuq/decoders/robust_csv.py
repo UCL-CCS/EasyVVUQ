@@ -125,7 +125,8 @@ class RobustCSV:
                     print(f"Reading file {out_path_aux} in order to have the appropriate dimension of NaN values")
                     with open(out_path_aux, 'r', newline='') as csvfile:
                         reader = csv.DictReader(csvfile, dialect=self.dialect)
-                        for row in reader:
+                        no_lines = len(list(reader))
+                        for i in range(0, no_lines):
                             for column in self.output_columns:
                                 results[column].append(float("nan"))
                     break
