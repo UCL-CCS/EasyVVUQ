@@ -289,8 +289,11 @@ class PCEAnalysis(BaseAnalysisElement):
             dim = len(self.sampler.vary.vary_dict)
             if dim < 1:
                 return 0
+            elif dim == 1:
+                Vars = [cp.variable(dim).names[0]]
+            else:
+                Vars = [v.names[0] for v in cp.variable(dim)]
 
-            Vars = [v.names[0] for v in cp.variable(dim)]
             T = len(Y_hat)
 
             assert(len(Vars) == len(self.sampler.vary.vary_dict))
