@@ -4,6 +4,8 @@ under the hood for this functionality.
 import logging
 import chaospy as cp
 import numpy as np
+import numpoly
+import warnings
 from easyvvuq import OutputType
 from .base import BaseAnalysisElement
 from .results import AnalysisResults
@@ -18,6 +20,24 @@ logger = logging.getLogger(__name__)
 class PCEAnalysisResults(QMCAnalysisResults):
     """Analysis results for the PCEAnalysis class.
     """
+
+    def _get_derivatives_first(self, qoi, input_):
+        """Returns the first order derivative-based index for a given qoi wrt input variable.
+
+        Parameters
+        ----------
+        qoi : str
+           Quantity of interest
+        input_ : str
+           Input variable
+
+        Returns
+        -------
+        float
+            First order derivative-based index.
+        """
+        raw_dict = AnalysisResults._keys_to_tuples(self.raw_data['derivatives_first'])
+        return raw_dict[AnalysisResults._to_tuple(qoi)][input_]
 
     def _get_sobols_first(self, qoi, input_):
         """Returns the first order sobol index for a given qoi wrt input variable.
@@ -180,6 +200,9 @@ class PCEAnalysis(BaseAnalysisElement):
             msg = 'PCE analysis requires a paired sampler to be passed'
             raise RuntimeError(msg)
 
+        # Flag specifing if we should scale the runs with the nominal base run
+        self.relative_analysis = sampler.relative_analysis
+
         if qoi_cols is None:
             raise RuntimeError("Analysis element requires a list of "
                                "quantities of interest (qoi)")
@@ -257,6 +280,71 @@ class PCEAnalysis(BaseAnalysisElement):
             sobol = sobol / (var + np.finfo(float).tiny)
             return sobol, sobol_idx, sobol_idx_bool
 
+        def build_surrogate_der(Y_hat, verbose=False):
+            '''Computes derivative of the polynomial Y_hat w.r.t. Vars
+            Parameter T specifies the time dimension
+            '''
+
+            # Build derivative with respect to all variables
+            dim = len(self.sampler.vary.vary_dict)
+            if dim < 1:
+                return 0
+            elif dim == 1:
+                Vars = [cp.variable(dim).names[0]]
+            else:
+                Vars = [v.names[0] for v in cp.variable(dim)]
+
+            T = len(Y_hat)
+
+            assert(len(Vars) == len(self.sampler.vary.vary_dict))
+
+            # derivative of the PCE expansion
+            # {dYhat_dx1: [t0, t1, ...],
+            #  dYhat_dx2: [t0, t1, ...],
+            #  ...,
+            #  dYhat_dxN: [t0, t1, ...] }
+            dY_hat = {v:[cp.polynomial(0) for t in range(T)] for v in self.sampler.vary.vary_dict}
+
+            for t in range(T):
+
+                for n1, n2 in zip(Y_hat[t].names, Vars):
+                    assert(n1 == n2)
+
+                for d_var_idx, (d_var, d_var_app) in enumerate(zip(Vars, self.sampler.vary.vary_dict)):
+
+                    if verbose:
+                        print(f'Computing derivative d(Y_hat)/d({d_var})')
+                        print('='*40)
+
+                    # Some variables are missing in the expression,
+                    # then they must be constant terms only i.e. sum(exp==0)
+                    if Y_hat[t].exponents.shape[1] < dim:
+                        #exponents.shape: (n_summands, n_variables)
+                        assert(sum(sum(np.array(Y_hat[t].exponents))) == 0)
+                        continue
+
+                    # Consider only polynomial components var^exp where exp > 0 (since the derivative decreases exp by -1)
+                    components_mask = np.array(Y_hat[t].exponents[:,d_var_idx] > 0)
+                    dY_hat_dvar_exp = Y_hat[t].exponents[components_mask]
+                    dY_hat_dvar_coeff = np.array(Y_hat[t].coefficients)[components_mask]
+
+                    # Iterate over all polynomial components (summands)
+                    for i, (coeff, exp) in enumerate(zip(dY_hat_dvar_coeff, dY_hat_dvar_exp)):
+                        assert(exp[d_var_idx] > 0)
+
+                        # derivative = coeff*exp * var^(exp-1)
+                        dY_hat_dvar_coeff[i] = coeff * exp[d_var_idx]
+                        dY_hat_dvar_exp[i][d_var_idx] = exp[d_var_idx] - 1
+
+                    dY_hat[d_var_app][t] = numpoly.construct.polynomial_from_attributes(
+                                exponents=dY_hat_dvar_exp,
+                                coefficients=dY_hat_dvar_coeff,
+                                names=Y_hat[t].names,
+                                retain_coefficients=True,
+                                retain_names=True)
+
+            return dY_hat
+
         if data_frame is None:
             raise RuntimeError("Analysis element needs a data frame to "
                                "analyse")
@@ -265,16 +353,24 @@ class PCEAnalysis(BaseAnalysisElement):
                 "No data in data frame passed to analyse element")
 
         qoi_cols = self.qoi_cols
+        T = len(data_frame[qoi_cols[0]].values[-1])
 
-        results = {'statistical_moments': {},
-                   'percentiles': {},
-                   'sobols_first': {k: {} for k in qoi_cols},
-                   'sobols_second': {k: {} for k in qoi_cols},
-                   'sobols_total': {k: {} for k in qoi_cols},
-                   'correlation_matrices': {},
-                   'output_distributions': {},
-                   'fit': {},
-                   'Fourier_coefficients': {},
+        results = {'statistical_moments': {k: {'mean':np.zeros(T),
+                                               'var':np.zeros(T),
+                                               'std':np.zeros(T)} for k in qoi_cols},
+                   'percentiles': {k: {'p01': np.zeros(T),
+                                       'p10': np.zeros(T),
+                                       'p50': np.zeros(T),
+                                       'p90': np.zeros(T),
+                                       'p99': np.zeros(T)} for k in qoi_cols},
+                   'sobols_first': {k: {p: np.zeros(T) for p in self.sampler.vary.vary_dict} for k in qoi_cols},
+                   'sobols_second': {k: {p: np.zeros(T) for p in self.sampler.vary.vary_dict} for k in qoi_cols},
+                   'sobols_total': {k: {p: np.zeros(T) for p in self.sampler.vary.vary_dict} for k in qoi_cols},
+                   'correlation_matrices': {k: {} for k in qoi_cols},
+                   'output_distributions': {k: {} for k in qoi_cols},
+                   'fit': {k: cp.polynomial(np.zeros(T)) for k in qoi_cols},
+                   'Fourier_coefficients': {k: {p: np.zeros(T) for p in self.sampler.vary.vary_dict} for k in qoi_cols},
+                   'derivatives_first': {k: {p: np.zeros(T) for p in self.sampler.vary.vary_dict} for k in qoi_cols},
                    }
 
         # Get sampler informations
@@ -283,22 +379,22 @@ class PCEAnalysis(BaseAnalysisElement):
         weights = self.sampler._weights
         regression = self.sampler.regression
 
-        # Extract output values for each quantity of interest from Dataframe
-#        samples = {k: [] for k in qoi_cols}
-#        for run_id in data_frame[('run_id', 0)].unique():
-#            for k in qoi_cols:
-#                data = data_frame.loc[data_frame[('run_id', 0)] == run_id][k]
-#                samples[k].append(data.values.flatten())
-
         samples = {k: [] for k in qoi_cols}
         for k in qoi_cols:
-            samples[k] = data_frame[k].values
+            if self.relative_analysis:
+                base = data_frame[k].values[self.sampler.n_samples]
+                if np.all(np.array(base) == 0):
+                    warnings.warn(f"Removing QoI {k} from the analysis, contains all zeros", RuntimeWarning)
+                    continue
+                if np.any(np.array(base) == 0):
+                    warnings.warn(f"Removing QoI {k} from the analysis, contains some zeros", RuntimeWarning)
+                    continue
 
-        # Compute descriptive statistics for each quantity of interest
-        for k in qoi_cols:
-            # Approximation solver
+            samples[k] = data_frame[k].values[:self.sampler.n_samples]
+
+            # Compute descriptive statistics for each quantity of interest
             if regression:
-                fit, fc = cp.fit_regression(P, nodes, samples[k], retall=1)
+                fit, fc = cp.fit_regression(P, [n[:self.sampler.n_samples] for n in nodes], samples[k], retall=1)
             else:
                 fit, fc = cp.fit_quadrature(P, nodes, weights, samples[k], retall=1)
             results['fit'][k] = fit
@@ -309,7 +405,7 @@ class PCEAnalysis(BaseAnalysisElement):
                 fit, [1, 10, 50, 90, 99], self.sampler.distribution).squeeze()
             results['percentiles'][k] = {'p01': P01, 'p10': P10, 'p50': P50, 'p90': P90, 'p99': P99}
 
-            if self.sampling:  # use chaospy's sampling method
+            if self.sampling:  # use Chaospy's sampling method
 
                 # Statistical moments
                 mean = cp.E(fit, self.sampler.distribution)
@@ -319,7 +415,6 @@ class PCEAnalysis(BaseAnalysisElement):
                                                      'var': var,
                                                      'std': std}
 
-                # Sensitivity Analysis: First, Second and Total Sobol indices
                 sobols_first_narr = cp.Sens_m(fit, self.sampler.distribution)
                 sobols_second_narr = cp.Sens_m2(fit, self.sampler.distribution)
                 sobols_total_narr = cp.Sens_t(fit, self.sampler.distribution)
@@ -371,16 +466,65 @@ class PCEAnalysis(BaseAnalysisElement):
                 results['sobols_second'][k] = S2
                 results['sobols_total'][k] = ST
 
+            # Sensitivity Analysis: Derivative based
+            dY_hat = build_surrogate_der(fit, verbose=False)
+            derivatives_first_dict = {}
+            Ndimensions = len(self.sampler.vary.vary_dict)
+            for i, param_name in enumerate(self.sampler.vary.vary_dict):
+                if self.sampler.nominal_value:
+                    # Evaluate dY_hat['param'] at the nominal value of the parameters
+                    values = self.sampler.nominal_value
+                    logging.info(f"Using nominal value of the parameters to evaluate the derivative ")
+                    derivatives_first_dict[param_name] = cp.polynomial(dY_hat[param_name])(*[v for v in values.values()])
+                elif all([type(v) == type(cp.Normal()) for v in self.sampler.vary.vary_dict.values()]):
+                    # Evaluate dY_hat['param'] at the mean of the parameters
+                    logging.info(f"Using mean value of the parameters to evaluate the derivative ")
+                    derivatives_first_dict[param_name] = cp.polynomial(dY_hat[param_name])(*[v.get_mom_parameters()["shift"][0] for v in self.sampler.vary.vary_dict.values()])
+                elif all([type(v) == type(cp.Uniform()) for v in self.sampler.vary.vary_dict.values()]):
+                    logging.info(f"Using mean value of the parameters to evaluate the derivative ")
+                    # Evaluate dY_hat['param'] at the mean of the parameters
+                    derivatives_first_dict[param_name] = cp.polynomial(dY_hat[param_name])(*[(v.lower + v.upper)/2.0 for v in self.sampler.vary.vary_dict.values()])
+                else:
+                    # Evaluate dY_hat['param'] at the zero vector
+                    logging.info(f"Using zero vector to evaluate the derivative ")
+                    derivatives_first_dict[param_name] = cp.polynomial(dY_hat[param_name])(*np.zeros(Ndimensions))
+
+            results['derivatives_first'][k] = derivatives_first_dict
+
+            # Transform the relative numbers back to the absolute values
+            if self.relative_analysis:
+                base = data_frame[k].values[-1]
+
+                results['percentiles'][k]['p01'] = (1.0 + results['percentiles'][k]['p01']) * base
+                results['percentiles'][k]['p10'] = (1.0 + results['percentiles'][k]['p10']) * base
+                results['percentiles'][k]['p50'] = (1.0 + results['percentiles'][k]['p50']) * base
+                results['percentiles'][k]['p90'] = (1.0 + results['percentiles'][k]['p90']) * base
+                results['percentiles'][k]['p99'] = (1.0 + results['percentiles'][k]['p99']) * base
+                results['statistical_moments'][k]['mean'] = (1.0 + results['statistical_moments'][k]['mean']) * base
+                results['statistical_moments'][k]['var']  = (1.0 + results['statistical_moments'][k]['var']) * base
+                results['statistical_moments'][k]['std']  = (1.0 + results['statistical_moments'][k]['std']) * base
+
             # Correlation matrix
-            results['correlation_matrices'][k] = cp.Corr(
-                fit, self.sampler.distribution)
+            try:
+                warnings.warn(f"Skipping computation of cp.Corr", RuntimeWarning)
+                if self.sampler._is_dependent:
+                    results['correlation_matrices'][k] = None
+                else:
+                    results['correlation_matrices'][k] = cp.Corr(fit, self.sampler.distribution)
+            except Exception as e:
+                print ('Error %s for %s when computing cp.Corr()'% (e.__class__.__name__, k))
+                results['correlation_matrices'][k] = None
+            
 
             # Output distributions
             try:
-                results['output_distributions'][k] = cp.QoI_Dist(
-                    fit, self.sampler.distribution)
+                warnings.warn(f"Skipping computation of cp.QoI_Dist", RuntimeWarning)
+                if self.sampler._is_dependent:
+                    results['output_distributions'][k] = None
+                else:
+                    results['output_distributions'][k] = cp.QoI_Dist( fit, self.sampler.distribution)
             except Exception as e:
-                print('Error %s for %s' % (e.__class__.__name__, k))
+                print ('Error %s for %s when computing cp.QoI_Dist()'% (e.__class__.__name__, k))
 #                from traceback import print_exc
 #                print_exc()
                 results['output_distributions'][k] = None
