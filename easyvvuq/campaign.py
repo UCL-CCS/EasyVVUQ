@@ -135,16 +135,15 @@ class Campaign:
     """
 
     def __init__(
-            self,
-            name,
-            params=None,
-            actions=None,
-            db_location=None,
-            work_dir="./",
-            change_to_state=False,
-            verify_all_runs=True
+        self,
+        name,
+        params=None,
+        actions=None,
+        db_location=None,
+        work_dir="./",
+        change_to_state=False,
+        verify_all_runs=True,
     ):
-
         self.work_dir = os.path.realpath(os.path.expanduser(work_dir))
         self.verify_all_runs = verify_all_runs
 
@@ -189,7 +188,7 @@ class Campaign:
 
         return os.path.join(self.work_dir, self._campaign_dir)
 
-    def init_db(self, name, work_dir='.'):
+    def init_db(self, name, work_dir="."):
         """Initialize the connection with the database and either resume or create the campaign.
 
         Parameters
@@ -206,7 +205,7 @@ class Campaign:
             self.campaign_name = name
             self._campaign_dir = self.campaign_db.campaign_dir(name)
             if not os.path.exists(self._campaign_dir):
-                message = (f"Campaign directory ({self.campaign_dir}) does not exist.")
+                message = f"Campaign directory ({self.campaign_dir}) does not exist."
                 raise RuntimeError(message)
             self._active_sampler_id = self.campaign_db.get_sampler_id(self.campaign_id)
             self._active_sampler = self.campaign_db.resurrect_sampler(self._active_sampler_id)
@@ -219,7 +218,8 @@ class Campaign:
                 name=name,
                 campaign_dir_prefix=default_campaign_prefix,
                 easyvvuq_version=easyvvuq.__version__,
-                campaign_dir=self._campaign_dir)
+                campaign_dir=self._campaign_dir,
+            )
             self.campaign_db.create_campaign(info)
             self.campaign_name = name
             self.campaign_id = self.campaign_db.get_campaign_id(self.campaign_name)
@@ -313,24 +313,26 @@ class Campaign:
         inputs = []
         for input_file in input_files:
             input_decoder.target_filename = os.path.basename(input_file)
-            params = input_decoder.parse_sim_output({'run_dir': os.path.dirname(input_file)})
+            params = input_decoder.parse_sim_output({"run_dir": os.path.dirname(input_file)})
             inputs.append(params)
         outputs = []
         for output_file in output_files:
             output_decoder.target_filename = os.path.basename(output_file)
-            result = output_decoder.parse_sim_output({'run_dir': os.path.dirname(output_file)})
+            result = output_decoder.parse_sim_output({"run_dir": os.path.dirname(output_file)})
             outputs.append(result)
         i = 0
         for params, result in zip(inputs, outputs):
             i += 1
-            table = db.RunTable(run_name='run_{}'.format(i),
-                                app=self._active_app['id'],
-                                params=json.dumps(params),
-                                status=Status.COLLATED,
-                                run_dir=self.get_campaign_runs_dir(),
-                                result=json.dumps(result),
-                                campaign=self.campaign_id,
-                                sampler=self._active_sampler_id)
+            table = db.RunTable(
+                run_name="run_{}".format(i),
+                app=self._active_app["id"],
+                params=json.dumps(params),
+                status=Status.COLLATED,
+                run_dir=self.get_campaign_runs_dir(),
+                result=json.dumps(result),
+                campaign=self.campaign_id,
+                sampler=self._active_sampler_id,
+            )
             self.campaign_db.session.add(table)
             self.campaign_db.session.commit()
 
@@ -346,15 +348,14 @@ class Campaign:
             Will mark runs that fail verification as invalid (but will not raise an exception)
         """
         if self._active_app is None:
-            msg = ("No app is currently set for this campaign. "
-                   "Use set_app('name_of_app').")
+            msg = "No app is currently set for this campaign. " "Use set_app('name_of_app')."
             logging.error(msg)
             raise Exception(msg)
         app_default_params = self._active_app["params"]
         run_info_list = []
         for new_run in runs:
             if new_run is None:
-                msg = ("add_run() was passed new_run of type None. Bad sampler?")
+                msg = "add_run() was passed new_run of type None. Bad sampler?"
                 logging.error(msg)
                 raise Exception(msg)
             # Verify and complete run with missing/default param values
@@ -368,11 +369,13 @@ class Campaign:
                 else:
                     raise
             # Add to run queue
-            run_info = RunInfo(app=self._active_app['id'],
-                               params=new_run,
-                               sample=self._active_sampler_id,
-                               campaign=self.campaign_id,
-                               status=status)
+            run_info = RunInfo(
+                app=self._active_app["id"],
+                params=new_run,
+                sample=self._active_sampler_id,
+                campaign=self.campaign_id,
+                status=status,
+            )
             run_info_list.append(run_info)
         self.campaign_db.add_runs(run_info_list, iteration=self._active_sampler.iteration)
 
@@ -396,9 +399,11 @@ class Campaign:
         # Make sure `num_samples` is not 0 for an infinite generator
         # (this would add runs forever...)
         if not self._active_sampler.is_finite() and num_samples <= 0:
-            msg = (f"Sampling_element '{self._active_sampler.element_name()}' "
-                   f"is an infinite generator, therefore a finite number of "
-                   f"draws (n > 0) must be specified.")
+            msg = (
+                f"Sampling_element '{self._active_sampler.element_name()}' "
+                f"is an infinite generator, therefore a finite number of "
+                f"draws (n > 0) must be specified."
+            )
             raise RuntimeError(msg)
         num_added = 0
         new_runs = []
@@ -407,6 +412,17 @@ class Campaign:
             num_added += 1
             if num_samples != 0 and num_added >= num_samples:
                 break
+
+        # NOTE:
+        # PSNC temporary solution to non integer values.
+        # For each parameter describe as "integer" - force cast to integer.
+        logging.info("Starting parameter rounding")
+        for run in new_runs:
+            for param in run:
+                if self.get_active_app()["params"].params_dict[param]["type"] == "integer":
+                    run[param] = round(run[param])
+                    logging.info(f"Rounded parameter '{param}' to '{run[param]}'")
+
         self.add_runs(new_runs, mark_invalid)
         # Write sampler's new state to database
         self.campaign_db.update_sampler(self._active_sampler_id, self._active_sampler)
@@ -430,8 +446,7 @@ class Campaign:
         -------
         list of runs
         """
-        return list(self.campaign_db.runs(
-            sampler=sampler, campaign=campaign, app_id=app_id, status=status))
+        return list(self.campaign_db.runs(sampler=sampler, campaign=campaign, app_id=app_id, status=status))
 
     def get_campaign_runs_dir(self):
         """Get the runs directory from the CampaignDB.
@@ -473,8 +488,7 @@ class Campaign:
             want to avoid the concurrent module for some reason).
         """
         self.draw_samples(nsamples, mark_invalid=mark_invalid)
-        action_pool = self.apply_for_each_sample(
-            self._active_app_actions, sequential=sequential)
+        action_pool = self.apply_for_each_sample(self._active_app_actions, sequential=sequential)
         return action_pool.start(pool=pool)
 
     def apply_for_each_sample(self, actions, status=Status.NEW, sequential=False):
@@ -496,19 +510,20 @@ class Campaign:
         ActionPool
             An object containing ActionStatus instances to track action execution.
         """
+
         # Loop through all runs in this campaign with status ENCODED, and
         # run the specified action on each run's dir
         def inits():
-            for run_id, run_data in self.campaign_db.runs(
-                    status=status, app_id=self._active_app['id']):
+            for run_id, run_data in self.campaign_db.runs(status=status, app_id=self._active_app["id"]):
                 previous = {}
-                previous['run_id'] = run_id
-                previous['campaign_dir'] = self._campaign_dir
-                previous['rundir'] = run_data['run_dir']
-                previous['run_info'] = run_data
-                previous['result'] = {}
-                previous['collated'] = False
+                previous["run_id"] = run_id
+                previous["campaign_dir"] = self._campaign_dir
+                previous["rundir"] = run_data["run_dir"]
+                previous["run_info"] = run_data
+                previous["result"] = {}
+                previous["collated"] = False
                 yield previous
+
         return ActionPool(self, actions, inits=inits(), sequential=sequential)
 
     def iterate(self, nsamples=0, pool=None, mark_invalid=False, sequential=False):
@@ -535,21 +550,20 @@ class Campaign:
         """
         while True:
             self.draw_samples(nsamples, mark_invalid=mark_invalid)
-            action_pool = self.apply_for_each_sample(
-                self._active_app_actions, sequential=sequential)
+            action_pool = self.apply_for_each_sample(self._active_app_actions, sequential=sequential)
             yield action_pool.start(pool=pool)
             result = self.get_collation_result(last_iteration=True)
             invalid = self.get_invalid_runs(last_iteration=True)
             ignored_runs = self._active_sampler.update(result, invalid)
             for run_id in ignored_runs:
-                self.campaign_db.session.query(db.RunTable).\
-                    filter(db.RunTable.id == int(run_id)).\
-                    update({'status': easyvvuq.constants.Status.IGNORED})
+                self.campaign_db.session.query(db.RunTable).filter(db.RunTable.id == int(run_id)).update(
+                    {"status": easyvvuq.constants.Status.IGNORED}
+                )
             self.campaign_db.session.commit()
 
     def recollate(self):
         """Clears the current collation table, changes all COLLATED status runs
-           back to ENCODED, then runs collate() again
+        back to ENCODED, then runs collate() again
         """
         collated_run_ids = list(self.campaign_db.run_ids(status=Status.COLLATED))
         self.campaign_db.set_run_statuses(collated_run_ids, Status.ENCODED)
@@ -574,10 +588,11 @@ class Campaign:
         else:
             iteration = -1
         return self.campaign_db.get_results(
-            self._active_app['name'],
+            self._active_app["name"],
             self._active_sampler_id,
             status=easyvvuq.constants.Status.COLLATED,
-            iteration=iteration)
+            iteration=iteration,
+        )
 
     def get_invalid_runs(self, last_iteration=False):
         """Return dataframe containing all results marked as INVALID.
@@ -599,10 +614,11 @@ class Campaign:
         else:
             iteration = -1
         return self.campaign_db.get_results(
-            self._active_app['name'],
+            self._active_app["name"],
             self._active_sampler_id,
             status=easyvvuq.constants.Status.INVALID,
-            iteration=iteration)
+            iteration=iteration,
+        )
 
     def apply_analysis(self, analysis):
         """Run the `analysis` element on the output of the last run collation.
@@ -639,8 +655,7 @@ class Campaign:
             raise RuntimeError("This sampler does not have a corresponding analysis class")
 
     def get_last_analysis(self):
-        """Return the output of the most recently run analysis element.
-        """
+        """Return the output of the most recently run analysis element."""
         if self.last_analysis is None:
             logging.warning("No last analysis output available.")
         return self.last_analysis
@@ -649,11 +664,13 @@ class Campaign:
         """Returns formatted summary of the current Campaign state.
         Enables class to work with standard print() method
         """
-        return (f"db_location = {self.db_location}\n"
-                f"active_sampler_id = {self._active_sampler_id}\n"
-                f"campaign_name = {self.campaign_name}\n"
-                f"campaign_dir = {self.campaign_dir}\n"
-                f"campaign_id = {self.campaign_id}\n")
+        return (
+            f"db_location = {self.db_location}\n"
+            f"active_sampler_id = {self._active_sampler_id}\n"
+            f"campaign_name = {self.campaign_name}\n"
+            f"campaign_dir = {self.campaign_dir}\n"
+            f"campaign_id = {self.campaign_id}\n"
+        )
 
     def get_active_sampler(self):
         """Return the active sampler element in use by this campaign.
@@ -693,8 +710,7 @@ class Campaign:
         for run_ID in list_of_run_IDs:
             status = self.campaign_db.get_run_status(run_ID)
             if status == Status.NEW:
-                msg = (f"Cannot rerun {run_ID} as it has status NEW, and must"
-                       f"be encoded before execution.")
+                msg = f"Cannot rerun {run_ID} as it has status NEW, and must" f"be encoded before execution."
                 raise RuntimeError(msg)
         self.campaign_db.set_run_statuses(list_of_run_IDs, Status.ENCODED)
 
