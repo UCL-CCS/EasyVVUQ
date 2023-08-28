@@ -307,8 +307,8 @@ class EnsembleBootMultiple(BaseAnalysisElement):
         qoi_cols : list or None
             Columns of quantities of interest (for which stats will be
             calculated).
-        stat_func : function
-            Statistical function to be applied to data for bootstrapping.
+        stat_func : list[function]
+            List of statistical functions to be applied to data for bootstrapping.
         alpha : float, default=0.05
             Produce estimate of 100.0*(1-`alpha`) confidence interval.
         sample_size : int
@@ -317,7 +317,7 @@ class EnsembleBootMultiple(BaseAnalysisElement):
             Number of times samples are to be drawn from the input data.
         pivotal : bool, default=False
             Use the pivotal method? Default to percentile method.
-        stat_name : str, default='boot'
+        stat_name : str, default=None
             Name to use to describe columns containing output statistic (for example
             'mean'). If not provided, then attr '__name__' from each func is used.
         """
@@ -381,4 +381,4 @@ class EnsembleBootMultiple(BaseAnalysisElement):
                     pivotal=self.pivotal,
                     stat_name=stat_name)
             frames.append(results)
-        return pd.concat(frames, axis=1).reset_index(drop=True)
+        return frames
