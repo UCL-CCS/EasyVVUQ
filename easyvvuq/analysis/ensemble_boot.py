@@ -381,4 +381,4 @@ class EnsembleBootMultiple(BaseAnalysisElement):
                     pivotal=self.pivotal,
                     stat_name=stat_name)
             frames.append(results)
-        return frames
+        return pd.concat(frames, axis=1, keys=self.stat_name).swaplevel(0, 1, axis=1)
