@@ -379,6 +379,6 @@ class EnsembleBootMultiple(BaseAnalysisElement):
                     sample_size=self.sample_size,
                     n_samples=self.n_boot_samples,
                     pivotal=self.pivotal,
-                    stat_name=stat_name)
+                    stat_name="average")
             frames.append(results)
-        return frames
+        return pd.concat(frames, axis=1, keys=self.stat_name).swaplevel(0, 1, axis=1)
