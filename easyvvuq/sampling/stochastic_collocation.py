@@ -203,7 +203,7 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
                 xi_i, wi_i = cp.generate_quadrature(self.polynomial_order[n],
                                                     self.params_distribution[n],
                                                     rule=rule,
-                                                    growth=self.growth)   
+                                                    growth=self.growth) 
 
                 self.xi_1d[n][self.polynomial_order[n]] = xi_i[0]
                 self.wi_1d[n][self.polynomial_order[n]] = wi_i
