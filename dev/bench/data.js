@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1691825939206,
+  "lastUpdate": 1695819035685,
   "repoUrl": "https://github.com/UCL-CCS/EasyVVUQ",
   "entries": {
     "Benchmark": [
@@ -66,6 +66,68 @@ window.BENCHMARK_DATA = {
             "unit": "iter/sec",
             "range": "stddev: 0.00044120282012384066",
             "extra": "mean: 23.734490999998332 msec\nrounds: 41"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "name": "UCL-CCS",
+            "username": "UCL-CCS"
+          },
+          "committer": {
+            "name": "UCL-CCS",
+            "username": "UCL-CCS"
+          },
+          "id": "66f3efeb34e8ff1fee7e15418843be6ec4e6465a",
+          "message": "Issue401: Inconsistent sampled values when mixing continuous and discrete distributions",
+          "timestamp": "2023-09-07T03:59:45Z",
+          "url": "https://github.com/UCL-CCS/EasyVVUQ/pull/402/commits/66f3efeb34e8ff1fee7e15418843be6ec4e6465a"
+        },
+        "date": 1695819033648,
+        "tool": "pytest",
+        "benches": [
+          {
+            "name": "tests/test_db_benchmark.py::test_draw",
+            "value": 0.09871238268380024,
+            "unit": "iter/sec",
+            "range": "stddev: 0.11154905928447001",
+            "extra": "mean: 10.130441316599995 sec\nrounds: 5"
+          },
+          {
+            "name": "tests/test_db_benchmark.py::test_store_results",
+            "value": 0.1542111839891214,
+            "unit": "iter/sec",
+            "range": "stddev: 0.06593414971245735",
+            "extra": "mean: 6.484613982799999 sec\nrounds: 5"
+          },
+          {
+            "name": "tests/test_db_benchmark.py::test_get_collation_result",
+            "value": 88.14387567597565,
+            "unit": "iter/sec",
+            "range": "stddev: 0.00011609558951358308",
+            "extra": "mean: 11.34508770270194 msec\nrounds: 74"
+          },
+          {
+            "name": "tests/test_db_benchmark.py::test_draw_add",
+            "value": 0.09884860836327058,
+            "unit": "iter/sec",
+            "range": "stddev: 0.0711218321793032",
+            "extra": "mean: 10.116480308199993 sec\nrounds: 5"
+          },
+          {
+            "name": "tests/test_db_benchmark.py::test_store_results_add",
+            "value": 0.15391730221382047,
+            "unit": "iter/sec",
+            "range": "stddev: 0.05946973847793195",
+            "extra": "mean: 6.496995371000002 sec\nrounds: 5"
+          },
+          {
+            "name": "tests/test_db_benchmark.py::test_get_collation_result_add",
+            "value": 46.66743352756686,
+            "unit": "iter/sec",
+            "range": "stddev: 0.00014567767982446388",
+            "extra": "mean: 21.428219304352606 msec\nrounds: 46"
           }
         ]
       }
