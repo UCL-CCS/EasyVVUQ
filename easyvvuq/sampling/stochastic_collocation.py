@@ -391,7 +391,14 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
             run_dict = {}
             i_par = 0
             for param_name in self.vary.get_keys():
-                run_dict[param_name] = self.xi_d[self.count][i_par]
+                # the current input parameter
+                current_param = self.xi_d[self.count][i_par]
+                # all parameters self.xi_d will store floats. If current param is
+                # DiscreteUniform, convert e.g. 2.0 to 2 before running
+                # the simulation.
+                if isinstance(self.params_distribution[i_par], cp.DiscreteUniform):
+                    current_param = int(current_param)
+                run_dict[param_name] = current_param
                 i_par += 1
             self.count += 1
             return run_dict
