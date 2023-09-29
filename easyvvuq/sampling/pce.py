@@ -115,8 +115,8 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
         self.polynomial_order = polynomial_order
 
         # List of the probability distributions of uncertain parameters
-        params_distribution = list(vary.values())
-        params_num = len(params_distribution)
+        self.params_distribution = list(vary.values())
+        params_num = len(self.params_distribution)
 
         # Nominal value of the parameters
         if nominal_value is None:
@@ -142,7 +142,7 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
         self.distribution_dep = None
         if distribution is None:
             logging.info("Using default joint distribution")
-            self.distribution = cp.J(*params_distribution)
+            self.distribution = cp.J(*self.params_distribution)
         elif 'distributions' in str(type(distribution)):
             if distribution.stochastic_dependent:
                 if not isinstance(distribution, cp.MvNormal):
@@ -205,6 +205,9 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
         # To determinate the PCE vraint to use
         self.regression = regression
 
+        # indices of cp.DiscreteUniform parameters
+        idx_discrete = np.where([isinstance(p, cp.DiscreteUniform) for p in self.params_distribution])[0]
+
         # Regression variante (Point collocation method)
         if regression:
             logging.info(f"Using point collocation method to create PCE")
@@ -240,6 +243,15 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
 
         # Projection variante (Pseudo-spectral method)
         else:
+            if type(self.rule) is str and idx_discrete.size > 0:
+                tmp = []
+                for i in range(params_num):
+                    if i in idx_discrete:
+                        tmp.append("discrete")
+                    else:
+                        tmp.append(rule)
+                self.rule = tmp
+
             logging.info(f"Using pseudo-spectral method to create PCE")
             # Nodes and weights for the integration
             self._nodes, self._weights = cp.generate_quadrature(order=polynomial_order,
@@ -307,7 +319,13 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
                     # Return transformed nodes reflecting the dependencies
                     run_dict[param_name] = self._nodes_dep[i][self.count]
                 else:
-                    run_dict[param_name] = self._nodes[i][self.count]
+                    current_param = self._nodes[i][self.count]
+                    # all parameters self.xi_d will store floats. If current param is
+                    # DiscreteUniform, convert e.g. 2.0 to 2 before running
+                    # the simulation.
+                    if isinstance(self.params_distribution[i], cp.DiscreteUniform):
+                        current_param = int(current_param)
+                    run_dict[param_name] = current_param
             self.count += 1
             return run_dict
         elif self.relative_analysis and self.count == self._n_samples: #extra sample for the nominal case
