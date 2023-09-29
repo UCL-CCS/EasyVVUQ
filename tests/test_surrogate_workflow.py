@@ -17,6 +17,7 @@ VARY = {
 }
 
 
+@pytest.mark.skip(reason="Broke due to pandas update. See issue #395.")
 @pytest.mark.parametrize('sampler', [
     uq.sampling.RandomSampler(
         vary=VARY, max_num=100, analysis_class=uq.analysis.GaussianProcessSurrogate),
