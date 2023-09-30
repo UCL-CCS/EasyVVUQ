@@ -182,7 +182,7 @@ class PCEAnalysisResults(QMCAnalysisResults):
 
 class PCEAnalysis(BaseAnalysisElement):
 
-    def __init__(self, sampler=None, qoi_cols=None, sampling=False):
+    def __init__(self, sampler=None, qoi_cols=None, sampling=False, noCorrelationMatrices=False, noOutputDistributions=False):
         """Analysis element for polynomial chaos expansion (PCE).
 
         Parameters
@@ -211,6 +211,8 @@ class PCEAnalysis(BaseAnalysisElement):
         self.sampling = sampling
         self.output_type = OutputType.SUMMARY
         self.sampler = sampler
+        self.noCorrelationMatrices = noCorrelationMatrices
+        self.noOutputDistributions = noOutputDistributions
 
     def element_name(self):
         """Name for this element for logging purposes.
@@ -506,11 +508,15 @@ class PCEAnalysis(BaseAnalysisElement):
 
             # Correlation matrix
             try:
-                warnings.warn(f"Skipping computation of cp.Corr", RuntimeWarning)
                 if self.sampler._is_dependent:
+                    warnings.warn(f"Skipping computation of cp.Corr", RuntimeWarning)
                     results['correlation_matrices'][k] = None
                 else:
-                    results['correlation_matrices'][k] = cp.Corr(fit, self.sampler.distribution)
+                    if not self.noCorrelationMatrices:
+                        results['correlation_matrices'][k] = cp.Corr(fit, self.sampler.distribution)
+                    else:
+                        warnings.warn(f"Skipping computation of cp.Corr", RuntimeWarning)
+                        results['correlation_matrices'][k] = None
             except Exception as e:
                 print ('Error %s for %s when computing cp.Corr()'% (e.__class__.__name__, k))
                 results['correlation_matrices'][k] = None
@@ -518,11 +524,15 @@ class PCEAnalysis(BaseAnalysisElement):
 
             # Output distributions
             try:
-                warnings.warn(f"Skipping computation of cp.QoI_Dist", RuntimeWarning)
                 if self.sampler._is_dependent:
+                    warnings.warn(f"Skipping computation of cp.QoI_Dist", RuntimeWarning)
                     results['output_distributions'][k] = None
                 else:
-                    results['output_distributions'][k] = cp.QoI_Dist( fit, self.sampler.distribution)
+                    if not self.noOutputDistributions:
+                        results['output_distributions'][k] = cp.QoI_Dist( fit, self.sampler.distribution)
+                    else:
+                        warnings.warn(f"Skipping computation of cp.QoI_Dist", RuntimeWarning)
+                        results['output_distributions'][k] = None                        
             except Exception as e:
                 print ('Error %s for %s when computing cp.QoI_Dist()'% (e.__class__.__name__, k))
 #                from traceback import print_exc
