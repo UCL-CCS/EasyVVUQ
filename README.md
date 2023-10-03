@@ -34,8 +34,8 @@ Available analysis and sampling methods:
 
 * Polynomial Chaos Expansion
 * Stochastic Collocation
-* Dimension-adaptive Stochastic Collocation for high-dimensional inputs
-* Simplex Stochastic Collocation for irregular outputs
+* Dimension-adaptive Stochastic Collocation for high-dimensional inputs (incl notebook in `./tutorials` and [theoretical tutorial](https://www.researchgate.net/publication/359296270_Adaptive_sparse-grid_tutorial))
+* Simplex Stochastic Collocation for irregular outputs (incl notebook in `./tutorials` and [article](https://doi.org/10.1016/J.JCP.2015.12.034))
 * Monte Carlo Sensitivity Analysis
 * Markov-Chain Monte Carlo
 
