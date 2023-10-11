@@ -152,6 +152,7 @@ class QCGPJPool(Executor):
 
         Returns
         -------
+        QCGPJFuture
             QCGPJFuture representing the given call.
         """
         actions = fn.__self__
@@ -206,6 +207,7 @@ class QCGPJPool(Executor):
 
         Returns
         -------
+        dict
             A dictionary containing results
         """
 
