@@ -1,7 +1,6 @@
 import pytest
 import chaospy as cp
 from easyvvuq.sampling import QMCSampler
-from easyvvuq.sampling.base import Vary
 
 
 def test_init():
