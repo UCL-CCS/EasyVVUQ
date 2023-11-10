@@ -3,7 +3,6 @@ import easyvvuq as uq
 import numpy as np
 import chaospy as cp
 import json
-import matplotlib.pyplot as plt
 import pytest
 import sys
 from easyvvuq.actions import ExecutePython, Actions
