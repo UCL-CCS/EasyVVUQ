@@ -116,7 +116,7 @@ class Encode():
         try:
             previous['encoder_filename'] = self.encoder.target_filename
         except AttributeError:
-            pass
+            print('AttributeError raised and ignored')
         return previous
 
     def finished(self):
