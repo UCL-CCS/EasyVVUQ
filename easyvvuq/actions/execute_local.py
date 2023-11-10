@@ -116,7 +116,7 @@ class Encode():
         try:
             previous['encoder_filename'] = self.encoder.target_filename
         except AttributeError:
-            pass
+            print('AttributeError raised and ignored')
         return previous
 
     def finished(self):
@@ -233,6 +233,8 @@ class ExecuteLocal():
         self.ret = subprocess.run(
             self.full_cmd, cwd=target_dir,
             stdout=stdout, stderr=stderr)
+        if isinstance(self.stdout, str): close(stdout)
+        if isinstance(self.stderr, str): close(stderr)
         return previous
 
     def finished(self):
