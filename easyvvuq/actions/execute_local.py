@@ -233,6 +233,8 @@ class ExecuteLocal():
         self.ret = subprocess.run(
             self.full_cmd, cwd=target_dir,
             stdout=stdout, stderr=stderr)
+        if isinstance(self.stdout, str): close(stdout)
+        if isinstance(self.stderr, str): close(stderr)
         return previous
 
     def finished(self):
