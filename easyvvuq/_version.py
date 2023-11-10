@@ -154,7 +154,7 @@ def git_get_keywords(versionfile_abs):
                     keywords["date"] = mo.group(1)
         f.close()
     except EnvironmentError:
-        pass
+        print('EnvironmentError raised and ignored')
     return keywords
 
 
