@@ -113,7 +113,7 @@ def test_sobol_basic():
 
     print(results.sobols_first())
 
-    assert results.sobols_first()["f"]["x1"] > 0.4
+    assert results.sobols_first()["f"]["x1"] > 0.5
 
 if __name__ == '__main__':
     test_sobol_basic()
