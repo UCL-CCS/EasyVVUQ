@@ -9,10 +9,8 @@ import pandas as pd
 import numpy as np
 from sqlalchemy.sql import case
 from sqlalchemy import create_engine, Column, Integer, String, ForeignKey
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker, declarative_base
 from sqlalchemy import MetaData
-from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import text
 from sqlalchemy.engine import Engine
 from sqlalchemy import event
