@@ -513,7 +513,7 @@ def get_versions():
         if cfg.parentdir_prefix:
             return versions_from_parentdir(cfg.parentdir_prefix, root, verbose)
     except NotThisMethod:
-        pass
+        print('NotThisMethod raised and ignored')
 
     return {"version": "0+unknown", "full-revisionid": None,
             "dirty": None,
