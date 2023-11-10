@@ -1,8 +1,6 @@
 import easyvvuq as uq
 from easyvvuq.actions import Actions, Encode, Decode, CreateRunDirectory
-import chaospy as cp
 import os
-import sys
 import pytest
 
 __copyright__ = """
