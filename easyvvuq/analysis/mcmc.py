@@ -41,9 +41,7 @@ class MCMCAnalysisResults(AnalysisResults):
         input_parameter = (input_parameter, 0)
         if merge:
             chain_keys = list(self.chains.keys())
-            df = self.chains[chain_keys[0]][input_parameter].iloc[skip:]
-            for chain in chain_keys[1:]:
-                df.append(self.chains[chain][input_parameter].iloc[skip:])
+            df = pd.concat([self.chains[ck][input_parameter].iloc[skip:] for ck in chain_keys])
             plt.hist(df, 20)
         else:
             plt.hist(self.chains[chain][input_parameter].iloc[skip:], 20)
