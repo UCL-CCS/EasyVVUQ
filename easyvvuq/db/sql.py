@@ -320,7 +320,6 @@ class CampaignDB(BaseCampaignDB):
         """
 
         selected = self.session.get(SamplerTable,sampler_id)
-        #selected = self.session.query(SamplerTable).get(sampler_id)
         selected.sampler = easyvvuq_serialize(sampler_element)
         self.session.commit()
 
@@ -339,8 +338,7 @@ class CampaignDB(BaseCampaignDB):
             The 'live' sampler object, deserialized from the state in the db
         """
         try:
-            serialized_sampler = self.session.get(SamplerTable,sampler_id).sampler
-            #serialized_sampler = self.session.query(SamplerTable).get(sampler_id).sampler
+            serialized_sampler = self.session.get(SamplerTable,sampler_id).sampler 
             sampler = easyvvuq_deserialize(serialized_sampler.encode('utf-8'))
         except AttributeError:
             sampler = None
@@ -582,7 +580,6 @@ class CampaignDB(BaseCampaignDB):
             The id of the sampler set for the specified campaign
         """
         sampler_id = self.session.get(CampaignTable,campaign_id).sampler
-        #sampler_id = self.session.query(CampaignTable).get(campaign_id).sampler
         return sampler_id
 
     def set_sampler(self, campaign_id, sampler_id):
@@ -596,7 +593,6 @@ class CampaignDB(BaseCampaignDB):
             ID of the sampler.
         """
         self.session.get(CampaignTable,campaign_id).sampler = sampler_id
-        #self.session.query(CampaignTable).get(campaign_id).sampler = sampler_id
         self.session.commit()
 
     def campaign_dir(self, campaign_name=None):
