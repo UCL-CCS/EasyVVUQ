@@ -153,7 +153,7 @@ def git_get_keywords(versionfile_abs):
                     if mo:
                         keywords["date"] = mo.group(1)
     except EnvironmentError:
-        print('EnvironmentError raised and ignored')
+        if os.getenv("EasyVVUQ_Debug"): print('EnvironmentError raised and ignored')
     return keywords
 
 
@@ -512,7 +512,7 @@ def get_versions():
         if cfg.parentdir_prefix:
             return versions_from_parentdir(cfg.parentdir_prefix, root, verbose)
     except NotThisMethod:
-        print('NotThisMethod raised and ignored')
+        if os.getenv("EasyVVUQ_Debug"): print('NotThisMethod raised and ignored')
 
     return {"version": "0+unknown", "full-revisionid": None,
             "dirty": None,
