@@ -25,3 +25,4 @@ qcg-pilotjob~=0.13.0
 qcg-pilotjob-executor-api~=0.13.0
 h5py
 tomli
+fipy
