@@ -89,16 +89,11 @@ git clone https://github.com/UCL-CCS/EasyVVUQ.git
 
 Note: As above, you need to be sure you are installing for Python 3 - if necessary replace `pip` with `pip3` and `python` with `python3` in the commands below.
 
-We are trying to keep dependencies at a minimum but a few are inevitable, to install them use:
+We are trying to keep dependencies at a minimum but a few are inevitable, to install these, install the EasyVVUQ library itself and build a test case use:
 ```
 cd EasyVVUQ/
 
-pip install --use-feature=2020-resolver -r requirements.txt
-```
-
-Then the library can be installed using:
-```buildoutcfg
-python setup.py install
+bash install_EasyVVUQ.sh
 ```
 
 ## API
