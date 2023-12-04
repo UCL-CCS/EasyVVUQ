@@ -7,6 +7,7 @@ import pytest
 import sys
 from easyvvuq.actions import ExecutePython, Actions
 from dask.distributed import Client
+import matplotlib.pyplot as plt
 
 
 HOME = os.path.abspath(os.path.dirname(__file__))
@@ -19,13 +20,12 @@ def rosenbrock(inputs):
     return {'value': 300.0 - y}
 
 
-@pytest.mark.skip(reason="Broke due to pandas update. See issue #393.")
+###@pytest.mark.skip(reason="Broke due to pandas update. See issue #393.")
 def test_mcmc(tmp_path):
     campaign = uq.Campaign(name="mcmc", work_dir=tmp_path)
     params = {
         "x1": {"type": "float", "default": 0.0},
         "x2": {"type": "float", "default": 0.0},
-        "out_file": {"type": "string", "default": "output.json"},
         "chain_id": {"type": "integer", "default": 0}
     }
     encoder = uq.encoders.GenericEncoder(template_fname=os.path.abspath(
@@ -49,7 +49,7 @@ def test_mcmc(tmp_path):
     df = campaign.get_collation_result()
     analysis = uq.analysis.MCMCAnalysis(sampler)
     result = analysis.analyse(df)
-    result.plot_hist('x1')
-    result.plot_hist('x2')
-    result.plot_chains('x1')
-    result.plot_chains('x2')
+    plt.clf(); result.plot_hist('x1'); plt.savefig('/tmp/test_mcmc_hist_x1.png')
+    plt.clf(); result.plot_hist('x2'); plt.savefig('/tmp/test_mcmc_hist_x2.png')
+    plt.clf(); result.plot_chains('x1'); plt.savefig('/tmp/test_mcmc_chains_x1.png')
+    plt.clf(); result.plot_chains('x2'); plt.savefig('/tmp/test_mcmc_chains_x2.png')

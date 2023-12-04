@@ -116,7 +116,7 @@ class Encode():
         try:
             previous['encoder_filename'] = self.encoder.target_filename
         except AttributeError:
-            print('AttributeError raised and ignored')
+            if os.getenv("EasyVVUQ_Debug"): print('AttributeError raised and ignored')
         return previous
 
     def finished(self):
