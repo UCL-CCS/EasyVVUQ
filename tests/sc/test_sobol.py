@@ -4,7 +4,7 @@ import os
 import easyvvuq as uq
 import numpy as np
 import chaospy as cp
-from easyvvuq.actions import CreateRunDirectory, Encode, Decode, CleanUp, ExecuteLocal, Actions
+from easyvvuq.actions import CreateRunDirectory, Encode, Decode, ExecuteLocal, Actions
 
 def print_exact_sobols():
     V_i = np.zeros(d)
