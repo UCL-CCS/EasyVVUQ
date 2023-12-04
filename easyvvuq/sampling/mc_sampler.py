@@ -49,13 +49,11 @@ class MCSampler(RandomSampler, sampler_name='mc_sampler'):
         None.
 
         """
-        super().__init__(vary=vary, max_num=n_mc_samples, **kwargs)
+        super().__init__(vary=vary, count=0, max_num=n_mc_samples, **kwargs)
         # the number of uncertain inputs
         self.n_params = len(vary)
         # the number of MC samples, for each of the n_params + 2 input matrices
         self.n_mc_samples = n_mc_samples
-        self.vary = Vary(vary)
-        self.count = 0
         # joint distribution
         self.joint = cp.J(*list(vary.values()))
         # create the Saltelli sampling plan
