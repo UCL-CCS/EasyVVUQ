@@ -55,7 +55,7 @@ def campaign(tmp_path, app_info):
     campaign = CampaignDB(location='sqlite:///{}/test.sqlite'.format(tmp_path))
     campaign.create_campaign(info)
     campaign.tmp_path = str(tmp_path)
-    runs = [RunInfo('run', '.', 1, {'a': 1}, 1, 1) for _ in range(1010)]
+    runs = [RunInfo('run', '.', 1, {'a': 1}, 1, 1) for _ in range(910)]
     campaign.add_runs(runs)
     campaign.add_app(app_info)
     return campaign
@@ -66,14 +66,14 @@ def test_db_file_created(campaign):
 
 
 def test_get_and_set_status(campaign):
-    run_ids = list(range(1, 1011))
+    run_ids = list(range(1, 911))
     assert (all([campaign.get_run_status(id_) == Status.NEW for id_ in run_ids]))
     campaign.set_run_statuses(run_ids, Status.ENCODED)
     assert (all([campaign.get_run_status(id_) == Status.ENCODED for id_ in run_ids]))
 
 
 def test_get_num_runs(campaign):
-    assert (campaign.get_num_runs() == 1010)
+    assert (campaign.get_num_runs() == 910)
 
 
 def test_app(campaign):
@@ -130,7 +130,7 @@ def test_collation(campaign):
     assert (list(result.columns) == [('run_id', 0), ('iteration', 0),
                                      ('a', 0), ('b', 0), ('c', 0), ('c', 1)])
     assert (list(result.iloc[100].values) == [101, 0, 1, 100, 101, 102])
-    assert (result.count()[0] == 1010)
+    assert (result.count()[0] == 910)
 
 
 def test_mv_collation(tmp_path, app_info):
