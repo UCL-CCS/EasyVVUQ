@@ -64,7 +64,7 @@ class JinjaEncoder:
         try:
             with open(self.template_fname, 'r') as template_file:
                 template_txt = template_file.read()
-                self.template = Template(template_txt)
+                self.template = Template(template_txt, autoescape=False)
         except FileNotFoundError:
             raise RuntimeError(
                 "the template file specified ({}) does not exist".format(self.template_fname))
