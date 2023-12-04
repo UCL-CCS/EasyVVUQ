@@ -243,6 +243,8 @@ class ExecuteLocal():
     def finalise(self):
         """Performs clean-up if necessary. In this case it isn't. I think.
         """
+        stdout.close()
+        stderr.close()
         pass
 
     def succeeded(self):
