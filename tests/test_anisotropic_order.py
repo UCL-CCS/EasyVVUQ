@@ -71,14 +71,7 @@ def test_anisotropic_order(tmpdir):
     my_campaign.apply_analysis(analysis)
 
     results = my_campaign.get_last_analysis()
-
-    return results, sampler, analysis
-
-
-if __name__ == "__main__":
-
-    results, sampler, analysis = test_anisotropic_order("/tmp")
-
+    
     ###################################
     # Plot the moments and SC samples #
     ###################################
@@ -136,6 +129,7 @@ if __name__ == "__main__":
     leg.set_draggable(True)
 
     plt.tight_layout()
+    plt.savefig('/tmp/test_anisotropic_order_sobols.png')
 
     #############
     # Plot grid #
@@ -144,3 +138,8 @@ if __name__ == "__main__":
     analysis.plot_grid()
 
     # plt.show()
+
+if __name__ == "__main__":
+
+    test_anisotropic_order("/tmp")
+
