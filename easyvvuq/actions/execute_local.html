@@ -358,7 +358,7 @@ simulations locally. Some Actions will also be useful when using Dask.</p>
 </span><span id="L-116"><a href="#L-116"><span class="linenos">116</span></a>        <span class="k">try</span><span class="p">:</span>
 </span><span id="L-117"><a href="#L-117"><span class="linenos">117</span></a>            <span class="n">previous</span><span class="p">[</span><span class="s1">&#39;encoder_filename&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">encoder</span><span class="o">.</span><span class="n">target_filename</span>
 </span><span id="L-118"><a href="#L-118"><span class="linenos">118</span></a>        <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
-</span><span id="L-119"><a href="#L-119"><span class="linenos">119</span></a>            <span class="k">pass</span>
+</span><span id="L-119"><a href="#L-119"><span class="linenos">119</span></a>            <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;EasyVVUQ_Debug&quot;</span><span class="p">):</span> <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;AttributeError raised and ignored&#39;</span><span class="p">)</span>
 </span><span id="L-120"><a href="#L-120"><span class="linenos">120</span></a>        <span class="k">return</span> <span class="n">previous</span>
 </span><span id="L-121"><a href="#L-121"><span class="linenos">121</span></a>
 </span><span id="L-122"><a href="#L-122"><span class="linenos">122</span></a>    <span class="k">def</span> <span class="nf">finished</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -475,64 +475,68 @@ simulations locally. Some Actions will also be useful when using Dask.</p>
 </span><span id="L-233"><a href="#L-233"><span class="linenos">233</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">ret</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
 </span><span id="L-234"><a href="#L-234"><span class="linenos">234</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">full_cmd</span><span class="p">,</span> <span class="n">cwd</span><span class="o">=</span><span class="n">target_dir</span><span class="p">,</span>
 </span><span id="L-235"><a href="#L-235"><span class="linenos">235</span></a>            <span class="n">stdout</span><span class="o">=</span><span class="n">stdout</span><span class="p">,</span> <span class="n">stderr</span><span class="o">=</span><span class="n">stderr</span><span class="p">)</span>
-</span><span id="L-236"><a href="#L-236"><span class="linenos">236</span></a>        <span class="k">return</span> <span class="n">previous</span>
-</span><span id="L-237"><a href="#L-237"><span class="linenos">237</span></a>
-</span><span id="L-238"><a href="#L-238"><span class="linenos">238</span></a>    <span class="k">def</span> <span class="nf">finished</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="L-239"><a href="#L-239"><span class="linenos">239</span></a>        <span class="k">return</span> <span class="kc">True</span>
-</span><span id="L-240"><a href="#L-240"><span class="linenos">240</span></a>
-</span><span id="L-241"><a href="#L-241"><span class="linenos">241</span></a>    <span class="k">def</span> <span class="nf">finalise</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="L-242"><a href="#L-242"><span class="linenos">242</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Performs clean-up if necessary. In this case it isn&#39;t. I think.</span>
-</span><span id="L-243"><a href="#L-243"><span class="linenos">243</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="L-244"><a href="#L-244"><span class="linenos">244</span></a>        <span class="k">pass</span>
-</span><span id="L-245"><a href="#L-245"><span class="linenos">245</span></a>
-</span><span id="L-246"><a href="#L-246"><span class="linenos">246</span></a>    <span class="k">def</span> <span class="nf">succeeded</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="L-247"><a href="#L-247"><span class="linenos">247</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Will return True if the process finished successfully.</span>
-</span><span id="L-248"><a href="#L-248"><span class="linenos">248</span></a><span class="sd">        It judges based on the return code and will return False</span>
-</span><span id="L-249"><a href="#L-249"><span class="linenos">249</span></a><span class="sd">        if that code is not zero.</span>
-</span><span id="L-250"><a href="#L-250"><span class="linenos">250</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="L-251"><a href="#L-251"><span class="linenos">251</span></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ret</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
-</span><span id="L-252"><a href="#L-252"><span class="linenos">252</span></a>            <span class="k">return</span> <span class="kc">False</span>
-</span><span id="L-253"><a href="#L-253"><span class="linenos">253</span></a>        <span class="k">else</span><span class="p">:</span>
-</span><span id="L-254"><a href="#L-254"><span class="linenos">254</span></a>            <span class="k">return</span> <span class="kc">True</span>
-</span><span id="L-255"><a href="#L-255"><span class="linenos">255</span></a>
-</span><span id="L-256"><a href="#L-256"><span class="linenos">256</span></a>
-</span><span id="L-257"><a href="#L-257"><span class="linenos">257</span></a><span class="k">class</span> <span class="nc">Actions</span><span class="p">():</span>
-</span><span id="L-258"><a href="#L-258"><span class="linenos">258</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
-</span><span id="L-259"><a href="#L-259"><span class="linenos">259</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">actions</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
-</span><span id="L-260"><a href="#L-260"><span class="linenos">260</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">wrapper</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">action</span><span class="p">,</span> <span class="n">previous</span><span class="p">:</span> <span class="n">action</span><span class="o">.</span><span class="n">start</span><span class="p">(</span><span class="n">previous</span><span class="p">)</span>
-</span><span id="L-261"><a href="#L-261"><span class="linenos">261</span></a>
-</span><span id="L-262"><a href="#L-262"><span class="linenos">262</span></a>    <span class="k">def</span> <span class="nf">set_wrapper</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">wrapper</span><span class="p">):</span>
-</span><span id="L-263"><a href="#L-263"><span class="linenos">263</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Adds a wrapper to be called on each Action.</span>
-</span><span id="L-264"><a href="#L-264"><span class="linenos">264</span></a>
-</span><span id="L-265"><a href="#L-265"><span class="linenos">265</span></a><span class="sd">        Parameters</span>
-</span><span id="L-266"><a href="#L-266"><span class="linenos">266</span></a><span class="sd">        ----------</span>
-</span><span id="L-267"><a href="#L-267"><span class="linenos">267</span></a><span class="sd">        wrapper: callable</span>
-</span><span id="L-268"><a href="#L-268"><span class="linenos">268</span></a><span class="sd">            A function to call on each Action. Should pass through the return of the</span>
-</span><span id="L-269"><a href="#L-269"><span class="linenos">269</span></a><span class="sd">            start method.</span>
-</span><span id="L-270"><a href="#L-270"><span class="linenos">270</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="L-271"><a href="#L-271"><span class="linenos">271</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">wrapper</span> <span class="o">=</span> <span class="n">wrapper</span>
-</span><span id="L-272"><a href="#L-272"><span class="linenos">272</span></a>
-</span><span id="L-273"><a href="#L-273"><span class="linenos">273</span></a>    <span class="k">def</span> <span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">previous</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-</span><span id="L-274"><a href="#L-274"><span class="linenos">274</span></a>        <span class="k">for</span> <span class="n">action</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">actions</span><span class="p">:</span>
-</span><span id="L-275"><a href="#L-275"><span class="linenos">275</span></a>            <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">action</span><span class="p">,</span> <span class="s1">&#39;start&#39;</span><span class="p">):</span>
-</span><span id="L-276"><a href="#L-276"><span class="linenos">276</span></a>                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;action in the actions list does not provide a start method&#39;</span><span class="p">)</span>
-</span><span id="L-277"><a href="#L-277"><span class="linenos">277</span></a>        <span class="n">previous</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">previous</span><span class="p">)</span>
-</span><span id="L-278"><a href="#L-278"><span class="linenos">278</span></a>        <span class="n">run_id</span> <span class="o">=</span> <span class="n">previous</span><span class="p">[</span><span class="s1">&#39;run_id&#39;</span><span class="p">]</span>
-</span><span id="L-279"><a href="#L-279"><span class="linenos">279</span></a>        <span class="k">for</span> <span class="n">action</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">actions</span><span class="p">:</span>
-</span><span id="L-280"><a href="#L-280"><span class="linenos">280</span></a>            <span class="n">previous</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">wrapper</span><span class="p">(</span><span class="n">action</span><span class="p">,</span> <span class="n">previous</span><span class="p">)</span>
-</span><span id="L-281"><a href="#L-281"><span class="linenos">281</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">result</span> <span class="o">=</span> <span class="n">previous</span>
-</span><span id="L-282"><a href="#L-282"><span class="linenos">282</span></a>        <span class="k">assert</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">result</span><span class="p">[</span><span class="s1">&#39;run_id&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">run_id</span><span class="p">)</span>
-</span><span id="L-283"><a href="#L-283"><span class="linenos">283</span></a>        <span class="k">return</span> <span class="n">previous</span>
-</span><span id="L-284"><a href="#L-284"><span class="linenos">284</span></a>
-</span><span id="L-285"><a href="#L-285"><span class="linenos">285</span></a>    <span class="k">def</span> <span class="nf">finished</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="L-286"><a href="#L-286"><span class="linenos">286</span></a>        <span class="k">return</span> <span class="nb">all</span><span class="p">([</span><span class="n">action</span><span class="o">.</span><span class="n">finished</span><span class="p">()</span> <span class="k">for</span> <span class="n">action</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">actions</span><span class="p">])</span>
-</span><span id="L-287"><a href="#L-287"><span class="linenos">287</span></a>
-</span><span id="L-288"><a href="#L-288"><span class="linenos">288</span></a>    <span class="k">def</span> <span class="nf">finalise</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="L-289"><a href="#L-289"><span class="linenos">289</span></a>        <span class="k">for</span> <span class="n">action</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">actions</span><span class="p">:</span>
-</span><span id="L-290"><a href="#L-290"><span class="linenos">290</span></a>            <span class="n">action</span><span class="o">.</span><span class="n">finalise</span><span class="p">()</span>
+</span><span id="L-236"><a href="#L-236"><span class="linenos">236</span></a>        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">stdout</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span> <span class="n">close</span><span class="p">(</span><span class="n">stdout</span><span class="p">)</span>
+</span><span id="L-237"><a href="#L-237"><span class="linenos">237</span></a>        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">stderr</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span> <span class="n">close</span><span class="p">(</span><span class="n">stderr</span><span class="p">)</span>
+</span><span id="L-238"><a href="#L-238"><span class="linenos">238</span></a>        <span class="k">return</span> <span class="n">previous</span>
+</span><span id="L-239"><a href="#L-239"><span class="linenos">239</span></a>
+</span><span id="L-240"><a href="#L-240"><span class="linenos">240</span></a>    <span class="k">def</span> <span class="nf">finished</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="L-241"><a href="#L-241"><span class="linenos">241</span></a>        <span class="k">return</span> <span class="kc">True</span>
+</span><span id="L-242"><a href="#L-242"><span class="linenos">242</span></a>
+</span><span id="L-243"><a href="#L-243"><span class="linenos">243</span></a>    <span class="k">def</span> <span class="nf">finalise</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="L-244"><a href="#L-244"><span class="linenos">244</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Performs clean-up if necessary. In this case it isn&#39;t. I think.</span>
+</span><span id="L-245"><a href="#L-245"><span class="linenos">245</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-246"><a href="#L-246"><span class="linenos">246</span></a>        <span class="n">stdout</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</span><span id="L-247"><a href="#L-247"><span class="linenos">247</span></a>        <span class="n">stderr</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</span><span id="L-248"><a href="#L-248"><span class="linenos">248</span></a>        <span class="k">pass</span>
+</span><span id="L-249"><a href="#L-249"><span class="linenos">249</span></a>
+</span><span id="L-250"><a href="#L-250"><span class="linenos">250</span></a>    <span class="k">def</span> <span class="nf">succeeded</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="L-251"><a href="#L-251"><span class="linenos">251</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Will return True if the process finished successfully.</span>
+</span><span id="L-252"><a href="#L-252"><span class="linenos">252</span></a><span class="sd">        It judges based on the return code and will return False</span>
+</span><span id="L-253"><a href="#L-253"><span class="linenos">253</span></a><span class="sd">        if that code is not zero.</span>
+</span><span id="L-254"><a href="#L-254"><span class="linenos">254</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-255"><a href="#L-255"><span class="linenos">255</span></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ret</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+</span><span id="L-256"><a href="#L-256"><span class="linenos">256</span></a>            <span class="k">return</span> <span class="kc">False</span>
+</span><span id="L-257"><a href="#L-257"><span class="linenos">257</span></a>        <span class="k">else</span><span class="p">:</span>
+</span><span id="L-258"><a href="#L-258"><span class="linenos">258</span></a>            <span class="k">return</span> <span class="kc">True</span>
+</span><span id="L-259"><a href="#L-259"><span class="linenos">259</span></a>
+</span><span id="L-260"><a href="#L-260"><span class="linenos">260</span></a>
+</span><span id="L-261"><a href="#L-261"><span class="linenos">261</span></a><span class="k">class</span> <span class="nc">Actions</span><span class="p">():</span>
+</span><span id="L-262"><a href="#L-262"><span class="linenos">262</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+</span><span id="L-263"><a href="#L-263"><span class="linenos">263</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">actions</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+</span><span id="L-264"><a href="#L-264"><span class="linenos">264</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">wrapper</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">action</span><span class="p">,</span> <span class="n">previous</span><span class="p">:</span> <span class="n">action</span><span class="o">.</span><span class="n">start</span><span class="p">(</span><span class="n">previous</span><span class="p">)</span>
+</span><span id="L-265"><a href="#L-265"><span class="linenos">265</span></a>
+</span><span id="L-266"><a href="#L-266"><span class="linenos">266</span></a>    <span class="k">def</span> <span class="nf">set_wrapper</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">wrapper</span><span class="p">):</span>
+</span><span id="L-267"><a href="#L-267"><span class="linenos">267</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Adds a wrapper to be called on each Action.</span>
+</span><span id="L-268"><a href="#L-268"><span class="linenos">268</span></a>
+</span><span id="L-269"><a href="#L-269"><span class="linenos">269</span></a><span class="sd">        Parameters</span>
+</span><span id="L-270"><a href="#L-270"><span class="linenos">270</span></a><span class="sd">        ----------</span>
+</span><span id="L-271"><a href="#L-271"><span class="linenos">271</span></a><span class="sd">        wrapper: callable</span>
+</span><span id="L-272"><a href="#L-272"><span class="linenos">272</span></a><span class="sd">            A function to call on each Action. Should pass through the return of the</span>
+</span><span id="L-273"><a href="#L-273"><span class="linenos">273</span></a><span class="sd">            start method.</span>
+</span><span id="L-274"><a href="#L-274"><span class="linenos">274</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-275"><a href="#L-275"><span class="linenos">275</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">wrapper</span> <span class="o">=</span> <span class="n">wrapper</span>
+</span><span id="L-276"><a href="#L-276"><span class="linenos">276</span></a>
+</span><span id="L-277"><a href="#L-277"><span class="linenos">277</span></a>    <span class="k">def</span> <span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">previous</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+</span><span id="L-278"><a href="#L-278"><span class="linenos">278</span></a>        <span class="k">for</span> <span class="n">action</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">actions</span><span class="p">:</span>
+</span><span id="L-279"><a href="#L-279"><span class="linenos">279</span></a>            <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">action</span><span class="p">,</span> <span class="s1">&#39;start&#39;</span><span class="p">):</span>
+</span><span id="L-280"><a href="#L-280"><span class="linenos">280</span></a>                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;action in the actions list does not provide a start method&#39;</span><span class="p">)</span>
+</span><span id="L-281"><a href="#L-281"><span class="linenos">281</span></a>        <span class="n">previous</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">previous</span><span class="p">)</span>
+</span><span id="L-282"><a href="#L-282"><span class="linenos">282</span></a>        <span class="n">run_id</span> <span class="o">=</span> <span class="n">previous</span><span class="p">[</span><span class="s1">&#39;run_id&#39;</span><span class="p">]</span>
+</span><span id="L-283"><a href="#L-283"><span class="linenos">283</span></a>        <span class="k">for</span> <span class="n">action</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">actions</span><span class="p">:</span>
+</span><span id="L-284"><a href="#L-284"><span class="linenos">284</span></a>            <span class="n">previous</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">wrapper</span><span class="p">(</span><span class="n">action</span><span class="p">,</span> <span class="n">previous</span><span class="p">)</span>
+</span><span id="L-285"><a href="#L-285"><span class="linenos">285</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">result</span> <span class="o">=</span> <span class="n">previous</span>
+</span><span id="L-286"><a href="#L-286"><span class="linenos">286</span></a>        <span class="k">assert</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">result</span><span class="p">[</span><span class="s1">&#39;run_id&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">run_id</span><span class="p">)</span>
+</span><span id="L-287"><a href="#L-287"><span class="linenos">287</span></a>        <span class="k">return</span> <span class="n">previous</span>
+</span><span id="L-288"><a href="#L-288"><span class="linenos">288</span></a>
+</span><span id="L-289"><a href="#L-289"><span class="linenos">289</span></a>    <span class="k">def</span> <span class="nf">finished</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="L-290"><a href="#L-290"><span class="linenos">290</span></a>        <span class="k">return</span> <span class="nb">all</span><span class="p">([</span><span class="n">action</span><span class="o">.</span><span class="n">finished</span><span class="p">()</span> <span class="k">for</span> <span class="n">action</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">actions</span><span class="p">])</span>
 </span><span id="L-291"><a href="#L-291"><span class="linenos">291</span></a>
-</span><span id="L-292"><a href="#L-292"><span class="linenos">292</span></a>    <span class="k">def</span> <span class="nf">succeeded</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="L-293"><a href="#L-293"><span class="linenos">293</span></a>        <span class="k">return</span> <span class="nb">all</span><span class="p">([</span><span class="n">action</span><span class="o">.</span><span class="n">succeeded</span><span class="p">()</span> <span class="k">for</span> <span class="n">action</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">actions</span><span class="p">])</span>
+</span><span id="L-292"><a href="#L-292"><span class="linenos">292</span></a>    <span class="k">def</span> <span class="nf">finalise</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="L-293"><a href="#L-293"><span class="linenos">293</span></a>        <span class="k">for</span> <span class="n">action</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">actions</span><span class="p">:</span>
+</span><span id="L-294"><a href="#L-294"><span class="linenos">294</span></a>            <span class="n">action</span><span class="o">.</span><span class="n">finalise</span><span class="p">()</span>
+</span><span id="L-295"><a href="#L-295"><span class="linenos">295</span></a>
+</span><span id="L-296"><a href="#L-296"><span class="linenos">296</span></a>    <span class="k">def</span> <span class="nf">succeeded</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="L-297"><a href="#L-297"><span class="linenos">297</span></a>        <span class="k">return</span> <span class="nb">all</span><span class="p">([</span><span class="n">action</span><span class="o">.</span><span class="n">succeeded</span><span class="p">()</span> <span class="k">for</span> <span class="n">action</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">actions</span><span class="p">])</span>
 </span></pre></div>
 
 
@@ -856,7 +860,7 @@ Will then create a directory structure based on the numerical value of the <code
 </span><span id="Encode-117"><a href="#Encode-117"><span class="linenos">117</span></a>        <span class="k">try</span><span class="p">:</span>
 </span><span id="Encode-118"><a href="#Encode-118"><span class="linenos">118</span></a>            <span class="n">previous</span><span class="p">[</span><span class="s1">&#39;encoder_filename&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">encoder</span><span class="o">.</span><span class="n">target_filename</span>
 </span><span id="Encode-119"><a href="#Encode-119"><span class="linenos">119</span></a>        <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
-</span><span id="Encode-120"><a href="#Encode-120"><span class="linenos">120</span></a>            <span class="k">pass</span>
+</span><span id="Encode-120"><a href="#Encode-120"><span class="linenos">120</span></a>            <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;EasyVVUQ_Debug&quot;</span><span class="p">):</span> <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;AttributeError raised and ignored&#39;</span><span class="p">)</span>
 </span><span id="Encode-121"><a href="#Encode-121"><span class="linenos">121</span></a>        <span class="k">return</span> <span class="n">previous</span>
 </span><span id="Encode-122"><a href="#Encode-122"><span class="linenos">122</span></a>
 </span><span id="Encode-123"><a href="#Encode-123"><span class="linenos">123</span></a>    <span class="k">def</span> <span class="nf">finished</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -919,7 +923,7 @@ Will then create a directory structure based on the numerical value of the <code
 </span><span id="Encode.start-117"><a href="#Encode.start-117"><span class="linenos">117</span></a>        <span class="k">try</span><span class="p">:</span>
 </span><span id="Encode.start-118"><a href="#Encode.start-118"><span class="linenos">118</span></a>            <span class="n">previous</span><span class="p">[</span><span class="s1">&#39;encoder_filename&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">encoder</span><span class="o">.</span><span class="n">target_filename</span>
 </span><span id="Encode.start-119"><a href="#Encode.start-119"><span class="linenos">119</span></a>        <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
-</span><span id="Encode.start-120"><a href="#Encode.start-120"><span class="linenos">120</span></a>            <span class="k">pass</span>
+</span><span id="Encode.start-120"><a href="#Encode.start-120"><span class="linenos">120</span></a>            <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;EasyVVUQ_Debug&quot;</span><span class="p">):</span> <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;AttributeError raised and ignored&#39;</span><span class="p">)</span>
 </span><span id="Encode.start-121"><a href="#Encode.start-121"><span class="linenos">121</span></a>        <span class="k">return</span> <span class="n">previous</span>
 </span></pre></div>
 
@@ -1474,25 +1478,29 @@ Will then create a directory structure based on the numerical value of the <code
 </span><span id="ExecuteLocal-234"><a href="#ExecuteLocal-234"><span class="linenos">234</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">ret</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
 </span><span id="ExecuteLocal-235"><a href="#ExecuteLocal-235"><span class="linenos">235</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">full_cmd</span><span class="p">,</span> <span class="n">cwd</span><span class="o">=</span><span class="n">target_dir</span><span class="p">,</span>
 </span><span id="ExecuteLocal-236"><a href="#ExecuteLocal-236"><span class="linenos">236</span></a>            <span class="n">stdout</span><span class="o">=</span><span class="n">stdout</span><span class="p">,</span> <span class="n">stderr</span><span class="o">=</span><span class="n">stderr</span><span class="p">)</span>
-</span><span id="ExecuteLocal-237"><a href="#ExecuteLocal-237"><span class="linenos">237</span></a>        <span class="k">return</span> <span class="n">previous</span>
-</span><span id="ExecuteLocal-238"><a href="#ExecuteLocal-238"><span class="linenos">238</span></a>
-</span><span id="ExecuteLocal-239"><a href="#ExecuteLocal-239"><span class="linenos">239</span></a>    <span class="k">def</span> <span class="nf">finished</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="ExecuteLocal-240"><a href="#ExecuteLocal-240"><span class="linenos">240</span></a>        <span class="k">return</span> <span class="kc">True</span>
-</span><span id="ExecuteLocal-241"><a href="#ExecuteLocal-241"><span class="linenos">241</span></a>
-</span><span id="ExecuteLocal-242"><a href="#ExecuteLocal-242"><span class="linenos">242</span></a>    <span class="k">def</span> <span class="nf">finalise</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="ExecuteLocal-243"><a href="#ExecuteLocal-243"><span class="linenos">243</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Performs clean-up if necessary. In this case it isn&#39;t. I think.</span>
-</span><span id="ExecuteLocal-244"><a href="#ExecuteLocal-244"><span class="linenos">244</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="ExecuteLocal-245"><a href="#ExecuteLocal-245"><span class="linenos">245</span></a>        <span class="k">pass</span>
-</span><span id="ExecuteLocal-246"><a href="#ExecuteLocal-246"><span class="linenos">246</span></a>
-</span><span id="ExecuteLocal-247"><a href="#ExecuteLocal-247"><span class="linenos">247</span></a>    <span class="k">def</span> <span class="nf">succeeded</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="ExecuteLocal-248"><a href="#ExecuteLocal-248"><span class="linenos">248</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Will return True if the process finished successfully.</span>
-</span><span id="ExecuteLocal-249"><a href="#ExecuteLocal-249"><span class="linenos">249</span></a><span class="sd">        It judges based on the return code and will return False</span>
-</span><span id="ExecuteLocal-250"><a href="#ExecuteLocal-250"><span class="linenos">250</span></a><span class="sd">        if that code is not zero.</span>
-</span><span id="ExecuteLocal-251"><a href="#ExecuteLocal-251"><span class="linenos">251</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="ExecuteLocal-252"><a href="#ExecuteLocal-252"><span class="linenos">252</span></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ret</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
-</span><span id="ExecuteLocal-253"><a href="#ExecuteLocal-253"><span class="linenos">253</span></a>            <span class="k">return</span> <span class="kc">False</span>
-</span><span id="ExecuteLocal-254"><a href="#ExecuteLocal-254"><span class="linenos">254</span></a>        <span class="k">else</span><span class="p">:</span>
-</span><span id="ExecuteLocal-255"><a href="#ExecuteLocal-255"><span class="linenos">255</span></a>            <span class="k">return</span> <span class="kc">True</span>
+</span><span id="ExecuteLocal-237"><a href="#ExecuteLocal-237"><span class="linenos">237</span></a>        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">stdout</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span> <span class="n">close</span><span class="p">(</span><span class="n">stdout</span><span class="p">)</span>
+</span><span id="ExecuteLocal-238"><a href="#ExecuteLocal-238"><span class="linenos">238</span></a>        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">stderr</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span> <span class="n">close</span><span class="p">(</span><span class="n">stderr</span><span class="p">)</span>
+</span><span id="ExecuteLocal-239"><a href="#ExecuteLocal-239"><span class="linenos">239</span></a>        <span class="k">return</span> <span class="n">previous</span>
+</span><span id="ExecuteLocal-240"><a href="#ExecuteLocal-240"><span class="linenos">240</span></a>
+</span><span id="ExecuteLocal-241"><a href="#ExecuteLocal-241"><span class="linenos">241</span></a>    <span class="k">def</span> <span class="nf">finished</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="ExecuteLocal-242"><a href="#ExecuteLocal-242"><span class="linenos">242</span></a>        <span class="k">return</span> <span class="kc">True</span>
+</span><span id="ExecuteLocal-243"><a href="#ExecuteLocal-243"><span class="linenos">243</span></a>
+</span><span id="ExecuteLocal-244"><a href="#ExecuteLocal-244"><span class="linenos">244</span></a>    <span class="k">def</span> <span class="nf">finalise</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="ExecuteLocal-245"><a href="#ExecuteLocal-245"><span class="linenos">245</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Performs clean-up if necessary. In this case it isn&#39;t. I think.</span>
+</span><span id="ExecuteLocal-246"><a href="#ExecuteLocal-246"><span class="linenos">246</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="ExecuteLocal-247"><a href="#ExecuteLocal-247"><span class="linenos">247</span></a>        <span class="n">stdout</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</span><span id="ExecuteLocal-248"><a href="#ExecuteLocal-248"><span class="linenos">248</span></a>        <span class="n">stderr</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</span><span id="ExecuteLocal-249"><a href="#ExecuteLocal-249"><span class="linenos">249</span></a>        <span class="k">pass</span>
+</span><span id="ExecuteLocal-250"><a href="#ExecuteLocal-250"><span class="linenos">250</span></a>
+</span><span id="ExecuteLocal-251"><a href="#ExecuteLocal-251"><span class="linenos">251</span></a>    <span class="k">def</span> <span class="nf">succeeded</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="ExecuteLocal-252"><a href="#ExecuteLocal-252"><span class="linenos">252</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Will return True if the process finished successfully.</span>
+</span><span id="ExecuteLocal-253"><a href="#ExecuteLocal-253"><span class="linenos">253</span></a><span class="sd">        It judges based on the return code and will return False</span>
+</span><span id="ExecuteLocal-254"><a href="#ExecuteLocal-254"><span class="linenos">254</span></a><span class="sd">        if that code is not zero.</span>
+</span><span id="ExecuteLocal-255"><a href="#ExecuteLocal-255"><span class="linenos">255</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="ExecuteLocal-256"><a href="#ExecuteLocal-256"><span class="linenos">256</span></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ret</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+</span><span id="ExecuteLocal-257"><a href="#ExecuteLocal-257"><span class="linenos">257</span></a>            <span class="k">return</span> <span class="kc">False</span>
+</span><span id="ExecuteLocal-258"><a href="#ExecuteLocal-258"><span class="linenos">258</span></a>        <span class="k">else</span><span class="p">:</span>
+</span><span id="ExecuteLocal-259"><a href="#ExecuteLocal-259"><span class="linenos">259</span></a>            <span class="k">return</span> <span class="kc">True</span>
 </span></pre></div>
 
 
@@ -1610,7 +1618,9 @@ Will then create a directory structure based on the numerical value of the <code
 </span><span id="ExecuteLocal.start-234"><a href="#ExecuteLocal.start-234"><span class="linenos">234</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">ret</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
 </span><span id="ExecuteLocal.start-235"><a href="#ExecuteLocal.start-235"><span class="linenos">235</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">full_cmd</span><span class="p">,</span> <span class="n">cwd</span><span class="o">=</span><span class="n">target_dir</span><span class="p">,</span>
 </span><span id="ExecuteLocal.start-236"><a href="#ExecuteLocal.start-236"><span class="linenos">236</span></a>            <span class="n">stdout</span><span class="o">=</span><span class="n">stdout</span><span class="p">,</span> <span class="n">stderr</span><span class="o">=</span><span class="n">stderr</span><span class="p">)</span>
-</span><span id="ExecuteLocal.start-237"><a href="#ExecuteLocal.start-237"><span class="linenos">237</span></a>        <span class="k">return</span> <span class="n">previous</span>
+</span><span id="ExecuteLocal.start-237"><a href="#ExecuteLocal.start-237"><span class="linenos">237</span></a>        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">stdout</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span> <span class="n">close</span><span class="p">(</span><span class="n">stdout</span><span class="p">)</span>
+</span><span id="ExecuteLocal.start-238"><a href="#ExecuteLocal.start-238"><span class="linenos">238</span></a>        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">stderr</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span> <span class="n">close</span><span class="p">(</span><span class="n">stderr</span><span class="p">)</span>
+</span><span id="ExecuteLocal.start-239"><a href="#ExecuteLocal.start-239"><span class="linenos">239</span></a>        <span class="k">return</span> <span class="n">previous</span>
 </span></pre></div>
 
 
@@ -1628,8 +1638,8 @@ Will then create a directory structure based on the numerical value of the <code
 
     </div>
     <a class="headerlink" href="#ExecuteLocal.finished"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="ExecuteLocal.finished-239"><a href="#ExecuteLocal.finished-239"><span class="linenos">239</span></a>    <span class="k">def</span> <span class="nf">finished</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="ExecuteLocal.finished-240"><a href="#ExecuteLocal.finished-240"><span class="linenos">240</span></a>        <span class="k">return</span> <span class="kc">True</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="ExecuteLocal.finished-241"><a href="#ExecuteLocal.finished-241"><span class="linenos">241</span></a>    <span class="k">def</span> <span class="nf">finished</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="ExecuteLocal.finished-242"><a href="#ExecuteLocal.finished-242"><span class="linenos">242</span></a>        <span class="k">return</span> <span class="kc">True</span>
 </span></pre></div>
 
 
@@ -1647,10 +1657,12 @@ Will then create a directory structure based on the numerical value of the <code
 
     </div>
     <a class="headerlink" href="#ExecuteLocal.finalise"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="ExecuteLocal.finalise-242"><a href="#ExecuteLocal.finalise-242"><span class="linenos">242</span></a>    <span class="k">def</span> <span class="nf">finalise</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="ExecuteLocal.finalise-243"><a href="#ExecuteLocal.finalise-243"><span class="linenos">243</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Performs clean-up if necessary. In this case it isn&#39;t. I think.</span>
-</span><span id="ExecuteLocal.finalise-244"><a href="#ExecuteLocal.finalise-244"><span class="linenos">244</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="ExecuteLocal.finalise-245"><a href="#ExecuteLocal.finalise-245"><span class="linenos">245</span></a>        <span class="k">pass</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="ExecuteLocal.finalise-244"><a href="#ExecuteLocal.finalise-244"><span class="linenos">244</span></a>    <span class="k">def</span> <span class="nf">finalise</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="ExecuteLocal.finalise-245"><a href="#ExecuteLocal.finalise-245"><span class="linenos">245</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Performs clean-up if necessary. In this case it isn&#39;t. I think.</span>
+</span><span id="ExecuteLocal.finalise-246"><a href="#ExecuteLocal.finalise-246"><span class="linenos">246</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="ExecuteLocal.finalise-247"><a href="#ExecuteLocal.finalise-247"><span class="linenos">247</span></a>        <span class="n">stdout</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</span><span id="ExecuteLocal.finalise-248"><a href="#ExecuteLocal.finalise-248"><span class="linenos">248</span></a>        <span class="n">stderr</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</span><span id="ExecuteLocal.finalise-249"><a href="#ExecuteLocal.finalise-249"><span class="linenos">249</span></a>        <span class="k">pass</span>
 </span></pre></div>
 
 
@@ -1670,15 +1682,15 @@ Will then create a directory structure based on the numerical value of the <code
 
     </div>
     <a class="headerlink" href="#ExecuteLocal.succeeded"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="ExecuteLocal.succeeded-247"><a href="#ExecuteLocal.succeeded-247"><span class="linenos">247</span></a>    <span class="k">def</span> <span class="nf">succeeded</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="ExecuteLocal.succeeded-248"><a href="#ExecuteLocal.succeeded-248"><span class="linenos">248</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Will return True if the process finished successfully.</span>
-</span><span id="ExecuteLocal.succeeded-249"><a href="#ExecuteLocal.succeeded-249"><span class="linenos">249</span></a><span class="sd">        It judges based on the return code and will return False</span>
-</span><span id="ExecuteLocal.succeeded-250"><a href="#ExecuteLocal.succeeded-250"><span class="linenos">250</span></a><span class="sd">        if that code is not zero.</span>
-</span><span id="ExecuteLocal.succeeded-251"><a href="#ExecuteLocal.succeeded-251"><span class="linenos">251</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="ExecuteLocal.succeeded-252"><a href="#ExecuteLocal.succeeded-252"><span class="linenos">252</span></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ret</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
-</span><span id="ExecuteLocal.succeeded-253"><a href="#ExecuteLocal.succeeded-253"><span class="linenos">253</span></a>            <span class="k">return</span> <span class="kc">False</span>
-</span><span id="ExecuteLocal.succeeded-254"><a href="#ExecuteLocal.succeeded-254"><span class="linenos">254</span></a>        <span class="k">else</span><span class="p">:</span>
-</span><span id="ExecuteLocal.succeeded-255"><a href="#ExecuteLocal.succeeded-255"><span class="linenos">255</span></a>            <span class="k">return</span> <span class="kc">True</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="ExecuteLocal.succeeded-251"><a href="#ExecuteLocal.succeeded-251"><span class="linenos">251</span></a>    <span class="k">def</span> <span class="nf">succeeded</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="ExecuteLocal.succeeded-252"><a href="#ExecuteLocal.succeeded-252"><span class="linenos">252</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Will return True if the process finished successfully.</span>
+</span><span id="ExecuteLocal.succeeded-253"><a href="#ExecuteLocal.succeeded-253"><span class="linenos">253</span></a><span class="sd">        It judges based on the return code and will return False</span>
+</span><span id="ExecuteLocal.succeeded-254"><a href="#ExecuteLocal.succeeded-254"><span class="linenos">254</span></a><span class="sd">        if that code is not zero.</span>
+</span><span id="ExecuteLocal.succeeded-255"><a href="#ExecuteLocal.succeeded-255"><span class="linenos">255</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="ExecuteLocal.succeeded-256"><a href="#ExecuteLocal.succeeded-256"><span class="linenos">256</span></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ret</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+</span><span id="ExecuteLocal.succeeded-257"><a href="#ExecuteLocal.succeeded-257"><span class="linenos">257</span></a>            <span class="k">return</span> <span class="kc">False</span>
+</span><span id="ExecuteLocal.succeeded-258"><a href="#ExecuteLocal.succeeded-258"><span class="linenos">258</span></a>        <span class="k">else</span><span class="p">:</span>
+</span><span id="ExecuteLocal.succeeded-259"><a href="#ExecuteLocal.succeeded-259"><span class="linenos">259</span></a>            <span class="k">return</span> <span class="kc">True</span>
 </span></pre></div>
 
 
@@ -1701,43 +1713,43 @@ if that code is not zero.</p>
 
     </div>
     <a class="headerlink" href="#Actions"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="Actions-258"><a href="#Actions-258"><span class="linenos">258</span></a><span class="k">class</span> <span class="nc">Actions</span><span class="p">():</span>
-</span><span id="Actions-259"><a href="#Actions-259"><span class="linenos">259</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
-</span><span id="Actions-260"><a href="#Actions-260"><span class="linenos">260</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">actions</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
-</span><span id="Actions-261"><a href="#Actions-261"><span class="linenos">261</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">wrapper</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">action</span><span class="p">,</span> <span class="n">previous</span><span class="p">:</span> <span class="n">action</span><span class="o">.</span><span class="n">start</span><span class="p">(</span><span class="n">previous</span><span class="p">)</span>
-</span><span id="Actions-262"><a href="#Actions-262"><span class="linenos">262</span></a>
-</span><span id="Actions-263"><a href="#Actions-263"><span class="linenos">263</span></a>    <span class="k">def</span> <span class="nf">set_wrapper</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">wrapper</span><span class="p">):</span>
-</span><span id="Actions-264"><a href="#Actions-264"><span class="linenos">264</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Adds a wrapper to be called on each Action.</span>
-</span><span id="Actions-265"><a href="#Actions-265"><span class="linenos">265</span></a>
-</span><span id="Actions-266"><a href="#Actions-266"><span class="linenos">266</span></a><span class="sd">        Parameters</span>
-</span><span id="Actions-267"><a href="#Actions-267"><span class="linenos">267</span></a><span class="sd">        ----------</span>
-</span><span id="Actions-268"><a href="#Actions-268"><span class="linenos">268</span></a><span class="sd">        wrapper: callable</span>
-</span><span id="Actions-269"><a href="#Actions-269"><span class="linenos">269</span></a><span class="sd">            A function to call on each Action. Should pass through the return of the</span>
-</span><span id="Actions-270"><a href="#Actions-270"><span class="linenos">270</span></a><span class="sd">            start method.</span>
-</span><span id="Actions-271"><a href="#Actions-271"><span class="linenos">271</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="Actions-272"><a href="#Actions-272"><span class="linenos">272</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">wrapper</span> <span class="o">=</span> <span class="n">wrapper</span>
-</span><span id="Actions-273"><a href="#Actions-273"><span class="linenos">273</span></a>
-</span><span id="Actions-274"><a href="#Actions-274"><span class="linenos">274</span></a>    <span class="k">def</span> <span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">previous</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-</span><span id="Actions-275"><a href="#Actions-275"><span class="linenos">275</span></a>        <span class="k">for</span> <span class="n">action</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">actions</span><span class="p">:</span>
-</span><span id="Actions-276"><a href="#Actions-276"><span class="linenos">276</span></a>            <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">action</span><span class="p">,</span> <span class="s1">&#39;start&#39;</span><span class="p">):</span>
-</span><span id="Actions-277"><a href="#Actions-277"><span class="linenos">277</span></a>                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;action in the actions list does not provide a start method&#39;</span><span class="p">)</span>
-</span><span id="Actions-278"><a href="#Actions-278"><span class="linenos">278</span></a>        <span class="n">previous</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">previous</span><span class="p">)</span>
-</span><span id="Actions-279"><a href="#Actions-279"><span class="linenos">279</span></a>        <span class="n">run_id</span> <span class="o">=</span> <span class="n">previous</span><span class="p">[</span><span class="s1">&#39;run_id&#39;</span><span class="p">]</span>
-</span><span id="Actions-280"><a href="#Actions-280"><span class="linenos">280</span></a>        <span class="k">for</span> <span class="n">action</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">actions</span><span class="p">:</span>
-</span><span id="Actions-281"><a href="#Actions-281"><span class="linenos">281</span></a>            <span class="n">previous</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">wrapper</span><span class="p">(</span><span class="n">action</span><span class="p">,</span> <span class="n">previous</span><span class="p">)</span>
-</span><span id="Actions-282"><a href="#Actions-282"><span class="linenos">282</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">result</span> <span class="o">=</span> <span class="n">previous</span>
-</span><span id="Actions-283"><a href="#Actions-283"><span class="linenos">283</span></a>        <span class="k">assert</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">result</span><span class="p">[</span><span class="s1">&#39;run_id&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">run_id</span><span class="p">)</span>
-</span><span id="Actions-284"><a href="#Actions-284"><span class="linenos">284</span></a>        <span class="k">return</span> <span class="n">previous</span>
-</span><span id="Actions-285"><a href="#Actions-285"><span class="linenos">285</span></a>
-</span><span id="Actions-286"><a href="#Actions-286"><span class="linenos">286</span></a>    <span class="k">def</span> <span class="nf">finished</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="Actions-287"><a href="#Actions-287"><span class="linenos">287</span></a>        <span class="k">return</span> <span class="nb">all</span><span class="p">([</span><span class="n">action</span><span class="o">.</span><span class="n">finished</span><span class="p">()</span> <span class="k">for</span> <span class="n">action</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">actions</span><span class="p">])</span>
-</span><span id="Actions-288"><a href="#Actions-288"><span class="linenos">288</span></a>
-</span><span id="Actions-289"><a href="#Actions-289"><span class="linenos">289</span></a>    <span class="k">def</span> <span class="nf">finalise</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="Actions-290"><a href="#Actions-290"><span class="linenos">290</span></a>        <span class="k">for</span> <span class="n">action</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">actions</span><span class="p">:</span>
-</span><span id="Actions-291"><a href="#Actions-291"><span class="linenos">291</span></a>            <span class="n">action</span><span class="o">.</span><span class="n">finalise</span><span class="p">()</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="Actions-262"><a href="#Actions-262"><span class="linenos">262</span></a><span class="k">class</span> <span class="nc">Actions</span><span class="p">():</span>
+</span><span id="Actions-263"><a href="#Actions-263"><span class="linenos">263</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+</span><span id="Actions-264"><a href="#Actions-264"><span class="linenos">264</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">actions</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+</span><span id="Actions-265"><a href="#Actions-265"><span class="linenos">265</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">wrapper</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">action</span><span class="p">,</span> <span class="n">previous</span><span class="p">:</span> <span class="n">action</span><span class="o">.</span><span class="n">start</span><span class="p">(</span><span class="n">previous</span><span class="p">)</span>
+</span><span id="Actions-266"><a href="#Actions-266"><span class="linenos">266</span></a>
+</span><span id="Actions-267"><a href="#Actions-267"><span class="linenos">267</span></a>    <span class="k">def</span> <span class="nf">set_wrapper</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">wrapper</span><span class="p">):</span>
+</span><span id="Actions-268"><a href="#Actions-268"><span class="linenos">268</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Adds a wrapper to be called on each Action.</span>
+</span><span id="Actions-269"><a href="#Actions-269"><span class="linenos">269</span></a>
+</span><span id="Actions-270"><a href="#Actions-270"><span class="linenos">270</span></a><span class="sd">        Parameters</span>
+</span><span id="Actions-271"><a href="#Actions-271"><span class="linenos">271</span></a><span class="sd">        ----------</span>
+</span><span id="Actions-272"><a href="#Actions-272"><span class="linenos">272</span></a><span class="sd">        wrapper: callable</span>
+</span><span id="Actions-273"><a href="#Actions-273"><span class="linenos">273</span></a><span class="sd">            A function to call on each Action. Should pass through the return of the</span>
+</span><span id="Actions-274"><a href="#Actions-274"><span class="linenos">274</span></a><span class="sd">            start method.</span>
+</span><span id="Actions-275"><a href="#Actions-275"><span class="linenos">275</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="Actions-276"><a href="#Actions-276"><span class="linenos">276</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">wrapper</span> <span class="o">=</span> <span class="n">wrapper</span>
+</span><span id="Actions-277"><a href="#Actions-277"><span class="linenos">277</span></a>
+</span><span id="Actions-278"><a href="#Actions-278"><span class="linenos">278</span></a>    <span class="k">def</span> <span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">previous</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+</span><span id="Actions-279"><a href="#Actions-279"><span class="linenos">279</span></a>        <span class="k">for</span> <span class="n">action</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">actions</span><span class="p">:</span>
+</span><span id="Actions-280"><a href="#Actions-280"><span class="linenos">280</span></a>            <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">action</span><span class="p">,</span> <span class="s1">&#39;start&#39;</span><span class="p">):</span>
+</span><span id="Actions-281"><a href="#Actions-281"><span class="linenos">281</span></a>                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;action in the actions list does not provide a start method&#39;</span><span class="p">)</span>
+</span><span id="Actions-282"><a href="#Actions-282"><span class="linenos">282</span></a>        <span class="n">previous</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">previous</span><span class="p">)</span>
+</span><span id="Actions-283"><a href="#Actions-283"><span class="linenos">283</span></a>        <span class="n">run_id</span> <span class="o">=</span> <span class="n">previous</span><span class="p">[</span><span class="s1">&#39;run_id&#39;</span><span class="p">]</span>
+</span><span id="Actions-284"><a href="#Actions-284"><span class="linenos">284</span></a>        <span class="k">for</span> <span class="n">action</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">actions</span><span class="p">:</span>
+</span><span id="Actions-285"><a href="#Actions-285"><span class="linenos">285</span></a>            <span class="n">previous</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">wrapper</span><span class="p">(</span><span class="n">action</span><span class="p">,</span> <span class="n">previous</span><span class="p">)</span>
+</span><span id="Actions-286"><a href="#Actions-286"><span class="linenos">286</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">result</span> <span class="o">=</span> <span class="n">previous</span>
+</span><span id="Actions-287"><a href="#Actions-287"><span class="linenos">287</span></a>        <span class="k">assert</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">result</span><span class="p">[</span><span class="s1">&#39;run_id&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">run_id</span><span class="p">)</span>
+</span><span id="Actions-288"><a href="#Actions-288"><span class="linenos">288</span></a>        <span class="k">return</span> <span class="n">previous</span>
+</span><span id="Actions-289"><a href="#Actions-289"><span class="linenos">289</span></a>
+</span><span id="Actions-290"><a href="#Actions-290"><span class="linenos">290</span></a>    <span class="k">def</span> <span class="nf">finished</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="Actions-291"><a href="#Actions-291"><span class="linenos">291</span></a>        <span class="k">return</span> <span class="nb">all</span><span class="p">([</span><span class="n">action</span><span class="o">.</span><span class="n">finished</span><span class="p">()</span> <span class="k">for</span> <span class="n">action</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">actions</span><span class="p">])</span>
 </span><span id="Actions-292"><a href="#Actions-292"><span class="linenos">292</span></a>
-</span><span id="Actions-293"><a href="#Actions-293"><span class="linenos">293</span></a>    <span class="k">def</span> <span class="nf">succeeded</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="Actions-294"><a href="#Actions-294"><span class="linenos">294</span></a>        <span class="k">return</span> <span class="nb">all</span><span class="p">([</span><span class="n">action</span><span class="o">.</span><span class="n">succeeded</span><span class="p">()</span> <span class="k">for</span> <span class="n">action</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">actions</span><span class="p">])</span>
+</span><span id="Actions-293"><a href="#Actions-293"><span class="linenos">293</span></a>    <span class="k">def</span> <span class="nf">finalise</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="Actions-294"><a href="#Actions-294"><span class="linenos">294</span></a>        <span class="k">for</span> <span class="n">action</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">actions</span><span class="p">:</span>
+</span><span id="Actions-295"><a href="#Actions-295"><span class="linenos">295</span></a>            <span class="n">action</span><span class="o">.</span><span class="n">finalise</span><span class="p">()</span>
+</span><span id="Actions-296"><a href="#Actions-296"><span class="linenos">296</span></a>
+</span><span id="Actions-297"><a href="#Actions-297"><span class="linenos">297</span></a>    <span class="k">def</span> <span class="nf">succeeded</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="Actions-298"><a href="#Actions-298"><span class="linenos">298</span></a>        <span class="k">return</span> <span class="nb">all</span><span class="p">([</span><span class="n">action</span><span class="o">.</span><span class="n">succeeded</span><span class="p">()</span> <span class="k">for</span> <span class="n">action</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">actions</span><span class="p">])</span>
 </span></pre></div>
 
 
@@ -1753,9 +1765,9 @@ if that code is not zero.</p>
 
     </div>
     <a class="headerlink" href="#Actions.__init__"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="Actions.__init__-259"><a href="#Actions.__init__-259"><span class="linenos">259</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
-</span><span id="Actions.__init__-260"><a href="#Actions.__init__-260"><span class="linenos">260</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">actions</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
-</span><span id="Actions.__init__-261"><a href="#Actions.__init__-261"><span class="linenos">261</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">wrapper</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">action</span><span class="p">,</span> <span class="n">previous</span><span class="p">:</span> <span class="n">action</span><span class="o">.</span><span class="n">start</span><span class="p">(</span><span class="n">previous</span><span class="p">)</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="Actions.__init__-263"><a href="#Actions.__init__-263"><span class="linenos">263</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+</span><span id="Actions.__init__-264"><a href="#Actions.__init__-264"><span class="linenos">264</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">actions</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+</span><span id="Actions.__init__-265"><a href="#Actions.__init__-265"><span class="linenos">265</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">wrapper</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">action</span><span class="p">,</span> <span class="n">previous</span><span class="p">:</span> <span class="n">action</span><span class="o">.</span><span class="n">start</span><span class="p">(</span><span class="n">previous</span><span class="p">)</span>
 </span></pre></div>
 
 
@@ -1795,16 +1807,16 @@ if that code is not zero.</p>
 
     </div>
     <a class="headerlink" href="#Actions.set_wrapper"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="Actions.set_wrapper-263"><a href="#Actions.set_wrapper-263"><span class="linenos">263</span></a>    <span class="k">def</span> <span class="nf">set_wrapper</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">wrapper</span><span class="p">):</span>
-</span><span id="Actions.set_wrapper-264"><a href="#Actions.set_wrapper-264"><span class="linenos">264</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Adds a wrapper to be called on each Action.</span>
-</span><span id="Actions.set_wrapper-265"><a href="#Actions.set_wrapper-265"><span class="linenos">265</span></a>
-</span><span id="Actions.set_wrapper-266"><a href="#Actions.set_wrapper-266"><span class="linenos">266</span></a><span class="sd">        Parameters</span>
-</span><span id="Actions.set_wrapper-267"><a href="#Actions.set_wrapper-267"><span class="linenos">267</span></a><span class="sd">        ----------</span>
-</span><span id="Actions.set_wrapper-268"><a href="#Actions.set_wrapper-268"><span class="linenos">268</span></a><span class="sd">        wrapper: callable</span>
-</span><span id="Actions.set_wrapper-269"><a href="#Actions.set_wrapper-269"><span class="linenos">269</span></a><span class="sd">            A function to call on each Action. Should pass through the return of the</span>
-</span><span id="Actions.set_wrapper-270"><a href="#Actions.set_wrapper-270"><span class="linenos">270</span></a><span class="sd">            start method.</span>
-</span><span id="Actions.set_wrapper-271"><a href="#Actions.set_wrapper-271"><span class="linenos">271</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="Actions.set_wrapper-272"><a href="#Actions.set_wrapper-272"><span class="linenos">272</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">wrapper</span> <span class="o">=</span> <span class="n">wrapper</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="Actions.set_wrapper-267"><a href="#Actions.set_wrapper-267"><span class="linenos">267</span></a>    <span class="k">def</span> <span class="nf">set_wrapper</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">wrapper</span><span class="p">):</span>
+</span><span id="Actions.set_wrapper-268"><a href="#Actions.set_wrapper-268"><span class="linenos">268</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Adds a wrapper to be called on each Action.</span>
+</span><span id="Actions.set_wrapper-269"><a href="#Actions.set_wrapper-269"><span class="linenos">269</span></a>
+</span><span id="Actions.set_wrapper-270"><a href="#Actions.set_wrapper-270"><span class="linenos">270</span></a><span class="sd">        Parameters</span>
+</span><span id="Actions.set_wrapper-271"><a href="#Actions.set_wrapper-271"><span class="linenos">271</span></a><span class="sd">        ----------</span>
+</span><span id="Actions.set_wrapper-272"><a href="#Actions.set_wrapper-272"><span class="linenos">272</span></a><span class="sd">        wrapper: callable</span>
+</span><span id="Actions.set_wrapper-273"><a href="#Actions.set_wrapper-273"><span class="linenos">273</span></a><span class="sd">            A function to call on each Action. Should pass through the return of the</span>
+</span><span id="Actions.set_wrapper-274"><a href="#Actions.set_wrapper-274"><span class="linenos">274</span></a><span class="sd">            start method.</span>
+</span><span id="Actions.set_wrapper-275"><a href="#Actions.set_wrapper-275"><span class="linenos">275</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="Actions.set_wrapper-276"><a href="#Actions.set_wrapper-276"><span class="linenos">276</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">wrapper</span> <span class="o">=</span> <span class="n">wrapper</span>
 </span></pre></div>
 
 
@@ -1832,17 +1844,17 @@ start method.</li>
 
     </div>
     <a class="headerlink" href="#Actions.start"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="Actions.start-274"><a href="#Actions.start-274"><span class="linenos">274</span></a>    <span class="k">def</span> <span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">previous</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-</span><span id="Actions.start-275"><a href="#Actions.start-275"><span class="linenos">275</span></a>        <span class="k">for</span> <span class="n">action</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">actions</span><span class="p">:</span>
-</span><span id="Actions.start-276"><a href="#Actions.start-276"><span class="linenos">276</span></a>            <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">action</span><span class="p">,</span> <span class="s1">&#39;start&#39;</span><span class="p">):</span>
-</span><span id="Actions.start-277"><a href="#Actions.start-277"><span class="linenos">277</span></a>                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;action in the actions list does not provide a start method&#39;</span><span class="p">)</span>
-</span><span id="Actions.start-278"><a href="#Actions.start-278"><span class="linenos">278</span></a>        <span class="n">previous</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">previous</span><span class="p">)</span>
-</span><span id="Actions.start-279"><a href="#Actions.start-279"><span class="linenos">279</span></a>        <span class="n">run_id</span> <span class="o">=</span> <span class="n">previous</span><span class="p">[</span><span class="s1">&#39;run_id&#39;</span><span class="p">]</span>
-</span><span id="Actions.start-280"><a href="#Actions.start-280"><span class="linenos">280</span></a>        <span class="k">for</span> <span class="n">action</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">actions</span><span class="p">:</span>
-</span><span id="Actions.start-281"><a href="#Actions.start-281"><span class="linenos">281</span></a>            <span class="n">previous</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">wrapper</span><span class="p">(</span><span class="n">action</span><span class="p">,</span> <span class="n">previous</span><span class="p">)</span>
-</span><span id="Actions.start-282"><a href="#Actions.start-282"><span class="linenos">282</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">result</span> <span class="o">=</span> <span class="n">previous</span>
-</span><span id="Actions.start-283"><a href="#Actions.start-283"><span class="linenos">283</span></a>        <span class="k">assert</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">result</span><span class="p">[</span><span class="s1">&#39;run_id&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">run_id</span><span class="p">)</span>
-</span><span id="Actions.start-284"><a href="#Actions.start-284"><span class="linenos">284</span></a>        <span class="k">return</span> <span class="n">previous</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="Actions.start-278"><a href="#Actions.start-278"><span class="linenos">278</span></a>    <span class="k">def</span> <span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">previous</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+</span><span id="Actions.start-279"><a href="#Actions.start-279"><span class="linenos">279</span></a>        <span class="k">for</span> <span class="n">action</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">actions</span><span class="p">:</span>
+</span><span id="Actions.start-280"><a href="#Actions.start-280"><span class="linenos">280</span></a>            <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">action</span><span class="p">,</span> <span class="s1">&#39;start&#39;</span><span class="p">):</span>
+</span><span id="Actions.start-281"><a href="#Actions.start-281"><span class="linenos">281</span></a>                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;action in the actions list does not provide a start method&#39;</span><span class="p">)</span>
+</span><span id="Actions.start-282"><a href="#Actions.start-282"><span class="linenos">282</span></a>        <span class="n">previous</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">previous</span><span class="p">)</span>
+</span><span id="Actions.start-283"><a href="#Actions.start-283"><span class="linenos">283</span></a>        <span class="n">run_id</span> <span class="o">=</span> <span class="n">previous</span><span class="p">[</span><span class="s1">&#39;run_id&#39;</span><span class="p">]</span>
+</span><span id="Actions.start-284"><a href="#Actions.start-284"><span class="linenos">284</span></a>        <span class="k">for</span> <span class="n">action</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">actions</span><span class="p">:</span>
+</span><span id="Actions.start-285"><a href="#Actions.start-285"><span class="linenos">285</span></a>            <span class="n">previous</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">wrapper</span><span class="p">(</span><span class="n">action</span><span class="p">,</span> <span class="n">previous</span><span class="p">)</span>
+</span><span id="Actions.start-286"><a href="#Actions.start-286"><span class="linenos">286</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">result</span> <span class="o">=</span> <span class="n">previous</span>
+</span><span id="Actions.start-287"><a href="#Actions.start-287"><span class="linenos">287</span></a>        <span class="k">assert</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">result</span><span class="p">[</span><span class="s1">&#39;run_id&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">run_id</span><span class="p">)</span>
+</span><span id="Actions.start-288"><a href="#Actions.start-288"><span class="linenos">288</span></a>        <span class="k">return</span> <span class="n">previous</span>
 </span></pre></div>
 
 
@@ -1860,8 +1872,8 @@ start method.</li>
 
     </div>
     <a class="headerlink" href="#Actions.finished"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="Actions.finished-286"><a href="#Actions.finished-286"><span class="linenos">286</span></a>    <span class="k">def</span> <span class="nf">finished</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="Actions.finished-287"><a href="#Actions.finished-287"><span class="linenos">287</span></a>        <span class="k">return</span> <span class="nb">all</span><span class="p">([</span><span class="n">action</span><span class="o">.</span><span class="n">finished</span><span class="p">()</span> <span class="k">for</span> <span class="n">action</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">actions</span><span class="p">])</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="Actions.finished-290"><a href="#Actions.finished-290"><span class="linenos">290</span></a>    <span class="k">def</span> <span class="nf">finished</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="Actions.finished-291"><a href="#Actions.finished-291"><span class="linenos">291</span></a>        <span class="k">return</span> <span class="nb">all</span><span class="p">([</span><span class="n">action</span><span class="o">.</span><span class="n">finished</span><span class="p">()</span> <span class="k">for</span> <span class="n">action</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">actions</span><span class="p">])</span>
 </span></pre></div>
 
 
@@ -1879,9 +1891,9 @@ start method.</li>
 
     </div>
     <a class="headerlink" href="#Actions.finalise"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="Actions.finalise-289"><a href="#Actions.finalise-289"><span class="linenos">289</span></a>    <span class="k">def</span> <span class="nf">finalise</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="Actions.finalise-290"><a href="#Actions.finalise-290"><span class="linenos">290</span></a>        <span class="k">for</span> <span class="n">action</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">actions</span><span class="p">:</span>
-</span><span id="Actions.finalise-291"><a href="#Actions.finalise-291"><span class="linenos">291</span></a>            <span class="n">action</span><span class="o">.</span><span class="n">finalise</span><span class="p">()</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="Actions.finalise-293"><a href="#Actions.finalise-293"><span class="linenos">293</span></a>    <span class="k">def</span> <span class="nf">finalise</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="Actions.finalise-294"><a href="#Actions.finalise-294"><span class="linenos">294</span></a>        <span class="k">for</span> <span class="n">action</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">actions</span><span class="p">:</span>
+</span><span id="Actions.finalise-295"><a href="#Actions.finalise-295"><span class="linenos">295</span></a>            <span class="n">action</span><span class="o">.</span><span class="n">finalise</span><span class="p">()</span>
 </span></pre></div>
 
 
@@ -1899,8 +1911,8 @@ start method.</li>
 
     </div>
     <a class="headerlink" href="#Actions.succeeded"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="Actions.succeeded-293"><a href="#Actions.succeeded-293"><span class="linenos">293</span></a>    <span class="k">def</span> <span class="nf">succeeded</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="Actions.succeeded-294"><a href="#Actions.succeeded-294"><span class="linenos">294</span></a>        <span class="k">return</span> <span class="nb">all</span><span class="p">([</span><span class="n">action</span><span class="o">.</span><span class="n">succeeded</span><span class="p">()</span> <span class="k">for</span> <span class="n">action</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">actions</span><span class="p">])</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="Actions.succeeded-297"><a href="#Actions.succeeded-297"><span class="linenos">297</span></a>    <span class="k">def</span> <span class="nf">succeeded</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="Actions.succeeded-298"><a href="#Actions.succeeded-298"><span class="linenos">298</span></a>        <span class="k">return</span> <span class="nb">all</span><span class="p">([</span><span class="n">action</span><span class="o">.</span><span class="n">succeeded</span><span class="p">()</span> <span class="k">for</span> <span class="n">action</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">actions</span><span class="p">])</span>
 </span></pre></div>
 
 
