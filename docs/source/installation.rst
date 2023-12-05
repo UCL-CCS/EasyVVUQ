@@ -6,7 +6,7 @@ EasyVVUQ installation
 Installation
 ------------
 
-.. note:: To use the library you will need Python 3.7+.
+.. note:: To use the library you will need Python 3.8+.
 
 Installation should be straight forward::
 
@@ -21,12 +21,11 @@ Github as follows::
 
     git clone https://github.com/UCL-CCS/EasyVVUQ.git
     cd EasyVVUQ
-    pip install -r requirements.txt
-    python setup.py install
+    bash install_EasyVVUQ.sh
 
-.. note:: The above assumes that your default `python` is Python 3. If 
-          that is not the case replace `python` with `python3` and `pip` 
-          with `pip3`.
+.. note:: The `install_EasyVVUQ.sh` script above assumes that your default `python`
+          is Python 3. If that is not the case replace `python` with `python3` and
+          `pip` with `pip3`.
 
 Depending on your setup you may not have permission to install packages.
 In that case, we recommend creating a virtual environment using  
