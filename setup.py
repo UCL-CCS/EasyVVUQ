@@ -5,39 +5,6 @@ import distutils
 import versioneer
 import subprocess
 
-
-class BuildCannonsimCommand(distutils.cmd.Command):
-    description = 'build cannonsim'
-    user_options = []
-
-    def initialize_options(self):
-        pass
-
-    def finalize_options(self):
-        pass
-
-    def run(self):
-        self.announce('Building cannonsim')
-        subprocess.check_call(['make'], cwd=path.abspath('./tests/cannonsim/src'))
-
-
-class BuildNotebooks(distutils.cmd.Command):
-    description = 'build tutorials as Jupyter notebooks'
-    user_options = []
-
-    def initialize_options(self):
-        pass
-
-    def finalize_options(self):
-        pass
-
-    def run(self):
-        self.announce('Building tutorial as Jupyter notebooks')
-        tutorials = ['basic_tutorial.rst', 'cooling_coffee_cup.rst']
-        for tutorial in tutorials:
-            subprocess.check_call(['rst2ipynb', tutorial, '-o', path.splitext(tutorial)[0] + '.ipynb'], cwd=path.abspath('./docs'))
-
-
 class BuildPyCommand(setuptools.command.build_py.build_py):
     def run(self):
         setuptools.command.build_py.build_py.run(self)
@@ -48,8 +15,6 @@ with open(path.join(this_directory, 'README.md'), encoding='utf-8') as f:
     long_description = f.read()
 
 cmdclass = versioneer.get_cmdclass()
-cmdclass['build_cannonsim'] = BuildCannonsimCommand
-cmdclass['build_notebooks'] = BuildNotebooks
 cmdclass['build_py'] = BuildPyCommand
 
 setup(

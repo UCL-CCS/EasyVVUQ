@@ -9,10 +9,8 @@ import pandas as pd
 import numpy as np
 from sqlalchemy.sql import case
 from sqlalchemy import create_engine, Column, Integer, String, ForeignKey
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker, declarative_base
 from sqlalchemy import MetaData
-from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import text
 from sqlalchemy.engine import Engine
 from sqlalchemy import event
@@ -321,7 +319,7 @@ class CampaignDB(BaseCampaignDB):
             The sampler that should be used as the new state
         """
 
-        selected = self.session.query(SamplerTable).get(sampler_id)
+        selected = self.session.get(SamplerTable,sampler_id)
         selected.sampler = easyvvuq_serialize(sampler_element)
         self.session.commit()
 
@@ -340,7 +338,7 @@ class CampaignDB(BaseCampaignDB):
             The 'live' sampler object, deserialized from the state in the db
         """
         try:
-            serialized_sampler = self.session.query(SamplerTable).get(sampler_id).sampler
+            serialized_sampler = self.session.get(SamplerTable,sampler_id).sampler 
             sampler = easyvvuq_deserialize(serialized_sampler.encode('utf-8'))
         except AttributeError:
             sampler = None
@@ -581,7 +579,7 @@ class CampaignDB(BaseCampaignDB):
         int
             The id of the sampler set for the specified campaign
         """
-        sampler_id = self.session.query(CampaignTable).get(campaign_id).sampler
+        sampler_id = self.session.get(CampaignTable,campaign_id).sampler
         return sampler_id
 
     def set_sampler(self, campaign_id, sampler_id):
@@ -594,7 +592,7 @@ class CampaignDB(BaseCampaignDB):
         sampler_id: int
             ID of the sampler.
         """
-        self.session.query(CampaignTable).get(campaign_id).sampler = sampler_id
+        self.session.get(CampaignTable,campaign_id).sampler = sampler_id
         self.session.commit()
 
     def campaign_dir(self, campaign_name=None):

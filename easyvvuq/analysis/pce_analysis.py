@@ -10,6 +10,7 @@ from easyvvuq import OutputType
 from .base import BaseAnalysisElement
 from .results import AnalysisResults
 from .qmc_analysis import QMCAnalysisResults
+import traceback
 
 __author__ = 'Jalal Lakhlili'
 __license__ = "LGPL"
@@ -475,29 +476,33 @@ class PCEAnalysis(BaseAnalysisElement):
                 results['sobols_total'][k] = ST
 
             # Sensitivity Analysis: Derivative based
-            dY_hat = build_surrogate_der(fit, verbose=False)
-            derivatives_first_dict = {}
-            Ndimensions = len(self.sampler.vary.vary_dict)
-            for i, param_name in enumerate(self.sampler.vary.vary_dict):
-                if self.sampler.nominal_value:
-                    # Evaluate dY_hat['param'] at the nominal value of the parameters
-                    values = self.sampler.nominal_value
-                    logging.info(f"Using nominal value of the parameters to evaluate the derivative ")
-                    derivatives_first_dict[param_name] = cp.polynomial(dY_hat[param_name])(*[v for v in values.values()])
-                elif all([type(v) == type(cp.Normal()) for v in self.sampler.vary.vary_dict.values()]):
-                    # Evaluate dY_hat['param'] at the mean of the parameters
-                    logging.info(f"Using mean value of the parameters to evaluate the derivative ")
-                    derivatives_first_dict[param_name] = cp.polynomial(dY_hat[param_name])(*[v.get_mom_parameters()["shift"][0] for v in self.sampler.vary.vary_dict.values()])
-                elif all([type(v) == type(cp.Uniform()) for v in self.sampler.vary.vary_dict.values()]):
-                    logging.info(f"Using mean value of the parameters to evaluate the derivative ")
-                    # Evaluate dY_hat['param'] at the mean of the parameters
-                    derivatives_first_dict[param_name] = cp.polynomial(dY_hat[param_name])(*[(v.lower + v.upper)/2.0 for v in self.sampler.vary.vary_dict.values()])
-                else:
-                    # Evaluate dY_hat['param'] at the zero vector
-                    logging.info(f"Using zero vector to evaluate the derivative ")
-                    derivatives_first_dict[param_name] = cp.polynomial(dY_hat[param_name])(*np.zeros(Ndimensions))
+            try:
+                dY_hat = build_surrogate_der(fit, verbose=False)
+                derivatives_first_dict = {}
+                Ndimensions = len(self.sampler.vary.vary_dict)
+                for i, param_name in enumerate(self.sampler.vary.vary_dict):
+                    if self.sampler.nominal_value:
+                        # Evaluate dY_hat['param'] at the nominal value of the parameters
+                        values = self.sampler.nominal_value
+                        logging.info(f"Using nominal value of the parameters to evaluate the derivative ")
+                        derivatives_first_dict[param_name] = cp.polynomial(dY_hat[param_name])(*[v for v in values.values()])
+                    elif all([type(v) == type(cp.Normal()) for v in self.sampler.vary.vary_dict.values()]):
+                        # Evaluate dY_hat['param'] at the mean of the parameters
+                        logging.info(f"Using mean value of the parameters to evaluate the derivative ")
+                        derivatives_first_dict[param_name] = cp.polynomial(dY_hat[param_name])(*[v.get_mom_parameters()["shift"][0] for v in self.sampler.vary.vary_dict.values()])
+                    elif all([type(v) == type(cp.Uniform()) for v in self.sampler.vary.vary_dict.values()]):
+                        logging.info(f"Using mean value of the parameters to evaluate the derivative ")
+                        # Evaluate dY_hat['param'] at the mean of the parameters
+                        derivatives_first_dict[param_name] = cp.polynomial(dY_hat[param_name])(*[(v.lower + v.upper)/2.0 for v in self.sampler.vary.vary_dict.values()])
+                    else:
+                        # Evaluate dY_hat['param'] at the zero vector
+                        logging.info(f"Using zero vector to evaluate the derivative ")
+                        derivatives_first_dict[param_name] = cp.polynomial(dY_hat[param_name])(*np.zeros(Ndimensions))
 
-            results['derivatives_first'][k] = derivatives_first_dict
+                    results['derivatives_first'][k] = derivatives_first_dict
+
+            except Exception:
+                traceback.print_exc()
 
             # Transform the relative numbers back to the absolute values
             if self.relative_analysis:

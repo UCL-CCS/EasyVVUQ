@@ -328,7 +328,7 @@ def get_root():
             print("Warning: build in %s is using versioneer.py from %s"
                   % (os.path.dirname(me), versioneer_py))
     except NameError:
-        pass
+        print('NameError raised and ignored')
     return root
 
 
@@ -574,7 +574,7 @@ def git_get_keywords(versionfile_abs):
                     keywords["date"] = mo.group(1)
         f.close()
     except EnvironmentError:
-        pass
+        print('EnvironmentError raised and ignored')
     return keywords
 
 
@@ -908,7 +908,7 @@ def get_versions():
         return git_versions_from_keywords(get_keywords(), cfg.tag_prefix,
                                           verbose)
     except NotThisMethod:
-        pass
+        print('NotThisMethod raised and ignored')
 
     try:
         root = os.path.realpath(__file__)
@@ -927,13 +927,13 @@ def get_versions():
         pieces = git_pieces_from_vcs(cfg.tag_prefix, root, verbose)
         return render(pieces, cfg.style)
     except NotThisMethod:
-        pass
+        print('NotThisMethod raised and ignored')
 
     try:
         if cfg.parentdir_prefix:
             return versions_from_parentdir(cfg.parentdir_prefix, root, verbose)
     except NotThisMethod:
-        pass
+        print('NotThisMethod raised and ignored')
 
     return {"version": "0+unknown", "full-revisionid": None,
             "dirty": None,
@@ -966,7 +966,7 @@ def git_get_keywords(versionfile_abs):
                     keywords["date"] = mo.group(1)
         f.close()
     except EnvironmentError:
-        pass
+        print('EnvironmentError raised and ignored')
     return keywords
 
 
@@ -1146,7 +1146,7 @@ def do_vcs_install(manifest_in, versionfile_source, ipy):
                     present = True
         f.close()
     except EnvironmentError:
-        pass
+        print('EnvironmentError raised and ignored')
     if not present:
         f = open(".gitattributes", "a+")
         f.write("%s export-subst\n" % versionfile_source)
@@ -1437,7 +1437,7 @@ def get_versions(verbose=False):
                 print("got version from expanded keyword %s" % ver)
             return ver
         except NotThisMethod:
-            pass
+            print('NotThisMethod raised and ignored')
 
     try:
         ver = versions_from_file(versionfile_abs)
@@ -1445,7 +1445,7 @@ def get_versions(verbose=False):
             print("got version from file %s %s" % (versionfile_abs, ver))
         return ver
     except NotThisMethod:
-        pass
+        print('NotThisMethod raised and ignored')
 
     from_vcs_f = handlers.get("pieces_from_vcs")
     if from_vcs_f:
@@ -1456,7 +1456,7 @@ def get_versions(verbose=False):
                 print("got version from VCS %s" % ver)
             return ver
         except NotThisMethod:
-            pass
+            print('NotThisMethod raised and ignored')
 
     try:
         if cfg.parentdir_prefix:
@@ -1465,7 +1465,7 @@ def get_versions(verbose=False):
                 print("got version from parentdir %s" % ver)
             return ver
     except NotThisMethod:
-        pass
+        print('NotThisMethod raised and ignored')
 
     if verbose:
         print("unable to compute version")
@@ -1750,7 +1750,8 @@ def do_setup():
                     for include in line.split()[1:]:
                         simple_includes.add(include)
     except EnvironmentError:
-        pass
+        print('EnvironmentError raised and ignored')
+
     # That doesn't cover everything MANIFEST.in can do
     # (http://docs.python.org/2/distutils/sourcedist.html#commands), so
     # it might give some false negatives. Appending redundant 'include'

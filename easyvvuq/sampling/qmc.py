@@ -2,7 +2,8 @@
 """
 
 import chaospy as cp
-from SALib.sample import saltelli
+from SALib.sample import sobol
+#from SALib.sample import saltelli
 from .base import BaseSamplingElement, Vary
 import logging
 
@@ -80,7 +81,7 @@ class QMCSampler(BaseSamplingElement, sampler_name="QMC_sampler"):
             "bounds": [[0, 1]] * self.n_params
         }
 
-        nodes = saltelli.sample(problem, n_mc_samples, calc_second_order=False)
+        nodes = sobol.sample(problem, n_mc_samples, calc_second_order=False,scramble=True)
 
         self._samples = self.distribution.inv(dist_U.fwd(nodes.transpose()))
 
