@@ -39,13 +39,8 @@ def sobols(P, coefficients):
 
 # Read an old campaign
 time_start = time.time()
-<<<<<<< HEAD
 DIR = os.getenv('DIR')   ## use the environment variable DIR to store the previous campaign directory path
 old_campaign = uq.Campaign(name="fusion_pce.", db_location= f'sqlite:///{os.path.abspath(os.curdir)}/{DIR}/campaign.db')
-=======
-DIR = '[[DIR]]'   ## replace with directory containing campaign.db
-old_campaign = uq.Campaign(name="solps_pce.", db_location= f'{os.path.abspath(os.curdir)}/{DIR}/campaign.db')
->>>>>>> 5511dc091aadfb198b8fbe22ae8b4856db35afde
 time_end = time.time()
 print('Time for phase 1 = %.3f' % (time_end-time_start))
 

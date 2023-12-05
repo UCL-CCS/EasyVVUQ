@@ -310,4 +310,4 @@ def test_mv_collation(tmp_path, app_info):
     results = [(0, mv_data), (1, mv_data)]
     campaign.store_results('test', results)
     assert (not campaign.get_results('test', 1).empty)
-    return campaign
+    
