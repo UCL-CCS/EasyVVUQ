@@ -1,5 +1,5 @@
 from .basic_stats import BasicStats
-from .ensemble_boot import EnsembleBoot
+from .ensemble_boot import EnsembleBoot, EnsembleBootMultiple
 from .sc_analysis import SCAnalysis
 from .ssc_analysis import SSCAnalysis
 from .pce_analysis import PCEAnalysis

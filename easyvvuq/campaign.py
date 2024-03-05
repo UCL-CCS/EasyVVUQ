@@ -407,6 +407,17 @@ class Campaign:
             num_added += 1
             if num_samples != 0 and num_added >= num_samples:
                 break
+
+        # NOTE:
+        # PSNC temporary solution to non integer values.
+        # For each parameter describe as "integer" - force cast to integer.
+        logging.info("Starting parameter rounding")
+        for run in new_runs:
+            logging.info(f"Handling run {run}")
+            for param in run:
+                if self.get_active_app()["params"].params_dict[param]["type"] == "integer":
+                    run[param] = round(run[param])
+
         self.add_runs(new_runs, mark_invalid)
         # Write sampler's new state to database
         self.campaign_db.update_sampler(self._active_sampler_id, self._active_sampler)
