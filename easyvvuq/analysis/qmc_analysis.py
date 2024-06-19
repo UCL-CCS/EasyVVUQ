@@ -51,17 +51,21 @@ class QMCAnalysisResults(AnalysisResults):
         -------
         list of str
         """
-        return ['mean', 'var', 'std', 'percentiles', '10%', '50%', '90%']
+        return ['mean', 'var', 'std', 'min', 'max', 'median', 'percentiles', '1%', '10%', '50%', '90%', '99%']
 
     def _describe(self, qoi, statistic):
         if statistic not in self.supported_stats():
             raise NotImplementedError
+        if statistic == '1%':
+            return self.raw_data['percentiles'][qoi]['p1']
         if statistic == '10%':
             return self.raw_data['percentiles'][qoi]['p10']
         elif statistic == '50%':
             return self.raw_data['percentiles'][qoi]['p50']
         elif statistic == '90%':
             return self.raw_data['percentiles'][qoi]['p90']
+        elif statistic == '99%':
+            return self.raw_data['percentiles'][qoi]['p99']
         else:
             return self.raw_data['statistical_moments'][qoi][statistic][0]
 
@@ -206,10 +210,16 @@ class QMCAnalysis(BaseAnalysisElement):
 
             results['statistical_moments'][k] = {'mean': np.mean(masked_samples, axis=0),
                                                  'var': np.var(masked_samples, axis=0),
-                                                 'std': np.std(masked_samples, axis=0)}
-            results['percentiles'][k] = {'p10': np.percentile(masked_samples, 10, 0)[0],
+                                                 'std': np.std(masked_samples, axis=0),
+                                                 'min': np.min(masked_samples, axis=0),
+                                                 'max': np.max(masked_samples, axis=0),
+                                                 'median': np.median(masked_samples, axis=0),
+                                                 }
+            results['percentiles'][k] = {'p1': np.percentile(masked_samples, 1, 0)[0],
+                                         'p10': np.percentile(masked_samples, 10, 0)[0],
                                          'p50': np.percentile(masked_samples, 50, 0)[0],
-                                         'p90': np.percentile(masked_samples, 90, 0)[0]}                                                 
+                                         'p90': np.percentile(masked_samples, 90, 0)[0],
+                                         'p99': np.percentile(masked_samples, 99, 0)[0]}
 
             # Replace Nan values by the mean before proceeding with the SA
             indices = np.where(mask == 0)[0] # samples[~mask] = results[k].mean
