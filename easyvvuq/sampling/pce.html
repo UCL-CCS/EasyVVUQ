@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="generator" content="pdoc 14.1.0"/>
+    <meta name="generator" content="pdoc 14.5.1"/>
     <title>easyvvuq.sampling.pce API documentation</title>
 
     <style>/*! * Bootstrap Reboot v5.0.0 (https://getbootstrap.com/) * Copyright 2011-2021 The Bootstrap Authors * Copyright 2011-2021 Twitter, Inc. * Licensed under MIT (https://github.com/twbs/bootstrap/blob/main/LICENSE) * Forked from Normalize.css, licensed MIT (https://github.com/necolas/normalize.css/blob/master/LICENSE.md) */*,::after,::before{box-sizing:border-box}@media (prefers-reduced-motion:no-preference){:root{scroll-behavior:smooth}}body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans","Liberation Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";font-size:1rem;font-weight:400;line-height:1.5;color:#212529;background-color:#fff;-webkit-text-size-adjust:100%;-webkit-tap-highlight-color:transparent}hr{margin:1rem 0;color:inherit;background-color:currentColor;border:0;opacity:.25}hr:not([size]){height:1px}h1,h2,h3,h4,h5,h6{margin-top:0;margin-bottom:.5rem;font-weight:500;line-height:1.2}h1{font-size:calc(1.375rem + 1.5vw)}@media (min-width:1200px){h1{font-size:2.5rem}}h2{font-size:calc(1.325rem + .9vw)}@media (min-width:1200px){h2{font-size:2rem}}h3{font-size:calc(1.3rem + .6vw)}@media (min-width:1200px){h3{font-size:1.75rem}}h4{font-size:calc(1.275rem + .3vw)}@media (min-width:1200px){h4{font-size:1.5rem}}h5{font-size:1.25rem}h6{font-size:1rem}p{margin-top:0;margin-bottom:1rem}abbr[data-bs-original-title],abbr[title]{-webkit-text-decoration:underline dotted;text-decoration:underline dotted;cursor:help;-webkit-text-decoration-skip-ink:none;text-decoration-skip-ink:none}address{margin-bottom:1rem;font-style:normal;line-height:inherit}ol,ul{padding-left:2rem}dl,ol,ul{margin-top:0;margin-bottom:1rem}ol ol,ol ul,ul ol,ul ul{margin-bottom:0}dt{font-weight:700}dd{margin-bottom:.5rem;margin-left:0}blockquote{margin:0 0 1rem}b,strong{font-weight:bolder}small{font-size:.875em}mark{padding:.2em;background-color:#fcf8e3}sub,sup{position:relative;font-size:.75em;line-height:0;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}a{color:#0d6efd;text-decoration:underline}a:hover{color:#0a58ca}a:not([href]):not([class]),a:not([href]):not([class]):hover{color:inherit;text-decoration:none}code,kbd,pre,samp{font-family:SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;font-size:1em;direction:ltr;unicode-bidi:bidi-override}pre{display:block;margin-top:0;margin-bottom:1rem;overflow:auto;font-size:.875em}pre code{font-size:inherit;color:inherit;word-break:normal}code{font-size:.875em;color:#d63384;word-wrap:break-word}a>code{color:inherit}kbd{padding:.2rem .4rem;font-size:.875em;color:#fff;background-color:#212529;border-radius:.2rem}kbd kbd{padding:0;font-size:1em;font-weight:700}figure{margin:0 0 1rem}img,svg{vertical-align:middle}table{caption-side:bottom;border-collapse:collapse}caption{padding-top:.5rem;padding-bottom:.5rem;color:#6c757d;text-align:left}th{text-align:inherit;text-align:-webkit-match-parent}tbody,td,tfoot,th,thead,tr{border-color:inherit;border-style:solid;border-width:0}label{display:inline-block}button{border-radius:0}button:focus:not(:focus-visible){outline:0}button,input,optgroup,select,textarea{margin:0;font-family:inherit;font-size:inherit;line-height:inherit}button,select{text-transform:none}[role=button]{cursor:pointer}select{word-wrap:normal}select:disabled{opacity:1}[list]::-webkit-calendar-picker-indicator{display:none}[type=button],[type=reset],[type=submit],button{-webkit-appearance:button}[type=button]:not(:disabled),[type=reset]:not(:disabled),[type=submit]:not(:disabled),button:not(:disabled){cursor:pointer}::-moz-focus-inner{padding:0;border-style:none}textarea{resize:vertical}fieldset{min-width:0;padding:0;margin:0;border:0}legend{float:left;width:100%;padding:0;margin-bottom:.5rem;font-size:calc(1.275rem + .3vw);line-height:inherit}@media (min-width:1200px){legend{font-size:1.5rem}}legend+*{clear:left}::-webkit-datetime-edit-day-field,::-webkit-datetime-edit-fields-wrapper,::-webkit-datetime-edit-hour-field,::-webkit-datetime-edit-minute,::-webkit-datetime-edit-month-field,::-webkit-datetime-edit-text,::-webkit-datetime-edit-year-field{padding:0}::-webkit-inner-spin-button{height:auto}[type=search]{outline-offset:-2px;-webkit-appearance:textfield}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-color-swatch-wrapper{padding:0}::file-selector-button{font:inherit}::-webkit-file-upload-button{font:inherit;-webkit-appearance:button}output{display:inline-block}iframe{border:0}summary{display:list-item;cursor:pointer}progress{vertical-align:baseline}[hidden]{display:none!important}</style>
@@ -1235,13 +1235,33 @@ In case the base_value is None, the mean of the distribution is used (assuming c
 
                             </div>
                             <div id="PCESampler.n_samples" class="classattr">
-                                <div class="attr variable">
+                                        <input id="PCESampler.n_samples-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr variable">
             <span class="name">n_samples</span>
 
-        
+                <label class="view-source-button" for="PCESampler.n_samples-view-source"><span>View Source</span></label>
+
     </div>
     <a class="headerlink" href="#PCESampler.n_samples"></a>
-    
+            <div class="pdoc-code codehilite"><pre><span></span><span id="PCESampler.n_samples-289"><a href="#PCESampler.n_samples-289"><span class="linenos">289</span></a>    <span class="nd">@property</span>
+</span><span id="PCESampler.n_samples-290"><a href="#PCESampler.n_samples-290"><span class="linenos">290</span></a>    <span class="k">def</span> <span class="nf">n_samples</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="PCESampler.n_samples-291"><a href="#PCESampler.n_samples-291"><span class="linenos">291</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="PCESampler.n_samples-292"><a href="#PCESampler.n_samples-292"><span class="linenos">292</span></a><span class="sd">        Number of samples (Ns) of PCE method.</span>
+</span><span id="PCESampler.n_samples-293"><a href="#PCESampler.n_samples-293"><span class="linenos">293</span></a><span class="sd">        - When using pseudo-spectral projection method with tensored</span>
+</span><span id="PCESampler.n_samples-294"><a href="#PCESampler.n_samples-294"><span class="linenos">294</span></a><span class="sd">          quadrature: Ns = (p + 1)**d</span>
+</span><span id="PCESampler.n_samples-295"><a href="#PCESampler.n_samples-295"><span class="linenos">295</span></a><span class="sd">        - When using pseudo-spectral projection method with sparce grid</span>
+</span><span id="PCESampler.n_samples-296"><a href="#PCESampler.n_samples-296"><span class="linenos">296</span></a><span class="sd">          quadratue: Ns = bigO((p + 1)*log(p + 1)**(d-1))</span>
+</span><span id="PCESampler.n_samples-297"><a href="#PCESampler.n_samples-297"><span class="linenos">297</span></a><span class="sd">        - When using regression method: Ns = 2*(p + d)!/p!*d!</span>
+</span><span id="PCESampler.n_samples-298"><a href="#PCESampler.n_samples-298"><span class="linenos">298</span></a><span class="sd">        Where: p is the polynomial degree and d is the number of</span>
+</span><span id="PCESampler.n_samples-299"><a href="#PCESampler.n_samples-299"><span class="linenos">299</span></a><span class="sd">        uncertain parameters.</span>
+</span><span id="PCESampler.n_samples-300"><a href="#PCESampler.n_samples-300"><span class="linenos">300</span></a>
+</span><span id="PCESampler.n_samples-301"><a href="#PCESampler.n_samples-301"><span class="linenos">301</span></a><span class="sd">        Ref: Eck et al. &#39;A guide to uncertainty quantification and</span>
+</span><span id="PCESampler.n_samples-302"><a href="#PCESampler.n_samples-302"><span class="linenos">302</span></a><span class="sd">        sensitivity analysis for cardiovascular applications&#39; [2016].</span>
+</span><span id="PCESampler.n_samples-303"><a href="#PCESampler.n_samples-303"><span class="linenos">303</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="PCESampler.n_samples-304"><a href="#PCESampler.n_samples-304"><span class="linenos">304</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_n_samples</span>
+</span></pre></div>
+
+
             <div class="docstring"><p>Number of samples (Ns) of PCE method.</p>
 
 <ul>
@@ -1261,13 +1281,23 @@ sensitivity analysis for cardiovascular applications' [2016].</p>
 
                             </div>
                             <div id="PCESampler.analysis_class" class="classattr">
-                                <div class="attr variable">
+                                        <input id="PCESampler.analysis_class-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr variable">
             <span class="name">analysis_class</span>
 
-        
+                <label class="view-source-button" for="PCESampler.analysis_class-view-source"><span>View Source</span></label>
+
     </div>
     <a class="headerlink" href="#PCESampler.analysis_class"></a>
-    
+            <div class="pdoc-code codehilite"><pre><span></span><span id="PCESampler.analysis_class-306"><a href="#PCESampler.analysis_class-306"><span class="linenos">306</span></a>    <span class="nd">@property</span>
+</span><span id="PCESampler.analysis_class-307"><a href="#PCESampler.analysis_class-307"><span class="linenos">307</span></a>    <span class="k">def</span> <span class="nf">analysis_class</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="PCESampler.analysis_class-308"><a href="#PCESampler.analysis_class-308"><span class="linenos">308</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a corresponding analysis class.</span>
+</span><span id="PCESampler.analysis_class-309"><a href="#PCESampler.analysis_class-309"><span class="linenos">309</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="PCESampler.analysis_class-310"><a href="#PCESampler.analysis_class-310"><span class="linenos">310</span></a>        <span class="kn">from</span> <span class="nn">easyvvuq.analysis</span> <span class="kn">import</span> <span class="n">PCEAnalysis</span>
+</span><span id="PCESampler.analysis_class-311"><a href="#PCESampler.analysis_class-311"><span class="linenos">311</span></a>        <span class="k">return</span> <span class="n">PCEAnalysis</span>
+</span></pre></div>
+
+
             <div class="docstring"><p>Return a corresponding analysis class.</p>
 </div>
 
