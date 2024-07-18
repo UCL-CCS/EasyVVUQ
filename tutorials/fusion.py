@@ -121,7 +121,7 @@ def solve_Te(Qe_tot=2e6, H0=0, Hw=0.1, Te_bc=100, chi=1, a0=1, R0=3, E0=1.5, b_p
     return Te.value, ne.value, mesh.cellCenters.value[0], mesh.cellCenters.value[0]/a
 
 if __name__ == '__main__':
-    Te, ne, rho, rho_norm = solve_Te()
+    solve_Te()
 
 """
 to test:

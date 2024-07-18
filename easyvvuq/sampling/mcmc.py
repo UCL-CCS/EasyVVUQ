@@ -1,6 +1,6 @@
 from .base import BaseSamplingElement
 import numpy as np
-
+import os
 
 class MCMCSampler(BaseSamplingElement, sampler_name='mcmc_sampler'):
     """A Metropolis-Hastings MCMC Sampler.
@@ -142,12 +142,12 @@ class MCMCSampler(BaseSamplingElement, sampler_name='mcmc_sampler'):
                 ignored_runs += list(result.loc[result[('chain_id', 0)]
                                                 == chain_id]['run_id'].values)
             except KeyError:
-                pass
+                if os.getenv("EasyVVUQ_Debug"): print('KeyError raised and ignored')
             try:
                 ignored_runs += list(invalid.loc[invalid[('chain_id', 0)]
                                                  == chain_id]['run_id'].values)
             except KeyError:
-                pass
+                if os.getenv("EasyVVUQ_Debug"): print('KeyError raised and ignored')
         ignored_runs = [run[0] for run in ignored_runs]
         self.iteration += 1
         return ignored_runs

@@ -4,8 +4,6 @@ import chaospy as cp
 import os
 import logging
 import pytest
-import shutil
-from easyvvuq.db.sql import CampaignTable
 
 TEST_PATH = os.path.dirname(os.path.realpath(__file__))
 LOGGER = logging.getLogger(__name__)

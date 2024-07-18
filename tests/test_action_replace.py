@@ -11,7 +11,7 @@ import subprocess
 import pytest
 
 
-@pytest.mark.skip(reason="fipy nonsense")
+###@pytest.mark.skip(reason="fipy nonsense")
 def test_action_replace():
     params = {
         "Qe_tot": {"type": "float", "min": 1.0e6, "max": 50.0e6, "default": 2e6},

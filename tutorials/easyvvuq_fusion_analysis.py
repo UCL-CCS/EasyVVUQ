@@ -4,6 +4,7 @@ import chaospy as cp
 import time
 import numpy as np
 import matplotlib.pylab as plt
+import os
 
 def sobols(P, coefficients):
     A = np.array(P.coefficients)!=0
@@ -38,7 +39,8 @@ def sobols(P, coefficients):
 
 # Read an old campaign
 time_start = time.time()
-old_campaign = uq.Campaign(state_file="campaign_state.json", work_dir=".")
+DIR = os.getenv('DIR')   ## use the environment variable DIR to store the previous campaign directory path
+old_campaign = uq.Campaign(name="fusion_pce.", db_location= f'sqlite:///{os.path.abspath(os.curdir)}/{DIR}/campaign.db')
 time_end = time.time()
 print('Time for phase 1 = %.3f' % (time_end-time_start))
 

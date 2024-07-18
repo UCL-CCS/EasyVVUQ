@@ -9,7 +9,7 @@ import math
 from tests.sc.sobol_model import sobol_g_func
 from easyvvuq.analysis.sc_analysis import SCAnalysisResults
 from easyvvuq.actions import CreateRunDirectory, Encode, Decode, ExecuteLocal, Actions, ExecutePython
-
+import matplotlib.pyplot as plt
 
 VARY = {
     "Pe": cp.Uniform(100.0, 200.0),
@@ -17,7 +17,7 @@ VARY = {
 }
 
 
-@pytest.mark.skip(reason="Broke due to pandas update. See issue #395.")
+###@pytest.mark.skip(reason="Broke due to pandas update. See issue #395.")
 @pytest.mark.parametrize('sampler', [
     uq.sampling.RandomSampler(
         vary=VARY, max_num=100, analysis_class=uq.analysis.GaussianProcessSurrogate),
@@ -72,6 +72,7 @@ def test_surrogate_workflow(tmpdir, sampler):
         assert np.max(np.abs(surrogate_y - model_y)) < 1e-6
 
     # Attempt callibration with MCMC
+    del params['out_file']  # eliminate this (now) nuisance field
     campaign.add_app(name='surrogate', params=params, actions=Actions(ExecutePython(surrogate)))
     db_location = campaign.db_location
     campaign = None
@@ -145,6 +146,7 @@ def test_surrogate_workflow(tmpdir, sampler):
 
     def loglikelihood(x):
         return -((u - x) ** 2).sum()
+
     init = {'Pe': [110.0], 'f': [2.0]}
     reloaded_campaign.set_sampler(uq.sampling.MCMCSampler(init, proposal, 'u', 1, loglikelihood))
     iterator = reloaded_campaign.iterate(mark_invalid=True)
@@ -154,3 +156,7 @@ def test_surrogate_workflow(tmpdir, sampler):
     assert (len(df) > 0)
     assert (len(df) <= 100)
     results = reloaded_campaign.analyse()
+    plt.clf(); results.plot_hist('Pe'); plt.savefig('/tmp/test_mcmc_hist_Pe.png')
+    plt.clf(); results.plot_hist('f'); plt.savefig('/tmp/test_mcmc_hist_f.png')
+    plt.clf(); results.plot_chains('Pe'); plt.savefig('/tmp/test_mcmc_chains_Pe.png')
+    plt.clf(); results.plot_chains('f'); plt.savefig('/tmp/test_mcmc_chains_f.png')
