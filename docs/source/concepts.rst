@@ -62,9 +62,10 @@ central location where all information about your campaign is
 kept. The `Campaign` handles all validation and is transfers
 information between each stage of the workflow.
 
-The `Basic Tutorial <https://github.com/UCL-CCS/EasyVVUQ/blob/dev/tutorials/basic_tutorial.ipynb>`_
+The `Basic Tutorial <https://github.com/UCL-CCS/EasyVVUQ/blob/dev/tutorials/basic_tutorial.ipynb>`_ (link to repository) or `Basic Tutorial Binder <https://mybinder.org/v2/gh/UCL-CCS/EasyVVUQ/a6852d6c5ba36f15579e601d7a8d074505f31084?filepath=tutorials%2Fbasic_tutorial.ipynb>`_ (link to Binder to directly run the notebook) 
 gives a good hands-on introduction to defining parameters and 
 creating a campaign.
+
 
 Elements
 --------
@@ -72,8 +73,7 @@ Elements
 Within VECMA software components that can be reused in a wide range of
 application scenarios are known as ``Elements``.
 Within EasyVVUQ we provide five classes of ``Elements`` (:ref:`samplers`,
-:ref:`decoders`, :ref:`encoders`, and those providing :ref:`collation`,
-for the aggregation step, and :ref:`analysis` functionality) which we 
+:ref:`decoders`, :ref:`encoders`, and :ref:`analysis` functionality) which we 
 describe below.
 
 .. _samplers:
@@ -89,7 +89,7 @@ They deal with generic information in the sense that all parameters use the
 nomenclature and units provided by the user rather than anything specific to
 any application or workflow.
 
-Detailed information on the Sampler modules is available `here <https://easyvvuq.readthedocs.io/en/dev/_autodoc/easyvvuq.sampling.html>`_.
+Detailed information on the Sampler modules is available :doc:`here <_autodoc/easyvvuq.sampling>`.
 
 .. _encoders:
 
@@ -107,7 +107,7 @@ generic Encoder base class is picked up and may be used.
 This enables EasyVVUQ to be easily extended for new applications by 
 experienced users.
 
-Detailed information on the Encoder modules is available `here <https://easyvvuq.readthedocs.io/en/dev/_autodoc/easyvvuq.encoders.html>`_.
+Detailed information on the Encoder modules is available :doc:`here <_autodoc/easyvvuq.encoders>`.
 
 .. _decoders:
 
@@ -121,7 +121,7 @@ facilitate analysis of a wide range of applications.
 
 The `Encoder-Decoder tutorial <https://github.com/UCL-CCS/EasyVVUQ/blob/dev/tutorials/encoder_decoder_tutorial.ipynb>`_
 provides a good introduction to using Encoders and Decoders within EasyVVUQ. Detailed information on the Decoder modules
-themselves is available `here <https://easyvvuq.readthedocs.io/en/dev/_autodoc/easyvvuq.decoders.html>`_.
+themselves is available :doc:`here <_autodoc/easyvvuq.decoders>`.
 
 .. _analysis:
 
@@ -133,5 +133,11 @@ on the simulation output across a range of runs.
 Different types of analysis (for example bootstrapping of multiple runs from
 varied initial conditions) are, or will be,  provided by EasyVVUQ.
 
-Detailed information on the Analysis modules is available `here <https://easyvvuq.readthedocs.io/en/dev/_autodoc/easyvvuq.analysis.html>`_
+Detailed information on the Analysis modules is available :doc:`here <_autodoc/easyvvuq.analysis>`.
 
+.. _execution:
+
+Execution
+---------
+
+Some more information on the use of QCG-Pilothob can be found :doc:`here <QCG-PilotJob-EasyVVUQ>`.

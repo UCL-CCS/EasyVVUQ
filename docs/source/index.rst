@@ -11,6 +11,8 @@ and uncertainty quantification (VVUQ) for a wide variety of simulations.
 It was conceived and developed within the EU funded `VECMA <http://www.vecma.eu/>`_ 
 (Verified Exascale Computing for Multiscale Applications) project.
 
+A good introduction can be found in the paper by D. Suleimenova *et al.*, “Tutorial applications for Verification, Validation and Uncertainty Quantification using VECMA toolkit”, J. Comput. Sci. 53, 101402 (2021), `DOI:10.1016/j.jocs.2021.101402 <https://doi.org/10.1016/j.jocs.2021.101402>`_.
+
 .. _goals:
 
 Goals
@@ -57,3 +59,4 @@ Indices and tables
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
+* :doc:`_autodoc/modules`
