@@ -1,7 +1,6 @@
 import os
-#from string import Template
+# from string import Template
 from jinja2 import Template
-from .base import BaseEncoder
 import logging
 
 __copyright__ = """
@@ -27,7 +26,7 @@ __copyright__ = """
 __license__ = "LGPL"
 
 
-class JinjaEncoder(BaseEncoder, encoder_name="jinja_template"):
+class JinjaEncoder:
     """JinjaEncoder for substituting values into application template input.
     Uses the jinja2 template system, which supports more complex expressions than
     the GenericEncoder.
@@ -48,7 +47,7 @@ class JinjaEncoder(BaseEncoder, encoder_name="jinja_template"):
         self.template_fname = template_fname
         self.fixture_support = True
 
-    def encode(self, params={}, target_dir='', fixtures=None):
+    def encode(self, params={}, target_dir=''):
         """Substitutes `params` into a template application input, saves in
         `target_dir`
 
@@ -58,20 +57,14 @@ class JinjaEncoder(BaseEncoder, encoder_name="jinja_template"):
             Parameter information in dictionary.
         target_dir    : str
             Path to directory where application input will be written.
-        fixtures      : dict
-            Information of files/assets for fixture type parameters.
         """
 
-        if fixtures is not None:
-            local_params = self.substitute_fixtures_params(params, fixtures,
-                                                           target_dir)
-        else:
-            local_params = params
+        local_params = params
 
         try:
             with open(self.template_fname, 'r') as template_file:
                 template_txt = template_file.read()
-                self.template = Template(template_txt)
+                self.template = Template(template_txt, autoescape=True)
         except FileNotFoundError:
             raise RuntimeError(
                 "the template file specified ({}) does not exist".format(self.template_fname))
@@ -96,10 +89,3 @@ class JinjaEncoder(BaseEncoder, encoder_name="jinja_template"):
         logging.error(reasoning)
 
         raise KeyError(reasoning)
-
-    def get_restart_dict(self):
-        return {"target_filename": self.target_filename,
-                "template_fname": self.template_fname}
-
-    def element_version(self):
-        return "0.1"

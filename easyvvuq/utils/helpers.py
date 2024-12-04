@@ -1,4 +1,41 @@
 from ast import literal_eval
+import dill
+import base64
+
+
+def easyvvuq_serialize(obj):
+    """Takes an object and returns a string with that object serialized.
+
+    Parameters
+    ----------
+    obj: obj
+        An arbitrary Python object.
+
+    Returns
+    -------
+    str:
+        A string representation of obj.
+    """
+    return base64.b64encode(dill.dumps(obj)).decode('utf-8')
+
+
+def easyvvuq_deserialize(s):
+    """Takes a serialized objected and reconstructs it.
+
+    Parameters
+    ----------
+    s: str
+        A serialized Python object.
+
+    Returns
+    -------
+    obj:
+        A previously serialized Python object.
+    """
+    if isinstance(s, bytes):
+        return dill.loads(base64.b64decode(s))
+    else:
+        return dill.loads(base64.b64decode(s.encode('utf-8')))
 
 
 def multi_index_tuple_parser(lst):

@@ -1,30 +1,39 @@
 import pytest
 import time
 from unittest.mock import MagicMock
-from easyvvuq.actions import ActionStatuses
+from easyvvuq.actions import ActionPool
 
 
-def test_action_status_kubernetes():
-    status1, status2, status3 = (MagicMock(), MagicMock(), MagicMock())
-    status1.finished.return_value = False
-    status2.finished.return_value = True
-    status3.finished.return_value = True
-    status1.succeeded.return_value = False
-    status2.succeeded.return_value = False
-    status3.succeeded.return_value = True
-    statuses = ActionStatuses([status1, status2, status3], 3)
-    statuses.start()
-    time.sleep(1)
-    stats = statuses.progress()
-    assert(stats['active'] == 1)
-    assert(stats['finished'] == 1)
-    assert(stats['failed'] == 1)
-    assert(not status1.finalise.called)
-    assert(not status2.finalise.called)
-    assert(status3.finalise.called)
-    status1.finished.return_value = True
-    status2.finished.return_value = True
-    status3.finished.return_value = True
-    status1.succeeded.return_value = True
-    status2.succeeded.return_value = True
-    status3.succeeded.return_value = True
+@pytest.fixture(scope="module", params=[False])
+def action_pool():
+    campaign = MagicMock()
+    actions = MagicMock()
+    inits = [MagicMock(), MagicMock(), MagicMock()]
+    return ActionPool(campaign, actions, inits, sequential=False)
+
+
+def test_action_pool_start(action_pool):
+    action_pool.start()
+    assert (action_pool.progress()['finished'] == 3)
+    mock1 = MagicMock()
+    mock1.running = MagicMock(return_value=True)
+    mock1.done = MagicMock(return_value=False)
+    mock1.result = MagicMock(return_value=False)
+    mock2 = MagicMock()
+    mock2.running = MagicMock(return_value=False)
+    mock2.done = MagicMock(return_value=True)
+    mock2.result = MagicMock(return_value=False)
+    mock3 = MagicMock()
+    mock3.running = MagicMock(return_value=False)
+    mock3.done = MagicMock(return_value=True)
+    mock3.result = MagicMock(return_value=True)
+    mock4 = MagicMock()
+    mock4.running = MagicMock(return_value=False)
+    mock4.done = MagicMock(return_value=False)
+    mock4.result = MagicMock(return_value=False)
+    action_pool.futures = [mock1, mock2, mock3, mock4]
+    progress = action_pool.progress()
+    assert (progress['ready'] == 1)
+    assert (progress['active'] == 1)
+    assert (progress['finished'] == 1)
+    assert (progress['failed'] == 1)

@@ -83,50 +83,54 @@ def results_vectors(data_vectors):
 
 
 def test_results(results):
-    assert(isinstance(results, QMCAnalysisResults))
+    assert (isinstance(results, QMCAnalysisResults))
     sobols_first_x1 = results._get_sobols_first('f', 'x1')
     sobols_first_x2 = results._get_sobols_first('f', 'x2')
     sobols_total_x1 = results._get_sobols_total('f', 'x1')
     sobols_total_x2 = results._get_sobols_total('f', 'x2')
-    assert(sobols_first_x1 == pytest.approx(0.55690589, 0.001))
-    assert(sobols_first_x2 == pytest.approx(0.20727553, 0.001))
-    assert(sobols_total_x1 == pytest.approx(0.81327937, 0.001))
-    assert(sobols_total_x2 == pytest.approx(0.38049629, 0.001))
+    assert (sobols_first_x1 == pytest.approx(0.55690589, 0.001))
+    assert (sobols_first_x2 == pytest.approx(0.20727553, 0.001))
+    assert (sobols_total_x1 == pytest.approx(0.81327937, 0.001))
+    assert (sobols_total_x2 == pytest.approx(0.38049629, 0.001))
 
 
 def test_results_conf(results):
     sobols_first_x1_conf = results._get_sobols_first_conf('f', 'x1')
-    assert(sobols_first_x1_conf[0] == pytest.approx(0.14387, 0.001))
-    assert(sobols_first_x1_conf[1] == pytest.approx(0.894288, 0.001))
+    assert (sobols_first_x1_conf[0] == pytest.approx(0.14387, 0.001))
+    assert (sobols_first_x1_conf[1] == pytest.approx(0.894288, 0.001))
     sobols_first_x2_conf = results._get_sobols_first_conf('f', 'x2')
-    assert(sobols_first_x2_conf[0] == pytest.approx(-0.110633, 0.001))
-    assert(sobols_first_x2_conf[1] == pytest.approx(0.467528, 0.001))
+    assert (sobols_first_x2_conf[0] == pytest.approx(-0.110633, 0.001))
+    assert (sobols_first_x2_conf[1] == pytest.approx(0.467528, 0.001))
     sobols_total_x1_conf = results._get_sobols_total_conf('f', 'x1')
-    assert(sobols_total_x1_conf[0] == pytest.approx(0.613689, 0.001))
-    assert(sobols_total_x1_conf[1] == pytest.approx(1.018587, 0.001))
+    assert (sobols_total_x1_conf[0] == pytest.approx(0.613689, 0.001))
+    assert (sobols_total_x1_conf[1] == pytest.approx(1.018587, 0.001))
     sobols_total_x2_conf = results._get_sobols_total_conf('f', 'x2')
-    assert(sobols_total_x2_conf[0] == pytest.approx(0.243612, 0.001))
-    assert(sobols_total_x2_conf[1] == pytest.approx(0.492141, 0.001))
+    assert (sobols_total_x2_conf[0] == pytest.approx(0.243612, 0.001))
+    assert (sobols_total_x2_conf[1] == pytest.approx(0.492141, 0.001))
 
 
 def test_full_results(results):
-    assert(results.sobols_first() == {'f': {'x1': 0.5569058947880715, 'x2': 0.20727553481694053}})
-    assert(results.sobols_total() == {'f': {'x1': 0.8132793654841785, 'x2': 0.3804962894947435}})
+    assert (results.sobols_first() == {'f': {'x1': 0.5569058947880715, 'x2': 0.20727553481694053}})
+    assert (results.sobols_total() == {'f': {'x1': 0.8132793654841785, 'x2': 0.3804962894947435}})
 
 
 def test_describe(results_vectors):
-    assert(
+    assert (
         results_vectors.describe()[
             ('g',
              1)].to_dict() == {
+            '10%': 0.08156520178597204,
+            '90%': 0.8729378821725343,     
             'mean': 0.4691844466934421,
             'var': 0.08534945020531205,
             'std': 0.29214628220347433})
-    assert(
+    assert (
         results_vectors.describe('h')[
             ('h',
              1)].to_dict() == {
+            '10%': 0.21724677702965456,
+            '90%': 0.9764815719704141,
             'mean': 0.6873389710989142,
             'var': 0.07501266456861228,
             'std': 0.27388440000958847})
-    assert(isinstance(results_vectors.describe('h', 'std'), np.ndarray))
+    assert (isinstance(results_vectors.describe('h', 'std'), np.ndarray))

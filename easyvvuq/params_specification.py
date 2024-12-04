@@ -80,7 +80,6 @@ class ParamsSpecification:
         self.cerberus_validator = EasyVVUQValidator(self.params_dict)
 
     def process_run(self, new_run, verify=True):
-
         # If necessary parameter names are missing, fill them in from the
         # default values in params_info
         for param in self.params_dict.keys():

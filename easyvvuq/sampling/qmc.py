@@ -2,7 +2,8 @@
 """
 
 import chaospy as cp
-from SALib.sample import saltelli
+from SALib.sample import sobol
+#from SALib.sample import saltelli
 from .base import BaseSamplingElement, Vary
 import logging
 
@@ -80,7 +81,7 @@ class QMCSampler(BaseSamplingElement, sampler_name="QMC_sampler"):
             "bounds": [[0, 1]] * self.n_params
         }
 
-        nodes = saltelli.sample(problem, n_mc_samples, calc_second_order=False)
+        nodes = sobol.sample(problem, n_mc_samples, calc_second_order=False,scramble=True)
 
         self._samples = self.distribution.inv(dist_U.fwd(nodes.transpose()))
 
@@ -96,10 +97,6 @@ class QMCSampler(BaseSamplingElement, sampler_name="QMC_sampler"):
         else:
             for _ in range(count):
                 self.__next__()
-
-    def element_version(self):
-        """Version number for the sampler."""
-        return "0.2"
 
     def is_finite(self):
         """Can this sampler produce only a finite number of samples."""
@@ -117,10 +114,12 @@ class QMCSampler(BaseSamplingElement, sampler_name="QMC_sampler"):
         """
         return self._n_samples
 
-    def is_restartable(self):
-        """Can this sampler be resumed.
+    @property
+    def analysis_class(self):
+        """Return a corresponding analysis class.
         """
-        return True
+        from easyvvuq.analysis import QMCAnalysis
+        return QMCAnalysis
 
     def __next__(self):
         if self.count < self.n_samples:
@@ -133,12 +132,3 @@ class QMCSampler(BaseSamplingElement, sampler_name="QMC_sampler"):
             return run_dict
         else:
             raise StopIteration
-
-    def get_restart_dict(self):
-        """This information is used to restart the sampler.
-        """
-        return {
-            "vary": self.vary.serialize(),
-            "count": self.count,
-            "n_mc_samples": self.n_mc_samples
-        }

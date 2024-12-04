@@ -7,7 +7,7 @@ import sys
 import logging
 
 
-def sobol_g_func(theta, d=5, a=[0.0, 0.5, 3.0, 9.0, 99.0]):
+def sobol_g_func(theta, d=2, a=[0.0, 0.5, 3.0, 9.0, 99.0]):
     Y = 1.0
     for i in range(d):
         Y *= (np.abs(4.0 * theta[i] - 2.0) + a[i]) / (1.0 + a[i])
@@ -18,7 +18,7 @@ if __name__ == '__main__':
     # parameters required by test function
     a = [0.0, 0.5, 3.0, 9.0, 99.0]
     # stocastic dimension of the problem
-    d = 5
+    d = 2
     # the json input file containing the values of the parameters, and the
     # output file
     json_input = sys.argv[1]

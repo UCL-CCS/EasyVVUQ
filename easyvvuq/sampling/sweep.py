@@ -55,9 +55,6 @@ class BasicSweep(BaseSamplingElement, sampler_name="basic_sweep"):
             except StopIteration:
                 logger.warning("BasicSweep constructed, but has no samples left to draw.")
 
-    def element_version(self):
-        return "0.1"
-
     def is_finite(self):
         return True
 
@@ -81,9 +78,3 @@ class BasicSweep(BaseSamplingElement, sampler_name="basic_sweep"):
 
         self.count += 1
         return run_dict
-
-    def is_restartable(self):
-        return True
-
-    def get_restart_dict(self):
-        return {"sweep": self.sweep, "count": self.count}

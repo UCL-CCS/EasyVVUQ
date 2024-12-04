@@ -17,7 +17,7 @@ def test_yamldecoder_data(keys, vals):
     data = decoder.parse_sim_output(run_info)
 
     for k, v in zip(keys, vals):
-        assert((data[k] == np.array([v])).all().all())
+        assert ((data[k] == np.array([v])).all().all())
 
 
 def test_yaml_nested():
@@ -25,33 +25,11 @@ def test_yaml_nested():
                           [['root1', 'node1', 'leaf1'], ['root1', 'leaf2'], 'leaf3'])
     run_info = {'run_dir': 'tests'}
     data = decoder.parse_sim_output(run_info)
-    assert((data['root1.node1.leaf1'] == np.array([0.33])).all().all())
-    assert((data['root1.leaf2'] == np.array([0.32])).all().all())
-    assert((data['leaf3'] == np.array([0.2, 0.3])).all().all())
-
-
-def test_get_restart_dict():
-    decoder = YAMLDecoder('nested.yml',
-                          [['root1', 'node1', 'leaf1'], ['root1', 'leaf2'], 'leaf3'])
-    restart_dict = decoder.get_restart_dict()
-    assert(restart_dict['target_filename'] == 'nested.yml')
-    assert(restart_dict['output_columns'] ==
-           [['root1', 'node1', 'leaf1'], ['root1', 'leaf2'], 'leaf3'])
-
-
-def test_sim_complete():
-    decoder = YAMLDecoder('nested.yml',
-                          [['root1', 'node1', 'leaf1'], ['root1', 'leaf2'], 'leaf3'])
-    assert(decoder.sim_complete({'run_dir': os.path.join('tests', 'yamldecoder')}))
+    assert ((data['root1.node1.leaf1'] == np.array([0.33])).all().all())
+    assert ((data['root1.leaf2'] == np.array([0.32])).all().all())
+    assert ((data['leaf3'] == np.array([0.2, 0.3])).all().all())
 
 
 def test_init_exception():
     with pytest.raises(RuntimeError):
-        YAMLDecoder(None, output_columns=[['root1', 'node1', 'leaf1'],
-                                          ['root1', 'leaf2'], 'leaf3'])
-
-    with pytest.raises(RuntimeError):
-        YAMLDecoder('yamldecoder/nested.yaml', None)
-
-    with pytest.raises(RuntimeError):
-        YAMLDecoder('yamldecoder/nested.yaml', None)
+        YAMLDecoder('yamldecoder/nested.yaml', [])

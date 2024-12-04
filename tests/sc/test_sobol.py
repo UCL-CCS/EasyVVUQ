@@ -4,7 +4,7 @@ import os
 import easyvvuq as uq
 import numpy as np
 import chaospy as cp
-
+from easyvvuq.actions import CreateRunDirectory, Encode, Decode, ExecuteLocal, Actions
 
 def print_exact_sobols():
     V_i = np.zeros(d)
@@ -18,9 +18,7 @@ def print_exact_sobols():
     print('Exact 1st-order Sobol indices: ', V_i / V)
 
 
-if __name__ == '__main__':
-    import matplotlib.pyplot as plt
-    plt.close('all')
+def test_sobol_basic():
 
     # number of unknown variables
     d = 5
@@ -79,20 +77,17 @@ if __name__ == '__main__':
         target_filename='sobol_in.json')
     decoder = uq.decoders.SimpleCSV(target_filename=output_filename,
                                     output_columns=output_columns)
+    execute = ExecuteLocal(f"{HOME}/sobol_model.py sobol_in.json")
 
-    # Add the SC app (automatically set as current app)
-    my_campaign.add_app(name="sc",
-                        params=params,
-                        encoder=encoder,
-                        decoder=decoder)
+    actions = Actions(CreateRunDirectory(HOME),
+                  Encode(encoder), execute, Decode(decoder))
+
+    campaign = uq.Campaign(name='sc', params=params, actions=actions)
 
     # Create the sampler
     vary = {
         "x1": cp.Uniform(0.0, 1.0),
-        "x2": cp.Uniform(0.0, 1.0),
-        "x3": cp.Uniform(0.0, 1.0),
-        "x4": cp.Uniform(0.0, 1.0),
-        "x5": cp.Uniform(0.0, 1.0)}
+        "x2": cp.Uniform(0.0, 1.0)}
 
     """
     SPARSE GRID PARAMETERS
@@ -102,32 +97,23 @@ if __name__ == '__main__':
       of 1D collocation points per level. Used to make e.g. clenshaw-curtis
       quadrature nested.
     """
+
     my_sampler = uq.sampling.SCSampler(vary=vary, polynomial_order=2,
                                        quadrature_rule="G", sparse=False,
                                        growth=False)
 
-    # Associate the sampler with the campaign
-    my_campaign.set_sampler(my_sampler)
+    campaign.set_sampler(my_sampler)
 
-    # Will draw all (of the finite set of samples)
-    my_campaign.draw_samples()
-    my_campaign.populate_runs_dir()
-
-    # Use this instead to run the samples using EasyVVUQ on the localhost
-    my_campaign.apply_for_each_run_dir(uq.actions.ExecuteLocal(
-        "tests/sc/sobol_model.py sobol_in.json"))
-
-    my_campaign.collate()
+    campaign.execute().collate()
 
     # Post-processing analysis
     analysis = uq.analysis.SCAnalysis(sampler=my_sampler, qoi_cols=output_columns)
 
-    my_campaign.apply_analysis(analysis)
-
-    results = my_campaign.get_last_analysis()
+    results = campaign.analyse(qoi_cols=output_columns)
 
     print(results.sobols_first())
 
-    print_exact_sobols()
+    assert results.sobols_first()["f"]["x1"] > 0.5
 
-    plt.show()
+if __name__ == '__main__':
+    test_sobol_basic()

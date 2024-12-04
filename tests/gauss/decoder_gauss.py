@@ -1,7 +1,6 @@
 import os
 import logging
 import pandas as pd
-from easyvvuq.decoders import BaseDecoder
 from easyvvuq import OutputType
 
 __copyright__ = """
@@ -30,7 +29,7 @@ __license__ = "LGPL"
 logger = logging.Logger(__name__)
 
 
-class GaussDecoder(BaseDecoder, decoder_name="gauss"):
+class GaussDecoder:
 
     def __init__(self, target_filename=None):
 

@@ -15,12 +15,12 @@ def test_multi_index_tuple_parser_exceptions():
 
 
 def test_multi_index_parser_corner_cases():
-    assert(multi_index_tuple_parser(["a"]) == (["a"], False))
-    assert(multi_index_tuple_parser(['a', '("b", 1)']) == (["a", ("b", 1)], False))
+    assert (multi_index_tuple_parser(["a"]) == (["a"], False))
+    assert (multi_index_tuple_parser(['a', '("b", 1)']) == (["a", ("b", 1)], False))
 
 
 def test_multi_index_parser():
-    assert(multi_index_tuple_parser(['("a", 1)', '("b", 1)']) == ([("a", 1), ("b", 1)], True))
+    assert (multi_index_tuple_parser(['("a", 1)', '("b", 1)']) == ([("a", 1), ("b", 1)], True))
 
 
 def test_remove_start_of_file(tmp_path):
@@ -38,4 +38,4 @@ def test_remove_start_of_file(tmp_path):
         fd.write(data)
     remove_start_of_file(os.path.join(tmp_path, 'test.txt'), 'START')
     with open(os.path.join(tmp_path, 'test.txt'), 'r') as fd:
-        assert(fd.read() == trimmed)
+        assert (fd.read() == trimmed)

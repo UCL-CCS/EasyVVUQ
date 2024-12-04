@@ -1,6 +1,5 @@
 import os
 import json
-from easyvvuq.encoders import BaseEncoder
 
 __copyright__ = """
 
@@ -25,7 +24,7 @@ __copyright__ = """
 __license__ = "LGPL"
 
 
-class GaussEncoder(BaseEncoder, encoder_name="gauss"):
+class GaussEncoder:
 
     def __init__(self, target_filename="gauss_input.json"):
         self.target_filename = target_filename

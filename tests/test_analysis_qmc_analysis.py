@@ -13,7 +13,7 @@ def test_analyse():
         "a": cp.Uniform(0.0, 1.0),
         "b": cp.Uniform(0.0, 1.0)
     }
-    sampler = QMCSampler(vary, 100)
+    sampler = QMCSampler(vary, 128)
     samples = {('run_id', 0): [], ('a', 0): [], ('b', 0): [], ('a+b', 0): []}
     for i, sample in enumerate(sampler):
         samples[('run_id', 0)].append(i)

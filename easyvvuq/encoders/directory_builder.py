@@ -1,6 +1,4 @@
 import os
-from .base import BaseEncoder
-import logging
 
 __copyright__ = """
 
@@ -25,7 +23,7 @@ __copyright__ = """
 __license__ = "LGPL"
 
 
-class DirectoryBuilder(BaseEncoder, encoder_name="directory_builder"):
+class DirectoryBuilder:
     """DirectoryBuilder builds the specified directory structure for a Run.
 
     The dir structure is specified by the 'tree' parameter. This should be a dict of dicts,
@@ -36,11 +34,8 @@ class DirectoryBuilder(BaseEncoder, encoder_name="directory_builder"):
 
     Parameters
     ----------
-        tree    : dict of dicts
-            The desired directory structure
-    Attributes
-    ----------
-
+    tree : dict of dicts
+        The desired directory structure
     """
 
     def __init__(self, tree):
@@ -51,9 +46,9 @@ class DirectoryBuilder(BaseEncoder, encoder_name="directory_builder"):
 
         Parameters
         ----------
-        params        : dict
+        params : dict
             Parameter information in dictionary.
-        target_dir    : str
+        target_dir : str
             Path to directory where application input will be written.
         """
 

@@ -4,6 +4,7 @@ branch = True
 omit =
      tests/*
      easyvvuq/_version.py
+     easyvvuq/utils/db_benchmark.py
      setup.py
      versioneer.py
 

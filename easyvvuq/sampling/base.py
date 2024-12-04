@@ -1,7 +1,5 @@
 from easyvvuq.base_element import BaseElement
 import logging
-import json
-import jsonpickle
 
 __copyright__ = """
 
@@ -41,6 +39,8 @@ class BaseSamplingElement(BaseElement):
 
     """
 
+    iteration = 0
+
     def __init_subclass__(cls, sampler_name, **kwargs):
         """
         Catch any new samplers (all samplers must inherit from
@@ -64,9 +64,6 @@ class BaseSamplingElement(BaseElement):
 
     def element_name(self):
         return self.sampler_name
-
-    def element_version(self):
-        raise NotImplementedError
 
     def is_finite(self):
         raise NotImplementedError
@@ -92,32 +89,20 @@ class BaseSamplingElement(BaseElement):
         """
         raise NotImplementedError
 
-    @staticmethod
-    def deserialize(serialized_sampler):
-        """Deserialize a sampler element.
+    @property
+    def analysis_class(self):
+        raise NotImplementedError
 
-        Parameters
-        ----------
-        serialized_sampler : str
-            Sampler serialized in JSON format.
+    @property
+    def sampler_id(self):
+        try:
+            return self._sampler_id
+        except AttributeError:
+            raise RuntimeError('this sampler does not have an id assigned, run set_sampler first')
 
-        Returns
-        -------
-
-        """
-
-        inputs = json.loads(serialized_sampler)
-
-        if not inputs["restartable"]:
-            msg = f'Sampler {inputs["element_name"]} is not restartable'
-            logging.error(msg)
-            raise Exception(msg)
-
-        if 'vary' in inputs["state"]:
-            inputs["state"]["vary"] = Vary.deserialize(inputs["state"]["vary"]).vary_dict
-
-        sampler = AVAILABLE_SAMPLERS[inputs["element_name"]](**inputs["state"])
-        return sampler
+    @sampler_id.setter
+    def sampler_id(self, val):
+        self._sampler_id = val
 
 
 class Vary:
@@ -152,25 +137,3 @@ class Vary:
 
     def __str__(self):
         return self.vary_dict.__str__()
-
-    def serialize_distribution(self, dist):
-        return jsonpickle.encode(dist)
-
-    @staticmethod
-    def deserialize_distribution(sdist):
-        return jsonpickle.decode(sdist)
-
-    def serialize(self):
-        serialized_vary = {}
-        for var, dist in self.vary_dict.items():
-            serialized_vary[var] = self.serialize_distribution(dist)
-
-        return json.dumps(serialized_vary)
-
-    @staticmethod
-    def deserialize(serialized_vary):
-        vary = json.loads(serialized_vary)
-        for var, sdist in vary.items():
-            vary[var] = Vary.deserialize_distribution(sdist)
-
-        return Vary(vary)

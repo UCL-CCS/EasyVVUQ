@@ -1,6 +1,6 @@
 """Analysis element for Quasi-Monte Carlo (QMC) sensitivity analysis.
 
-Please refer to the article below for further references.
+Please refer to the article below for the basic approach used here.
 https://en.wikipedia.org/wiki/Variance-based_sensitivity_analysis
 """
 import logging
@@ -19,7 +19,9 @@ logger = logging.getLogger(__name__)
 
 
 class QMCAnalysisResults(AnalysisResults):
-    implemented = ['sobols_first', 'sobols_total', 'describe']
+    """Analysis results for the QMCAnalysis Method. Refer to the AnalysisResults base class
+    documentation for details on using it.
+    """
 
     def _get_sobols_first(self, qoi, input_):
         raw_dict = AnalysisResults._keys_to_tuples(self.raw_data['sobols_first'])
@@ -42,11 +44,26 @@ class QMCAnalysisResults(AnalysisResults):
         return [raw_dict[AnalysisResults._to_tuple(qoi)][input_]['low'][0],
                 raw_dict[AnalysisResults._to_tuple(qoi)][input_]['high'][0]]
 
+    def supported_stats(self):
+        """Types of statistics supported by the describe method.
+
+        Returns
+        -------
+        list of str
+        """
+        return ['mean', 'var', 'std', 'percentiles', '10%', '50%', '90%']
+
     def _describe(self, qoi, statistic):
-        if statistic in ['mean', 'var', 'std']:
-            return self.raw_data['statistical_moments'][qoi][statistic][0]
-        else:
+        if statistic not in self.supported_stats():
             raise NotImplementedError
+        if statistic == '10%':
+            return self.raw_data['percentiles'][qoi]['p10']
+        elif statistic == '50%':
+            return self.raw_data['percentiles'][qoi]['p50']
+        elif statistic == '90%':
+            return self.raw_data['percentiles'][qoi]['p90']
+        else:
+            return self.raw_data['statistical_moments'][qoi][statistic][0]
 
 
 class QMCAnalysis(BaseAnalysisElement):
@@ -58,7 +75,7 @@ class QMCAnalysis(BaseAnalysisElement):
         sampler : easyvvuq.sampling.qmc.QMCSampler
             Sampler used to initiate the QMC analysis
         qoi_cols : list or None
-            Column names for quantities of interest (for which analysis is
+            Column names for quantities of interest (for which analysis is to be
             performed).
         """
         if not isinstance(sampler, QMCSampler) and not isinstance(sampler, MCSampler):
@@ -72,12 +89,83 @@ class QMCAnalysis(BaseAnalysisElement):
         self.sampler = sampler
 
     def element_name(self):
-        """Name for this element"""
+        """Name for this element.
+
+        Return
+        ------
+        str:
+            "QMC_Analysis"
+        """
         return "QMC_Analysis"
 
     def element_version(self):
-        """Version of this element"""
+        """Version of this element.
+
+        Return
+        ------
+        str:
+            Element version.
+        """
         return "0.2"
+
+    def contains_nan(self, values):
+        """
+        Checks if ``None`` or ``numpy.nan`` exists in `values`. Returns ``True`` if
+        any there are at least one occurrence of ``None`` or ``numpy.nan``.
+        Parameters
+        ----------
+        values : array_like, list, number
+            `values` where to check for occurrences of ``None`` or ``np.nan``.
+            Can be irregular and have any number of nested elements.
+        Returns
+        -------
+        bool
+            ``True`` if `values` has at least one occurrence of ``None`` or
+            ``numpy.nan``.
+        """
+        # To speed up we first try the fast option np.any(np.isnan(values))
+        try:
+            return np.any(np.isnan(values))
+        except (ValueError, TypeError):
+            if values is None or values is np.nan:
+                return True
+            # To solve the problem of float/int as well as numpy int/flaot
+            elif np.isscalar(values) and np.isnan(values):
+                return True
+            elif hasattr(values, "__iter__"):
+                for value in values:
+                    if self.contains_nan(value):
+                        return True
+
+                return False
+            else:
+                return False
+
+    def create_mask(self, samples):
+        """
+        Mask samples that do not give results (anything but np.nan or None).
+        Parameters
+        ----------
+        samples : array_like
+            Evaluations for the model.
+        Returns
+        -------
+        masked_samples : list
+            The evaluations that have results (not numpy.nan or None).
+        mask : boolean array
+            The mask itself, used to create the masked arrays.
+        """
+        masked_samples = []
+        mask = np.ones(len(samples), dtype=bool)
+
+        for i, result in enumerate(samples):
+            # if np.any(np.isnan(result)):
+            if self.contains_nan(result):
+                mask[i] = False
+            else:
+                masked_samples.append(result)
+
+        return masked_samples, mask     
 
     def analyse(self, data_frame):
         """Perform QMC analysis on a given pandas DataFrame.
@@ -89,10 +177,8 @@ class QMCAnalysis(BaseAnalysisElement):
 
         Returns
         -------
-        dict:
-            Contains analysis results in sub-dicts with keys -
-            ['statistical_moments', 'percentiles', 'sobol_indices',
-             'correlation_matrices', 'output_distributions']
+        easyvvuq.analysis.qmc.QMCAnalysisResults
+            AnalysisResults object for QMC.
         """
         if data_frame.empty:
             raise RuntimeError(
@@ -102,6 +188,7 @@ class QMCAnalysis(BaseAnalysisElement):
 
         results = {
             'statistical_moments': {k: {} for k in qoi_cols},
+            'percentiles': {k: {} for k in qoi_cols},
             'sobols_first': {k: {} for k in qoi_cols},
             'sobols_total': {k: {} for k in qoi_cols},
             'conf_sobols_first': {k: {} for k in qoi_cols},
@@ -113,9 +200,30 @@ class QMCAnalysis(BaseAnalysisElement):
 
         # Compute descriptive statistics for each quantity of interest
         for k in qoi_cols:
-            results['statistical_moments'][k] = {'mean': np.mean(samples[k], axis=0),
-                                                 'var': np.var(samples[k], axis=0),
-                                                 'std': np.std(samples[k], axis=0)}
+            # Find NaNs and create a mask excluding these samples from the analysis
+            # https://github.com/simetenn/uncertainpy/blob/ffb2400289743066265b9a8561cdf3b72e478a28/src/uncertainpy/core/uncertainty_calculations.py#L1532
+            masked_samples, mask = self.create_mask(samples[k])
+
+            results['statistical_moments'][k] = {'mean': np.mean(masked_samples, axis=0),
+                                                 'var': np.var(masked_samples, axis=0),
+                                                 'std': np.std(masked_samples, axis=0)}
+            results['percentiles'][k] = {'p10': np.percentile(masked_samples, 10, 0)[0],
+                                         'p50': np.percentile(masked_samples, 50, 0)[0],
+                                         'p90': np.percentile(masked_samples, 90, 0)[0]}                                                 
+
+            # Replace Nan values by the mean before proceeding with the SA
+            indices = np.where(mask == 0)[0] # samples[~mask] = results[k].mean
+            for i in indices:
+                samples[k][i] = results['statistical_moments'][k]['mean']
+
+            if not np.all(mask):
+                print("Warning: QoI \"{}\" only yields ".format(k) +
+                    "results for {}/{} ".format(sum(mask), len(mask)) +
+                    "parameter combinations. " +
+                    "Runs {} are not valid. ".format(indices+1) +
+                    "NaN results are set to the mean when calculating the Sobol indices. " +
+                    "This might affect the Sobol indices.")
+            
             sobols_first, conf_first, sobols_total, conf_total = \
                 self.sobol_bootstrap(samples[k])
             results['sobols_first'][k] = sobols_first
@@ -132,13 +240,14 @@ class QMCAnalysis(BaseAnalysisElement):
 
         Parameters
         ----------
-        data_frame : the EasyVVUQ Pandas dataframe.
+        data_frame : pandas DataFrame
+            the EasyVVUQ Pandas dataframe from collation.
 
         Returns
         -------
-        samples : A dictionary with the QoI names as keys. Each samples[qoi_name]
-        is a list of code evaluations.
-
+        dict :
+            A dictionary with the QoI names as keys.
+            Each element is a list of code evaluations.
         """
         samples = {k: [] for k in self.qoi_cols}
         for run_id in data_frame['run_id'].squeeze().unique():

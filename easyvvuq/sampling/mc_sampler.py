@@ -49,13 +49,11 @@ class MCSampler(RandomSampler, sampler_name='mc_sampler'):
         None.
 
         """
-        super().__init__(vary=vary, max_num=n_mc_samples, **kwargs)
+        super().__init__(vary=vary, count=0, max_num=n_mc_samples, **kwargs)
         # the number of uncertain inputs
         self.n_params = len(vary)
         # the number of MC samples, for each of the n_params + 2 input matrices
         self.n_mc_samples = n_mc_samples
-        self.vary = Vary(vary)
-        self.count = 0
         # joint distribution
         self.joint = cp.J(*list(vary.values()))
         # create the Saltelli sampling plan
@@ -108,8 +106,12 @@ class MCSampler(RandomSampler, sampler_name='mc_sampler'):
         # number of different sampling matrices
         step = self.n_params + 2
         # store M2 first, with entries separated by step places
+        if M_2.ndim == 1:
+            M_2 = M_2.reshape([-1, 1])
         self.xi_mc[0:self.max_num:step] = M_2
         # store M1 entries last
+        if M_1.ndim == 1:
+            M_1 = M_1.reshape([-1, 1])
         self.xi_mc[(step - 1):self.max_num:step] = M_1
         # store N_i entries between M2 and M1
         for i in range(self.n_params):
@@ -119,5 +121,9 @@ class MCSampler(RandomSampler, sampler_name='mc_sampler'):
             self.xi_mc[(i + 1):self.max_num:step] = N_i
         logging.debug('Done.')
 
-    def get_restart_dict(self):
-        return {"vary": self.vary.serialize(), "n_mc_samples": self.n_mc_samples}
+    @property
+    def analysis_class(self):
+        """Return a corresponding analysis class.
+        """
+        from easyvvuq.analysis import QMCAnalysis
+        return QMCAnalysis

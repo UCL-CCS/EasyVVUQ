@@ -1,0 +1,36 @@
+#!/usr/bin/env python3
+
+import sys
+import numpy as np
+import json
+import pandas as pd
+import os
+
+def model(a, b, c, d):
+    a = int(a)
+    b = int(b)
+    c = int(c)
+    d = int(d)
+    x = np.linspace(0, 1, 50)
+    return np.random.poisson(
+        a * (0.5 * np.sin(2.0 * np.pi * x) + 1.0) +\
+        b * (0.5 * np.sin(4.0 * np.pi * x) + 1.0) +\
+        c * (0.5 * np.sin(6.0 * np.pi * x) + 1.0) +\
+        d * (0.5 * np.sin(8.0 * np.pi * x) + 1.0))
+
+if __name__ == '__main__':
+    if len(sys.argv) != 2:
+        sys.exit("Usage: beam input_file")
+    json_input = sys.argv[1]
+    with open(json_input, 'r') as fd:
+        inputs = json.load(fd)
+    a = inputs['a']
+    b = inputs['b']
+    c = inputs['c']
+    d = inputs['d']
+    outfile = inputs['outfile']
+    data = pd.DataFrame({"Values": model(a, b, c, d)})
+    directory="."
+    data.to_csv(os.path.join(directory, outfile), index=False)
+
+    

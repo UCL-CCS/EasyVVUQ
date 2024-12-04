@@ -1,6 +1,4 @@
 from .base import BaseSamplingElement
-import itertools
-import logging
 
 __copyright__ = """
 
@@ -27,17 +25,8 @@ __license__ = "LGPL"
 
 class EmptySampler(BaseSamplingElement, sampler_name="empty"):
 
-    def element_version(self):
-        return "0.1"
-
     def is_finite(self):
         return False
 
     def __next__(self):
-        return {}
-
-    def is_restartable(self):
-        return True
-
-    def get_restart_dict(self):
         return {}

@@ -1,4 +1,5 @@
 import os
+from shutil import rmtree
 import easyvvuq as uq
 import chaospy as cp
 
@@ -6,15 +7,26 @@ import chaospy as cp
 #
 #    gauss.py is in current directory and takes one input file
 #    and writes to 'output.csv'.
-cwd = os.getcwd()
-input_filename = 'gauss_in.json'
-cmd = f"{cwd}/gauss.py {input_filename}"
+work_dir = os.path.dirname(os.path.abspath(__file__))
+input_filename = "gauss_in.json"
 out_file = "output.csv"
 # Template input to substitute values into for each run
-template = f"{cwd}/gauss.template"
+template = f"{work_dir}/gauss.template"
+
+campaign_work_dir = os.path.join(work_dir, "easyvvuq_gauss_tutorial")
+# clear the target campaign dir
+if os.path.exists(campaign_work_dir):
+    rmtree(campaign_work_dir)
+os.makedirs(campaign_work_dir)
+
 
 # 1. Create campaign
-my_campaign = uq.Campaign(name='gauss', work_dir=".")
+db_location = "sqlite:///" + campaign_work_dir + "/campaign.db"
+my_campaign = uq.Campaign(
+    name="gauss",
+    db_location=db_location,
+    work_dir=campaign_work_dir
+)
 
 # 2. Parameter space definition
 params = {
@@ -43,19 +55,38 @@ params = {
 }
 
 # 3. Wrap Application
-#    - Define a new application (we'll call it 'gauss'), and the encoding/decoding elements it needs
-#    - Also requires a collation element - his will be responsible for aggregating the results
-encoder = uq.encoders.GenericEncoder(template_fname=template,
-                                     target_filename=input_filename)
+#    - Define a new application (we'll call it 'gauss'),
+#      and the encoding/decoding elements it needs
+#    - Also requires a collation element - his will be responsible for
+#      aggregating the results
+encoder = uq.encoders.GenericEncoder(
+    template_fname=template,
+    target_filename=input_filename
+)
 
 decoder = uq.decoders.SimpleCSV(
-            target_filename=out_file,
-            output_columns=['Step', 'Value'])
+    target_filename=out_file,
+    output_columns=['Step', 'Value']
+)
 
-my_campaign.add_app(name="gauss",
-                    params=params,
-                    encoder=encoder,
-                    decoder=decoder)
+cmd = f"{work_dir}/gauss.py {input_filename}"
+execute = uq.actions.ExecuteLocal(
+    "python3 {}".format(cmd)
+)
+
+actions = uq.actions.Actions(
+    uq.actions.CreateRunDirectory(root=campaign_work_dir, flatten=True),
+    uq.actions.Encode(encoder),
+    execute,
+    uq.actions.Decode(decoder)
+)
+
+my_campaign.add_app(
+    name="gauss",
+    params=params,
+    actions=actions
+)
+
 
 # 4. Specify Sampler
 #    -  vary the `mu` parameter only
@@ -67,24 +98,13 @@ my_sampler = uq.sampling.RandomSampler(vary=vary)
 
 my_campaign.set_sampler(my_sampler)
 
-# 5. Get run parameters
-my_campaign.draw_samples(num_samples=3,
-                         replicas=5)
-
-# 6. Create run input directories
-my_campaign.populate_runs_dir()
-
 print(my_campaign)
 
-# 7. Run Application
+# 5. Run Application and Collate output
 #    - gauss is executed for each sample
-my_campaign.apply_for_each_run_dir(uq.actions.ExecuteLocal(cmd,
-                                                           interpret='python3'))
+my_campaign.execute(nsamples=3).collate()
 
-# 8. Collate output
-my_campaign.collate()
-
-# 9. Run Analysis
+# 6. Run Analysis
 #     - Calculate bootstrap statistics for collated data
 stats = uq.analysis.EnsembleBoot(groupby=[("mu", 0)], qoi_cols=[("Value", 0)])
 my_campaign.apply_analysis(stats)

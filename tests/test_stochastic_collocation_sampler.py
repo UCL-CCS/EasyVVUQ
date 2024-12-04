@@ -61,10 +61,11 @@ def test_generate_grid(sc_sampler):
          (188.72983346207417, 1.046623475710158)]))
 
 
-def test_cmpute_sparse_multi_idx(sc_sampler):
-    assert((sc_sampler.compute_sparse_multi_idx(5, 2) ==
-            np.array([[1, 1], [1, 2], [1, 3], [1, 4], [1, 5],
-                      [2, 1], [2, 2], [2, 3], [2, 4],
-                      [3, 1], [3, 2], [3, 3],
-                      [4, 1], [4, 2],
-                      [5, 1]])).all())
+# Removed test, already tested in test_hierarchical_sparse_grid_sc.py
+# def test_cmpute_sparse_multi_idx(sc_sampler):
+#     assert((sc_sampler.compute_sparse_multi_idx(5, 2) ==
+#             np.array([[1, 1], [1, 2], [1, 3], [1, 4], [1, 5],
+#                       [2, 1], [2, 2], [2, 3], [2, 4],
+#                       [3, 1], [3, 2], [3, 3],
+#                       [4, 1], [4, 2],
+#                       [5, 1]])).all())

@@ -133,7 +133,7 @@ def ensemble_bootstrap(data, groupby=[], qoi_cols=[],
     Parameters
     ----------
     data : :obj:`pandas.DataFrame`
-        Date to be analysed.
+        DataFrame to be analysed.
     groupby : list or None
         Columns to use to group the data in `analyse` method before
         calculating stats.
