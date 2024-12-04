@@ -129,15 +129,30 @@ class PCEAnalysisResults(QMCAnalysisResults):
             return np.array([v.upper[0] for _, v in enumerate(
                 self.raw_data['output_distributions'][qoi])])
         elif statistic == '1%':
-            return self.raw_data['percentiles'][qoi]['p01']
+            if isinstance(self.raw_data['percentiles'][qoi]['p01'], np.ndarray):
+                return self.raw_data['percentiles'][qoi]['p01']
+            else:
+                return np.array([self.raw_data['percentiles'][qoi]['p01']])
         elif statistic == '10%':
-            return self.raw_data['percentiles'][qoi]['p10']
+            if isinstance(self.raw_data['percentiles'][qoi]['p10'], np.ndarray):
+                return self.raw_data['percentiles'][qoi]['p10']
+            else:
+                return np.array([self.raw_data['percentiles'][qoi]['p10']])
         elif statistic == '90%':
-            return self.raw_data['percentiles'][qoi]['p90']
+            if isinstance(self.raw_data['percentiles'][qoi]['p90'], np.ndarray):
+                return self.raw_data['percentiles'][qoi]['p90']
+            else:
+                return np.array([self.raw_data['percentiles'][qoi]['p90']])
         elif statistic == '99%':
-            return self.raw_data['percentiles'][qoi]['p99']
+            if isinstance(self.raw_data['percentiles'][qoi]['p99'], np.ndarray):
+                return self.raw_data['percentiles'][qoi]['p99']
+            else:
+                return np.array([self.raw_data['percentiles'][qoi]['p99']])
         elif statistic == 'median':
-            return self.raw_data['percentiles'][qoi]['p50']
+            if isinstance(self.raw_data['percentiles'][qoi]['p50'], np.ndarray):
+                return self.raw_data['percentiles'][qoi]['p50']
+            else:
+                return np.array([self.raw_data['percentiles'][qoi]['p50']])
         else:
             try:
                 return self.raw_data['statistical_moments'][qoi][statistic]

@@ -37,6 +37,7 @@ class EasyVVUQBasicTemplate(QCGPJTemplate):
                     'stdout': '${stdout}',
                     'stderr': '${stderr}',
                     'venv': '${venv}',
+                    'modules': ${modules},
                     'model': '${model}',
                     'model_opts': ${model_opts}
                 }
@@ -48,6 +49,7 @@ class EasyVVUQBasicTemplate(QCGPJTemplate):
             'stdout': 'stdout',
             'stderr': 'stderr',
             'venv': '',
+            'modules': [],
             'model': 'default',
             'model_opts': {}
         }
@@ -74,6 +76,7 @@ class EasyVVUQParallelTemplate(QCGPJTemplate):
                     'stdout': '${stdout}',
                     'stderr': '${stderr}',
                     'venv': '${venv}',
+                    'modules': ${modules},
                     'model': '${model}',
                     'model_opts': ${model_opts}
                 },
@@ -93,6 +96,7 @@ class EasyVVUQParallelTemplate(QCGPJTemplate):
             'stdout': 'stdout',
             'stderr': 'stderr',
             'venv': '',
+            'modules': [],
             'model': 'default',
             'model_opts': {},
             'numCores': 1,
