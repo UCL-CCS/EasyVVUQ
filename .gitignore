@@ -21,3 +21,4 @@ pep.sh
 *.csv
 env/
 .ipynb_checkpoints/
+easyvvuq/_version.py

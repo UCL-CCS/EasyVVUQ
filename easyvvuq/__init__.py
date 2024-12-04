@@ -11,9 +11,14 @@ from . import sampling
 from . import analysis
 from . import comparison
 
-# First make sure python version is 3.6+
-assert sys.version_info >= (3, 6), (f"Python version must be >= 3.6,"
-                                    f"found {sys.version_info}")
+from importlib.metadata import version, PackageNotFoundError
+
+try:
+    __version__ = version("easyvvuq")
+except PackageNotFoundError:
+    from setuptools_scm import get_version  # type: ignore[import]
+
+    __version__ = get_version(root="..", relative_to=__file__)
 
 __copyright__ = """
 
@@ -36,6 +41,3 @@ __copyright__ = """
 
 """
 __license__ = "LGPL"
-
-from . import _version
-__version__ = _version.get_versions()['version']

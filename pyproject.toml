@@ -1,0 +1,74 @@
+[build-system]
+requires = ["setuptools>=64", "setuptools_scm>=8"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "easyvvuq"
+description = "Library to facilitate simple Verification, Validation and Uncertainty Quantification of simulation codes"
+readme = "README.md"
+authors = [{name = "CCS"}]
+license = {file = "LICENSE"}
+dynamic = ["version"]
+requires-python = ">=3.8"
+dependencies = [
+    "numpy<2",
+    "pandas",
+    "scipy",
+    "wheel",
+    "chaospy==4.3.2",
+    "numpoly==1.1.3",
+    "SALib",
+    "SQLAlchemy",
+    "cerberus",
+    "dask[complete]",
+    "dask_jobqueue",
+    "cloudpickle",
+    "scikit-learn",
+    "jinja2",
+    "kubernetes",
+    "squarify",
+    "dill",
+    "tqdm",
+    "qcg-pilotjob~=0.13.0",
+    "qcg-pilotjob-executor-api~=0.13.0",
+    "h5py",
+    "tomli",
+    "fipy",
+]
+
+[project.optional-dependencies]
+docs = [
+    "sphinx >= 5.3",
+]
+tests = [
+    "pytest >= 3.3.0",
+    "pytest-pep8",
+    "pytest-benchmark",
+    "pytest-dependency",
+]
+lint = [
+    "black",
+    "ruff",
+]
+
+[project.urls]
+Source = "https://github.com/UCL-CCS/EasyVVUQ"
+Tracker = "https://github.com/UCL-CCS/EasyVVUQ/issues"
+Documentation = "https://easyvvuq.readthedocs.io/en/dev/"
+
+[tool.setuptools.packages.find]
+where = ["easyvvuq"]
+
+[tool.setuptools_scm]
+write_to = "easyvvuq/_version.py"
+
+[tool.black]
+exclude = "easyvvuq/_version.py"
+
+[tool.pytest.ini_options]
+pep8ignore = [
+    "*.py E265",
+    "__init__.py E402",
+    "tests/*.py E128",
+]
+pep8maxlinelength = 100
