@@ -84,6 +84,51 @@
                 </ul>
 
             </li>
+            <li>
+                    <a class="class" href="#EnsembleBootMultiple">EnsembleBootMultiple</a>
+                            <ul class="memberlist">
+                        <li>
+                                <a class="function" href="#EnsembleBootMultiple.__init__">EnsembleBootMultiple</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#EnsembleBootMultiple.groupby">groupby</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#EnsembleBootMultiple.qoi_cols">qoi_cols</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#EnsembleBootMultiple.stat_func">stat_func</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#EnsembleBootMultiple.alpha">alpha</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#EnsembleBootMultiple.sample_size">sample_size</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#EnsembleBootMultiple.n_boot_samples">n_boot_samples</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#EnsembleBootMultiple.pivotal">pivotal</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#EnsembleBootMultiple.stat_name">stat_name</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#EnsembleBootMultiple.output_type">output_type</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#EnsembleBootMultiple.element_name">element_name</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#EnsembleBootMultiple.element_version">element_version</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#EnsembleBootMultiple.analyse">analyse</a>
+                        </li>
+                </ul>
+
+            </li>
     </ul>
 
 
@@ -398,6 +443,99 @@
 </span><span id="L-289"><a href="#L-289"><span class="linenos">289</span></a>            <span class="n">stat_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">stat_name</span><span class="p">)</span>
 </span><span id="L-290"><a href="#L-290"><span class="linenos">290</span></a>
 </span><span id="L-291"><a href="#L-291"><span class="linenos">291</span></a>        <span class="k">return</span> <span class="n">results</span>
+</span><span id="L-292"><a href="#L-292"><span class="linenos">292</span></a>
+</span><span id="L-293"><a href="#L-293"><span class="linenos">293</span></a><span class="k">class</span> <span class="nc">EnsembleBootMultiple</span><span class="p">(</span><span class="n">BaseAnalysisElement</span><span class="p">):</span>
+</span><span id="L-294"><a href="#L-294"><span class="linenos">294</span></a>
+</span><span id="L-295"><a href="#L-295"><span class="linenos">295</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">groupby</span><span class="o">=</span><span class="p">[],</span> <span class="n">qoi_cols</span><span class="o">=</span><span class="p">[],</span>
+</span><span id="L-296"><a href="#L-296"><span class="linenos">296</span></a>                 <span class="n">stat_func</span><span class="o">=</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">],</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span>
+</span><span id="L-297"><a href="#L-297"><span class="linenos">297</span></a>                 <span class="n">sample_size</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">n_boot_samples</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
+</span><span id="L-298"><a href="#L-298"><span class="linenos">298</span></a>                 <span class="n">pivotal</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">stat_name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+</span><span id="L-299"><a href="#L-299"><span class="linenos">299</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-300"><a href="#L-300"><span class="linenos">300</span></a><span class="sd">        Element to perform bootstrapping on collated simulation output.</span>
+</span><span id="L-301"><a href="#L-301"><span class="linenos">301</span></a>
+</span><span id="L-302"><a href="#L-302"><span class="linenos">302</span></a><span class="sd">        Parameters</span>
+</span><span id="L-303"><a href="#L-303"><span class="linenos">303</span></a><span class="sd">        ----------</span>
+</span><span id="L-304"><a href="#L-304"><span class="linenos">304</span></a><span class="sd">        groupby : list or None</span>
+</span><span id="L-305"><a href="#L-305"><span class="linenos">305</span></a><span class="sd">            Columns to use to group the data in `analyse` method before</span>
+</span><span id="L-306"><a href="#L-306"><span class="linenos">306</span></a><span class="sd">            calculating stats.</span>
+</span><span id="L-307"><a href="#L-307"><span class="linenos">307</span></a><span class="sd">        qoi_cols : list or None</span>
+</span><span id="L-308"><a href="#L-308"><span class="linenos">308</span></a><span class="sd">            Columns of quantities of interest (for which stats will be</span>
+</span><span id="L-309"><a href="#L-309"><span class="linenos">309</span></a><span class="sd">            calculated).</span>
+</span><span id="L-310"><a href="#L-310"><span class="linenos">310</span></a><span class="sd">        stat_func : list[function]</span>
+</span><span id="L-311"><a href="#L-311"><span class="linenos">311</span></a><span class="sd">            List of statistical functions to be applied to data for bootstrapping.</span>
+</span><span id="L-312"><a href="#L-312"><span class="linenos">312</span></a><span class="sd">        alpha : float, default=0.05</span>
+</span><span id="L-313"><a href="#L-313"><span class="linenos">313</span></a><span class="sd">            Produce estimate of 100.0*(1-`alpha`) confidence interval.</span>
+</span><span id="L-314"><a href="#L-314"><span class="linenos">314</span></a><span class="sd">        sample_size : int</span>
+</span><span id="L-315"><a href="#L-315"><span class="linenos">315</span></a><span class="sd">            Size of the sample to be drawn from the input data.</span>
+</span><span id="L-316"><a href="#L-316"><span class="linenos">316</span></a><span class="sd">        n_boot_samples : int, default=1000</span>
+</span><span id="L-317"><a href="#L-317"><span class="linenos">317</span></a><span class="sd">            Number of times samples are to be drawn from the input data.</span>
+</span><span id="L-318"><a href="#L-318"><span class="linenos">318</span></a><span class="sd">        pivotal : bool, default=False</span>
+</span><span id="L-319"><a href="#L-319"><span class="linenos">319</span></a><span class="sd">            Use the pivotal method? Default to percentile method.</span>
+</span><span id="L-320"><a href="#L-320"><span class="linenos">320</span></a><span class="sd">        stat_name : str, default=None</span>
+</span><span id="L-321"><a href="#L-321"><span class="linenos">321</span></a><span class="sd">            Name to use to describe columns containing output statistic (for example</span>
+</span><span id="L-322"><a href="#L-322"><span class="linenos">322</span></a><span class="sd">            &#39;mean&#39;). If not provided, then attr &#39;__name__&#39; from each func is used.</span>
+</span><span id="L-323"><a href="#L-323"><span class="linenos">323</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-324"><a href="#L-324"><span class="linenos">324</span></a>
+</span><span id="L-325"><a href="#L-325"><span class="linenos">325</span></a>        <span class="k">if</span> <span class="ow">not</span> <span class="n">stat_func</span> <span class="ow">or</span> <span class="n">stat_func</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="L-326"><a href="#L-326"><span class="linenos">326</span></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;stat_func cannot be empty or None&#39;</span><span class="p">)</span>
+</span><span id="L-327"><a href="#L-327"><span class="linenos">327</span></a>
+</span><span id="L-328"><a href="#L-328"><span class="linenos">328</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">groupby</span> <span class="o">=</span> <span class="n">groupby</span>
+</span><span id="L-329"><a href="#L-329"><span class="linenos">329</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">qoi_cols</span> <span class="o">=</span> <span class="n">qoi_cols</span>
+</span><span id="L-330"><a href="#L-330"><span class="linenos">330</span></a>
+</span><span id="L-331"><a href="#L-331"><span class="linenos">331</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">stat_func</span> <span class="o">=</span> <span class="n">stat_func</span>
+</span><span id="L-332"><a href="#L-332"><span class="linenos">332</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span> <span class="o">=</span> <span class="n">alpha</span>
+</span><span id="L-333"><a href="#L-333"><span class="linenos">333</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">sample_size</span> <span class="o">=</span> <span class="n">sample_size</span>
+</span><span id="L-334"><a href="#L-334"><span class="linenos">334</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">n_boot_samples</span> <span class="o">=</span> <span class="n">n_boot_samples</span>
+</span><span id="L-335"><a href="#L-335"><span class="linenos">335</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">pivotal</span> <span class="o">=</span> <span class="n">pivotal</span>
+</span><span id="L-336"><a href="#L-336"><span class="linenos">336</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">stat_name</span> <span class="o">=</span> <span class="n">stat_name</span> <span class="k">if</span> <span class="n">stat_name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="p">[</span><span class="n">func</span><span class="o">.</span><span class="vm">__name__</span> <span class="k">for</span> <span class="n">func</span> <span class="ow">in</span> <span class="n">stat_func</span><span class="p">]</span>
+</span><span id="L-337"><a href="#L-337"><span class="linenos">337</span></a>
+</span><span id="L-338"><a href="#L-338"><span class="linenos">338</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">output_type</span> <span class="o">=</span> <span class="n">OutputType</span><span class="o">.</span><span class="n">SUMMARY</span>
+</span><span id="L-339"><a href="#L-339"><span class="linenos">339</span></a>
+</span><span id="L-340"><a href="#L-340"><span class="linenos">340</span></a>    <span class="k">def</span> <span class="nf">element_name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="L-341"><a href="#L-341"><span class="linenos">341</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Name for this element for logging purposes&quot;&quot;&quot;</span>
+</span><span id="L-342"><a href="#L-342"><span class="linenos">342</span></a>        <span class="k">return</span> <span class="s2">&quot;ensemble_boot_multiple&quot;</span>
+</span><span id="L-343"><a href="#L-343"><span class="linenos">343</span></a>
+</span><span id="L-344"><a href="#L-344"><span class="linenos">344</span></a>    <span class="k">def</span> <span class="nf">element_version</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="L-345"><a href="#L-345"><span class="linenos">345</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Version of this element for logging purposes&quot;&quot;&quot;</span>
+</span><span id="L-346"><a href="#L-346"><span class="linenos">346</span></a>        <span class="k">return</span> <span class="s2">&quot;0.1&quot;</span>
+</span><span id="L-347"><a href="#L-347"><span class="linenos">347</span></a>
+</span><span id="L-348"><a href="#L-348"><span class="linenos">348</span></a>    <span class="k">def</span> <span class="nf">analyse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_frame</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+</span><span id="L-349"><a href="#L-349"><span class="linenos">349</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Perform bootstrapping analysis on the input `data_frame`.</span>
+</span><span id="L-350"><a href="#L-350"><span class="linenos">350</span></a>
+</span><span id="L-351"><a href="#L-351"><span class="linenos">351</span></a><span class="sd">        The data_frame is grouped according to `self.groupby` if specified and</span>
+</span><span id="L-352"><a href="#L-352"><span class="linenos">352</span></a><span class="sd">        analysis is performed on the columns selected in `self.qoi_cols` if set.</span>
+</span><span id="L-353"><a href="#L-353"><span class="linenos">353</span></a>
+</span><span id="L-354"><a href="#L-354"><span class="linenos">354</span></a><span class="sd">        Parameters</span>
+</span><span id="L-355"><a href="#L-355"><span class="linenos">355</span></a><span class="sd">        ----------</span>
+</span><span id="L-356"><a href="#L-356"><span class="linenos">356</span></a><span class="sd">        data_frame : :obj:`pandas.DataFrame`</span>
+</span><span id="L-357"><a href="#L-357"><span class="linenos">357</span></a><span class="sd">            Summary data produced through collation of simulation output.</span>
+</span><span id="L-358"><a href="#L-358"><span class="linenos">358</span></a>
+</span><span id="L-359"><a href="#L-359"><span class="linenos">359</span></a><span class="sd">        Returns</span>
+</span><span id="L-360"><a href="#L-360"><span class="linenos">360</span></a><span class="sd">        -------</span>
+</span><span id="L-361"><a href="#L-361"><span class="linenos">361</span></a><span class="sd">        :obj:`pandas.DataFrame`</span>
+</span><span id="L-362"><a href="#L-362"><span class="linenos">362</span></a><span class="sd">            Basic statistic for selected columns and groupings of data.</span>
+</span><span id="L-363"><a href="#L-363"><span class="linenos">363</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-364"><a href="#L-364"><span class="linenos">364</span></a>
+</span><span id="L-365"><a href="#L-365"><span class="linenos">365</span></a>        <span class="k">if</span> <span class="n">data_frame</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="L-366"><a href="#L-366"><span class="linenos">366</span></a>            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+</span><span id="L-367"><a href="#L-367"><span class="linenos">367</span></a>                    <span class="s2">&quot;This VVUQ element needs a data frame to analyse&quot;</span><span class="p">)</span>
+</span><span id="L-368"><a href="#L-368"><span class="linenos">368</span></a>        <span class="k">elif</span> <span class="n">data_frame</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
+</span><span id="L-369"><a href="#L-369"><span class="linenos">369</span></a>            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+</span><span id="L-370"><a href="#L-370"><span class="linenos">370</span></a>                    <span class="s2">&quot;No data in data frame passed to analyse element&quot;</span><span class="p">)</span>
+</span><span id="L-371"><a href="#L-371"><span class="linenos">371</span></a>        <span class="n">frames</span> <span class="o">=</span> <span class="p">[]</span>
+</span><span id="L-372"><a href="#L-372"><span class="linenos">372</span></a>        <span class="k">for</span> <span class="n">stat_func</span><span class="p">,</span> <span class="n">stat_name</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">stat_func</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">stat_name</span><span class="p">):</span>
+</span><span id="L-373"><a href="#L-373"><span class="linenos">373</span></a>            <span class="n">results</span> <span class="o">=</span> <span class="n">ensemble_bootstrap</span><span class="p">(</span>
+</span><span id="L-374"><a href="#L-374"><span class="linenos">374</span></a>                    <span class="n">data_frame</span><span class="p">,</span>
+</span><span id="L-375"><a href="#L-375"><span class="linenos">375</span></a>                    <span class="n">groupby</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">groupby</span><span class="p">,</span>
+</span><span id="L-376"><a href="#L-376"><span class="linenos">376</span></a>                    <span class="n">qoi_cols</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">qoi_cols</span><span class="p">,</span>
+</span><span id="L-377"><a href="#L-377"><span class="linenos">377</span></a>                    <span class="n">stat_func</span><span class="o">=</span><span class="n">stat_func</span><span class="p">,</span>
+</span><span id="L-378"><a href="#L-378"><span class="linenos">378</span></a>                    <span class="n">alpha</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">alpha</span><span class="p">,</span>
+</span><span id="L-379"><a href="#L-379"><span class="linenos">379</span></a>                    <span class="n">sample_size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">sample_size</span><span class="p">,</span>
+</span><span id="L-380"><a href="#L-380"><span class="linenos">380</span></a>                    <span class="n">n_samples</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">n_boot_samples</span><span class="p">,</span>
+</span><span id="L-381"><a href="#L-381"><span class="linenos">381</span></a>                    <span class="n">pivotal</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">pivotal</span><span class="p">,</span>
+</span><span id="L-382"><a href="#L-382"><span class="linenos">382</span></a>                    <span class="n">stat_name</span><span class="o">=</span><span class="n">stat_name</span><span class="p">)</span>
+</span><span id="L-383"><a href="#L-383"><span class="linenos">383</span></a>            <span class="n">frames</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
+</span><span id="L-384"><a href="#L-384"><span class="linenos">384</span></a>        <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">frames</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">keys</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">stat_name</span><span class="p">)</span><span class="o">.</span><span class="n">swaplevel</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 </span></pre></div>
 
 
@@ -1112,6 +1250,429 @@ Summary data produced through collation of simulation output.</li>
                                 <dl>
                                     <div><dt><a href="base.html#BaseAnalysisElement">easyvvuq.analysis.base.BaseAnalysisElement</a></dt>
                                 <dd id="EnsembleBoot.element_category" class="function"><a href="base.html#BaseAnalysisElement.element_category">element_category</a></dd>
+
+            </div>
+                                </dl>
+                            </div>
+                </section>
+                <section id="EnsembleBootMultiple">
+                            <input id="EnsembleBootMultiple-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr class">
+            
+    <span class="def">class</span>
+    <span class="name">EnsembleBootMultiple</span><wbr>(<span class="base"><a href="base.html#BaseAnalysisElement">easyvvuq.analysis.base.BaseAnalysisElement</a></span>):
+
+                <label class="view-source-button" for="EnsembleBootMultiple-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#EnsembleBootMultiple"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="EnsembleBootMultiple-294"><a href="#EnsembleBootMultiple-294"><span class="linenos">294</span></a><span class="k">class</span> <span class="nc">EnsembleBootMultiple</span><span class="p">(</span><span class="n">BaseAnalysisElement</span><span class="p">):</span>
+</span><span id="EnsembleBootMultiple-295"><a href="#EnsembleBootMultiple-295"><span class="linenos">295</span></a>
+</span><span id="EnsembleBootMultiple-296"><a href="#EnsembleBootMultiple-296"><span class="linenos">296</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">groupby</span><span class="o">=</span><span class="p">[],</span> <span class="n">qoi_cols</span><span class="o">=</span><span class="p">[],</span>
+</span><span id="EnsembleBootMultiple-297"><a href="#EnsembleBootMultiple-297"><span class="linenos">297</span></a>                 <span class="n">stat_func</span><span class="o">=</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">],</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span>
+</span><span id="EnsembleBootMultiple-298"><a href="#EnsembleBootMultiple-298"><span class="linenos">298</span></a>                 <span class="n">sample_size</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">n_boot_samples</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
+</span><span id="EnsembleBootMultiple-299"><a href="#EnsembleBootMultiple-299"><span class="linenos">299</span></a>                 <span class="n">pivotal</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">stat_name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+</span><span id="EnsembleBootMultiple-300"><a href="#EnsembleBootMultiple-300"><span class="linenos">300</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="EnsembleBootMultiple-301"><a href="#EnsembleBootMultiple-301"><span class="linenos">301</span></a><span class="sd">        Element to perform bootstrapping on collated simulation output.</span>
+</span><span id="EnsembleBootMultiple-302"><a href="#EnsembleBootMultiple-302"><span class="linenos">302</span></a>
+</span><span id="EnsembleBootMultiple-303"><a href="#EnsembleBootMultiple-303"><span class="linenos">303</span></a><span class="sd">        Parameters</span>
+</span><span id="EnsembleBootMultiple-304"><a href="#EnsembleBootMultiple-304"><span class="linenos">304</span></a><span class="sd">        ----------</span>
+</span><span id="EnsembleBootMultiple-305"><a href="#EnsembleBootMultiple-305"><span class="linenos">305</span></a><span class="sd">        groupby : list or None</span>
+</span><span id="EnsembleBootMultiple-306"><a href="#EnsembleBootMultiple-306"><span class="linenos">306</span></a><span class="sd">            Columns to use to group the data in `analyse` method before</span>
+</span><span id="EnsembleBootMultiple-307"><a href="#EnsembleBootMultiple-307"><span class="linenos">307</span></a><span class="sd">            calculating stats.</span>
+</span><span id="EnsembleBootMultiple-308"><a href="#EnsembleBootMultiple-308"><span class="linenos">308</span></a><span class="sd">        qoi_cols : list or None</span>
+</span><span id="EnsembleBootMultiple-309"><a href="#EnsembleBootMultiple-309"><span class="linenos">309</span></a><span class="sd">            Columns of quantities of interest (for which stats will be</span>
+</span><span id="EnsembleBootMultiple-310"><a href="#EnsembleBootMultiple-310"><span class="linenos">310</span></a><span class="sd">            calculated).</span>
+</span><span id="EnsembleBootMultiple-311"><a href="#EnsembleBootMultiple-311"><span class="linenos">311</span></a><span class="sd">        stat_func : list[function]</span>
+</span><span id="EnsembleBootMultiple-312"><a href="#EnsembleBootMultiple-312"><span class="linenos">312</span></a><span class="sd">            List of statistical functions to be applied to data for bootstrapping.</span>
+</span><span id="EnsembleBootMultiple-313"><a href="#EnsembleBootMultiple-313"><span class="linenos">313</span></a><span class="sd">        alpha : float, default=0.05</span>
+</span><span id="EnsembleBootMultiple-314"><a href="#EnsembleBootMultiple-314"><span class="linenos">314</span></a><span class="sd">            Produce estimate of 100.0*(1-`alpha`) confidence interval.</span>
+</span><span id="EnsembleBootMultiple-315"><a href="#EnsembleBootMultiple-315"><span class="linenos">315</span></a><span class="sd">        sample_size : int</span>
+</span><span id="EnsembleBootMultiple-316"><a href="#EnsembleBootMultiple-316"><span class="linenos">316</span></a><span class="sd">            Size of the sample to be drawn from the input data.</span>
+</span><span id="EnsembleBootMultiple-317"><a href="#EnsembleBootMultiple-317"><span class="linenos">317</span></a><span class="sd">        n_boot_samples : int, default=1000</span>
+</span><span id="EnsembleBootMultiple-318"><a href="#EnsembleBootMultiple-318"><span class="linenos">318</span></a><span class="sd">            Number of times samples are to be drawn from the input data.</span>
+</span><span id="EnsembleBootMultiple-319"><a href="#EnsembleBootMultiple-319"><span class="linenos">319</span></a><span class="sd">        pivotal : bool, default=False</span>
+</span><span id="EnsembleBootMultiple-320"><a href="#EnsembleBootMultiple-320"><span class="linenos">320</span></a><span class="sd">            Use the pivotal method? Default to percentile method.</span>
+</span><span id="EnsembleBootMultiple-321"><a href="#EnsembleBootMultiple-321"><span class="linenos">321</span></a><span class="sd">        stat_name : str, default=None</span>
+</span><span id="EnsembleBootMultiple-322"><a href="#EnsembleBootMultiple-322"><span class="linenos">322</span></a><span class="sd">            Name to use to describe columns containing output statistic (for example</span>
+</span><span id="EnsembleBootMultiple-323"><a href="#EnsembleBootMultiple-323"><span class="linenos">323</span></a><span class="sd">            &#39;mean&#39;). If not provided, then attr &#39;__name__&#39; from each func is used.</span>
+</span><span id="EnsembleBootMultiple-324"><a href="#EnsembleBootMultiple-324"><span class="linenos">324</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="EnsembleBootMultiple-325"><a href="#EnsembleBootMultiple-325"><span class="linenos">325</span></a>
+</span><span id="EnsembleBootMultiple-326"><a href="#EnsembleBootMultiple-326"><span class="linenos">326</span></a>        <span class="k">if</span> <span class="ow">not</span> <span class="n">stat_func</span> <span class="ow">or</span> <span class="n">stat_func</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="EnsembleBootMultiple-327"><a href="#EnsembleBootMultiple-327"><span class="linenos">327</span></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;stat_func cannot be empty or None&#39;</span><span class="p">)</span>
+</span><span id="EnsembleBootMultiple-328"><a href="#EnsembleBootMultiple-328"><span class="linenos">328</span></a>
+</span><span id="EnsembleBootMultiple-329"><a href="#EnsembleBootMultiple-329"><span class="linenos">329</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">groupby</span> <span class="o">=</span> <span class="n">groupby</span>
+</span><span id="EnsembleBootMultiple-330"><a href="#EnsembleBootMultiple-330"><span class="linenos">330</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">qoi_cols</span> <span class="o">=</span> <span class="n">qoi_cols</span>
+</span><span id="EnsembleBootMultiple-331"><a href="#EnsembleBootMultiple-331"><span class="linenos">331</span></a>
+</span><span id="EnsembleBootMultiple-332"><a href="#EnsembleBootMultiple-332"><span class="linenos">332</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">stat_func</span> <span class="o">=</span> <span class="n">stat_func</span>
+</span><span id="EnsembleBootMultiple-333"><a href="#EnsembleBootMultiple-333"><span class="linenos">333</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span> <span class="o">=</span> <span class="n">alpha</span>
+</span><span id="EnsembleBootMultiple-334"><a href="#EnsembleBootMultiple-334"><span class="linenos">334</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">sample_size</span> <span class="o">=</span> <span class="n">sample_size</span>
+</span><span id="EnsembleBootMultiple-335"><a href="#EnsembleBootMultiple-335"><span class="linenos">335</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">n_boot_samples</span> <span class="o">=</span> <span class="n">n_boot_samples</span>
+</span><span id="EnsembleBootMultiple-336"><a href="#EnsembleBootMultiple-336"><span class="linenos">336</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">pivotal</span> <span class="o">=</span> <span class="n">pivotal</span>
+</span><span id="EnsembleBootMultiple-337"><a href="#EnsembleBootMultiple-337"><span class="linenos">337</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">stat_name</span> <span class="o">=</span> <span class="n">stat_name</span> <span class="k">if</span> <span class="n">stat_name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="p">[</span><span class="n">func</span><span class="o">.</span><span class="vm">__name__</span> <span class="k">for</span> <span class="n">func</span> <span class="ow">in</span> <span class="n">stat_func</span><span class="p">]</span>
+</span><span id="EnsembleBootMultiple-338"><a href="#EnsembleBootMultiple-338"><span class="linenos">338</span></a>
+</span><span id="EnsembleBootMultiple-339"><a href="#EnsembleBootMultiple-339"><span class="linenos">339</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">output_type</span> <span class="o">=</span> <span class="n">OutputType</span><span class="o">.</span><span class="n">SUMMARY</span>
+</span><span id="EnsembleBootMultiple-340"><a href="#EnsembleBootMultiple-340"><span class="linenos">340</span></a>
+</span><span id="EnsembleBootMultiple-341"><a href="#EnsembleBootMultiple-341"><span class="linenos">341</span></a>    <span class="k">def</span> <span class="nf">element_name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="EnsembleBootMultiple-342"><a href="#EnsembleBootMultiple-342"><span class="linenos">342</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Name for this element for logging purposes&quot;&quot;&quot;</span>
+</span><span id="EnsembleBootMultiple-343"><a href="#EnsembleBootMultiple-343"><span class="linenos">343</span></a>        <span class="k">return</span> <span class="s2">&quot;ensemble_boot_multiple&quot;</span>
+</span><span id="EnsembleBootMultiple-344"><a href="#EnsembleBootMultiple-344"><span class="linenos">344</span></a>
+</span><span id="EnsembleBootMultiple-345"><a href="#EnsembleBootMultiple-345"><span class="linenos">345</span></a>    <span class="k">def</span> <span class="nf">element_version</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="EnsembleBootMultiple-346"><a href="#EnsembleBootMultiple-346"><span class="linenos">346</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Version of this element for logging purposes&quot;&quot;&quot;</span>
+</span><span id="EnsembleBootMultiple-347"><a href="#EnsembleBootMultiple-347"><span class="linenos">347</span></a>        <span class="k">return</span> <span class="s2">&quot;0.1&quot;</span>
+</span><span id="EnsembleBootMultiple-348"><a href="#EnsembleBootMultiple-348"><span class="linenos">348</span></a>
+</span><span id="EnsembleBootMultiple-349"><a href="#EnsembleBootMultiple-349"><span class="linenos">349</span></a>    <span class="k">def</span> <span class="nf">analyse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_frame</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+</span><span id="EnsembleBootMultiple-350"><a href="#EnsembleBootMultiple-350"><span class="linenos">350</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Perform bootstrapping analysis on the input `data_frame`.</span>
+</span><span id="EnsembleBootMultiple-351"><a href="#EnsembleBootMultiple-351"><span class="linenos">351</span></a>
+</span><span id="EnsembleBootMultiple-352"><a href="#EnsembleBootMultiple-352"><span class="linenos">352</span></a><span class="sd">        The data_frame is grouped according to `self.groupby` if specified and</span>
+</span><span id="EnsembleBootMultiple-353"><a href="#EnsembleBootMultiple-353"><span class="linenos">353</span></a><span class="sd">        analysis is performed on the columns selected in `self.qoi_cols` if set.</span>
+</span><span id="EnsembleBootMultiple-354"><a href="#EnsembleBootMultiple-354"><span class="linenos">354</span></a>
+</span><span id="EnsembleBootMultiple-355"><a href="#EnsembleBootMultiple-355"><span class="linenos">355</span></a><span class="sd">        Parameters</span>
+</span><span id="EnsembleBootMultiple-356"><a href="#EnsembleBootMultiple-356"><span class="linenos">356</span></a><span class="sd">        ----------</span>
+</span><span id="EnsembleBootMultiple-357"><a href="#EnsembleBootMultiple-357"><span class="linenos">357</span></a><span class="sd">        data_frame : :obj:`pandas.DataFrame`</span>
+</span><span id="EnsembleBootMultiple-358"><a href="#EnsembleBootMultiple-358"><span class="linenos">358</span></a><span class="sd">            Summary data produced through collation of simulation output.</span>
+</span><span id="EnsembleBootMultiple-359"><a href="#EnsembleBootMultiple-359"><span class="linenos">359</span></a>
+</span><span id="EnsembleBootMultiple-360"><a href="#EnsembleBootMultiple-360"><span class="linenos">360</span></a><span class="sd">        Returns</span>
+</span><span id="EnsembleBootMultiple-361"><a href="#EnsembleBootMultiple-361"><span class="linenos">361</span></a><span class="sd">        -------</span>
+</span><span id="EnsembleBootMultiple-362"><a href="#EnsembleBootMultiple-362"><span class="linenos">362</span></a><span class="sd">        :obj:`pandas.DataFrame`</span>
+</span><span id="EnsembleBootMultiple-363"><a href="#EnsembleBootMultiple-363"><span class="linenos">363</span></a><span class="sd">            Basic statistic for selected columns and groupings of data.</span>
+</span><span id="EnsembleBootMultiple-364"><a href="#EnsembleBootMultiple-364"><span class="linenos">364</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="EnsembleBootMultiple-365"><a href="#EnsembleBootMultiple-365"><span class="linenos">365</span></a>
+</span><span id="EnsembleBootMultiple-366"><a href="#EnsembleBootMultiple-366"><span class="linenos">366</span></a>        <span class="k">if</span> <span class="n">data_frame</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="EnsembleBootMultiple-367"><a href="#EnsembleBootMultiple-367"><span class="linenos">367</span></a>            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+</span><span id="EnsembleBootMultiple-368"><a href="#EnsembleBootMultiple-368"><span class="linenos">368</span></a>                    <span class="s2">&quot;This VVUQ element needs a data frame to analyse&quot;</span><span class="p">)</span>
+</span><span id="EnsembleBootMultiple-369"><a href="#EnsembleBootMultiple-369"><span class="linenos">369</span></a>        <span class="k">elif</span> <span class="n">data_frame</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
+</span><span id="EnsembleBootMultiple-370"><a href="#EnsembleBootMultiple-370"><span class="linenos">370</span></a>            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+</span><span id="EnsembleBootMultiple-371"><a href="#EnsembleBootMultiple-371"><span class="linenos">371</span></a>                    <span class="s2">&quot;No data in data frame passed to analyse element&quot;</span><span class="p">)</span>
+</span><span id="EnsembleBootMultiple-372"><a href="#EnsembleBootMultiple-372"><span class="linenos">372</span></a>        <span class="n">frames</span> <span class="o">=</span> <span class="p">[]</span>
+</span><span id="EnsembleBootMultiple-373"><a href="#EnsembleBootMultiple-373"><span class="linenos">373</span></a>        <span class="k">for</span> <span class="n">stat_func</span><span class="p">,</span> <span class="n">stat_name</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">stat_func</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">stat_name</span><span class="p">):</span>
+</span><span id="EnsembleBootMultiple-374"><a href="#EnsembleBootMultiple-374"><span class="linenos">374</span></a>            <span class="n">results</span> <span class="o">=</span> <span class="n">ensemble_bootstrap</span><span class="p">(</span>
+</span><span id="EnsembleBootMultiple-375"><a href="#EnsembleBootMultiple-375"><span class="linenos">375</span></a>                    <span class="n">data_frame</span><span class="p">,</span>
+</span><span id="EnsembleBootMultiple-376"><a href="#EnsembleBootMultiple-376"><span class="linenos">376</span></a>                    <span class="n">groupby</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">groupby</span><span class="p">,</span>
+</span><span id="EnsembleBootMultiple-377"><a href="#EnsembleBootMultiple-377"><span class="linenos">377</span></a>                    <span class="n">qoi_cols</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">qoi_cols</span><span class="p">,</span>
+</span><span id="EnsembleBootMultiple-378"><a href="#EnsembleBootMultiple-378"><span class="linenos">378</span></a>                    <span class="n">stat_func</span><span class="o">=</span><span class="n">stat_func</span><span class="p">,</span>
+</span><span id="EnsembleBootMultiple-379"><a href="#EnsembleBootMultiple-379"><span class="linenos">379</span></a>                    <span class="n">alpha</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">alpha</span><span class="p">,</span>
+</span><span id="EnsembleBootMultiple-380"><a href="#EnsembleBootMultiple-380"><span class="linenos">380</span></a>                    <span class="n">sample_size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">sample_size</span><span class="p">,</span>
+</span><span id="EnsembleBootMultiple-381"><a href="#EnsembleBootMultiple-381"><span class="linenos">381</span></a>                    <span class="n">n_samples</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">n_boot_samples</span><span class="p">,</span>
+</span><span id="EnsembleBootMultiple-382"><a href="#EnsembleBootMultiple-382"><span class="linenos">382</span></a>                    <span class="n">pivotal</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">pivotal</span><span class="p">,</span>
+</span><span id="EnsembleBootMultiple-383"><a href="#EnsembleBootMultiple-383"><span class="linenos">383</span></a>                    <span class="n">stat_name</span><span class="o">=</span><span class="n">stat_name</span><span class="p">)</span>
+</span><span id="EnsembleBootMultiple-384"><a href="#EnsembleBootMultiple-384"><span class="linenos">384</span></a>            <span class="n">frames</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
+</span><span id="EnsembleBootMultiple-385"><a href="#EnsembleBootMultiple-385"><span class="linenos">385</span></a>        <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">frames</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">keys</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">stat_name</span><span class="p">)</span><span class="o">.</span><span class="n">swaplevel</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+</span></pre></div>
+
+
+            <div class="docstring"><p>Base class for all EasyVVUQ analysis elements.</p>
+
+<h2 id="attributes">Attributes</h2>
+</div>
+
+
+                            <div id="EnsembleBootMultiple.__init__" class="classattr">
+                                        <input id="EnsembleBootMultiple.__init__-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr function">
+            
+        <span class="name">EnsembleBootMultiple</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">groupby</span><span class="o">=</span><span class="p">[]</span>,</span><span class="param">	<span class="n">qoi_cols</span><span class="o">=</span><span class="p">[]</span>,</span><span class="param">	<span class="n">stat_func</span><span class="o">=</span><span class="p">[</span><span class="o">&lt;</span><span class="n">function</span> <span class="n">mean</span><span class="o">&gt;</span><span class="p">]</span>,</span><span class="param">	<span class="n">alpha</span><span class="o">=</span><span class="mf">0.05</span>,</span><span class="param">	<span class="n">sample_size</span><span class="o">=</span><span class="kc">None</span>,</span><span class="param">	<span class="n">n_boot_samples</span><span class="o">=</span><span class="mi">1000</span>,</span><span class="param">	<span class="n">pivotal</span><span class="o">=</span><span class="kc">False</span>,</span><span class="param">	<span class="n">stat_name</span><span class="o">=</span><span class="kc">None</span></span>)</span>
+
+                <label class="view-source-button" for="EnsembleBootMultiple.__init__-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#EnsembleBootMultiple.__init__"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="EnsembleBootMultiple.__init__-296"><a href="#EnsembleBootMultiple.__init__-296"><span class="linenos">296</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">groupby</span><span class="o">=</span><span class="p">[],</span> <span class="n">qoi_cols</span><span class="o">=</span><span class="p">[],</span>
+</span><span id="EnsembleBootMultiple.__init__-297"><a href="#EnsembleBootMultiple.__init__-297"><span class="linenos">297</span></a>                 <span class="n">stat_func</span><span class="o">=</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">],</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span>
+</span><span id="EnsembleBootMultiple.__init__-298"><a href="#EnsembleBootMultiple.__init__-298"><span class="linenos">298</span></a>                 <span class="n">sample_size</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">n_boot_samples</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
+</span><span id="EnsembleBootMultiple.__init__-299"><a href="#EnsembleBootMultiple.__init__-299"><span class="linenos">299</span></a>                 <span class="n">pivotal</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">stat_name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+</span><span id="EnsembleBootMultiple.__init__-300"><a href="#EnsembleBootMultiple.__init__-300"><span class="linenos">300</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="EnsembleBootMultiple.__init__-301"><a href="#EnsembleBootMultiple.__init__-301"><span class="linenos">301</span></a><span class="sd">        Element to perform bootstrapping on collated simulation output.</span>
+</span><span id="EnsembleBootMultiple.__init__-302"><a href="#EnsembleBootMultiple.__init__-302"><span class="linenos">302</span></a>
+</span><span id="EnsembleBootMultiple.__init__-303"><a href="#EnsembleBootMultiple.__init__-303"><span class="linenos">303</span></a><span class="sd">        Parameters</span>
+</span><span id="EnsembleBootMultiple.__init__-304"><a href="#EnsembleBootMultiple.__init__-304"><span class="linenos">304</span></a><span class="sd">        ----------</span>
+</span><span id="EnsembleBootMultiple.__init__-305"><a href="#EnsembleBootMultiple.__init__-305"><span class="linenos">305</span></a><span class="sd">        groupby : list or None</span>
+</span><span id="EnsembleBootMultiple.__init__-306"><a href="#EnsembleBootMultiple.__init__-306"><span class="linenos">306</span></a><span class="sd">            Columns to use to group the data in `analyse` method before</span>
+</span><span id="EnsembleBootMultiple.__init__-307"><a href="#EnsembleBootMultiple.__init__-307"><span class="linenos">307</span></a><span class="sd">            calculating stats.</span>
+</span><span id="EnsembleBootMultiple.__init__-308"><a href="#EnsembleBootMultiple.__init__-308"><span class="linenos">308</span></a><span class="sd">        qoi_cols : list or None</span>
+</span><span id="EnsembleBootMultiple.__init__-309"><a href="#EnsembleBootMultiple.__init__-309"><span class="linenos">309</span></a><span class="sd">            Columns of quantities of interest (for which stats will be</span>
+</span><span id="EnsembleBootMultiple.__init__-310"><a href="#EnsembleBootMultiple.__init__-310"><span class="linenos">310</span></a><span class="sd">            calculated).</span>
+</span><span id="EnsembleBootMultiple.__init__-311"><a href="#EnsembleBootMultiple.__init__-311"><span class="linenos">311</span></a><span class="sd">        stat_func : list[function]</span>
+</span><span id="EnsembleBootMultiple.__init__-312"><a href="#EnsembleBootMultiple.__init__-312"><span class="linenos">312</span></a><span class="sd">            List of statistical functions to be applied to data for bootstrapping.</span>
+</span><span id="EnsembleBootMultiple.__init__-313"><a href="#EnsembleBootMultiple.__init__-313"><span class="linenos">313</span></a><span class="sd">        alpha : float, default=0.05</span>
+</span><span id="EnsembleBootMultiple.__init__-314"><a href="#EnsembleBootMultiple.__init__-314"><span class="linenos">314</span></a><span class="sd">            Produce estimate of 100.0*(1-`alpha`) confidence interval.</span>
+</span><span id="EnsembleBootMultiple.__init__-315"><a href="#EnsembleBootMultiple.__init__-315"><span class="linenos">315</span></a><span class="sd">        sample_size : int</span>
+</span><span id="EnsembleBootMultiple.__init__-316"><a href="#EnsembleBootMultiple.__init__-316"><span class="linenos">316</span></a><span class="sd">            Size of the sample to be drawn from the input data.</span>
+</span><span id="EnsembleBootMultiple.__init__-317"><a href="#EnsembleBootMultiple.__init__-317"><span class="linenos">317</span></a><span class="sd">        n_boot_samples : int, default=1000</span>
+</span><span id="EnsembleBootMultiple.__init__-318"><a href="#EnsembleBootMultiple.__init__-318"><span class="linenos">318</span></a><span class="sd">            Number of times samples are to be drawn from the input data.</span>
+</span><span id="EnsembleBootMultiple.__init__-319"><a href="#EnsembleBootMultiple.__init__-319"><span class="linenos">319</span></a><span class="sd">        pivotal : bool, default=False</span>
+</span><span id="EnsembleBootMultiple.__init__-320"><a href="#EnsembleBootMultiple.__init__-320"><span class="linenos">320</span></a><span class="sd">            Use the pivotal method? Default to percentile method.</span>
+</span><span id="EnsembleBootMultiple.__init__-321"><a href="#EnsembleBootMultiple.__init__-321"><span class="linenos">321</span></a><span class="sd">        stat_name : str, default=None</span>
+</span><span id="EnsembleBootMultiple.__init__-322"><a href="#EnsembleBootMultiple.__init__-322"><span class="linenos">322</span></a><span class="sd">            Name to use to describe columns containing output statistic (for example</span>
+</span><span id="EnsembleBootMultiple.__init__-323"><a href="#EnsembleBootMultiple.__init__-323"><span class="linenos">323</span></a><span class="sd">            &#39;mean&#39;). If not provided, then attr &#39;__name__&#39; from each func is used.</span>
+</span><span id="EnsembleBootMultiple.__init__-324"><a href="#EnsembleBootMultiple.__init__-324"><span class="linenos">324</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="EnsembleBootMultiple.__init__-325"><a href="#EnsembleBootMultiple.__init__-325"><span class="linenos">325</span></a>
+</span><span id="EnsembleBootMultiple.__init__-326"><a href="#EnsembleBootMultiple.__init__-326"><span class="linenos">326</span></a>        <span class="k">if</span> <span class="ow">not</span> <span class="n">stat_func</span> <span class="ow">or</span> <span class="n">stat_func</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="EnsembleBootMultiple.__init__-327"><a href="#EnsembleBootMultiple.__init__-327"><span class="linenos">327</span></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;stat_func cannot be empty or None&#39;</span><span class="p">)</span>
+</span><span id="EnsembleBootMultiple.__init__-328"><a href="#EnsembleBootMultiple.__init__-328"><span class="linenos">328</span></a>
+</span><span id="EnsembleBootMultiple.__init__-329"><a href="#EnsembleBootMultiple.__init__-329"><span class="linenos">329</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">groupby</span> <span class="o">=</span> <span class="n">groupby</span>
+</span><span id="EnsembleBootMultiple.__init__-330"><a href="#EnsembleBootMultiple.__init__-330"><span class="linenos">330</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">qoi_cols</span> <span class="o">=</span> <span class="n">qoi_cols</span>
+</span><span id="EnsembleBootMultiple.__init__-331"><a href="#EnsembleBootMultiple.__init__-331"><span class="linenos">331</span></a>
+</span><span id="EnsembleBootMultiple.__init__-332"><a href="#EnsembleBootMultiple.__init__-332"><span class="linenos">332</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">stat_func</span> <span class="o">=</span> <span class="n">stat_func</span>
+</span><span id="EnsembleBootMultiple.__init__-333"><a href="#EnsembleBootMultiple.__init__-333"><span class="linenos">333</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span> <span class="o">=</span> <span class="n">alpha</span>
+</span><span id="EnsembleBootMultiple.__init__-334"><a href="#EnsembleBootMultiple.__init__-334"><span class="linenos">334</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">sample_size</span> <span class="o">=</span> <span class="n">sample_size</span>
+</span><span id="EnsembleBootMultiple.__init__-335"><a href="#EnsembleBootMultiple.__init__-335"><span class="linenos">335</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">n_boot_samples</span> <span class="o">=</span> <span class="n">n_boot_samples</span>
+</span><span id="EnsembleBootMultiple.__init__-336"><a href="#EnsembleBootMultiple.__init__-336"><span class="linenos">336</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">pivotal</span> <span class="o">=</span> <span class="n">pivotal</span>
+</span><span id="EnsembleBootMultiple.__init__-337"><a href="#EnsembleBootMultiple.__init__-337"><span class="linenos">337</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">stat_name</span> <span class="o">=</span> <span class="n">stat_name</span> <span class="k">if</span> <span class="n">stat_name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="p">[</span><span class="n">func</span><span class="o">.</span><span class="vm">__name__</span> <span class="k">for</span> <span class="n">func</span> <span class="ow">in</span> <span class="n">stat_func</span><span class="p">]</span>
+</span><span id="EnsembleBootMultiple.__init__-338"><a href="#EnsembleBootMultiple.__init__-338"><span class="linenos">338</span></a>
+</span><span id="EnsembleBootMultiple.__init__-339"><a href="#EnsembleBootMultiple.__init__-339"><span class="linenos">339</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">output_type</span> <span class="o">=</span> <span class="n">OutputType</span><span class="o">.</span><span class="n">SUMMARY</span>
+</span></pre></div>
+
+
+            <div class="docstring"><p>Element to perform bootstrapping on collated simulation output.</p>
+
+<h6 id="parameters">Parameters</h6>
+
+<ul>
+<li><strong>groupby</strong> (list or None):
+Columns to use to group the data in <code><a href="#EnsembleBootMultiple.analyse">analyse</a></code> method before
+calculating stats.</li>
+<li><strong>qoi_cols</strong> (list or None):
+Columns of quantities of interest (for which stats will be
+calculated).</li>
+<li><strong>stat_func</strong> (list[function]):
+List of statistical functions to be applied to data for bootstrapping.</li>
+<li><strong>alpha</strong> (float, default=0.05):
+Produce estimate of 100.0*(1-<code><a href="#EnsembleBootMultiple.alpha">alpha</a></code>) confidence interval.</li>
+<li><strong>sample_size</strong> (int):
+Size of the sample to be drawn from the input data.</li>
+<li><strong>n_boot_samples</strong> (int, default=1000):
+Number of times samples are to be drawn from the input data.</li>
+<li><strong>pivotal</strong> (bool, default=False):
+Use the pivotal method? Default to percentile method.</li>
+<li><strong>stat_name</strong> (str, default=None):
+Name to use to describe columns containing output statistic (for example
+'mean'). If not provided, then attr '__name__' from each func is used.</li>
+</ul>
+</div>
+
+
+                            </div>
+                            <div id="EnsembleBootMultiple.groupby" class="classattr">
+                                <div class="attr variable">
+            <span class="name">groupby</span>
+
+        
+    </div>
+    <a class="headerlink" href="#EnsembleBootMultiple.groupby"></a>
+    
+    
+
+                            </div>
+                            <div id="EnsembleBootMultiple.qoi_cols" class="classattr">
+                                <div class="attr variable">
+            <span class="name">qoi_cols</span>
+
+        
+    </div>
+    <a class="headerlink" href="#EnsembleBootMultiple.qoi_cols"></a>
+    
+    
+
+                            </div>
+                            <div id="EnsembleBootMultiple.stat_func" class="classattr">
+                                <div class="attr variable">
+            <span class="name">stat_func</span>
+
+        
+    </div>
+    <a class="headerlink" href="#EnsembleBootMultiple.stat_func"></a>
+    
+    
+
+                            </div>
+                            <div id="EnsembleBootMultiple.alpha" class="classattr">
+                                <div class="attr variable">
+            <span class="name">alpha</span>
+
+        
+    </div>
+    <a class="headerlink" href="#EnsembleBootMultiple.alpha"></a>
+    
+    
+
+                            </div>
+                            <div id="EnsembleBootMultiple.sample_size" class="classattr">
+                                <div class="attr variable">
+            <span class="name">sample_size</span>
+
+        
+    </div>
+    <a class="headerlink" href="#EnsembleBootMultiple.sample_size"></a>
+    
+    
+
+                            </div>
+                            <div id="EnsembleBootMultiple.n_boot_samples" class="classattr">
+                                <div class="attr variable">
+            <span class="name">n_boot_samples</span>
+
+        
+    </div>
+    <a class="headerlink" href="#EnsembleBootMultiple.n_boot_samples"></a>
+    
+    
+
+                            </div>
+                            <div id="EnsembleBootMultiple.pivotal" class="classattr">
+                                <div class="attr variable">
+            <span class="name">pivotal</span>
+
+        
+    </div>
+    <a class="headerlink" href="#EnsembleBootMultiple.pivotal"></a>
+    
+    
+
+                            </div>
+                            <div id="EnsembleBootMultiple.stat_name" class="classattr">
+                                <div class="attr variable">
+            <span class="name">stat_name</span>
+
+        
+    </div>
+    <a class="headerlink" href="#EnsembleBootMultiple.stat_name"></a>
+    
+    
+
+                            </div>
+                            <div id="EnsembleBootMultiple.output_type" class="classattr">
+                                <div class="attr variable">
+            <span class="name">output_type</span>
+
+        
+    </div>
+    <a class="headerlink" href="#EnsembleBootMultiple.output_type"></a>
+    
+    
+
+                            </div>
+                            <div id="EnsembleBootMultiple.element_name" class="classattr">
+                                        <input id="EnsembleBootMultiple.element_name-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">element_name</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">):</span></span>
+
+                <label class="view-source-button" for="EnsembleBootMultiple.element_name-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#EnsembleBootMultiple.element_name"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="EnsembleBootMultiple.element_name-341"><a href="#EnsembleBootMultiple.element_name-341"><span class="linenos">341</span></a>    <span class="k">def</span> <span class="nf">element_name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="EnsembleBootMultiple.element_name-342"><a href="#EnsembleBootMultiple.element_name-342"><span class="linenos">342</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Name for this element for logging purposes&quot;&quot;&quot;</span>
+</span><span id="EnsembleBootMultiple.element_name-343"><a href="#EnsembleBootMultiple.element_name-343"><span class="linenos">343</span></a>        <span class="k">return</span> <span class="s2">&quot;ensemble_boot_multiple&quot;</span>
+</span></pre></div>
+
+
+            <div class="docstring"><p>Name for this element for logging purposes</p>
+</div>
+
+
+                            </div>
+                            <div id="EnsembleBootMultiple.element_version" class="classattr">
+                                        <input id="EnsembleBootMultiple.element_version-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">element_version</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">):</span></span>
+
+                <label class="view-source-button" for="EnsembleBootMultiple.element_version-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#EnsembleBootMultiple.element_version"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="EnsembleBootMultiple.element_version-345"><a href="#EnsembleBootMultiple.element_version-345"><span class="linenos">345</span></a>    <span class="k">def</span> <span class="nf">element_version</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="EnsembleBootMultiple.element_version-346"><a href="#EnsembleBootMultiple.element_version-346"><span class="linenos">346</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Version of this element for logging purposes&quot;&quot;&quot;</span>
+</span><span id="EnsembleBootMultiple.element_version-347"><a href="#EnsembleBootMultiple.element_version-347"><span class="linenos">347</span></a>        <span class="k">return</span> <span class="s2">&quot;0.1&quot;</span>
+</span></pre></div>
+
+
+            <div class="docstring"><p>Version of this element for logging purposes</p>
+</div>
+
+
+                            </div>
+                            <div id="EnsembleBootMultiple.analyse" class="classattr">
+                                        <input id="EnsembleBootMultiple.analyse-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">analyse</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">data_frame</span><span class="o">=</span><span class="kc">None</span></span><span class="return-annotation">):</span></span>
+
+                <label class="view-source-button" for="EnsembleBootMultiple.analyse-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#EnsembleBootMultiple.analyse"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="EnsembleBootMultiple.analyse-349"><a href="#EnsembleBootMultiple.analyse-349"><span class="linenos">349</span></a>    <span class="k">def</span> <span class="nf">analyse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_frame</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+</span><span id="EnsembleBootMultiple.analyse-350"><a href="#EnsembleBootMultiple.analyse-350"><span class="linenos">350</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Perform bootstrapping analysis on the input `data_frame`.</span>
+</span><span id="EnsembleBootMultiple.analyse-351"><a href="#EnsembleBootMultiple.analyse-351"><span class="linenos">351</span></a>
+</span><span id="EnsembleBootMultiple.analyse-352"><a href="#EnsembleBootMultiple.analyse-352"><span class="linenos">352</span></a><span class="sd">        The data_frame is grouped according to `self.groupby` if specified and</span>
+</span><span id="EnsembleBootMultiple.analyse-353"><a href="#EnsembleBootMultiple.analyse-353"><span class="linenos">353</span></a><span class="sd">        analysis is performed on the columns selected in `self.qoi_cols` if set.</span>
+</span><span id="EnsembleBootMultiple.analyse-354"><a href="#EnsembleBootMultiple.analyse-354"><span class="linenos">354</span></a>
+</span><span id="EnsembleBootMultiple.analyse-355"><a href="#EnsembleBootMultiple.analyse-355"><span class="linenos">355</span></a><span class="sd">        Parameters</span>
+</span><span id="EnsembleBootMultiple.analyse-356"><a href="#EnsembleBootMultiple.analyse-356"><span class="linenos">356</span></a><span class="sd">        ----------</span>
+</span><span id="EnsembleBootMultiple.analyse-357"><a href="#EnsembleBootMultiple.analyse-357"><span class="linenos">357</span></a><span class="sd">        data_frame : :obj:`pandas.DataFrame`</span>
+</span><span id="EnsembleBootMultiple.analyse-358"><a href="#EnsembleBootMultiple.analyse-358"><span class="linenos">358</span></a><span class="sd">            Summary data produced through collation of simulation output.</span>
+</span><span id="EnsembleBootMultiple.analyse-359"><a href="#EnsembleBootMultiple.analyse-359"><span class="linenos">359</span></a>
+</span><span id="EnsembleBootMultiple.analyse-360"><a href="#EnsembleBootMultiple.analyse-360"><span class="linenos">360</span></a><span class="sd">        Returns</span>
+</span><span id="EnsembleBootMultiple.analyse-361"><a href="#EnsembleBootMultiple.analyse-361"><span class="linenos">361</span></a><span class="sd">        -------</span>
+</span><span id="EnsembleBootMultiple.analyse-362"><a href="#EnsembleBootMultiple.analyse-362"><span class="linenos">362</span></a><span class="sd">        :obj:`pandas.DataFrame`</span>
+</span><span id="EnsembleBootMultiple.analyse-363"><a href="#EnsembleBootMultiple.analyse-363"><span class="linenos">363</span></a><span class="sd">            Basic statistic for selected columns and groupings of data.</span>
+</span><span id="EnsembleBootMultiple.analyse-364"><a href="#EnsembleBootMultiple.analyse-364"><span class="linenos">364</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="EnsembleBootMultiple.analyse-365"><a href="#EnsembleBootMultiple.analyse-365"><span class="linenos">365</span></a>
+</span><span id="EnsembleBootMultiple.analyse-366"><a href="#EnsembleBootMultiple.analyse-366"><span class="linenos">366</span></a>        <span class="k">if</span> <span class="n">data_frame</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="EnsembleBootMultiple.analyse-367"><a href="#EnsembleBootMultiple.analyse-367"><span class="linenos">367</span></a>            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+</span><span id="EnsembleBootMultiple.analyse-368"><a href="#EnsembleBootMultiple.analyse-368"><span class="linenos">368</span></a>                    <span class="s2">&quot;This VVUQ element needs a data frame to analyse&quot;</span><span class="p">)</span>
+</span><span id="EnsembleBootMultiple.analyse-369"><a href="#EnsembleBootMultiple.analyse-369"><span class="linenos">369</span></a>        <span class="k">elif</span> <span class="n">data_frame</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
+</span><span id="EnsembleBootMultiple.analyse-370"><a href="#EnsembleBootMultiple.analyse-370"><span class="linenos">370</span></a>            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+</span><span id="EnsembleBootMultiple.analyse-371"><a href="#EnsembleBootMultiple.analyse-371"><span class="linenos">371</span></a>                    <span class="s2">&quot;No data in data frame passed to analyse element&quot;</span><span class="p">)</span>
+</span><span id="EnsembleBootMultiple.analyse-372"><a href="#EnsembleBootMultiple.analyse-372"><span class="linenos">372</span></a>        <span class="n">frames</span> <span class="o">=</span> <span class="p">[]</span>
+</span><span id="EnsembleBootMultiple.analyse-373"><a href="#EnsembleBootMultiple.analyse-373"><span class="linenos">373</span></a>        <span class="k">for</span> <span class="n">stat_func</span><span class="p">,</span> <span class="n">stat_name</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">stat_func</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">stat_name</span><span class="p">):</span>
+</span><span id="EnsembleBootMultiple.analyse-374"><a href="#EnsembleBootMultiple.analyse-374"><span class="linenos">374</span></a>            <span class="n">results</span> <span class="o">=</span> <span class="n">ensemble_bootstrap</span><span class="p">(</span>
+</span><span id="EnsembleBootMultiple.analyse-375"><a href="#EnsembleBootMultiple.analyse-375"><span class="linenos">375</span></a>                    <span class="n">data_frame</span><span class="p">,</span>
+</span><span id="EnsembleBootMultiple.analyse-376"><a href="#EnsembleBootMultiple.analyse-376"><span class="linenos">376</span></a>                    <span class="n">groupby</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">groupby</span><span class="p">,</span>
+</span><span id="EnsembleBootMultiple.analyse-377"><a href="#EnsembleBootMultiple.analyse-377"><span class="linenos">377</span></a>                    <span class="n">qoi_cols</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">qoi_cols</span><span class="p">,</span>
+</span><span id="EnsembleBootMultiple.analyse-378"><a href="#EnsembleBootMultiple.analyse-378"><span class="linenos">378</span></a>                    <span class="n">stat_func</span><span class="o">=</span><span class="n">stat_func</span><span class="p">,</span>
+</span><span id="EnsembleBootMultiple.analyse-379"><a href="#EnsembleBootMultiple.analyse-379"><span class="linenos">379</span></a>                    <span class="n">alpha</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">alpha</span><span class="p">,</span>
+</span><span id="EnsembleBootMultiple.analyse-380"><a href="#EnsembleBootMultiple.analyse-380"><span class="linenos">380</span></a>                    <span class="n">sample_size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">sample_size</span><span class="p">,</span>
+</span><span id="EnsembleBootMultiple.analyse-381"><a href="#EnsembleBootMultiple.analyse-381"><span class="linenos">381</span></a>                    <span class="n">n_samples</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">n_boot_samples</span><span class="p">,</span>
+</span><span id="EnsembleBootMultiple.analyse-382"><a href="#EnsembleBootMultiple.analyse-382"><span class="linenos">382</span></a>                    <span class="n">pivotal</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">pivotal</span><span class="p">,</span>
+</span><span id="EnsembleBootMultiple.analyse-383"><a href="#EnsembleBootMultiple.analyse-383"><span class="linenos">383</span></a>                    <span class="n">stat_name</span><span class="o">=</span><span class="n">stat_name</span><span class="p">)</span>
+</span><span id="EnsembleBootMultiple.analyse-384"><a href="#EnsembleBootMultiple.analyse-384"><span class="linenos">384</span></a>            <span class="n">frames</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
+</span><span id="EnsembleBootMultiple.analyse-385"><a href="#EnsembleBootMultiple.analyse-385"><span class="linenos">385</span></a>        <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">frames</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">keys</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">stat_name</span><span class="p">)</span><span class="o">.</span><span class="n">swaplevel</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+</span></pre></div>
+
+
+            <div class="docstring"><p>Perform bootstrapping analysis on the input <code>data_frame</code>.</p>
+
+<p>The data_frame is grouped according to <code>self.groupby</code> if specified and
+analysis is performed on the columns selected in <code>self.qoi_cols</code> if set.</p>
+
+<h6 id="parameters">Parameters</h6>
+
+<ul>
+<li><strong>data_frame</strong> (<code>pandas.DataFrame</code>):
+Summary data produced through collation of simulation output.</li>
+</ul>
+
+<h6 id="returns">Returns</h6>
+
+<ul>
+<li><strong><code>pandas.DataFrame</code></strong>: Basic statistic for selected columns and groupings of data.</li>
+</ul>
+</div>
+
+
+                            </div>
+                            <div class="inherited">
+                                <h5>Inherited Members</h5>
+                                <dl>
+                                    <div><dt><a href="base.html#BaseAnalysisElement">easyvvuq.analysis.base.BaseAnalysisElement</a></dt>
+                                <dd id="EnsembleBootMultiple.element_category" class="function"><a href="base.html#BaseAnalysisElement.element_category">element_category</a></dd>
 
             </div>
                                 </dl>
