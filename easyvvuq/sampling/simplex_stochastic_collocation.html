@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="generator" content="pdoc 15.0.0"/>
+    <meta name="generator" content="pdoc 15.0.1"/>
     <title>easyvvuq.sampling.simplex_stochastic_collocation API documentation</title>
 
     <style>/*! * Bootstrap Reboot v5.0.0 (https://getbootstrap.com/) * Copyright 2011-2021 The Bootstrap Authors * Copyright 2011-2021 Twitter, Inc. * Licensed under MIT (https://github.com/twbs/bootstrap/blob/main/LICENSE) * Forked from Normalize.css, licensed MIT (https://github.com/necolas/normalize.css/blob/master/LICENSE.md) */*,::after,::before{box-sizing:border-box}@media (prefers-reduced-motion:no-preference){:root{scroll-behavior:smooth}}body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans","Liberation Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";font-size:1rem;font-weight:400;line-height:1.5;color:#212529;background-color:#fff;-webkit-text-size-adjust:100%;-webkit-tap-highlight-color:transparent}hr{margin:1rem 0;color:inherit;background-color:currentColor;border:0;opacity:.25}hr:not([size]){height:1px}h1,h2,h3,h4,h5,h6{margin-top:0;margin-bottom:.5rem;font-weight:500;line-height:1.2}h1{font-size:calc(1.375rem + 1.5vw)}@media (min-width:1200px){h1{font-size:2.5rem}}h2{font-size:calc(1.325rem + .9vw)}@media (min-width:1200px){h2{font-size:2rem}}h3{font-size:calc(1.3rem + .6vw)}@media (min-width:1200px){h3{font-size:1.75rem}}h4{font-size:calc(1.275rem + .3vw)}@media (min-width:1200px){h4{font-size:1.5rem}}h5{font-size:1.25rem}h6{font-size:1rem}p{margin-top:0;margin-bottom:1rem}abbr[data-bs-original-title],abbr[title]{-webkit-text-decoration:underline dotted;text-decoration:underline dotted;cursor:help;-webkit-text-decoration-skip-ink:none;text-decoration-skip-ink:none}address{margin-bottom:1rem;font-style:normal;line-height:inherit}ol,ul{padding-left:2rem}dl,ol,ul{margin-top:0;margin-bottom:1rem}ol ol,ol ul,ul ol,ul ul{margin-bottom:0}dt{font-weight:700}dd{margin-bottom:.5rem;margin-left:0}blockquote{margin:0 0 1rem}b,strong{font-weight:bolder}small{font-size:.875em}mark{padding:.2em;background-color:#fcf8e3}sub,sup{position:relative;font-size:.75em;line-height:0;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}a{color:#0d6efd;text-decoration:underline}a:hover{color:#0a58ca}a:not([href]):not([class]),a:not([href]):not([class]):hover{color:inherit;text-decoration:none}code,kbd,pre,samp{font-family:SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;font-size:1em;direction:ltr;unicode-bidi:bidi-override}pre{display:block;margin-top:0;margin-bottom:1rem;overflow:auto;font-size:.875em}pre code{font-size:inherit;color:inherit;word-break:normal}code{font-size:.875em;color:#d63384;word-wrap:break-word}a>code{color:inherit}kbd{padding:.2rem .4rem;font-size:.875em;color:#fff;background-color:#212529;border-radius:.2rem}kbd kbd{padding:0;font-size:1em;font-weight:700}figure{margin:0 0 1rem}img,svg{vertical-align:middle}table{caption-side:bottom;border-collapse:collapse}caption{padding-top:.5rem;padding-bottom:.5rem;color:#6c757d;text-align:left}th{text-align:inherit;text-align:-webkit-match-parent}tbody,td,tfoot,th,thead,tr{border-color:inherit;border-style:solid;border-width:0}label{display:inline-block}button{border-radius:0}button:focus:not(:focus-visible){outline:0}button,input,optgroup,select,textarea{margin:0;font-family:inherit;font-size:inherit;line-height:inherit}button,select{text-transform:none}[role=button]{cursor:pointer}select{word-wrap:normal}select:disabled{opacity:1}[list]::-webkit-calendar-picker-indicator{display:none}[type=button],[type=reset],[type=submit],button{-webkit-appearance:button}[type=button]:not(:disabled),[type=reset]:not(:disabled),[type=submit]:not(:disabled),button:not(:disabled){cursor:pointer}::-moz-focus-inner{padding:0;border-style:none}textarea{resize:vertical}fieldset{min-width:0;padding:0;margin:0;border:0}legend{float:left;width:100%;padding:0;margin-bottom:.5rem;font-size:calc(1.275rem + .3vw);line-height:inherit}@media (min-width:1200px){legend{font-size:1.5rem}}legend+*{clear:left}::-webkit-datetime-edit-day-field,::-webkit-datetime-edit-fields-wrapper,::-webkit-datetime-edit-hour-field,::-webkit-datetime-edit-minute,::-webkit-datetime-edit-month-field,::-webkit-datetime-edit-text,::-webkit-datetime-edit-year-field{padding:0}::-webkit-inner-spin-button{height:auto}[type=search]{outline-offset:-2px;-webkit-appearance:textfield}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-color-swatch-wrapper{padding:0}::file-selector-button{font:inherit}::-webkit-file-upload-button{font:inherit;-webkit-appearance:button}output{display:inline-block}iframe{border:0}summary{display:list-item;cursor:pointer}progress{vertical-align:baseline}[hidden]{display:none!important}</style>
@@ -237,15 +237,15 @@ Journal of Computational Physics, 310, 301-328.</p>
 </span><span id="L-15"><a href="#L-15"><span class="linenos">  15</span></a>
 </span><span id="L-16"><a href="#L-16"><span class="linenos">  16</span></a><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-17"><a href="#L-17"><span class="linenos">  17</span></a>
-</span><span id="L-18"><a href="#L-18"><span class="linenos">  18</span></a><span class="kn">from</span> <span class="nn">.base</span> <span class="kn">import</span> <span class="n">BaseSamplingElement</span><span class="p">,</span> <span class="n">Vary</span>
+</span><span id="L-18"><a href="#L-18"><span class="linenos">  18</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseSamplingElement</span><span class="p">,</span> <span class="n">Vary</span>
 </span><span id="L-19"><a href="#L-19"><span class="linenos">  19</span></a><span class="c1"># import chaospy as cp</span>
-</span><span id="L-20"><a href="#L-20"><span class="linenos">  20</span></a><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-</span><span id="L-21"><a href="#L-21"><span class="linenos">  21</span></a><span class="kn">import</span> <span class="nn">pickle</span>
-</span><span id="L-22"><a href="#L-22"><span class="linenos">  22</span></a><span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">product</span><span class="p">,</span> <span class="n">combinations</span>
+</span><span id="L-20"><a href="#L-20"><span class="linenos">  20</span></a><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+</span><span id="L-21"><a href="#L-21"><span class="linenos">  21</span></a><span class="kn">import</span><span class="w"> </span><span class="nn">pickle</span>
+</span><span id="L-22"><a href="#L-22"><span class="linenos">  22</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">itertools</span><span class="w"> </span><span class="kn">import</span> <span class="n">product</span><span class="p">,</span> <span class="n">combinations</span>
 </span><span id="L-23"><a href="#L-23"><span class="linenos">  23</span></a><span class="c1"># import logging</span>
-</span><span id="L-24"><a href="#L-24"><span class="linenos">  24</span></a><span class="kn">from</span> <span class="nn">scipy.spatial</span> <span class="kn">import</span> <span class="n">Delaunay</span>
-</span><span id="L-25"><a href="#L-25"><span class="linenos">  25</span></a><span class="kn">from</span> <span class="nn">scipy.special</span> <span class="kn">import</span> <span class="n">factorial</span>
-</span><span id="L-26"><a href="#L-26"><span class="linenos">  26</span></a><span class="kn">import</span> <span class="nn">multiprocessing</span> <span class="k">as</span> <span class="nn">mp</span>
+</span><span id="L-24"><a href="#L-24"><span class="linenos">  24</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">scipy.spatial</span><span class="w"> </span><span class="kn">import</span> <span class="n">Delaunay</span>
+</span><span id="L-25"><a href="#L-25"><span class="linenos">  25</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">scipy.special</span><span class="w"> </span><span class="kn">import</span> <span class="n">factorial</span>
+</span><span id="L-26"><a href="#L-26"><span class="linenos">  26</span></a><span class="kn">import</span><span class="w"> </span><span class="nn">multiprocessing</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">mp</span>
 </span><span id="L-27"><a href="#L-27"><span class="linenos">  27</span></a>
 </span><span id="L-28"><a href="#L-28"><span class="linenos">  28</span></a>
 </span><span id="L-29"><a href="#L-29"><span class="linenos">  29</span></a><span class="n">__author__</span> <span class="o">=</span> <span class="s2">&quot;Wouter Edeling&quot;</span>
@@ -272,12 +272,12 @@ Journal of Computational Physics, 310, 301-328.</p>
 </span><span id="L-50"><a href="#L-50"><span class="linenos">  50</span></a><span class="n">__license__</span> <span class="o">=</span> <span class="s2">&quot;LGPL&quot;</span>
 </span><span id="L-51"><a href="#L-51"><span class="linenos">  51</span></a>
 </span><span id="L-52"><a href="#L-52"><span class="linenos">  52</span></a>
-</span><span id="L-53"><a href="#L-53"><span class="linenos">  53</span></a><span class="k">class</span> <span class="nc">SSCSampler</span><span class="p">(</span><span class="n">BaseSamplingElement</span><span class="p">,</span> <span class="n">sampler_name</span><span class="o">=</span><span class="s2">&quot;ssc_sampler&quot;</span><span class="p">):</span>
+</span><span id="L-53"><a href="#L-53"><span class="linenos">  53</span></a><span class="k">class</span><span class="w"> </span><span class="nc">SSCSampler</span><span class="p">(</span><span class="n">BaseSamplingElement</span><span class="p">,</span> <span class="n">sampler_name</span><span class="o">=</span><span class="s2">&quot;ssc_sampler&quot;</span><span class="p">):</span>
 </span><span id="L-54"><a href="#L-54"><span class="linenos">  54</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-55"><a href="#L-55"><span class="linenos">  55</span></a><span class="sd">    Simplex Stochastic Collocation sampler</span>
 </span><span id="L-56"><a href="#L-56"><span class="linenos">  56</span></a><span class="sd">    &quot;&quot;&quot;</span>
 </span><span id="L-57"><a href="#L-57"><span class="linenos">  57</span></a>
-</span><span id="L-58"><a href="#L-58"><span class="linenos">  58</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vary</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">max_polynomial_order</span><span class="o">=</span><span class="mi">4</span><span class="p">):</span>
+</span><span id="L-58"><a href="#L-58"><span class="linenos">  58</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vary</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">max_polynomial_order</span><span class="o">=</span><span class="mi">4</span><span class="p">):</span>
 </span><span id="L-59"><a href="#L-59"><span class="linenos">  59</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-60"><a href="#L-60"><span class="linenos">  60</span></a><span class="sd">        Create an SSC sampler object.</span>
 </span><span id="L-61"><a href="#L-61"><span class="linenos">  61</span></a>
@@ -303,7 +303,7 @@ Journal of Computational Physics, 310, 301-328.</p>
 </span><span id="L-81"><a href="#L-81"><span class="linenos">  81</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_n_samples</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tri</span><span class="o">.</span><span class="n">points</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 </span><span id="L-82"><a href="#L-82"><span class="linenos">  82</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">set_pmax_cutoff</span><span class="p">(</span><span class="n">max_polynomial_order</span><span class="p">)</span>
 </span><span id="L-83"><a href="#L-83"><span class="linenos">  83</span></a>
-</span><span id="L-84"><a href="#L-84"><span class="linenos">  84</span></a>    <span class="k">def</span> <span class="nf">init_grid</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="L-84"><a href="#L-84"><span class="linenos">  84</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">init_grid</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span id="L-85"><a href="#L-85"><span class="linenos">  85</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-86"><a href="#L-86"><span class="linenos">  86</span></a><span class="sd">        Create the initial n_xi-dimensional Delaunay discretization</span>
 </span><span id="L-87"><a href="#L-87"><span class="linenos">  87</span></a>
@@ -341,7 +341,7 @@ Journal of Computational Physics, 310, 301-328.</p>
 </span><span id="L-119"><a href="#L-119"><span class="linenos"> 119</span></a>
 </span><span id="L-120"><a href="#L-120"><span class="linenos"> 120</span></a>        <span class="k">return</span> <span class="n">tri</span>
 </span><span id="L-121"><a href="#L-121"><span class="linenos"> 121</span></a>
-</span><span id="L-122"><a href="#L-122"><span class="linenos"> 122</span></a>    <span class="k">def</span> <span class="nf">find_pmax</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_s</span><span class="p">):</span>
+</span><span id="L-122"><a href="#L-122"><span class="linenos"> 122</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">find_pmax</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_s</span><span class="p">):</span>
 </span><span id="L-123"><a href="#L-123"><span class="linenos"> 123</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-124"><a href="#L-124"><span class="linenos"> 124</span></a><span class="sd">        Finds the maximum polynomial stencil order that can be sustained</span>
 </span><span id="L-125"><a href="#L-125"><span class="linenos"> 125</span></a><span class="sd">        given the current number of code evaluations. The stencil size</span>
@@ -374,7 +374,7 @@ Journal of Computational Physics, 310, 301-328.</p>
 </span><span id="L-152"><a href="#L-152"><span class="linenos"> 152</span></a>
 </span><span id="L-153"><a href="#L-153"><span class="linenos"> 153</span></a>        <span class="k">return</span> <span class="n">p</span> <span class="o">-</span> <span class="mi">1</span>
 </span><span id="L-154"><a href="#L-154"><span class="linenos"> 154</span></a>
-</span><span id="L-155"><a href="#L-155"><span class="linenos"> 155</span></a>    <span class="k">def</span> <span class="nf">set_pmax_cutoff</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pmax_cutoff</span><span class="p">):</span>
+</span><span id="L-155"><a href="#L-155"><span class="linenos"> 155</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">set_pmax_cutoff</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pmax_cutoff</span><span class="p">):</span>
 </span><span id="L-156"><a href="#L-156"><span class="linenos"> 156</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-157"><a href="#L-157"><span class="linenos"> 157</span></a><span class="sd">        Set the maximum allowed polynomial value of the surrogate.</span>
 </span><span id="L-158"><a href="#L-158"><span class="linenos"> 158</span></a>
@@ -392,7 +392,7 @@ Journal of Computational Physics, 310, 301-328.</p>
 </span><span id="L-170"><a href="#L-170"><span class="linenos"> 170</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">pmax_cutoff</span> <span class="o">=</span> <span class="n">pmax_cutoff</span>
 </span><span id="L-171"><a href="#L-171"><span class="linenos"> 171</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">i_norm_le_pj</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">compute_i_norm_le_pj</span><span class="p">(</span><span class="n">pmax_cutoff</span><span class="p">)</span>
 </span><span id="L-172"><a href="#L-172"><span class="linenos"> 172</span></a>
-</span><span id="L-173"><a href="#L-173"><span class="linenos"> 173</span></a>    <span class="k">def</span> <span class="nf">compute_vol</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="L-173"><a href="#L-173"><span class="linenos"> 173</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">compute_vol</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span id="L-174"><a href="#L-174"><span class="linenos"> 174</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-175"><a href="#L-175"><span class="linenos"> 175</span></a><span class="sd">        Use analytic formula to compute the volume of all simplices.</span>
 </span><span id="L-176"><a href="#L-176"><span class="linenos"> 176</span></a>
@@ -420,7 +420,7 @@ Journal of Computational Physics, 310, 301-328.</p>
 </span><span id="L-198"><a href="#L-198"><span class="linenos"> 198</span></a>
 </span><span id="L-199"><a href="#L-199"><span class="linenos"> 199</span></a>        <span class="k">return</span> <span class="n">vols</span>
 </span><span id="L-200"><a href="#L-200"><span class="linenos"> 200</span></a>
-</span><span id="L-201"><a href="#L-201"><span class="linenos"> 201</span></a>    <span class="k">def</span> <span class="nf">compute_xi_center_j</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="L-201"><a href="#L-201"><span class="linenos"> 201</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">compute_xi_center_j</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span id="L-202"><a href="#L-202"><span class="linenos"> 202</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-203"><a href="#L-203"><span class="linenos"> 203</span></a><span class="sd">        Compute the center of all simplex elements.</span>
 </span><span id="L-204"><a href="#L-204"><span class="linenos"> 204</span></a>
@@ -439,7 +439,7 @@ Journal of Computational Physics, 310, 301-328.</p>
 </span><span id="L-217"><a href="#L-217"><span class="linenos"> 217</span></a>
 </span><span id="L-218"><a href="#L-218"><span class="linenos"> 218</span></a>        <span class="k">return</span> <span class="n">xi_center_j</span>
 </span><span id="L-219"><a href="#L-219"><span class="linenos"> 219</span></a>
-</span><span id="L-220"><a href="#L-220"><span class="linenos"> 220</span></a>    <span class="k">def</span> <span class="nf">compute_sub_simplex_vertices</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">simplex_idx</span><span class="p">):</span>
+</span><span id="L-220"><a href="#L-220"><span class="linenos"> 220</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">compute_sub_simplex_vertices</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">simplex_idx</span><span class="p">):</span>
 </span><span id="L-221"><a href="#L-221"><span class="linenos"> 221</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-222"><a href="#L-222"><span class="linenos"> 222</span></a><span class="sd">        Compute the vertices of the sub-simplex. The  sub simplex is contained</span>
 </span><span id="L-223"><a href="#L-223"><span class="linenos"> 223</span></a><span class="sd">        in the larger simplex. The larger simplex is refined by randomly</span>
@@ -465,7 +465,7 @@ Journal of Computational Physics, 310, 301-328.</p>
 </span><span id="L-243"><a href="#L-243"><span class="linenos"> 243</span></a>
 </span><span id="L-244"><a href="#L-244"><span class="linenos"> 244</span></a>        <span class="k">return</span> <span class="n">xi_sub_jl</span>
 </span><span id="L-245"><a href="#L-245"><span class="linenos"> 245</span></a>
-</span><span id="L-246"><a href="#L-246"><span class="linenos"> 246</span></a>    <span class="k">def</span> <span class="nf">sample_inputs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_mc</span><span class="p">):</span>
+</span><span id="L-246"><a href="#L-246"><span class="linenos"> 246</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">sample_inputs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_mc</span><span class="p">):</span>
 </span><span id="L-247"><a href="#L-247"><span class="linenos"> 247</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-248"><a href="#L-248"><span class="linenos"> 248</span></a><span class="sd">        Draw n_mc random values from the input distribution.</span>
 </span><span id="L-249"><a href="#L-249"><span class="linenos"> 249</span></a>
@@ -485,7 +485,7 @@ Journal of Computational Physics, 310, 301-328.</p>
 </span><span id="L-263"><a href="#L-263"><span class="linenos"> 263</span></a>            <span class="n">xi</span><span class="p">[:,</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">param</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">n_mc</span><span class="p">)</span>
 </span><span id="L-264"><a href="#L-264"><span class="linenos"> 264</span></a>        <span class="k">return</span> <span class="n">xi</span>
 </span><span id="L-265"><a href="#L-265"><span class="linenos"> 265</span></a>
-</span><span id="L-266"><a href="#L-266"><span class="linenos"> 266</span></a>    <span class="k">def</span> <span class="nf">compute_probability</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="L-266"><a href="#L-266"><span class="linenos"> 266</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">compute_probability</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span id="L-267"><a href="#L-267"><span class="linenos"> 267</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-268"><a href="#L-268"><span class="linenos"> 268</span></a><span class="sd">        Compute the probability Omega_j for all simplex elements;</span>
 </span><span id="L-269"><a href="#L-269"><span class="linenos"> 269</span></a>
@@ -524,7 +524,7 @@ Journal of Computational Physics, 310, 301-328.</p>
 </span><span id="L-302"><a href="#L-302"><span class="linenos"> 302</span></a>
 </span><span id="L-303"><a href="#L-303"><span class="linenos"> 303</span></a>        <span class="k">return</span> <span class="n">prob_j</span>
 </span><span id="L-304"><a href="#L-304"><span class="linenos"> 304</span></a>
-</span><span id="L-305"><a href="#L-305"><span class="linenos"> 305</span></a>    <span class="k">def</span> <span class="nf">compute_i_norm_le_pj</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_max</span><span class="p">):</span>
+</span><span id="L-305"><a href="#L-305"><span class="linenos"> 305</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">compute_i_norm_le_pj</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_max</span><span class="p">):</span>
 </span><span id="L-306"><a href="#L-306"><span class="linenos"> 306</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-307"><a href="#L-307"><span class="linenos"> 307</span></a><span class="sd">        Compute the multi-index set {i | |i| = i_1 + ... + i_{n_xi} &lt;= p},</span>
 </span><span id="L-308"><a href="#L-308"><span class="linenos"> 308</span></a><span class="sd">        for p = 1,...,p_max</span>
@@ -554,7 +554,7 @@ Journal of Computational Physics, 310, 301-328.</p>
 </span><span id="L-332"><a href="#L-332"><span class="linenos"> 332</span></a>
 </span><span id="L-333"><a href="#L-333"><span class="linenos"> 333</span></a>        <span class="k">return</span> <span class="n">i_norm_le_pj</span>
 </span><span id="L-334"><a href="#L-334"><span class="linenos"> 334</span></a>
-</span><span id="L-335"><a href="#L-335"><span class="linenos"> 335</span></a>    <span class="k">def</span> <span class="nf">compute_Psi</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xi_Sj</span><span class="p">,</span> <span class="n">pmax</span><span class="p">):</span>
+</span><span id="L-335"><a href="#L-335"><span class="linenos"> 335</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">compute_Psi</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xi_Sj</span><span class="p">,</span> <span class="n">pmax</span><span class="p">):</span>
 </span><span id="L-336"><a href="#L-336"><span class="linenos"> 336</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-337"><a href="#L-337"><span class="linenos"> 337</span></a><span class="sd">        Compute the Vandermonde matrix Psi, given N + 1 points xi from the</span>
 </span><span id="L-338"><a href="#L-338"><span class="linenos"> 338</span></a><span class="sd">        j-th interpolation stencil, and a multi-index set of polynomial</span>
@@ -587,7 +587,7 @@ Journal of Computational Physics, 310, 301-328.</p>
 </span><span id="L-365"><a href="#L-365"><span class="linenos"> 365</span></a>
 </span><span id="L-366"><a href="#L-366"><span class="linenos"> 366</span></a>        <span class="k">return</span> <span class="n">Psi</span>
 </span><span id="L-367"><a href="#L-367"><span class="linenos"> 367</span></a>
-</span><span id="L-368"><a href="#L-368"><span class="linenos"> 368</span></a>    <span class="k">def</span> <span class="nf">w_j</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xi</span><span class="p">,</span> <span class="n">c_jl</span><span class="p">,</span> <span class="n">pmax</span><span class="p">):</span>
+</span><span id="L-368"><a href="#L-368"><span class="linenos"> 368</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">w_j</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xi</span><span class="p">,</span> <span class="n">c_jl</span><span class="p">,</span> <span class="n">pmax</span><span class="p">):</span>
 </span><span id="L-369"><a href="#L-369"><span class="linenos"> 369</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-370"><a href="#L-370"><span class="linenos"> 370</span></a><span class="sd">        Compute the surrogate local interpolation at point xi.</span>
 </span><span id="L-371"><a href="#L-371"><span class="linenos"> 371</span></a>
@@ -626,7 +626,7 @@ Journal of Computational Physics, 310, 301-328.</p>
 </span><span id="L-404"><a href="#L-404"><span class="linenos"> 404</span></a>
 </span><span id="L-405"><a href="#L-405"><span class="linenos"> 405</span></a>        <span class="k">return</span> <span class="n">w_j_at_xi</span>
 </span><span id="L-406"><a href="#L-406"><span class="linenos"> 406</span></a>
-</span><span id="L-407"><a href="#L-407"><span class="linenos"> 407</span></a>    <span class="k">def</span> <span class="nf">check_LEC</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_j</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">S_j</span><span class="p">,</span> <span class="n">n_mc</span><span class="p">,</span> <span class="n">max_jobs</span><span class="o">=</span><span class="mi">4</span><span class="p">):</span>
+</span><span id="L-407"><a href="#L-407"><span class="linenos"> 407</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">check_LEC</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_j</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">S_j</span><span class="p">,</span> <span class="n">n_mc</span><span class="p">,</span> <span class="n">max_jobs</span><span class="o">=</span><span class="mi">4</span><span class="p">):</span>
 </span><span id="L-408"><a href="#L-408"><span class="linenos"> 408</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-409"><a href="#L-409"><span class="linenos"> 409</span></a><span class="sd">        Check the Local Extremum Conserving propery of all simplex elements.</span>
 </span><span id="L-410"><a href="#L-410"><span class="linenos"> 410</span></a>
@@ -745,7 +745,7 @@ Journal of Computational Physics, 310, 301-328.</p>
 </span><span id="L-523"><a href="#L-523"><span class="linenos"> 523</span></a>        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;done.&#39;</span><span class="p">)</span>
 </span><span id="L-524"><a href="#L-524"><span class="linenos"> 524</span></a>        <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;p_j&#39;</span><span class="p">:</span> <span class="n">p_j</span><span class="p">,</span> <span class="s1">&#39;S_j&#39;</span><span class="p">:</span> <span class="n">S_j</span><span class="p">,</span> <span class="s1">&#39;el_idx&#39;</span><span class="p">:</span> <span class="n">el_idx</span><span class="p">}</span>
 </span><span id="L-525"><a href="#L-525"><span class="linenos"> 525</span></a>
-</span><span id="L-526"><a href="#L-526"><span class="linenos"> 526</span></a>    <span class="k">def</span> <span class="nf">find_simplices</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">S_j</span><span class="p">):</span>
+</span><span id="L-526"><a href="#L-526"><span class="linenos"> 526</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">find_simplices</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">S_j</span><span class="p">):</span>
 </span><span id="L-527"><a href="#L-527"><span class="linenos"> 527</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-528"><a href="#L-528"><span class="linenos"> 528</span></a><span class="sd">        Find the simplex element indices that are in point stencil S_j.</span>
 </span><span id="L-529"><a href="#L-529"><span class="linenos"> 529</span></a>
@@ -769,7 +769,7 @@ Journal of Computational Physics, 310, 301-328.</p>
 </span><span id="L-547"><a href="#L-547"><span class="linenos"> 547</span></a>
 </span><span id="L-548"><a href="#L-548"><span class="linenos"> 548</span></a>        <span class="k">return</span> <span class="n">idx</span>
 </span><span id="L-549"><a href="#L-549"><span class="linenos"> 549</span></a>
-</span><span id="L-550"><a href="#L-550"><span class="linenos"> 550</span></a>    <span class="k">def</span> <span class="nf">check_LEC_j</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_j</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">S_j</span><span class="p">,</span> <span class="n">n_mc</span><span class="p">,</span> <span class="n">queue</span><span class="p">):</span>
+</span><span id="L-550"><a href="#L-550"><span class="linenos"> 550</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">check_LEC_j</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_j</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">S_j</span><span class="p">,</span> <span class="n">n_mc</span><span class="p">,</span> <span class="n">queue</span><span class="p">):</span>
 </span><span id="L-551"><a href="#L-551"><span class="linenos"> 551</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-552"><a href="#L-552"><span class="linenos"> 552</span></a><span class="sd">        Check the LEC conditin of the j-th interpolation stencil.</span>
 </span><span id="L-553"><a href="#L-553"><span class="linenos"> 553</span></a>
@@ -882,7 +882,7 @@ Journal of Computational Physics, 310, 301-328.</p>
 </span><span id="L-660"><a href="#L-660"><span class="linenos"> 660</span></a>
 </span><span id="L-661"><a href="#L-661"><span class="linenos"> 661</span></a>        <span class="n">queue</span><span class="o">.</span><span class="n">put</span><span class="p">({</span><span class="s1">&#39;p_j[j]&#39;</span><span class="p">:</span> <span class="n">p_j</span><span class="p">,</span> <span class="s1">&#39;el_idx_j&#39;</span><span class="p">:</span> <span class="n">el_idx_j</span><span class="p">})</span>
 </span><span id="L-662"><a href="#L-662"><span class="linenos"> 662</span></a>
-</span><span id="L-663"><a href="#L-663"><span class="linenos"> 663</span></a>    <span class="k">def</span> <span class="nf">compute_stencil_j</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="L-663"><a href="#L-663"><span class="linenos"> 663</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">compute_stencil_j</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span id="L-664"><a href="#L-664"><span class="linenos"> 664</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-665"><a href="#L-665"><span class="linenos"> 665</span></a><span class="sd">        Compute the nearest neighbor stencils of all simplex elements. The</span>
 </span><span id="L-666"><a href="#L-666"><span class="linenos"> 666</span></a><span class="sd">        distance to all points are measured with respect to the cell center</span>
@@ -922,7 +922,7 @@ Journal of Computational Physics, 310, 301-328.</p>
 </span><span id="L-700"><a href="#L-700"><span class="linenos"> 700</span></a>
 </span><span id="L-701"><a href="#L-701"><span class="linenos"> 701</span></a>        <span class="k">return</span> <span class="n">S_j</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;int&#39;</span><span class="p">)</span>
 </span><span id="L-702"><a href="#L-702"><span class="linenos"> 702</span></a>
-</span><span id="L-703"><a href="#L-703"><span class="linenos"> 703</span></a>    <span class="k">def</span> <span class="nf">compute_ENO_stencil</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_j</span><span class="p">,</span> <span class="n">S_j</span><span class="p">,</span> <span class="n">el_idx</span><span class="p">,</span> <span class="n">max_jobs</span><span class="o">=</span><span class="mi">4</span><span class="p">):</span>
+</span><span id="L-703"><a href="#L-703"><span class="linenos"> 703</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">compute_ENO_stencil</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_j</span><span class="p">,</span> <span class="n">S_j</span><span class="p">,</span> <span class="n">el_idx</span><span class="p">,</span> <span class="n">max_jobs</span><span class="o">=</span><span class="mi">4</span><span class="p">):</span>
 </span><span id="L-704"><a href="#L-704"><span class="linenos"> 704</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-705"><a href="#L-705"><span class="linenos"> 705</span></a><span class="sd">        Compute the Essentially Non-Oscillatory stencils. The idea behind ENO</span>
 </span><span id="L-706"><a href="#L-706"><span class="linenos"> 706</span></a><span class="sd">        stencils is to have higher degree interpolation stencils up to a thin</span>
@@ -1012,7 +1012,7 @@ Journal of Computational Physics, 310, 301-328.</p>
 </span><span id="L-790"><a href="#L-790"><span class="linenos"> 790</span></a>
 </span><span id="L-791"><a href="#L-791"><span class="linenos"> 791</span></a>        <span class="k">return</span> <span class="n">ENO_S_j</span><span class="p">,</span> <span class="n">p_j</span><span class="p">,</span> <span class="n">el_idx</span>
 </span><span id="L-792"><a href="#L-792"><span class="linenos"> 792</span></a>
-</span><span id="L-793"><a href="#L-793"><span class="linenos"> 793</span></a>    <span class="k">def</span> <span class="nf">compute_ENO_stencil_j</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_j</span><span class="p">,</span> <span class="n">S_j</span><span class="p">,</span> <span class="n">xi_centers</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">el_idx</span><span class="p">,</span> <span class="n">queue</span><span class="p">):</span>
+</span><span id="L-793"><a href="#L-793"><span class="linenos"> 793</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">compute_ENO_stencil_j</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_j</span><span class="p">,</span> <span class="n">S_j</span><span class="p">,</span> <span class="n">xi_centers</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">el_idx</span><span class="p">,</span> <span class="n">queue</span><span class="p">):</span>
 </span><span id="L-794"><a href="#L-794"><span class="linenos"> 794</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-795"><a href="#L-795"><span class="linenos"> 795</span></a><span class="sd">        Compute the ENO stencil of the j-th element.</span>
 </span><span id="L-796"><a href="#L-796"><span class="linenos"> 796</span></a>
@@ -1075,7 +1075,7 @@ Journal of Computational Physics, 310, 301-328.</p>
 </span><span id="L-853"><a href="#L-853"><span class="linenos"> 853</span></a>
 </span><span id="L-854"><a href="#L-854"><span class="linenos"> 854</span></a>        <span class="n">queue</span><span class="o">.</span><span class="n">put</span><span class="p">({</span><span class="s1">&#39;ENO_S_j&#39;</span><span class="p">:</span> <span class="n">ENO_S_j</span><span class="p">,</span> <span class="s1">&#39;p_j_new&#39;</span><span class="p">:</span> <span class="n">p_j_new</span><span class="p">,</span> <span class="s1">&#39;el_idx[j]&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">el_idx</span><span class="p">[</span><span class="n">j</span><span class="p">])})</span>
 </span><span id="L-855"><a href="#L-855"><span class="linenos"> 855</span></a>
-</span><span id="L-856"><a href="#L-856"><span class="linenos"> 856</span></a>    <span class="k">def</span> <span class="nf">sample_simplex</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_mc</span><span class="p">,</span> <span class="n">xi_k_jl</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+</span><span id="L-856"><a href="#L-856"><span class="linenos"> 856</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">sample_simplex</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_mc</span><span class="p">,</span> <span class="n">xi_k_jl</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 </span><span id="L-857"><a href="#L-857"><span class="linenos"> 857</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-858"><a href="#L-858"><span class="linenos"> 858</span></a><span class="sd">        Use an analytical map from n_mc uniformly distributed points in the</span>
 </span><span id="L-859"><a href="#L-859"><span class="linenos"> 859</span></a><span class="sd">        n_xi-dimensional hypercube, to uniformly distributed points in the</span>
@@ -1131,7 +1131,7 @@ Journal of Computational Physics, 310, 301-328.</p>
 </span><span id="L-909"><a href="#L-909"><span class="linenos"> 909</span></a>
 </span><span id="L-910"><a href="#L-910"><span class="linenos"> 910</span></a>        <span class="k">return</span> <span class="n">P</span>
 </span><span id="L-911"><a href="#L-911"><span class="linenos"> 911</span></a>
-</span><span id="L-912"><a href="#L-912"><span class="linenos"> 912</span></a>    <span class="k">def</span> <span class="nf">sample_simplex_edge</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">simplex_idx</span><span class="p">,</span> <span class="n">refined_edges</span><span class="p">):</span>
+</span><span id="L-912"><a href="#L-912"><span class="linenos"> 912</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">sample_simplex_edge</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">simplex_idx</span><span class="p">,</span> <span class="n">refined_edges</span><span class="p">):</span>
 </span><span id="L-913"><a href="#L-913"><span class="linenos"> 913</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-914"><a href="#L-914"><span class="linenos"> 914</span></a><span class="sd">        Refine the longest edge of a simplex.</span>
 </span><span id="L-915"><a href="#L-915"><span class="linenos"> 915</span></a>
@@ -1202,7 +1202,7 @@ Journal of Computational Physics, 310, 301-328.</p>
 </span><span id="L-980"><a href="#L-980"><span class="linenos"> 980</span></a>
 </span><span id="L-981"><a href="#L-981"><span class="linenos"> 981</span></a>        <span class="k">return</span> <span class="n">xi_new</span><span class="p">,</span> <span class="n">refined_edges</span><span class="p">,</span> <span class="n">already_refined</span>
 </span><span id="L-982"><a href="#L-982"><span class="linenos"> 982</span></a>
-</span><span id="L-983"><a href="#L-983"><span class="linenos"> 983</span></a>    <span class="k">def</span> <span class="nf">compute_surplus_k</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xi_k_jref</span><span class="p">,</span> <span class="n">S_j</span><span class="p">,</span> <span class="n">p_j</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">v_k_jref</span><span class="p">):</span>
+</span><span id="L-983"><a href="#L-983"><span class="linenos"> 983</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">compute_surplus_k</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xi_k_jref</span><span class="p">,</span> <span class="n">S_j</span><span class="p">,</span> <span class="n">p_j</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">v_k_jref</span><span class="p">):</span>
 </span><span id="L-984"><a href="#L-984"><span class="linenos"> 984</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-985"><a href="#L-985"><span class="linenos"> 985</span></a><span class="sd">        Compute the hierachical surplus at xi_k_jref (the refinement location),</span>
 </span><span id="L-986"><a href="#L-986"><span class="linenos"> 986</span></a><span class="sd">        defined as the difference between the new code sample and the (old)</span>
@@ -1237,7 +1237,7 @@ Journal of Computational Physics, 310, 301-328.</p>
 </span><span id="L-1015"><a href="#L-1015"><span class="linenos">1015</span></a>
 </span><span id="L-1016"><a href="#L-1016"><span class="linenos">1016</span></a>        <span class="k">return</span> <span class="n">surplus</span>
 </span><span id="L-1017"><a href="#L-1017"><span class="linenos">1017</span></a>
-</span><span id="L-1018"><a href="#L-1018"><span class="linenos">1018</span></a>    <span class="k">def</span> <span class="nf">surrogate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xi</span><span class="p">,</span> <span class="n">S_j</span><span class="p">,</span> <span class="n">p_j</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
+</span><span id="L-1018"><a href="#L-1018"><span class="linenos">1018</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">surrogate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xi</span><span class="p">,</span> <span class="n">S_j</span><span class="p">,</span> <span class="n">p_j</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
 </span><span id="L-1019"><a href="#L-1019"><span class="linenos">1019</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-1020"><a href="#L-1020"><span class="linenos">1020</span></a><span class="sd">        Evaluate the SSC surrogate at xi.</span>
 </span><span id="L-1021"><a href="#L-1021"><span class="linenos">1021</span></a>
@@ -1285,7 +1285,7 @@ Journal of Computational Physics, 310, 301-328.</p>
 </span><span id="L-1063"><a href="#L-1063"><span class="linenos">1063</span></a>
 </span><span id="L-1064"><a href="#L-1064"><span class="linenos">1064</span></a>        <span class="k">return</span> <span class="n">w_j</span>
 </span><span id="L-1065"><a href="#L-1065"><span class="linenos">1065</span></a>
-</span><span id="L-1066"><a href="#L-1066"><span class="linenos">1066</span></a>    <span class="k">def</span> <span class="nf">compute_eps_bar_j</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_j</span><span class="p">,</span> <span class="n">prob_j</span><span class="p">):</span>
+</span><span id="L-1066"><a href="#L-1066"><span class="linenos">1066</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">compute_eps_bar_j</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_j</span><span class="p">,</span> <span class="n">prob_j</span><span class="p">):</span>
 </span><span id="L-1067"><a href="#L-1067"><span class="linenos">1067</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-1068"><a href="#L-1068"><span class="linenos">1068</span></a><span class="sd">        Compute the geometric refinement measure \bar{\\eps}_j for all elements,</span>
 </span><span id="L-1069"><a href="#L-1069"><span class="linenos">1069</span></a><span class="sd">        Elements with the largest values will be selected for refinement.</span>
@@ -1318,7 +1318,7 @@ Journal of Computational Physics, 310, 301-328.</p>
 </span><span id="L-1096"><a href="#L-1096"><span class="linenos">1096</span></a>
 </span><span id="L-1097"><a href="#L-1097"><span class="linenos">1097</span></a>        <span class="k">return</span> <span class="n">eps_bar_j</span><span class="p">,</span> <span class="n">vol_j</span>
 </span><span id="L-1098"><a href="#L-1098"><span class="linenos">1098</span></a>
-</span><span id="L-1099"><a href="#L-1099"><span class="linenos">1099</span></a>    <span class="k">def</span> <span class="nf">find_boundary_simplices</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="L-1099"><a href="#L-1099"><span class="linenos">1099</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">find_boundary_simplices</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span id="L-1100"><a href="#L-1100"><span class="linenos">1100</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-1101"><a href="#L-1101"><span class="linenos">1101</span></a><span class="sd">        Find the simplices that are on the boundary of the hypercube   .</span>
 </span><span id="L-1102"><a href="#L-1102"><span class="linenos">1102</span></a>
@@ -1332,7 +1332,7 @@ Journal of Computational Physics, 310, 301-328.</p>
 </span><span id="L-1110"><a href="#L-1110"><span class="linenos">1110</span></a>        <span class="n">idx</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tri</span><span class="o">.</span><span class="n">neighbors</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">nonzero</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
 </span><span id="L-1111"><a href="#L-1111"><span class="linenos">1111</span></a>        <span class="k">return</span> <span class="n">idx</span>
 </span><span id="L-1112"><a href="#L-1112"><span class="linenos">1112</span></a>
-</span><span id="L-1113"><a href="#L-1113"><span class="linenos">1113</span></a>    <span class="k">def</span> <span class="nf">update_Delaunay</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_points</span><span class="p">):</span>
+</span><span id="L-1113"><a href="#L-1113"><span class="linenos">1113</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">update_Delaunay</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_points</span><span class="p">):</span>
 </span><span id="L-1114"><a href="#L-1114"><span class="linenos">1114</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-1115"><a href="#L-1115"><span class="linenos">1115</span></a><span class="sd">        Update the Delaunay triangulation with P new points.</span>
 </span><span id="L-1116"><a href="#L-1116"><span class="linenos">1116</span></a>
@@ -1355,37 +1355,37 @@ Journal of Computational Physics, 310, 301-328.</p>
 </span><span id="L-1133"><a href="#L-1133"><span class="linenos">1133</span></a>
 </span><span id="L-1134"><a href="#L-1134"><span class="linenos">1134</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_n_samples</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tri</span><span class="o">.</span><span class="n">npoints</span>
 </span><span id="L-1135"><a href="#L-1135"><span class="linenos">1135</span></a>
-</span><span id="L-1136"><a href="#L-1136"><span class="linenos">1136</span></a>    <span class="k">def</span> <span class="nf">get_Delaunay</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="L-1136"><a href="#L-1136"><span class="linenos">1136</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_Delaunay</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span id="L-1137"><a href="#L-1137"><span class="linenos">1137</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-1138"><a href="#L-1138"><span class="linenos">1138</span></a><span class="sd">        Return the SciPy Delaunay triangulation.</span>
 </span><span id="L-1139"><a href="#L-1139"><span class="linenos">1139</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span><span id="L-1140"><a href="#L-1140"><span class="linenos">1140</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">tri</span>
 </span><span id="L-1141"><a href="#L-1141"><span class="linenos">1141</span></a>
-</span><span id="L-1142"><a href="#L-1142"><span class="linenos">1142</span></a>    <span class="k">def</span> <span class="nf">is_finite</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="L-1142"><a href="#L-1142"><span class="linenos">1142</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">is_finite</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span id="L-1143"><a href="#L-1143"><span class="linenos">1143</span></a>        <span class="k">return</span> <span class="kc">True</span>
 </span><span id="L-1144"><a href="#L-1144"><span class="linenos">1144</span></a>
 </span><span id="L-1145"><a href="#L-1145"><span class="linenos">1145</span></a>    <span class="nd">@property</span>
-</span><span id="L-1146"><a href="#L-1146"><span class="linenos">1146</span></a>    <span class="k">def</span> <span class="nf">n_samples</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="L-1146"><a href="#L-1146"><span class="linenos">1146</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">n_samples</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span id="L-1147"><a href="#L-1147"><span class="linenos">1147</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-1148"><a href="#L-1148"><span class="linenos">1148</span></a><span class="sd">        Returns the number of samples code samples.</span>
 </span><span id="L-1149"><a href="#L-1149"><span class="linenos">1149</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span><span id="L-1150"><a href="#L-1150"><span class="linenos">1150</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_n_samples</span>
 </span><span id="L-1151"><a href="#L-1151"><span class="linenos">1151</span></a>
 </span><span id="L-1152"><a href="#L-1152"><span class="linenos">1152</span></a>    <span class="nd">@property</span>
-</span><span id="L-1153"><a href="#L-1153"><span class="linenos">1153</span></a>    <span class="k">def</span> <span class="nf">n_dimensions</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="L-1153"><a href="#L-1153"><span class="linenos">1153</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">n_dimensions</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span id="L-1154"><a href="#L-1154"><span class="linenos">1154</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-1155"><a href="#L-1155"><span class="linenos">1155</span></a><span class="sd">        Returns the number of uncertain random variables</span>
 </span><span id="L-1156"><a href="#L-1156"><span class="linenos">1156</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span><span id="L-1157"><a href="#L-1157"><span class="linenos">1157</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_xi</span>
 </span><span id="L-1158"><a href="#L-1158"><span class="linenos">1158</span></a>
 </span><span id="L-1159"><a href="#L-1159"><span class="linenos">1159</span></a>    <span class="nd">@property</span>
-</span><span id="L-1160"><a href="#L-1160"><span class="linenos">1160</span></a>    <span class="k">def</span> <span class="nf">n_elements</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="L-1160"><a href="#L-1160"><span class="linenos">1160</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">n_elements</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span id="L-1161"><a href="#L-1161"><span class="linenos">1161</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-1162"><a href="#L-1162"><span class="linenos">1162</span></a><span class="sd">        Returns the number of simplex elements</span>
 </span><span id="L-1163"><a href="#L-1163"><span class="linenos">1163</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span><span id="L-1164"><a href="#L-1164"><span class="linenos">1164</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">tri</span><span class="o">.</span><span class="n">nsimplex</span>
 </span><span id="L-1165"><a href="#L-1165"><span class="linenos">1165</span></a>
-</span><span id="L-1166"><a href="#L-1166"><span class="linenos">1166</span></a>    <span class="k">def</span> <span class="fm">__next__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="L-1166"><a href="#L-1166"><span class="linenos">1166</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__next__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span id="L-1167"><a href="#L-1167"><span class="linenos">1167</span></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">count</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_n_samples</span><span class="p">:</span>
 </span><span id="L-1168"><a href="#L-1168"><span class="linenos">1168</span></a>            <span class="n">run_dict</span> <span class="o">=</span> <span class="p">{}</span>
 </span><span id="L-1169"><a href="#L-1169"><span class="linenos">1169</span></a>            <span class="n">i_par</span> <span class="o">=</span> <span class="mi">0</span>
@@ -1397,7 +1397,7 @@ Journal of Computational Physics, 310, 301-328.</p>
 </span><span id="L-1175"><a href="#L-1175"><span class="linenos">1175</span></a>        <span class="k">else</span><span class="p">:</span>
 </span><span id="L-1176"><a href="#L-1176"><span class="linenos">1176</span></a>            <span class="k">raise</span> <span class="ne">StopIteration</span>
 </span><span id="L-1177"><a href="#L-1177"><span class="linenos">1177</span></a>
-</span><span id="L-1178"><a href="#L-1178"><span class="linenos">1178</span></a>    <span class="k">def</span> <span class="nf">save_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+</span><span id="L-1178"><a href="#L-1178"><span class="linenos">1178</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">save_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
 </span><span id="L-1179"><a href="#L-1179"><span class="linenos">1179</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-1180"><a href="#L-1180"><span class="linenos">1180</span></a><span class="sd">        Save the state of the sampler to a pickle file.</span>
 </span><span id="L-1181"><a href="#L-1181"><span class="linenos">1181</span></a>
@@ -1415,7 +1415,7 @@ Journal of Computational Physics, 310, 301-328.</p>
 </span><span id="L-1193"><a href="#L-1193"><span class="linenos">1193</span></a>        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fp</span><span class="p">:</span>
 </span><span id="L-1194"><a href="#L-1194"><span class="linenos">1194</span></a>            <span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">,</span> <span class="n">fp</span><span class="p">)</span>
 </span><span id="L-1195"><a href="#L-1195"><span class="linenos">1195</span></a>
-</span><span id="L-1196"><a href="#L-1196"><span class="linenos">1196</span></a>    <span class="k">def</span> <span class="nf">load_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+</span><span id="L-1196"><a href="#L-1196"><span class="linenos">1196</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">load_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
 </span><span id="L-1197"><a href="#L-1197"><span class="linenos">1197</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-1198"><a href="#L-1198"><span class="linenos">1198</span></a><span class="sd">        Load the state of the sampler from a pickle file.</span>
 </span><span id="L-1199"><a href="#L-1199"><span class="linenos">1199</span></a>
@@ -1434,7 +1434,7 @@ Journal of Computational Physics, 310, 301-328.</p>
 </span><span id="L-1212"><a href="#L-1212"><span class="linenos">1212</span></a>            <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">fp</span><span class="p">)</span>
 </span><span id="L-1213"><a href="#L-1213"><span class="linenos">1213</span></a>
 </span><span id="L-1214"><a href="#L-1214"><span class="linenos">1214</span></a>
-</span><span id="L-1215"><a href="#L-1215"><span class="linenos">1215</span></a><span class="k">def</span> <span class="nf">DAFSILAS</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">print_message</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+</span><span id="L-1215"><a href="#L-1215"><span class="linenos">1215</span></a><span class="k">def</span><span class="w"> </span><span class="nf">DAFSILAS</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">print_message</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 </span><span id="L-1216"><a href="#L-1216"><span class="linenos">1216</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-1217"><a href="#L-1217"><span class="linenos">1217</span></a><span class="sd">    Direct Algorithm For Solving Ill-conditioned Linear Algebraic Systems,</span>
 </span><span id="L-1218"><a href="#L-1218"><span class="linenos">1218</span></a>
@@ -1553,7 +1553,7 @@ Journal of Computational Physics, 310, 301-328.</p>
 </span><span id="L-1331"><a href="#L-1331"><span class="linenos">1331</span></a>    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">P</span><span class="p">,</span> <span class="n">Ap</span><span class="p">[:,</span> <span class="n">n</span><span class="p">])</span><span class="o">.</span><span class="n">reshape</span><span class="p">([</span><span class="n">n</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
 </span><span id="L-1332"><a href="#L-1332"><span class="linenos">1332</span></a>
 </span><span id="L-1333"><a href="#L-1333"><span class="linenos">1333</span></a>
-</span><span id="L-1334"><a href="#L-1334"><span class="linenos">1334</span></a><span class="k">class</span> <span class="nc">Tri1D</span><span class="p">:</span>
+</span><span id="L-1334"><a href="#L-1334"><span class="linenos">1334</span></a><span class="k">class</span><span class="w"> </span><span class="nc">Tri1D</span><span class="p">:</span>
 </span><span id="L-1335"><a href="#L-1335"><span class="linenos">1335</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-1336"><a href="#L-1336"><span class="linenos">1336</span></a><span class="sd">    1D &quot;triangulation&quot; that mimics the following SciPy Delaunay properties:</span>
 </span><span id="L-1337"><a href="#L-1337"><span class="linenos">1337</span></a><span class="sd">        * ndim</span>
@@ -1565,7 +1565,7 @@ Journal of Computational Physics, 310, 301-328.</p>
 </span><span id="L-1343"><a href="#L-1343"><span class="linenos">1343</span></a><span class="sd">        * the find_simplex subroutine</span>
 </span><span id="L-1344"><a href="#L-1344"><span class="linenos">1344</span></a><span class="sd">    &quot;&quot;&quot;</span>
 </span><span id="L-1345"><a href="#L-1345"><span class="linenos">1345</span></a>
-</span><span id="L-1346"><a href="#L-1346"><span class="linenos">1346</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">points</span><span class="p">):</span>
+</span><span id="L-1346"><a href="#L-1346"><span class="linenos">1346</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">points</span><span class="p">):</span>
 </span><span id="L-1347"><a href="#L-1347"><span class="linenos">1347</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-1348"><a href="#L-1348"><span class="linenos">1348</span></a><span class="sd">        Create a 1D Triangulation object that can we used by the SSCSampler</span>
 </span><span id="L-1349"><a href="#L-1349"><span class="linenos">1349</span></a><span class="sd">        in the same way as the SciPy Delaunay triangulation.</span>
@@ -1599,7 +1599,7 @@ Journal of Computational Physics, 310, 301-328.</p>
 </span><span id="L-1377"><a href="#L-1377"><span class="linenos">1377</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">neighbors</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
 </span><span id="L-1378"><a href="#L-1378"><span class="linenos">1378</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">neighbors</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">neighbors</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;int&#39;</span><span class="p">)</span>
 </span><span id="L-1379"><a href="#L-1379"><span class="linenos">1379</span></a>
-</span><span id="L-1380"><a href="#L-1380"><span class="linenos">1380</span></a>    <span class="k">def</span> <span class="nf">find_simplex</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xi</span><span class="p">):</span>
+</span><span id="L-1380"><a href="#L-1380"><span class="linenos">1380</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">find_simplex</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xi</span><span class="p">):</span>
 </span><span id="L-1381"><a href="#L-1381"><span class="linenos">1381</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-1382"><a href="#L-1382"><span class="linenos">1382</span></a><span class="sd">        Find the simplex indices of nodes xi</span>
 </span><span id="L-1383"><a href="#L-1383"><span class="linenos">1383</span></a>
@@ -1641,12 +1641,12 @@ Journal of Computational Physics, 310, 301-328.</p>
 
     </div>
     <a class="headerlink" href="#SSCSampler"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="SSCSampler-54"><a href="#SSCSampler-54"><span class="linenos">  54</span></a><span class="k">class</span> <span class="nc">SSCSampler</span><span class="p">(</span><span class="n">BaseSamplingElement</span><span class="p">,</span> <span class="n">sampler_name</span><span class="o">=</span><span class="s2">&quot;ssc_sampler&quot;</span><span class="p">):</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="SSCSampler-54"><a href="#SSCSampler-54"><span class="linenos">  54</span></a><span class="k">class</span><span class="w"> </span><span class="nc">SSCSampler</span><span class="p">(</span><span class="n">BaseSamplingElement</span><span class="p">,</span> <span class="n">sampler_name</span><span class="o">=</span><span class="s2">&quot;ssc_sampler&quot;</span><span class="p">):</span>
 </span><span id="SSCSampler-55"><a href="#SSCSampler-55"><span class="linenos">  55</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="SSCSampler-56"><a href="#SSCSampler-56"><span class="linenos">  56</span></a><span class="sd">    Simplex Stochastic Collocation sampler</span>
 </span><span id="SSCSampler-57"><a href="#SSCSampler-57"><span class="linenos">  57</span></a><span class="sd">    &quot;&quot;&quot;</span>
 </span><span id="SSCSampler-58"><a href="#SSCSampler-58"><span class="linenos">  58</span></a>
-</span><span id="SSCSampler-59"><a href="#SSCSampler-59"><span class="linenos">  59</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vary</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">max_polynomial_order</span><span class="o">=</span><span class="mi">4</span><span class="p">):</span>
+</span><span id="SSCSampler-59"><a href="#SSCSampler-59"><span class="linenos">  59</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vary</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">max_polynomial_order</span><span class="o">=</span><span class="mi">4</span><span class="p">):</span>
 </span><span id="SSCSampler-60"><a href="#SSCSampler-60"><span class="linenos">  60</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="SSCSampler-61"><a href="#SSCSampler-61"><span class="linenos">  61</span></a><span class="sd">        Create an SSC sampler object.</span>
 </span><span id="SSCSampler-62"><a href="#SSCSampler-62"><span class="linenos">  62</span></a>
@@ -1672,7 +1672,7 @@ Journal of Computational Physics, 310, 301-328.</p>
 </span><span id="SSCSampler-82"><a href="#SSCSampler-82"><span class="linenos">  82</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_n_samples</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tri</span><span class="o">.</span><span class="n">points</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 </span><span id="SSCSampler-83"><a href="#SSCSampler-83"><span class="linenos">  83</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">set_pmax_cutoff</span><span class="p">(</span><span class="n">max_polynomial_order</span><span class="p">)</span>
 </span><span id="SSCSampler-84"><a href="#SSCSampler-84"><span class="linenos">  84</span></a>
-</span><span id="SSCSampler-85"><a href="#SSCSampler-85"><span class="linenos">  85</span></a>    <span class="k">def</span> <span class="nf">init_grid</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="SSCSampler-85"><a href="#SSCSampler-85"><span class="linenos">  85</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">init_grid</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span id="SSCSampler-86"><a href="#SSCSampler-86"><span class="linenos">  86</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="SSCSampler-87"><a href="#SSCSampler-87"><span class="linenos">  87</span></a><span class="sd">        Create the initial n_xi-dimensional Delaunay discretization</span>
 </span><span id="SSCSampler-88"><a href="#SSCSampler-88"><span class="linenos">  88</span></a>
@@ -1710,7 +1710,7 @@ Journal of Computational Physics, 310, 301-328.</p>
 </span><span id="SSCSampler-120"><a href="#SSCSampler-120"><span class="linenos"> 120</span></a>
 </span><span id="SSCSampler-121"><a href="#SSCSampler-121"><span class="linenos"> 121</span></a>        <span class="k">return</span> <span class="n">tri</span>
 </span><span id="SSCSampler-122"><a href="#SSCSampler-122"><span class="linenos"> 122</span></a>
-</span><span id="SSCSampler-123"><a href="#SSCSampler-123"><span class="linenos"> 123</span></a>    <span class="k">def</span> <span class="nf">find_pmax</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_s</span><span class="p">):</span>
+</span><span id="SSCSampler-123"><a href="#SSCSampler-123"><span class="linenos"> 123</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">find_pmax</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_s</span><span class="p">):</span>
 </span><span id="SSCSampler-124"><a href="#SSCSampler-124"><span class="linenos"> 124</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="SSCSampler-125"><a href="#SSCSampler-125"><span class="linenos"> 125</span></a><span class="sd">        Finds the maximum polynomial stencil order that can be sustained</span>
 </span><span id="SSCSampler-126"><a href="#SSCSampler-126"><span class="linenos"> 126</span></a><span class="sd">        given the current number of code evaluations. The stencil size</span>
@@ -1743,7 +1743,7 @@ Journal of Computational Physics, 310, 301-328.</p>
 </span><span id="SSCSampler-153"><a href="#SSCSampler-153"><span class="linenos"> 153</span></a>
 </span><span id="SSCSampler-154"><a href="#SSCSampler-154"><span class="linenos"> 154</span></a>        <span class="k">return</span> <span class="n">p</span> <span class="o">-</span> <span class="mi">1</span>
 </span><span id="SSCSampler-155"><a href="#SSCSampler-155"><span class="linenos"> 155</span></a>
-</span><span id="SSCSampler-156"><a href="#SSCSampler-156"><span class="linenos"> 156</span></a>    <span class="k">def</span> <span class="nf">set_pmax_cutoff</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pmax_cutoff</span><span class="p">):</span>
+</span><span id="SSCSampler-156"><a href="#SSCSampler-156"><span class="linenos"> 156</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">set_pmax_cutoff</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pmax_cutoff</span><span class="p">):</span>
 </span><span id="SSCSampler-157"><a href="#SSCSampler-157"><span class="linenos"> 157</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="SSCSampler-158"><a href="#SSCSampler-158"><span class="linenos"> 158</span></a><span class="sd">        Set the maximum allowed polynomial value of the surrogate.</span>
 </span><span id="SSCSampler-159"><a href="#SSCSampler-159"><span class="linenos"> 159</span></a>
@@ -1761,7 +1761,7 @@ Journal of Computational Physics, 310, 301-328.</p>
 </span><span id="SSCSampler-171"><a href="#SSCSampler-171"><span class="linenos"> 171</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">pmax_cutoff</span> <span class="o">=</span> <span class="n">pmax_cutoff</span>
 </span><span id="SSCSampler-172"><a href="#SSCSampler-172"><span class="linenos"> 172</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">i_norm_le_pj</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">compute_i_norm_le_pj</span><span class="p">(</span><span class="n">pmax_cutoff</span><span class="p">)</span>
 </span><span id="SSCSampler-173"><a href="#SSCSampler-173"><span class="linenos"> 173</span></a>
-</span><span id="SSCSampler-174"><a href="#SSCSampler-174"><span class="linenos"> 174</span></a>    <span class="k">def</span> <span class="nf">compute_vol</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="SSCSampler-174"><a href="#SSCSampler-174"><span class="linenos"> 174</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">compute_vol</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span id="SSCSampler-175"><a href="#SSCSampler-175"><span class="linenos"> 175</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="SSCSampler-176"><a href="#SSCSampler-176"><span class="linenos"> 176</span></a><span class="sd">        Use analytic formula to compute the volume of all simplices.</span>
 </span><span id="SSCSampler-177"><a href="#SSCSampler-177"><span class="linenos"> 177</span></a>
@@ -1789,7 +1789,7 @@ Journal of Computational Physics, 310, 301-328.</p>
 </span><span id="SSCSampler-199"><a href="#SSCSampler-199"><span class="linenos"> 199</span></a>
 </span><span id="SSCSampler-200"><a href="#SSCSampler-200"><span class="linenos"> 200</span></a>        <span class="k">return</span> <span class="n">vols</span>
 </span><span id="SSCSampler-201"><a href="#SSCSampler-201"><span class="linenos"> 201</span></a>
-</span><span id="SSCSampler-202"><a href="#SSCSampler-202"><span class="linenos"> 202</span></a>    <span class="k">def</span> <span class="nf">compute_xi_center_j</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="SSCSampler-202"><a href="#SSCSampler-202"><span class="linenos"> 202</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">compute_xi_center_j</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span id="SSCSampler-203"><a href="#SSCSampler-203"><span class="linenos"> 203</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="SSCSampler-204"><a href="#SSCSampler-204"><span class="linenos"> 204</span></a><span class="sd">        Compute the center of all simplex elements.</span>
 </span><span id="SSCSampler-205"><a href="#SSCSampler-205"><span class="linenos"> 205</span></a>
@@ -1808,7 +1808,7 @@ Journal of Computational Physics, 310, 301-328.</p>
 </span><span id="SSCSampler-218"><a href="#SSCSampler-218"><span class="linenos"> 218</span></a>
 </span><span id="SSCSampler-219"><a href="#SSCSampler-219"><span class="linenos"> 219</span></a>        <span class="k">return</span> <span class="n">xi_center_j</span>
 </span><span id="SSCSampler-220"><a href="#SSCSampler-220"><span class="linenos"> 220</span></a>
-</span><span id="SSCSampler-221"><a href="#SSCSampler-221"><span class="linenos"> 221</span></a>    <span class="k">def</span> <span class="nf">compute_sub_simplex_vertices</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">simplex_idx</span><span class="p">):</span>
+</span><span id="SSCSampler-221"><a href="#SSCSampler-221"><span class="linenos"> 221</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">compute_sub_simplex_vertices</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">simplex_idx</span><span class="p">):</span>
 </span><span id="SSCSampler-222"><a href="#SSCSampler-222"><span class="linenos"> 222</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="SSCSampler-223"><a href="#SSCSampler-223"><span class="linenos"> 223</span></a><span class="sd">        Compute the vertices of the sub-simplex. The  sub simplex is contained</span>
 </span><span id="SSCSampler-224"><a href="#SSCSampler-224"><span class="linenos"> 224</span></a><span class="sd">        in the larger simplex. The larger simplex is refined by randomly</span>
@@ -1834,7 +1834,7 @@ Journal of Computational Physics, 310, 301-328.</p>
 </span><span id="SSCSampler-244"><a href="#SSCSampler-244"><span class="linenos"> 244</span></a>
 </span><span id="SSCSampler-245"><a href="#SSCSampler-245"><span class="linenos"> 245</span></a>        <span class="k">return</span> <span class="n">xi_sub_jl</span>
 </span><span id="SSCSampler-246"><a href="#SSCSampler-246"><span class="linenos"> 246</span></a>
-</span><span id="SSCSampler-247"><a href="#SSCSampler-247"><span class="linenos"> 247</span></a>    <span class="k">def</span> <span class="nf">sample_inputs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_mc</span><span class="p">):</span>
+</span><span id="SSCSampler-247"><a href="#SSCSampler-247"><span class="linenos"> 247</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">sample_inputs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_mc</span><span class="p">):</span>
 </span><span id="SSCSampler-248"><a href="#SSCSampler-248"><span class="linenos"> 248</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="SSCSampler-249"><a href="#SSCSampler-249"><span class="linenos"> 249</span></a><span class="sd">        Draw n_mc random values from the input distribution.</span>
 </span><span id="SSCSampler-250"><a href="#SSCSampler-250"><span class="linenos"> 250</span></a>
@@ -1854,7 +1854,7 @@ Journal of Computational Physics, 310, 301-328.</p>
 </span><span id="SSCSampler-264"><a href="#SSCSampler-264"><span class="linenos"> 264</span></a>            <span class="n">xi</span><span class="p">[:,</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">param</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">n_mc</span><span class="p">)</span>
 </span><span id="SSCSampler-265"><a href="#SSCSampler-265"><span class="linenos"> 265</span></a>        <span class="k">return</span> <span class="n">xi</span>
 </span><span id="SSCSampler-266"><a href="#SSCSampler-266"><span class="linenos"> 266</span></a>
-</span><span id="SSCSampler-267"><a href="#SSCSampler-267"><span class="linenos"> 267</span></a>    <span class="k">def</span> <span class="nf">compute_probability</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="SSCSampler-267"><a href="#SSCSampler-267"><span class="linenos"> 267</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">compute_probability</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span id="SSCSampler-268"><a href="#SSCSampler-268"><span class="linenos"> 268</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="SSCSampler-269"><a href="#SSCSampler-269"><span class="linenos"> 269</span></a><span class="sd">        Compute the probability Omega_j for all simplex elements;</span>
 </span><span id="SSCSampler-270"><a href="#SSCSampler-270"><span class="linenos"> 270</span></a>
@@ -1893,7 +1893,7 @@ Journal of Computational Physics, 310, 301-328.</p>
 </span><span id="SSCSampler-303"><a href="#SSCSampler-303"><span class="linenos"> 303</span></a>
 </span><span id="SSCSampler-304"><a href="#SSCSampler-304"><span class="linenos"> 304</span></a>        <span class="k">return</span> <span class="n">prob_j</span>
 </span><span id="SSCSampler-305"><a href="#SSCSampler-305"><span class="linenos"> 305</span></a>
-</span><span id="SSCSampler-306"><a href="#SSCSampler-306"><span class="linenos"> 306</span></a>    <span class="k">def</span> <span class="nf">compute_i_norm_le_pj</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_max</span><span class="p">):</span>
+</span><span id="SSCSampler-306"><a href="#SSCSampler-306"><span class="linenos"> 306</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">compute_i_norm_le_pj</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_max</span><span class="p">):</span>
 </span><span id="SSCSampler-307"><a href="#SSCSampler-307"><span class="linenos"> 307</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="SSCSampler-308"><a href="#SSCSampler-308"><span class="linenos"> 308</span></a><span class="sd">        Compute the multi-index set {i | |i| = i_1 + ... + i_{n_xi} &lt;= p},</span>
 </span><span id="SSCSampler-309"><a href="#SSCSampler-309"><span class="linenos"> 309</span></a><span class="sd">        for p = 1,...,p_max</span>
@@ -1923,7 +1923,7 @@ Journal of Computational Physics, 310, 301-328.</p>
 </span><span id="SSCSampler-333"><a href="#SSCSampler-333"><span class="linenos"> 333</span></a>
 </span><span id="SSCSampler-334"><a href="#SSCSampler-334"><span class="linenos"> 334</span></a>        <span class="k">return</span> <span class="n">i_norm_le_pj</span>
 </span><span id="SSCSampler-335"><a href="#SSCSampler-335"><span class="linenos"> 335</span></a>
-</span><span id="SSCSampler-336"><a href="#SSCSampler-336"><span class="linenos"> 336</span></a>    <span class="k">def</span> <span class="nf">compute_Psi</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xi_Sj</span><span class="p">,</span> <span class="n">pmax</span><span class="p">):</span>
+</span><span id="SSCSampler-336"><a href="#SSCSampler-336"><span class="linenos"> 336</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">compute_Psi</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xi_Sj</span><span class="p">,</span> <span class="n">pmax</span><span class="p">):</span>
 </span><span id="SSCSampler-337"><a href="#SSCSampler-337"><span class="linenos"> 337</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="SSCSampler-338"><a href="#SSCSampler-338"><span class="linenos"> 338</span></a><span class="sd">        Compute the Vandermonde matrix Psi, given N + 1 points xi from the</span>
 </span><span id="SSCSampler-339"><a href="#SSCSampler-339"><span class="linenos"> 339</span></a><span class="sd">        j-th interpolation stencil, and a multi-index set of polynomial</span>
@@ -1956,7 +1956,7 @@ Journal of Computational Physics, 310, 301-328.</p>
 </span><span id="SSCSampler-366"><a href="#SSCSampler-366"><span class="linenos"> 366</span></a>
 </span><span id="SSCSampler-367"><a href="#SSCSampler-367"><span class="linenos"> 367</span></a>        <span class="k">return</span> <span class="n">Psi</span>
 </span><span id="SSCSampler-368"><a href="#SSCSampler-368"><span class="linenos"> 368</span></a>
-</span><span id="SSCSampler-369"><a href="#SSCSampler-369"><span class="linenos"> 369</span></a>    <span class="k">def</span> <span class="nf">w_j</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xi</span><span class="p">,</span> <span class="n">c_jl</span><span class="p">,</span> <span class="n">pmax</span><span class="p">):</span>
+</span><span id="SSCSampler-369"><a href="#SSCSampler-369"><span class="linenos"> 369</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">w_j</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xi</span><span class="p">,</span> <span class="n">c_jl</span><span class="p">,</span> <span class="n">pmax</span><span class="p">):</span>
 </span><span id="SSCSampler-370"><a href="#SSCSampler-370"><span class="linenos"> 370</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="SSCSampler-371"><a href="#SSCSampler-371"><span class="linenos"> 371</span></a><span class="sd">        Compute the surrogate local interpolation at point xi.</span>
 </span><span id="SSCSampler-372"><a href="#SSCSampler-372"><span class="linenos"> 372</span></a>
@@ -1995,7 +1995,7 @@ Journal of Computational Physics, 310, 301-328.</p>
 </span><span id="SSCSampler-405"><a href="#SSCSampler-405"><span class="linenos"> 405</span></a>
 </span><span id="SSCSampler-406"><a href="#SSCSampler-406"><span class="linenos"> 406</span></a>        <span class="k">return</span> <span class="n">w_j_at_xi</span>
 </span><span id="SSCSampler-407"><a href="#SSCSampler-407"><span class="linenos"> 407</span></a>
-</span><span id="SSCSampler-408"><a href="#SSCSampler-408"><span class="linenos"> 408</span></a>    <span class="k">def</span> <span class="nf">check_LEC</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_j</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">S_j</span><span class="p">,</span> <span class="n">n_mc</span><span class="p">,</span> <span class="n">max_jobs</span><span class="o">=</span><span class="mi">4</span><span class="p">):</span>
+</span><span id="SSCSampler-408"><a href="#SSCSampler-408"><span class="linenos"> 408</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">check_LEC</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_j</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">S_j</span><span class="p">,</span> <span class="n">n_mc</span><span class="p">,</span> <span class="n">max_jobs</span><span class="o">=</span><span class="mi">4</span><span class="p">):</span>
 </span><span id="SSCSampler-409"><a href="#SSCSampler-409"><span class="linenos"> 409</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="SSCSampler-410"><a href="#SSCSampler-410"><span class="linenos"> 410</span></a><span class="sd">        Check the Local Extremum Conserving propery of all simplex elements.</span>
 </span><span id="SSCSampler-411"><a href="#SSCSampler-411"><span class="linenos"> 411</span></a>
@@ -2114,7 +2114,7 @@ Journal of Computational Physics, 310, 301-328.</p>
 </span><span id="SSCSampler-524"><a href="#SSCSampler-524"><span class="linenos"> 524</span></a>        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;done.&#39;</span><span class="p">)</span>
 </span><span id="SSCSampler-525"><a href="#SSCSampler-525"><span class="linenos"> 525</span></a>        <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;p_j&#39;</span><span class="p">:</span> <span class="n">p_j</span><span class="p">,</span> <span class="s1">&#39;S_j&#39;</span><span class="p">:</span> <span class="n">S_j</span><span class="p">,</span> <span class="s1">&#39;el_idx&#39;</span><span class="p">:</span> <span class="n">el_idx</span><span class="p">}</span>
 </span><span id="SSCSampler-526"><a href="#SSCSampler-526"><span class="linenos"> 526</span></a>
-</span><span id="SSCSampler-527"><a href="#SSCSampler-527"><span class="linenos"> 527</span></a>    <span class="k">def</span> <span class="nf">find_simplices</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">S_j</span><span class="p">):</span>
+</span><span id="SSCSampler-527"><a href="#SSCSampler-527"><span class="linenos"> 527</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">find_simplices</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">S_j</span><span class="p">):</span>
 </span><span id="SSCSampler-528"><a href="#SSCSampler-528"><span class="linenos"> 528</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="SSCSampler-529"><a href="#SSCSampler-529"><span class="linenos"> 529</span></a><span class="sd">        Find the simplex element indices that are in point stencil S_j.</span>
 </span><span id="SSCSampler-530"><a href="#SSCSampler-530"><span class="linenos"> 530</span></a>
@@ -2138,7 +2138,7 @@ Journal of Computational Physics, 310, 301-328.</p>
 </span><span id="SSCSampler-548"><a href="#SSCSampler-548"><span class="linenos"> 548</span></a>
 </span><span id="SSCSampler-549"><a href="#SSCSampler-549"><span class="linenos"> 549</span></a>        <span class="k">return</span> <span class="n">idx</span>
 </span><span id="SSCSampler-550"><a href="#SSCSampler-550"><span class="linenos"> 550</span></a>
-</span><span id="SSCSampler-551"><a href="#SSCSampler-551"><span class="linenos"> 551</span></a>    <span class="k">def</span> <span class="nf">check_LEC_j</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_j</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">S_j</span><span class="p">,</span> <span class="n">n_mc</span><span class="p">,</span> <span class="n">queue</span><span class="p">):</span>
+</span><span id="SSCSampler-551"><a href="#SSCSampler-551"><span class="linenos"> 551</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">check_LEC_j</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_j</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">S_j</span><span class="p">,</span> <span class="n">n_mc</span><span class="p">,</span> <span class="n">queue</span><span class="p">):</span>
 </span><span id="SSCSampler-552"><a href="#SSCSampler-552"><span class="linenos"> 552</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="SSCSampler-553"><a href="#SSCSampler-553"><span class="linenos"> 553</span></a><span class="sd">        Check the LEC conditin of the j-th interpolation stencil.</span>
 </span><span id="SSCSampler-554"><a href="#SSCSampler-554"><span class="linenos"> 554</span></a>
@@ -2251,7 +2251,7 @@ Journal of Computational Physics, 310, 301-328.</p>
 </span><span id="SSCSampler-661"><a href="#SSCSampler-661"><span class="linenos"> 661</span></a>
 </span><span id="SSCSampler-662"><a href="#SSCSampler-662"><span class="linenos"> 662</span></a>        <span class="n">queue</span><span class="o">.</span><span class="n">put</span><span class="p">({</span><span class="s1">&#39;p_j[j]&#39;</span><span class="p">:</span> <span class="n">p_j</span><span class="p">,</span> <span class="s1">&#39;el_idx_j&#39;</span><span class="p">:</span> <span class="n">el_idx_j</span><span class="p">})</span>
 </span><span id="SSCSampler-663"><a href="#SSCSampler-663"><span class="linenos"> 663</span></a>
-</span><span id="SSCSampler-664"><a href="#SSCSampler-664"><span class="linenos"> 664</span></a>    <span class="k">def</span> <span class="nf">compute_stencil_j</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="SSCSampler-664"><a href="#SSCSampler-664"><span class="linenos"> 664</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">compute_stencil_j</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span id="SSCSampler-665"><a href="#SSCSampler-665"><span class="linenos"> 665</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="SSCSampler-666"><a href="#SSCSampler-666"><span class="linenos"> 666</span></a><span class="sd">        Compute the nearest neighbor stencils of all simplex elements. The</span>
 </span><span id="SSCSampler-667"><a href="#SSCSampler-667"><span class="linenos"> 667</span></a><span class="sd">        distance to all points are measured with respect to the cell center</span>
@@ -2291,7 +2291,7 @@ Journal of Computational Physics, 310, 301-328.</p>
 </span><span id="SSCSampler-701"><a href="#SSCSampler-701"><span class="linenos"> 701</span></a>
 </span><span id="SSCSampler-702"><a href="#SSCSampler-702"><span class="linenos"> 702</span></a>        <span class="k">return</span> <span class="n">S_j</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;int&#39;</span><span class="p">)</span>
 </span><span id="SSCSampler-703"><a href="#SSCSampler-703"><span class="linenos"> 703</span></a>
-</span><span id="SSCSampler-704"><a href="#SSCSampler-704"><span class="linenos"> 704</span></a>    <span class="k">def</span> <span class="nf">compute_ENO_stencil</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_j</span><span class="p">,</span> <span class="n">S_j</span><span class="p">,</span> <span class="n">el_idx</span><span class="p">,</span> <span class="n">max_jobs</span><span class="o">=</span><span class="mi">4</span><span class="p">):</span>
+</span><span id="SSCSampler-704"><a href="#SSCSampler-704"><span class="linenos"> 704</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">compute_ENO_stencil</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_j</span><span class="p">,</span> <span class="n">S_j</span><span class="p">,</span> <span class="n">el_idx</span><span class="p">,</span> <span class="n">max_jobs</span><span class="o">=</span><span class="mi">4</span><span class="p">):</span>
 </span><span id="SSCSampler-705"><a href="#SSCSampler-705"><span class="linenos"> 705</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="SSCSampler-706"><a href="#SSCSampler-706"><span class="linenos"> 706</span></a><span class="sd">        Compute the Essentially Non-Oscillatory stencils. The idea behind ENO</span>
 </span><span id="SSCSampler-707"><a href="#SSCSampler-707"><span class="linenos"> 707</span></a><span class="sd">        stencils is to have higher degree interpolation stencils up to a thin</span>
@@ -2381,7 +2381,7 @@ Journal of Computational Physics, 310, 301-328.</p>
 </span><span id="SSCSampler-791"><a href="#SSCSampler-791"><span class="linenos"> 791</span></a>
 </span><span id="SSCSampler-792"><a href="#SSCSampler-792"><span class="linenos"> 792</span></a>        <span class="k">return</span> <span class="n">ENO_S_j</span><span class="p">,</span> <span class="n">p_j</span><span class="p">,</span> <span class="n">el_idx</span>
 </span><span id="SSCSampler-793"><a href="#SSCSampler-793"><span class="linenos"> 793</span></a>
-</span><span id="SSCSampler-794"><a href="#SSCSampler-794"><span class="linenos"> 794</span></a>    <span class="k">def</span> <span class="nf">compute_ENO_stencil_j</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_j</span><span class="p">,</span> <span class="n">S_j</span><span class="p">,</span> <span class="n">xi_centers</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">el_idx</span><span class="p">,</span> <span class="n">queue</span><span class="p">):</span>
+</span><span id="SSCSampler-794"><a href="#SSCSampler-794"><span class="linenos"> 794</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">compute_ENO_stencil_j</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_j</span><span class="p">,</span> <span class="n">S_j</span><span class="p">,</span> <span class="n">xi_centers</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">el_idx</span><span class="p">,</span> <span class="n">queue</span><span class="p">):</span>
 </span><span id="SSCSampler-795"><a href="#SSCSampler-795"><span class="linenos"> 795</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="SSCSampler-796"><a href="#SSCSampler-796"><span class="linenos"> 796</span></a><span class="sd">        Compute the ENO stencil of the j-th element.</span>
 </span><span id="SSCSampler-797"><a href="#SSCSampler-797"><span class="linenos"> 797</span></a>
@@ -2444,7 +2444,7 @@ Journal of Computational Physics, 310, 301-328.</p>
 </span><span id="SSCSampler-854"><a href="#SSCSampler-854"><span class="linenos"> 854</span></a>
 </span><span id="SSCSampler-855"><a href="#SSCSampler-855"><span class="linenos"> 855</span></a>        <span class="n">queue</span><span class="o">.</span><span class="n">put</span><span class="p">({</span><span class="s1">&#39;ENO_S_j&#39;</span><span class="p">:</span> <span class="n">ENO_S_j</span><span class="p">,</span> <span class="s1">&#39;p_j_new&#39;</span><span class="p">:</span> <span class="n">p_j_new</span><span class="p">,</span> <span class="s1">&#39;el_idx[j]&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">el_idx</span><span class="p">[</span><span class="n">j</span><span class="p">])})</span>
 </span><span id="SSCSampler-856"><a href="#SSCSampler-856"><span class="linenos"> 856</span></a>
-</span><span id="SSCSampler-857"><a href="#SSCSampler-857"><span class="linenos"> 857</span></a>    <span class="k">def</span> <span class="nf">sample_simplex</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_mc</span><span class="p">,</span> <span class="n">xi_k_jl</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+</span><span id="SSCSampler-857"><a href="#SSCSampler-857"><span class="linenos"> 857</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">sample_simplex</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_mc</span><span class="p">,</span> <span class="n">xi_k_jl</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 </span><span id="SSCSampler-858"><a href="#SSCSampler-858"><span class="linenos"> 858</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="SSCSampler-859"><a href="#SSCSampler-859"><span class="linenos"> 859</span></a><span class="sd">        Use an analytical map from n_mc uniformly distributed points in the</span>
 </span><span id="SSCSampler-860"><a href="#SSCSampler-860"><span class="linenos"> 860</span></a><span class="sd">        n_xi-dimensional hypercube, to uniformly distributed points in the</span>
@@ -2500,7 +2500,7 @@ Journal of Computational Physics, 310, 301-328.</p>
 </span><span id="SSCSampler-910"><a href="#SSCSampler-910"><span class="linenos"> 910</span></a>
 </span><span id="SSCSampler-911"><a href="#SSCSampler-911"><span class="linenos"> 911</span></a>        <span class="k">return</span> <span class="n">P</span>
 </span><span id="SSCSampler-912"><a href="#SSCSampler-912"><span class="linenos"> 912</span></a>
-</span><span id="SSCSampler-913"><a href="#SSCSampler-913"><span class="linenos"> 913</span></a>    <span class="k">def</span> <span class="nf">sample_simplex_edge</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">simplex_idx</span><span class="p">,</span> <span class="n">refined_edges</span><span class="p">):</span>
+</span><span id="SSCSampler-913"><a href="#SSCSampler-913"><span class="linenos"> 913</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">sample_simplex_edge</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">simplex_idx</span><span class="p">,</span> <span class="n">refined_edges</span><span class="p">):</span>
 </span><span id="SSCSampler-914"><a href="#SSCSampler-914"><span class="linenos"> 914</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="SSCSampler-915"><a href="#SSCSampler-915"><span class="linenos"> 915</span></a><span class="sd">        Refine the longest edge of a simplex.</span>
 </span><span id="SSCSampler-916"><a href="#SSCSampler-916"><span class="linenos"> 916</span></a>
@@ -2571,7 +2571,7 @@ Journal of Computational Physics, 310, 301-328.</p>
 </span><span id="SSCSampler-981"><a href="#SSCSampler-981"><span class="linenos"> 981</span></a>
 </span><span id="SSCSampler-982"><a href="#SSCSampler-982"><span class="linenos"> 982</span></a>        <span class="k">return</span> <span class="n">xi_new</span><span class="p">,</span> <span class="n">refined_edges</span><span class="p">,</span> <span class="n">already_refined</span>
 </span><span id="SSCSampler-983"><a href="#SSCSampler-983"><span class="linenos"> 983</span></a>
-</span><span id="SSCSampler-984"><a href="#SSCSampler-984"><span class="linenos"> 984</span></a>    <span class="k">def</span> <span class="nf">compute_surplus_k</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xi_k_jref</span><span class="p">,</span> <span class="n">S_j</span><span class="p">,</span> <span class="n">p_j</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">v_k_jref</span><span class="p">):</span>
+</span><span id="SSCSampler-984"><a href="#SSCSampler-984"><span class="linenos"> 984</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">compute_surplus_k</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xi_k_jref</span><span class="p">,</span> <span class="n">S_j</span><span class="p">,</span> <span class="n">p_j</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">v_k_jref</span><span class="p">):</span>
 </span><span id="SSCSampler-985"><a href="#SSCSampler-985"><span class="linenos"> 985</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="SSCSampler-986"><a href="#SSCSampler-986"><span class="linenos"> 986</span></a><span class="sd">        Compute the hierachical surplus at xi_k_jref (the refinement location),</span>
 </span><span id="SSCSampler-987"><a href="#SSCSampler-987"><span class="linenos"> 987</span></a><span class="sd">        defined as the difference between the new code sample and the (old)</span>
@@ -2606,7 +2606,7 @@ Journal of Computational Physics, 310, 301-328.</p>
 </span><span id="SSCSampler-1016"><a href="#SSCSampler-1016"><span class="linenos">1016</span></a>
 </span><span id="SSCSampler-1017"><a href="#SSCSampler-1017"><span class="linenos">1017</span></a>        <span class="k">return</span> <span class="n">surplus</span>
 </span><span id="SSCSampler-1018"><a href="#SSCSampler-1018"><span class="linenos">1018</span></a>
-</span><span id="SSCSampler-1019"><a href="#SSCSampler-1019"><span class="linenos">1019</span></a>    <span class="k">def</span> <span class="nf">surrogate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xi</span><span class="p">,</span> <span class="n">S_j</span><span class="p">,</span> <span class="n">p_j</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
+</span><span id="SSCSampler-1019"><a href="#SSCSampler-1019"><span class="linenos">1019</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">surrogate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xi</span><span class="p">,</span> <span class="n">S_j</span><span class="p">,</span> <span class="n">p_j</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
 </span><span id="SSCSampler-1020"><a href="#SSCSampler-1020"><span class="linenos">1020</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="SSCSampler-1021"><a href="#SSCSampler-1021"><span class="linenos">1021</span></a><span class="sd">        Evaluate the SSC surrogate at xi.</span>
 </span><span id="SSCSampler-1022"><a href="#SSCSampler-1022"><span class="linenos">1022</span></a>
@@ -2654,7 +2654,7 @@ Journal of Computational Physics, 310, 301-328.</p>
 </span><span id="SSCSampler-1064"><a href="#SSCSampler-1064"><span class="linenos">1064</span></a>
 </span><span id="SSCSampler-1065"><a href="#SSCSampler-1065"><span class="linenos">1065</span></a>        <span class="k">return</span> <span class="n">w_j</span>
 </span><span id="SSCSampler-1066"><a href="#SSCSampler-1066"><span class="linenos">1066</span></a>
-</span><span id="SSCSampler-1067"><a href="#SSCSampler-1067"><span class="linenos">1067</span></a>    <span class="k">def</span> <span class="nf">compute_eps_bar_j</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_j</span><span class="p">,</span> <span class="n">prob_j</span><span class="p">):</span>
+</span><span id="SSCSampler-1067"><a href="#SSCSampler-1067"><span class="linenos">1067</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">compute_eps_bar_j</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_j</span><span class="p">,</span> <span class="n">prob_j</span><span class="p">):</span>
 </span><span id="SSCSampler-1068"><a href="#SSCSampler-1068"><span class="linenos">1068</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="SSCSampler-1069"><a href="#SSCSampler-1069"><span class="linenos">1069</span></a><span class="sd">        Compute the geometric refinement measure \bar{\\eps}_j for all elements,</span>
 </span><span id="SSCSampler-1070"><a href="#SSCSampler-1070"><span class="linenos">1070</span></a><span class="sd">        Elements with the largest values will be selected for refinement.</span>
@@ -2687,7 +2687,7 @@ Journal of Computational Physics, 310, 301-328.</p>
 </span><span id="SSCSampler-1097"><a href="#SSCSampler-1097"><span class="linenos">1097</span></a>
 </span><span id="SSCSampler-1098"><a href="#SSCSampler-1098"><span class="linenos">1098</span></a>        <span class="k">return</span> <span class="n">eps_bar_j</span><span class="p">,</span> <span class="n">vol_j</span>
 </span><span id="SSCSampler-1099"><a href="#SSCSampler-1099"><span class="linenos">1099</span></a>
-</span><span id="SSCSampler-1100"><a href="#SSCSampler-1100"><span class="linenos">1100</span></a>    <span class="k">def</span> <span class="nf">find_boundary_simplices</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="SSCSampler-1100"><a href="#SSCSampler-1100"><span class="linenos">1100</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">find_boundary_simplices</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span id="SSCSampler-1101"><a href="#SSCSampler-1101"><span class="linenos">1101</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="SSCSampler-1102"><a href="#SSCSampler-1102"><span class="linenos">1102</span></a><span class="sd">        Find the simplices that are on the boundary of the hypercube   .</span>
 </span><span id="SSCSampler-1103"><a href="#SSCSampler-1103"><span class="linenos">1103</span></a>
@@ -2701,7 +2701,7 @@ Journal of Computational Physics, 310, 301-328.</p>
 </span><span id="SSCSampler-1111"><a href="#SSCSampler-1111"><span class="linenos">1111</span></a>        <span class="n">idx</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tri</span><span class="o">.</span><span class="n">neighbors</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">nonzero</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
 </span><span id="SSCSampler-1112"><a href="#SSCSampler-1112"><span class="linenos">1112</span></a>        <span class="k">return</span> <span class="n">idx</span>
 </span><span id="SSCSampler-1113"><a href="#SSCSampler-1113"><span class="linenos">1113</span></a>
-</span><span id="SSCSampler-1114"><a href="#SSCSampler-1114"><span class="linenos">1114</span></a>    <span class="k">def</span> <span class="nf">update_Delaunay</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_points</span><span class="p">):</span>
+</span><span id="SSCSampler-1114"><a href="#SSCSampler-1114"><span class="linenos">1114</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">update_Delaunay</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_points</span><span class="p">):</span>
 </span><span id="SSCSampler-1115"><a href="#SSCSampler-1115"><span class="linenos">1115</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="SSCSampler-1116"><a href="#SSCSampler-1116"><span class="linenos">1116</span></a><span class="sd">        Update the Delaunay triangulation with P new points.</span>
 </span><span id="SSCSampler-1117"><a href="#SSCSampler-1117"><span class="linenos">1117</span></a>
@@ -2724,37 +2724,37 @@ Journal of Computational Physics, 310, 301-328.</p>
 </span><span id="SSCSampler-1134"><a href="#SSCSampler-1134"><span class="linenos">1134</span></a>
 </span><span id="SSCSampler-1135"><a href="#SSCSampler-1135"><span class="linenos">1135</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_n_samples</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tri</span><span class="o">.</span><span class="n">npoints</span>
 </span><span id="SSCSampler-1136"><a href="#SSCSampler-1136"><span class="linenos">1136</span></a>
-</span><span id="SSCSampler-1137"><a href="#SSCSampler-1137"><span class="linenos">1137</span></a>    <span class="k">def</span> <span class="nf">get_Delaunay</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="SSCSampler-1137"><a href="#SSCSampler-1137"><span class="linenos">1137</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_Delaunay</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span id="SSCSampler-1138"><a href="#SSCSampler-1138"><span class="linenos">1138</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="SSCSampler-1139"><a href="#SSCSampler-1139"><span class="linenos">1139</span></a><span class="sd">        Return the SciPy Delaunay triangulation.</span>
 </span><span id="SSCSampler-1140"><a href="#SSCSampler-1140"><span class="linenos">1140</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span><span id="SSCSampler-1141"><a href="#SSCSampler-1141"><span class="linenos">1141</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">tri</span>
 </span><span id="SSCSampler-1142"><a href="#SSCSampler-1142"><span class="linenos">1142</span></a>
-</span><span id="SSCSampler-1143"><a href="#SSCSampler-1143"><span class="linenos">1143</span></a>    <span class="k">def</span> <span class="nf">is_finite</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="SSCSampler-1143"><a href="#SSCSampler-1143"><span class="linenos">1143</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">is_finite</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span id="SSCSampler-1144"><a href="#SSCSampler-1144"><span class="linenos">1144</span></a>        <span class="k">return</span> <span class="kc">True</span>
 </span><span id="SSCSampler-1145"><a href="#SSCSampler-1145"><span class="linenos">1145</span></a>
 </span><span id="SSCSampler-1146"><a href="#SSCSampler-1146"><span class="linenos">1146</span></a>    <span class="nd">@property</span>
-</span><span id="SSCSampler-1147"><a href="#SSCSampler-1147"><span class="linenos">1147</span></a>    <span class="k">def</span> <span class="nf">n_samples</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="SSCSampler-1147"><a href="#SSCSampler-1147"><span class="linenos">1147</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">n_samples</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span id="SSCSampler-1148"><a href="#SSCSampler-1148"><span class="linenos">1148</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="SSCSampler-1149"><a href="#SSCSampler-1149"><span class="linenos">1149</span></a><span class="sd">        Returns the number of samples code samples.</span>
 </span><span id="SSCSampler-1150"><a href="#SSCSampler-1150"><span class="linenos">1150</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span><span id="SSCSampler-1151"><a href="#SSCSampler-1151"><span class="linenos">1151</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_n_samples</span>
 </span><span id="SSCSampler-1152"><a href="#SSCSampler-1152"><span class="linenos">1152</span></a>
 </span><span id="SSCSampler-1153"><a href="#SSCSampler-1153"><span class="linenos">1153</span></a>    <span class="nd">@property</span>
-</span><span id="SSCSampler-1154"><a href="#SSCSampler-1154"><span class="linenos">1154</span></a>    <span class="k">def</span> <span class="nf">n_dimensions</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="SSCSampler-1154"><a href="#SSCSampler-1154"><span class="linenos">1154</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">n_dimensions</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span id="SSCSampler-1155"><a href="#SSCSampler-1155"><span class="linenos">1155</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="SSCSampler-1156"><a href="#SSCSampler-1156"><span class="linenos">1156</span></a><span class="sd">        Returns the number of uncertain random variables</span>
 </span><span id="SSCSampler-1157"><a href="#SSCSampler-1157"><span class="linenos">1157</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span><span id="SSCSampler-1158"><a href="#SSCSampler-1158"><span class="linenos">1158</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_xi</span>
 </span><span id="SSCSampler-1159"><a href="#SSCSampler-1159"><span class="linenos">1159</span></a>
 </span><span id="SSCSampler-1160"><a href="#SSCSampler-1160"><span class="linenos">1160</span></a>    <span class="nd">@property</span>
-</span><span id="SSCSampler-1161"><a href="#SSCSampler-1161"><span class="linenos">1161</span></a>    <span class="k">def</span> <span class="nf">n_elements</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="SSCSampler-1161"><a href="#SSCSampler-1161"><span class="linenos">1161</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">n_elements</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span id="SSCSampler-1162"><a href="#SSCSampler-1162"><span class="linenos">1162</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="SSCSampler-1163"><a href="#SSCSampler-1163"><span class="linenos">1163</span></a><span class="sd">        Returns the number of simplex elements</span>
 </span><span id="SSCSampler-1164"><a href="#SSCSampler-1164"><span class="linenos">1164</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span><span id="SSCSampler-1165"><a href="#SSCSampler-1165"><span class="linenos">1165</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">tri</span><span class="o">.</span><span class="n">nsimplex</span>
 </span><span id="SSCSampler-1166"><a href="#SSCSampler-1166"><span class="linenos">1166</span></a>
-</span><span id="SSCSampler-1167"><a href="#SSCSampler-1167"><span class="linenos">1167</span></a>    <span class="k">def</span> <span class="fm">__next__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="SSCSampler-1167"><a href="#SSCSampler-1167"><span class="linenos">1167</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__next__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span id="SSCSampler-1168"><a href="#SSCSampler-1168"><span class="linenos">1168</span></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">count</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_n_samples</span><span class="p">:</span>
 </span><span id="SSCSampler-1169"><a href="#SSCSampler-1169"><span class="linenos">1169</span></a>            <span class="n">run_dict</span> <span class="o">=</span> <span class="p">{}</span>
 </span><span id="SSCSampler-1170"><a href="#SSCSampler-1170"><span class="linenos">1170</span></a>            <span class="n">i_par</span> <span class="o">=</span> <span class="mi">0</span>
@@ -2766,7 +2766,7 @@ Journal of Computational Physics, 310, 301-328.</p>
 </span><span id="SSCSampler-1176"><a href="#SSCSampler-1176"><span class="linenos">1176</span></a>        <span class="k">else</span><span class="p">:</span>
 </span><span id="SSCSampler-1177"><a href="#SSCSampler-1177"><span class="linenos">1177</span></a>            <span class="k">raise</span> <span class="ne">StopIteration</span>
 </span><span id="SSCSampler-1178"><a href="#SSCSampler-1178"><span class="linenos">1178</span></a>
-</span><span id="SSCSampler-1179"><a href="#SSCSampler-1179"><span class="linenos">1179</span></a>    <span class="k">def</span> <span class="nf">save_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+</span><span id="SSCSampler-1179"><a href="#SSCSampler-1179"><span class="linenos">1179</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">save_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
 </span><span id="SSCSampler-1180"><a href="#SSCSampler-1180"><span class="linenos">1180</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="SSCSampler-1181"><a href="#SSCSampler-1181"><span class="linenos">1181</span></a><span class="sd">        Save the state of the sampler to a pickle file.</span>
 </span><span id="SSCSampler-1182"><a href="#SSCSampler-1182"><span class="linenos">1182</span></a>
@@ -2784,7 +2784,7 @@ Journal of Computational Physics, 310, 301-328.</p>
 </span><span id="SSCSampler-1194"><a href="#SSCSampler-1194"><span class="linenos">1194</span></a>        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fp</span><span class="p">:</span>
 </span><span id="SSCSampler-1195"><a href="#SSCSampler-1195"><span class="linenos">1195</span></a>            <span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">,</span> <span class="n">fp</span><span class="p">)</span>
 </span><span id="SSCSampler-1196"><a href="#SSCSampler-1196"><span class="linenos">1196</span></a>
-</span><span id="SSCSampler-1197"><a href="#SSCSampler-1197"><span class="linenos">1197</span></a>    <span class="k">def</span> <span class="nf">load_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+</span><span id="SSCSampler-1197"><a href="#SSCSampler-1197"><span class="linenos">1197</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">load_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
 </span><span id="SSCSampler-1198"><a href="#SSCSampler-1198"><span class="linenos">1198</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="SSCSampler-1199"><a href="#SSCSampler-1199"><span class="linenos">1199</span></a><span class="sd">        Load the state of the sampler from a pickle file.</span>
 </span><span id="SSCSampler-1200"><a href="#SSCSampler-1200"><span class="linenos">1200</span></a>
@@ -2818,7 +2818,7 @@ Journal of Computational Physics, 310, 301-328.</p>
 
     </div>
     <a class="headerlink" href="#SSCSampler.__init__"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="SSCSampler.__init__-59"><a href="#SSCSampler.__init__-59"><span class="linenos">59</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vary</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">max_polynomial_order</span><span class="o">=</span><span class="mi">4</span><span class="p">):</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="SSCSampler.__init__-59"><a href="#SSCSampler.__init__-59"><span class="linenos">59</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vary</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">max_polynomial_order</span><span class="o">=</span><span class="mi">4</span><span class="p">):</span>
 </span><span id="SSCSampler.__init__-60"><a href="#SSCSampler.__init__-60"><span class="linenos">60</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="SSCSampler.__init__-61"><a href="#SSCSampler.__init__-61"><span class="linenos">61</span></a><span class="sd">        Create an SSC sampler object.</span>
 </span><span id="SSCSampler.__init__-62"><a href="#SSCSampler.__init__-62"><span class="linenos">62</span></a>
@@ -2921,7 +2921,7 @@ The maximum polynomial order, default is 4.</li>
 
     </div>
     <a class="headerlink" href="#SSCSampler.init_grid"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="SSCSampler.init_grid-85"><a href="#SSCSampler.init_grid-85"><span class="linenos"> 85</span></a>    <span class="k">def</span> <span class="nf">init_grid</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="SSCSampler.init_grid-85"><a href="#SSCSampler.init_grid-85"><span class="linenos"> 85</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">init_grid</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span id="SSCSampler.init_grid-86"><a href="#SSCSampler.init_grid-86"><span class="linenos"> 86</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="SSCSampler.init_grid-87"><a href="#SSCSampler.init_grid-87"><span class="linenos"> 87</span></a><span class="sd">        Create the initial n_xi-dimensional Delaunay discretization</span>
 </span><span id="SSCSampler.init_grid-88"><a href="#SSCSampler.init_grid-88"><span class="linenos"> 88</span></a>
@@ -2984,7 +2984,7 @@ Initial triagulation of 2 ** n_xi + 1 points.</li>
 
     </div>
     <a class="headerlink" href="#SSCSampler.find_pmax"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="SSCSampler.find_pmax-123"><a href="#SSCSampler.find_pmax-123"><span class="linenos">123</span></a>    <span class="k">def</span> <span class="nf">find_pmax</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_s</span><span class="p">):</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="SSCSampler.find_pmax-123"><a href="#SSCSampler.find_pmax-123"><span class="linenos">123</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">find_pmax</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_s</span><span class="p">):</span>
 </span><span id="SSCSampler.find_pmax-124"><a href="#SSCSampler.find_pmax-124"><span class="linenos">124</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="SSCSampler.find_pmax-125"><a href="#SSCSampler.find_pmax-125"><span class="linenos">125</span></a><span class="sd">        Finds the maximum polynomial stencil order that can be sustained</span>
 </span><span id="SSCSampler.find_pmax-126"><a href="#SSCSampler.find_pmax-126"><span class="linenos">126</span></a><span class="sd">        given the current number of code evaluations. The stencil size</span>
@@ -3058,7 +3058,7 @@ the number of code evaluations.</li>
 
     </div>
     <a class="headerlink" href="#SSCSampler.set_pmax_cutoff"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="SSCSampler.set_pmax_cutoff-156"><a href="#SSCSampler.set_pmax_cutoff-156"><span class="linenos">156</span></a>    <span class="k">def</span> <span class="nf">set_pmax_cutoff</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pmax_cutoff</span><span class="p">):</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="SSCSampler.set_pmax_cutoff-156"><a href="#SSCSampler.set_pmax_cutoff-156"><span class="linenos">156</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">set_pmax_cutoff</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pmax_cutoff</span><span class="p">):</span>
 </span><span id="SSCSampler.set_pmax_cutoff-157"><a href="#SSCSampler.set_pmax_cutoff-157"><span class="linenos">157</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="SSCSampler.set_pmax_cutoff-158"><a href="#SSCSampler.set_pmax_cutoff-158"><span class="linenos">158</span></a><span class="sd">        Set the maximum allowed polynomial value of the surrogate.</span>
 </span><span id="SSCSampler.set_pmax_cutoff-159"><a href="#SSCSampler.set_pmax_cutoff-159"><span class="linenos">159</span></a>
@@ -3107,7 +3107,7 @@ The max polynomial order.</li>
 
     </div>
     <a class="headerlink" href="#SSCSampler.compute_vol"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="SSCSampler.compute_vol-174"><a href="#SSCSampler.compute_vol-174"><span class="linenos">174</span></a>    <span class="k">def</span> <span class="nf">compute_vol</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="SSCSampler.compute_vol-174"><a href="#SSCSampler.compute_vol-174"><span class="linenos">174</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">compute_vol</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span id="SSCSampler.compute_vol-175"><a href="#SSCSampler.compute_vol-175"><span class="linenos">175</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="SSCSampler.compute_vol-176"><a href="#SSCSampler.compute_vol-176"><span class="linenos">176</span></a><span class="sd">        Use analytic formula to compute the volume of all simplices.</span>
 </span><span id="SSCSampler.compute_vol-177"><a href="#SSCSampler.compute_vol-177"><span class="linenos">177</span></a>
@@ -3162,7 +3162,7 @@ The volumes of the n_e simplices.</li>
 
     </div>
     <a class="headerlink" href="#SSCSampler.compute_xi_center_j"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="SSCSampler.compute_xi_center_j-202"><a href="#SSCSampler.compute_xi_center_j-202"><span class="linenos">202</span></a>    <span class="k">def</span> <span class="nf">compute_xi_center_j</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="SSCSampler.compute_xi_center_j-202"><a href="#SSCSampler.compute_xi_center_j-202"><span class="linenos">202</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">compute_xi_center_j</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span id="SSCSampler.compute_xi_center_j-203"><a href="#SSCSampler.compute_xi_center_j-203"><span class="linenos">203</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="SSCSampler.compute_xi_center_j-204"><a href="#SSCSampler.compute_xi_center_j-204"><span class="linenos">204</span></a><span class="sd">        Compute the center of all simplex elements.</span>
 </span><span id="SSCSampler.compute_xi_center_j-205"><a href="#SSCSampler.compute_xi_center_j-205"><span class="linenos">205</span></a>
@@ -3206,7 +3206,7 @@ The cell centers of the n_e simplices.</li>
 
     </div>
     <a class="headerlink" href="#SSCSampler.compute_sub_simplex_vertices"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="SSCSampler.compute_sub_simplex_vertices-221"><a href="#SSCSampler.compute_sub_simplex_vertices-221"><span class="linenos">221</span></a>    <span class="k">def</span> <span class="nf">compute_sub_simplex_vertices</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">simplex_idx</span><span class="p">):</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="SSCSampler.compute_sub_simplex_vertices-221"><a href="#SSCSampler.compute_sub_simplex_vertices-221"><span class="linenos">221</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">compute_sub_simplex_vertices</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">simplex_idx</span><span class="p">):</span>
 </span><span id="SSCSampler.compute_sub_simplex_vertices-222"><a href="#SSCSampler.compute_sub_simplex_vertices-222"><span class="linenos">222</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="SSCSampler.compute_sub_simplex_vertices-223"><a href="#SSCSampler.compute_sub_simplex_vertices-223"><span class="linenos">223</span></a><span class="sd">        Compute the vertices of the sub-simplex. The  sub simplex is contained</span>
 </span><span id="SSCSampler.compute_sub_simplex_vertices-224"><a href="#SSCSampler.compute_sub_simplex_vertices-224"><span class="linenos">224</span></a><span class="sd">        in the larger simplex. The larger simplex is refined by randomly</span>
@@ -3266,7 +3266,7 @@ The vertices of the sub simplex.</li>
 
     </div>
     <a class="headerlink" href="#SSCSampler.sample_inputs"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="SSCSampler.sample_inputs-247"><a href="#SSCSampler.sample_inputs-247"><span class="linenos">247</span></a>    <span class="k">def</span> <span class="nf">sample_inputs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_mc</span><span class="p">):</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="SSCSampler.sample_inputs-247"><a href="#SSCSampler.sample_inputs-247"><span class="linenos">247</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">sample_inputs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_mc</span><span class="p">):</span>
 </span><span id="SSCSampler.sample_inputs-248"><a href="#SSCSampler.sample_inputs-248"><span class="linenos">248</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="SSCSampler.sample_inputs-249"><a href="#SSCSampler.sample_inputs-249"><span class="linenos">249</span></a><span class="sd">        Draw n_mc random values from the input distribution.</span>
 </span><span id="SSCSampler.sample_inputs-250"><a href="#SSCSampler.sample_inputs-250"><span class="linenos">250</span></a>
@@ -3318,7 +3318,7 @@ n_mc random samples from the n_xi input distributions.</li>
 
     </div>
     <a class="headerlink" href="#SSCSampler.compute_probability"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="SSCSampler.compute_probability-267"><a href="#SSCSampler.compute_probability-267"><span class="linenos">267</span></a>    <span class="k">def</span> <span class="nf">compute_probability</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="SSCSampler.compute_probability-267"><a href="#SSCSampler.compute_probability-267"><span class="linenos">267</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">compute_probability</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span id="SSCSampler.compute_probability-268"><a href="#SSCSampler.compute_probability-268"><span class="linenos">268</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="SSCSampler.compute_probability-269"><a href="#SSCSampler.compute_probability-269"><span class="linenos">269</span></a><span class="sd">        Compute the probability Omega_j for all simplex elements;</span>
 </span><span id="SSCSampler.compute_probability-270"><a href="#SSCSampler.compute_probability-270"><span class="linenos">270</span></a>
@@ -3387,7 +3387,7 @@ The probabilities of each simplex.</li>
 
     </div>
     <a class="headerlink" href="#SSCSampler.compute_i_norm_le_pj"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="SSCSampler.compute_i_norm_le_pj-306"><a href="#SSCSampler.compute_i_norm_le_pj-306"><span class="linenos">306</span></a>    <span class="k">def</span> <span class="nf">compute_i_norm_le_pj</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_max</span><span class="p">):</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="SSCSampler.compute_i_norm_le_pj-306"><a href="#SSCSampler.compute_i_norm_le_pj-306"><span class="linenos">306</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">compute_i_norm_le_pj</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_max</span><span class="p">):</span>
 </span><span id="SSCSampler.compute_i_norm_le_pj-307"><a href="#SSCSampler.compute_i_norm_le_pj-307"><span class="linenos">307</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="SSCSampler.compute_i_norm_le_pj-308"><a href="#SSCSampler.compute_i_norm_le_pj-308"><span class="linenos">308</span></a><span class="sd">        Compute the multi-index set {i | |i| = i_1 + ... + i_{n_xi} &lt;= p},</span>
 </span><span id="SSCSampler.compute_i_norm_le_pj-309"><a href="#SSCSampler.compute_i_norm_le_pj-309"><span class="linenos">309</span></a><span class="sd">        for p = 1,...,p_max</span>
@@ -3450,7 +3450,7 @@ The Np + 1 multi indices per polynomial order.</li>
 
     </div>
     <a class="headerlink" href="#SSCSampler.compute_Psi"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="SSCSampler.compute_Psi-336"><a href="#SSCSampler.compute_Psi-336"><span class="linenos">336</span></a>    <span class="k">def</span> <span class="nf">compute_Psi</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xi_Sj</span><span class="p">,</span> <span class="n">pmax</span><span class="p">):</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="SSCSampler.compute_Psi-336"><a href="#SSCSampler.compute_Psi-336"><span class="linenos">336</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">compute_Psi</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xi_Sj</span><span class="p">,</span> <span class="n">pmax</span><span class="p">):</span>
 </span><span id="SSCSampler.compute_Psi-337"><a href="#SSCSampler.compute_Psi-337"><span class="linenos">337</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="SSCSampler.compute_Psi-338"><a href="#SSCSampler.compute_Psi-338"><span class="linenos">338</span></a><span class="sd">        Compute the Vandermonde matrix Psi, given N + 1 points xi from the</span>
 </span><span id="SSCSampler.compute_Psi-339"><a href="#SSCSampler.compute_Psi-339"><span class="linenos">339</span></a><span class="sd">        j-th interpolation stencil, and a multi-index set of polynomial</span>
@@ -3521,7 +3521,7 @@ xi_1 ** i_1 + ... + xi_{n_xi} ** i_{n_xi}.</li>
 
     </div>
     <a class="headerlink" href="#SSCSampler.w_j"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="SSCSampler.w_j-369"><a href="#SSCSampler.w_j-369"><span class="linenos">369</span></a>    <span class="k">def</span> <span class="nf">w_j</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xi</span><span class="p">,</span> <span class="n">c_jl</span><span class="p">,</span> <span class="n">pmax</span><span class="p">):</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="SSCSampler.w_j-369"><a href="#SSCSampler.w_j-369"><span class="linenos">369</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">w_j</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xi</span><span class="p">,</span> <span class="n">c_jl</span><span class="p">,</span> <span class="n">pmax</span><span class="p">):</span>
 </span><span id="SSCSampler.w_j-370"><a href="#SSCSampler.w_j-370"><span class="linenos">370</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="SSCSampler.w_j-371"><a href="#SSCSampler.w_j-371"><span class="linenos">371</span></a><span class="sd">        Compute the surrogate local interpolation at point xi.</span>
 </span><span id="SSCSampler.w_j-372"><a href="#SSCSampler.w_j-372"><span class="linenos">372</span></a>
@@ -3601,7 +3601,7 @@ The surrogate prediction at xi.</li>
 
     </div>
     <a class="headerlink" href="#SSCSampler.check_LEC"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="SSCSampler.check_LEC-408"><a href="#SSCSampler.check_LEC-408"><span class="linenos">408</span></a>    <span class="k">def</span> <span class="nf">check_LEC</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_j</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">S_j</span><span class="p">,</span> <span class="n">n_mc</span><span class="p">,</span> <span class="n">max_jobs</span><span class="o">=</span><span class="mi">4</span><span class="p">):</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="SSCSampler.check_LEC-408"><a href="#SSCSampler.check_LEC-408"><span class="linenos">408</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">check_LEC</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_j</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">S_j</span><span class="p">,</span> <span class="n">n_mc</span><span class="p">,</span> <span class="n">max_jobs</span><span class="o">=</span><span class="mi">4</span><span class="p">):</span>
 </span><span id="SSCSampler.check_LEC-409"><a href="#SSCSampler.check_LEC-409"><span class="linenos">409</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="SSCSampler.check_LEC-410"><a href="#SSCSampler.check_LEC-410"><span class="linenos">410</span></a><span class="sd">        Check the Local Extremum Conserving propery of all simplex elements.</span>
 </span><span id="SSCSampler.check_LEC-411"><a href="#SSCSampler.check_LEC-411"><span class="linenos">411</span></a>
@@ -3763,7 +3763,7 @@ parallel.</li>
 
     </div>
     <a class="headerlink" href="#SSCSampler.find_simplices"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="SSCSampler.find_simplices-527"><a href="#SSCSampler.find_simplices-527"><span class="linenos">527</span></a>    <span class="k">def</span> <span class="nf">find_simplices</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">S_j</span><span class="p">):</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="SSCSampler.find_simplices-527"><a href="#SSCSampler.find_simplices-527"><span class="linenos">527</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">find_simplices</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">S_j</span><span class="p">):</span>
 </span><span id="SSCSampler.find_simplices-528"><a href="#SSCSampler.find_simplices-528"><span class="linenos">528</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="SSCSampler.find_simplices-529"><a href="#SSCSampler.find_simplices-529"><span class="linenos">529</span></a><span class="sd">        Find the simplex element indices that are in point stencil S_j.</span>
 </span><span id="SSCSampler.find_simplices-530"><a href="#SSCSampler.find_simplices-530"><span class="linenos">530</span></a>
@@ -3820,7 +3820,7 @@ The element indices of stencil S_j.</li>
 
     </div>
     <a class="headerlink" href="#SSCSampler.check_LEC_j"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="SSCSampler.check_LEC_j-551"><a href="#SSCSampler.check_LEC_j-551"><span class="linenos">551</span></a>    <span class="k">def</span> <span class="nf">check_LEC_j</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_j</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">S_j</span><span class="p">,</span> <span class="n">n_mc</span><span class="p">,</span> <span class="n">queue</span><span class="p">):</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="SSCSampler.check_LEC_j-551"><a href="#SSCSampler.check_LEC_j-551"><span class="linenos">551</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">check_LEC_j</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_j</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">S_j</span><span class="p">,</span> <span class="n">n_mc</span><span class="p">,</span> <span class="n">queue</span><span class="p">):</span>
 </span><span id="SSCSampler.check_LEC_j-552"><a href="#SSCSampler.check_LEC_j-552"><span class="linenos">552</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="SSCSampler.check_LEC_j-553"><a href="#SSCSampler.check_LEC_j-553"><span class="linenos">553</span></a><span class="sd">        Check the LEC conditin of the j-th interpolation stencil.</span>
 </span><span id="SSCSampler.check_LEC_j-554"><a href="#SSCSampler.check_LEC_j-554"><span class="linenos">554</span></a>
@@ -3974,7 +3974,7 @@ Used to store the results.</li>
 
     </div>
     <a class="headerlink" href="#SSCSampler.compute_stencil_j"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="SSCSampler.compute_stencil_j-664"><a href="#SSCSampler.compute_stencil_j-664"><span class="linenos">664</span></a>    <span class="k">def</span> <span class="nf">compute_stencil_j</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="SSCSampler.compute_stencil_j-664"><a href="#SSCSampler.compute_stencil_j-664"><span class="linenos">664</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">compute_stencil_j</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span id="SSCSampler.compute_stencil_j-665"><a href="#SSCSampler.compute_stencil_j-665"><span class="linenos">665</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="SSCSampler.compute_stencil_j-666"><a href="#SSCSampler.compute_stencil_j-666"><span class="linenos">666</span></a><span class="sd">        Compute the nearest neighbor stencils of all simplex elements. The</span>
 </span><span id="SSCSampler.compute_stencil_j-667"><a href="#SSCSampler.compute_stencil_j-667"><span class="linenos">667</span></a><span class="sd">        distance to all points are measured with respect to the cell center</span>
@@ -4043,7 +4043,7 @@ n_xi + 1 indeces belong to the j-th simplex itself.</li>
 
     </div>
     <a class="headerlink" href="#SSCSampler.compute_ENO_stencil"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="SSCSampler.compute_ENO_stencil-704"><a href="#SSCSampler.compute_ENO_stencil-704"><span class="linenos">704</span></a>    <span class="k">def</span> <span class="nf">compute_ENO_stencil</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_j</span><span class="p">,</span> <span class="n">S_j</span><span class="p">,</span> <span class="n">el_idx</span><span class="p">,</span> <span class="n">max_jobs</span><span class="o">=</span><span class="mi">4</span><span class="p">):</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="SSCSampler.compute_ENO_stencil-704"><a href="#SSCSampler.compute_ENO_stencil-704"><span class="linenos">704</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">compute_ENO_stencil</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_j</span><span class="p">,</span> <span class="n">S_j</span><span class="p">,</span> <span class="n">el_idx</span><span class="p">,</span> <span class="n">max_jobs</span><span class="o">=</span><span class="mi">4</span><span class="p">):</span>
 </span><span id="SSCSampler.compute_ENO_stencil-705"><a href="#SSCSampler.compute_ENO_stencil-705"><span class="linenos">705</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="SSCSampler.compute_ENO_stencil-706"><a href="#SSCSampler.compute_ENO_stencil-706"><span class="linenos">706</span></a><span class="sd">        Compute the Essentially Non-Oscillatory stencils. The idea behind ENO</span>
 </span><span id="SSCSampler.compute_ENO_stencil-707"><a href="#SSCSampler.compute_ENO_stencil-707"><span class="linenos">707</span></a><span class="sd">        stencils is to have higher degree interpolation stencils up to a thin</span>
@@ -4188,7 +4188,7 @@ The new element indices for each interpolation stencil.</li>
 
     </div>
     <a class="headerlink" href="#SSCSampler.compute_ENO_stencil_j"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="SSCSampler.compute_ENO_stencil_j-794"><a href="#SSCSampler.compute_ENO_stencil_j-794"><span class="linenos">794</span></a>    <span class="k">def</span> <span class="nf">compute_ENO_stencil_j</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_j</span><span class="p">,</span> <span class="n">S_j</span><span class="p">,</span> <span class="n">xi_centers</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">el_idx</span><span class="p">,</span> <span class="n">queue</span><span class="p">):</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="SSCSampler.compute_ENO_stencil_j-794"><a href="#SSCSampler.compute_ENO_stencil_j-794"><span class="linenos">794</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">compute_ENO_stencil_j</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_j</span><span class="p">,</span> <span class="n">S_j</span><span class="p">,</span> <span class="n">xi_centers</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">el_idx</span><span class="p">,</span> <span class="n">queue</span><span class="p">):</span>
 </span><span id="SSCSampler.compute_ENO_stencil_j-795"><a href="#SSCSampler.compute_ENO_stencil_j-795"><span class="linenos">795</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="SSCSampler.compute_ENO_stencil_j-796"><a href="#SSCSampler.compute_ENO_stencil_j-796"><span class="linenos">796</span></a><span class="sd">        Compute the ENO stencil of the j-th element.</span>
 </span><span id="SSCSampler.compute_ENO_stencil_j-797"><a href="#SSCSampler.compute_ENO_stencil_j-797"><span class="linenos">797</span></a>
@@ -4297,7 +4297,7 @@ Used to store the results.</li>
 
     </div>
     <a class="headerlink" href="#SSCSampler.sample_simplex"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="SSCSampler.sample_simplex-857"><a href="#SSCSampler.sample_simplex-857"><span class="linenos">857</span></a>    <span class="k">def</span> <span class="nf">sample_simplex</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_mc</span><span class="p">,</span> <span class="n">xi_k_jl</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="SSCSampler.sample_simplex-857"><a href="#SSCSampler.sample_simplex-857"><span class="linenos">857</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">sample_simplex</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_mc</span><span class="p">,</span> <span class="n">xi_k_jl</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 </span><span id="SSCSampler.sample_simplex-858"><a href="#SSCSampler.sample_simplex-858"><span class="linenos">858</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="SSCSampler.sample_simplex-859"><a href="#SSCSampler.sample_simplex-859"><span class="linenos">859</span></a><span class="sd">        Use an analytical map from n_mc uniformly distributed points in the</span>
 </span><span id="SSCSampler.sample_simplex-860"><a href="#SSCSampler.sample_simplex-860"><span class="linenos">860</span></a><span class="sd">        n_xi-dimensional hypercube, to uniformly distributed points in the</span>
@@ -4396,7 +4396,7 @@ Uniformly distributed points inside the target simplex.</li>
 
     </div>
     <a class="headerlink" href="#SSCSampler.sample_simplex_edge"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="SSCSampler.sample_simplex_edge-913"><a href="#SSCSampler.sample_simplex_edge-913"><span class="linenos">913</span></a>    <span class="k">def</span> <span class="nf">sample_simplex_edge</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">simplex_idx</span><span class="p">,</span> <span class="n">refined_edges</span><span class="p">):</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="SSCSampler.sample_simplex_edge-913"><a href="#SSCSampler.sample_simplex_edge-913"><span class="linenos">913</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">sample_simplex_edge</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">simplex_idx</span><span class="p">,</span> <span class="n">refined_edges</span><span class="p">):</span>
 </span><span id="SSCSampler.sample_simplex_edge-914"><a href="#SSCSampler.sample_simplex_edge-914"><span class="linenos">914</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="SSCSampler.sample_simplex_edge-915"><a href="#SSCSampler.sample_simplex_edge-915"><span class="linenos">915</span></a><span class="sd">        Refine the longest edge of a simplex.</span>
 </span><span id="SSCSampler.sample_simplex_edge-916"><a href="#SSCSampler.sample_simplex_edge-916"><span class="linenos">916</span></a>
@@ -4510,7 +4510,7 @@ Returns True if the edge already has been refined.</li>
 
     </div>
     <a class="headerlink" href="#SSCSampler.compute_surplus_k"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="SSCSampler.compute_surplus_k-984"><a href="#SSCSampler.compute_surplus_k-984"><span class="linenos"> 984</span></a>    <span class="k">def</span> <span class="nf">compute_surplus_k</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xi_k_jref</span><span class="p">,</span> <span class="n">S_j</span><span class="p">,</span> <span class="n">p_j</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">v_k_jref</span><span class="p">):</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="SSCSampler.compute_surplus_k-984"><a href="#SSCSampler.compute_surplus_k-984"><span class="linenos"> 984</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">compute_surplus_k</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xi_k_jref</span><span class="p">,</span> <span class="n">S_j</span><span class="p">,</span> <span class="n">p_j</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">v_k_jref</span><span class="p">):</span>
 </span><span id="SSCSampler.compute_surplus_k-985"><a href="#SSCSampler.compute_surplus_k-985"><span class="linenos"> 985</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="SSCSampler.compute_surplus_k-986"><a href="#SSCSampler.compute_surplus_k-986"><span class="linenos"> 986</span></a><span class="sd">        Compute the hierachical surplus at xi_k_jref (the refinement location),</span>
 </span><span id="SSCSampler.compute_surplus_k-987"><a href="#SSCSampler.compute_surplus_k-987"><span class="linenos"> 987</span></a><span class="sd">        defined as the difference between the new code sample and the (old)</span>
@@ -4589,7 +4589,7 @@ The hierarchical suplus</li>
 
     </div>
     <a class="headerlink" href="#SSCSampler.surrogate"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="SSCSampler.surrogate-1019"><a href="#SSCSampler.surrogate-1019"><span class="linenos">1019</span></a>    <span class="k">def</span> <span class="nf">surrogate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xi</span><span class="p">,</span> <span class="n">S_j</span><span class="p">,</span> <span class="n">p_j</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="SSCSampler.surrogate-1019"><a href="#SSCSampler.surrogate-1019"><span class="linenos">1019</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">surrogate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xi</span><span class="p">,</span> <span class="n">S_j</span><span class="p">,</span> <span class="n">p_j</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
 </span><span id="SSCSampler.surrogate-1020"><a href="#SSCSampler.surrogate-1020"><span class="linenos">1020</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="SSCSampler.surrogate-1021"><a href="#SSCSampler.surrogate-1021"><span class="linenos">1021</span></a><span class="sd">        Evaluate the SSC surrogate at xi.</span>
 </span><span id="SSCSampler.surrogate-1022"><a href="#SSCSampler.surrogate-1022"><span class="linenos">1022</span></a>
@@ -4676,7 +4676,7 @@ The (scalar) code outputs. #TODO:modify when vectors are allowed</li>
 
     </div>
     <a class="headerlink" href="#SSCSampler.compute_eps_bar_j"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="SSCSampler.compute_eps_bar_j-1067"><a href="#SSCSampler.compute_eps_bar_j-1067"><span class="linenos">1067</span></a>    <span class="k">def</span> <span class="nf">compute_eps_bar_j</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_j</span><span class="p">,</span> <span class="n">prob_j</span><span class="p">):</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="SSCSampler.compute_eps_bar_j-1067"><a href="#SSCSampler.compute_eps_bar_j-1067"><span class="linenos">1067</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">compute_eps_bar_j</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_j</span><span class="p">,</span> <span class="n">prob_j</span><span class="p">):</span>
 </span><span id="SSCSampler.compute_eps_bar_j-1068"><a href="#SSCSampler.compute_eps_bar_j-1068"><span class="linenos">1068</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="SSCSampler.compute_eps_bar_j-1069"><a href="#SSCSampler.compute_eps_bar_j-1069"><span class="linenos">1069</span></a><span class="sd">        Compute the geometric refinement measure \bar{\\eps}_j for all elements,</span>
 </span><span id="SSCSampler.compute_eps_bar_j-1070"><a href="#SSCSampler.compute_eps_bar_j-1070"><span class="linenos">1070</span></a><span class="sd">        Elements with the largest values will be selected for refinement.</span>
@@ -4746,7 +4746,7 @@ The volume of each simplex element.</li>
 
     </div>
     <a class="headerlink" href="#SSCSampler.find_boundary_simplices"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="SSCSampler.find_boundary_simplices-1100"><a href="#SSCSampler.find_boundary_simplices-1100"><span class="linenos">1100</span></a>    <span class="k">def</span> <span class="nf">find_boundary_simplices</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="SSCSampler.find_boundary_simplices-1100"><a href="#SSCSampler.find_boundary_simplices-1100"><span class="linenos">1100</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">find_boundary_simplices</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span id="SSCSampler.find_boundary_simplices-1101"><a href="#SSCSampler.find_boundary_simplices-1101"><span class="linenos">1101</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="SSCSampler.find_boundary_simplices-1102"><a href="#SSCSampler.find_boundary_simplices-1102"><span class="linenos">1102</span></a><span class="sd">        Find the simplices that are on the boundary of the hypercube   .</span>
 </span><span id="SSCSampler.find_boundary_simplices-1103"><a href="#SSCSampler.find_boundary_simplices-1103"><span class="linenos">1103</span></a>
@@ -4785,7 +4785,7 @@ Indices of the boundary simplices.</li>
 
     </div>
     <a class="headerlink" href="#SSCSampler.update_Delaunay"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="SSCSampler.update_Delaunay-1114"><a href="#SSCSampler.update_Delaunay-1114"><span class="linenos">1114</span></a>    <span class="k">def</span> <span class="nf">update_Delaunay</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_points</span><span class="p">):</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="SSCSampler.update_Delaunay-1114"><a href="#SSCSampler.update_Delaunay-1114"><span class="linenos">1114</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">update_Delaunay</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_points</span><span class="p">):</span>
 </span><span id="SSCSampler.update_Delaunay-1115"><a href="#SSCSampler.update_Delaunay-1115"><span class="linenos">1115</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="SSCSampler.update_Delaunay-1116"><a href="#SSCSampler.update_Delaunay-1116"><span class="linenos">1116</span></a><span class="sd">        Update the Delaunay triangulation with P new points.</span>
 </span><span id="SSCSampler.update_Delaunay-1117"><a href="#SSCSampler.update_Delaunay-1117"><span class="linenos">1117</span></a>
@@ -4839,7 +4839,7 @@ P new n_xi-dimensional points.</li>
 
     </div>
     <a class="headerlink" href="#SSCSampler.get_Delaunay"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="SSCSampler.get_Delaunay-1137"><a href="#SSCSampler.get_Delaunay-1137"><span class="linenos">1137</span></a>    <span class="k">def</span> <span class="nf">get_Delaunay</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="SSCSampler.get_Delaunay-1137"><a href="#SSCSampler.get_Delaunay-1137"><span class="linenos">1137</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_Delaunay</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span id="SSCSampler.get_Delaunay-1138"><a href="#SSCSampler.get_Delaunay-1138"><span class="linenos">1138</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="SSCSampler.get_Delaunay-1139"><a href="#SSCSampler.get_Delaunay-1139"><span class="linenos">1139</span></a><span class="sd">        Return the SciPy Delaunay triangulation.</span>
 </span><span id="SSCSampler.get_Delaunay-1140"><a href="#SSCSampler.get_Delaunay-1140"><span class="linenos">1140</span></a><span class="sd">        &quot;&quot;&quot;</span>
@@ -4863,7 +4863,7 @@ P new n_xi-dimensional points.</li>
 
     </div>
     <a class="headerlink" href="#SSCSampler.is_finite"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="SSCSampler.is_finite-1143"><a href="#SSCSampler.is_finite-1143"><span class="linenos">1143</span></a>    <span class="k">def</span> <span class="nf">is_finite</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="SSCSampler.is_finite-1143"><a href="#SSCSampler.is_finite-1143"><span class="linenos">1143</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">is_finite</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span id="SSCSampler.is_finite-1144"><a href="#SSCSampler.is_finite-1144"><span class="linenos">1144</span></a>        <span class="k">return</span> <span class="kc">True</span>
 </span></pre></div>
 
@@ -4881,7 +4881,7 @@ P new n_xi-dimensional points.</li>
     </div>
     <a class="headerlink" href="#SSCSampler.n_samples"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="SSCSampler.n_samples-1146"><a href="#SSCSampler.n_samples-1146"><span class="linenos">1146</span></a>    <span class="nd">@property</span>
-</span><span id="SSCSampler.n_samples-1147"><a href="#SSCSampler.n_samples-1147"><span class="linenos">1147</span></a>    <span class="k">def</span> <span class="nf">n_samples</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="SSCSampler.n_samples-1147"><a href="#SSCSampler.n_samples-1147"><span class="linenos">1147</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">n_samples</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span id="SSCSampler.n_samples-1148"><a href="#SSCSampler.n_samples-1148"><span class="linenos">1148</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="SSCSampler.n_samples-1149"><a href="#SSCSampler.n_samples-1149"><span class="linenos">1149</span></a><span class="sd">        Returns the number of samples code samples.</span>
 </span><span id="SSCSampler.n_samples-1150"><a href="#SSCSampler.n_samples-1150"><span class="linenos">1150</span></a><span class="sd">        &quot;&quot;&quot;</span>
@@ -4904,7 +4904,7 @@ P new n_xi-dimensional points.</li>
     </div>
     <a class="headerlink" href="#SSCSampler.n_dimensions"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="SSCSampler.n_dimensions-1153"><a href="#SSCSampler.n_dimensions-1153"><span class="linenos">1153</span></a>    <span class="nd">@property</span>
-</span><span id="SSCSampler.n_dimensions-1154"><a href="#SSCSampler.n_dimensions-1154"><span class="linenos">1154</span></a>    <span class="k">def</span> <span class="nf">n_dimensions</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="SSCSampler.n_dimensions-1154"><a href="#SSCSampler.n_dimensions-1154"><span class="linenos">1154</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">n_dimensions</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span id="SSCSampler.n_dimensions-1155"><a href="#SSCSampler.n_dimensions-1155"><span class="linenos">1155</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="SSCSampler.n_dimensions-1156"><a href="#SSCSampler.n_dimensions-1156"><span class="linenos">1156</span></a><span class="sd">        Returns the number of uncertain random variables</span>
 </span><span id="SSCSampler.n_dimensions-1157"><a href="#SSCSampler.n_dimensions-1157"><span class="linenos">1157</span></a><span class="sd">        &quot;&quot;&quot;</span>
@@ -4927,7 +4927,7 @@ P new n_xi-dimensional points.</li>
     </div>
     <a class="headerlink" href="#SSCSampler.n_elements"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="SSCSampler.n_elements-1160"><a href="#SSCSampler.n_elements-1160"><span class="linenos">1160</span></a>    <span class="nd">@property</span>
-</span><span id="SSCSampler.n_elements-1161"><a href="#SSCSampler.n_elements-1161"><span class="linenos">1161</span></a>    <span class="k">def</span> <span class="nf">n_elements</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="SSCSampler.n_elements-1161"><a href="#SSCSampler.n_elements-1161"><span class="linenos">1161</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">n_elements</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span id="SSCSampler.n_elements-1162"><a href="#SSCSampler.n_elements-1162"><span class="linenos">1162</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="SSCSampler.n_elements-1163"><a href="#SSCSampler.n_elements-1163"><span class="linenos">1163</span></a><span class="sd">        Returns the number of simplex elements</span>
 </span><span id="SSCSampler.n_elements-1164"><a href="#SSCSampler.n_elements-1164"><span class="linenos">1164</span></a><span class="sd">        &quot;&quot;&quot;</span>
@@ -4951,7 +4951,7 @@ P new n_xi-dimensional points.</li>
 
     </div>
     <a class="headerlink" href="#SSCSampler.save_state"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="SSCSampler.save_state-1179"><a href="#SSCSampler.save_state-1179"><span class="linenos">1179</span></a>    <span class="k">def</span> <span class="nf">save_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="SSCSampler.save_state-1179"><a href="#SSCSampler.save_state-1179"><span class="linenos">1179</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">save_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
 </span><span id="SSCSampler.save_state-1180"><a href="#SSCSampler.save_state-1180"><span class="linenos">1180</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="SSCSampler.save_state-1181"><a href="#SSCSampler.save_state-1181"><span class="linenos">1181</span></a><span class="sd">        Save the state of the sampler to a pickle file.</span>
 </span><span id="SSCSampler.save_state-1182"><a href="#SSCSampler.save_state-1182"><span class="linenos">1182</span></a>
@@ -5000,7 +5000,7 @@ File name.</li>
 
     </div>
     <a class="headerlink" href="#SSCSampler.load_state"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="SSCSampler.load_state-1197"><a href="#SSCSampler.load_state-1197"><span class="linenos">1197</span></a>    <span class="k">def</span> <span class="nf">load_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="SSCSampler.load_state-1197"><a href="#SSCSampler.load_state-1197"><span class="linenos">1197</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">load_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
 </span><span id="SSCSampler.load_state-1198"><a href="#SSCSampler.load_state-1198"><span class="linenos">1198</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="SSCSampler.load_state-1199"><a href="#SSCSampler.load_state-1199"><span class="linenos">1199</span></a><span class="sd">        Load the state of the sampler from a pickle file.</span>
 </span><span id="SSCSampler.load_state-1200"><a href="#SSCSampler.load_state-1200"><span class="linenos">1200</span></a>
@@ -5079,7 +5079,7 @@ File name.</li>
 
     </div>
     <a class="headerlink" href="#DAFSILAS"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="DAFSILAS-1216"><a href="#DAFSILAS-1216"><span class="linenos">1216</span></a><span class="k">def</span> <span class="nf">DAFSILAS</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">print_message</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="DAFSILAS-1216"><a href="#DAFSILAS-1216"><span class="linenos">1216</span></a><span class="k">def</span><span class="w"> </span><span class="nf">DAFSILAS</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">print_message</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 </span><span id="DAFSILAS-1217"><a href="#DAFSILAS-1217"><span class="linenos">1217</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="DAFSILAS-1218"><a href="#DAFSILAS-1218"><span class="linenos">1218</span></a><span class="sd">    Direct Algorithm For Solving Ill-conditioned Linear Algebraic Systems,</span>
 </span><span id="DAFSILAS-1219"><a href="#DAFSILAS-1219"><span class="linenos">1219</span></a>
@@ -5226,7 +5226,7 @@ Adv. X-Ray Anal, 42.</p>
 
     </div>
     <a class="headerlink" href="#Tri1D"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="Tri1D-1335"><a href="#Tri1D-1335"><span class="linenos">1335</span></a><span class="k">class</span> <span class="nc">Tri1D</span><span class="p">:</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="Tri1D-1335"><a href="#Tri1D-1335"><span class="linenos">1335</span></a><span class="k">class</span><span class="w"> </span><span class="nc">Tri1D</span><span class="p">:</span>
 </span><span id="Tri1D-1336"><a href="#Tri1D-1336"><span class="linenos">1336</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="Tri1D-1337"><a href="#Tri1D-1337"><span class="linenos">1337</span></a><span class="sd">    1D &quot;triangulation&quot; that mimics the following SciPy Delaunay properties:</span>
 </span><span id="Tri1D-1338"><a href="#Tri1D-1338"><span class="linenos">1338</span></a><span class="sd">        * ndim</span>
@@ -5238,7 +5238,7 @@ Adv. X-Ray Anal, 42.</p>
 </span><span id="Tri1D-1344"><a href="#Tri1D-1344"><span class="linenos">1344</span></a><span class="sd">        * the find_simplex subroutine</span>
 </span><span id="Tri1D-1345"><a href="#Tri1D-1345"><span class="linenos">1345</span></a><span class="sd">    &quot;&quot;&quot;</span>
 </span><span id="Tri1D-1346"><a href="#Tri1D-1346"><span class="linenos">1346</span></a>
-</span><span id="Tri1D-1347"><a href="#Tri1D-1347"><span class="linenos">1347</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">points</span><span class="p">):</span>
+</span><span id="Tri1D-1347"><a href="#Tri1D-1347"><span class="linenos">1347</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">points</span><span class="p">):</span>
 </span><span id="Tri1D-1348"><a href="#Tri1D-1348"><span class="linenos">1348</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="Tri1D-1349"><a href="#Tri1D-1349"><span class="linenos">1349</span></a><span class="sd">        Create a 1D Triangulation object that can we used by the SSCSampler</span>
 </span><span id="Tri1D-1350"><a href="#Tri1D-1350"><span class="linenos">1350</span></a><span class="sd">        in the same way as the SciPy Delaunay triangulation.</span>
@@ -5272,7 +5272,7 @@ Adv. X-Ray Anal, 42.</p>
 </span><span id="Tri1D-1378"><a href="#Tri1D-1378"><span class="linenos">1378</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">neighbors</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
 </span><span id="Tri1D-1379"><a href="#Tri1D-1379"><span class="linenos">1379</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">neighbors</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">neighbors</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;int&#39;</span><span class="p">)</span>
 </span><span id="Tri1D-1380"><a href="#Tri1D-1380"><span class="linenos">1380</span></a>
-</span><span id="Tri1D-1381"><a href="#Tri1D-1381"><span class="linenos">1381</span></a>    <span class="k">def</span> <span class="nf">find_simplex</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xi</span><span class="p">):</span>
+</span><span id="Tri1D-1381"><a href="#Tri1D-1381"><span class="linenos">1381</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">find_simplex</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xi</span><span class="p">):</span>
 </span><span id="Tri1D-1382"><a href="#Tri1D-1382"><span class="linenos">1382</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="Tri1D-1383"><a href="#Tri1D-1383"><span class="linenos">1383</span></a><span class="sd">        Find the simplex indices of nodes xi</span>
 </span><span id="Tri1D-1384"><a href="#Tri1D-1384"><span class="linenos">1384</span></a>
@@ -5323,7 +5323,7 @@ Adv. X-Ray Anal, 42.</p>
 
     </div>
     <a class="headerlink" href="#Tri1D.__init__"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="Tri1D.__init__-1347"><a href="#Tri1D.__init__-1347"><span class="linenos">1347</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">points</span><span class="p">):</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="Tri1D.__init__-1347"><a href="#Tri1D.__init__-1347"><span class="linenos">1347</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">points</span><span class="p">):</span>
 </span><span id="Tri1D.__init__-1348"><a href="#Tri1D.__init__-1348"><span class="linenos">1348</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="Tri1D.__init__-1349"><a href="#Tri1D.__init__-1349"><span class="linenos">1349</span></a><span class="sd">        Create a 1D Triangulation object that can we used by the SSCSampler</span>
 </span><span id="Tri1D.__init__-1350"><a href="#Tri1D.__init__-1350"><span class="linenos">1350</span></a><span class="sd">        in the same way as the SciPy Delaunay triangulation.</span>
@@ -5455,7 +5455,7 @@ A 1D array of nodes.</li>
 
     </div>
     <a class="headerlink" href="#Tri1D.find_simplex"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="Tri1D.find_simplex-1381"><a href="#Tri1D.find_simplex-1381"><span class="linenos">1381</span></a>    <span class="k">def</span> <span class="nf">find_simplex</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xi</span><span class="p">):</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="Tri1D.find_simplex-1381"><a href="#Tri1D.find_simplex-1381"><span class="linenos">1381</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">find_simplex</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xi</span><span class="p">):</span>
 </span><span id="Tri1D.find_simplex-1382"><a href="#Tri1D.find_simplex-1382"><span class="linenos">1382</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="Tri1D.find_simplex-1383"><a href="#Tri1D.find_simplex-1383"><span class="linenos">1383</span></a><span class="sd">        Find the simplex indices of nodes xi</span>
 </span><span id="Tri1D.find_simplex-1384"><a href="#Tri1D.find_simplex-1384"><span class="linenos">1384</span></a>

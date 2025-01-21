@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="generator" content="pdoc 15.0.0"/>
+    <meta name="generator" content="pdoc 15.0.1"/>
     <title>easyvvuq.data_structs API documentation</title>
 
     <style>/*! * Bootstrap Reboot v5.0.0 (https://getbootstrap.com/) * Copyright 2011-2021 The Bootstrap Authors * Copyright 2011-2021 Twitter, Inc. * Licensed under MIT (https://github.com/twbs/bootstrap/blob/main/LICENSE) * Forked from Normalize.css, licensed MIT (https://github.com/necolas/normalize.css/blob/master/LICENSE.md) */*,::after,::before{box-sizing:border-box}@media (prefers-reduced-motion:no-preference){:root{scroll-behavior:smooth}}body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans","Liberation Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";font-size:1rem;font-weight:400;line-height:1.5;color:#212529;background-color:#fff;-webkit-text-size-adjust:100%;-webkit-tap-highlight-color:transparent}hr{margin:1rem 0;color:inherit;background-color:currentColor;border:0;opacity:.25}hr:not([size]){height:1px}h1,h2,h3,h4,h5,h6{margin-top:0;margin-bottom:.5rem;font-weight:500;line-height:1.2}h1{font-size:calc(1.375rem + 1.5vw)}@media (min-width:1200px){h1{font-size:2.5rem}}h2{font-size:calc(1.325rem + .9vw)}@media (min-width:1200px){h2{font-size:2rem}}h3{font-size:calc(1.3rem + .6vw)}@media (min-width:1200px){h3{font-size:1.75rem}}h4{font-size:calc(1.275rem + .3vw)}@media (min-width:1200px){h4{font-size:1.5rem}}h5{font-size:1.25rem}h6{font-size:1rem}p{margin-top:0;margin-bottom:1rem}abbr[data-bs-original-title],abbr[title]{-webkit-text-decoration:underline dotted;text-decoration:underline dotted;cursor:help;-webkit-text-decoration-skip-ink:none;text-decoration-skip-ink:none}address{margin-bottom:1rem;font-style:normal;line-height:inherit}ol,ul{padding-left:2rem}dl,ol,ul{margin-top:0;margin-bottom:1rem}ol ol,ol ul,ul ol,ul ul{margin-bottom:0}dt{font-weight:700}dd{margin-bottom:.5rem;margin-left:0}blockquote{margin:0 0 1rem}b,strong{font-weight:bolder}small{font-size:.875em}mark{padding:.2em;background-color:#fcf8e3}sub,sup{position:relative;font-size:.75em;line-height:0;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}a{color:#0d6efd;text-decoration:underline}a:hover{color:#0a58ca}a:not([href]):not([class]),a:not([href]):not([class]):hover{color:inherit;text-decoration:none}code,kbd,pre,samp{font-family:SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;font-size:1em;direction:ltr;unicode-bidi:bidi-override}pre{display:block;margin-top:0;margin-bottom:1rem;overflow:auto;font-size:.875em}pre code{font-size:inherit;color:inherit;word-break:normal}code{font-size:.875em;color:#d63384;word-wrap:break-word}a>code{color:inherit}kbd{padding:.2rem .4rem;font-size:.875em;color:#fff;background-color:#212529;border-radius:.2rem}kbd kbd{padding:0;font-size:1em;font-weight:700}figure{margin:0 0 1rem}img,svg{vertical-align:middle}table{caption-side:bottom;border-collapse:collapse}caption{padding-top:.5rem;padding-bottom:.5rem;color:#6c757d;text-align:left}th{text-align:inherit;text-align:-webkit-match-parent}tbody,td,tfoot,th,thead,tr{border-color:inherit;border-style:solid;border-width:0}label{display:inline-block}button{border-radius:0}button:focus:not(:focus-visible){outline:0}button,input,optgroup,select,textarea{margin:0;font-family:inherit;font-size:inherit;line-height:inherit}button,select{text-transform:none}[role=button]{cursor:pointer}select{word-wrap:normal}select:disabled{opacity:1}[list]::-webkit-calendar-picker-indicator{display:none}[type=button],[type=reset],[type=submit],button{-webkit-appearance:button}[type=button]:not(:disabled),[type=reset]:not(:disabled),[type=submit]:not(:disabled),button:not(:disabled){cursor:pointer}::-moz-focus-inner{padding:0;border-style:none}textarea{resize:vertical}fieldset{min-width:0;padding:0;margin:0;border:0}legend{float:left;width:100%;padding:0;margin-bottom:.5rem;font-size:calc(1.275rem + .3vw);line-height:inherit}@media (min-width:1200px){legend{font-size:1.5rem}}legend+*{clear:left}::-webkit-datetime-edit-day-field,::-webkit-datetime-edit-fields-wrapper,::-webkit-datetime-edit-hour-field,::-webkit-datetime-edit-minute,::-webkit-datetime-edit-month-field,::-webkit-datetime-edit-text,::-webkit-datetime-edit-year-field{padding:0}::-webkit-inner-spin-button{height:auto}[type=search]{outline-offset:-2px;-webkit-appearance:textfield}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-color-swatch-wrapper{padding:0}::file-selector-button{font:inherit}::-webkit-file-upload-button{font:inherit;-webkit-appearance:button}output{display:inline-block}iframe{border:0}summary{display:list-item;cursor:pointer}progress{vertical-align:baseline}[hidden]{display:none!important}</style>
@@ -149,12 +149,12 @@
                         <div class="pdoc-code codehilite"><pre><span></span><span id="L-1"><a href="#L-1"><span class="linenos">  1</span></a><span class="sd">&quot;&quot;&quot;Data structures to ensure consistency during serialization for databases.</span>
 </span><span id="L-2"><a href="#L-2"><span class="linenos">  2</span></a>
 </span><span id="L-3"><a href="#L-3"><span class="linenos">  3</span></a><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="L-4"><a href="#L-4"><span class="linenos">  4</span></a><span class="kn">import</span> <span class="nn">os</span>
-</span><span id="L-5"><a href="#L-5"><span class="linenos">  5</span></a><span class="kn">import</span> <span class="nn">logging</span>
-</span><span id="L-6"><a href="#L-6"><span class="linenos">  6</span></a><span class="kn">import</span> <span class="nn">json</span>
-</span><span id="L-7"><a href="#L-7"><span class="linenos">  7</span></a><span class="kn">from</span> <span class="nn">easyvvuq</span> <span class="kn">import</span> <span class="n">constants</span>
-</span><span id="L-8"><a href="#L-8"><span class="linenos">  8</span></a><span class="kn">from</span> <span class="nn">easyvvuq.utils.helpers</span> <span class="kn">import</span> <span class="n">easyvvuq_serialize</span>
-</span><span id="L-9"><a href="#L-9"><span class="linenos">  9</span></a><span class="kn">import</span> <span class="nn">numpy</span>
+</span><span id="L-4"><a href="#L-4"><span class="linenos">  4</span></a><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+</span><span id="L-5"><a href="#L-5"><span class="linenos">  5</span></a><span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+</span><span id="L-6"><a href="#L-6"><span class="linenos">  6</span></a><span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+</span><span id="L-7"><a href="#L-7"><span class="linenos">  7</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">easyvvuq</span><span class="w"> </span><span class="kn">import</span> <span class="n">constants</span>
+</span><span id="L-8"><a href="#L-8"><span class="linenos">  8</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">easyvvuq.utils.helpers</span><span class="w"> </span><span class="kn">import</span> <span class="n">easyvvuq_serialize</span>
+</span><span id="L-9"><a href="#L-9"><span class="linenos">  9</span></a><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span>
 </span><span id="L-10"><a href="#L-10"><span class="linenos"> 10</span></a>
 </span><span id="L-11"><a href="#L-11"><span class="linenos"> 11</span></a><span class="n">__copyright__</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
 </span><span id="L-12"><a href="#L-12"><span class="linenos"> 12</span></a>
@@ -181,7 +181,7 @@
 </span><span id="L-33"><a href="#L-33"><span class="linenos"> 33</span></a><span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 </span><span id="L-34"><a href="#L-34"><span class="linenos"> 34</span></a>
 </span><span id="L-35"><a href="#L-35"><span class="linenos"> 35</span></a>
-</span><span id="L-36"><a href="#L-36"><span class="linenos"> 36</span></a><span class="k">def</span> <span class="nf">check_local_dir</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">dir_type</span><span class="o">=</span><span class="s1">&#39;campaign&#39;</span><span class="p">):</span>
+</span><span id="L-36"><a href="#L-36"><span class="linenos"> 36</span></a><span class="k">def</span><span class="w"> </span><span class="nf">check_local_dir</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">dir_type</span><span class="o">=</span><span class="s1">&#39;campaign&#39;</span><span class="p">):</span>
 </span><span id="L-37"><a href="#L-37"><span class="linenos"> 37</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-38"><a href="#L-38"><span class="linenos"> 38</span></a><span class="sd">    Check that local path exists and if not create it.</span>
 </span><span id="L-39"><a href="#L-39"><span class="linenos"> 39</span></a>
@@ -208,7 +208,7 @@
 </span><span id="L-60"><a href="#L-60"><span class="linenos"> 60</span></a>            <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
 </span><span id="L-61"><a href="#L-61"><span class="linenos"> 61</span></a>
 </span><span id="L-62"><a href="#L-62"><span class="linenos"> 62</span></a>
-</span><span id="L-63"><a href="#L-63"><span class="linenos"> 63</span></a><span class="k">def</span> <span class="nf">check_reference</span><span class="p">(</span><span class="n">ref</span><span class="p">,</span> <span class="n">run_name</span><span class="p">,</span> <span class="n">ref_type</span><span class="o">=</span><span class="s1">&#39;campaign&#39;</span><span class="p">):</span>
+</span><span id="L-63"><a href="#L-63"><span class="linenos"> 63</span></a><span class="k">def</span><span class="w"> </span><span class="nf">check_reference</span><span class="p">(</span><span class="n">ref</span><span class="p">,</span> <span class="n">run_name</span><span class="p">,</span> <span class="n">ref_type</span><span class="o">=</span><span class="s1">&#39;campaign&#39;</span><span class="p">):</span>
 </span><span id="L-64"><a href="#L-64"><span class="linenos"> 64</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-65"><a href="#L-65"><span class="linenos"> 65</span></a><span class="sd">    Validation check for a `RunInfo` reference. Checks that an integer value</span>
 </span><span id="L-66"><a href="#L-66"><span class="linenos"> 66</span></a><span class="sd">    has been passed to use as a reference to another &#39;table&#39; - i.e. to a</span>
@@ -242,7 +242,7 @@
 </span><span id="L-94"><a href="#L-94"><span class="linenos"> 94</span></a>        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
 </span><span id="L-95"><a href="#L-95"><span class="linenos"> 95</span></a>
 </span><span id="L-96"><a href="#L-96"><span class="linenos"> 96</span></a>
-</span><span id="L-97"><a href="#L-97"><span class="linenos"> 97</span></a><span class="k">class</span> <span class="nc">RunInfo</span><span class="p">:</span>
+</span><span id="L-97"><a href="#L-97"><span class="linenos"> 97</span></a><span class="k">class</span><span class="w"> </span><span class="nc">RunInfo</span><span class="p">:</span>
 </span><span id="L-98"><a href="#L-98"><span class="linenos"> 98</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Handles information for individual application runs.</span>
 </span><span id="L-99"><a href="#L-99"><span class="linenos"> 99</span></a>
 </span><span id="L-100"><a href="#L-100"><span class="linenos">100</span></a><span class="sd">    Parameters</span>
@@ -271,7 +271,7 @@
 </span><span id="L-123"><a href="#L-123"><span class="linenos">123</span></a><span class="sd">    status : enum(Status)</span>
 </span><span id="L-124"><a href="#L-124"><span class="linenos">124</span></a><span class="sd">    &quot;&quot;&quot;</span>
 </span><span id="L-125"><a href="#L-125"><span class="linenos">125</span></a>
-</span><span id="L-126"><a href="#L-126"><span class="linenos">126</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+</span><span id="L-126"><a href="#L-126"><span class="linenos">126</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
 </span><span id="L-127"><a href="#L-127"><span class="linenos">127</span></a>            <span class="bp">self</span><span class="p">,</span>
 </span><span id="L-128"><a href="#L-128"><span class="linenos">128</span></a>            <span class="n">run_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
 </span><span id="L-129"><a href="#L-129"><span class="linenos">129</span></a>            <span class="n">run_dir</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
@@ -296,7 +296,7 @@
 </span><span id="L-148"><a href="#L-148"><span class="linenos">148</span></a>
 </span><span id="L-149"><a href="#L-149"><span class="linenos">149</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">iteration</span> <span class="o">=</span> <span class="mi">0</span>
 </span><span id="L-150"><a href="#L-150"><span class="linenos">150</span></a>
-</span><span id="L-151"><a href="#L-151"><span class="linenos">151</span></a>    <span class="k">def</span> <span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">flatten</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+</span><span id="L-151"><a href="#L-151"><span class="linenos">151</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">flatten</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 </span><span id="L-152"><a href="#L-152"><span class="linenos">152</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert to a dictionary (optionally flatten to single level)</span>
 </span><span id="L-153"><a href="#L-153"><span class="linenos">153</span></a>
 </span><span id="L-154"><a href="#L-154"><span class="linenos">154</span></a><span class="sd">        Parameters</span>
@@ -312,7 +312,7 @@
 </span><span id="L-164"><a href="#L-164"><span class="linenos">164</span></a><span class="sd">            returned as a JSON format sting.</span>
 </span><span id="L-165"><a href="#L-165"><span class="linenos">165</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span><span id="L-166"><a href="#L-166"><span class="linenos">166</span></a>
-</span><span id="L-167"><a href="#L-167"><span class="linenos">167</span></a>        <span class="k">def</span> <span class="nf">convert_nonserializable</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
+</span><span id="L-167"><a href="#L-167"><span class="linenos">167</span></a>        <span class="k">def</span><span class="w"> </span><span class="nf">convert_nonserializable</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
 </span><span id="L-168"><a href="#L-168"><span class="linenos">168</span></a>            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">int64</span><span class="p">):</span>
 </span><span id="L-169"><a href="#L-169"><span class="linenos">169</span></a>                <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
 </span><span id="L-170"><a href="#L-170"><span class="linenos">170</span></a>            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;Unknown type:&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="n">obj</span><span class="p">))</span>
@@ -346,7 +346,7 @@
 </span><span id="L-198"><a href="#L-198"><span class="linenos">198</span></a>        <span class="k">return</span> <span class="n">out_dict</span>
 </span><span id="L-199"><a href="#L-199"><span class="linenos">199</span></a>
 </span><span id="L-200"><a href="#L-200"><span class="linenos">200</span></a>
-</span><span id="L-201"><a href="#L-201"><span class="linenos">201</span></a><span class="k">class</span> <span class="nc">AppInfo</span><span class="p">:</span>
+</span><span id="L-201"><a href="#L-201"><span class="linenos">201</span></a><span class="k">class</span><span class="w"> </span><span class="nc">AppInfo</span><span class="p">:</span>
 </span><span id="L-202"><a href="#L-202"><span class="linenos">202</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Handles information for particular application.</span>
 </span><span id="L-203"><a href="#L-203"><span class="linenos">203</span></a>
 </span><span id="L-204"><a href="#L-204"><span class="linenos">204</span></a><span class="sd">    Attributes</span>
@@ -357,7 +357,7 @@
 </span><span id="L-209"><a href="#L-209"><span class="linenos">209</span></a><span class="sd">        Description of possible parameter values.</span>
 </span><span id="L-210"><a href="#L-210"><span class="linenos">210</span></a><span class="sd">    &quot;&quot;&quot;</span>
 </span><span id="L-211"><a href="#L-211"><span class="linenos">211</span></a>
-</span><span id="L-212"><a href="#L-212"><span class="linenos">212</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+</span><span id="L-212"><a href="#L-212"><span class="linenos">212</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
 </span><span id="L-213"><a href="#L-213"><span class="linenos">213</span></a>            <span class="bp">self</span><span class="p">,</span>
 </span><span id="L-214"><a href="#L-214"><span class="linenos">214</span></a>            <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
 </span><span id="L-215"><a href="#L-215"><span class="linenos">215</span></a>            <span class="n">paramsspec</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
@@ -367,7 +367,7 @@
 </span><span id="L-219"><a href="#L-219"><span class="linenos">219</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">paramsspec</span> <span class="o">=</span> <span class="n">paramsspec</span>
 </span><span id="L-220"><a href="#L-220"><span class="linenos">220</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">actions</span> <span class="o">=</span> <span class="n">actions</span>
 </span><span id="L-221"><a href="#L-221"><span class="linenos">221</span></a>
-</span><span id="L-222"><a href="#L-222"><span class="linenos">222</span></a>    <span class="k">def</span> <span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">flatten</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+</span><span id="L-222"><a href="#L-222"><span class="linenos">222</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">flatten</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 </span><span id="L-223"><a href="#L-223"><span class="linenos">223</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert to a dictionary (optionally flatten to single level)</span>
 </span><span id="L-224"><a href="#L-224"><span class="linenos">224</span></a>
 </span><span id="L-225"><a href="#L-225"><span class="linenos">225</span></a><span class="sd">        Parameters</span>
@@ -399,7 +399,7 @@
 </span><span id="L-251"><a href="#L-251"><span class="linenos">251</span></a>        <span class="k">return</span> <span class="n">out_dict</span>
 </span><span id="L-252"><a href="#L-252"><span class="linenos">252</span></a>
 </span><span id="L-253"><a href="#L-253"><span class="linenos">253</span></a>
-</span><span id="L-254"><a href="#L-254"><span class="linenos">254</span></a><span class="k">class</span> <span class="nc">CampaignInfo</span><span class="p">:</span>
+</span><span id="L-254"><a href="#L-254"><span class="linenos">254</span></a><span class="k">class</span><span class="w"> </span><span class="nc">CampaignInfo</span><span class="p">:</span>
 </span><span id="L-255"><a href="#L-255"><span class="linenos">255</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Handles information on Campaign.</span>
 </span><span id="L-256"><a href="#L-256"><span class="linenos">256</span></a>
 </span><span id="L-257"><a href="#L-257"><span class="linenos">257</span></a><span class="sd">    Parameters</span>
@@ -432,7 +432,7 @@
 </span><span id="L-284"><a href="#L-284"><span class="linenos">284</span></a><span class="sd">        path to run directory (within the campaign directory)</span>
 </span><span id="L-285"><a href="#L-285"><span class="linenos">285</span></a><span class="sd">    &quot;&quot;&quot;</span>
 </span><span id="L-286"><a href="#L-286"><span class="linenos">286</span></a>
-</span><span id="L-287"><a href="#L-287"><span class="linenos">287</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">easyvvuq_version</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+</span><span id="L-287"><a href="#L-287"><span class="linenos">287</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">easyvvuq_version</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
 </span><span id="L-288"><a href="#L-288"><span class="linenos">288</span></a>                 <span class="n">campaign_dir_prefix</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">campaign_dir</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
 </span><span id="L-289"><a href="#L-289"><span class="linenos">289</span></a>                 <span class="n">runs_dir</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">local</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 </span><span id="L-290"><a href="#L-290"><span class="linenos">290</span></a>
@@ -466,15 +466,15 @@
 </span><span id="L-318"><a href="#L-318"><span class="linenos">318</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">runs_dir</span> <span class="o">=</span> <span class="n">runs_dir</span>
 </span><span id="L-319"><a href="#L-319"><span class="linenos">319</span></a>
 </span><span id="L-320"><a href="#L-320"><span class="linenos">320</span></a>    <span class="nd">@property</span>
-</span><span id="L-321"><a href="#L-321"><span class="linenos">321</span></a>    <span class="k">def</span> <span class="nf">easyvvuq_version</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="L-321"><a href="#L-321"><span class="linenos">321</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">easyvvuq_version</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span id="L-322"><a href="#L-322"><span class="linenos">322</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_easyvvuq_version</span>
 </span><span id="L-323"><a href="#L-323"><span class="linenos">323</span></a>
 </span><span id="L-324"><a href="#L-324"><span class="linenos">324</span></a>    <span class="nd">@easyvvuq_version</span><span class="o">.</span><span class="n">setter</span>
-</span><span id="L-325"><a href="#L-325"><span class="linenos">325</span></a>    <span class="k">def</span> <span class="nf">easyvvuq_version</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">version_no</span><span class="p">):</span>
+</span><span id="L-325"><a href="#L-325"><span class="linenos">325</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">easyvvuq_version</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">version_no</span><span class="p">):</span>
 </span><span id="L-326"><a href="#L-326"><span class="linenos">326</span></a>        <span class="c1"># TODO: check validity and compatibility</span>
 </span><span id="L-327"><a href="#L-327"><span class="linenos">327</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_easyvvuq_version</span> <span class="o">=</span> <span class="n">version_no</span>
 </span><span id="L-328"><a href="#L-328"><span class="linenos">328</span></a>
-</span><span id="L-329"><a href="#L-329"><span class="linenos">329</span></a>    <span class="k">def</span> <span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">flatten</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+</span><span id="L-329"><a href="#L-329"><span class="linenos">329</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">flatten</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 </span><span id="L-330"><a href="#L-330"><span class="linenos">330</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert this to a dictionary</span>
 </span><span id="L-331"><a href="#L-331"><span class="linenos">331</span></a>
 </span><span id="L-332"><a href="#L-332"><span class="linenos">332</span></a><span class="sd">        Parameters</span>
@@ -524,7 +524,7 @@
 
     </div>
     <a class="headerlink" href="#check_local_dir"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="check_local_dir-37"><a href="#check_local_dir-37"><span class="linenos">37</span></a><span class="k">def</span> <span class="nf">check_local_dir</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">dir_type</span><span class="o">=</span><span class="s1">&#39;campaign&#39;</span><span class="p">):</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="check_local_dir-37"><a href="#check_local_dir-37"><span class="linenos">37</span></a><span class="k">def</span><span class="w"> </span><span class="nf">check_local_dir</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">dir_type</span><span class="o">=</span><span class="s1">&#39;campaign&#39;</span><span class="p">):</span>
 </span><span id="check_local_dir-38"><a href="#check_local_dir-38"><span class="linenos">38</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="check_local_dir-39"><a href="#check_local_dir-39"><span class="linenos">39</span></a><span class="sd">    Check that local path exists and if not create it.</span>
 </span><span id="check_local_dir-40"><a href="#check_local_dir-40"><span class="linenos">40</span></a>
@@ -580,7 +580,7 @@ information.)</li>
 
     </div>
     <a class="headerlink" href="#check_reference"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="check_reference-64"><a href="#check_reference-64"><span class="linenos">64</span></a><span class="k">def</span> <span class="nf">check_reference</span><span class="p">(</span><span class="n">ref</span><span class="p">,</span> <span class="n">run_name</span><span class="p">,</span> <span class="n">ref_type</span><span class="o">=</span><span class="s1">&#39;campaign&#39;</span><span class="p">):</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="check_reference-64"><a href="#check_reference-64"><span class="linenos">64</span></a><span class="k">def</span><span class="w"> </span><span class="nf">check_reference</span><span class="p">(</span><span class="n">ref</span><span class="p">,</span> <span class="n">run_name</span><span class="p">,</span> <span class="n">ref_type</span><span class="o">=</span><span class="s1">&#39;campaign&#39;</span><span class="p">):</span>
 </span><span id="check_reference-65"><a href="#check_reference-65"><span class="linenos">65</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="check_reference-66"><a href="#check_reference-66"><span class="linenos">66</span></a><span class="sd">    Validation check for a `RunInfo` reference. Checks that an integer value</span>
 </span><span id="check_reference-67"><a href="#check_reference-67"><span class="linenos">67</span></a><span class="sd">    has been passed to use as a reference to another &#39;table&#39; - i.e. to a</span>
@@ -648,7 +648,7 @@ debugging).</li>
 
     </div>
     <a class="headerlink" href="#RunInfo"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="RunInfo-98"><a href="#RunInfo-98"><span class="linenos"> 98</span></a><span class="k">class</span> <span class="nc">RunInfo</span><span class="p">:</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="RunInfo-98"><a href="#RunInfo-98"><span class="linenos"> 98</span></a><span class="k">class</span><span class="w"> </span><span class="nc">RunInfo</span><span class="p">:</span>
 </span><span id="RunInfo-99"><a href="#RunInfo-99"><span class="linenos"> 99</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Handles information for individual application runs.</span>
 </span><span id="RunInfo-100"><a href="#RunInfo-100"><span class="linenos">100</span></a>
 </span><span id="RunInfo-101"><a href="#RunInfo-101"><span class="linenos">101</span></a><span class="sd">    Parameters</span>
@@ -677,7 +677,7 @@ debugging).</li>
 </span><span id="RunInfo-124"><a href="#RunInfo-124"><span class="linenos">124</span></a><span class="sd">    status : enum(Status)</span>
 </span><span id="RunInfo-125"><a href="#RunInfo-125"><span class="linenos">125</span></a><span class="sd">    &quot;&quot;&quot;</span>
 </span><span id="RunInfo-126"><a href="#RunInfo-126"><span class="linenos">126</span></a>
-</span><span id="RunInfo-127"><a href="#RunInfo-127"><span class="linenos">127</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+</span><span id="RunInfo-127"><a href="#RunInfo-127"><span class="linenos">127</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
 </span><span id="RunInfo-128"><a href="#RunInfo-128"><span class="linenos">128</span></a>            <span class="bp">self</span><span class="p">,</span>
 </span><span id="RunInfo-129"><a href="#RunInfo-129"><span class="linenos">129</span></a>            <span class="n">run_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
 </span><span id="RunInfo-130"><a href="#RunInfo-130"><span class="linenos">130</span></a>            <span class="n">run_dir</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
@@ -702,7 +702,7 @@ debugging).</li>
 </span><span id="RunInfo-149"><a href="#RunInfo-149"><span class="linenos">149</span></a>
 </span><span id="RunInfo-150"><a href="#RunInfo-150"><span class="linenos">150</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">iteration</span> <span class="o">=</span> <span class="mi">0</span>
 </span><span id="RunInfo-151"><a href="#RunInfo-151"><span class="linenos">151</span></a>
-</span><span id="RunInfo-152"><a href="#RunInfo-152"><span class="linenos">152</span></a>    <span class="k">def</span> <span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">flatten</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+</span><span id="RunInfo-152"><a href="#RunInfo-152"><span class="linenos">152</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">flatten</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 </span><span id="RunInfo-153"><a href="#RunInfo-153"><span class="linenos">153</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert to a dictionary (optionally flatten to single level)</span>
 </span><span id="RunInfo-154"><a href="#RunInfo-154"><span class="linenos">154</span></a>
 </span><span id="RunInfo-155"><a href="#RunInfo-155"><span class="linenos">155</span></a><span class="sd">        Parameters</span>
@@ -718,7 +718,7 @@ debugging).</li>
 </span><span id="RunInfo-165"><a href="#RunInfo-165"><span class="linenos">165</span></a><span class="sd">            returned as a JSON format sting.</span>
 </span><span id="RunInfo-166"><a href="#RunInfo-166"><span class="linenos">166</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span><span id="RunInfo-167"><a href="#RunInfo-167"><span class="linenos">167</span></a>
-</span><span id="RunInfo-168"><a href="#RunInfo-168"><span class="linenos">168</span></a>        <span class="k">def</span> <span class="nf">convert_nonserializable</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
+</span><span id="RunInfo-168"><a href="#RunInfo-168"><span class="linenos">168</span></a>        <span class="k">def</span><span class="w"> </span><span class="nf">convert_nonserializable</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
 </span><span id="RunInfo-169"><a href="#RunInfo-169"><span class="linenos">169</span></a>            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">int64</span><span class="p">):</span>
 </span><span id="RunInfo-170"><a href="#RunInfo-170"><span class="linenos">170</span></a>                <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
 </span><span id="RunInfo-171"><a href="#RunInfo-171"><span class="linenos">171</span></a>            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;Unknown type:&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="n">obj</span><span class="p">))</span>
@@ -796,7 +796,7 @@ Human readable name of the run.</li>
 
     </div>
     <a class="headerlink" href="#RunInfo.__init__"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="RunInfo.__init__-127"><a href="#RunInfo.__init__-127"><span class="linenos">127</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="RunInfo.__init__-127"><a href="#RunInfo.__init__-127"><span class="linenos">127</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
 </span><span id="RunInfo.__init__-128"><a href="#RunInfo.__init__-128"><span class="linenos">128</span></a>            <span class="bp">self</span><span class="p">,</span>
 </span><span id="RunInfo.__init__-129"><a href="#RunInfo.__init__-129"><span class="linenos">129</span></a>            <span class="n">run_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
 </span><span id="RunInfo.__init__-130"><a href="#RunInfo.__init__-130"><span class="linenos">130</span></a>            <span class="n">run_dir</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
@@ -925,7 +925,7 @@ Human readable name of the run.</li>
 
     </div>
     <a class="headerlink" href="#RunInfo.to_dict"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="RunInfo.to_dict-152"><a href="#RunInfo.to_dict-152"><span class="linenos">152</span></a>    <span class="k">def</span> <span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">flatten</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="RunInfo.to_dict-152"><a href="#RunInfo.to_dict-152"><span class="linenos">152</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">flatten</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 </span><span id="RunInfo.to_dict-153"><a href="#RunInfo.to_dict-153"><span class="linenos">153</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert to a dictionary (optionally flatten to single level)</span>
 </span><span id="RunInfo.to_dict-154"><a href="#RunInfo.to_dict-154"><span class="linenos">154</span></a>
 </span><span id="RunInfo.to_dict-155"><a href="#RunInfo.to_dict-155"><span class="linenos">155</span></a><span class="sd">        Parameters</span>
@@ -941,7 +941,7 @@ Human readable name of the run.</li>
 </span><span id="RunInfo.to_dict-165"><a href="#RunInfo.to_dict-165"><span class="linenos">165</span></a><span class="sd">            returned as a JSON format sting.</span>
 </span><span id="RunInfo.to_dict-166"><a href="#RunInfo.to_dict-166"><span class="linenos">166</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span><span id="RunInfo.to_dict-167"><a href="#RunInfo.to_dict-167"><span class="linenos">167</span></a>
-</span><span id="RunInfo.to_dict-168"><a href="#RunInfo.to_dict-168"><span class="linenos">168</span></a>        <span class="k">def</span> <span class="nf">convert_nonserializable</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
+</span><span id="RunInfo.to_dict-168"><a href="#RunInfo.to_dict-168"><span class="linenos">168</span></a>        <span class="k">def</span><span class="w"> </span><span class="nf">convert_nonserializable</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
 </span><span id="RunInfo.to_dict-169"><a href="#RunInfo.to_dict-169"><span class="linenos">169</span></a>            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">int64</span><span class="p">):</span>
 </span><span id="RunInfo.to_dict-170"><a href="#RunInfo.to_dict-170"><span class="linenos">170</span></a>                <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
 </span><span id="RunInfo.to_dict-171"><a href="#RunInfo.to_dict-171"><span class="linenos">171</span></a>            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;Unknown type:&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="n">obj</span><span class="p">))</span>
@@ -1008,7 +1008,7 @@ returned as a JSON format sting.</li>
 
     </div>
     <a class="headerlink" href="#AppInfo"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="AppInfo-202"><a href="#AppInfo-202"><span class="linenos">202</span></a><span class="k">class</span> <span class="nc">AppInfo</span><span class="p">:</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="AppInfo-202"><a href="#AppInfo-202"><span class="linenos">202</span></a><span class="k">class</span><span class="w"> </span><span class="nc">AppInfo</span><span class="p">:</span>
 </span><span id="AppInfo-203"><a href="#AppInfo-203"><span class="linenos">203</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Handles information for particular application.</span>
 </span><span id="AppInfo-204"><a href="#AppInfo-204"><span class="linenos">204</span></a>
 </span><span id="AppInfo-205"><a href="#AppInfo-205"><span class="linenos">205</span></a><span class="sd">    Attributes</span>
@@ -1019,7 +1019,7 @@ returned as a JSON format sting.</li>
 </span><span id="AppInfo-210"><a href="#AppInfo-210"><span class="linenos">210</span></a><span class="sd">        Description of possible parameter values.</span>
 </span><span id="AppInfo-211"><a href="#AppInfo-211"><span class="linenos">211</span></a><span class="sd">    &quot;&quot;&quot;</span>
 </span><span id="AppInfo-212"><a href="#AppInfo-212"><span class="linenos">212</span></a>
-</span><span id="AppInfo-213"><a href="#AppInfo-213"><span class="linenos">213</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+</span><span id="AppInfo-213"><a href="#AppInfo-213"><span class="linenos">213</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
 </span><span id="AppInfo-214"><a href="#AppInfo-214"><span class="linenos">214</span></a>            <span class="bp">self</span><span class="p">,</span>
 </span><span id="AppInfo-215"><a href="#AppInfo-215"><span class="linenos">215</span></a>            <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
 </span><span id="AppInfo-216"><a href="#AppInfo-216"><span class="linenos">216</span></a>            <span class="n">paramsspec</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
@@ -1029,7 +1029,7 @@ returned as a JSON format sting.</li>
 </span><span id="AppInfo-220"><a href="#AppInfo-220"><span class="linenos">220</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">paramsspec</span> <span class="o">=</span> <span class="n">paramsspec</span>
 </span><span id="AppInfo-221"><a href="#AppInfo-221"><span class="linenos">221</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">actions</span> <span class="o">=</span> <span class="n">actions</span>
 </span><span id="AppInfo-222"><a href="#AppInfo-222"><span class="linenos">222</span></a>
-</span><span id="AppInfo-223"><a href="#AppInfo-223"><span class="linenos">223</span></a>    <span class="k">def</span> <span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">flatten</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+</span><span id="AppInfo-223"><a href="#AppInfo-223"><span class="linenos">223</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">flatten</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 </span><span id="AppInfo-224"><a href="#AppInfo-224"><span class="linenos">224</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert to a dictionary (optionally flatten to single level)</span>
 </span><span id="AppInfo-225"><a href="#AppInfo-225"><span class="linenos">225</span></a>
 </span><span id="AppInfo-226"><a href="#AppInfo-226"><span class="linenos">226</span></a><span class="sd">        Parameters</span>
@@ -1085,7 +1085,7 @@ Description of possible parameter values.</li>
 
     </div>
     <a class="headerlink" href="#AppInfo.__init__"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="AppInfo.__init__-213"><a href="#AppInfo.__init__-213"><span class="linenos">213</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="AppInfo.__init__-213"><a href="#AppInfo.__init__-213"><span class="linenos">213</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
 </span><span id="AppInfo.__init__-214"><a href="#AppInfo.__init__-214"><span class="linenos">214</span></a>            <span class="bp">self</span><span class="p">,</span>
 </span><span id="AppInfo.__init__-215"><a href="#AppInfo.__init__-215"><span class="linenos">215</span></a>            <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
 </span><span id="AppInfo.__init__-216"><a href="#AppInfo.__init__-216"><span class="linenos">216</span></a>            <span class="n">paramsspec</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
@@ -1144,7 +1144,7 @@ Description of possible parameter values.</li>
 
     </div>
     <a class="headerlink" href="#AppInfo.to_dict"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="AppInfo.to_dict-223"><a href="#AppInfo.to_dict-223"><span class="linenos">223</span></a>    <span class="k">def</span> <span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">flatten</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="AppInfo.to_dict-223"><a href="#AppInfo.to_dict-223"><span class="linenos">223</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">flatten</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 </span><span id="AppInfo.to_dict-224"><a href="#AppInfo.to_dict-224"><span class="linenos">224</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert to a dictionary (optionally flatten to single level)</span>
 </span><span id="AppInfo.to_dict-225"><a href="#AppInfo.to_dict-225"><span class="linenos">225</span></a>
 </span><span id="AppInfo.to_dict-226"><a href="#AppInfo.to_dict-226"><span class="linenos">226</span></a><span class="sd">        Parameters</span>
@@ -1209,7 +1209,7 @@ is returned as a JSON format sting.</li>
 
     </div>
     <a class="headerlink" href="#CampaignInfo"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="CampaignInfo-255"><a href="#CampaignInfo-255"><span class="linenos">255</span></a><span class="k">class</span> <span class="nc">CampaignInfo</span><span class="p">:</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="CampaignInfo-255"><a href="#CampaignInfo-255"><span class="linenos">255</span></a><span class="k">class</span><span class="w"> </span><span class="nc">CampaignInfo</span><span class="p">:</span>
 </span><span id="CampaignInfo-256"><a href="#CampaignInfo-256"><span class="linenos">256</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Handles information on Campaign.</span>
 </span><span id="CampaignInfo-257"><a href="#CampaignInfo-257"><span class="linenos">257</span></a>
 </span><span id="CampaignInfo-258"><a href="#CampaignInfo-258"><span class="linenos">258</span></a><span class="sd">    Parameters</span>
@@ -1242,7 +1242,7 @@ is returned as a JSON format sting.</li>
 </span><span id="CampaignInfo-285"><a href="#CampaignInfo-285"><span class="linenos">285</span></a><span class="sd">        path to run directory (within the campaign directory)</span>
 </span><span id="CampaignInfo-286"><a href="#CampaignInfo-286"><span class="linenos">286</span></a><span class="sd">    &quot;&quot;&quot;</span>
 </span><span id="CampaignInfo-287"><a href="#CampaignInfo-287"><span class="linenos">287</span></a>
-</span><span id="CampaignInfo-288"><a href="#CampaignInfo-288"><span class="linenos">288</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">easyvvuq_version</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+</span><span id="CampaignInfo-288"><a href="#CampaignInfo-288"><span class="linenos">288</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">easyvvuq_version</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
 </span><span id="CampaignInfo-289"><a href="#CampaignInfo-289"><span class="linenos">289</span></a>                 <span class="n">campaign_dir_prefix</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">campaign_dir</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
 </span><span id="CampaignInfo-290"><a href="#CampaignInfo-290"><span class="linenos">290</span></a>                 <span class="n">runs_dir</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">local</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 </span><span id="CampaignInfo-291"><a href="#CampaignInfo-291"><span class="linenos">291</span></a>
@@ -1276,15 +1276,15 @@ is returned as a JSON format sting.</li>
 </span><span id="CampaignInfo-319"><a href="#CampaignInfo-319"><span class="linenos">319</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">runs_dir</span> <span class="o">=</span> <span class="n">runs_dir</span>
 </span><span id="CampaignInfo-320"><a href="#CampaignInfo-320"><span class="linenos">320</span></a>
 </span><span id="CampaignInfo-321"><a href="#CampaignInfo-321"><span class="linenos">321</span></a>    <span class="nd">@property</span>
-</span><span id="CampaignInfo-322"><a href="#CampaignInfo-322"><span class="linenos">322</span></a>    <span class="k">def</span> <span class="nf">easyvvuq_version</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="CampaignInfo-322"><a href="#CampaignInfo-322"><span class="linenos">322</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">easyvvuq_version</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span id="CampaignInfo-323"><a href="#CampaignInfo-323"><span class="linenos">323</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_easyvvuq_version</span>
 </span><span id="CampaignInfo-324"><a href="#CampaignInfo-324"><span class="linenos">324</span></a>
 </span><span id="CampaignInfo-325"><a href="#CampaignInfo-325"><span class="linenos">325</span></a>    <span class="nd">@easyvvuq_version</span><span class="o">.</span><span class="n">setter</span>
-</span><span id="CampaignInfo-326"><a href="#CampaignInfo-326"><span class="linenos">326</span></a>    <span class="k">def</span> <span class="nf">easyvvuq_version</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">version_no</span><span class="p">):</span>
+</span><span id="CampaignInfo-326"><a href="#CampaignInfo-326"><span class="linenos">326</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">easyvvuq_version</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">version_no</span><span class="p">):</span>
 </span><span id="CampaignInfo-327"><a href="#CampaignInfo-327"><span class="linenos">327</span></a>        <span class="c1"># TODO: check validity and compatibility</span>
 </span><span id="CampaignInfo-328"><a href="#CampaignInfo-328"><span class="linenos">328</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_easyvvuq_version</span> <span class="o">=</span> <span class="n">version_no</span>
 </span><span id="CampaignInfo-329"><a href="#CampaignInfo-329"><span class="linenos">329</span></a>
-</span><span id="CampaignInfo-330"><a href="#CampaignInfo-330"><span class="linenos">330</span></a>    <span class="k">def</span> <span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">flatten</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+</span><span id="CampaignInfo-330"><a href="#CampaignInfo-330"><span class="linenos">330</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">flatten</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 </span><span id="CampaignInfo-331"><a href="#CampaignInfo-331"><span class="linenos">331</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert this to a dictionary</span>
 </span><span id="CampaignInfo-332"><a href="#CampaignInfo-332"><span class="linenos">332</span></a>
 </span><span id="CampaignInfo-333"><a href="#CampaignInfo-333"><span class="linenos">333</span></a><span class="sd">        Parameters</span>
@@ -1357,7 +1357,7 @@ path to run directory (within the campaign directory)</li>
 
     </div>
     <a class="headerlink" href="#CampaignInfo.__init__"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="CampaignInfo.__init__-288"><a href="#CampaignInfo.__init__-288"><span class="linenos">288</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">easyvvuq_version</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="CampaignInfo.__init__-288"><a href="#CampaignInfo.__init__-288"><span class="linenos">288</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">easyvvuq_version</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
 </span><span id="CampaignInfo.__init__-289"><a href="#CampaignInfo.__init__-289"><span class="linenos">289</span></a>                 <span class="n">campaign_dir_prefix</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">campaign_dir</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
 </span><span id="CampaignInfo.__init__-290"><a href="#CampaignInfo.__init__-290"><span class="linenos">290</span></a>                 <span class="n">runs_dir</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">local</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 </span><span id="CampaignInfo.__init__-291"><a href="#CampaignInfo.__init__-291"><span class="linenos">291</span></a>
@@ -1427,7 +1427,7 @@ path to run directory (within the campaign directory)</li>
     </div>
     <a class="headerlink" href="#CampaignInfo.easyvvuq_version"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="CampaignInfo.easyvvuq_version-321"><a href="#CampaignInfo.easyvvuq_version-321"><span class="linenos">321</span></a>    <span class="nd">@property</span>
-</span><span id="CampaignInfo.easyvvuq_version-322"><a href="#CampaignInfo.easyvvuq_version-322"><span class="linenos">322</span></a>    <span class="k">def</span> <span class="nf">easyvvuq_version</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="CampaignInfo.easyvvuq_version-322"><a href="#CampaignInfo.easyvvuq_version-322"><span class="linenos">322</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">easyvvuq_version</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span id="CampaignInfo.easyvvuq_version-323"><a href="#CampaignInfo.easyvvuq_version-323"><span class="linenos">323</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_easyvvuq_version</span>
 </span></pre></div>
 
@@ -1468,7 +1468,7 @@ path to run directory (within the campaign directory)</li>
 
     </div>
     <a class="headerlink" href="#CampaignInfo.to_dict"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="CampaignInfo.to_dict-330"><a href="#CampaignInfo.to_dict-330"><span class="linenos">330</span></a>    <span class="k">def</span> <span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">flatten</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="CampaignInfo.to_dict-330"><a href="#CampaignInfo.to_dict-330"><span class="linenos">330</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">flatten</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 </span><span id="CampaignInfo.to_dict-331"><a href="#CampaignInfo.to_dict-331"><span class="linenos">331</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert this to a dictionary</span>
 </span><span id="CampaignInfo.to_dict-332"><a href="#CampaignInfo.to_dict-332"><span class="linenos">332</span></a>
 </span><span id="CampaignInfo.to_dict-333"><a href="#CampaignInfo.to_dict-333"><span class="linenos">333</span></a><span class="sd">        Parameters</span>

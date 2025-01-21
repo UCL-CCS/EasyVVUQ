@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="generator" content="pdoc 15.0.0"/>
+    <meta name="generator" content="pdoc 15.0.1"/>
     <title>easyvvuq.sampling.mc_sampler API documentation</title>
 
     <style>/*! * Bootstrap Reboot v5.0.0 (https://getbootstrap.com/) * Copyright 2011-2021 The Bootstrap Authors * Copyright 2011-2021 Twitter, Inc. * Licensed under MIT (https://github.com/twbs/bootstrap/blob/main/LICENSE) * Forked from Normalize.css, licensed MIT (https://github.com/necolas/normalize.css/blob/master/LICENSE.md) */*,::after,::before{box-sizing:border-box}@media (prefers-reduced-motion:no-preference){:root{scroll-behavior:smooth}}body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans","Liberation Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";font-size:1rem;font-weight:400;line-height:1.5;color:#212529;background-color:#fff;-webkit-text-size-adjust:100%;-webkit-tap-highlight-color:transparent}hr{margin:1rem 0;color:inherit;background-color:currentColor;border:0;opacity:.25}hr:not([size]){height:1px}h1,h2,h3,h4,h5,h6{margin-top:0;margin-bottom:.5rem;font-weight:500;line-height:1.2}h1{font-size:calc(1.375rem + 1.5vw)}@media (min-width:1200px){h1{font-size:2.5rem}}h2{font-size:calc(1.325rem + .9vw)}@media (min-width:1200px){h2{font-size:2rem}}h3{font-size:calc(1.3rem + .6vw)}@media (min-width:1200px){h3{font-size:1.75rem}}h4{font-size:calc(1.275rem + .3vw)}@media (min-width:1200px){h4{font-size:1.5rem}}h5{font-size:1.25rem}h6{font-size:1rem}p{margin-top:0;margin-bottom:1rem}abbr[data-bs-original-title],abbr[title]{-webkit-text-decoration:underline dotted;text-decoration:underline dotted;cursor:help;-webkit-text-decoration-skip-ink:none;text-decoration-skip-ink:none}address{margin-bottom:1rem;font-style:normal;line-height:inherit}ol,ul{padding-left:2rem}dl,ol,ul{margin-top:0;margin-bottom:1rem}ol ol,ol ul,ul ol,ul ul{margin-bottom:0}dt{font-weight:700}dd{margin-bottom:.5rem;margin-left:0}blockquote{margin:0 0 1rem}b,strong{font-weight:bolder}small{font-size:.875em}mark{padding:.2em;background-color:#fcf8e3}sub,sup{position:relative;font-size:.75em;line-height:0;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}a{color:#0d6efd;text-decoration:underline}a:hover{color:#0a58ca}a:not([href]):not([class]),a:not([href]):not([class]):hover{color:inherit;text-decoration:none}code,kbd,pre,samp{font-family:SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;font-size:1em;direction:ltr;unicode-bidi:bidi-override}pre{display:block;margin-top:0;margin-bottom:1rem;overflow:auto;font-size:.875em}pre code{font-size:inherit;color:inherit;word-break:normal}code{font-size:.875em;color:#d63384;word-wrap:break-word}a>code{color:inherit}kbd{padding:.2rem .4rem;font-size:.875em;color:#fff;background-color:#212529;border-radius:.2rem}kbd kbd{padding:0;font-size:1em;font-weight:700}figure{margin:0 0 1rem}img,svg{vertical-align:middle}table{caption-side:bottom;border-collapse:collapse}caption{padding-top:.5rem;padding-bottom:.5rem;color:#6c757d;text-align:left}th{text-align:inherit;text-align:-webkit-match-parent}tbody,td,tfoot,th,thead,tr{border-color:inherit;border-style:solid;border-width:0}label{display:inline-block}button{border-radius:0}button:focus:not(:focus-visible){outline:0}button,input,optgroup,select,textarea{margin:0;font-family:inherit;font-size:inherit;line-height:inherit}button,select{text-transform:none}[role=button]{cursor:pointer}select{word-wrap:normal}select:disabled{opacity:1}[list]::-webkit-calendar-picker-indicator{display:none}[type=button],[type=reset],[type=submit],button{-webkit-appearance:button}[type=button]:not(:disabled),[type=reset]:not(:disabled),[type=submit]:not(:disabled),button:not(:disabled){cursor:pointer}::-moz-focus-inner{padding:0;border-style:none}textarea{resize:vertical}fieldset{min-width:0;padding:0;margin:0;border:0}legend{float:left;width:100%;padding:0;margin-bottom:.5rem;font-size:calc(1.275rem + .3vw);line-height:inherit}@media (min-width:1200px){legend{font-size:1.5rem}}legend+*{clear:left}::-webkit-datetime-edit-day-field,::-webkit-datetime-edit-fields-wrapper,::-webkit-datetime-edit-hour-field,::-webkit-datetime-edit-minute,::-webkit-datetime-edit-month-field,::-webkit-datetime-edit-text,::-webkit-datetime-edit-year-field{padding:0}::-webkit-inner-spin-button{height:auto}[type=search]{outline-offset:-2px;-webkit-appearance:textfield}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-color-swatch-wrapper{padding:0}::file-selector-button{font:inherit}::-webkit-file-upload-button{font:inherit;-webkit-appearance:button}output{display:inline-block}iframe{border:0}summary{display:list-item;cursor:pointer}progress{vertical-align:baseline}[hidden]{display:none!important}</style>
@@ -84,11 +84,11 @@
 
                         <label class="view-source-button" for="mod-mc_sampler-view-source"><span>View Source</span></label>
 
-                        <div class="pdoc-code codehilite"><pre><span></span><span id="L-1"><a href="#L-1"><span class="linenos">  1</span></a><span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">RandomSampler</span>
-</span><span id="L-2"><a href="#L-2"><span class="linenos">  2</span></a><span class="kn">from</span> <span class="nn">.base</span> <span class="kn">import</span> <span class="n">Vary</span>
-</span><span id="L-3"><a href="#L-3"><span class="linenos">  3</span></a><span class="kn">import</span> <span class="nn">logging</span>
-</span><span id="L-4"><a href="#L-4"><span class="linenos">  4</span></a><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-</span><span id="L-5"><a href="#L-5"><span class="linenos">  5</span></a><span class="kn">import</span> <span class="nn">chaospy</span> <span class="k">as</span> <span class="nn">cp</span>
+                        <div class="pdoc-code codehilite"><pre><span></span><span id="L-1"><a href="#L-1"><span class="linenos">  1</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">.</span><span class="w"> </span><span class="kn">import</span> <span class="n">RandomSampler</span>
+</span><span id="L-2"><a href="#L-2"><span class="linenos">  2</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">Vary</span>
+</span><span id="L-3"><a href="#L-3"><span class="linenos">  3</span></a><span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+</span><span id="L-4"><a href="#L-4"><span class="linenos">  4</span></a><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+</span><span id="L-5"><a href="#L-5"><span class="linenos">  5</span></a><span class="kn">import</span><span class="w"> </span><span class="nn">chaospy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">cp</span>
 </span><span id="L-6"><a href="#L-6"><span class="linenos">  6</span></a>
 </span><span id="L-7"><a href="#L-7"><span class="linenos">  7</span></a><span class="n">__author__</span> <span class="o">=</span> <span class="s2">&quot;Wouter Edeling&quot;</span>
 </span><span id="L-8"><a href="#L-8"><span class="linenos">  8</span></a><span class="sd">&quot;&quot;&quot;</span>
@@ -113,13 +113,13 @@
 </span><span id="L-27"><a href="#L-27"><span class="linenos"> 27</span></a><span class="n">__license__</span> <span class="o">=</span> <span class="s2">&quot;LGPL&quot;</span>
 </span><span id="L-28"><a href="#L-28"><span class="linenos"> 28</span></a>
 </span><span id="L-29"><a href="#L-29"><span class="linenos"> 29</span></a>
-</span><span id="L-30"><a href="#L-30"><span class="linenos"> 30</span></a><span class="k">class</span> <span class="nc">MCSampler</span><span class="p">(</span><span class="n">RandomSampler</span><span class="p">,</span> <span class="n">sampler_name</span><span class="o">=</span><span class="s1">&#39;MC_sampler&#39;</span><span class="p">):</span>
+</span><span id="L-30"><a href="#L-30"><span class="linenos"> 30</span></a><span class="k">class</span><span class="w"> </span><span class="nc">MCSampler</span><span class="p">(</span><span class="n">RandomSampler</span><span class="p">,</span> <span class="n">sampler_name</span><span class="o">=</span><span class="s1">&#39;MC_sampler&#39;</span><span class="p">):</span>
 </span><span id="L-31"><a href="#L-31"><span class="linenos"> 31</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-32"><a href="#L-32"><span class="linenos"> 32</span></a><span class="sd">    This is a Monte Carlo sampler, used to compute the Sobol indices, mean</span>
 </span><span id="L-33"><a href="#L-33"><span class="linenos"> 33</span></a><span class="sd">    and variance of the different QoIs.</span>
 </span><span id="L-34"><a href="#L-34"><span class="linenos"> 34</span></a><span class="sd">    &quot;&quot;&quot;</span>
 </span><span id="L-35"><a href="#L-35"><span class="linenos"> 35</span></a>
-</span><span id="L-36"><a href="#L-36"><span class="linenos"> 36</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vary</span><span class="p">,</span> <span class="n">n_mc_samples</span><span class="p">,</span> <span class="n">rule</span><span class="o">=</span><span class="s1">&#39;latin_hypercube&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</span><span id="L-36"><a href="#L-36"><span class="linenos"> 36</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vary</span><span class="p">,</span> <span class="n">n_mc_samples</span><span class="p">,</span> <span class="n">rule</span><span class="o">=</span><span class="s1">&#39;latin_hypercube&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 </span><span id="L-37"><a href="#L-37"><span class="linenos"> 37</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-38"><a href="#L-38"><span class="linenos"> 38</span></a>
 </span><span id="L-39"><a href="#L-39"><span class="linenos"> 39</span></a><span class="sd">        Parameters</span>
@@ -158,7 +158,7 @@
 </span><span id="L-72"><a href="#L-72"><span class="linenos"> 72</span></a>        <span class="c1"># create the Saltelli sampling plan</span>
 </span><span id="L-73"><a href="#L-73"><span class="linenos"> 73</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">saltelli</span><span class="p">(</span><span class="n">n_mc_samples</span><span class="p">)</span>
 </span><span id="L-74"><a href="#L-74"><span class="linenos"> 74</span></a>
-</span><span id="L-75"><a href="#L-75"><span class="linenos"> 75</span></a>    <span class="k">def</span> <span class="fm">__next__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="L-75"><a href="#L-75"><span class="linenos"> 75</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__next__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span id="L-76"><a href="#L-76"><span class="linenos"> 76</span></a>
 </span><span id="L-77"><a href="#L-77"><span class="linenos"> 77</span></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_finite</span><span class="p">():</span>
 </span><span id="L-78"><a href="#L-78"><span class="linenos"> 78</span></a>            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">count</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_num</span><span class="p">:</span>
@@ -176,7 +176,7 @@
 </span><span id="L-90"><a href="#L-90"><span class="linenos"> 90</span></a>
 </span><span id="L-91"><a href="#L-91"><span class="linenos"> 91</span></a>        <span class="k">return</span> <span class="n">run_dict</span>
 </span><span id="L-92"><a href="#L-92"><span class="linenos"> 92</span></a>
-</span><span id="L-93"><a href="#L-93"><span class="linenos"> 93</span></a>    <span class="k">def</span> <span class="nf">saltelli</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_mc</span><span class="p">):</span>
+</span><span id="L-93"><a href="#L-93"><span class="linenos"> 93</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">saltelli</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_mc</span><span class="p">):</span>
 </span><span id="L-94"><a href="#L-94"><span class="linenos"> 94</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-95"><a href="#L-95"><span class="linenos"> 95</span></a><span class="sd">        Generates a Saltelli sampling plan of n_mc*(n_params + 2) input samples</span>
 </span><span id="L-96"><a href="#L-96"><span class="linenos"> 96</span></a><span class="sd">        needed to compute the Sobol indices. Stored in xi_mc.</span>
@@ -229,10 +229,10 @@
 </span><span id="L-143"><a href="#L-143"><span class="linenos">143</span></a>        <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Done.&#39;</span><span class="p">)</span>
 </span><span id="L-144"><a href="#L-144"><span class="linenos">144</span></a>
 </span><span id="L-145"><a href="#L-145"><span class="linenos">145</span></a>    <span class="nd">@property</span>
-</span><span id="L-146"><a href="#L-146"><span class="linenos">146</span></a>    <span class="k">def</span> <span class="nf">analysis_class</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="L-146"><a href="#L-146"><span class="linenos">146</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">analysis_class</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span id="L-147"><a href="#L-147"><span class="linenos">147</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a corresponding analysis class.</span>
 </span><span id="L-148"><a href="#L-148"><span class="linenos">148</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="L-149"><a href="#L-149"><span class="linenos">149</span></a>        <span class="kn">from</span> <span class="nn">easyvvuq.analysis</span> <span class="kn">import</span> <span class="n">QMCAnalysis</span>
+</span><span id="L-149"><a href="#L-149"><span class="linenos">149</span></a>        <span class="kn">from</span><span class="w"> </span><span class="nn">easyvvuq.analysis</span><span class="w"> </span><span class="kn">import</span> <span class="n">QMCAnalysis</span>
 </span><span id="L-150"><a href="#L-150"><span class="linenos">150</span></a>        <span class="k">return</span> <span class="n">QMCAnalysis</span>
 </span></pre></div>
 
@@ -249,13 +249,13 @@
 
     </div>
     <a class="headerlink" href="#MCSampler"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="MCSampler-31"><a href="#MCSampler-31"><span class="linenos"> 31</span></a><span class="k">class</span> <span class="nc">MCSampler</span><span class="p">(</span><span class="n">RandomSampler</span><span class="p">,</span> <span class="n">sampler_name</span><span class="o">=</span><span class="s1">&#39;MC_sampler&#39;</span><span class="p">):</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="MCSampler-31"><a href="#MCSampler-31"><span class="linenos"> 31</span></a><span class="k">class</span><span class="w"> </span><span class="nc">MCSampler</span><span class="p">(</span><span class="n">RandomSampler</span><span class="p">,</span> <span class="n">sampler_name</span><span class="o">=</span><span class="s1">&#39;MC_sampler&#39;</span><span class="p">):</span>
 </span><span id="MCSampler-32"><a href="#MCSampler-32"><span class="linenos"> 32</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="MCSampler-33"><a href="#MCSampler-33"><span class="linenos"> 33</span></a><span class="sd">    This is a Monte Carlo sampler, used to compute the Sobol indices, mean</span>
 </span><span id="MCSampler-34"><a href="#MCSampler-34"><span class="linenos"> 34</span></a><span class="sd">    and variance of the different QoIs.</span>
 </span><span id="MCSampler-35"><a href="#MCSampler-35"><span class="linenos"> 35</span></a><span class="sd">    &quot;&quot;&quot;</span>
 </span><span id="MCSampler-36"><a href="#MCSampler-36"><span class="linenos"> 36</span></a>
-</span><span id="MCSampler-37"><a href="#MCSampler-37"><span class="linenos"> 37</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vary</span><span class="p">,</span> <span class="n">n_mc_samples</span><span class="p">,</span> <span class="n">rule</span><span class="o">=</span><span class="s1">&#39;latin_hypercube&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</span><span id="MCSampler-37"><a href="#MCSampler-37"><span class="linenos"> 37</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vary</span><span class="p">,</span> <span class="n">n_mc_samples</span><span class="p">,</span> <span class="n">rule</span><span class="o">=</span><span class="s1">&#39;latin_hypercube&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 </span><span id="MCSampler-38"><a href="#MCSampler-38"><span class="linenos"> 38</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="MCSampler-39"><a href="#MCSampler-39"><span class="linenos"> 39</span></a>
 </span><span id="MCSampler-40"><a href="#MCSampler-40"><span class="linenos"> 40</span></a><span class="sd">        Parameters</span>
@@ -294,7 +294,7 @@
 </span><span id="MCSampler-73"><a href="#MCSampler-73"><span class="linenos"> 73</span></a>        <span class="c1"># create the Saltelli sampling plan</span>
 </span><span id="MCSampler-74"><a href="#MCSampler-74"><span class="linenos"> 74</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">saltelli</span><span class="p">(</span><span class="n">n_mc_samples</span><span class="p">)</span>
 </span><span id="MCSampler-75"><a href="#MCSampler-75"><span class="linenos"> 75</span></a>
-</span><span id="MCSampler-76"><a href="#MCSampler-76"><span class="linenos"> 76</span></a>    <span class="k">def</span> <span class="fm">__next__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="MCSampler-76"><a href="#MCSampler-76"><span class="linenos"> 76</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__next__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span id="MCSampler-77"><a href="#MCSampler-77"><span class="linenos"> 77</span></a>
 </span><span id="MCSampler-78"><a href="#MCSampler-78"><span class="linenos"> 78</span></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_finite</span><span class="p">():</span>
 </span><span id="MCSampler-79"><a href="#MCSampler-79"><span class="linenos"> 79</span></a>            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">count</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_num</span><span class="p">:</span>
@@ -312,7 +312,7 @@
 </span><span id="MCSampler-91"><a href="#MCSampler-91"><span class="linenos"> 91</span></a>
 </span><span id="MCSampler-92"><a href="#MCSampler-92"><span class="linenos"> 92</span></a>        <span class="k">return</span> <span class="n">run_dict</span>
 </span><span id="MCSampler-93"><a href="#MCSampler-93"><span class="linenos"> 93</span></a>
-</span><span id="MCSampler-94"><a href="#MCSampler-94"><span class="linenos"> 94</span></a>    <span class="k">def</span> <span class="nf">saltelli</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_mc</span><span class="p">):</span>
+</span><span id="MCSampler-94"><a href="#MCSampler-94"><span class="linenos"> 94</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">saltelli</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_mc</span><span class="p">):</span>
 </span><span id="MCSampler-95"><a href="#MCSampler-95"><span class="linenos"> 95</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="MCSampler-96"><a href="#MCSampler-96"><span class="linenos"> 96</span></a><span class="sd">        Generates a Saltelli sampling plan of n_mc*(n_params + 2) input samples</span>
 </span><span id="MCSampler-97"><a href="#MCSampler-97"><span class="linenos"> 97</span></a><span class="sd">        needed to compute the Sobol indices. Stored in xi_mc.</span>
@@ -365,10 +365,10 @@
 </span><span id="MCSampler-144"><a href="#MCSampler-144"><span class="linenos">144</span></a>        <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Done.&#39;</span><span class="p">)</span>
 </span><span id="MCSampler-145"><a href="#MCSampler-145"><span class="linenos">145</span></a>
 </span><span id="MCSampler-146"><a href="#MCSampler-146"><span class="linenos">146</span></a>    <span class="nd">@property</span>
-</span><span id="MCSampler-147"><a href="#MCSampler-147"><span class="linenos">147</span></a>    <span class="k">def</span> <span class="nf">analysis_class</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="MCSampler-147"><a href="#MCSampler-147"><span class="linenos">147</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">analysis_class</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span id="MCSampler-148"><a href="#MCSampler-148"><span class="linenos">148</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a corresponding analysis class.</span>
 </span><span id="MCSampler-149"><a href="#MCSampler-149"><span class="linenos">149</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="MCSampler-150"><a href="#MCSampler-150"><span class="linenos">150</span></a>        <span class="kn">from</span> <span class="nn">easyvvuq.analysis</span> <span class="kn">import</span> <span class="n">QMCAnalysis</span>
+</span><span id="MCSampler-150"><a href="#MCSampler-150"><span class="linenos">150</span></a>        <span class="kn">from</span><span class="w"> </span><span class="nn">easyvvuq.analysis</span><span class="w"> </span><span class="kn">import</span> <span class="n">QMCAnalysis</span>
 </span><span id="MCSampler-151"><a href="#MCSampler-151"><span class="linenos">151</span></a>        <span class="k">return</span> <span class="n">QMCAnalysis</span>
 </span></pre></div>
 
@@ -388,7 +388,7 @@ and variance of the different QoIs.</p>
 
     </div>
     <a class="headerlink" href="#MCSampler.__init__"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="MCSampler.__init__-37"><a href="#MCSampler.__init__-37"><span class="linenos">37</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vary</span><span class="p">,</span> <span class="n">n_mc_samples</span><span class="p">,</span> <span class="n">rule</span><span class="o">=</span><span class="s1">&#39;latin_hypercube&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="MCSampler.__init__-37"><a href="#MCSampler.__init__-37"><span class="linenos">37</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vary</span><span class="p">,</span> <span class="n">n_mc_samples</span><span class="p">,</span> <span class="n">rule</span><span class="o">=</span><span class="s1">&#39;latin_hypercube&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 </span><span id="MCSampler.__init__-38"><a href="#MCSampler.__init__-38"><span class="linenos">38</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="MCSampler.__init__-39"><a href="#MCSampler.__init__-39"><span class="linenos">39</span></a>
 </span><span id="MCSampler.__init__-40"><a href="#MCSampler.__init__-40"><span class="linenos">40</span></a><span class="sd">        Parameters</span>
@@ -521,7 +521,7 @@ sampling plan.</li>
 
     </div>
     <a class="headerlink" href="#MCSampler.saltelli"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="MCSampler.saltelli-94"><a href="#MCSampler.saltelli-94"><span class="linenos"> 94</span></a>    <span class="k">def</span> <span class="nf">saltelli</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_mc</span><span class="p">):</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="MCSampler.saltelli-94"><a href="#MCSampler.saltelli-94"><span class="linenos"> 94</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">saltelli</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_mc</span><span class="p">):</span>
 </span><span id="MCSampler.saltelli-95"><a href="#MCSampler.saltelli-95"><span class="linenos"> 95</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="MCSampler.saltelli-96"><a href="#MCSampler.saltelli-96"><span class="linenos"> 96</span></a><span class="sd">        Generates a Saltelli sampling plan of n_mc*(n_params + 2) input samples</span>
 </span><span id="MCSampler.saltelli-97"><a href="#MCSampler.saltelli-97"><span class="linenos"> 97</span></a><span class="sd">        needed to compute the Sobol indices. Stored in xi_mc.</span>
@@ -607,10 +607,10 @@ sensitivity indices, Computer Physics Communications, 2002.</p>
     </div>
     <a class="headerlink" href="#MCSampler.analysis_class"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="MCSampler.analysis_class-146"><a href="#MCSampler.analysis_class-146"><span class="linenos">146</span></a>    <span class="nd">@property</span>
-</span><span id="MCSampler.analysis_class-147"><a href="#MCSampler.analysis_class-147"><span class="linenos">147</span></a>    <span class="k">def</span> <span class="nf">analysis_class</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="MCSampler.analysis_class-147"><a href="#MCSampler.analysis_class-147"><span class="linenos">147</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">analysis_class</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span id="MCSampler.analysis_class-148"><a href="#MCSampler.analysis_class-148"><span class="linenos">148</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a corresponding analysis class.</span>
 </span><span id="MCSampler.analysis_class-149"><a href="#MCSampler.analysis_class-149"><span class="linenos">149</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="MCSampler.analysis_class-150"><a href="#MCSampler.analysis_class-150"><span class="linenos">150</span></a>        <span class="kn">from</span> <span class="nn">easyvvuq.analysis</span> <span class="kn">import</span> <span class="n">QMCAnalysis</span>
+</span><span id="MCSampler.analysis_class-150"><a href="#MCSampler.analysis_class-150"><span class="linenos">150</span></a>        <span class="kn">from</span><span class="w"> </span><span class="nn">easyvvuq.analysis</span><span class="w"> </span><span class="kn">import</span> <span class="n">QMCAnalysis</span>
 </span><span id="MCSampler.analysis_class-151"><a href="#MCSampler.analysis_class-151"><span class="linenos">151</span></a>        <span class="k">return</span> <span class="n">QMCAnalysis</span>
 </span></pre></div>
 

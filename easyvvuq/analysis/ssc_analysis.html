@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="generator" content="pdoc 15.0.0"/>
+    <meta name="generator" content="pdoc 15.0.1"/>
     <title>easyvvuq.analysis.ssc_analysis API documentation</title>
 
     <style>/*! * Bootstrap Reboot v5.0.0 (https://getbootstrap.com/) * Copyright 2011-2021 The Bootstrap Authors * Copyright 2011-2021 Twitter, Inc. * Licensed under MIT (https://github.com/twbs/bootstrap/blob/main/LICENSE) * Forked from Normalize.css, licensed MIT (https://github.com/necolas/normalize.css/blob/master/LICENSE.md) */*,::after,::before{box-sizing:border-box}@media (prefers-reduced-motion:no-preference){:root{scroll-behavior:smooth}}body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans","Liberation Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";font-size:1rem;font-weight:400;line-height:1.5;color:#212529;background-color:#fff;-webkit-text-size-adjust:100%;-webkit-tap-highlight-color:transparent}hr{margin:1rem 0;color:inherit;background-color:currentColor;border:0;opacity:.25}hr:not([size]){height:1px}h1,h2,h3,h4,h5,h6{margin-top:0;margin-bottom:.5rem;font-weight:500;line-height:1.2}h1{font-size:calc(1.375rem + 1.5vw)}@media (min-width:1200px){h1{font-size:2.5rem}}h2{font-size:calc(1.325rem + .9vw)}@media (min-width:1200px){h2{font-size:2rem}}h3{font-size:calc(1.3rem + .6vw)}@media (min-width:1200px){h3{font-size:1.75rem}}h4{font-size:calc(1.275rem + .3vw)}@media (min-width:1200px){h4{font-size:1.5rem}}h5{font-size:1.25rem}h6{font-size:1rem}p{margin-top:0;margin-bottom:1rem}abbr[data-bs-original-title],abbr[title]{-webkit-text-decoration:underline dotted;text-decoration:underline dotted;cursor:help;-webkit-text-decoration-skip-ink:none;text-decoration-skip-ink:none}address{margin-bottom:1rem;font-style:normal;line-height:inherit}ol,ul{padding-left:2rem}dl,ol,ul{margin-top:0;margin-bottom:1rem}ol ol,ol ul,ul ol,ul ul{margin-bottom:0}dt{font-weight:700}dd{margin-bottom:.5rem;margin-left:0}blockquote{margin:0 0 1rem}b,strong{font-weight:bolder}small{font-size:.875em}mark{padding:.2em;background-color:#fcf8e3}sub,sup{position:relative;font-size:.75em;line-height:0;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}a{color:#0d6efd;text-decoration:underline}a:hover{color:#0a58ca}a:not([href]):not([class]),a:not([href]):not([class]):hover{color:inherit;text-decoration:none}code,kbd,pre,samp{font-family:SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;font-size:1em;direction:ltr;unicode-bidi:bidi-override}pre{display:block;margin-top:0;margin-bottom:1rem;overflow:auto;font-size:.875em}pre code{font-size:inherit;color:inherit;word-break:normal}code{font-size:.875em;color:#d63384;word-wrap:break-word}a>code{color:inherit}kbd{padding:.2rem .4rem;font-size:.875em;color:#fff;background-color:#212529;border-radius:.2rem}kbd kbd{padding:0;font-size:1em;font-weight:700}figure{margin:0 0 1rem}img,svg{vertical-align:middle}table{caption-side:bottom;border-collapse:collapse}caption{padding-top:.5rem;padding-bottom:.5rem;color:#6c757d;text-align:left}th{text-align:inherit;text-align:-webkit-match-parent}tbody,td,tfoot,th,thead,tr{border-color:inherit;border-style:solid;border-width:0}label{display:inline-block}button{border-radius:0}button:focus:not(:focus-visible){outline:0}button,input,optgroup,select,textarea{margin:0;font-family:inherit;font-size:inherit;line-height:inherit}button,select{text-transform:none}[role=button]{cursor:pointer}select{word-wrap:normal}select:disabled{opacity:1}[list]::-webkit-calendar-picker-indicator{display:none}[type=button],[type=reset],[type=submit],button{-webkit-appearance:button}[type=button]:not(:disabled),[type=reset]:not(:disabled),[type=submit]:not(:disabled),button:not(:disabled){cursor:pointer}::-moz-focus-inner{padding:0;border-style:none}textarea{resize:vertical}fieldset{min-width:0;padding:0;margin:0;border:0}legend{float:left;width:100%;padding:0;margin-bottom:.5rem;font-size:calc(1.275rem + .3vw);line-height:inherit}@media (min-width:1200px){legend{font-size:1.5rem}}legend+*{clear:left}::-webkit-datetime-edit-day-field,::-webkit-datetime-edit-fields-wrapper,::-webkit-datetime-edit-hour-field,::-webkit-datetime-edit-minute,::-webkit-datetime-edit-month-field,::-webkit-datetime-edit-text,::-webkit-datetime-edit-year-field{padding:0}::-webkit-inner-spin-button{height:auto}[type=search]{outline-offset:-2px;-webkit-appearance:textfield}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-color-swatch-wrapper{padding:0}::file-selector-button{font:inherit}::-webkit-file-upload-button{font:inherit;-webkit-appearance:button}output{display:inline-block}iframe{border:0}summary{display:list-item;cursor:pointer}progress{vertical-align:baseline}[hidden]{display:none!important}</style>
@@ -123,17 +123,17 @@
 </span><span id="L-2"><a href="#L-2"><span class="linenos">  2</span></a><span class="sd">ANALYSIS CLASS FOR THE SSC SAMPLER</span>
 </span><span id="L-3"><a href="#L-3"><span class="linenos">  3</span></a><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-4"><a href="#L-4"><span class="linenos">  4</span></a>
-</span><span id="L-5"><a href="#L-5"><span class="linenos">  5</span></a><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-</span><span id="L-6"><a href="#L-6"><span class="linenos">  6</span></a><span class="kn">import</span> <span class="nn">pickle</span>
-</span><span id="L-7"><a href="#L-7"><span class="linenos">  7</span></a><span class="kn">import</span> <span class="nn">copy</span>
-</span><span id="L-8"><a href="#L-8"><span class="linenos">  8</span></a><span class="kn">from</span> <span class="nn">easyvvuq</span> <span class="kn">import</span> <span class="n">OutputType</span>
-</span><span id="L-9"><a href="#L-9"><span class="linenos">  9</span></a><span class="kn">from</span> <span class="nn">.base</span> <span class="kn">import</span> <span class="n">BaseAnalysisElement</span>
-</span><span id="L-10"><a href="#L-10"><span class="linenos"> 10</span></a><span class="kn">from</span> <span class="nn">.results</span> <span class="kn">import</span> <span class="n">AnalysisResults</span>
+</span><span id="L-5"><a href="#L-5"><span class="linenos">  5</span></a><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+</span><span id="L-6"><a href="#L-6"><span class="linenos">  6</span></a><span class="kn">import</span><span class="w"> </span><span class="nn">pickle</span>
+</span><span id="L-7"><a href="#L-7"><span class="linenos">  7</span></a><span class="kn">import</span><span class="w"> </span><span class="nn">copy</span>
+</span><span id="L-8"><a href="#L-8"><span class="linenos">  8</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">easyvvuq</span><span class="w"> </span><span class="kn">import</span> <span class="n">OutputType</span>
+</span><span id="L-9"><a href="#L-9"><span class="linenos">  9</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseAnalysisElement</span>
+</span><span id="L-10"><a href="#L-10"><span class="linenos"> 10</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">.results</span><span class="w"> </span><span class="kn">import</span> <span class="n">AnalysisResults</span>
 </span><span id="L-11"><a href="#L-11"><span class="linenos"> 11</span></a><span class="c1"># import logging</span>
 </span><span id="L-12"><a href="#L-12"><span class="linenos"> 12</span></a><span class="c1"># from scipy.special import comb</span>
-</span><span id="L-13"><a href="#L-13"><span class="linenos"> 13</span></a><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-</span><span id="L-14"><a href="#L-14"><span class="linenos"> 14</span></a><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
-</span><span id="L-15"><a href="#L-15"><span class="linenos"> 15</span></a><span class="kn">from</span> <span class="nn">matplotlib.patches</span> <span class="kn">import</span> <span class="n">Polygon</span>
+</span><span id="L-13"><a href="#L-13"><span class="linenos"> 13</span></a><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+</span><span id="L-14"><a href="#L-14"><span class="linenos"> 14</span></a><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+</span><span id="L-15"><a href="#L-15"><span class="linenos"> 15</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib.patches</span><span class="w"> </span><span class="kn">import</span> <span class="n">Polygon</span>
 </span><span id="L-16"><a href="#L-16"><span class="linenos"> 16</span></a>
 </span><span id="L-17"><a href="#L-17"><span class="linenos"> 17</span></a><span class="n">__author__</span> <span class="o">=</span> <span class="s2">&quot;Wouter Edeling&quot;</span>
 </span><span id="L-18"><a href="#L-18"><span class="linenos"> 18</span></a><span class="n">__copyright__</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
@@ -159,7 +159,7 @@
 </span><span id="L-38"><a href="#L-38"><span class="linenos"> 38</span></a><span class="n">__license__</span> <span class="o">=</span> <span class="s2">&quot;LGPL&quot;</span>
 </span><span id="L-39"><a href="#L-39"><span class="linenos"> 39</span></a>
 </span><span id="L-40"><a href="#L-40"><span class="linenos"> 40</span></a>
-</span><span id="L-41"><a href="#L-41"><span class="linenos"> 41</span></a><span class="k">class</span> <span class="nc">SSCAnalysisResults</span><span class="p">(</span><span class="n">AnalysisResults</span><span class="p">):</span>
+</span><span id="L-41"><a href="#L-41"><span class="linenos"> 41</span></a><span class="k">class</span><span class="w"> </span><span class="nc">SSCAnalysisResults</span><span class="p">(</span><span class="n">AnalysisResults</span><span class="p">):</span>
 </span><span id="L-42"><a href="#L-42"><span class="linenos"> 42</span></a>    <span class="c1"># def _get_sobols_first(self, qoi, input_):</span>
 </span><span id="L-43"><a href="#L-43"><span class="linenos"> 43</span></a>    <span class="c1">#     raw_dict = AnalysisResults._keys_to_tuples(self.raw_data[&#39;sobols_first&#39;])</span>
 </span><span id="L-44"><a href="#L-44"><span class="linenos"> 44</span></a>    <span class="c1">#     result = raw_dict[AnalysisResults._to_tuple(qoi)][input_]</span>
@@ -168,7 +168,7 @@
 </span><span id="L-47"><a href="#L-47"><span class="linenos"> 47</span></a>    <span class="c1">#     except TypeError:</span>
 </span><span id="L-48"><a href="#L-48"><span class="linenos"> 48</span></a>    <span class="c1">#         return np.array(result)</span>
 </span><span id="L-49"><a href="#L-49"><span class="linenos"> 49</span></a>
-</span><span id="L-50"><a href="#L-50"><span class="linenos"> 50</span></a>    <span class="k">def</span> <span class="nf">supported_stats</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="L-50"><a href="#L-50"><span class="linenos"> 50</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">supported_stats</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span id="L-51"><a href="#L-51"><span class="linenos"> 51</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Types of statistics supported by the describe method.</span>
 </span><span id="L-52"><a href="#L-52"><span class="linenos"> 52</span></a>
 </span><span id="L-53"><a href="#L-53"><span class="linenos"> 53</span></a><span class="sd">        Returns</span>
@@ -177,13 +177,13 @@
 </span><span id="L-56"><a href="#L-56"><span class="linenos"> 56</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span><span id="L-57"><a href="#L-57"><span class="linenos"> 57</span></a>        <span class="k">return</span> <span class="p">[</span><span class="s1">&#39;mean&#39;</span><span class="p">,</span> <span class="s1">&#39;var&#39;</span><span class="p">,</span> <span class="s1">&#39;std&#39;</span><span class="p">]</span>
 </span><span id="L-58"><a href="#L-58"><span class="linenos"> 58</span></a>
-</span><span id="L-59"><a href="#L-59"><span class="linenos"> 59</span></a>    <span class="k">def</span> <span class="nf">_describe</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">qoi</span><span class="p">,</span> <span class="n">statistic</span><span class="p">):</span>
+</span><span id="L-59"><a href="#L-59"><span class="linenos"> 59</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">_describe</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">qoi</span><span class="p">,</span> <span class="n">statistic</span><span class="p">):</span>
 </span><span id="L-60"><a href="#L-60"><span class="linenos"> 60</span></a>        <span class="k">if</span> <span class="n">statistic</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">supported_stats</span><span class="p">():</span>
 </span><span id="L-61"><a href="#L-61"><span class="linenos"> 61</span></a>            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">raw_data</span><span class="p">[</span><span class="s1">&#39;statistical_moments&#39;</span><span class="p">][</span><span class="n">qoi</span><span class="p">][</span><span class="n">statistic</span><span class="p">]</span>
 </span><span id="L-62"><a href="#L-62"><span class="linenos"> 62</span></a>        <span class="k">else</span><span class="p">:</span>
 </span><span id="L-63"><a href="#L-63"><span class="linenos"> 63</span></a>            <span class="k">raise</span> <span class="ne">NotImplementedError</span>
 </span><span id="L-64"><a href="#L-64"><span class="linenos"> 64</span></a>
-</span><span id="L-65"><a href="#L-65"><span class="linenos"> 65</span></a>    <span class="k">def</span> <span class="nf">surrogate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="L-65"><a href="#L-65"><span class="linenos"> 65</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">surrogate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span id="L-66"><a href="#L-66"><span class="linenos"> 66</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a SSC surrogate model.</span>
 </span><span id="L-67"><a href="#L-67"><span class="linenos"> 67</span></a>
 </span><span id="L-68"><a href="#L-68"><span class="linenos"> 68</span></a><span class="sd">        Returns</span>
@@ -191,8 +191,8 @@
 </span><span id="L-70"><a href="#L-70"><span class="linenos"> 70</span></a><span class="sd">        A function that takes a dictionary of parameter - value pairs and returns</span>
 </span><span id="L-71"><a href="#L-71"><span class="linenos"> 71</span></a><span class="sd">        a dictionary with the results (same output as decoder).</span>
 </span><span id="L-72"><a href="#L-72"><span class="linenos"> 72</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="L-73"><a href="#L-73"><span class="linenos"> 73</span></a>        <span class="k">def</span> <span class="nf">surrogate_fn</span><span class="p">(</span><span class="n">inputs</span><span class="p">):</span>
-</span><span id="L-74"><a href="#L-74"><span class="linenos"> 74</span></a>            <span class="k">def</span> <span class="nf">swap</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+</span><span id="L-73"><a href="#L-73"><span class="linenos"> 73</span></a>        <span class="k">def</span><span class="w"> </span><span class="nf">surrogate_fn</span><span class="p">(</span><span class="n">inputs</span><span class="p">):</span>
+</span><span id="L-74"><a href="#L-74"><span class="linenos"> 74</span></a>            <span class="k">def</span><span class="w"> </span><span class="nf">swap</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
 </span><span id="L-75"><a href="#L-75"><span class="linenos"> 75</span></a>                <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">size</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
 </span><span id="L-76"><a href="#L-76"><span class="linenos"> 76</span></a>                    <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
 </span><span id="L-77"><a href="#L-77"><span class="linenos"> 77</span></a>                <span class="k">else</span><span class="p">:</span>
@@ -203,12 +203,12 @@
 </span><span id="L-82"><a href="#L-82"><span class="linenos"> 82</span></a>        <span class="k">return</span> <span class="n">surrogate_fn</span>
 </span><span id="L-83"><a href="#L-83"><span class="linenos"> 83</span></a>
 </span><span id="L-84"><a href="#L-84"><span class="linenos"> 84</span></a>
-</span><span id="L-85"><a href="#L-85"><span class="linenos"> 85</span></a><span class="k">class</span> <span class="nc">SSCAnalysis</span><span class="p">(</span><span class="n">BaseAnalysisElement</span><span class="p">):</span>
+</span><span id="L-85"><a href="#L-85"><span class="linenos"> 85</span></a><span class="k">class</span><span class="w"> </span><span class="nc">SSCAnalysis</span><span class="p">(</span><span class="n">BaseAnalysisElement</span><span class="p">):</span>
 </span><span id="L-86"><a href="#L-86"><span class="linenos"> 86</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-87"><a href="#L-87"><span class="linenos"> 87</span></a><span class="sd">    SSc analysis class.</span>
 </span><span id="L-88"><a href="#L-88"><span class="linenos"> 88</span></a><span class="sd">    &quot;&quot;&quot;</span>
 </span><span id="L-89"><a href="#L-89"><span class="linenos"> 89</span></a>
-</span><span id="L-90"><a href="#L-90"><span class="linenos"> 90</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sampler</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">qoi_cols</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+</span><span id="L-90"><a href="#L-90"><span class="linenos"> 90</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sampler</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">qoi_cols</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 </span><span id="L-91"><a href="#L-91"><span class="linenos"> 91</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-92"><a href="#L-92"><span class="linenos"> 92</span></a><span class="sd">        Parameters</span>
 </span><span id="L-93"><a href="#L-93"><span class="linenos"> 93</span></a><span class="sd">        ----------</span>
@@ -231,15 +231,15 @@
 </span><span id="L-110"><a href="#L-110"><span class="linenos">110</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">output_type</span> <span class="o">=</span> <span class="n">OutputType</span><span class="o">.</span><span class="n">SUMMARY</span>
 </span><span id="L-111"><a href="#L-111"><span class="linenos">111</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">sampler</span> <span class="o">=</span> <span class="n">sampler</span>
 </span><span id="L-112"><a href="#L-112"><span class="linenos">112</span></a>
-</span><span id="L-113"><a href="#L-113"><span class="linenos">113</span></a>    <span class="k">def</span> <span class="nf">element_name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="L-113"><a href="#L-113"><span class="linenos">113</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">element_name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span id="L-114"><a href="#L-114"><span class="linenos">114</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Name for this element for logging purposes&quot;&quot;&quot;</span>
 </span><span id="L-115"><a href="#L-115"><span class="linenos">115</span></a>        <span class="k">return</span> <span class="s2">&quot;SSC_Analysis&quot;</span>
 </span><span id="L-116"><a href="#L-116"><span class="linenos">116</span></a>
-</span><span id="L-117"><a href="#L-117"><span class="linenos">117</span></a>    <span class="k">def</span> <span class="nf">element_version</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="L-117"><a href="#L-117"><span class="linenos">117</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">element_version</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span id="L-118"><a href="#L-118"><span class="linenos">118</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Version of this element for logging purposes&quot;&quot;&quot;</span>
 </span><span id="L-119"><a href="#L-119"><span class="linenos">119</span></a>        <span class="k">return</span> <span class="s2">&quot;0.1&quot;</span>
 </span><span id="L-120"><a href="#L-120"><span class="linenos">120</span></a>
-</span><span id="L-121"><a href="#L-121"><span class="linenos">121</span></a>    <span class="k">def</span> <span class="nf">save_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+</span><span id="L-121"><a href="#L-121"><span class="linenos">121</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">save_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
 </span><span id="L-122"><a href="#L-122"><span class="linenos">122</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-123"><a href="#L-123"><span class="linenos">123</span></a><span class="sd">        Saves the complete state of the analysis object to a pickle file,</span>
 </span><span id="L-124"><a href="#L-124"><span class="linenos">124</span></a><span class="sd">        except the sampler object (self.sampler).</span>
@@ -256,7 +256,7 @@
 </span><span id="L-135"><a href="#L-135"><span class="linenos">135</span></a>        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fp</span><span class="p">:</span>
 </span><span id="L-136"><a href="#L-136"><span class="linenos">136</span></a>            <span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">fp</span><span class="p">)</span>
 </span><span id="L-137"><a href="#L-137"><span class="linenos">137</span></a>
-</span><span id="L-138"><a href="#L-138"><span class="linenos">138</span></a>    <span class="k">def</span> <span class="nf">load_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+</span><span id="L-138"><a href="#L-138"><span class="linenos">138</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">load_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
 </span><span id="L-139"><a href="#L-139"><span class="linenos">139</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-140"><a href="#L-140"><span class="linenos">140</span></a><span class="sd">        Loads the complete state of the analysis object from a</span>
 </span><span id="L-141"><a href="#L-141"><span class="linenos">141</span></a><span class="sd">        pickle file, stored using save_state.</span>
@@ -272,7 +272,7 @@
 </span><span id="L-151"><a href="#L-151"><span class="linenos">151</span></a>        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">state</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
 </span><span id="L-152"><a href="#L-152"><span class="linenos">152</span></a>            <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">state</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
 </span><span id="L-153"><a href="#L-153"><span class="linenos">153</span></a>
-</span><span id="L-154"><a href="#L-154"><span class="linenos">154</span></a>    <span class="k">def</span> <span class="nf">analyse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_frame</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">compute_moments</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">n_mc</span><span class="o">=</span><span class="mi">20000</span><span class="p">):</span>
+</span><span id="L-154"><a href="#L-154"><span class="linenos">154</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">analyse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_frame</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">compute_moments</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">n_mc</span><span class="o">=</span><span class="mi">20000</span><span class="p">):</span>
 </span><span id="L-155"><a href="#L-155"><span class="linenos">155</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-156"><a href="#L-156"><span class="linenos">156</span></a><span class="sd">        Perform SSC analysis on input `data_frame`.</span>
 </span><span id="L-157"><a href="#L-157"><span class="linenos">157</span></a>
@@ -318,7 +318,7 @@
 </span><span id="L-197"><a href="#L-197"><span class="linenos">197</span></a>        <span class="n">results</span><span class="o">.</span><span class="n">surrogate_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">surrogate</span>
 </span><span id="L-198"><a href="#L-198"><span class="linenos">198</span></a>        <span class="k">return</span> <span class="n">results</span>
 </span><span id="L-199"><a href="#L-199"><span class="linenos">199</span></a>
-</span><span id="L-200"><a href="#L-200"><span class="linenos">200</span></a>    <span class="k">def</span> <span class="nf">load_samples</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_frame</span><span class="p">):</span>
+</span><span id="L-200"><a href="#L-200"><span class="linenos">200</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">load_samples</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_frame</span><span class="p">):</span>
 </span><span id="L-201"><a href="#L-201"><span class="linenos">201</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-202"><a href="#L-202"><span class="linenos">202</span></a><span class="sd">        Extract output values for each quantity of interest from Dataframe.</span>
 </span><span id="L-203"><a href="#L-203"><span class="linenos">203</span></a>
@@ -343,7 +343,7 @@
 </span><span id="L-222"><a href="#L-222"><span class="linenos">222</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">samples</span> <span class="o">=</span> <span class="n">samples</span>
 </span><span id="L-223"><a href="#L-223"><span class="linenos">223</span></a>        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;done&#39;</span><span class="p">)</span>
 </span><span id="L-224"><a href="#L-224"><span class="linenos">224</span></a>
-</span><span id="L-225"><a href="#L-225"><span class="linenos">225</span></a>    <span class="k">def</span> <span class="nf">get_moments</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">qoi</span><span class="p">,</span> <span class="n">n_mc</span><span class="p">):</span>
+</span><span id="L-225"><a href="#L-225"><span class="linenos">225</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_moments</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">qoi</span><span class="p">,</span> <span class="n">n_mc</span><span class="p">):</span>
 </span><span id="L-226"><a href="#L-226"><span class="linenos">226</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-227"><a href="#L-227"><span class="linenos">227</span></a><span class="sd">        Compute the mean and variance through Monte Carlo sampling of the SSC</span>
 </span><span id="L-228"><a href="#L-228"><span class="linenos">228</span></a><span class="sd">        surrogate. Independent random inputs samples are drawn though the</span>
@@ -372,7 +372,7 @@
 </span><span id="L-251"><a href="#L-251"><span class="linenos">251</span></a>        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;done.&#39;</span><span class="p">)</span>
 </span><span id="L-252"><a href="#L-252"><span class="linenos">252</span></a>        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">mean</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">var</span><span class="p">])</span>
 </span><span id="L-253"><a href="#L-253"><span class="linenos">253</span></a>
-</span><span id="L-254"><a href="#L-254"><span class="linenos">254</span></a>    <span class="k">def</span> <span class="nf">update_surrogate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">qoi</span><span class="p">,</span> <span class="n">data_frame</span><span class="p">,</span> <span class="n">max_LEC_jobs</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">n_mc_LEC</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+</span><span id="L-254"><a href="#L-254"><span class="linenos">254</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">update_surrogate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">qoi</span><span class="p">,</span> <span class="n">data_frame</span><span class="p">,</span> <span class="n">max_LEC_jobs</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">n_mc_LEC</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
 </span><span id="L-255"><a href="#L-255"><span class="linenos">255</span></a>                         <span class="n">max_ENO_jobs</span><span class="o">=</span><span class="mi">4</span><span class="p">):</span>
 </span><span id="L-256"><a href="#L-256"><span class="linenos">256</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-257"><a href="#L-257"><span class="linenos">257</span></a><span class="sd">        Update the SSC surrogate given new data. Given an EasyVVUQ dataframe,</span>
@@ -448,7 +448,7 @@
 </span><span id="L-327"><a href="#L-327"><span class="linenos">327</span></a>        <span class="c1"># compute the simplex probabilities</span>
 </span><span id="L-328"><a href="#L-328"><span class="linenos">328</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">prob_j</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sampler</span><span class="o">.</span><span class="n">compute_probability</span><span class="p">()</span>
 </span><span id="L-329"><a href="#L-329"><span class="linenos">329</span></a>
-</span><span id="L-330"><a href="#L-330"><span class="linenos">330</span></a>    <span class="k">def</span> <span class="nf">adapt_locally</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_new_samples</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+</span><span id="L-330"><a href="#L-330"><span class="linenos">330</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">adapt_locally</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_new_samples</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
 </span><span id="L-331"><a href="#L-331"><span class="linenos">331</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-332"><a href="#L-332"><span class="linenos">332</span></a><span class="sd">        Locally refine the sampling plan based on the SSC geometric</span>
 </span><span id="L-333"><a href="#L-333"><span class="linenos">333</span></a><span class="sd">        refinement measure.</span>
@@ -512,7 +512,7 @@
 </span><span id="L-391"><a href="#L-391"><span class="linenos">391</span></a>
 </span><span id="L-392"><a href="#L-392"><span class="linenos">392</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">sampler</span><span class="o">.</span><span class="n">update_Delaunay</span><span class="p">(</span><span class="n">xi_k_jref</span><span class="p">)</span>
 </span><span id="L-393"><a href="#L-393"><span class="linenos">393</span></a>
-</span><span id="L-394"><a href="#L-394"><span class="linenos">394</span></a>    <span class="k">def</span> <span class="nf">surrogate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">qoi</span><span class="p">,</span> <span class="n">xi</span><span class="p">):</span>
+</span><span id="L-394"><a href="#L-394"><span class="linenos">394</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">surrogate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">qoi</span><span class="p">,</span> <span class="n">xi</span><span class="p">):</span>
 </span><span id="L-395"><a href="#L-395"><span class="linenos">395</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-396"><a href="#L-396"><span class="linenos">396</span></a><span class="sd">        Evaluate the SSC surrogate at xi.</span>
 </span><span id="L-397"><a href="#L-397"><span class="linenos">397</span></a>
@@ -537,7 +537,7 @@
 </span><span id="L-416"><a href="#L-416"><span class="linenos">416</span></a>        <span class="n">surr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sampler</span><span class="o">.</span><span class="n">surrogate</span><span class="p">(</span><span class="n">xi</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">S_j</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">p_j</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">samples</span><span class="p">[</span><span class="n">qoi</span><span class="p">])</span>
 </span><span id="L-417"><a href="#L-417"><span class="linenos">417</span></a>        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">surr</span><span class="p">])</span>
 </span><span id="L-418"><a href="#L-418"><span class="linenos">418</span></a>
-</span><span id="L-419"><a href="#L-419"><span class="linenos">419</span></a>    <span class="k">def</span> <span class="nf">get_sample_array</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">qoi</span><span class="p">):</span>
+</span><span id="L-419"><a href="#L-419"><span class="linenos">419</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_sample_array</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">qoi</span><span class="p">):</span>
 </span><span id="L-420"><a href="#L-420"><span class="linenos">420</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-421"><a href="#L-421"><span class="linenos">421</span></a><span class="sd">        Parameters</span>
 </span><span id="L-422"><a href="#L-422"><span class="linenos">422</span></a><span class="sd">        ----------</span>
@@ -551,7 +551,7 @@
 </span><span id="L-430"><a href="#L-430"><span class="linenos">430</span></a>
 </span><span id="L-431"><a href="#L-431"><span class="linenos">431</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">samples</span><span class="p">[</span><span class="n">qoi</span><span class="p">]</span>
 </span><span id="L-432"><a href="#L-432"><span class="linenos">432</span></a>
-</span><span id="L-433"><a href="#L-433"><span class="linenos">433</span></a>    <span class="k">def</span> <span class="nf">plot_grid</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="L-433"><a href="#L-433"><span class="linenos">433</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">plot_grid</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span id="L-434"><a href="#L-434"><span class="linenos">434</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-435"><a href="#L-435"><span class="linenos">435</span></a><span class="sd">        Plot the 1D or 2D sampling plan and color code the simplices according</span>
 </span><span id="L-436"><a href="#L-436"><span class="linenos">436</span></a><span class="sd">        to their polynomial order.</span>
@@ -622,7 +622,7 @@
 
     </div>
     <a class="headerlink" href="#SSCAnalysisResults"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="SSCAnalysisResults-42"><a href="#SSCAnalysisResults-42"><span class="linenos">42</span></a><span class="k">class</span> <span class="nc">SSCAnalysisResults</span><span class="p">(</span><span class="n">AnalysisResults</span><span class="p">):</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="SSCAnalysisResults-42"><a href="#SSCAnalysisResults-42"><span class="linenos">42</span></a><span class="k">class</span><span class="w"> </span><span class="nc">SSCAnalysisResults</span><span class="p">(</span><span class="n">AnalysisResults</span><span class="p">):</span>
 </span><span id="SSCAnalysisResults-43"><a href="#SSCAnalysisResults-43"><span class="linenos">43</span></a>    <span class="c1"># def _get_sobols_first(self, qoi, input_):</span>
 </span><span id="SSCAnalysisResults-44"><a href="#SSCAnalysisResults-44"><span class="linenos">44</span></a>    <span class="c1">#     raw_dict = AnalysisResults._keys_to_tuples(self.raw_data[&#39;sobols_first&#39;])</span>
 </span><span id="SSCAnalysisResults-45"><a href="#SSCAnalysisResults-45"><span class="linenos">45</span></a>    <span class="c1">#     result = raw_dict[AnalysisResults._to_tuple(qoi)][input_]</span>
@@ -631,7 +631,7 @@
 </span><span id="SSCAnalysisResults-48"><a href="#SSCAnalysisResults-48"><span class="linenos">48</span></a>    <span class="c1">#     except TypeError:</span>
 </span><span id="SSCAnalysisResults-49"><a href="#SSCAnalysisResults-49"><span class="linenos">49</span></a>    <span class="c1">#         return np.array(result)</span>
 </span><span id="SSCAnalysisResults-50"><a href="#SSCAnalysisResults-50"><span class="linenos">50</span></a>
-</span><span id="SSCAnalysisResults-51"><a href="#SSCAnalysisResults-51"><span class="linenos">51</span></a>    <span class="k">def</span> <span class="nf">supported_stats</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="SSCAnalysisResults-51"><a href="#SSCAnalysisResults-51"><span class="linenos">51</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">supported_stats</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span id="SSCAnalysisResults-52"><a href="#SSCAnalysisResults-52"><span class="linenos">52</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Types of statistics supported by the describe method.</span>
 </span><span id="SSCAnalysisResults-53"><a href="#SSCAnalysisResults-53"><span class="linenos">53</span></a>
 </span><span id="SSCAnalysisResults-54"><a href="#SSCAnalysisResults-54"><span class="linenos">54</span></a><span class="sd">        Returns</span>
@@ -640,13 +640,13 @@
 </span><span id="SSCAnalysisResults-57"><a href="#SSCAnalysisResults-57"><span class="linenos">57</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span><span id="SSCAnalysisResults-58"><a href="#SSCAnalysisResults-58"><span class="linenos">58</span></a>        <span class="k">return</span> <span class="p">[</span><span class="s1">&#39;mean&#39;</span><span class="p">,</span> <span class="s1">&#39;var&#39;</span><span class="p">,</span> <span class="s1">&#39;std&#39;</span><span class="p">]</span>
 </span><span id="SSCAnalysisResults-59"><a href="#SSCAnalysisResults-59"><span class="linenos">59</span></a>
-</span><span id="SSCAnalysisResults-60"><a href="#SSCAnalysisResults-60"><span class="linenos">60</span></a>    <span class="k">def</span> <span class="nf">_describe</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">qoi</span><span class="p">,</span> <span class="n">statistic</span><span class="p">):</span>
+</span><span id="SSCAnalysisResults-60"><a href="#SSCAnalysisResults-60"><span class="linenos">60</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">_describe</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">qoi</span><span class="p">,</span> <span class="n">statistic</span><span class="p">):</span>
 </span><span id="SSCAnalysisResults-61"><a href="#SSCAnalysisResults-61"><span class="linenos">61</span></a>        <span class="k">if</span> <span class="n">statistic</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">supported_stats</span><span class="p">():</span>
 </span><span id="SSCAnalysisResults-62"><a href="#SSCAnalysisResults-62"><span class="linenos">62</span></a>            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">raw_data</span><span class="p">[</span><span class="s1">&#39;statistical_moments&#39;</span><span class="p">][</span><span class="n">qoi</span><span class="p">][</span><span class="n">statistic</span><span class="p">]</span>
 </span><span id="SSCAnalysisResults-63"><a href="#SSCAnalysisResults-63"><span class="linenos">63</span></a>        <span class="k">else</span><span class="p">:</span>
 </span><span id="SSCAnalysisResults-64"><a href="#SSCAnalysisResults-64"><span class="linenos">64</span></a>            <span class="k">raise</span> <span class="ne">NotImplementedError</span>
 </span><span id="SSCAnalysisResults-65"><a href="#SSCAnalysisResults-65"><span class="linenos">65</span></a>
-</span><span id="SSCAnalysisResults-66"><a href="#SSCAnalysisResults-66"><span class="linenos">66</span></a>    <span class="k">def</span> <span class="nf">surrogate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="SSCAnalysisResults-66"><a href="#SSCAnalysisResults-66"><span class="linenos">66</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">surrogate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span id="SSCAnalysisResults-67"><a href="#SSCAnalysisResults-67"><span class="linenos">67</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a SSC surrogate model.</span>
 </span><span id="SSCAnalysisResults-68"><a href="#SSCAnalysisResults-68"><span class="linenos">68</span></a>
 </span><span id="SSCAnalysisResults-69"><a href="#SSCAnalysisResults-69"><span class="linenos">69</span></a><span class="sd">        Returns</span>
@@ -654,8 +654,8 @@
 </span><span id="SSCAnalysisResults-71"><a href="#SSCAnalysisResults-71"><span class="linenos">71</span></a><span class="sd">        A function that takes a dictionary of parameter - value pairs and returns</span>
 </span><span id="SSCAnalysisResults-72"><a href="#SSCAnalysisResults-72"><span class="linenos">72</span></a><span class="sd">        a dictionary with the results (same output as decoder).</span>
 </span><span id="SSCAnalysisResults-73"><a href="#SSCAnalysisResults-73"><span class="linenos">73</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="SSCAnalysisResults-74"><a href="#SSCAnalysisResults-74"><span class="linenos">74</span></a>        <span class="k">def</span> <span class="nf">surrogate_fn</span><span class="p">(</span><span class="n">inputs</span><span class="p">):</span>
-</span><span id="SSCAnalysisResults-75"><a href="#SSCAnalysisResults-75"><span class="linenos">75</span></a>            <span class="k">def</span> <span class="nf">swap</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+</span><span id="SSCAnalysisResults-74"><a href="#SSCAnalysisResults-74"><span class="linenos">74</span></a>        <span class="k">def</span><span class="w"> </span><span class="nf">surrogate_fn</span><span class="p">(</span><span class="n">inputs</span><span class="p">):</span>
+</span><span id="SSCAnalysisResults-75"><a href="#SSCAnalysisResults-75"><span class="linenos">75</span></a>            <span class="k">def</span><span class="w"> </span><span class="nf">swap</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
 </span><span id="SSCAnalysisResults-76"><a href="#SSCAnalysisResults-76"><span class="linenos">76</span></a>                <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">size</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
 </span><span id="SSCAnalysisResults-77"><a href="#SSCAnalysisResults-77"><span class="linenos">77</span></a>                    <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
 </span><span id="SSCAnalysisResults-78"><a href="#SSCAnalysisResults-78"><span class="linenos">78</span></a>                <span class="k">else</span><span class="p">:</span>
@@ -695,7 +695,7 @@ List of input names used during the analysis.</li>
 
     </div>
     <a class="headerlink" href="#SSCAnalysisResults.supported_stats"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="SSCAnalysisResults.supported_stats-51"><a href="#SSCAnalysisResults.supported_stats-51"><span class="linenos">51</span></a>    <span class="k">def</span> <span class="nf">supported_stats</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="SSCAnalysisResults.supported_stats-51"><a href="#SSCAnalysisResults.supported_stats-51"><span class="linenos">51</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">supported_stats</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span id="SSCAnalysisResults.supported_stats-52"><a href="#SSCAnalysisResults.supported_stats-52"><span class="linenos">52</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Types of statistics supported by the describe method.</span>
 </span><span id="SSCAnalysisResults.supported_stats-53"><a href="#SSCAnalysisResults.supported_stats-53"><span class="linenos">53</span></a>
 </span><span id="SSCAnalysisResults.supported_stats-54"><a href="#SSCAnalysisResults.supported_stats-54"><span class="linenos">54</span></a><span class="sd">        Returns</span>
@@ -728,7 +728,7 @@ List of input names used during the analysis.</li>
 
     </div>
     <a class="headerlink" href="#SSCAnalysisResults.surrogate"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="SSCAnalysisResults.surrogate-66"><a href="#SSCAnalysisResults.surrogate-66"><span class="linenos">66</span></a>    <span class="k">def</span> <span class="nf">surrogate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="SSCAnalysisResults.surrogate-66"><a href="#SSCAnalysisResults.surrogate-66"><span class="linenos">66</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">surrogate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span id="SSCAnalysisResults.surrogate-67"><a href="#SSCAnalysisResults.surrogate-67"><span class="linenos">67</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a SSC surrogate model.</span>
 </span><span id="SSCAnalysisResults.surrogate-68"><a href="#SSCAnalysisResults.surrogate-68"><span class="linenos">68</span></a>
 </span><span id="SSCAnalysisResults.surrogate-69"><a href="#SSCAnalysisResults.surrogate-69"><span class="linenos">69</span></a><span class="sd">        Returns</span>
@@ -736,8 +736,8 @@ List of input names used during the analysis.</li>
 </span><span id="SSCAnalysisResults.surrogate-71"><a href="#SSCAnalysisResults.surrogate-71"><span class="linenos">71</span></a><span class="sd">        A function that takes a dictionary of parameter - value pairs and returns</span>
 </span><span id="SSCAnalysisResults.surrogate-72"><a href="#SSCAnalysisResults.surrogate-72"><span class="linenos">72</span></a><span class="sd">        a dictionary with the results (same output as decoder).</span>
 </span><span id="SSCAnalysisResults.surrogate-73"><a href="#SSCAnalysisResults.surrogate-73"><span class="linenos">73</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="SSCAnalysisResults.surrogate-74"><a href="#SSCAnalysisResults.surrogate-74"><span class="linenos">74</span></a>        <span class="k">def</span> <span class="nf">surrogate_fn</span><span class="p">(</span><span class="n">inputs</span><span class="p">):</span>
-</span><span id="SSCAnalysisResults.surrogate-75"><a href="#SSCAnalysisResults.surrogate-75"><span class="linenos">75</span></a>            <span class="k">def</span> <span class="nf">swap</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+</span><span id="SSCAnalysisResults.surrogate-74"><a href="#SSCAnalysisResults.surrogate-74"><span class="linenos">74</span></a>        <span class="k">def</span><span class="w"> </span><span class="nf">surrogate_fn</span><span class="p">(</span><span class="n">inputs</span><span class="p">):</span>
+</span><span id="SSCAnalysisResults.surrogate-75"><a href="#SSCAnalysisResults.surrogate-75"><span class="linenos">75</span></a>            <span class="k">def</span><span class="w"> </span><span class="nf">swap</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
 </span><span id="SSCAnalysisResults.surrogate-76"><a href="#SSCAnalysisResults.surrogate-76"><span class="linenos">76</span></a>                <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">size</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
 </span><span id="SSCAnalysisResults.surrogate-77"><a href="#SSCAnalysisResults.surrogate-77"><span class="linenos">77</span></a>                    <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
 </span><span id="SSCAnalysisResults.surrogate-78"><a href="#SSCAnalysisResults.surrogate-78"><span class="linenos">78</span></a>                <span class="k">else</span><span class="p">:</span>
@@ -795,12 +795,12 @@ List of input names used during the analysis.</li>
 
     </div>
     <a class="headerlink" href="#SSCAnalysis"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="SSCAnalysis-86"><a href="#SSCAnalysis-86"><span class="linenos"> 86</span></a><span class="k">class</span> <span class="nc">SSCAnalysis</span><span class="p">(</span><span class="n">BaseAnalysisElement</span><span class="p">):</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="SSCAnalysis-86"><a href="#SSCAnalysis-86"><span class="linenos"> 86</span></a><span class="k">class</span><span class="w"> </span><span class="nc">SSCAnalysis</span><span class="p">(</span><span class="n">BaseAnalysisElement</span><span class="p">):</span>
 </span><span id="SSCAnalysis-87"><a href="#SSCAnalysis-87"><span class="linenos"> 87</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="SSCAnalysis-88"><a href="#SSCAnalysis-88"><span class="linenos"> 88</span></a><span class="sd">    SSc analysis class.</span>
 </span><span id="SSCAnalysis-89"><a href="#SSCAnalysis-89"><span class="linenos"> 89</span></a><span class="sd">    &quot;&quot;&quot;</span>
 </span><span id="SSCAnalysis-90"><a href="#SSCAnalysis-90"><span class="linenos"> 90</span></a>
-</span><span id="SSCAnalysis-91"><a href="#SSCAnalysis-91"><span class="linenos"> 91</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sampler</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">qoi_cols</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+</span><span id="SSCAnalysis-91"><a href="#SSCAnalysis-91"><span class="linenos"> 91</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sampler</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">qoi_cols</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 </span><span id="SSCAnalysis-92"><a href="#SSCAnalysis-92"><span class="linenos"> 92</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="SSCAnalysis-93"><a href="#SSCAnalysis-93"><span class="linenos"> 93</span></a><span class="sd">        Parameters</span>
 </span><span id="SSCAnalysis-94"><a href="#SSCAnalysis-94"><span class="linenos"> 94</span></a><span class="sd">        ----------</span>
@@ -823,15 +823,15 @@ List of input names used during the analysis.</li>
 </span><span id="SSCAnalysis-111"><a href="#SSCAnalysis-111"><span class="linenos">111</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">output_type</span> <span class="o">=</span> <span class="n">OutputType</span><span class="o">.</span><span class="n">SUMMARY</span>
 </span><span id="SSCAnalysis-112"><a href="#SSCAnalysis-112"><span class="linenos">112</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">sampler</span> <span class="o">=</span> <span class="n">sampler</span>
 </span><span id="SSCAnalysis-113"><a href="#SSCAnalysis-113"><span class="linenos">113</span></a>
-</span><span id="SSCAnalysis-114"><a href="#SSCAnalysis-114"><span class="linenos">114</span></a>    <span class="k">def</span> <span class="nf">element_name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="SSCAnalysis-114"><a href="#SSCAnalysis-114"><span class="linenos">114</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">element_name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span id="SSCAnalysis-115"><a href="#SSCAnalysis-115"><span class="linenos">115</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Name for this element for logging purposes&quot;&quot;&quot;</span>
 </span><span id="SSCAnalysis-116"><a href="#SSCAnalysis-116"><span class="linenos">116</span></a>        <span class="k">return</span> <span class="s2">&quot;SSC_Analysis&quot;</span>
 </span><span id="SSCAnalysis-117"><a href="#SSCAnalysis-117"><span class="linenos">117</span></a>
-</span><span id="SSCAnalysis-118"><a href="#SSCAnalysis-118"><span class="linenos">118</span></a>    <span class="k">def</span> <span class="nf">element_version</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="SSCAnalysis-118"><a href="#SSCAnalysis-118"><span class="linenos">118</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">element_version</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span id="SSCAnalysis-119"><a href="#SSCAnalysis-119"><span class="linenos">119</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Version of this element for logging purposes&quot;&quot;&quot;</span>
 </span><span id="SSCAnalysis-120"><a href="#SSCAnalysis-120"><span class="linenos">120</span></a>        <span class="k">return</span> <span class="s2">&quot;0.1&quot;</span>
 </span><span id="SSCAnalysis-121"><a href="#SSCAnalysis-121"><span class="linenos">121</span></a>
-</span><span id="SSCAnalysis-122"><a href="#SSCAnalysis-122"><span class="linenos">122</span></a>    <span class="k">def</span> <span class="nf">save_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+</span><span id="SSCAnalysis-122"><a href="#SSCAnalysis-122"><span class="linenos">122</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">save_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
 </span><span id="SSCAnalysis-123"><a href="#SSCAnalysis-123"><span class="linenos">123</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="SSCAnalysis-124"><a href="#SSCAnalysis-124"><span class="linenos">124</span></a><span class="sd">        Saves the complete state of the analysis object to a pickle file,</span>
 </span><span id="SSCAnalysis-125"><a href="#SSCAnalysis-125"><span class="linenos">125</span></a><span class="sd">        except the sampler object (self.sampler).</span>
@@ -848,7 +848,7 @@ List of input names used during the analysis.</li>
 </span><span id="SSCAnalysis-136"><a href="#SSCAnalysis-136"><span class="linenos">136</span></a>        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fp</span><span class="p">:</span>
 </span><span id="SSCAnalysis-137"><a href="#SSCAnalysis-137"><span class="linenos">137</span></a>            <span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">fp</span><span class="p">)</span>
 </span><span id="SSCAnalysis-138"><a href="#SSCAnalysis-138"><span class="linenos">138</span></a>
-</span><span id="SSCAnalysis-139"><a href="#SSCAnalysis-139"><span class="linenos">139</span></a>    <span class="k">def</span> <span class="nf">load_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+</span><span id="SSCAnalysis-139"><a href="#SSCAnalysis-139"><span class="linenos">139</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">load_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
 </span><span id="SSCAnalysis-140"><a href="#SSCAnalysis-140"><span class="linenos">140</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="SSCAnalysis-141"><a href="#SSCAnalysis-141"><span class="linenos">141</span></a><span class="sd">        Loads the complete state of the analysis object from a</span>
 </span><span id="SSCAnalysis-142"><a href="#SSCAnalysis-142"><span class="linenos">142</span></a><span class="sd">        pickle file, stored using save_state.</span>
@@ -864,7 +864,7 @@ List of input names used during the analysis.</li>
 </span><span id="SSCAnalysis-152"><a href="#SSCAnalysis-152"><span class="linenos">152</span></a>        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">state</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
 </span><span id="SSCAnalysis-153"><a href="#SSCAnalysis-153"><span class="linenos">153</span></a>            <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">state</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
 </span><span id="SSCAnalysis-154"><a href="#SSCAnalysis-154"><span class="linenos">154</span></a>
-</span><span id="SSCAnalysis-155"><a href="#SSCAnalysis-155"><span class="linenos">155</span></a>    <span class="k">def</span> <span class="nf">analyse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_frame</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">compute_moments</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">n_mc</span><span class="o">=</span><span class="mi">20000</span><span class="p">):</span>
+</span><span id="SSCAnalysis-155"><a href="#SSCAnalysis-155"><span class="linenos">155</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">analyse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_frame</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">compute_moments</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">n_mc</span><span class="o">=</span><span class="mi">20000</span><span class="p">):</span>
 </span><span id="SSCAnalysis-156"><a href="#SSCAnalysis-156"><span class="linenos">156</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="SSCAnalysis-157"><a href="#SSCAnalysis-157"><span class="linenos">157</span></a><span class="sd">        Perform SSC analysis on input `data_frame`.</span>
 </span><span id="SSCAnalysis-158"><a href="#SSCAnalysis-158"><span class="linenos">158</span></a>
@@ -910,7 +910,7 @@ List of input names used during the analysis.</li>
 </span><span id="SSCAnalysis-198"><a href="#SSCAnalysis-198"><span class="linenos">198</span></a>        <span class="n">results</span><span class="o">.</span><span class="n">surrogate_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">surrogate</span>
 </span><span id="SSCAnalysis-199"><a href="#SSCAnalysis-199"><span class="linenos">199</span></a>        <span class="k">return</span> <span class="n">results</span>
 </span><span id="SSCAnalysis-200"><a href="#SSCAnalysis-200"><span class="linenos">200</span></a>
-</span><span id="SSCAnalysis-201"><a href="#SSCAnalysis-201"><span class="linenos">201</span></a>    <span class="k">def</span> <span class="nf">load_samples</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_frame</span><span class="p">):</span>
+</span><span id="SSCAnalysis-201"><a href="#SSCAnalysis-201"><span class="linenos">201</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">load_samples</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_frame</span><span class="p">):</span>
 </span><span id="SSCAnalysis-202"><a href="#SSCAnalysis-202"><span class="linenos">202</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="SSCAnalysis-203"><a href="#SSCAnalysis-203"><span class="linenos">203</span></a><span class="sd">        Extract output values for each quantity of interest from Dataframe.</span>
 </span><span id="SSCAnalysis-204"><a href="#SSCAnalysis-204"><span class="linenos">204</span></a>
@@ -935,7 +935,7 @@ List of input names used during the analysis.</li>
 </span><span id="SSCAnalysis-223"><a href="#SSCAnalysis-223"><span class="linenos">223</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">samples</span> <span class="o">=</span> <span class="n">samples</span>
 </span><span id="SSCAnalysis-224"><a href="#SSCAnalysis-224"><span class="linenos">224</span></a>        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;done&#39;</span><span class="p">)</span>
 </span><span id="SSCAnalysis-225"><a href="#SSCAnalysis-225"><span class="linenos">225</span></a>
-</span><span id="SSCAnalysis-226"><a href="#SSCAnalysis-226"><span class="linenos">226</span></a>    <span class="k">def</span> <span class="nf">get_moments</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">qoi</span><span class="p">,</span> <span class="n">n_mc</span><span class="p">):</span>
+</span><span id="SSCAnalysis-226"><a href="#SSCAnalysis-226"><span class="linenos">226</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_moments</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">qoi</span><span class="p">,</span> <span class="n">n_mc</span><span class="p">):</span>
 </span><span id="SSCAnalysis-227"><a href="#SSCAnalysis-227"><span class="linenos">227</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="SSCAnalysis-228"><a href="#SSCAnalysis-228"><span class="linenos">228</span></a><span class="sd">        Compute the mean and variance through Monte Carlo sampling of the SSC</span>
 </span><span id="SSCAnalysis-229"><a href="#SSCAnalysis-229"><span class="linenos">229</span></a><span class="sd">        surrogate. Independent random inputs samples are drawn though the</span>
@@ -964,7 +964,7 @@ List of input names used during the analysis.</li>
 </span><span id="SSCAnalysis-252"><a href="#SSCAnalysis-252"><span class="linenos">252</span></a>        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;done.&#39;</span><span class="p">)</span>
 </span><span id="SSCAnalysis-253"><a href="#SSCAnalysis-253"><span class="linenos">253</span></a>        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">mean</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">var</span><span class="p">])</span>
 </span><span id="SSCAnalysis-254"><a href="#SSCAnalysis-254"><span class="linenos">254</span></a>
-</span><span id="SSCAnalysis-255"><a href="#SSCAnalysis-255"><span class="linenos">255</span></a>    <span class="k">def</span> <span class="nf">update_surrogate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">qoi</span><span class="p">,</span> <span class="n">data_frame</span><span class="p">,</span> <span class="n">max_LEC_jobs</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">n_mc_LEC</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+</span><span id="SSCAnalysis-255"><a href="#SSCAnalysis-255"><span class="linenos">255</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">update_surrogate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">qoi</span><span class="p">,</span> <span class="n">data_frame</span><span class="p">,</span> <span class="n">max_LEC_jobs</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">n_mc_LEC</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
 </span><span id="SSCAnalysis-256"><a href="#SSCAnalysis-256"><span class="linenos">256</span></a>                         <span class="n">max_ENO_jobs</span><span class="o">=</span><span class="mi">4</span><span class="p">):</span>
 </span><span id="SSCAnalysis-257"><a href="#SSCAnalysis-257"><span class="linenos">257</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="SSCAnalysis-258"><a href="#SSCAnalysis-258"><span class="linenos">258</span></a><span class="sd">        Update the SSC surrogate given new data. Given an EasyVVUQ dataframe,</span>
@@ -1040,7 +1040,7 @@ List of input names used during the analysis.</li>
 </span><span id="SSCAnalysis-328"><a href="#SSCAnalysis-328"><span class="linenos">328</span></a>        <span class="c1"># compute the simplex probabilities</span>
 </span><span id="SSCAnalysis-329"><a href="#SSCAnalysis-329"><span class="linenos">329</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">prob_j</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sampler</span><span class="o">.</span><span class="n">compute_probability</span><span class="p">()</span>
 </span><span id="SSCAnalysis-330"><a href="#SSCAnalysis-330"><span class="linenos">330</span></a>
-</span><span id="SSCAnalysis-331"><a href="#SSCAnalysis-331"><span class="linenos">331</span></a>    <span class="k">def</span> <span class="nf">adapt_locally</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_new_samples</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+</span><span id="SSCAnalysis-331"><a href="#SSCAnalysis-331"><span class="linenos">331</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">adapt_locally</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_new_samples</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
 </span><span id="SSCAnalysis-332"><a href="#SSCAnalysis-332"><span class="linenos">332</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="SSCAnalysis-333"><a href="#SSCAnalysis-333"><span class="linenos">333</span></a><span class="sd">        Locally refine the sampling plan based on the SSC geometric</span>
 </span><span id="SSCAnalysis-334"><a href="#SSCAnalysis-334"><span class="linenos">334</span></a><span class="sd">        refinement measure.</span>
@@ -1104,7 +1104,7 @@ List of input names used during the analysis.</li>
 </span><span id="SSCAnalysis-392"><a href="#SSCAnalysis-392"><span class="linenos">392</span></a>
 </span><span id="SSCAnalysis-393"><a href="#SSCAnalysis-393"><span class="linenos">393</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">sampler</span><span class="o">.</span><span class="n">update_Delaunay</span><span class="p">(</span><span class="n">xi_k_jref</span><span class="p">)</span>
 </span><span id="SSCAnalysis-394"><a href="#SSCAnalysis-394"><span class="linenos">394</span></a>
-</span><span id="SSCAnalysis-395"><a href="#SSCAnalysis-395"><span class="linenos">395</span></a>    <span class="k">def</span> <span class="nf">surrogate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">qoi</span><span class="p">,</span> <span class="n">xi</span><span class="p">):</span>
+</span><span id="SSCAnalysis-395"><a href="#SSCAnalysis-395"><span class="linenos">395</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">surrogate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">qoi</span><span class="p">,</span> <span class="n">xi</span><span class="p">):</span>
 </span><span id="SSCAnalysis-396"><a href="#SSCAnalysis-396"><span class="linenos">396</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="SSCAnalysis-397"><a href="#SSCAnalysis-397"><span class="linenos">397</span></a><span class="sd">        Evaluate the SSC surrogate at xi.</span>
 </span><span id="SSCAnalysis-398"><a href="#SSCAnalysis-398"><span class="linenos">398</span></a>
@@ -1129,7 +1129,7 @@ List of input names used during the analysis.</li>
 </span><span id="SSCAnalysis-417"><a href="#SSCAnalysis-417"><span class="linenos">417</span></a>        <span class="n">surr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sampler</span><span class="o">.</span><span class="n">surrogate</span><span class="p">(</span><span class="n">xi</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">S_j</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">p_j</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">samples</span><span class="p">[</span><span class="n">qoi</span><span class="p">])</span>
 </span><span id="SSCAnalysis-418"><a href="#SSCAnalysis-418"><span class="linenos">418</span></a>        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">surr</span><span class="p">])</span>
 </span><span id="SSCAnalysis-419"><a href="#SSCAnalysis-419"><span class="linenos">419</span></a>
-</span><span id="SSCAnalysis-420"><a href="#SSCAnalysis-420"><span class="linenos">420</span></a>    <span class="k">def</span> <span class="nf">get_sample_array</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">qoi</span><span class="p">):</span>
+</span><span id="SSCAnalysis-420"><a href="#SSCAnalysis-420"><span class="linenos">420</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_sample_array</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">qoi</span><span class="p">):</span>
 </span><span id="SSCAnalysis-421"><a href="#SSCAnalysis-421"><span class="linenos">421</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="SSCAnalysis-422"><a href="#SSCAnalysis-422"><span class="linenos">422</span></a><span class="sd">        Parameters</span>
 </span><span id="SSCAnalysis-423"><a href="#SSCAnalysis-423"><span class="linenos">423</span></a><span class="sd">        ----------</span>
@@ -1143,7 +1143,7 @@ List of input names used during the analysis.</li>
 </span><span id="SSCAnalysis-431"><a href="#SSCAnalysis-431"><span class="linenos">431</span></a>
 </span><span id="SSCAnalysis-432"><a href="#SSCAnalysis-432"><span class="linenos">432</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">samples</span><span class="p">[</span><span class="n">qoi</span><span class="p">]</span>
 </span><span id="SSCAnalysis-433"><a href="#SSCAnalysis-433"><span class="linenos">433</span></a>
-</span><span id="SSCAnalysis-434"><a href="#SSCAnalysis-434"><span class="linenos">434</span></a>    <span class="k">def</span> <span class="nf">plot_grid</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="SSCAnalysis-434"><a href="#SSCAnalysis-434"><span class="linenos">434</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">plot_grid</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span id="SSCAnalysis-435"><a href="#SSCAnalysis-435"><span class="linenos">435</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="SSCAnalysis-436"><a href="#SSCAnalysis-436"><span class="linenos">436</span></a><span class="sd">        Plot the 1D or 2D sampling plan and color code the simplices according</span>
 </span><span id="SSCAnalysis-437"><a href="#SSCAnalysis-437"><span class="linenos">437</span></a><span class="sd">        to their polynomial order.</span>
@@ -1216,7 +1216,7 @@ List of input names used during the analysis.</li>
 
     </div>
     <a class="headerlink" href="#SSCAnalysis.__init__"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="SSCAnalysis.__init__-91"><a href="#SSCAnalysis.__init__-91"><span class="linenos"> 91</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sampler</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">qoi_cols</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="SSCAnalysis.__init__-91"><a href="#SSCAnalysis.__init__-91"><span class="linenos"> 91</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sampler</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">qoi_cols</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 </span><span id="SSCAnalysis.__init__-92"><a href="#SSCAnalysis.__init__-92"><span class="linenos"> 92</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="SSCAnalysis.__init__-93"><a href="#SSCAnalysis.__init__-93"><span class="linenos"> 93</span></a><span class="sd">        Parameters</span>
 </span><span id="SSCAnalysis.__init__-94"><a href="#SSCAnalysis.__init__-94"><span class="linenos"> 94</span></a><span class="sd">        ----------</span>
@@ -1298,7 +1298,7 @@ performed).</li>
 
     </div>
     <a class="headerlink" href="#SSCAnalysis.element_name"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="SSCAnalysis.element_name-114"><a href="#SSCAnalysis.element_name-114"><span class="linenos">114</span></a>    <span class="k">def</span> <span class="nf">element_name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="SSCAnalysis.element_name-114"><a href="#SSCAnalysis.element_name-114"><span class="linenos">114</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">element_name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span id="SSCAnalysis.element_name-115"><a href="#SSCAnalysis.element_name-115"><span class="linenos">115</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Name for this element for logging purposes&quot;&quot;&quot;</span>
 </span><span id="SSCAnalysis.element_name-116"><a href="#SSCAnalysis.element_name-116"><span class="linenos">116</span></a>        <span class="k">return</span> <span class="s2">&quot;SSC_Analysis&quot;</span>
 </span></pre></div>
@@ -1320,7 +1320,7 @@ performed).</li>
 
     </div>
     <a class="headerlink" href="#SSCAnalysis.element_version"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="SSCAnalysis.element_version-118"><a href="#SSCAnalysis.element_version-118"><span class="linenos">118</span></a>    <span class="k">def</span> <span class="nf">element_version</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="SSCAnalysis.element_version-118"><a href="#SSCAnalysis.element_version-118"><span class="linenos">118</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">element_version</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span id="SSCAnalysis.element_version-119"><a href="#SSCAnalysis.element_version-119"><span class="linenos">119</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Version of this element for logging purposes&quot;&quot;&quot;</span>
 </span><span id="SSCAnalysis.element_version-120"><a href="#SSCAnalysis.element_version-120"><span class="linenos">120</span></a>        <span class="k">return</span> <span class="s2">&quot;0.1&quot;</span>
 </span></pre></div>
@@ -1342,7 +1342,7 @@ performed).</li>
 
     </div>
     <a class="headerlink" href="#SSCAnalysis.save_state"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="SSCAnalysis.save_state-122"><a href="#SSCAnalysis.save_state-122"><span class="linenos">122</span></a>    <span class="k">def</span> <span class="nf">save_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="SSCAnalysis.save_state-122"><a href="#SSCAnalysis.save_state-122"><span class="linenos">122</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">save_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
 </span><span id="SSCAnalysis.save_state-123"><a href="#SSCAnalysis.save_state-123"><span class="linenos">123</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="SSCAnalysis.save_state-124"><a href="#SSCAnalysis.save_state-124"><span class="linenos">124</span></a><span class="sd">        Saves the complete state of the analysis object to a pickle file,</span>
 </span><span id="SSCAnalysis.save_state-125"><a href="#SSCAnalysis.save_state-125"><span class="linenos">125</span></a><span class="sd">        except the sampler object (self.sampler).</span>
@@ -1385,7 +1385,7 @@ name to the file to write the state to</li>
 
     </div>
     <a class="headerlink" href="#SSCAnalysis.load_state"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="SSCAnalysis.load_state-139"><a href="#SSCAnalysis.load_state-139"><span class="linenos">139</span></a>    <span class="k">def</span> <span class="nf">load_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="SSCAnalysis.load_state-139"><a href="#SSCAnalysis.load_state-139"><span class="linenos">139</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">load_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
 </span><span id="SSCAnalysis.load_state-140"><a href="#SSCAnalysis.load_state-140"><span class="linenos">140</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="SSCAnalysis.load_state-141"><a href="#SSCAnalysis.load_state-141"><span class="linenos">141</span></a><span class="sd">        Loads the complete state of the analysis object from a</span>
 </span><span id="SSCAnalysis.load_state-142"><a href="#SSCAnalysis.load_state-142"><span class="linenos">142</span></a><span class="sd">        pickle file, stored using save_state.</span>
@@ -1427,7 +1427,7 @@ name of the file to load</li>
 
     </div>
     <a class="headerlink" href="#SSCAnalysis.analyse"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="SSCAnalysis.analyse-155"><a href="#SSCAnalysis.analyse-155"><span class="linenos">155</span></a>    <span class="k">def</span> <span class="nf">analyse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_frame</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">compute_moments</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">n_mc</span><span class="o">=</span><span class="mi">20000</span><span class="p">):</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="SSCAnalysis.analyse-155"><a href="#SSCAnalysis.analyse-155"><span class="linenos">155</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">analyse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_frame</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">compute_moments</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">n_mc</span><span class="o">=</span><span class="mi">20000</span><span class="p">):</span>
 </span><span id="SSCAnalysis.analyse-156"><a href="#SSCAnalysis.analyse-156"><span class="linenos">156</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="SSCAnalysis.analyse-157"><a href="#SSCAnalysis.analyse-157"><span class="linenos">157</span></a><span class="sd">        Perform SSC analysis on input `data_frame`.</span>
 </span><span id="SSCAnalysis.analyse-158"><a href="#SSCAnalysis.analyse-158"><span class="linenos">158</span></a>
@@ -1507,7 +1507,7 @@ A dictionary containing the statistical moments.</li>
 
     </div>
     <a class="headerlink" href="#SSCAnalysis.load_samples"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="SSCAnalysis.load_samples-201"><a href="#SSCAnalysis.load_samples-201"><span class="linenos">201</span></a>    <span class="k">def</span> <span class="nf">load_samples</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_frame</span><span class="p">):</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="SSCAnalysis.load_samples-201"><a href="#SSCAnalysis.load_samples-201"><span class="linenos">201</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">load_samples</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_frame</span><span class="p">):</span>
 </span><span id="SSCAnalysis.load_samples-202"><a href="#SSCAnalysis.load_samples-202"><span class="linenos">202</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="SSCAnalysis.load_samples-203"><a href="#SSCAnalysis.load_samples-203"><span class="linenos">203</span></a><span class="sd">        Extract output values for each quantity of interest from Dataframe.</span>
 </span><span id="SSCAnalysis.load_samples-204"><a href="#SSCAnalysis.load_samples-204"><span class="linenos">204</span></a>
@@ -1563,7 +1563,7 @@ The code samples from the EasyVVUQ data frame.</li>
 
     </div>
     <a class="headerlink" href="#SSCAnalysis.get_moments"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="SSCAnalysis.get_moments-226"><a href="#SSCAnalysis.get_moments-226"><span class="linenos">226</span></a>    <span class="k">def</span> <span class="nf">get_moments</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">qoi</span><span class="p">,</span> <span class="n">n_mc</span><span class="p">):</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="SSCAnalysis.get_moments-226"><a href="#SSCAnalysis.get_moments-226"><span class="linenos">226</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_moments</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">qoi</span><span class="p">,</span> <span class="n">n_mc</span><span class="p">):</span>
 </span><span id="SSCAnalysis.get_moments-227"><a href="#SSCAnalysis.get_moments-227"><span class="linenos">227</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="SSCAnalysis.get_moments-228"><a href="#SSCAnalysis.get_moments-228"><span class="linenos">228</span></a><span class="sd">        Compute the mean and variance through Monte Carlo sampling of the SSC</span>
 </span><span id="SSCAnalysis.get_moments-229"><a href="#SSCAnalysis.get_moments-229"><span class="linenos">229</span></a><span class="sd">        surrogate. Independent random inputs samples are drawn though the</span>
@@ -1630,7 +1630,7 @@ The variance of qoi.</li>
 
     </div>
     <a class="headerlink" href="#SSCAnalysis.update_surrogate"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="SSCAnalysis.update_surrogate-255"><a href="#SSCAnalysis.update_surrogate-255"><span class="linenos">255</span></a>    <span class="k">def</span> <span class="nf">update_surrogate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">qoi</span><span class="p">,</span> <span class="n">data_frame</span><span class="p">,</span> <span class="n">max_LEC_jobs</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">n_mc_LEC</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="SSCAnalysis.update_surrogate-255"><a href="#SSCAnalysis.update_surrogate-255"><span class="linenos">255</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">update_surrogate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">qoi</span><span class="p">,</span> <span class="n">data_frame</span><span class="p">,</span> <span class="n">max_LEC_jobs</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">n_mc_LEC</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
 </span><span id="SSCAnalysis.update_surrogate-256"><a href="#SSCAnalysis.update_surrogate-256"><span class="linenos">256</span></a>                         <span class="n">max_ENO_jobs</span><span class="o">=</span><span class="mi">4</span><span class="p">):</span>
 </span><span id="SSCAnalysis.update_surrogate-257"><a href="#SSCAnalysis.update_surrogate-257"><span class="linenos">257</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="SSCAnalysis.update_surrogate-258"><a href="#SSCAnalysis.update_surrogate-258"><span class="linenos">258</span></a><span class="sd">        Update the SSC surrogate given new data. Given an EasyVVUQ dataframe,</span>
@@ -1750,7 +1750,7 @@ The number of ENO stencils to compute in parallel. The default is 4.</li>
 
     </div>
     <a class="headerlink" href="#SSCAnalysis.adapt_locally"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="SSCAnalysis.adapt_locally-331"><a href="#SSCAnalysis.adapt_locally-331"><span class="linenos">331</span></a>    <span class="k">def</span> <span class="nf">adapt_locally</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_new_samples</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="SSCAnalysis.adapt_locally-331"><a href="#SSCAnalysis.adapt_locally-331"><span class="linenos">331</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">adapt_locally</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_new_samples</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
 </span><span id="SSCAnalysis.adapt_locally-332"><a href="#SSCAnalysis.adapt_locally-332"><span class="linenos">332</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="SSCAnalysis.adapt_locally-333"><a href="#SSCAnalysis.adapt_locally-333"><span class="linenos">333</span></a><span class="sd">        Locally refine the sampling plan based on the SSC geometric</span>
 </span><span id="SSCAnalysis.adapt_locally-334"><a href="#SSCAnalysis.adapt_locally-334"><span class="linenos">334</span></a><span class="sd">        refinement measure.</span>
@@ -1847,7 +1847,7 @@ The number of new code evaulations to perform. The default is 1.</li>
 
     </div>
     <a class="headerlink" href="#SSCAnalysis.surrogate"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="SSCAnalysis.surrogate-395"><a href="#SSCAnalysis.surrogate-395"><span class="linenos">395</span></a>    <span class="k">def</span> <span class="nf">surrogate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">qoi</span><span class="p">,</span> <span class="n">xi</span><span class="p">):</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="SSCAnalysis.surrogate-395"><a href="#SSCAnalysis.surrogate-395"><span class="linenos">395</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">surrogate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">qoi</span><span class="p">,</span> <span class="n">xi</span><span class="p">):</span>
 </span><span id="SSCAnalysis.surrogate-396"><a href="#SSCAnalysis.surrogate-396"><span class="linenos">396</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="SSCAnalysis.surrogate-397"><a href="#SSCAnalysis.surrogate-397"><span class="linenos">397</span></a><span class="sd">        Evaluate the SSC surrogate at xi.</span>
 </span><span id="SSCAnalysis.surrogate-398"><a href="#SSCAnalysis.surrogate-398"><span class="linenos">398</span></a>
@@ -1906,7 +1906,7 @@ surrogate.</li>
 
     </div>
     <a class="headerlink" href="#SSCAnalysis.get_sample_array"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="SSCAnalysis.get_sample_array-420"><a href="#SSCAnalysis.get_sample_array-420"><span class="linenos">420</span></a>    <span class="k">def</span> <span class="nf">get_sample_array</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">qoi</span><span class="p">):</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="SSCAnalysis.get_sample_array-420"><a href="#SSCAnalysis.get_sample_array-420"><span class="linenos">420</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_sample_array</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">qoi</span><span class="p">):</span>
 </span><span id="SSCAnalysis.get_sample_array-421"><a href="#SSCAnalysis.get_sample_array-421"><span class="linenos">421</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="SSCAnalysis.get_sample_array-422"><a href="#SSCAnalysis.get_sample_array-422"><span class="linenos">422</span></a><span class="sd">        Parameters</span>
 </span><span id="SSCAnalysis.get_sample_array-423"><a href="#SSCAnalysis.get_sample_array-423"><span class="linenos">423</span></a><span class="sd">        ----------</span>
@@ -1949,7 +1949,7 @@ name of quantity of interest</li>
 
     </div>
     <a class="headerlink" href="#SSCAnalysis.plot_grid"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="SSCAnalysis.plot_grid-434"><a href="#SSCAnalysis.plot_grid-434"><span class="linenos">434</span></a>    <span class="k">def</span> <span class="nf">plot_grid</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="SSCAnalysis.plot_grid-434"><a href="#SSCAnalysis.plot_grid-434"><span class="linenos">434</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">plot_grid</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span id="SSCAnalysis.plot_grid-435"><a href="#SSCAnalysis.plot_grid-435"><span class="linenos">435</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="SSCAnalysis.plot_grid-436"><a href="#SSCAnalysis.plot_grid-436"><span class="linenos">436</span></a><span class="sd">        Plot the 1D or 2D sampling plan and color code the simplices according</span>
 </span><span id="SSCAnalysis.plot_grid-437"><a href="#SSCAnalysis.plot_grid-437"><span class="linenos">437</span></a><span class="sd">        to their polynomial order.</span>
