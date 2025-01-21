@@ -79,22 +79,59 @@ To upgrade the library use:
 pip install easyvvuq --upgrade
 ```
 
-### Manual installation from repository
-
-Alternatively, you can manually install EasyVVUQ.
-First clone the repository to your computer:
-```
-git clone https://github.com/UCL-CCS/EasyVVUQ.git
-```
+### Manual installation from repository - recommended for developers
 
 Note: As above, you need to be sure you are installing for Python 3 - if necessary replace `pip` with `pip3` and `python` with `python3` in the commands below.
 
-We are trying to keep dependencies at a minimum but a few are inevitable, to install these, install the EasyVVUQ library itself and build a test case use:
-```
-cd EasyVVUQ/
 
-bash install_EasyVVUQ.sh
-```
+**Steps:**
+
+1.  **Clone the repository:**
+    ```
+    git clone https://github.com/UCL-CCS/EasyVVUQ.git
+    ```
+
+2.  **Create and activate a virtual environment:**
+   
+    Using a virtual environment isolates EasyVVUQ's dependencies and prevents conflicts with other Python projects.
+
+    ```
+    python3 -m venv venv        # Create a virtual environment named 'venv'
+    source venv/bin/activate   # Activate the virtual environment (Linux/macOS)
+    venv\Scripts\activate      # Activate the virtual environment (Windows)
+    ```
+
+    *   The first command creates a directory named `venv` containing the virtual environment. You can use an alternative, more descriptive name. 
+    *   The second command activates the environment. Your terminal prompt will change to indicate the active environment (e.g., `(venv) $`).
+    *   To use EasyVVUQ again in the future, you will need to reactivate the virtual environment using the command above. 
+
+3.  **Navigate to the EasyVVUQ directory:**
+
+    ```
+    cd EasyVVUQ
+    ```
+
+4.  **Install EasyVVUQ in editable mode in the virtual environment:**
+
+    ```
+    pip install -e .
+    ```
+    The `-e` flag (editable mode) means any changes you make to the EasyVVUQ source code will be immediately reflected without needing to reinstall.
+
+    To see easyvvuq in the list of the installed modules in the virtual environment
+    ```
+    pip show
+    ```
+5. **Verification:**
+
+    After installation, verify it by opening a Python interpreter within the activated virtual environment:
+    
+    ```
+    python
+    >>> import easyvvuq
+    >>> print(easyvvuq.__version__)  # Check the installed version
+    >>> exit()
+    ```
 
 ## API
 
