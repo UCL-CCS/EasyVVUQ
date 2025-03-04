@@ -34,3 +34,6 @@ jobs:
         output-file-path: output.json
         github-token: ${{ secrets.GITHUB_TOKEN }}
         auto-push: true
+        benchmark-branch: benchmark-data
+        benchmark-data-dir: .benchmarks
+
