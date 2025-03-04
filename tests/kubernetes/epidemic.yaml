@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: epidemic
+spec:
+  restartPolicy: Never
+  containers:
+  - name: epidemic
+    image: orbitfold/easyvvuq:latest
+    command: ["/bin/sh", "-c"]
+    args: ["python3 /EasyVVUQ/docs/epidemic/epidemic.py /config/epidemic_in.json out.csv && cat out.csv"]

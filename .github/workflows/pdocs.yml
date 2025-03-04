@@ -1,0 +1,39 @@
+# This workflows will upload a Python Package using Twine when a release is created
+# For more information see: https://help.github.com/en/actions/language-and-framework-guides/using-python-with-github-actions#publishing-to-package-registries
+
+name: Build API docs
+
+on:
+  push:
+    branches: [dev]
+
+jobs:
+  deploy:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.x'
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        python -m pip install setuptools
+        python -m pip install --editable .[docs]
+        cd tests/cannonsim/src; make; cd ../../.. 
+        pip install pdoc
+    - name: Checkout
+      uses: actions/checkout@v3
+    - name: Build
+      run: |
+        export PDOC_ALLOW_EXEC=1
+        pdoc -d numpy -o ./pdocs easyvvuq
+    - name: Publish generated content to GitHub Pages
+      uses: JamesIves/github-pages-deploy-action@4.1.2
+      with:
+        folder: pdocs
+        branch: gh-pages
+        token: ${{ secrets.PERSONAL_GITHUB_TOKEN }}

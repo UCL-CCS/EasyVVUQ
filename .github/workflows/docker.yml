@@ -1,0 +1,20 @@
+name: Push to Docker Hub
+on:
+  push:
+    branches: [ dev ]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Copy Dockerfile
+      run: |
+        cp tutorials/kubernetes/Dockerfile .
+    - uses: mr-smithers-excellent/docker-build-push@v3.3
+      name: Docker Build & Push
+      with:
+        image: orbitfold/easyvvuq
+        tag: latest
+        registry: docker.io
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}

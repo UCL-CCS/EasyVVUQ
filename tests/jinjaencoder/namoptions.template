@@ -1,0 +1,115 @@
+&RUN
+iexpnr     =  001
+lwarmstart =  .false.
+startfile  =  'initd001h00mx000y000.001'
+runtime    =  3600
+trestart   =  -1
+ladaptive  =  .true.
+irandom    =  {{seed | int}}
+randthl    =  0.1
+randqt     =  2.5e-5
+nsv        =  2
+nprocx     = {{nprocx | int}}
+nprocy     = {{nprocy | int}}
+/
+
+&DOMAIN
+itot       =  {{Nh | int}}
+jtot       =  {{Nh | int}}
+kmax       =  126
+
+
+xsize      =  {{extent}}
+ysize      =  {{extent}}
+
+xlat       =  18.0
+xlon       =  298.5
+xday       =  0.0
+xtime      =  0.0
+/
+
+&PHYSICS
+z0         =  {{z0}}
+ustin      =  0.32
+ps         =  101540.00
+thls       =  298.5
+
+
+lmoist     =  .true.
+isurf      =  2
+irad       =  0
+timerad    =  2
+lcoriol    =  .true.
+lmomsubs   =  .false.
+/
+&NAMSURFACE
+thls  =  298.5
+z0mav =  1.6e-4
+z0hav =  3.2e-5
+/
+
+
+&DYNAMICS
+llsadv     =  .false.
+lqlnr      =  .false.
+cu         =  -5.
+cv         =  -4.
+
+iadv_mom   =  2
+iadv_tke   =  2
+iadv_thl   =  2
+iadv_qt    =  2
+iadv_sv    =  7
+/
+&NAMMICROPHYSICS
+imicro     = 2
+Nc_0       = {{Nc_0}}
+l_sb       = {{'.true.' if l_sb else '.false.'}}
+/
+&NAMSUBGRID
+cf = {{cf}}
+Prandtl = {{Prandtl}}
+/
+
+&NAMBULKMICROSTAT
+lmicrostat = .true.
+timeav     = 21600
+dtav       = 60
+/
+&NAMCHECKSIM
+tcheck     = 0
+/
+&NAMSAMPLING
+lsampcl    = .true.
+lsampco    = .true.
+dtav       = 60
+timeav     = 21600
+/
+&NAMTIMESTAT
+ltimestat  = .true.
+dtav       = 60
+/
+&NAMCROSSSECTION
+lcross     = .false.
+dtav       = 60
+/
+&NAMGENSTAT
+lstat      = .true.
+dtav       = 1440
+timeav     = 1440
+/
+
+&NAMFIELDDUMP
+lfielddump = .false.
+dtav       = 60
+ldiracc    = .true.
+/
+&NAMSTATTEND
+dtav       = 60
+timeav     = 21600
+ltend      = .true.
+/
+&NAMCLOUDFIELD
+dtav=1440
+lcloudfield = .false.
+/

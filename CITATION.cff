@@ -1,0 +1,48 @@
+# YAML 1.2
+---
+
+abstract: "EasyVVUQ is an open source Python library designed to facilitate verification, validation and uncertainty quantification (VVUQ) for a wide variety of simulations. The goal of EasyVVUQ is to make it as easy as possible to implement advanced VVUQ techniques for existing application codes or workflows. Our aim is to expose these features in an accessible way for users of scientific software, in particular for simulation codes running on high performance computers."
+
+authors:
+  -
+    affiliation: "Netherlands eScience Center"
+    family-names: Richardson
+    given-names: Robin A.
+    orcid: https://orcid.org/0000-0002-9984-2720
+  -
+    affiliation: "University College London"
+    family-names: Wright
+    given-names: David W.
+    orcid: https://orcid.org/0000-0002-5124-8044
+  -
+    affiliation: "Leibniz Supercomputing Centre"
+    family-names: Jancauskas
+    given-names: Vytautas
+  -
+    affiliation: "Centrum voor Wiskunde en Informatica"
+    family-names: Edeling
+    given-names: Wouter
+  -
+    affiliation: "Max-Planck-Institut für Plasmaphysik"
+    family-names: Lakhlili
+    given-names: Jalal
+
+keywords:
+  - "Validation"
+  - "Verification"
+  - "Uncertainty Quantification"
+  - "VVUQ"
+  - "HPC"
+license: "GNU Lesser General Public License v3.0"
+repository-code: "https://github.com/UCL-CCS/EasyVVUQ"
+message: "If you use this software, please cite it using these metadata."
+title: "EasyVVUQ: A Library for Verification, Validation and Uncertainty Quantification in High Performance Computing"
+version: "0.7.1"
+cff-version: "1.0.3"
+references:
+  - type: article
+    title: "EasyVVUQ: A Library for Verification, Validation and Uncertainty Quantification in High Performance Computing"
+    doi: 10.5334/jors.303
+  - type: article
+    title: "Building Confidence in Simulation: Applications of EasyVVUQ"
+    doi: 10.1002/adts.201900246

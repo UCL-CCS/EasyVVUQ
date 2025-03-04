@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: sir
+spec:
+  restartPolicy: Never
+  containers:
+  - name: sir
+    image: orbitfold/easyvvuq:latest
+    command: ["/bin/sh", "-c"]
+    args: ["/EasyVVUQ/tutorials/sir /config/input.json out.csv && cat output.csv"]

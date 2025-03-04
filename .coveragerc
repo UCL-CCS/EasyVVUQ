@@ -1,0 +1,22 @@
+# .coveragerc to control coverage.py
+[run]
+branch = True
+omit =
+     tests/*
+     easyvvuq/_version.py
+     easyvvuq/utils/db_benchmark.py
+     setup.py
+     versioneer.py
+
+[report]
+# Regexes for lines to exclude from consideration
+exclude_lines =
+
+    # Don't complain if tests don't hit defensive assertion code:
+    raise AssertionError
+    raise NotImplementedError
+
+    # Don't complain if non-runnable code isn't run:
+    if __name__ == "__main__":
+
+ignore_errors = True

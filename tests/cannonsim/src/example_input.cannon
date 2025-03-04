@@ -1,0 +1,8 @@
+CANONSIM_INPUT_FILE:
+gravity = 9.8
+mass = 1.0
+velocity = 10.0
+angle = 1.5
+height = 1.0
+air_resistance = 0.5
+time_step = 0.01
