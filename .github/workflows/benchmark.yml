@@ -32,5 +32,9 @@ jobs:
       with:
         tool: 'pytest'
         output-file-path: output.json
-        github-token: ${{ secrets.PERSONAL_GITHUB_TOKEN }}
+        github-token: ${{ secrets.GITHUB_TOKEN }}
         auto-push: true
+        gh-pages-branch: benchmark-data
+  env:
+    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+

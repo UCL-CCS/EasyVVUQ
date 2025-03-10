@@ -20,6 +20,6 @@ pep.sh
 *.db
 *.csv
 env/
+.venv/
 .ipynb_checkpoints/
 easyvvuq/_version.py
-venv/
