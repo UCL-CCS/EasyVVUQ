@@ -9,7 +9,7 @@ description = "Library to facilitate simple Verification, Validation and Uncerta
 readme = "README.md"
 authors = [{name = "CCS"}]
 #license = {file = "LICENSE"}
-license = "LGPL-3.0"
+license = "LGPL-3.0 AND GPL-3.0"
 #dynamic = ["version"]
 requires-python = ">=3.8"
 dependencies = [
