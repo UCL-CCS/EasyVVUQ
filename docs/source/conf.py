@@ -18,7 +18,7 @@ import sphinx_rtd_theme
 html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
 
 from sphinx.ext.apidoc import main as apidoc_main
-apidoc_main(["--force", "-o", "./_autodoc", "../../easyvvuq"])
+apidoc_main(["--force", "-o", "./_autodoc", "../../src/easyvvuq"])
 
 autodoc_mock_imports = ['dill', 'SALib', 'cerberus', 'chaospy', 'scipy', 'qcg', 'kubernetes', 'dask', 'sqlalchemy', 'numpoly', 'sklearn']
 
