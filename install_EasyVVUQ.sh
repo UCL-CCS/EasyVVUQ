@@ -21,6 +21,7 @@ print_header() {
 # Step 1: Define the directory for the virtual environment
 VENV_DIR="./.venv"
 REQUIREMENTS_FILE="requirements.txt"
+TOML_FILE="pyproject.toml"
 
 print_header "Starting EasyVVUQ Installation"
 
@@ -49,7 +50,16 @@ else
     exit 1
 fi
 
-# Step 6: Test the EasyVVUQ installation
+# Step 6: Install local easyvvuq
+if [ -f "$TOML_FILE" ]; then
+    print_header "Installing local easyvvuq (from src) based on $TOML_FILE"
+    pip install -e .
+else
+    echo -e "${RED}Error:${RESET} $TOML_FILE not found in the EasyVVUQ directory!"
+    exit 1
+fi
+
+# Step 7: Test the EasyVVUQ installation
 print_header "Testing EasyVVUQ Installation"
 python -c "import easyvvuq; print('EasyVVUQ version:', easyvvuq.__version__)"
 
