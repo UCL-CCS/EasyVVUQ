@@ -1,19 +1,17 @@
-import sys
-from .constants import OutputType
-from . import data_structs
-from .params_specification import ParamsSpecification
-from .campaign import Campaign
-from . import actions
-from . import encoders
-from . import decoders
-from .base_element import BaseElement
-from . import sampling
-from . import analysis
-from . import comparison
+"""This module contains implementations of various Actions. Actions in
+EasyVVUQ are responsible for anything that is related to the execution of
+the simulation. That includes: actually executing the simulation, preparing
+the input files, parsing the output files, creating directory structures
+necessary to execute the simulation, cleaning up after, delegating work
+to external execution back-ends such as Dask, etc.
+"""
 
-# First make sure python version is 3.6+
-assert sys.version_info >= (3, 6), (f"Python version must be >= 3.6,"
-                                    f"found {sys.version_info}")
+from .execute_local import ExecuteLocal, ExecutePython, CreateRunDirectory, Encode, Decode, local_execute
+from .execute_local import CleanUp, Actions
+from .execute_qcgpj import QCGPJPool, EasyVVUQBasicTemplate, EasyVVUQParallelTemplate
+from .execute_kubernetes import ExecuteKubernetes
+from .execute_slurm import ExecuteSLURM
+from .action_statuses import ActionPool
 
 __copyright__ = """
 
@@ -36,6 +34,3 @@ __copyright__ = """
 
 """
 __license__ = "LGPL"
-
-from . import _version
-__version__ = _version.get_versions()['version']

@@ -1,17 +1,24 @@
-"""This module contains implementations of various Actions. Actions in
-EasyVVUQ are responsible for anything that is related to the execution of
-the simulation. That includes: actually executing the simulation, preparing
-the input files, parsing the output files, creating directory structures
-necessary to execute the simulation, cleaning up after, delegating work
-to external execution back-ends such as Dask, etc.
-"""
+import sys
+from .constants import OutputType
+from . import data_structs
+from .params_specification import ParamsSpecification
+from .campaign import Campaign
+from . import actions
+from . import encoders
+from . import decoders
+from .base_element import BaseElement
+from . import sampling
+from . import analysis
+from . import comparison
 
-from .execute_local import ExecuteLocal, ExecutePython, CreateRunDirectory, Encode, Decode, local_execute
-from .execute_local import CleanUp, Actions
-from .execute_qcgpj import QCGPJPool, EasyVVUQBasicTemplate, ExecuteQCGPJ
-from .execute_kubernetes import ExecuteKubernetes
-from .execute_slurm import ExecuteSLURM
-from .action_statuses import ActionPool
+from importlib.metadata import version, PackageNotFoundError
+
+try:
+    __version__ = version("easyvvuq")
+except PackageNotFoundError:
+    from setuptools_scm import get_version  # type: ignore[import]
+
+    __version__ = get_version(root="..", relative_to=__file__)
 
 __copyright__ = """
 

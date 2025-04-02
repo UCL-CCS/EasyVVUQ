@@ -266,7 +266,7 @@ class QMCAnalysis(BaseAnalysisElement):
                 samples[k].append(data.values)
         return samples
 
-    def sobol_bootstrap(self, samples, alpha=0.05, n_samples=1000):
+    def sobol_bootstrap_(self, samples, alpha=0.05, n_samples=1000):
         """
         Computes the first order and total order Sobol indices using Saltelli's
         method. To assess the sampling inaccuracy, bootstrap confidence intervals
@@ -342,6 +342,94 @@ class QMCAnalysis(BaseAnalysisElement):
             conf_total_dict[param_name] = {'low': low_total, 'high': high_total}
 
         return sobols_first_dict, conf_first_dict, sobols_total_dict, conf_total_dict
+    
+    def sobol_bootstrap(self, samples, alpha=0.05, n_bootstrap=1000):
+        """
+        Computes the first order and total order Sobol indices using Saltelli's
+        method. To assess the sampling inaccuracy, bootstrap confidence intervals
+        are also computed.
+
+        Reference: A. Saltelli, Making best use of model evaluations to compute
+        sensitivity indices, Computer Physics Communications, 2002.
+
+        Parameters
+        ----------
+        samples : list
+            The samples for a given QoI.
+        alpha: float
+            The (1 - alpha) * 100 confidence interval parameter. The default is 0.05.
+        n_samples: int
+            The number of bootstrap samples. The default is 1000.
+
+        Returns
+        -------
+        sobols_first_dict, conf_first_dict, sobols_total_dict, conf_total_dict:
+        dictionaries containing the first- and total-order Sobol indices for all
+        parameters, and (1-alpha)*100 lower and upper confidence bounds.
+
+        """
+        assert len(samples) > 0
+        assert alpha > 0.0
+        assert alpha < 1.0
+        assert n_bootstrap > 0
+
+        # convert to array
+        samples = np.array(samples)
+        # the number of parameter and the number of MC samples in n_mc * (n_params + 2)
+        # and the size of the QoI
+        n_params = self.sampler.n_params
+        # n_mc = self.sampler.n_mc_samples
+        n_mc = int(samples.shape[0]/(n_params + 2))
+        n_qoi = samples[0].size
+        sobols_first_dict = {}
+        conf_first_dict = {}
+        sobols_total_dict = {}
+        conf_total_dict = {}
+
+        # code evaluations of input matrices M1, M2 and Ni, i = 1,...,n_params
+        # see reference above.
+        f_M2, f_M1, f_Ni = self._separate_output_values(samples, n_params, n_mc)
+        r = np.random.randint(n_mc, size=(n_mc, n_bootstrap))
+
+        for j, param_name in enumerate(self.sampler.vary.get_keys()):
+
+            # our point estimate for the 1st and total order Sobol indices
+            value_first = self._first_order(f_M2, f_M1, f_Ni[:, j])
+            value_total = self._total_order(f_M2, f_M1, f_Ni[:, j])
+
+            # sobols computed from resampled data points
+            if n_mc * n_bootstrap * n_qoi <= 10**7:
+                #this is a vectorized computation, Is fast, but f_M2[r] will be of size
+                #(n_mc, n_bootstrap, n_qoi), this can become too large and cause a crash, 
+                #especially when dealing with large QoI (n_qoi >> 1). So this is only done
+                #when n_mc * n_bootstrap * n_qoi <= 10**7
+                print("Vectorized bootstrapping")
+                sobols_first = self._first_order(f_M2[r], f_M1[r], f_Ni[r, j])
+                sobols_total = self._total_order(f_M2[r], f_M1[r], f_Ni[r, j])
+            else:
+                #array for resampled estimates
+                sobols_first = np.zeros([n_bootstrap, n_qoi])
+                sobols_total = np.zeros([n_bootstrap, n_qoi])
+                print("Sequential bootstrapping")
+                #non-vectorized implementation
+                for i in range(n_bootstrap):
+                    #resampled sample matrices of size (n_mc, n_qoi)
+                    sobols_first[i] = self._first_order(f_M2[r[i]], f_M1[r[i]], f_Ni[r[i], j])
+                    sobols_total[i] = self._total_order(f_M2[r[i]], f_M1[r[i]], f_Ni[r[i], j])
+
+            # compute confidence intervals based on percentiles
+            _, low_first, high_first = confidence_interval(sobols_first, value_first,
+                                                           alpha, pivotal=True)
+            _, low_total, high_total = confidence_interval(sobols_total, value_total,
+                                                           alpha, pivotal=True)
+            # store results
+            sobols_first_dict[param_name] = value_first
+            conf_first_dict[param_name] = {'low': low_first, 'high': high_first}
+            sobols_total_dict[param_name] = value_total
+            conf_total_dict[param_name] = {'low': low_total, 'high': high_total}
+
+        return sobols_first_dict, conf_first_dict, sobols_total_dict, conf_total_dict
+
 
     # Adapted from SALib
     @staticmethod

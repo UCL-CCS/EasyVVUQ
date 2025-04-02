@@ -1,0 +1,40 @@
+2025-03-05 13:01:39,368: 2025-03-05 13:01:39.368245 waiting 300 secs for service start ...
+2025-03-05 13:01:39,381: service started after 0.013592 secs
+2025-03-05 13:01:39,381: manager zmq iface address: tcp://0.0.0.0:7445
+2025-03-05 13:01:39,382: connecting to the PJM @ tcp://0.0.0.0:7445
+2025-03-05 13:01:39,382: connection created
+2025-03-05 13:01:39,382: checking system status
+2025-03-05 13:01:39,383: successfully connected to the instance wouter-XPS-13-7390.1991 @ wouter-XPS-13-7390
+2025-03-05 13:01:39,383: created subscription socket for job status changed @ tcp://127.0.1.1:8301
+2025-03-05 13:01:42,515: waiting for finish of 1 jobs
+2025-03-05 13:01:42,516: all jobs finished
+2025-03-05 13:01:45,549: waiting for finish of 1 jobs
+2025-03-05 13:01:45,550: all jobs finished
+2025-03-05 13:01:48,592: waiting for finish of 1 jobs
+2025-03-05 13:01:48,592: all jobs finished
+2025-03-05 13:01:50,614: waiting for finish of 1 jobs
+2025-03-05 13:01:50,614: all jobs finished
+2025-03-05 13:01:53,645: waiting for finish of 1 jobs
+2025-03-05 13:01:53,646: all jobs finished
+2025-03-05 13:01:56,679: waiting for finish of 1 jobs
+2025-03-05 13:01:56,680: all jobs finished
+2025-03-05 13:01:59,710: waiting for finish of 1 jobs
+2025-03-05 13:01:59,711: all jobs finished
+2025-03-05 13:02:01,729: waiting for finish of 1 jobs
+2025-03-05 13:02:01,729: all jobs finished
+2025-03-05 13:02:04,750: waiting for finish of 1 jobs
+2025-03-05 13:02:04,751: all jobs finished
+2025-03-05 13:02:07,775: waiting for finish of 1 jobs
+2025-03-05 13:02:07,776: all jobs finished
+2025-03-05 13:02:09,788: waiting for finish of 1 jobs
+2025-03-05 13:02:09,789: all jobs finished
+2025-03-05 13:02:12,804: waiting for finish of 1 jobs
+2025-03-05 13:02:12,805: all jobs finished
+2025-03-05 13:02:15,822: waiting for finish of 1 jobs
+2025-03-05 13:02:15,823: all jobs finished
+2025-03-05 13:02:17,830: waiting for finish of 1 jobs
+2025-03-05 13:02:17,831: all jobs finished
+2025-03-05 13:02:20,846: waiting for finish of 1 jobs
+2025-03-05 13:02:20,847: all jobs finished
+2025-03-05 13:02:23,854: waiting for finish of 1 jobs
+2025-03-05 13:02:23,854: all jobs finished
