@@ -5,13 +5,13 @@ ANALYSIS CLASS FOR THE SC SAMPLER
 import numpy as np
 import chaospy as cp
 from itertools import product, chain, combinations
+import warnings
 import pickle
 import copy
 from easyvvuq import OutputType
 from .base import BaseAnalysisElement
 from .results import AnalysisResults
 import logging
-# from scipy.special import comb
 import pandas as pd
 
 __author__ = "Wouter Edeling"
@@ -42,10 +42,12 @@ class SCAnalysisResults(AnalysisResults):
     def _get_sobols_first(self, qoi, input_):
         raw_dict = AnalysisResults._keys_to_tuples(self.raw_data['sobols_first'])
         result = raw_dict[AnalysisResults._to_tuple(qoi)][input_]
-        try:
-            return np.array([float(result)])
-        except TypeError:
-            return np.array(result)
+        return np.array(result)
+        # try:
+        #     # return np.array([float(result)])
+        #     return np.array([result[0]])
+        # except TypeError:
+        #     return np.array(result)
 
     def supported_stats(self):
         """Types of statistics supported by the describe method.
@@ -781,6 +783,7 @@ class SCAnalysis(BaseAnalysisElement):
             order = range(self.N)
 
         l = np.copy(self.l_norm)[:, order]
+
         import matplotlib as mpl
         import matplotlib.pyplot as plt
 
@@ -791,13 +794,13 @@ class SCAnalysis(BaseAnalysisElement):
         M = np.max(l)
         cmap = plt.get_cmap('Purples', M)
         # plot 'heat map' of refinement
-        plt.imshow(l.T, cmap=cmap, aspect='auto')
+        im = plt.imshow(l.T, cmap=cmap, aspect='auto')
         norm = mpl.colors.Normalize(vmin=0, vmax=M - 1)
         sm = plt.cm.ScalarMappable(cmap=cmap, norm=norm)
         sm.set_array([])
-        cb = plt.colorbar(sm)
+        cb = plt.colorbar(im)
         # plot the quad order in the middle of the colorbar intervals
-        p = np.linspace(0, M - 1, M + 1)
+        p = np.linspace(1, M, M+1)
         tick_p = 0.5 * (p[1:] + p[0:-1])
         cb.set_ticks(tick_p)
         cb.set_ticklabels(np.arange(M))
@@ -1014,7 +1017,7 @@ class SCAnalysis(BaseAnalysisElement):
 
         Returns
         -------
-        tuple with mean and variance based on the PCE coefficients
+        mean, variance and generalized pce coefficients
         """
 
         gen_pce_coefs = self.generalized_pce_coefs(l_norm, pce_coefs, comb_coef)
@@ -1030,6 +1033,9 @@ class SCAnalysis(BaseAnalysisElement):
         D = 0.0
         for l in l_norm[1:]:
             D += gen_pce_coefs[tuple(l)] ** 2
+
+        if type(D) is float:
+            D = np.array([D])
 
         return mean, D, gen_pce_coefs
 
@@ -1125,7 +1131,13 @@ class SCAnalysis(BaseAnalysisElement):
                 D_u[u] = D_u[u] + gen_pce_coefs[tuple(k_u)] ** 2
 
             # normalize D_u by total variance D to get the Sobol index
-            S_u[u] = D_u[u] / D
+            if 0 in D:
+                with warnings.catch_warnings():
+                    # ignore divide by zero warning
+                    warnings.simplefilter("ignore")
+                    S_u[u] = D_u[u] / D    
+            else:
+                S_u[u] = D_u[u] / D
 
         logging.debug('done')
         return mean, D, D_u, S_u
@@ -1230,6 +1242,11 @@ class SCAnalysis(BaseAnalysisElement):
         elif typ == 'all':
             # all indices u
             P = list(powerset(U))
+        else:
+            logging.debug('Specified Sobol Index type %s not recognized' % typ)
+            logging.debug('Accepted are first_order or all')
+            import sys
+            sys.exit()
 
         # get first two moments
         mu, D = self.get_moments(qoi)
@@ -1275,8 +1292,14 @@ class SCAnalysis(BaseAnalysisElement):
                 D_u[u] -= D_u[w]
 
             # compute Sobol index, only include points where D > 0
-            # sobol[u] = D_u[u][idx_gt0]/D[idx_gt0]
-            sobol[u] = D_u[u] / D
+            if 0 in D:
+                with warnings.catch_warnings():
+                    # ignore divide by zero warning
+                    warnings.simplefilter("ignore")
+                    sobol[u] = D_u[u] / D                  
+            else:
+                sobol[u] = D_u[u] / D
+
         logging.debug('done.')
         return sobol
 

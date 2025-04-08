@@ -3,6 +3,16 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
+
+.. toctree::
+   :caption: Table of contents
+   :maxdepth: 2
+
+   installation.rst
+   concepts.rst
+   api.rst
+   Tutorials <https://mybinder.org/v2/gh/UCL-CCS/EasyVVUQ/a6852d6c5ba36f15579e601d7a8d074505f31084?filepath=tutorials%2Fbasic_tutorial.ipynb>
+
 EasyVVUQ: Uncertainty intervals for everyone!
 =============================================
 
@@ -12,8 +22,6 @@ It was conceived and developed within the EU funded `VECMA <http://www.vecma.eu/
 (Verified Exascale Computing for Multiscale Applications) project.
 
 A good introduction can be found in the paper by D. Suleimenova *et al.*, “Tutorial applications for Verification, Validation and Uncertainty Quantification using VECMA toolkit”, J. Comput. Sci. 53, 101402 (2021), `DOI:10.1016/j.jocs.2021.101402 <https://doi.org/10.1016/j.jocs.2021.101402>`_.
-
-.. _goals:
 
 Goals
 =====
@@ -39,19 +47,6 @@ Another point of reference point are the non-regression tests which
 can be found at https://github.com/UCL-CCS/EasyVVUQ/tree/dev/tests .
 These are often useful in showing how pieces of the software work.
 
-
-.. _toc:
-
-Table of contents
------------------
-
-.. toctree::
-   :maxdepth: 2
-   :caption: Contents
-
-   installation
-   concepts
-   
 
 Indices and tables
 ==================
