@@ -27,7 +27,7 @@ __author__ = "Wouter Edeling"
 __license__ = "LGPL"
 
 
-class MCSampler(RandomSampler, sampler_name='MC_sampler', seed=None):
+class MCSampler(RandomSampler, sampler_name='MC_sampler'):
     """
     This is a Monte Carlo sampler, used to compute the Sobol indices, mean
     and variance of the different QoIs.
