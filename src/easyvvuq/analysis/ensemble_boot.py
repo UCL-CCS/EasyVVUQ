@@ -115,6 +115,7 @@ def bootstrap(data, stat_func, alpha=0.05,
     dist = []
 
     for l in range(n_samples):
+
         sample = data.sample(sample_size, replace=True)
 
         dist.append(stat_func(sample))
@@ -164,18 +165,18 @@ def ensemble_bootstrap(data, groupby=[], qoi_cols=[],
 
     if not qoi_cols:
         qoi_cols = [
-                x for x in data.columns if x not in groupby + ['run_id', 'status']]
+            x for x in data.columns if x not in groupby + ['run_id', 'status']]
 
     for col in qoi_cols:
         if col not in data:
             raise RuntimeError(f"No such attribute: {col}\nAttributes found in data: {data}")
         agg_funcs[col] = lambda x: bootstrap(
-                x,
-                stat_func=stat_func,
-                alpha=alpha,
-                sample_size=sample_size,
-                n_samples=n_samples,
-                pivotal=pivotal)
+            x,
+            stat_func=stat_func,
+            alpha=alpha,
+            sample_size=sample_size,
+            n_samples=n_samples,
+            pivotal=pivotal)
 
     if not groupby:
         grouped_data = data.groupby(lambda x: True, sort=False)
@@ -186,13 +187,13 @@ def ensemble_bootstrap(data, groupby=[], qoi_cols=[],
     # Note results come a tuple per cell
     results = grouped_data.agg(agg_funcs)
 
-    outputs = ['value', 'low', 'high']
+    outputs = [stat_name, 'low', 'high']
 
     # Split out tuples in each cell and provide sensible naming
     results = pd.concat({col: results[col].apply(
-            lambda cell: pd.Series(cell, index=outputs)
+        lambda cell: pd.Series(cell, index=outputs)
     )
-            for col in qoi_cols}, axis=1)
+        for col in qoi_cols}, axis=1)
 
     return results
 
@@ -271,24 +272,23 @@ class EnsembleBoot(BaseAnalysisElement):
 
         if data_frame is None:
             raise RuntimeError(
-                    "This VVUQ element needs a data frame to analyse")
+                "This VVUQ element needs a data frame to analyse")
         elif data_frame.empty:
             raise RuntimeError(
-                    "No data in data frame passed to analyse element")
+                "No data in data frame passed to analyse element")
 
         results = ensemble_bootstrap(
-                data_frame,
-                groupby=self.groupby,
-                qoi_cols=self.qoi_cols,
-                stat_func=self.stat_func,
-                alpha=self.alpha,
-                sample_size=self.sample_size,
-                n_samples=self.n_boot_samples,
-                pivotal=self.pivotal,
-                stat_name=self.stat_name)
+            data_frame,
+            groupby=self.groupby,
+            qoi_cols=self.qoi_cols,
+            stat_func=self.stat_func,
+            alpha=self.alpha,
+            sample_size=self.sample_size,
+            n_samples=self.n_boot_samples,
+            pivotal=self.pivotal,
+            stat_name=self.stat_name)
 
         return results
-
 
 class EnsembleBootMultiple(BaseAnalysisElement):
 
@@ -339,7 +339,7 @@ class EnsembleBootMultiple(BaseAnalysisElement):
 
     def element_name(self):
         """Name for this element for logging purposes"""
-        return "ensemble_boot"
+        return "ensemble_boot_multiple"
 
     def element_version(self):
         """Version of this element for logging purposes"""
