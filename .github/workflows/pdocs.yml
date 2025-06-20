@@ -23,7 +23,7 @@ jobs:
         python -m pip install --upgrade pip
         python -m pip install setuptools
         python -m pip install --editable .[docs]
-        cd tests/cannonsim/src; make; cd ../../.. 
+        cd tests/cannonsim/src; make; cd ../../..
         pip install pdoc
     - name: Checkout
       uses: actions/checkout@v3
