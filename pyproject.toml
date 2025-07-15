@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "easyvvuq"
-version="1.2.3.1"
+version="1.3.0.1"
 description = "Library to facilitate simple Verification, Validation and Uncertainty Quantification of simulation codes"
 readme = "README.md"
 authors = [{name = "CCS"}]
