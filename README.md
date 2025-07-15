@@ -21,11 +21,11 @@ Here are some examples of questions EasyVVUQ can answer about your code:
 
 It also lets you construct surrogate models that are cheaper to evaluate than the complete simulation.
 
-The high-level overview of the library is avalable at our [readthedocs](https://easyvvuq.readthedocs.io/en/dev/).
+The high-level overview of the library is available at our [readthedocs](https://easyvvuq.readthedocs.io/en/dev/).
 
 ## Getting Started
 
-For the quick start with EasyVVUQ we reccommend to check our basic interactive tutorial available [here](https://mybinder.org/v2/gh/UCL-CCS/EasyVVUQ/a6852d6c5ba36f15579e601d7a8d074505f31084?filepath=tutorials%2Fbasic_tutorial.ipynb).
+For the quick start with EasyVVUQ we recommend to check our basic interactive tutorial available [here](https://mybinder.org/v2/gh/UCL-CCS/EasyVVUQ/a6852d6c5ba36f15579e601d7a8d074505f31084?filepath=tutorials%2Fbasic_tutorial.ipynb).
 
 
 ## Functionality
@@ -62,6 +62,7 @@ To use the library you will need Python 3.7+.
 ### Installation using pip
 
 If you are unsure of the version of python your default `pip` works for type:
+
 ```
 pip --version
 ```
@@ -69,6 +70,7 @@ pip --version
 If the output ends with `(python 2.7)` you should replace `pip` with `pip3` in the following commands.
 
 The following should fully install the library:
+
 ```
 pip install easyvvuq
 ```
@@ -79,22 +81,137 @@ To upgrade the library use:
 pip install easyvvuq --upgrade
 ```
 
-### Manual installation from repository
+### Installation from the Repository via Bash Script (Recommended for Developers)
 
-Alternatively, you can manually install EasyVVUQ.
-First clone the repository to your computer:
+Alternatively, you can manually install EasyVVUQ. Note: As above, you need to be sure you are installing for `Python3` - if necessary replace `pip` with `pip3` and `python` with `python3` in the commands below.
+
+1. **Clone the Repository:**
+
 ```
 git clone https://github.com/UCL-CCS/EasyVVUQ.git
 ```
 
-Note: As above, you need to be sure you are installing for Python 3 - if necessary replace `pip` with `pip3` and `python` with `python3` in the commands below.
+2. **Install with Bash Script:**
 
-We are trying to keep dependencies at a minimum but a few are inevitable, to install these, install the EasyVVUQ library itself and build a test case use:
+The installation of dependencies and testing have been automated using bash script `install_EasyVVUQ.sh` included in the repository. To execute it: 
+
 ```
 cd EasyVVUQ/
+```
 
+Make bash script executable:
+
+```
+chmod +x install_EasyVVUQ.sh
+```
+
+Execute bash script:
+
+```
 bash install_EasyVVUQ.sh
 ```
+
+Upon successful installation, the process will end with the following message:
+
+```
+EasyVVUQ installation and testing completed successfully!
+```
+
+3. **Set the `PYTHONPATH` Environment Variable After installation:**
+
+You may need to manually set the PYTHONPATH to ensure EasyVVUQ can be found by Python. This step is required if the library is installed locally within the repository using the provided venv.
+
+While in EasyVVUQ directory, activate the virtual environment (Linux/macOS):
+
+```
+source venv/bin/activate
+```
+
+For Windows users, activate virtual environment using:
+
+```
+venv\Scripts\activate
+```
+
+Export `PYTHONPATH`:
+
+```
+export PYTHONPATH=$(pwd):$PYTHONPATH
+```
+
+Export `PYTHONPATH` site-packages according to your Python version (e.g., python3.10):
+
+```
+export PYTHONPATH=$(pwd)/venv/lib/python3.10/site-packages:$PYTHONPATH
+```
+
+Check PYTHONPATH:
+
+```python
+python -c "import sys; print('\n'.join(sys.path))"
+```
+
+### Manual Developer Installation From the Repository 
+
+1.  **Clone the Repository:**
+    ```
+    git clone https://github.com/UCL-CCS/EasyVVUQ.git
+    ```
+
+2.  **Navigate to the EasyVVUQ directory:**
+
+    ```
+    cd EasyVVUQ
+    ```
+
+3.  **Create and Activate Virtual Environment:**
+   
+    Using a virtual environment isolates EasyVVUQ's dependencies and prevents conflicts with other Python projects.
+
+    You can create a Python Virtual Environment inside EasyVVUQ directory or outside it. Git is set to ignore venv
+
+    ```
+    python3 -m venv venv        
+    ```
+
+    Activate the virtual environment (Linux/macOS):
+    
+    ```
+    source venv/bin/activate
+    ```
+
+4. **Install Required Packages using requirements.txt**
+    ```
+    pip install -r requirements.txt
+    ```
+
+5.  **Install EasyVVUQ in Editable Mode in Virtual Environment:**
+
+    ```
+    pip install -e .
+    ```
+
+    The `-e` flag (editable mode) means any changes you make to the EasyVVUQ source code will be immediately reflected without needing to reinstall.
+
+    To see easyvvuq in the list of the installed packages in the virtual environment:
+
+    ```
+    pip list
+    ```
+
+6. **Installation Verification:**
+
+    After installation, verify the installation:
+    
+    ```python
+    python -c "import easyvvuq; print('EasyVVUQ version:', easyvvuq.__version__)"
+    ```
+
+    Output:
+
+    ```
+    EasyVVUQ version: 1.2.3
+    ```
 
 ## API
 

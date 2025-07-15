@@ -1,0 +1,19 @@
+# Make sure you have the latest version of PyPA’s build & twine installed
+python3 -m pip install --upgrade build
+python3 -m pip install --upgrade twine
+
+# open pyproject.toml + hardcode version number, for instance:
+version="1.2.3"
+
+# remove current build and dist directories
+rm -r build/ dist/
+
+# make new build
+python3 -m build
+
+# upload to pypi
+# You will need an API token: see "Uploading the distribution archives" section in reference below
+# You will also need to be a PyPi "Collaborator" on the easyvvuq project
+python3 -m twine upload dist/*
+
+#Reference: https://packaging.python.org/en/latest/tutorials/packaging-projects/

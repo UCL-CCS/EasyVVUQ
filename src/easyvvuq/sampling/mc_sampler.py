@@ -33,7 +33,7 @@ class MCSampler(RandomSampler, sampler_name='MC_sampler'):
     and variance of the different QoIs.
     """
 
-    def __init__(self, vary, n_mc_samples, rule='latin_hypercube', **kwargs):
+    def __init__(self, vary, n_mc_samples, rule='latin_hypercube', seed=None, **kwargs):
         """
 
         Parameters
@@ -53,6 +53,10 @@ class MCSampler(RandomSampler, sampler_name='MC_sampler'):
             Other options include 'random', which is a fully random Monte Carlo
             sampling plan.
 
+        seed : int
+            The seed that will be used in sampling random variable. 
+            If provided ensures reproducible results. 
+
         Returns
         -------
         None.
@@ -67,6 +71,8 @@ class MCSampler(RandomSampler, sampler_name='MC_sampler'):
         self.n_mc_samples = n_mc_samples
         # sampling rule
         self.rule = rule
+        # seed
+        self.seed = seed
         # joint distribution
         self.joint = cp.J(*list(vary.values()))
         # create the Saltelli sampling plan
@@ -113,7 +119,7 @@ class MCSampler(RandomSampler, sampler_name='MC_sampler'):
         self.max_num = n_mc * (self.n_params + 2)
         logging.debug('Generating {} input samples spread over {} sample matrices.'.format(
             self.max_num, self.n_params + 2))
-        input_samples = self.joint.sample(2 * n_mc, rule=self.rule).T
+        input_samples = self.joint.sample(2 * n_mc, rule=self.rule, seed=self.seed).T
         # Matrix M1, the sample matrix
         # M_1 = self.joint.sample(n_mc, rule=self.rule).T
         M_1 = input_samples[0:n_mc]
