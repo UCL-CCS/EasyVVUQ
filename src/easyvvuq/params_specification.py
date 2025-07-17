@@ -5,6 +5,7 @@ import logging
 import cerberus
 import json
 import numpy
+from .utils.discrete_validation import is_integer_valued, convert_to_integer
 
 __copyright__ = """
 
@@ -42,6 +43,26 @@ class EasyVVUQValidator(cerberus.Validator):
         # Add 'fixture' type (for now, it's expected just to be a string)
         fixture_type = cerberus.TypeDefinition('fixture', (str), ())
         cerberus.Validator.types_mapping['fixture'] = fixture_type
+
+    def _validate_type_integer(self, value):
+        """
+        Enhanced integer validation that handles discrete distributions.
+        
+        This method allows float values that represent integers (e.g., 2.0)
+        to pass validation for integer parameters. This is necessary because
+        chaospy returns float arrays for discrete distributions when mixed
+        with continuous distributions.
+        """
+        # First check if it's already an integer type
+        if isinstance(value, (int, numpy.int64)):
+            return True
+        
+        # Check if it's a float that represents an integer
+        if is_integer_valued(value):
+            return True
+        
+        # Fall back to standard validation
+        return super()._validate_type_integer(value)
 
 
 class ParamsSpecification:
@@ -86,6 +107,15 @@ class ParamsSpecification:
             if param not in new_run.keys():
                 default_val = self.params_dict[param]["default"]
                 new_run[param] = default_val
+
+        # Convert float values to integers for integer parameters when they represent integers
+        # This handles the case where chaospy returns float arrays for discrete distributions
+        # Do this BEFORE validation to avoid type errors
+        for param_name, value in new_run.items():
+            if param_name in self.params_dict:
+                param_def = self.params_dict[param_name]
+                if param_def.get('type') == 'integer' and is_integer_valued(value):
+                    new_run[param_name] = convert_to_integer(value)
 
         # Optionally verify that all params are known for this app, that the types are
         # correct, params are within specified ranges etc. Uses cerberus for this.
