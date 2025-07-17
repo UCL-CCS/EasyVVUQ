@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1752755422331,
+  "lastUpdate": 1752756027394,
   "repoUrl": "https://github.com/UCL-CCS/EasyVVUQ",
   "entries": {
     "Benchmark": [
@@ -772,6 +772,72 @@ window.BENCHMARK_DATA = {
             "unit": "iter/sec",
             "range": "stddev: 0.0002392628491310445",
             "extra": "mean: 17.96886211320618 msec\nrounds: 53"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "maziarghorbani@gmail.com",
+            "name": "Maziar Ghorbani",
+            "username": "mzrghorbani"
+          },
+          "committer": {
+            "email": "maziarghorbani@gmail.com",
+            "name": "Maziar Ghorbani",
+            "username": "mzrghorbani"
+          },
+          "distinct": true,
+          "id": "d7caf698b4d4aea3467a889d0bc9425c123a0031",
+          "message": "Fix #169: Add discrete distribution support for SC and PCE samplers",
+          "timestamp": "2025-07-17T13:32:17+01:00",
+          "tree_id": "6123b28245c13cd69437d9b48bdf94aa4df207d1",
+          "url": "https://github.com/UCL-CCS/EasyVVUQ/commit/d7caf698b4d4aea3467a889d0bc9425c123a0031"
+        },
+        "date": 1752756026600,
+        "tool": "pytest",
+        "benches": [
+          {
+            "name": "tests/test_db_benchmark.py::test_draw",
+            "value": 0.11594106742339164,
+            "unit": "iter/sec",
+            "range": "stddev: 0.08882652246183838",
+            "extra": "mean: 8.625071531800003 sec\nrounds: 5"
+          },
+          {
+            "name": "tests/test_db_benchmark.py::test_store_results",
+            "value": 0.1995116403387069,
+            "unit": "iter/sec",
+            "range": "stddev: 0.030753817477949016",
+            "extra": "mean: 5.012238876399993 sec\nrounds: 5"
+          },
+          {
+            "name": "tests/test_db_benchmark.py::test_get_collation_result",
+            "value": 111.81299733769424,
+            "unit": "iter/sec",
+            "range": "stddev: 0.00008133675576719254",
+            "extra": "mean: 8.943504098900329 msec\nrounds: 91"
+          },
+          {
+            "name": "tests/test_db_benchmark.py::test_draw_add",
+            "value": 0.11690731612850531,
+            "unit": "iter/sec",
+            "range": "stddev: 0.1022091490288287",
+            "extra": "mean: 8.553784597200002 sec\nrounds: 5"
+          },
+          {
+            "name": "tests/test_db_benchmark.py::test_store_results_add",
+            "value": 0.20445073115467852,
+            "unit": "iter/sec",
+            "range": "stddev: 0.011438818562289966",
+            "extra": "mean: 4.891153943800004 sec\nrounds: 5"
+          },
+          {
+            "name": "tests/test_db_benchmark.py::test_get_collation_result_add",
+            "value": 55.28851144301963,
+            "unit": "iter/sec",
+            "range": "stddev: 0.00028137379257310027",
+            "extra": "mean: 18.086940196076732 msec\nrounds: 51"
           }
         ]
       }
