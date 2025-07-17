@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1752756628902,
+  "lastUpdate": 1752765559096,
   "repoUrl": "https://github.com/UCL-CCS/EasyVVUQ",
   "entries": {
     "Benchmark": [
@@ -900,6 +900,72 @@ window.BENCHMARK_DATA = {
             "unit": "iter/sec",
             "range": "stddev: 0.00016849140085962628",
             "extra": "mean: 17.52166852727338 msec\nrounds: 55"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "maziarghorbani@gmail.com",
+            "name": "Maziar Ghorbani",
+            "username": "mzrghorbani"
+          },
+          "committer": {
+            "email": "maziarghorbani@gmail.com",
+            "name": "Maziar Ghorbani",
+            "username": "mzrghorbani"
+          },
+          "distinct": true,
+          "id": "0bb9da666ef797f3bd49aa941bfa2d41cf454800",
+          "message": "Fix GitHub Actions syntax error in docker.yml\n\n- Remove secrets access from 'if' conditions (not supported in newer GitHub Actions)\n- Simplify conditions to check only github.event_name\n- Maintain proper secret usage in 'with:' contexts\n- Resolves: 'Unrecognized named-value: secrets' error\n\nThe workflow will still:\n- Skip Docker login/push for pull requests\n- Use secrets properly for authentication\n- Push images for branch pushes and tags",
+          "timestamp": "2025-07-17T15:01:22+01:00",
+          "tree_id": "7f5e65c2e051c6fa8e558afbf7d259b22ecd4913",
+          "url": "https://github.com/UCL-CCS/EasyVVUQ/commit/0bb9da666ef797f3bd49aa941bfa2d41cf454800"
+        },
+        "date": 1752765557966,
+        "tool": "pytest",
+        "benches": [
+          {
+            "name": "tests/test_db_benchmark.py::test_draw",
+            "value": 0.1127711500162454,
+            "unit": "iter/sec",
+            "range": "stddev: 0.0705144709779411",
+            "extra": "mean: 8.867516203000003 sec\nrounds: 5"
+          },
+          {
+            "name": "tests/test_db_benchmark.py::test_store_results",
+            "value": 0.20249082797089987,
+            "unit": "iter/sec",
+            "range": "stddev: 0.009498183862151633",
+            "extra": "mean: 4.938495289000008 sec\nrounds: 5"
+          },
+          {
+            "name": "tests/test_db_benchmark.py::test_get_collation_result",
+            "value": 112.30898891997911,
+            "unit": "iter/sec",
+            "range": "stddev: 0.00010128006560920238",
+            "extra": "mean: 8.904006790698709 msec\nrounds: 86"
+          },
+          {
+            "name": "tests/test_db_benchmark.py::test_draw_add",
+            "value": 0.11383060822982055,
+            "unit": "iter/sec",
+            "range": "stddev: 0.07077869443315227",
+            "extra": "mean: 8.784983367400008 sec\nrounds: 5"
+          },
+          {
+            "name": "tests/test_db_benchmark.py::test_store_results_add",
+            "value": 0.2080078838256191,
+            "unit": "iter/sec",
+            "range": "stddev: 0.010605844565297175",
+            "extra": "mean: 4.807510088599997 sec\nrounds: 5"
+          },
+          {
+            "name": "tests/test_db_benchmark.py::test_get_collation_result_add",
+            "value": 55.296108943050804,
+            "unit": "iter/sec",
+            "range": "stddev: 0.00027449906169466217",
+            "extra": "mean: 18.08445511111632 msec\nrounds: 54"
           }
         ]
       }
