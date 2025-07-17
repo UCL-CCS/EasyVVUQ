@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1752695681596,
+  "lastUpdate": 1752748214379,
   "repoUrl": "https://github.com/UCL-CCS/EasyVVUQ",
   "entries": {
     "Benchmark": [
@@ -582,6 +582,72 @@ window.BENCHMARK_DATA = {
             "unit": "iter/sec",
             "range": "stddev: 0.00012761150200410234",
             "extra": "mean: 17.68205948148231 msec\nrounds: 54"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "maziarghorbani@gmail.com",
+            "name": "Maziar Ghorbani",
+            "username": "mzrghorbani"
+          },
+          "committer": {
+            "email": "maziarghorbani@gmail.com",
+            "name": "Maziar Ghorbani",
+            "username": "mzrghorbani"
+          },
+          "distinct": true,
+          "id": "6ecfad69ff438c4107a03c8c578519f3e41d5cd7",
+          "message": "Add dataset import functionality to address GitHub issue #116",
+          "timestamp": "2025-07-17T11:25:39+01:00",
+          "tree_id": "21b06b7f3909c4813a14c5e106764920f5a8724d",
+          "url": "https://github.com/UCL-CCS/EasyVVUQ/commit/6ecfad69ff438c4107a03c8c578519f3e41d5cd7"
+        },
+        "date": 1752748213916,
+        "tool": "pytest",
+        "benches": [
+          {
+            "name": "tests/test_db_benchmark.py::test_draw",
+            "value": 0.11461337448493836,
+            "unit": "iter/sec",
+            "range": "stddev: 0.09985346771206938",
+            "extra": "mean: 8.724985234000005 sec\nrounds: 5"
+          },
+          {
+            "name": "tests/test_db_benchmark.py::test_store_results",
+            "value": 0.20184765924840511,
+            "unit": "iter/sec",
+            "range": "stddev: 0.039533410974009545",
+            "extra": "mean: 4.95423134319999 sec\nrounds: 5"
+          },
+          {
+            "name": "tests/test_db_benchmark.py::test_get_collation_result",
+            "value": 110.57263040755747,
+            "unit": "iter/sec",
+            "range": "stddev: 0.00013687134842459015",
+            "extra": "mean: 9.043829348312686 msec\nrounds: 89"
+          },
+          {
+            "name": "tests/test_db_benchmark.py::test_draw_add",
+            "value": 0.11607462914277854,
+            "unit": "iter/sec",
+            "range": "stddev: 0.1021880528063726",
+            "extra": "mean: 8.615147060000009 sec\nrounds: 5"
+          },
+          {
+            "name": "tests/test_db_benchmark.py::test_store_results_add",
+            "value": 0.20826352352173616,
+            "unit": "iter/sec",
+            "range": "stddev: 0.011971963945716889",
+            "extra": "mean: 4.801608957199994 sec\nrounds: 5"
+          },
+          {
+            "name": "tests/test_db_benchmark.py::test_get_collation_result_add",
+            "value": 56.834418019273414,
+            "unit": "iter/sec",
+            "range": "stddev: 0.00025981017635669283",
+            "extra": "mean: 17.594972111105015 msec\nrounds: 54"
           }
         ]
       }
