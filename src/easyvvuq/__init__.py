@@ -10,6 +10,7 @@ from .base_element import BaseElement
 from . import sampling
 from . import analysis
 from . import comparison
+from . import utils
 
 from importlib.metadata import version, PackageNotFoundError
 
