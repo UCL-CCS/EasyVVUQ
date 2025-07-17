@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1752769045858,
+  "lastUpdate": 1752769912791,
   "repoUrl": "https://github.com/UCL-CCS/EasyVVUQ",
   "entries": {
     "Benchmark": [
@@ -1098,6 +1098,72 @@ window.BENCHMARK_DATA = {
             "unit": "iter/sec",
             "range": "stddev: 0.0013344836220007025",
             "extra": "mean: 18.968433249995087 msec\nrounds: 52"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "maziarghorbani@gmail.com",
+            "name": "Maziar Ghorbani",
+            "username": "mzrghorbani"
+          },
+          "committer": {
+            "email": "maziarghorbani@gmail.com",
+            "name": "Maziar Ghorbani",
+            "username": "mzrghorbani"
+          },
+          "distinct": true,
+          "id": "9db49f356e5dd9c0b7f5cf0757fd5b384599ea8d",
+          "message": "Temporary fix: prevent Docker workflow failures\n\n- Add continue-on-error to Docker login step\n- Only push to Docker Hub if login actually succeeds\n- Prevents workflow failures when Docker Hub credentials are invalid\n- Stops failure notification emails to developers",
+          "timestamp": "2025-07-17T17:27:23+01:00",
+          "tree_id": "8cfedf63a28b1d12d8668f441c4cc2404f8e957d",
+          "url": "https://github.com/UCL-CCS/EasyVVUQ/commit/9db49f356e5dd9c0b7f5cf0757fd5b384599ea8d"
+        },
+        "date": 1752769912020,
+        "tool": "pytest",
+        "benches": [
+          {
+            "name": "tests/test_db_benchmark.py::test_draw",
+            "value": 0.11520181876310931,
+            "unit": "iter/sec",
+            "range": "stddev: 0.11191287285614786",
+            "extra": "mean: 8.680418510200003 sec\nrounds: 5"
+          },
+          {
+            "name": "tests/test_db_benchmark.py::test_store_results",
+            "value": 0.20072191444633652,
+            "unit": "iter/sec",
+            "range": "stddev: 0.01826745923039741",
+            "extra": "mean: 4.982017049599994 sec\nrounds: 5"
+          },
+          {
+            "name": "tests/test_db_benchmark.py::test_get_collation_result",
+            "value": 109.37315613186084,
+            "unit": "iter/sec",
+            "range": "stddev: 0.00015720645979313793",
+            "extra": "mean: 9.143011277780033 msec\nrounds: 90"
+          },
+          {
+            "name": "tests/test_db_benchmark.py::test_draw_add",
+            "value": 0.11555124442469879,
+            "unit": "iter/sec",
+            "range": "stddev: 0.09688989024826922",
+            "extra": "mean: 8.654169022400009 sec\nrounds: 5"
+          },
+          {
+            "name": "tests/test_db_benchmark.py::test_store_results_add",
+            "value": 0.21453176114259642,
+            "unit": "iter/sec",
+            "range": "stddev: 0.02936209083996839",
+            "extra": "mean: 4.6613144584 sec\nrounds: 5"
+          },
+          {
+            "name": "tests/test_db_benchmark.py::test_get_collation_result_add",
+            "value": 54.96932213989716,
+            "unit": "iter/sec",
+            "range": "stddev: 0.0008775857318441289",
+            "extra": "mean: 18.19196528301724 msec\nrounds: 53"
           }
         ]
       }
