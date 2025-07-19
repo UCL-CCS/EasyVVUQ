@@ -60,6 +60,12 @@ pyasn1_modules==0.4.1
 Pygments==2.19.1
 pyparsing==3.2.1
 python-dateutil==2.9.0.post0
+pytest==8.3.5
+pytest-benchmark==5.1.0
+pytest-cache==1.0
+pytest-dependency==0.6.0
+pytest-pep8==1.0.6
+pytest-runner==6.0.1
 pytz==2024.2
 PyYAML==6.0.2
 pyzmq==26.2.0
