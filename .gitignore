@@ -27,4 +27,5 @@ easyvvuq/_version.py
 tutorials/*.pickle
 tutorials/*.png
 tutorials/*.pdf
-tutorials/api.log
+api.log
+executor_api.log
