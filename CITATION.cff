@@ -18,14 +18,94 @@ authors:
     affiliation: "Leibniz Supercomputing Centre"
     family-names: Jancauskas
     given-names: Vytautas
+    orcid: https://orcid.org/0000-0002-6051-210X
   -
     affiliation: "Centrum voor Wiskunde en Informatica"
     family-names: Edeling
     given-names: Wouter
+    orcid: https://orcid.org/0000-0003-4734-7960
   -
     affiliation: "Max-Planck-Institut für Plasmaphysik"
     family-names: Lakhlili
     given-names: Jalal
+    orcid: https://orcid.org/0000-0003-2900-1026
+  -
+    affiliation: "Max Planck Institute for Plasma Physics"
+    family-names: Coster
+    given-names: David P.
+    orcid: https://orcid.org/0000-0002-2470-9706
+  -
+    affiliation: "Universita della Svizzera italiana, Lugano"
+    family-names: Kardoš
+    given-names: Juraj
+    orcid: https://orcid.org/0000-0002-0197-5470
+  -
+    affiliation: "Brunel University London"
+    family-names: Groen
+    given-names: Derek
+    orcid: https://orcid.org/0000-0001-7463-3765
+  -
+    affiliation: "Poznań Supercomputing and Networking Centre"
+    family-names: Bosak
+    given-names: Bartosz
+    orcid: https://orcid.org/0000-0002-9331-3166
+  -
+    affiliation: "Centre for Computational Science, University College London"
+    family-names: McCullough
+    given-names: Jon
+    orcid: https://orcid.org/0000-0002-9606-0408
+  -
+    affiliation: "Brunel University London"
+    family-names: Suleimenova
+    given-names: Diana
+    orcid: https://orcid.org/0000-0003-4474-0943
+  -
+    affiliation: "Brunel University London"
+    family-names: Arabnejad
+    given-names: Hamid
+    orcid: https://orcid.org/0000-0002-0789-1825
+  -
+    affiliation: "University of York"
+    family-names: Hill
+    given-names: Peter
+    orcid: https://orcid.org/0000-0003-3092-1858
+  -
+    affiliation: "Brunel University London"
+    family-names: Ghorbani
+    given-names: Maziar
+    orcid: https://orcid.org/0000-0001-7284-9853
+  -
+    affiliation: "University College London"
+    family-names: Sinclair
+    given-names: Robert
+    orcid: https://orcid.org/0000-0003-0418-6415
+  -
+    affiliation: "Centrum Wiskunde en Informatica Amsterdam"
+    family-names: Jansson
+    given-names: Fredrik
+    orcid: https://orcid.org/0000-0003-4712-5938
+  -
+    affiliation: "University of Amsterdam"
+    family-names: van der Kolk
+    given-names: Max
+    orcid: https://orcid.org/0000-0001-5761-5776
+  -
+    affiliation: "Poznań Supercomputing and Networking Centre"
+    family-names: Chodkowski
+    given-names: Miłosz
+  -
+    affiliation: "University of York"
+    family-names: Dickinson
+    given-names: David
+    orcid: https://orcid.org/0000-0002-0868-211X
+  -
+    affiliation: "Brunel University London"
+    family-names: Harbach
+    given-names: Laura
+    orcid: https://orcid.org/0000-0001-7944-0292
+  -
+    family-names: Lebedev
+    given-names: Anton
 
 keywords:
   - "Validation"
