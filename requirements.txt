@@ -88,7 +88,7 @@ sphinxcontrib-qthelp==2.0.0
 sphinxcontrib-serializinghtml==2.0.0
 SQLAlchemy==2.0.37
 squarify==0.4.4
-starlette==0.45.2
+starlette==0.47.2
 tblib==3.0.0
 threadpoolctl==3.5.0
 tomli==2.2.1
