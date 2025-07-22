@@ -74,6 +74,8 @@ qcg-pilotjob-executor-api==0.13.1
 requests==2.32.4
 requests-oauthlib==2.0.0
 rsa==4.9
+ruamel.yaml==0.18.14
+ruamel.yaml.clib==0.2.12
 SALib==1.5.1
 scikit-learn==1.6.1
 scipy==1.15.1
