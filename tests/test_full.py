@@ -1,4 +1,6 @@
+import os
 import easyvvuq as uq
+from easyvvuq.actions import CreateRunDirectory, Encode, Decode, ExecuteLocal, Actions
 import chaospy as cp
 import pytest
 import itertools
@@ -20,6 +22,7 @@ import tempfile
         [(uq.sampling.PCESampler, uq.analysis.PCEAnalysis),
          (uq.sampling.SCSampler, uq.analysis.SCAnalysis),
          (lambda vary: uq.sampling.QMCSampler(vary, 25), uq.analysis.QMCAnalysis)]))
+
 def test_full_campaign(encoder, decoder, sampler_analysis):
     with tempfile.TemporaryDirectory() as tmp_path:
         params = {
@@ -50,18 +53,13 @@ def test_full_campaign(encoder, decoder, sampler_analysis):
         sampler, analysis = sampler_analysis
         sampler = sampler(vary)
         analysis = analysis(sampler, qoi_cols=['te'])
-        actions = uq.actions.ExecuteLocal("tests/cooling/cooling_model.py cooling_in.json")
+        execute = ExecuteLocal(os.path.abspath("tests/cooling/cooling_model.py") + " cooling_in.json")
+        actions = Actions(CreateRunDirectory(root='/tmp'), Encode(encoder), execute, Decode(decoder))
         campaign = uq.Campaign(
             name='test_campaign', work_dir=tmp_path, db_location='sqlite:///:memory:')
-        params["encoder"] = encoder
-        params["decoder"] = decoder
-        campaign.add_app(name='test_app', params=params)
-        campaign.set_app('test_app')
+        campaign.add_app(name='test_app', params=params, actions=actions)
         campaign.set_sampler(sampler)
-        campaign.draw_samples()
-        campaign.populate_runs_dir()
-        campaign.apply_for_each_run_dir(actions)
-        campaign.collate()
+        campaign.execute().collate()
         df = campaign.get_collation_result()
         result = analysis.analyse(df)
     
