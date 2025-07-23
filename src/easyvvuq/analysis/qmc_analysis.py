@@ -113,8 +113,7 @@ class QMCAnalysis(BaseAnalysisElement):
         return "0.2"
 
     def contains_nan(self, values):
-        """
-        Checks if ``None`` or ``numpy.nan`` exists in `values`. Returns ``True`` if
+        """Checks if ``None`` or ``numpy.nan`` exists in `values`. Returns ``True`` if
         any there are at least one occurrence of ``None`` or ``numpy.nan``.
         Parameters
         ----------

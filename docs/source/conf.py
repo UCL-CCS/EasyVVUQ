@@ -15,7 +15,7 @@ import sys
 sys.path.insert(0, os.path.abspath('../../src'))
 
 import sphinx_rtd_theme 
-html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
+###html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
 
 from sphinx.ext.apidoc import main as apidoc_main
 apidoc_main(["--force", "-o", "./_autodoc", "../../src/easyvvuq"])
@@ -39,7 +39,9 @@ master_doc = 'index'
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
-extensions = ['sphinx.ext.autodoc', 'sphinx.ext.napoleon', 'sphinx.ext.autosectionlabel', 'sphinx.ext.viewcode']
+extensions = ['sphinx.ext.autodoc', 'sphinx.ext.napoleon', 'sphinx.ext.autosectionlabel', 'sphinx.ext.viewcode', 'nbsphinx']  # myst_nb
+
+nbsphinx_execute = 'never'
 
 autosectionlabel_prefix_document = True
 
@@ -84,6 +86,6 @@ html_theme_options = {
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
-html_static_path = ['_static']
+###html_static_path = ['_static']
 
 html_logo = "../images/circle-logo.png"

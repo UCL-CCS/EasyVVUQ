@@ -1,3 +1,2 @@
-include versioneer.py
-include easyvvuq/_version.py
+include src/easyvvuq/_version.py
 include requirements.txt
