@@ -13,7 +13,7 @@
    dataset_import.rst
    api.rst
    tutorials.rst
-   "Basic Totorial" on Binder <https://mybinder.org/v2/gh/UCL-CCS/EasyVVUQ/a6852d6c5ba36f15579e601d7a8d074505f31084?filepath=tutorials%2Fbasic_tutorial.ipynb>
+   "Basic Tutorial" on Binder <https://mybinder.org/v2/gh/UCL-CCS/EasyVVUQ/a6852d6c5ba36f15579e601d7a8d074505f31084?filepath=tutorials%2Fbasic_tutorial.ipynb>
    
 
 EasyVVUQ: Uncertainty intervals for everyone!
