@@ -23,4 +23,9 @@ env/
 .venv/
 .ipynb_checkpoints/
 easyvvuq/_version.py
-src/easyvvuq/_version.py
+.qcgpjm-service-*
+tutorials/*.pickle
+tutorials/*.png
+tutorials/*.pdf
+api.log
+executor_api.log
