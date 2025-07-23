@@ -51,6 +51,160 @@
             },
             "familyName": "Lakhlili",
             "givenName": "Jalal"
+        },
+        {
+            "id": "https://orcid.org/0000-0002-2470-9706",
+            "type": "Person",
+            "affiliation": {
+                "type": "Organization",
+                "name": "Max Planck Institute for Plasma Physics"
+            },
+            "familyName": "Coster",
+            "givenName": "David P."
+        },
+        {
+            "id": "https://orcid.org/0000-0002-0197-5470",
+            "type": "Person",
+            "affiliation": {
+                "type": "Organization",
+                "name": "Universita della Svizzera italiana, Lugano"
+            },
+            "familyName": "Kardoš",
+            "givenName": "Juraj"
+        },
+        {
+            "id": "https://orcid.org/0000-0001-7463-3765",
+            "type": "Person",
+            "affiliation": {
+                "type": "Organization",
+                "name": "Brunel University London"
+            },
+            "familyName": "Groen",
+            "givenName": "Derek"
+        },
+        {
+            "id": "https://orcid.org/0000-0002-9331-3166",
+            "type": "Person",
+            "affiliation": {
+                "type": "Organization",
+                "name": "Poznań Supercomputing and Networking Centre"
+            },
+            "familyName": "Bosak",
+            "givenName": "Bartosz"
+        },
+        {
+            "id": "https://orcid.org/0000-0002-9606-0408",
+            "type": "Person",
+            "affiliation": {
+                "type": "Organization",
+                "name": "Centre for Computational Science, University College London"
+            },
+            "familyName": "McCullough",
+            "givenName": "Jon"
+        },
+        {
+            "id": "https://orcid.org/0000-0003-4474-0943",
+            "type": "Person",
+            "affiliation": {
+                "type": "Organization",
+                "name": "Brunel University London"
+            },
+            "familyName": "Suleimenova",
+            "givenName": "Diana"
+        },
+        {
+            "id": "https://orcid.org/0000-0002-0789-1825",
+            "type": "Person",
+            "affiliation": {
+                "type": "Organization",
+                "name": "Brunel University London"
+            },
+            "familyName": "Arabnejad",
+            "givenName": "Hamid"
+        },
+        {
+            "id": "https://orcid.org/0000-0003-3092-1858",
+            "type": "Person",
+            "affiliation": {
+                "type": "Organization",
+                "name": "University of York"
+            },
+            "familyName": "Hill",
+            "givenName": "Peter"
+        },
+        {
+            "id": "https://orcid.org/0000-0001-7284-9853",
+            "type": "Person",
+            "affiliation": {
+                "type": "Organization",
+                "name": "Brunel University London"
+            },
+            "familyName": "Ghorbani",
+            "givenName": "Maziar"
+        },
+        {
+            "id": "https://orcid.org/0000-0003-0418-6415",
+            "type": "Person",
+            "affiliation": {
+                "type": "Organization",
+                "name": "University College London"
+            },
+            "familyName": "Sinclair",
+            "givenName": "Robert"
+        },
+        {
+            "id": "https://orcid.org/0000-0003-4712-5938",
+            "type": "Person",
+            "affiliation": {
+                "type": "Organization",
+                "name": "Centrum Wiskunde en Informatica Amsterdam"
+            },
+            "familyName": "Jansson",
+            "givenName": "Fredrik"
+        },
+        {
+            "id": "https://orcid.org/0000-0001-5761-5776",
+            "type": "Person",
+            "affiliation": {
+                "type": "Organization",
+                "name": "University of Amsterdam"
+            },
+            "familyName": "van der Kolk",
+            "givenName": "Max"
+        },
+        {
+            "type": "Person",
+            "affiliation": {
+                "type": "Organization",
+                "name": "Poznań Supercomputing and Networking Centre"
+            },
+            "familyName": "Chodkowski",
+            "givenName": "Miłosz"
+        },
+        {
+            "id": "https://orcid.org/0000-0002-0868-211X",
+            "type": "Person",
+            "affiliation": {
+                "type": "Organization",
+                "name": "University of York"
+            },
+            "familyName": "Dickinson",
+            "givenName": "David"
+        },
+        {
+            "id": "https://orcid.org/0000-0001-7944-0292",
+            "type": "Person",
+            "affiliation": {
+                "type": "Organization",
+                "name": "Brunel University London"
+            },
+            "familyName": "Harbach",
+            "givenName": "Laura"
+        },
+        {
+            "type": "Person",
+            "familyName": "Lebedev",
+            "givenName": "Anton"
         }
     ],
     "codeRepository": "https://github.com/UCL-CCS/EasyVVUQ.git",
