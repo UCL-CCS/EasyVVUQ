@@ -124,10 +124,10 @@ class PCEAnalysisResults(QMCAnalysisResults):
             raise NotImplementedError
         if statistic == 'min':
             return np.array([v.lower[0] for _, v in enumerate(
-                self.raw_data['output_distributions'][qoi])])
+                self.raw_data['output_distributions'][qoi])]) if self.raw_data['output_distributions'][qoi] is not None else np.array([])
         elif statistic == 'max':
             return np.array([v.upper[0] for _, v in enumerate(
-                self.raw_data['output_distributions'][qoi])])
+                self.raw_data['output_distributions'][qoi])]) if self.raw_data['output_distributions'][qoi] is not None else np.array([])
         elif statistic == '1%':
             if isinstance(self.raw_data['percentiles'][qoi]['p01'], np.ndarray):
                 return self.raw_data['percentiles'][qoi]['p01']

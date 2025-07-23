@@ -72,3 +72,15 @@ def test_pce(get_campaign):
     df = campaign.get_collation_result()
     assert df.values[0][-1] == 'float'
     assert df.values[0][-2] == 'int'
+
+def test_mc(get_campaign):
+    """
+    Perform the test for the MC sampler
+    """
+    campaign, vary = get_campaign
+    sampler = uq.sampling.MCSampler(vary=vary, n_mc_samples=1)
+    campaign.set_sampler(sampler)
+    campaign.execute().collate()
+    df = campaign.get_collation_result()
+    assert df.values[0][-1] == 'float'
+    assert df.values[0][-2] == 'int'

@@ -4,11 +4,12 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "easyvvuq"
+version="1.3.0.1"
 description = "Library to facilitate simple Verification, Validation and Uncertainty Quantification of simulation codes"
 readme = "README.md"
 authors = [{name = "CCS"}]
-license = {file = "LICENSE"}
-dynamic = ["version"]
+license = {text = "LGPL-3.0 AND GPL-3.0"}
+#dynamic = ["version"]
 requires-python = ">=3.8"
 dependencies = [
     "numpy<2",
@@ -29,11 +30,12 @@ dependencies = [
     "squarify",
     "dill",
     "tqdm",
-    "qcg-pilotjob~=0.13.0",
-    "qcg-pilotjob-executor-api~=0.13.0",
+    "qcg-pilotjob~=0.14",
+    "qcg-pilotjob-executor-api~=0.14",
     "h5py",
     "tomli",
     "fipy",
+    "setuptools_scm",
 ]
 
 [project.optional-dependencies]
@@ -56,14 +58,14 @@ Source = "https://github.com/UCL-CCS/EasyVVUQ"
 Tracker = "https://github.com/UCL-CCS/EasyVVUQ/issues"
 Documentation = "https://easyvvuq.readthedocs.io/en/dev/"
 
-[tool.setuptools.packages.find]
-where = ["easyvvuq"]
+#[tool.setuptools.packages.find]
+#where = ["easyvvuq"]
 
-[tool.setuptools_scm]
-write_to = "easyvvuq/_version.py"
+#[tool.setuptools_scm]
+#write_to = "easyvvuq/_version.py"
 
-[tool.black]
-exclude = "easyvvuq/_version.py"
+#[tool.black]
+#exclude = "easyvvuq/_version.py"
 
 [tool.pytest.ini_options]
 pep8ignore = [
@@ -72,3 +74,4 @@ pep8ignore = [
     "tests/*.py E128",
 ]
 pep8maxlinelength = 100
+

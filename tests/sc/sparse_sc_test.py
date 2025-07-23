@@ -50,11 +50,12 @@ if __name__ == '__main__':
     decoder = uq.decoders.SimpleCSV(target_filename=output_filename,
                                     output_columns=output_columns)
 
+    execute = ExecuteLocal(f"{HOME}/sc_model.py ade_in.json")
+
+    actions = Actions(CreateRunDirectory(HOME),
+                  Encode(encoder), execute, Decode(decoder))
     # Add the SC app (automatically set as current app)
-    my_campaign.add_app(name="sc",
-                        params=params,
-                        encoder=encoder,
-                        decoder=decoder)
+    my_campaign.add_app(name="sc", params=params, actions=actions)
 
     # Create the sampler
     vary = {
@@ -77,22 +78,12 @@ if __name__ == '__main__':
     # Associate the sampler with the campaign
     my_campaign.set_sampler(my_sampler)
 
-    # Will draw all (of the finite set of samples)
-    my_campaign.draw_samples(num_samples=my_sampler.n_samples)
-    my_campaign.populate_runs_dir()
-
-    # Use this instead to run the samples using EasyVVUQ on the localhost
-    my_campaign.apply_for_each_run_dir(uq.actions.ExecuteLocal(
-        "tests/sc/sc_model.py ade_in.json"))
-
-    my_campaign.collate()
+    my_campaign.execute().collate()
 
     # Post-processing analysis
     analysis = uq.analysis.SCAnalysis(sampler=my_sampler, qoi_cols=output_columns)
 
-    my_campaign.apply_analysis(analysis)
-
-    results = my_campaign.get_last_analysis()
+    results = my_campaign.analyse(qoi_cols=output_columns)
 
     ###################################
     # Plot the moments and SC samples #

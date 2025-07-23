@@ -948,6 +948,15 @@ class CampaignDB(BaseCampaignDB):
         meta = MetaData()
         meta.reflect(bind=self.engine)
         result = {}
-        for table in meta.sorted_tables:
-            result[table.name] = [dict(row) for row in self.engine.execute(table.select())]
+
+        # Create a connection from the engine
+        with self.engine.connect() as connection:
+            for table in meta.sorted_tables:
+                try:
+                    query_result = connection.execute(table.select()).fetchall()
+                    result[table.name] = [dict(row) for row in query_result]
+                except Exception as e:
+                    result[table.name] = str(e)
+
         return json.dumps(result)
+    

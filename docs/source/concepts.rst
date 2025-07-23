@@ -19,7 +19,7 @@ Making use of Patterns in practice requires that they are decomposed into
 components which can be flexibly combined to implement a range of algorithms.
 
 .. figure:: ../images/vecma-algorithms.svg
-   :scale: 50 %
+   :width: 50 %
    :alt: VVUQ algorithm as connected elements.
 
    Figure 1: Decomposition of generalized VVUQ workflow into different
@@ -140,4 +140,4 @@ Detailed information on the Analysis modules is available :doc:`here <_autodoc/e
 Execution
 ---------
 
-Some more information on the use of QCG-Pilothob can be found :doc:`here <QCG-PilotJob-EasyVVUQ>`.
+Some more information on the use of QCG-PilotJob can be found :doc:`here <QCG-PilotJob-EasyVVUQ>`.

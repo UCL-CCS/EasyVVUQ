@@ -58,6 +58,10 @@ class QMCSampler(BaseSamplingElement, sampler_name="QMC_sampler"):
             msg = "'vary' cannot be empty."
             raise RuntimeError(msg)
 
+        discrete_input = [isinstance(p, cp.DiscreteUniform) for p in vary.values()]
+        assert (True in discrete_input) == False, \
+            "QMCSampler cannot handle DiscreteUniform, use MCSampler instead"
+
         self.vary = Vary(vary)
         self.n_mc_samples = n_mc_samples
 

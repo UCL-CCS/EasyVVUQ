@@ -134,6 +134,65 @@ class Campaign:
     >>> campaign.add_app('simple_app', params=params, actions=actions)
     """
 
+    @staticmethod
+    def from_existing_data(name, 
+                          input_files, 
+                          output_files, 
+                          input_decoder=None, 
+                          output_decoder=None,
+                          params=None,
+                          output_columns=None,
+                          work_dir="./",
+                          auto_infer=True):
+        """
+        Create a campaign from existing data files.
+        
+        Parameters
+        ----------
+        name : str
+            Name of the campaign
+        input_files : list of str
+            List of input file paths
+        output_files : list of str
+            List of output file paths
+        input_decoder : Decoder, optional
+            Decoder for input files (auto-created if None)
+        output_decoder : Decoder, optional
+            Decoder for output files (auto-created if None)
+        params : dict, optional
+            Parameter definitions (auto-inferred if None and auto_infer=True)
+        output_columns : list of str, optional
+            Output column names (auto-inferred if None and auto_infer=True)
+        work_dir : str, optional
+            Working directory (default: "./")
+        auto_infer : bool, optional
+            Whether to automatically infer parameters and outputs (default: True)
+        
+        Returns
+        -------
+        Campaign
+            A new campaign with the imported data
+        
+        Examples
+        --------
+        >>> campaign = Campaign.from_existing_data(
+        ...     name="imported_sim",
+        ...     input_files=["run1/input.json", "run2/input.json"],
+        ...     output_files=["run1/output.csv", "run2/output.csv"]
+        ... )
+        """
+        from easyvvuq.utils.dataset_importer import create_campaign_from_files
+        
+        return create_campaign_from_files(
+            input_files=input_files,
+            output_files=output_files,
+            campaign_name=name,
+            work_dir=work_dir,
+            input_decoder=input_decoder,
+            output_decoder=output_decoder,
+            auto_infer=auto_infer
+        )
+
     def __init__(
             self,
             name,
@@ -298,32 +357,86 @@ class Campaign:
         self._active_sampler_id = self._active_sampler.sampler_id
         self.campaign_db.set_sampler(self.campaign_id, self._active_sampler.sampler_id)
 
-    def add_external_runs(self, input_files, output_files, input_decoder, output_decoder):
+    def add_external_runs(self, input_files, output_files, input_decoder, output_decoder,
+                         validate_params=True, run_prefix="external_run"):
         """Takes a list of files and adds them to the database. This method is to be
         used when adding runs to the EasyVVUQ database that were not executed using
         EasyVVUQ.
 
         Parameters
         ----------
+        input_files: list of str
+            A list of input file paths to be loaded to the database.
         output_files: list of str
             A list of output file paths to be loaded to the database.
-        decoder: Decoder
-            A decoder that will be used to parse these files.
+        input_decoder: Decoder
+            A decoder that will be used to parse input files.
+        output_decoder: Decoder
+            A decoder that will be used to parse output files.
+        validate_params: bool, optional
+            Whether to validate parameters against the app definition (default: True)
+        run_prefix: str, optional
+            Prefix for run names (default: "external_run")
         """
+        if self._active_app is None:
+            msg = ("No app is currently set for this campaign. "
+                   "Use set_app('name_of_app') or add_app() first.")
+            logging.error(msg)
+            raise Exception(msg)
+        
+        if len(input_files) != len(output_files):
+            raise ValueError("Number of input files must match number of output files")
+        
         inputs = []
-        for input_file in input_files:
-            input_decoder.target_filename = os.path.basename(input_file)
-            params = input_decoder.parse_sim_output({'run_dir': os.path.dirname(input_file)})
-            inputs.append(params)
         outputs = []
-        for output_file in output_files:
-            output_decoder.target_filename = os.path.basename(output_file)
-            result = output_decoder.parse_sim_output({'run_dir': os.path.dirname(output_file)})
-            outputs.append(result)
-        i = 0
-        for params, result in zip(inputs, outputs):
-            i += 1
-            table = db.RunTable(run_name='run_{}'.format(i),
+        failed_runs = []
+        
+        # Parse input files
+        for i, input_file in enumerate(input_files):
+            try:
+                input_decoder.target_filename = os.path.basename(input_file)
+                params = input_decoder.parse_sim_output({'run_dir': os.path.dirname(input_file)})
+                
+                # Validate parameters if requested
+                if validate_params:
+                    try:
+                        app_default_params = self._active_app["params"]
+                        validated_params = app_default_params.process_run(params, verify=self.verify_all_runs)
+                        inputs.append(validated_params)
+                    except Exception as e:
+                        logging.warning(f"Parameter validation failed for {input_file}: {e}")
+                        failed_runs.append(i)
+                        continue
+                else:
+                    inputs.append(params)
+                    
+            except Exception as e:
+                logging.error(f"Failed to parse input file {input_file}: {e}")
+                failed_runs.append(i)
+                continue
+        
+        # Parse output files
+        for i, output_file in enumerate(output_files):
+            if i in failed_runs:
+                continue
+                
+            try:
+                output_decoder.target_filename = os.path.basename(output_file)
+                result = output_decoder.parse_sim_output({'run_dir': os.path.dirname(output_file)})
+                outputs.append(result)
+            except Exception as e:
+                logging.error(f"Failed to parse output file {output_file}: {e}")
+                failed_runs.append(i)
+                continue
+        
+        # Add runs to database
+        run_counter = 0
+        for i, (params, result) in enumerate(zip(inputs, outputs)):
+            if i in failed_runs:
+                continue
+                
+            run_counter += 1
+            table = db.RunTable(run_name=f'{run_prefix}_{run_counter}',
                                 app=self._active_app['id'],
                                 params=json.dumps(params),
                                 status=Status.COLLATED,
@@ -332,7 +445,13 @@ class Campaign:
                                 campaign=self.campaign_id,
                                 sampler=self._active_sampler_id)
             self.campaign_db.session.add(table)
-            self.campaign_db.session.commit()
+        
+        # Commit all changes at once
+        self.campaign_db.session.commit()
+        
+        logging.info(f"Successfully imported {run_counter} runs")
+        if failed_runs:
+            logging.warning(f"Failed to import {len(failed_runs)} runs due to parsing or validation errors")
 
     def add_runs(self, runs, mark_invalid=False):
         """Add runs to the database.
