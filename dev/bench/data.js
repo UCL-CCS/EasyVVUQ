@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1753197777927,
+  "lastUpdate": 1753258260284,
   "repoUrl": "https://github.com/UCL-CCS/EasyVVUQ",
   "entries": {
     "Benchmark": [
@@ -2160,6 +2160,72 @@ window.BENCHMARK_DATA = {
             "unit": "iter/sec",
             "range": "stddev: 0.00024348222686428197",
             "extra": "mean: 17.590151203703666 msec\nrounds: 54"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "40796322+DavidPCoster@users.noreply.github.com",
+            "name": "David Coster",
+            "username": "DavidPCoster"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "66330a5148ed5332dc5b648689974a895f3a1f2c",
+          "message": "Merge pull request #456 from UCL-CCS/fix/migrate-docker-to-ghcr\n\nFix Docker authentication by migrating to GitHub Container Registry",
+          "timestamp": "2025-07-23T10:06:40+02:00",
+          "tree_id": "71ae32a2bf45dc130b75ac2ca8836d9f161dd0b0",
+          "url": "https://github.com/UCL-CCS/EasyVVUQ/commit/66330a5148ed5332dc5b648689974a895f3a1f2c"
+        },
+        "date": 1753258259667,
+        "tool": "pytest",
+        "benches": [
+          {
+            "name": "tests/test_db_benchmark.py::test_draw",
+            "value": 0.1152903616597131,
+            "unit": "iter/sec",
+            "range": "stddev: 0.10000527686350932",
+            "extra": "mean: 8.6737519564 sec\nrounds: 5"
+          },
+          {
+            "name": "tests/test_db_benchmark.py::test_store_results",
+            "value": 0.2049927457536118,
+            "unit": "iter/sec",
+            "range": "stddev: 0.05900021123709417",
+            "extra": "mean: 4.878221404000004 sec\nrounds: 5"
+          },
+          {
+            "name": "tests/test_db_benchmark.py::test_get_collation_result",
+            "value": 112.73625154654914,
+            "unit": "iter/sec",
+            "range": "stddev: 0.00006963193898965903",
+            "extra": "mean: 8.87026121838987 msec\nrounds: 87"
+          },
+          {
+            "name": "tests/test_db_benchmark.py::test_draw_add",
+            "value": 0.11630777041113016,
+            "unit": "iter/sec",
+            "range": "stddev: 0.09875550808360191",
+            "extra": "mean: 8.597877824199992 sec\nrounds: 5"
+          },
+          {
+            "name": "tests/test_db_benchmark.py::test_store_results_add",
+            "value": 0.20825754046586215,
+            "unit": "iter/sec",
+            "range": "stddev: 0.006003093093190035",
+            "extra": "mean: 4.801746903199989 sec\nrounds: 5"
+          },
+          {
+            "name": "tests/test_db_benchmark.py::test_get_collation_result_add",
+            "value": 56.40916178889483,
+            "unit": "iter/sec",
+            "range": "stddev: 0.0002017054576647617",
+            "extra": "mean: 17.72761672549561 msec\nrounds: 51"
           }
         ]
       }
