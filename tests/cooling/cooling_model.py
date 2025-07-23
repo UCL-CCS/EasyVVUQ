@@ -3,6 +3,7 @@
 import sys
 import json
 import numpy as np
+import os
 
 # author: Jalal Lakhlili
 
@@ -44,3 +45,6 @@ te = model(t, temp0, kappa, t_env)
 np.savetxt(output_filename, te,
            delimiter=",", comments='',
            header='te')
+# output json file
+with open(os.path.splitext(output_filename)[0] + '.json', 'wt') as fd:
+    json.dump({'te': list(te)}, fd)

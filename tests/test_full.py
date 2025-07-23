@@ -1,0 +1,65 @@
+import os
+import easyvvuq as uq
+from easyvvuq.actions import CreateRunDirectory, Encode, Decode, ExecuteLocal, Actions
+import chaospy as cp
+import pytest
+import itertools
+import tempfile
+
+@pytest.mark.parametrize(
+    'encoder,decoder,sampler_analysis',
+    itertools.product(
+        [uq.encoders.GenericEncoder(
+            template_fname='tests/cooling/cooling.template',
+            delimiter='$',
+            target_filename='cooling_in.json')],
+        [uq.decoders.SimpleCSV(
+            target_filename='output.csv',
+            output_columns=['te']),
+         uq.decoders.JSONDecoder(
+            target_filename='output.json',
+            output_columns=['te'])],
+        [(uq.sampling.PCESampler, uq.analysis.PCEAnalysis),
+         (uq.sampling.SCSampler, uq.analysis.SCAnalysis),
+         (lambda vary: uq.sampling.QMCSampler(vary, 25), uq.analysis.QMCAnalysis)]))
+
+def test_full_campaign(encoder, decoder, sampler_analysis):
+    with tempfile.TemporaryDirectory() as tmp_path:
+        params = {
+            "temp_init": {
+                "type": "float",
+                "min": 0.0,
+                "max": 100.0,
+                "default": 95.0},
+            "kappa": {
+                "type": "float",
+                "min": 0.0,
+                "max": 0.1,
+                "default": 0.025},
+            "t_env": {
+                "type": "float",
+                "min": 0.0,
+                "max": 40.0,
+                "default": 15.0},
+            "out_file": {
+                "type": "string",
+                "default": "output.csv"
+            }
+        }
+        vary = {
+            "kappa": cp.Uniform(0.025, 0.075),
+            "t_env": cp.Uniform(15, 25)
+        }
+        sampler, analysis = sampler_analysis
+        sampler = sampler(vary)
+        analysis = analysis(sampler, qoi_cols=['te'])
+        execute = ExecuteLocal(os.path.abspath("tests/cooling/cooling_model.py") + " cooling_in.json")
+        actions = Actions(CreateRunDirectory(root='/tmp'), Encode(encoder), execute, Decode(decoder))
+        campaign = uq.Campaign(
+            name='test_campaign', work_dir=tmp_path, db_location='sqlite:///:memory:')
+        campaign.add_app(name='test_app', params=params, actions=actions)
+        campaign.set_sampler(sampler)
+        campaign.execute().collate()
+        df = campaign.get_collation_result()
+        result = analysis.analyse(df)
+    
