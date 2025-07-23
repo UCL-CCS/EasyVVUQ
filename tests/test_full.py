@@ -1,7 +1,5 @@
 import easyvvuq as uq
 import chaospy as cp
-import os
-import sys
 import pytest
 import itertools
 import tempfile
@@ -55,10 +53,9 @@ def test_full_campaign(encoder, decoder, sampler_analysis):
         actions = uq.actions.ExecuteLocal("tests/cooling/cooling_model.py cooling_in.json")
         campaign = uq.Campaign(
             name='test_campaign', work_dir=tmp_path, db_location='sqlite:///:memory:')
-        campaign.add_app(name='test_app',
-                         params=params,
-                         encoder=encoder,
-                         decoder=decoder)
+        params["encoder"] = encoder
+        params["decoder"] = decoder
+        campaign.add_app(name='test_app', params=params)
         campaign.set_app('test_app')
         campaign.set_sampler(sampler)
         campaign.draw_samples()
