@@ -26,6 +26,11 @@ TOML_FILE="pyproject.toml"
 print_header "Starting EasyVVUQ Installation"
 
 # Step 2: Create a virtual environment in the EasyVVUQ directory
+if [ -d "$VENV_DIR" ]; then
+    echo -e "${YELLOW}Virtual environment already exists. Removing and recreating...${RESET}"
+    rm -rf $VENV_DIR
+fi
+
 echo -e "${YELLOW}Creating a virtual environment in the EasyVVUQ directory...${RESET}"
 python3 -m venv $VENV_DIR
 
@@ -40,6 +45,10 @@ echo -e "      ${BOLD}source $VENV_DIR/bin/activate${RESET}\n"
 # Step 4: Upgrade essential tools
 print_header "Upgrading Pip, Setuptools, and Wheel"
 pip install --upgrade pip setuptools wheel
+
+# Install build tools for modern Python packaging
+echo -e "${YELLOW}Installing build dependencies...${RESET}"
+pip install build
 
 # Step 5: Install dependencies from requirements.txt
 if [ -f "$REQUIREMENTS_FILE" ]; then
@@ -61,7 +70,34 @@ fi
 
 # Step 7: Test the EasyVVUQ installation
 print_header "Testing EasyVVUQ Installation"
-python -c "import easyvvuq; print('EasyVVUQ version:', easyvvuq.__version__)"
+
+# Test that the import works
+echo -e "${YELLOW}Testing import...${RESET}"
+python -c "import easyvvuq; print('✓ Import successful')" || {
+    echo -e "${RED}Error:${RESET} Failed to import easyvvuq"
+    exit 1
+}
+
+# Test version access
+echo -e "${YELLOW}Checking version...${RESET}"
+python -c "import easyvvuq; print('EasyVVUQ version:', easyvvuq.__version__)" || {
+    echo -e "${YELLOW}Warning:${RESET} Could not access version through __version__, trying alternative..."
+    python -c "import easyvvuq; print('EasyVVUQ installed successfully')"
+}
+
+# Test a basic functionality
+echo -e "${YELLOW}Testing basic functionality...${RESET}"
+python -c "
+import easyvvuq as uq
+import tempfile
+import os
+
+# Test creating a campaign
+with tempfile.TemporaryDirectory() as tmpdir:
+    campaign = uq.Campaign(name='test', work_dir=tmpdir)
+    print('✓ Campaign creation successful')
+    print('✓ Basic functionality test passed')
+"
 
 print_header "Installation Completed Successfully!"
 echo -e "${GREEN}Reminder:${RESET} Activate the virtual environment before using EasyVVUQ:"
