@@ -45,6 +45,7 @@ mdurl==0.1.2
 msgpack==1.1.0
 multiprocess==0.70.17
 myst-parser==4.0.0
+nbsphinx==0.9.7
 numpoly==1.1.3
 numpy==1.26.4
 oauthlib==3.2.2
@@ -59,6 +60,12 @@ pyasn1_modules==0.4.1
 Pygments==2.19.1
 pyparsing==3.2.1
 python-dateutil==2.9.0.post0
+pytest==8.3.5
+pytest-benchmark==5.1.0
+pytest-cache==1.0
+pytest-dependency==0.6.0
+pytest-pep8==1.0.6
+pytest-runner==6.0.1
 pytz==2024.2
 PyYAML==6.0.2
 pyzmq==26.2.0
@@ -67,6 +74,8 @@ qcg-pilotjob-executor-api==0.13.1
 requests==2.32.4
 requests-oauthlib==2.0.0
 rsa==4.9
+ruamel.yaml==0.18.14
+ruamel.yaml.clib==0.2.12
 SALib==1.5.1
 scikit-learn==1.6.1
 scipy==1.15.1
