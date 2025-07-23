@@ -61,6 +61,12 @@ pip install -e .
 pip install -r requirements.txt
 ```
 
+Alternatively, execute the installation script:
+
+```bash
+chmod +x install_EasyVVUQ.sh && bash install_EasyVVUQ.sh
+```
+
 ### 3. Install Development Tools
 
 ```bash

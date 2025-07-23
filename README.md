@@ -223,6 +223,7 @@ We welcome contributions! Please see our [Contributing Guidelines](CONTRIBUTING.
 
 - Setting up a development environment
 - Code style and testing requirements  
+- Git commit guidelines
 - Submitting pull requests
 - Community guidelines
 
