@@ -21,7 +21,7 @@ durationpy==0.9
 importlib_metadata==8.6.1
 exceptiongroup==1.2.2
 FiPy==3.4.5
-fonttools==4.55.3
+fonttools==4.60.2
 fsspec==2024.12.0
 future==1.0.0
 google-auth==2.37.0
