@@ -106,7 +106,7 @@ tornado==6.5.1
 tqdm==4.67.1
 typing_extensions==4.12.2
 tzdata==2024.2
-urllib3==2.6.0
+urllib3==2.6.3
 uvicorn==0.34.0
 watchfiles==1.0.4
 websocket-client==1.8.0
