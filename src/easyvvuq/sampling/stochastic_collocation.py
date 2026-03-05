@@ -243,14 +243,21 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
                     j = 1
 
                 number_of_points = 0
+                order = 0
                 for order in range(1000):
-                    xi_i, wi_i = cp.generate_quadrature(order + j,
+                    xi_i, _ = cp.generate_quadrature(order + j,
                                                         self.params_distribution[n],
                                                         growth=self.growth)
+                    xi_i = np.squeeze(xi_i, 0)
                     # if the quadrature points no longer grow with the quad order,
                     # then the max order has been reached
                     if xi_i.size == number_of_points:
                         break
+                    # if two consecutive points have the same value,
+                    # then the max order has been reached
+                    if any(x == next_x for x, next_x in zip(xi_i, xi_i[1:])):
+                        break
+
                     number_of_points = xi_i.size
 
                 logging.debug("Input %d is discrete, setting max quadrature order to %d"
@@ -334,12 +341,17 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
         # make sure that all entries of each index are <= the max quadrature order
         # The max quad order can be low for discrete input variables
         idx = np.where((self.admissible_idx <= self.max_level).all(axis=1))[0]
+        cut_by_max_level = len(idx) != len(self.admissible_idx)
         self.admissible_idx = self.admissible_idx[idx]
         logging.debug('Admissible multi-indices:\n%s', self.admissible_idx)
 
         # determine the maximum level L of the new index set L = |l| - N + 1
         # self.L = np.max(np.sum(self.admissible_idx, axis=1) - self.N + 1)
-        self.L = np.max(self.admissible_idx)
+        if cut_by_max_level:
+            self.L = np.max(np.concatenate([self.admissible_idx, current_multi_idx]))
+        else:
+            self.L = np.max(self.admissible_idx)
+
         # recompute the 1D weights and collocation points
         self.compute_1D_points_weights(self.L, self.N)
         # compute collocation grid based on the admissible level indices
