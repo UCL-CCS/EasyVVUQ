@@ -4,11 +4,11 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "easyvvuq"
-version="1.2.3.1"
+version="1.3.0.1"
 description = "Library to facilitate simple Verification, Validation and Uncertainty Quantification of simulation codes"
 readme = "README.md"
 authors = [{name = "CCS"}]
-license = {text = "LGPL-3.0 AND GPL-3.0"}
+license = {text = "LGPL-3.0-or-later OR GPL-3.0-or-later"}
 #dynamic = ["version"]
 requires-python = ">=3.8"
 dependencies = [
@@ -58,11 +58,14 @@ Source = "https://github.com/UCL-CCS/EasyVVUQ"
 Tracker = "https://github.com/UCL-CCS/EasyVVUQ/issues"
 Documentation = "https://easyvvuq.readthedocs.io/en/dev/"
 
-#[tool.setuptools.packages.find]
-#where = ["easyvvuq"]
+[tool.setuptools.packages.find]
+where = ["src"]
 
-#[tool.setuptools_scm]
-#write_to = "easyvvuq/_version.py"
+[tool.setuptools_scm]
+write_to = "src/easyvvuq/_version.py"
+
+[tool.black]
+exclude = "src/easyvvuq/_version.py"
 
 #[tool.black]
 #exclude = "easyvvuq/_version.py"

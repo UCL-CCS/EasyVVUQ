@@ -124,10 +124,10 @@ class PCEAnalysisResults(QMCAnalysisResults):
             raise NotImplementedError
         if statistic == 'min':
             return np.array([v.lower[0] for _, v in enumerate(
-                self.raw_data['output_distributions'][qoi])])
+                self.raw_data['output_distributions'][qoi])]) if self.raw_data['output_distributions'][qoi] is not None else np.array([])
         elif statistic == 'max':
             return np.array([v.upper[0] for _, v in enumerate(
-                self.raw_data['output_distributions'][qoi])])
+                self.raw_data['output_distributions'][qoi])]) if self.raw_data['output_distributions'][qoi] is not None else np.array([])
         elif statistic == '1%':
             if isinstance(self.raw_data['percentiles'][qoi]['p01'], np.ndarray):
                 return self.raw_data['percentiles'][qoi]['p01']
@@ -234,7 +234,9 @@ class PCEAnalysis(BaseAnalysisElement):
         self.output_type = OutputType.SUMMARY
         self.sampler = sampler
         self.CorrelationMatrices = CorrelationMatrices
+        self.CorrelationMatrices_messages = 0
         self.OutputDistributions = OutputDistributions
+        self.OutputDistributions_messages = 0
 
     def element_name(self):
         """Name for this element for logging purposes.
@@ -249,7 +251,8 @@ class PCEAnalysis(BaseAnalysisElement):
     def element_version(self):
         """Version of this element for logging purposes.
 
-        Returns
+        Returns  ## print out the warning only once
+                    self.OutputDistributions_messages += 1
         -------
         str
             Element version.
@@ -535,13 +538,15 @@ class PCEAnalysis(BaseAnalysisElement):
             # Correlation matrix
             try:
                 if self.sampler._is_dependent:
-                    warnings.warn(f"Skipping computation of cp.Corr", RuntimeWarning)
+                    if self.CorrelationMatrices_messages == 0: warnings.warn(f"Skipping computation of cp.Corr", RuntimeWarning)  ## print out the warning only once
+                    self.CorrelationMatrices_messages += 1
                     results['correlation_matrices'][k] = None
                 else:
                     if self.CorrelationMatrices:
                         results['correlation_matrices'][k] = cp.Corr(fit, self.sampler.distribution)
                     else:
-                        warnings.warn(f"Skipping computation of cp.Corr", RuntimeWarning)
+                        if self.CorrelationMatrices_messages == 0: warnings.warn(f"Skipping computation of cp.Corr", RuntimeWarning)  ## print out the warning only once
+                        self.CorrelationMatrices_messages += 1
                         results['correlation_matrices'][k] = None
             except Exception as e:
                 print ('Error %s for %s when computing cp.Corr()'% (e.__class__.__name__, k))
@@ -551,13 +556,15 @@ class PCEAnalysis(BaseAnalysisElement):
             # Output distributions
             try:
                 if self.sampler._is_dependent:
-                    warnings.warn(f"Skipping computation of cp.QoI_Dist", RuntimeWarning)
+                    if self.OutputDistributions_messages == 0: warnings.warn(f"Skipping computation of cp.QoI_Dist", RuntimeWarning)  ## print out the warning only once
+                    self.OutputDistributions_messages += 1
                     results['output_distributions'][k] = None
                 else:
                     if self.OutputDistributions:
                         results['output_distributions'][k] = cp.QoI_Dist( fit, self.sampler.distribution)
                     else:
-                        warnings.warn(f"Skipping computation of cp.QoI_Dist", RuntimeWarning)
+                        if self.OutputDistributions_messages == 0: warnings.warn(f"Skipping computation of cp.QoI_Dist", RuntimeWarning)  ## print out the warning only once
+                        self.OutputDistributions_messages += 1
                         results['output_distributions'][k] = None                        
             except Exception as e:
                 print ('Error %s for %s when computing cp.QoI_Dist()'% (e.__class__.__name__, k))

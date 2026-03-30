@@ -113,8 +113,7 @@ class QMCAnalysis(BaseAnalysisElement):
         return "0.2"
 
     def contains_nan(self, values):
-        """
-        Checks if ``None`` or ``numpy.nan`` exists in `values`. Returns ``True`` if
+        """Checks if ``None`` or ``numpy.nan`` exists in `values`. Returns ``True`` if
         any there are at least one occurrence of ``None`` or ``numpy.nan``.
         Parameters
         ----------
@@ -414,8 +413,9 @@ class QMCAnalysis(BaseAnalysisElement):
                 #non-vectorized implementation
                 for i in range(n_bootstrap):
                     #resampled sample matrices of size (n_mc, n_qoi)
-                    sobols_first[i] = self._first_order(f_M2[r[i]], f_M1[r[i]], f_Ni[r[i], j])
-                    sobols_total[i] = self._total_order(f_M2[r[i]], f_M1[r[i]], f_Ni[r[i], j])
+                    indices = r[:, i]  
+                    sobols_first[i] = self._first_order(f_M2[indices], f_M1[indices], f_Ni[indices, j])
+                    sobols_total[i] = self._total_order(f_M2[indices], f_M1[indices], f_Ni[indices, j])
 
             # compute confidence intervals based on percentiles
             _, low_first, high_first = confidence_interval(sobols_first, value_first,

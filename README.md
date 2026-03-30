@@ -217,6 +217,18 @@ python -c "import sys; print('\n'.join(sys.path))"
 
 You can find the EasyVVUQ API documentation on our [GitHub Pages](https://ucl-ccs.github.io/EasyVVUQ/).
 
+## Contributing
+
+We welcome contributions! Please see our [Contributing Guidelines](CONTRIBUTING.md) for details on:
+
+- Setting up a development environment
+- Code style and testing requirements  
+- Git commit guidelines
+- Submitting pull requests
+- Community guidelines
+
+For bug reports and feature requests, please use [GitHub Issues](https://github.com/UCL-CCS/EasyVVUQ/issues).
+
 ## Citing EasyVVUQ
 
 > Richardson, R A, Wright, D W, Edeling, W, Jancauskas, V, Lakhlili, J and Coveney, P V. 

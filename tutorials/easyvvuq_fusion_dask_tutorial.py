@@ -183,7 +183,7 @@ if __name__ == "__main__":
     client.close()
     if not args.local:
         client.shutdown()
-    print("C")
+    print("Close down client")
 
     time_end = time.time()
     print("Time for phase 4 = %.3f" % (time_end - time_start))

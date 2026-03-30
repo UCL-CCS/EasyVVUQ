@@ -2,6 +2,7 @@ import pytest
 import easyvvuq as uq
 import chaospy as cp
 import numpy as np
+import os
 from easyvvuq.actions import Actions, Encode, Decode, CreateRunDirectory
 
 
@@ -24,7 +25,8 @@ def test_draw(benchmark):
         delimiter='$',
         target_filename='input.json')
     decoder = uq.decoders.SimpleCSV(target_filename='output.csv', output_columns=['I'])
-    execute = uq.actions.ExecuteLocal('test')
+    # Use a simple echo command for benchmarking instead of a complex executable
+    execute = uq.actions.ExecuteLocal('echo "I\n1\n2\n3" > output.csv')
     actions = Actions(execute)
     campaign = uq.Campaign(name='sir_benchmark', params=params, actions=actions)
     pytest.shared = campaign
