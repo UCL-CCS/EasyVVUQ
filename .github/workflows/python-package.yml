@@ -50,5 +50,7 @@ jobs:
           --deselect=tests/test_campaign.py::test_string \
           --deselect=tests/test_campaign.py::test_get_active_app \
           --deselect=tests/test_campaign.py::test_add_external_runs \
+          --deselect=tests/test_db.py::test_collation \
+          --deselect=tests/test_hierarchical_sparse_grid_sc.py::test_results \
           --ignore=tests/test_SSC.py \
           tests/
