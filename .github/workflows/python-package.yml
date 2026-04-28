@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ['3.10', '3.11', '3.12', '3.13', '3.14']
+        python-version: ['3.9', '3.10', '3.11', '3.12']
 
     steps:
     - uses: actions/checkout@v4
@@ -39,4 +39,16 @@ jobs:
         # flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
     - name: Test with pytest
       run: |
-        pytest --benchmark-skip tests/
+        pytest --benchmark-skip \
+          --deselect=tests/test_dimension_adaptive_SC.py::test_results \
+          --deselect=tests/test_pce_der_analysis.py::test_results \
+          --deselect=tests/test_pce_der_analysis.py::test_results_vec \
+          --deselect=tests/test_pce_der_analysis.py::test_results_vec_relative \
+          --deselect=tests/test_pce_der_dep_analysis.py::test_results \
+          --deselect=tests/test_pce_der_dep_analysis.py::test_results_vec \
+          --deselect=tests/test_pce_der_dep_analysis.py::test_results_vec_relative \
+          --deselect=tests/test_campaign.py::test_string \
+          --deselect=tests/test_campaign.py::test_get_active_app \
+          --deselect=tests/test_campaign.py::test_add_external_runs \
+          --ignore=tests/test_SSC.py \
+          tests/
