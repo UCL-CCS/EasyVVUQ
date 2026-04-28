@@ -3,3 +3,6 @@ sphinx-rtd-theme
 sphinx-autobuild
 myst-parser
 sphinxcontrib-mermaid
+nbsphinx
+ipython
+jupyter
