@@ -3,4 +3,3 @@ sphinx-rtd-theme
 sphinx-autobuild
 myst-parser
 sphinxcontrib-mermaid
-easyvvuq
