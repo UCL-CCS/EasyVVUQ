@@ -369,7 +369,7 @@ class SSCAnalysis(BaseAnalysisElement):
         # determine n_new_samples locations
         while i < n_new_samples:
 
-            if np.in1d(refine_idx[j], bound_simplices) == False:
+            if np.isin(refine_idx[j], bound_simplices) == False:
                 # compute the subvertices of the element chosen for refinement
                 sub_vertices = self.sampler.compute_sub_simplex_vertices(refine_idx[j])
                 # draw a random sample from the sub simplex

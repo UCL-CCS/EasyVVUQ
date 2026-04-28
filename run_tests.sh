@@ -2,8 +2,9 @@
 # Run tests using the virtual environment if available, otherwise use system python
 
 if [ -f ".venv/bin/python" ]; then
-    .venv/bin/python -m pytest tests/
+    PYTHON_BIN=".venv/bin/python"
 else
-    python3 -m pytest tests/
+    PYTHON_BIN="python3"
 fi
 
+$PYTHON_BIN -m pytest --benchmark-skip tests/

@@ -64,7 +64,6 @@ fonttools==4.62.1
 fsspec==2026.3.0
 funcparserlib==1.0.1
 future==1.0.0
-gast==0.7.0
 gi-docgen==2026.1
 google-auth==2.49.2
 greenlet==3.5.0
@@ -119,7 +118,7 @@ meson-python==0.19.0
 mistune==3.2.0
 mock==5.2.0
 more-itertools==10.8.0
-mpmath==1.4.0
+mpmath==1.3.0
 msgpack==1.1.2
 multiprocess==0.70.19
 mypy==1.20.1
@@ -133,7 +132,6 @@ nbsphinx==0.9.8
 numpoly==1.3.9
 numpy==2.4.4
 oauthlib==3.3.1
-oldest-supported-numpy==0.1
 olefile==0.47
 packaging==26.2
 pandas==3.0.2
@@ -183,7 +181,6 @@ pytest-pep8==1.0.6
 pytest-runner==6.0.1
 python-dateutil==2.9.0.post0
 python-discovery==1.2.2
-pythran==0.18.1
 pytoolconfig==1.3.1
 pytz==2026.1.post1
 PyYAML==6.0.3
