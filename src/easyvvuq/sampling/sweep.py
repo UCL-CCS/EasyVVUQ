@@ -78,3 +78,28 @@ class BasicSweep(BaseSamplingElement, sampler_name="basic_sweep"):
 
         self.count += 1
         return run_dict
+
+    def __getstate__(self):
+        state = self.__dict__.copy()
+        # Remove the unpicklable itertools.product object
+        if 'sweep_iterator' in state:
+            del state['sweep_iterator']
+        return state
+
+    def __setstate__(self, state):
+        self.__dict__.update(state)
+        # Reconstruct the iterator
+        gens = []
+        if hasattr(self, 'sweep') and self.sweep:
+            for var_name, iterable in self.sweep.items():
+                gens.append(wrap_iterable(var_name, iterable))
+            self.sweep_iterator = itertools.product(*gens)
+            
+            # Advance the iterator to the current count
+            try:
+                for _ in range(getattr(self, 'count', 0)):
+                    next(self.sweep_iterator)
+            except StopIteration:
+                pass
+        else:
+            self.sweep_iterator = None
