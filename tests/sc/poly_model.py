@@ -1,4 +1,4 @@
-#!/home/mghorbani/workspace/hackathon_28April26/EasyVVUQ/.venv/bin/python3
+#!/usr/bin/env python3
 """
 Analytic isotropic function to test the SC sampler on
 """
