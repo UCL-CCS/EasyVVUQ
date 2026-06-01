@@ -258,6 +258,23 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
                 # level 1 = order 0 etc
                 self.max_level[n] = order
 
+    def set_max_quad_level(self, max_order):
+        """
+        
+
+        Parameters
+        ----------
+        max_order : TYPE
+            DESCRIPTION.
+
+        Returns
+        -------
+        None.
+
+        """
+
+        self.max_level = np.ones(self.N) * max_order
+        
     def next_level_sparse_grid(self):
         """
         Adds the points of the next level for isotropic hierarchical sparse grids.
@@ -424,8 +441,25 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
     """
 
     def generate_grid(self, l_norm):
+        """
+        Generate a sampling plan based on a set of specified
+        multi indices of quadrature orders.
+
+        Parameters
+        ----------
+        l_norm : array
+            An array of multi indices or quadrature orders.
+
+        Returns
+        -------
+        H_L_N :  array
+            The sampling plan.
+
+        """
 
         dimensions = range(self.N)
+        # make sure all required 1D quad rules are computed
+        self.compute_1D_points_weights(np.max(l_norm), self.N)
         H_L_N = []
         # loop over all multi indices i
         for l in l_norm:
