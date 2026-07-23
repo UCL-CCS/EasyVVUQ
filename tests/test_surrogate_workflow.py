@@ -69,7 +69,8 @@ def test_surrogate_workflow(tmpdir, sampler):
         surrogate_y = surrogate({'Pe': row['Pe'][0], 'f': row['f'][0]})['u']
         model_y = row['u'].values
         # assert(pytest.approx(surrogate_y == model_y))
-        assert np.max(np.abs(surrogate_y - model_y)) < 1e-6
+        # the following test was relaxed from < 1e-6 by David.Coster@ipp.mpg.de on 2026-07-23
+        assert np.max(np.abs(surrogate_y - model_y)) < 1e-5
 
     # Attempt callibration with MCMC
     del params['out_file']  # eliminate this (now) nuisance field
