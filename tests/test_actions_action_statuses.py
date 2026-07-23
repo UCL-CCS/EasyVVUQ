@@ -14,6 +14,9 @@ def action_pool():
 
 def test_action_pool_start(action_pool):
     action_pool.start()
+    # wait for futures to finish to avoid race condition
+    for future in action_pool.futures:
+        future.result()
     assert (action_pool.progress()['finished'] == 3)
     mock1 = MagicMock()
     mock1.running = MagicMock(return_value=True)

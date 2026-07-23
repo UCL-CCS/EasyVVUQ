@@ -48,7 +48,8 @@ class MultiSampler(BaseSamplingElement, sampler_name="multisampler"):
                 raise RuntimeError(msg)
 
         # Combine all the iterables/generators into one
-        self.multi_iterator = itertools.product(*self.samplers)
+        import copy
+        self.multi_iterator = itertools.product(*copy.deepcopy(self.samplers))
 
         self.count = 0
         for i in range(count):
@@ -80,3 +81,23 @@ class MultiSampler(BaseSamplingElement, sampler_name="multisampler"):
 
         self.count += 1
         return run_dict
+
+    def __getstate__(self):
+        state = self.__dict__.copy()
+        if 'multi_iterator' in state:
+            del state['multi_iterator']
+        return state
+
+    def __setstate__(self, state):
+        self.__dict__.update(state)
+        # Reconstruct the iterator
+        import copy
+        if hasattr(self, 'samplers') and self.samplers:
+            self.multi_iterator = itertools.product(*copy.deepcopy(self.samplers))
+            try:
+                for _ in range(getattr(self, 'count', 0)):
+                    next(self.multi_iterator)
+            except StopIteration:
+                pass
+        else:
+            self.multi_iterator = None

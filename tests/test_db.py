@@ -130,7 +130,7 @@ def test_collation(campaign):
     assert (list(result.columns) == [('run_id', 0), ('iteration', 0),
                                      ('a', 0), ('b', 0), ('c', 0), ('c', 1)])
     assert (list(result.iloc[100].values) == [101, 0, 1, 100, 101, 102])
-    assert (result.count()[0] == 910)
+    assert (result.count().iloc[0] == 910)
 
 
 def test_mv_collation(tmp_path, app_info):

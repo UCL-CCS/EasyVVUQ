@@ -1,0 +1,245 @@
+2026-04-28 11:47:36,610:easyvvuq.sampling.fd:INFO:Performing relative analysis: False
+2026-04-28 11:47:36,611:easyvvuq.sampling.fd:INFO:Performing perturbation of the nodes, base value = {'x1': 1.0, 'x2': 1.0}, with delta = 0.05
+2026-04-28 11:47:36,611:easyvvuq.sampling.fd:INFO:Generated 5/5 samples for the FD scheme
+2026-04-28 11:47:36,617:easyvvuq.sampling.fd:INFO:Performing relative analysis: False
+2026-04-28 11:47:36,618:easyvvuq.sampling.fd:INFO:Performing perturbation of the nodes, base value = {'x1': 1.0, 'x2': 1.0}, with delta = 0.05
+2026-04-28 11:47:36,618:easyvvuq.sampling.fd:INFO:Generated 5/5 samples for the FD scheme
+2026-04-28 11:47:36,628:easyvvuq.sampling.fd:INFO:Performing relative analysis: True
+2026-04-28 11:47:36,628:easyvvuq.sampling.fd:INFO:Performing perturbation of the nodes, base value = {'x1': 1.0, 'x2': 1.0}, with delta = 0.05
+2026-04-28 11:47:36,629:easyvvuq.sampling.fd:INFO:Generated 5/5 samples for the FD scheme
+2026-04-28 11:47:36,639:easyvvuq.sampling.fd:INFO:Performing relative analysis: False
+2026-04-28 11:47:36,639:easyvvuq.sampling.fd:INFO:Performing perturbation of the nodes, base value = {'x1': 1.0, 'x2': 1.0}, with delta = 0.05
+2026-04-28 11:47:36,639:easyvvuq.sampling.fd:INFO:Using user provided joint distribution with Rosenblatt transformation
+2026-04-28 11:47:36,640:easyvvuq.sampling.fd:INFO:Generated 5/5 samples for the FD scheme
+2026-04-28 11:47:36,640:easyvvuq.sampling.fd:INFO:Performing Rosenblatt transformation
+2026-04-28 11:47:36,640:easyvvuq.sampling.fd:DEBUG:The independent distribution consists of: J(Normal(mu=0.0, sigma=1.0), Normal(mu=0.0, sigma=1.0))
+2026-04-28 11:47:36,640:easyvvuq.sampling.fd:DEBUG:Using parameter permutation: ['x1', 'x2']
+2026-04-28 11:47:36,648:easyvvuq.sampling.fd:INFO:Performing relative analysis: False
+2026-04-28 11:47:36,648:easyvvuq.sampling.fd:INFO:Performing perturbation of the nodes, base value = {'x1': 1.0, 'x2': 1.0}, with delta = 0.05
+2026-04-28 11:47:36,649:easyvvuq.sampling.fd:INFO:Using user provided joint distribution with Rosenblatt transformation
+2026-04-28 11:47:36,649:easyvvuq.sampling.fd:INFO:Generated 5/5 samples for the FD scheme
+2026-04-28 11:47:36,649:easyvvuq.sampling.fd:INFO:Performing Rosenblatt transformation
+2026-04-28 11:47:36,650:easyvvuq.sampling.fd:DEBUG:The independent distribution consists of: J(Normal(mu=0.0, sigma=1.0), Normal(mu=0.0, sigma=1.0))
+2026-04-28 11:47:36,650:easyvvuq.sampling.fd:DEBUG:Using parameter permutation: ['x1', 'x2']
+2026-04-28 11:47:36,660:easyvvuq.sampling.fd:INFO:Performing relative analysis: False
+2026-04-28 11:47:36,660:easyvvuq.sampling.fd:INFO:Performing perturbation of the nodes, base value = {'x1': 1.0, 'x2': 1.0}, with delta = 0.05
+2026-04-28 11:47:36,660:easyvvuq.sampling.fd:INFO:Using user provided correlation matrix for Cholesky transformation
+2026-04-28 11:47:36,660:easyvvuq.sampling.fd:INFO:Generated 5/5 samples for the FD scheme
+2026-04-28 11:47:36,660:easyvvuq.sampling.fd:INFO:Performing Cholesky transformation
+2026-04-28 11:47:36,670:easyvvuq.sampling.fd:INFO:Performing relative analysis: True
+2026-04-28 11:47:36,671:easyvvuq.sampling.fd:INFO:Performing perturbation of the nodes, base value = {'x1': 1.0, 'x2': 1.0}, with delta = 0.05
+2026-04-28 11:47:36,671:easyvvuq.sampling.fd:INFO:Using user provided joint distribution with Rosenblatt transformation
+2026-04-28 11:47:36,671:easyvvuq.sampling.fd:INFO:Generated 5/5 samples for the FD scheme
+2026-04-28 11:47:36,671:easyvvuq.sampling.fd:INFO:Performing Rosenblatt transformation
+2026-04-28 11:47:36,672:easyvvuq.sampling.fd:DEBUG:The independent distribution consists of: J(Normal(mu=0.0, sigma=1.0), Normal(mu=0.0, sigma=1.0))
+2026-04-28 11:47:36,672:easyvvuq.sampling.fd:DEBUG:Using parameter permutation: ['x1', 'x2']
+2026-04-28 11:50:18,584:easyvvuq.sampling.fd:INFO:Performing relative analysis: False
+2026-04-28 11:50:18,584:easyvvuq.sampling.fd:INFO:Performing perturbation of the nodes, base value = {'x1': 1.0, 'x2': 1.0}, with delta = 0.05
+2026-04-28 11:50:18,584:easyvvuq.sampling.fd:INFO:Generated 5/5 samples for the FD scheme
+2026-04-28 11:50:18,590:easyvvuq.sampling.fd:INFO:Performing relative analysis: False
+2026-04-28 11:50:18,590:easyvvuq.sampling.fd:INFO:Performing perturbation of the nodes, base value = {'x1': 1.0, 'x2': 1.0}, with delta = 0.05
+2026-04-28 11:50:18,590:easyvvuq.sampling.fd:INFO:Generated 5/5 samples for the FD scheme
+2026-04-28 11:50:18,600:easyvvuq.sampling.fd:INFO:Performing relative analysis: True
+2026-04-28 11:50:18,600:easyvvuq.sampling.fd:INFO:Performing perturbation of the nodes, base value = {'x1': 1.0, 'x2': 1.0}, with delta = 0.05
+2026-04-28 11:50:18,600:easyvvuq.sampling.fd:INFO:Generated 5/5 samples for the FD scheme
+2026-04-28 11:50:18,610:easyvvuq.sampling.fd:INFO:Performing relative analysis: False
+2026-04-28 11:50:18,611:easyvvuq.sampling.fd:INFO:Performing perturbation of the nodes, base value = {'x1': 1.0, 'x2': 1.0}, with delta = 0.05
+2026-04-28 11:50:18,611:easyvvuq.sampling.fd:INFO:Using user provided joint distribution with Rosenblatt transformation
+2026-04-28 11:50:18,611:easyvvuq.sampling.fd:INFO:Generated 5/5 samples for the FD scheme
+2026-04-28 11:50:18,611:easyvvuq.sampling.fd:INFO:Performing Rosenblatt transformation
+2026-04-28 11:50:18,612:easyvvuq.sampling.fd:DEBUG:The independent distribution consists of: J(Normal(mu=0.0, sigma=1.0), Normal(mu=0.0, sigma=1.0))
+2026-04-28 11:50:18,612:easyvvuq.sampling.fd:DEBUG:Using parameter permutation: ['x1', 'x2']
+2026-04-28 11:50:18,622:easyvvuq.sampling.fd:INFO:Performing relative analysis: False
+2026-04-28 11:50:18,622:easyvvuq.sampling.fd:INFO:Performing perturbation of the nodes, base value = {'x1': 1.0, 'x2': 1.0}, with delta = 0.05
+2026-04-28 11:50:18,622:easyvvuq.sampling.fd:INFO:Using user provided joint distribution with Rosenblatt transformation
+2026-04-28 11:50:18,622:easyvvuq.sampling.fd:INFO:Generated 5/5 samples for the FD scheme
+2026-04-28 11:50:18,622:easyvvuq.sampling.fd:INFO:Performing Rosenblatt transformation
+2026-04-28 11:50:18,623:easyvvuq.sampling.fd:DEBUG:The independent distribution consists of: J(Normal(mu=0.0, sigma=1.0), Normal(mu=0.0, sigma=1.0))
+2026-04-28 11:50:18,623:easyvvuq.sampling.fd:DEBUG:Using parameter permutation: ['x1', 'x2']
+2026-04-28 11:50:18,637:easyvvuq.sampling.fd:INFO:Performing relative analysis: False
+2026-04-28 11:50:18,637:easyvvuq.sampling.fd:INFO:Performing perturbation of the nodes, base value = {'x1': 1.0, 'x2': 1.0}, with delta = 0.05
+2026-04-28 11:50:18,637:easyvvuq.sampling.fd:INFO:Using user provided correlation matrix for Cholesky transformation
+2026-04-28 11:50:18,637:easyvvuq.sampling.fd:INFO:Generated 5/5 samples for the FD scheme
+2026-04-28 11:50:18,637:easyvvuq.sampling.fd:INFO:Performing Cholesky transformation
+2026-04-28 11:50:18,647:easyvvuq.sampling.fd:INFO:Performing relative analysis: True
+2026-04-28 11:50:18,647:easyvvuq.sampling.fd:INFO:Performing perturbation of the nodes, base value = {'x1': 1.0, 'x2': 1.0}, with delta = 0.05
+2026-04-28 11:50:18,648:easyvvuq.sampling.fd:INFO:Using user provided joint distribution with Rosenblatt transformation
+2026-04-28 11:50:18,648:easyvvuq.sampling.fd:INFO:Generated 5/5 samples for the FD scheme
+2026-04-28 11:50:18,648:easyvvuq.sampling.fd:INFO:Performing Rosenblatt transformation
+2026-04-28 11:50:18,648:easyvvuq.sampling.fd:DEBUG:The independent distribution consists of: J(Normal(mu=0.0, sigma=1.0), Normal(mu=0.0, sigma=1.0))
+2026-04-28 11:50:18,649:easyvvuq.sampling.fd:DEBUG:Using parameter permutation: ['x1', 'x2']
+2026-04-28 15:59:32,354:easyvvuq.sampling.fd:INFO:Performing relative analysis: False
+2026-04-28 15:59:32,360:easyvvuq.sampling.fd:INFO:Performing perturbation of the nodes, base value = {'x1': 1.0, 'x2': 1.0}, with delta = 0.05
+2026-04-28 15:59:32,360:easyvvuq.sampling.fd:INFO:Generated 5/5 samples for the FD scheme
+2026-04-28 15:59:32,369:easyvvuq.sampling.fd:INFO:Performing relative analysis: False
+2026-04-28 15:59:32,369:easyvvuq.sampling.fd:INFO:Performing perturbation of the nodes, base value = {'x1': 1.0, 'x2': 1.0}, with delta = 0.05
+2026-04-28 15:59:32,370:easyvvuq.sampling.fd:INFO:Generated 5/5 samples for the FD scheme
+2026-04-28 15:59:32,382:easyvvuq.sampling.fd:INFO:Performing relative analysis: True
+2026-04-28 15:59:32,382:easyvvuq.sampling.fd:INFO:Performing perturbation of the nodes, base value = {'x1': 1.0, 'x2': 1.0}, with delta = 0.05
+2026-04-28 15:59:32,382:easyvvuq.sampling.fd:INFO:Generated 5/5 samples for the FD scheme
+2026-04-28 15:59:32,395:easyvvuq.sampling.fd:INFO:Performing relative analysis: False
+2026-04-28 15:59:32,396:easyvvuq.sampling.fd:INFO:Performing perturbation of the nodes, base value = {'x1': 1.0, 'x2': 1.0}, with delta = 0.05
+2026-04-28 15:59:32,396:easyvvuq.sampling.fd:INFO:Using user provided joint distribution with Rosenblatt transformation
+2026-04-28 15:59:32,396:easyvvuq.sampling.fd:INFO:Generated 5/5 samples for the FD scheme
+2026-04-28 15:59:32,396:easyvvuq.sampling.fd:INFO:Performing Rosenblatt transformation
+2026-04-28 15:59:32,397:easyvvuq.sampling.fd:DEBUG:The independent distribution consists of: J(Normal(mu=0.0, sigma=1.0), Normal(mu=0.0, sigma=1.0))
+2026-04-28 15:59:32,397:easyvvuq.sampling.fd:DEBUG:Using parameter permutation: ['x1', 'x2']
+2026-04-28 15:59:32,408:easyvvuq.sampling.fd:INFO:Performing relative analysis: False
+2026-04-28 15:59:32,408:easyvvuq.sampling.fd:INFO:Performing perturbation of the nodes, base value = {'x1': 1.0, 'x2': 1.0}, with delta = 0.05
+2026-04-28 15:59:32,408:easyvvuq.sampling.fd:INFO:Using user provided joint distribution with Rosenblatt transformation
+2026-04-28 15:59:32,408:easyvvuq.sampling.fd:INFO:Generated 5/5 samples for the FD scheme
+2026-04-28 15:59:32,408:easyvvuq.sampling.fd:INFO:Performing Rosenblatt transformation
+2026-04-28 15:59:32,409:easyvvuq.sampling.fd:DEBUG:The independent distribution consists of: J(Normal(mu=0.0, sigma=1.0), Normal(mu=0.0, sigma=1.0))
+2026-04-28 15:59:32,409:easyvvuq.sampling.fd:DEBUG:Using parameter permutation: ['x1', 'x2']
+2026-04-28 15:59:32,423:easyvvuq.sampling.fd:INFO:Performing relative analysis: False
+2026-04-28 15:59:32,423:easyvvuq.sampling.fd:INFO:Performing perturbation of the nodes, base value = {'x1': 1.0, 'x2': 1.0}, with delta = 0.05
+2026-04-28 15:59:32,423:easyvvuq.sampling.fd:INFO:Using user provided correlation matrix for Cholesky transformation
+2026-04-28 15:59:32,423:easyvvuq.sampling.fd:INFO:Generated 5/5 samples for the FD scheme
+2026-04-28 15:59:32,423:easyvvuq.sampling.fd:INFO:Performing Cholesky transformation
+2026-04-28 15:59:32,436:easyvvuq.sampling.fd:INFO:Performing relative analysis: True
+2026-04-28 15:59:32,436:easyvvuq.sampling.fd:INFO:Performing perturbation of the nodes, base value = {'x1': 1.0, 'x2': 1.0}, with delta = 0.05
+2026-04-28 15:59:32,436:easyvvuq.sampling.fd:INFO:Using user provided joint distribution with Rosenblatt transformation
+2026-04-28 15:59:32,436:easyvvuq.sampling.fd:INFO:Generated 5/5 samples for the FD scheme
+2026-04-28 15:59:32,436:easyvvuq.sampling.fd:INFO:Performing Rosenblatt transformation
+2026-04-28 15:59:32,437:easyvvuq.sampling.fd:DEBUG:The independent distribution consists of: J(Normal(mu=0.0, sigma=1.0), Normal(mu=0.0, sigma=1.0))
+2026-04-28 15:59:32,437:easyvvuq.sampling.fd:DEBUG:Using parameter permutation: ['x1', 'x2']
+2026-04-28 16:04:17,130:easyvvuq.sampling.fd:INFO:Performing relative analysis: False
+2026-04-28 16:04:17,130:easyvvuq.sampling.fd:INFO:Performing perturbation of the nodes, base value = {'x1': 1.0, 'x2': 1.0}, with delta = 0.05
+2026-04-28 16:04:17,130:easyvvuq.sampling.fd:INFO:Generated 5/5 samples for the FD scheme
+2026-04-28 16:04:17,138:easyvvuq.sampling.fd:INFO:Performing relative analysis: False
+2026-04-28 16:04:17,138:easyvvuq.sampling.fd:INFO:Performing perturbation of the nodes, base value = {'x1': 1.0, 'x2': 1.0}, with delta = 0.05
+2026-04-28 16:04:17,138:easyvvuq.sampling.fd:INFO:Generated 5/5 samples for the FD scheme
+2026-04-28 16:04:17,148:easyvvuq.sampling.fd:INFO:Performing relative analysis: True
+2026-04-28 16:04:17,148:easyvvuq.sampling.fd:INFO:Performing perturbation of the nodes, base value = {'x1': 1.0, 'x2': 1.0}, with delta = 0.05
+2026-04-28 16:04:17,148:easyvvuq.sampling.fd:INFO:Generated 5/5 samples for the FD scheme
+2026-04-28 16:04:17,159:easyvvuq.sampling.fd:INFO:Performing relative analysis: False
+2026-04-28 16:04:17,159:easyvvuq.sampling.fd:INFO:Performing perturbation of the nodes, base value = {'x1': 1.0, 'x2': 1.0}, with delta = 0.05
+2026-04-28 16:04:17,160:easyvvuq.sampling.fd:INFO:Using user provided joint distribution with Rosenblatt transformation
+2026-04-28 16:04:17,160:easyvvuq.sampling.fd:INFO:Generated 5/5 samples for the FD scheme
+2026-04-28 16:04:17,160:easyvvuq.sampling.fd:INFO:Performing Rosenblatt transformation
+2026-04-28 16:04:17,161:easyvvuq.sampling.fd:DEBUG:The independent distribution consists of: J(Normal(mu=0.0, sigma=1.0), Normal(mu=0.0, sigma=1.0))
+2026-04-28 16:04:17,161:easyvvuq.sampling.fd:DEBUG:Using parameter permutation: ['x1', 'x2']
+2026-04-28 16:04:17,172:easyvvuq.sampling.fd:INFO:Performing relative analysis: False
+2026-04-28 16:04:17,172:easyvvuq.sampling.fd:INFO:Performing perturbation of the nodes, base value = {'x1': 1.0, 'x2': 1.0}, with delta = 0.05
+2026-04-28 16:04:17,172:easyvvuq.sampling.fd:INFO:Using user provided joint distribution with Rosenblatt transformation
+2026-04-28 16:04:17,172:easyvvuq.sampling.fd:INFO:Generated 5/5 samples for the FD scheme
+2026-04-28 16:04:17,173:easyvvuq.sampling.fd:INFO:Performing Rosenblatt transformation
+2026-04-28 16:04:17,173:easyvvuq.sampling.fd:DEBUG:The independent distribution consists of: J(Normal(mu=0.0, sigma=1.0), Normal(mu=0.0, sigma=1.0))
+2026-04-28 16:04:17,174:easyvvuq.sampling.fd:DEBUG:Using parameter permutation: ['x1', 'x2']
+2026-04-28 16:04:17,186:easyvvuq.sampling.fd:INFO:Performing relative analysis: False
+2026-04-28 16:04:17,187:easyvvuq.sampling.fd:INFO:Performing perturbation of the nodes, base value = {'x1': 1.0, 'x2': 1.0}, with delta = 0.05
+2026-04-28 16:04:17,187:easyvvuq.sampling.fd:INFO:Using user provided correlation matrix for Cholesky transformation
+2026-04-28 16:04:17,187:easyvvuq.sampling.fd:INFO:Generated 5/5 samples for the FD scheme
+2026-04-28 16:04:17,187:easyvvuq.sampling.fd:INFO:Performing Cholesky transformation
+2026-04-28 16:04:17,198:easyvvuq.sampling.fd:INFO:Performing relative analysis: True
+2026-04-28 16:04:17,198:easyvvuq.sampling.fd:INFO:Performing perturbation of the nodes, base value = {'x1': 1.0, 'x2': 1.0}, with delta = 0.05
+2026-04-28 16:04:17,199:easyvvuq.sampling.fd:INFO:Using user provided joint distribution with Rosenblatt transformation
+2026-04-28 16:04:17,199:easyvvuq.sampling.fd:INFO:Generated 5/5 samples for the FD scheme
+2026-04-28 16:04:17,199:easyvvuq.sampling.fd:INFO:Performing Rosenblatt transformation
+2026-04-28 16:04:17,200:easyvvuq.sampling.fd:DEBUG:The independent distribution consists of: J(Normal(mu=0.0, sigma=1.0), Normal(mu=0.0, sigma=1.0))
+2026-04-28 16:04:17,200:easyvvuq.sampling.fd:DEBUG:Using parameter permutation: ['x1', 'x2']
+2026-04-28 16:25:00,049:easyvvuq.sampling.fd:INFO:Performing relative analysis: False
+2026-04-28 16:25:00,050:easyvvuq.sampling.fd:INFO:Performing perturbation of the nodes, base value = {'x1': 1.0, 'x2': 1.0}, with delta = 0.05
+2026-04-28 16:25:00,050:easyvvuq.sampling.fd:INFO:Generated 5/5 samples for the FD scheme
+2026-04-28 16:25:00,058:easyvvuq.sampling.fd:INFO:Performing relative analysis: False
+2026-04-28 16:25:00,058:easyvvuq.sampling.fd:INFO:Performing perturbation of the nodes, base value = {'x1': 1.0, 'x2': 1.0}, with delta = 0.05
+2026-04-28 16:25:00,058:easyvvuq.sampling.fd:INFO:Generated 5/5 samples for the FD scheme
+2026-04-28 16:25:00,068:easyvvuq.sampling.fd:INFO:Performing relative analysis: True
+2026-04-28 16:25:00,068:easyvvuq.sampling.fd:INFO:Performing perturbation of the nodes, base value = {'x1': 1.0, 'x2': 1.0}, with delta = 0.05
+2026-04-28 16:25:00,068:easyvvuq.sampling.fd:INFO:Generated 5/5 samples for the FD scheme
+2026-04-28 16:25:00,079:easyvvuq.sampling.fd:INFO:Performing relative analysis: False
+2026-04-28 16:25:00,079:easyvvuq.sampling.fd:INFO:Performing perturbation of the nodes, base value = {'x1': 1.0, 'x2': 1.0}, with delta = 0.05
+2026-04-28 16:25:00,079:easyvvuq.sampling.fd:INFO:Using user provided joint distribution with Rosenblatt transformation
+2026-04-28 16:25:00,079:easyvvuq.sampling.fd:INFO:Generated 5/5 samples for the FD scheme
+2026-04-28 16:25:00,079:easyvvuq.sampling.fd:INFO:Performing Rosenblatt transformation
+2026-04-28 16:25:00,080:easyvvuq.sampling.fd:DEBUG:The independent distribution consists of: J(Normal(mu=0.0, sigma=1.0), Normal(mu=0.0, sigma=1.0))
+2026-04-28 16:25:00,080:easyvvuq.sampling.fd:DEBUG:Using parameter permutation: ['x1', 'x2']
+2026-04-28 16:25:00,089:easyvvuq.sampling.fd:INFO:Performing relative analysis: False
+2026-04-28 16:25:00,090:easyvvuq.sampling.fd:INFO:Performing perturbation of the nodes, base value = {'x1': 1.0, 'x2': 1.0}, with delta = 0.05
+2026-04-28 16:25:00,090:easyvvuq.sampling.fd:INFO:Using user provided joint distribution with Rosenblatt transformation
+2026-04-28 16:25:00,090:easyvvuq.sampling.fd:INFO:Generated 5/5 samples for the FD scheme
+2026-04-28 16:25:00,090:easyvvuq.sampling.fd:INFO:Performing Rosenblatt transformation
+2026-04-28 16:25:00,091:easyvvuq.sampling.fd:DEBUG:The independent distribution consists of: J(Normal(mu=0.0, sigma=1.0), Normal(mu=0.0, sigma=1.0))
+2026-04-28 16:25:00,091:easyvvuq.sampling.fd:DEBUG:Using parameter permutation: ['x1', 'x2']
+2026-04-28 16:25:00,102:easyvvuq.sampling.fd:INFO:Performing relative analysis: False
+2026-04-28 16:25:00,102:easyvvuq.sampling.fd:INFO:Performing perturbation of the nodes, base value = {'x1': 1.0, 'x2': 1.0}, with delta = 0.05
+2026-04-28 16:25:00,102:easyvvuq.sampling.fd:INFO:Using user provided correlation matrix for Cholesky transformation
+2026-04-28 16:25:00,102:easyvvuq.sampling.fd:INFO:Generated 5/5 samples for the FD scheme
+2026-04-28 16:25:00,102:easyvvuq.sampling.fd:INFO:Performing Cholesky transformation
+2026-04-28 16:25:00,112:easyvvuq.sampling.fd:INFO:Performing relative analysis: True
+2026-04-28 16:25:00,113:easyvvuq.sampling.fd:INFO:Performing perturbation of the nodes, base value = {'x1': 1.0, 'x2': 1.0}, with delta = 0.05
+2026-04-28 16:25:00,113:easyvvuq.sampling.fd:INFO:Using user provided joint distribution with Rosenblatt transformation
+2026-04-28 16:25:00,113:easyvvuq.sampling.fd:INFO:Generated 5/5 samples for the FD scheme
+2026-04-28 16:25:00,113:easyvvuq.sampling.fd:INFO:Performing Rosenblatt transformation
+2026-04-28 16:25:00,114:easyvvuq.sampling.fd:DEBUG:The independent distribution consists of: J(Normal(mu=0.0, sigma=1.0), Normal(mu=0.0, sigma=1.0))
+2026-04-28 16:25:00,114:easyvvuq.sampling.fd:DEBUG:Using parameter permutation: ['x1', 'x2']
+2026-04-28 16:43:55,638:easyvvuq.sampling.fd:INFO:Performing relative analysis: False
+2026-04-28 16:43:55,638:easyvvuq.sampling.fd:INFO:Performing perturbation of the nodes, base value = {'x1': 1.0, 'x2': 1.0}, with delta = 0.05
+2026-04-28 16:43:55,638:easyvvuq.sampling.fd:INFO:Generated 5/5 samples for the FD scheme
+2026-04-28 16:43:55,648:easyvvuq.sampling.fd:INFO:Performing relative analysis: False
+2026-04-28 16:43:55,648:easyvvuq.sampling.fd:INFO:Performing perturbation of the nodes, base value = {'x1': 1.0, 'x2': 1.0}, with delta = 0.05
+2026-04-28 16:43:55,649:easyvvuq.sampling.fd:INFO:Generated 5/5 samples for the FD scheme
+2026-04-28 16:43:55,673:easyvvuq.sampling.fd:INFO:Performing relative analysis: True
+2026-04-28 16:43:55,674:easyvvuq.sampling.fd:INFO:Performing perturbation of the nodes, base value = {'x1': 1.0, 'x2': 1.0}, with delta = 0.05
+2026-04-28 16:43:55,674:easyvvuq.sampling.fd:INFO:Generated 5/5 samples for the FD scheme
+2026-04-28 16:43:55,691:easyvvuq.sampling.fd:INFO:Performing relative analysis: False
+2026-04-28 16:43:55,691:easyvvuq.sampling.fd:INFO:Performing perturbation of the nodes, base value = {'x1': 1.0, 'x2': 1.0}, with delta = 0.05
+2026-04-28 16:43:55,691:easyvvuq.sampling.fd:INFO:Using user provided joint distribution with Rosenblatt transformation
+2026-04-28 16:43:55,691:easyvvuq.sampling.fd:INFO:Generated 5/5 samples for the FD scheme
+2026-04-28 16:43:55,692:easyvvuq.sampling.fd:INFO:Performing Rosenblatt transformation
+2026-04-28 16:43:55,693:easyvvuq.sampling.fd:DEBUG:The independent distribution consists of: J(Normal(mu=0.0, sigma=1.0), Normal(mu=0.0, sigma=1.0))
+2026-04-28 16:43:55,693:easyvvuq.sampling.fd:DEBUG:Using parameter permutation: ['x1', 'x2']
+2026-04-28 16:43:55,704:easyvvuq.sampling.fd:INFO:Performing relative analysis: False
+2026-04-28 16:43:55,704:easyvvuq.sampling.fd:INFO:Performing perturbation of the nodes, base value = {'x1': 1.0, 'x2': 1.0}, with delta = 0.05
+2026-04-28 16:43:55,704:easyvvuq.sampling.fd:INFO:Using user provided joint distribution with Rosenblatt transformation
+2026-04-28 16:43:55,704:easyvvuq.sampling.fd:INFO:Generated 5/5 samples for the FD scheme
+2026-04-28 16:43:55,704:easyvvuq.sampling.fd:INFO:Performing Rosenblatt transformation
+2026-04-28 16:43:55,705:easyvvuq.sampling.fd:DEBUG:The independent distribution consists of: J(Normal(mu=0.0, sigma=1.0), Normal(mu=0.0, sigma=1.0))
+2026-04-28 16:43:55,705:easyvvuq.sampling.fd:DEBUG:Using parameter permutation: ['x1', 'x2']
+2026-04-28 16:43:55,721:easyvvuq.sampling.fd:INFO:Performing relative analysis: False
+2026-04-28 16:43:55,721:easyvvuq.sampling.fd:INFO:Performing perturbation of the nodes, base value = {'x1': 1.0, 'x2': 1.0}, with delta = 0.05
+2026-04-28 16:43:55,721:easyvvuq.sampling.fd:INFO:Using user provided correlation matrix for Cholesky transformation
+2026-04-28 16:43:55,722:easyvvuq.sampling.fd:INFO:Generated 5/5 samples for the FD scheme
+2026-04-28 16:43:55,722:easyvvuq.sampling.fd:INFO:Performing Cholesky transformation
+2026-04-28 16:43:55,735:easyvvuq.sampling.fd:INFO:Performing relative analysis: True
+2026-04-28 16:43:55,735:easyvvuq.sampling.fd:INFO:Performing perturbation of the nodes, base value = {'x1': 1.0, 'x2': 1.0}, with delta = 0.05
+2026-04-28 16:43:55,735:easyvvuq.sampling.fd:INFO:Using user provided joint distribution with Rosenblatt transformation
+2026-04-28 16:43:55,735:easyvvuq.sampling.fd:INFO:Generated 5/5 samples for the FD scheme
+2026-04-28 16:43:55,736:easyvvuq.sampling.fd:INFO:Performing Rosenblatt transformation
+2026-04-28 16:43:55,737:easyvvuq.sampling.fd:DEBUG:The independent distribution consists of: J(Normal(mu=0.0, sigma=1.0), Normal(mu=0.0, sigma=1.0))
+2026-04-28 16:43:55,737:easyvvuq.sampling.fd:DEBUG:Using parameter permutation: ['x1', 'x2']
+2026-04-28 21:25:36,404:easyvvuq.sampling.fd:INFO:Performing relative analysis: False
+2026-04-28 21:25:36,406:easyvvuq.sampling.fd:INFO:Performing perturbation of the nodes, base value = {'x1': 1.0, 'x2': 1.0}, with delta = 0.05
+2026-04-28 21:25:36,406:easyvvuq.sampling.fd:INFO:Generated 5/5 samples for the FD scheme
+2026-04-28 21:25:36,413:easyvvuq.sampling.fd:INFO:Performing relative analysis: False
+2026-04-28 21:25:36,413:easyvvuq.sampling.fd:INFO:Performing perturbation of the nodes, base value = {'x1': 1.0, 'x2': 1.0}, with delta = 0.05
+2026-04-28 21:25:36,413:easyvvuq.sampling.fd:INFO:Generated 5/5 samples for the FD scheme
+2026-04-28 21:25:36,423:easyvvuq.sampling.fd:INFO:Performing relative analysis: True
+2026-04-28 21:25:36,423:easyvvuq.sampling.fd:INFO:Performing perturbation of the nodes, base value = {'x1': 1.0, 'x2': 1.0}, with delta = 0.05
+2026-04-28 21:25:36,423:easyvvuq.sampling.fd:INFO:Generated 5/5 samples for the FD scheme
+2026-04-28 21:25:36,435:easyvvuq.sampling.fd:INFO:Performing relative analysis: False
+2026-04-28 21:25:36,435:easyvvuq.sampling.fd:INFO:Performing perturbation of the nodes, base value = {'x1': 1.0, 'x2': 1.0}, with delta = 0.05
+2026-04-28 21:25:36,435:easyvvuq.sampling.fd:INFO:Using user provided joint distribution with Rosenblatt transformation
+2026-04-28 21:25:36,435:easyvvuq.sampling.fd:INFO:Generated 5/5 samples for the FD scheme
+2026-04-28 21:25:36,436:easyvvuq.sampling.fd:INFO:Performing Rosenblatt transformation
+2026-04-28 21:25:36,436:easyvvuq.sampling.fd:DEBUG:The independent distribution consists of: J(Normal(mu=0.0, sigma=1.0), Normal(mu=0.0, sigma=1.0))
+2026-04-28 21:25:36,436:easyvvuq.sampling.fd:DEBUG:Using parameter permutation: ['x1', 'x2']
+2026-04-28 21:25:36,448:easyvvuq.sampling.fd:INFO:Performing relative analysis: False
+2026-04-28 21:25:36,448:easyvvuq.sampling.fd:INFO:Performing perturbation of the nodes, base value = {'x1': 1.0, 'x2': 1.0}, with delta = 0.05
+2026-04-28 21:25:36,449:easyvvuq.sampling.fd:INFO:Using user provided joint distribution with Rosenblatt transformation
+2026-04-28 21:25:36,449:easyvvuq.sampling.fd:INFO:Generated 5/5 samples for the FD scheme
+2026-04-28 21:25:36,449:easyvvuq.sampling.fd:INFO:Performing Rosenblatt transformation
+2026-04-28 21:25:36,450:easyvvuq.sampling.fd:DEBUG:The independent distribution consists of: J(Normal(mu=0.0, sigma=1.0), Normal(mu=0.0, sigma=1.0))
+2026-04-28 21:25:36,450:easyvvuq.sampling.fd:DEBUG:Using parameter permutation: ['x1', 'x2']
+2026-04-28 21:25:36,462:easyvvuq.sampling.fd:INFO:Performing relative analysis: False
+2026-04-28 21:25:36,462:easyvvuq.sampling.fd:INFO:Performing perturbation of the nodes, base value = {'x1': 1.0, 'x2': 1.0}, with delta = 0.05
+2026-04-28 21:25:36,462:easyvvuq.sampling.fd:INFO:Using user provided correlation matrix for Cholesky transformation
+2026-04-28 21:25:36,462:easyvvuq.sampling.fd:INFO:Generated 5/5 samples for the FD scheme
+2026-04-28 21:25:36,463:easyvvuq.sampling.fd:INFO:Performing Cholesky transformation
+2026-04-28 21:25:36,473:easyvvuq.sampling.fd:INFO:Performing relative analysis: True
+2026-04-28 21:25:36,473:easyvvuq.sampling.fd:INFO:Performing perturbation of the nodes, base value = {'x1': 1.0, 'x2': 1.0}, with delta = 0.05
+2026-04-28 21:25:36,474:easyvvuq.sampling.fd:INFO:Using user provided joint distribution with Rosenblatt transformation
+2026-04-28 21:25:36,474:easyvvuq.sampling.fd:INFO:Generated 5/5 samples for the FD scheme
+2026-04-28 21:25:36,474:easyvvuq.sampling.fd:INFO:Performing Rosenblatt transformation
+2026-04-28 21:25:36,474:easyvvuq.sampling.fd:DEBUG:The independent distribution consists of: J(Normal(mu=0.0, sigma=1.0), Normal(mu=0.0, sigma=1.0))
+2026-04-28 21:25:36,475:easyvvuq.sampling.fd:DEBUG:Using parameter permutation: ['x1', 'x2']
