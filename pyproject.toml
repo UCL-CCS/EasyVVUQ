@@ -44,7 +44,6 @@ docs = [
 ]
 tests = [
     "pytest >= 3.3.0",
-    "pytest-pep8",
     "pytest-benchmark",
     "pytest-dependency",
 ]
