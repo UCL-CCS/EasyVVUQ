@@ -254,7 +254,7 @@ typing_extensions==4.15.0
 typogrify==2.1.0
 tzdata==2026.2
 uc-micro-py==2.0.0
-ujson==5.12.0
+ujson==5.13.0
 uncertainties==3.2.4
 unicodedata2==17.0.1
 urllib3==2.6.3
