@@ -463,7 +463,7 @@ class SCAnalysis(BaseAnalysisElement):
                 for l in self.sampler.admissible_idx:
                     L = np.sum(l) - self.N + 1
                     tmp = np.where(l == L)[0]
-                    if L <= level and np.in1d(tmp, include)[0]:
+                    if L <= level and np.isin(tmp, include)[0]:
                         admissible_idx.append(l)
                         count += 1
                 admissible_idx = np.array(admissible_idx).reshape([count, self.N])

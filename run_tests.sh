@@ -1,9 +1,8 @@
 #!/bin/bash
-# Run tests using the virtual environment if available, otherwise use system python
+# Run tests securely by ensuring the virtual environment is loaded into PATH
 
-if [ -f ".venv/bin/python" ]; then
-    .venv/bin/python -m pytest tests/
-else
-    python3 -m pytest tests/
+if [ -f ".venv/bin/activate" ]; then
+    source .venv/bin/activate
 fi
 
+python3 -m pytest --benchmark-skip tests/

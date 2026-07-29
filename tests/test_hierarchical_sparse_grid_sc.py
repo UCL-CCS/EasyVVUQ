@@ -1,3 +1,4 @@
+import numpy as np
 import os
 import easyvvuq as uq
 import numpy as np
@@ -135,5 +136,5 @@ def test_results(sparse_campaign):
     for i in range(ref_sobols.size):
         computed_sobol = results._get_sobols_first('f', 'x%d' % (i + 1))
         logging.debug('Exact Sobol indices x%d = %.4f' % (i + 1, ref_sobols[i]))
-        logging.debug('Computed Sobol indices x%d = %.4f' % (i + 1, computed_sobol))
+        logging.debug('Computed Sobol indices x%d = %.4f' % (i + 1, float(np.squeeze(computed_sobol))))
         assert (ref_sobols[i] == pytest.approx(computed_sobol, abs=0.01))

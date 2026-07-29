@@ -3,4 +3,6 @@ sphinx-rtd-theme
 sphinx-autobuild
 myst-parser
 sphinxcontrib-mermaid
-easyvvuq
+nbsphinx
+ipython
+jupyter
