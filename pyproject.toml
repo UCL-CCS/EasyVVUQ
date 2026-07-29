@@ -17,6 +17,7 @@ dependencies = [
     "dill",
     "cerberus",
     "SALib>=1.4.5",
+    "qcg",
 ]
 
 [project.optional-dependencies]
