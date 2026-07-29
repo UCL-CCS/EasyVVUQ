@@ -16,7 +16,7 @@ dependencies = [
     "numpoly>=1.1.3",
     "dill",
     "cerberus",
-    "SALib",
+    "SALib>=1.4.5",
 ]
 
 [project.optional-dependencies]
@@ -25,14 +25,11 @@ dask = [
     "dask-jobqueue",
     "cloudpickle",
 ]
-salib = [
-    "SALib>=1.4.5",
-]
 ml = [
     "scikit-learn>=1.0",
 ]
 all = [
-    "easyvvuq[dask,salib,ml]",
+    "easyvvuq[dask,ml]",
 ]
 tests = [
     "pytest>=7.0",
