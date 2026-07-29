@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1785312931857,
+  "lastUpdate": 1785314088117,
   "repoUrl": "https://github.com/UCL-CCS/EasyVVUQ",
   "entries": {
     "Benchmark": [
@@ -6138,6 +6138,72 @@ window.BENCHMARK_DATA = {
             "unit": "iter/sec",
             "range": "stddev: 0.0003871667578297591",
             "extra": "mean: 19.324409862746304 msec\nrounds: 51"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "djgroennl@gmail.com",
+            "name": "Derek Groen",
+            "username": "djgroen"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "c8420e7304c61132c04d540a586acd0b468aca3f",
+          "message": "Merge pull request #490 from UCL-CCS/fix/action-versions\n\nupdate action versions to get rid of messages about 'Node.js 20 is de…",
+          "timestamp": "2026-07-29T09:30:03+01:00",
+          "tree_id": "24098526889db8e9426b393dc00712065dff5f21",
+          "url": "https://github.com/UCL-CCS/EasyVVUQ/commit/c8420e7304c61132c04d540a586acd0b468aca3f"
+        },
+        "date": 1785314086430,
+        "tool": "pytest",
+        "benches": [
+          {
+            "name": "tests/test_db_benchmark.py::test_draw",
+            "value": 0.12574157903456493,
+            "unit": "iter/sec",
+            "range": "stddev: 0.06381647460923348",
+            "extra": "mean: 7.952818850199992 sec\nrounds: 5"
+          },
+          {
+            "name": "tests/test_db_benchmark.py::test_store_results",
+            "value": 0.20810811536646975,
+            "unit": "iter/sec",
+            "range": "stddev: 0.035143857907549265",
+            "extra": "mean: 4.805194637599987 sec\nrounds: 5"
+          },
+          {
+            "name": "tests/test_db_benchmark.py::test_get_collation_result",
+            "value": 103.04271519952525,
+            "unit": "iter/sec",
+            "range": "stddev: 0.00023553047836091074",
+            "extra": "mean: 9.704713215909194 msec\nrounds: 88"
+          },
+          {
+            "name": "tests/test_db_benchmark.py::test_draw_add",
+            "value": 0.12679071819108184,
+            "unit": "iter/sec",
+            "range": "stddev: 0.09092085249483467",
+            "extra": "mean: 7.8870126635999895 sec\nrounds: 5"
+          },
+          {
+            "name": "tests/test_db_benchmark.py::test_store_results_add",
+            "value": 0.21262146502923268,
+            "unit": "iter/sec",
+            "range": "stddev: 0.017363466411574466",
+            "extra": "mean: 4.703194006600006 sec\nrounds: 5"
+          },
+          {
+            "name": "tests/test_db_benchmark.py::test_get_collation_result_add",
+            "value": 55.70344699157751,
+            "unit": "iter/sec",
+            "range": "stddev: 0.0003344166759414769",
+            "extra": "mean: 17.952210392854187 msec\nrounds: 56"
           }
         ]
       }
