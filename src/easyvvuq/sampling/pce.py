@@ -1,4 +1,5 @@
 import logging
+import sys
 import chaospy as cp
 import numpy as np
 import random
@@ -239,7 +240,7 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
                     self._nodes_dep = Transformations.cholesky(self._nodes, self.vary, self.distribution_dep, regression)
                 else:
                     logging.critical("Error: How did this happen? We are transforming the nodes but not with Rosenblatt nor Cholesky")
-                    exit()
+                    sys.exit(1)
 
         # Projection variante (Pseudo-spectral method)
         else:
