@@ -1,5 +1,6 @@
 #from hashlib import shake_128
 import logging
+import sys
 import chaospy as cp
 import numpy as np
 import random
@@ -281,7 +282,7 @@ class FDSampler(BaseSamplingElement, sampler_name="FD_sampler"):
                 #self._perturbations_dep = Transformations.cholesky(self._perturbations, vary_, distribution_)
             else:
                 self.logger.critical("Error: How did this happen? We are transforming the nodes but not with Rosenblatt nor Cholesky")
-                exit()
+                sys.exit()
         
         return
 
