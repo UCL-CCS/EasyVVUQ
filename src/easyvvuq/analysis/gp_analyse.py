@@ -41,6 +41,7 @@ class GaussianProcessSurrogateResults(AnalysisResults):
     """
 
     def __init__(self, gp, parameters, qoi):
+        super().__init__()
         self.gp = gp
         self.parameters = parameters
         self.qoi = qoi
