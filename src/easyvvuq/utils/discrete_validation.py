@@ -4,7 +4,6 @@ Utilities for handling discrete distribution validation in EasyVVUQ.
 This module provides enhanced validation capabilities for discrete distributions
 when used with Stochastic Collocation (SC) and Polynomial Chaos Expansion (PCE) methods.
 """
-import numpy as np
 import chaospy as cp
 from typing import Any, Dict, Union
 
