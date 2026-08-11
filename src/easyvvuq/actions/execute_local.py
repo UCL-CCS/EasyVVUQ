@@ -245,7 +245,6 @@ class ExecuteLocal():
         """
         stdout.close()
         stderr.close()
-        pass
 
     def succeeded(self):
         """Will return True if the process finished successfully.
