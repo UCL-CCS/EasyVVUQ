@@ -97,21 +97,21 @@ values.</p>
 
                         <label class="view-source-button" for="mod-grid_sampler-view-source"><span>View Source</span></label>
 
-                        <div class="pdoc-code codehilite"><pre><span></span><span id="L-1"><a href="#L-1"><span class="linenos">  1</span></a><span class="sd">&quot;&quot;&quot;A grid sampler</span>
+                        <div class="pdoc-code codehilite"><pre><span></span><span id="L-1"><a href="#L-1"><span class="linenos">  1</span></a><span class="sd">"""A grid sampler</span>
 </span><span id="L-2"><a href="#L-2"><span class="linenos">  2</span></a>
-</span><span id="L-3"><a href="#L-3"><span class="linenos">  3</span></a><span class="sd">Useful for e.g. hyperparameter search. The &quot;vary&quot; dict contains the values</span>
+</span><span id="L-3"><a href="#L-3"><span class="linenos">  3</span></a><span class="sd">Useful for e.g. hyperparameter search. The "vary" dict contains the values</span>
 </span><span id="L-4"><a href="#L-4"><span class="linenos">  4</span></a><span class="sd">that must be considered per (hyper)parameter, for instance:</span>
 </span><span id="L-5"><a href="#L-5"><span class="linenos">  5</span></a>
-</span><span id="L-6"><a href="#L-6"><span class="linenos">  6</span></a><span class="sd">    vary = {&quot;x1&quot;: [0.0, 0.5, 0.1],</span>
-</span><span id="L-7"><a href="#L-7"><span class="linenos">  7</span></a><span class="sd">            &quot;x2 = [1, 3],</span>
-</span><span id="L-8"><a href="#L-8"><span class="linenos">  8</span></a><span class="sd">            &quot;x3&quot; = [True, False]}</span>
+</span><span id="L-6"><a href="#L-6"><span class="linenos">  6</span></a><span class="sd">    vary = {"x1": [0.0, 0.5, 0.1],</span>
+</span><span id="L-7"><a href="#L-7"><span class="linenos">  7</span></a><span class="sd">            "x2 = [1, 3],</span>
+</span><span id="L-8"><a href="#L-8"><span class="linenos">  8</span></a><span class="sd">            "x3" = [True, False]}</span>
 </span><span id="L-9"><a href="#L-9"><span class="linenos">  9</span></a>
 </span><span id="L-10"><a href="#L-10"><span class="linenos"> 10</span></a><span class="sd">The sampler will create a tensor grid using all specified 1D parameter</span>
 </span><span id="L-11"><a href="#L-11"><span class="linenos"> 11</span></a><span class="sd">values.</span>
-</span><span id="L-12"><a href="#L-12"><span class="linenos"> 12</span></a><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-12"><a href="#L-12"><span class="linenos"> 12</span></a><span class="sd">"""</span>
 </span><span id="L-13"><a href="#L-13"><span class="linenos"> 13</span></a>
-</span><span id="L-14"><a href="#L-14"><span class="linenos"> 14</span></a><span class="n">__author__</span> <span class="o">=</span> <span class="s2">&quot;Wouter Edeling&quot;</span>
-</span><span id="L-15"><a href="#L-15"><span class="linenos"> 15</span></a><span class="n">__copyright__</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+</span><span id="L-14"><a href="#L-14"><span class="linenos"> 14</span></a><span class="n">__author__</span> <span class="o">=</span> <span class="s2">"Wouter Edeling"</span>
+</span><span id="L-15"><a href="#L-15"><span class="linenos"> 15</span></a><span class="n">__copyright__</span> <span class="o">=</span> <span class="s2">"""</span>
 </span><span id="L-16"><a href="#L-16"><span class="linenos"> 16</span></a>
 </span><span id="L-17"><a href="#L-17"><span class="linenos"> 17</span></a><span class="s2">    Copyright 2018 Robin A. Richardson, David W. Wright</span>
 </span><span id="L-18"><a href="#L-18"><span class="linenos"> 18</span></a>
@@ -130,30 +130,30 @@ values.</p>
 </span><span id="L-31"><a href="#L-31"><span class="linenos"> 31</span></a><span class="s2">    You should have received a copy of the Lesser GNU General Public License</span>
 </span><span id="L-32"><a href="#L-32"><span class="linenos"> 32</span></a><span class="s2">    along with this program.  If not, see &lt;https://www.gnu.org/licenses/&gt;.</span>
 </span><span id="L-33"><a href="#L-33"><span class="linenos"> 33</span></a>
-</span><span id="L-34"><a href="#L-34"><span class="linenos"> 34</span></a><span class="s2">&quot;&quot;&quot;</span>
-</span><span id="L-35"><a href="#L-35"><span class="linenos"> 35</span></a><span class="n">__license__</span> <span class="o">=</span> <span class="s2">&quot;LGPL&quot;</span>
+</span><span id="L-34"><a href="#L-34"><span class="linenos"> 34</span></a><span class="s2">"""</span>
+</span><span id="L-35"><a href="#L-35"><span class="linenos"> 35</span></a><span class="n">__license__</span> <span class="o">=</span> <span class="s2">"LGPL"</span>
 </span><span id="L-36"><a href="#L-36"><span class="linenos"> 36</span></a>
 </span><span id="L-37"><a href="#L-37"><span class="linenos"> 37</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">itertools</span><span class="w"> </span><span class="kn">import</span> <span class="n">product</span>
 </span><span id="L-38"><a href="#L-38"><span class="linenos"> 38</span></a><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 </span><span id="L-39"><a href="#L-39"><span class="linenos"> 39</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseSamplingElement</span>  <span class="c1"># , Vary</span>
 </span><span id="L-40"><a href="#L-40"><span class="linenos"> 40</span></a>
 </span><span id="L-41"><a href="#L-41"><span class="linenos"> 41</span></a>
-</span><span id="L-42"><a href="#L-42"><span class="linenos"> 42</span></a><span class="k">class</span><span class="w"> </span><span class="nc">Grid_Sampler</span><span class="p">(</span><span class="n">BaseSamplingElement</span><span class="p">,</span> <span class="n">sampler_name</span><span class="o">=</span><span class="s2">&quot;grid_sampler&quot;</span><span class="p">):</span>
+</span><span id="L-42"><a href="#L-42"><span class="linenos"> 42</span></a><span class="k">class</span><span class="w"> </span><span class="nc">Grid_Sampler</span><span class="p">(</span><span class="n">BaseSamplingElement</span><span class="p">,</span> <span class="n">sampler_name</span><span class="o">=</span><span class="s2">"grid_sampler"</span><span class="p">):</span>
 </span><span id="L-43"><a href="#L-43"><span class="linenos"> 43</span></a>
 </span><span id="L-44"><a href="#L-44"><span class="linenos"> 44</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vary</span><span class="p">,</span> <span class="n">count</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
-</span><span id="L-45"><a href="#L-45"><span class="linenos"> 45</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-45"><a href="#L-45"><span class="linenos"> 45</span></a><span class="w">        </span><span class="sd">"""</span>
 </span><span id="L-46"><a href="#L-46"><span class="linenos"> 46</span></a><span class="sd">        Initialize the grid sampler.</span>
 </span><span id="L-47"><a href="#L-47"><span class="linenos"> 47</span></a>
 </span><span id="L-48"><a href="#L-48"><span class="linenos"> 48</span></a><span class="sd">        Parameters</span>
 </span><span id="L-49"><a href="#L-49"><span class="linenos"> 49</span></a><span class="sd">        ----------</span>
 </span><span id="L-50"><a href="#L-50"><span class="linenos"> 50</span></a><span class="sd">        vary : dict, or list of dicts</span>
 </span><span id="L-51"><a href="#L-51"><span class="linenos"> 51</span></a><span class="sd">            A dictionary containing all 1D values for each parameter. For instance</span>
-</span><span id="L-52"><a href="#L-52"><span class="linenos"> 52</span></a><span class="sd">            vary = {&quot;x1&quot;: [0.0, 0.5. 1.0], &quot;x2&quot;: [True, False]}. This will</span>
+</span><span id="L-52"><a href="#L-52"><span class="linenos"> 52</span></a><span class="sd">            vary = {"x1": [0.0, 0.5. 1.0], "x2": [True, False]}. This will</span>
 </span><span id="L-53"><a href="#L-53"><span class="linenos"> 53</span></a><span class="sd">            create a 2D tensor product of all (x1, x2) parameter combinations.</span>
 </span><span id="L-54"><a href="#L-54"><span class="linenos"> 54</span></a><span class="sd">            If a list of vary dicts is specified, each vary dict will be treated</span>
 </span><span id="L-55"><a href="#L-55"><span class="linenos"> 55</span></a><span class="sd">            independently to generate points. These dicts do not have to contain</span>
 </span><span id="L-56"><a href="#L-56"><span class="linenos"> 56</span></a><span class="sd">            the same parameters. The tensor product points are stored in the </span>
-</span><span id="L-57"><a href="#L-57"><span class="linenos"> 57</span></a><span class="sd">            &#39;points&#39; list, with one tensor product per vary dict.</span>
+</span><span id="L-57"><a href="#L-57"><span class="linenos"> 57</span></a><span class="sd">            'points' list, with one tensor product per vary dict.</span>
 </span><span id="L-58"><a href="#L-58"><span class="linenos"> 58</span></a><span class="sd">        count : int, optional</span>
 </span><span id="L-59"><a href="#L-59"><span class="linenos"> 59</span></a><span class="sd">            Internal counter used to count the number of samples that have</span>
 </span><span id="L-60"><a href="#L-60"><span class="linenos"> 60</span></a><span class="sd">            been executed. The default is 0.</span>
@@ -162,7 +162,7 @@ values.</p>
 </span><span id="L-63"><a href="#L-63"><span class="linenos"> 63</span></a><span class="sd">        -------</span>
 </span><span id="L-64"><a href="#L-64"><span class="linenos"> 64</span></a><span class="sd">        None.</span>
 </span><span id="L-65"><a href="#L-65"><span class="linenos"> 65</span></a>
-</span><span id="L-66"><a href="#L-66"><span class="linenos"> 66</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-66"><a href="#L-66"><span class="linenos"> 66</span></a><span class="sd">        """</span>
 </span><span id="L-67"><a href="#L-67"><span class="linenos"> 67</span></a>        <span class="c1"># allways add vary to list, even if only a single dict is specified</span>
 </span><span id="L-68"><a href="#L-68"><span class="linenos"> 68</span></a>        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">vary</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
 </span><span id="L-69"><a href="#L-69"><span class="linenos"> 69</span></a>            <span class="n">vary</span> <span class="o">=</span> <span class="p">[</span><span class="n">vary</span><span class="p">]</span>
@@ -190,13 +190,13 @@ values.</p>
 </span><span id="L-91"><a href="#L-91"><span class="linenos"> 91</span></a>        <span class="k">return</span> <span class="kc">True</span>
 </span><span id="L-92"><a href="#L-92"><span class="linenos"> 92</span></a>
 </span><span id="L-93"><a href="#L-93"><span class="linenos"> 93</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">n_samples</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="L-94"><a href="#L-94"><span class="linenos"> 94</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the number of samples in this sampler.</span>
-</span><span id="L-95"><a href="#L-95"><span class="linenos"> 95</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-94"><a href="#L-94"><span class="linenos"> 94</span></a><span class="w">        </span><span class="sd">"""Returns the number of samples in this sampler.</span>
+</span><span id="L-95"><a href="#L-95"><span class="linenos"> 95</span></a><span class="sd">        """</span>
 </span><span id="L-96"><a href="#L-96"><span class="linenos"> 96</span></a>        <span class="c1"># return self.points.shape[0]</span>
 </span><span id="L-97"><a href="#L-97"><span class="linenos"> 97</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">cumul_sizes</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
 </span><span id="L-98"><a href="#L-98"><span class="linenos"> 98</span></a>
 </span><span id="L-99"><a href="#L-99"><span class="linenos"> 99</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_param_names</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="L-100"><a href="#L-100"><span class="linenos">100</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-100"><a href="#L-100"><span class="linenos">100</span></a><span class="w">        </span><span class="sd">"""</span>
 </span><span id="L-101"><a href="#L-101"><span class="linenos">101</span></a><span class="sd">        Get the names of all parameters that were varied.</span>
 </span><span id="L-102"><a href="#L-102"><span class="linenos">102</span></a>
 </span><span id="L-103"><a href="#L-103"><span class="linenos">103</span></a><span class="sd">        Returns</span>
@@ -204,7 +204,7 @@ values.</p>
 </span><span id="L-105"><a href="#L-105"><span class="linenos">105</span></a><span class="sd">        param_names : list</span>
 </span><span id="L-106"><a href="#L-106"><span class="linenos">106</span></a><span class="sd">            List of parameter names.</span>
 </span><span id="L-107"><a href="#L-107"><span class="linenos">107</span></a>
-</span><span id="L-108"><a href="#L-108"><span class="linenos">108</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-108"><a href="#L-108"><span class="linenos">108</span></a><span class="sd">        """</span>
 </span><span id="L-109"><a href="#L-109"><span class="linenos">109</span></a>        <span class="n">param_names</span> <span class="o">=</span> <span class="p">[]</span>
 </span><span id="L-110"><a href="#L-110"><span class="linenos">110</span></a>        <span class="k">for</span> <span class="n">_vary</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">vary</span><span class="p">:</span>
 </span><span id="L-111"><a href="#L-111"><span class="linenos">111</span></a>            <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">_vary</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
@@ -213,7 +213,7 @@ values.</p>
 </span><span id="L-114"><a href="#L-114"><span class="linenos">114</span></a>        <span class="k">return</span> <span class="n">param_names</span>
 </span><span id="L-115"><a href="#L-115"><span class="linenos">115</span></a>
 </span><span id="L-116"><a href="#L-116"><span class="linenos">116</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__next__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="L-117"><a href="#L-117"><span class="linenos">117</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-117"><a href="#L-117"><span class="linenos">117</span></a><span class="w">        </span><span class="sd">"""</span>
 </span><span id="L-118"><a href="#L-118"><span class="linenos">118</span></a><span class="sd">        Return the next sample from the input distributions.</span>
 </span><span id="L-119"><a href="#L-119"><span class="linenos">119</span></a>
 </span><span id="L-120"><a href="#L-120"><span class="linenos">120</span></a><span class="sd">        Raises</span>
@@ -225,9 +225,9 @@ values.</p>
 </span><span id="L-126"><a href="#L-126"><span class="linenos">126</span></a><span class="sd">        -------</span>
 </span><span id="L-127"><a href="#L-127"><span class="linenos">127</span></a><span class="sd">        run_dict : dict</span>
 </span><span id="L-128"><a href="#L-128"><span class="linenos">128</span></a><span class="sd">            A dictionary with the random input samples, e.g.</span>
-</span><span id="L-129"><a href="#L-129"><span class="linenos">129</span></a><span class="sd">            {&#39;x1&#39;: 0.5, &#39;x2&#39;: False}.</span>
+</span><span id="L-129"><a href="#L-129"><span class="linenos">129</span></a><span class="sd">            {'x1': 0.5, 'x2': False}.</span>
 </span><span id="L-130"><a href="#L-130"><span class="linenos">130</span></a>
-</span><span id="L-131"><a href="#L-131"><span class="linenos">131</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-131"><a href="#L-131"><span class="linenos">131</span></a><span class="sd">        """</span>
 </span><span id="L-132"><a href="#L-132"><span class="linenos">132</span></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">count</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_samples</span><span class="p">():</span>
 </span><span id="L-133"><a href="#L-133"><span class="linenos">133</span></a>            <span class="n">vary_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">count</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">cumul_sizes</span><span class="p">[</span><span class="mi">1</span><span class="p">:])[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
 </span><span id="L-134"><a href="#L-134"><span class="linenos">134</span></a>            <span class="n">run_dict</span> <span class="o">=</span> <span class="p">{}</span>
@@ -255,22 +255,22 @@ values.</p>
 
     </div>
     <a class="headerlink" href="#Grid_Sampler"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="Grid_Sampler-43"><a href="#Grid_Sampler-43"><span class="linenos"> 43</span></a><span class="k">class</span><span class="w"> </span><span class="nc">Grid_Sampler</span><span class="p">(</span><span class="n">BaseSamplingElement</span><span class="p">,</span> <span class="n">sampler_name</span><span class="o">=</span><span class="s2">&quot;grid_sampler&quot;</span><span class="p">):</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="Grid_Sampler-43"><a href="#Grid_Sampler-43"><span class="linenos"> 43</span></a><span class="k">class</span><span class="w"> </span><span class="nc">Grid_Sampler</span><span class="p">(</span><span class="n">BaseSamplingElement</span><span class="p">,</span> <span class="n">sampler_name</span><span class="o">=</span><span class="s2">"grid_sampler"</span><span class="p">):</span>
 </span><span id="Grid_Sampler-44"><a href="#Grid_Sampler-44"><span class="linenos"> 44</span></a>
 </span><span id="Grid_Sampler-45"><a href="#Grid_Sampler-45"><span class="linenos"> 45</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vary</span><span class="p">,</span> <span class="n">count</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
-</span><span id="Grid_Sampler-46"><a href="#Grid_Sampler-46"><span class="linenos"> 46</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="Grid_Sampler-46"><a href="#Grid_Sampler-46"><span class="linenos"> 46</span></a><span class="w">        </span><span class="sd">"""</span>
 </span><span id="Grid_Sampler-47"><a href="#Grid_Sampler-47"><span class="linenos"> 47</span></a><span class="sd">        Initialize the grid sampler.</span>
 </span><span id="Grid_Sampler-48"><a href="#Grid_Sampler-48"><span class="linenos"> 48</span></a>
 </span><span id="Grid_Sampler-49"><a href="#Grid_Sampler-49"><span class="linenos"> 49</span></a><span class="sd">        Parameters</span>
 </span><span id="Grid_Sampler-50"><a href="#Grid_Sampler-50"><span class="linenos"> 50</span></a><span class="sd">        ----------</span>
 </span><span id="Grid_Sampler-51"><a href="#Grid_Sampler-51"><span class="linenos"> 51</span></a><span class="sd">        vary : dict, or list of dicts</span>
 </span><span id="Grid_Sampler-52"><a href="#Grid_Sampler-52"><span class="linenos"> 52</span></a><span class="sd">            A dictionary containing all 1D values for each parameter. For instance</span>
-</span><span id="Grid_Sampler-53"><a href="#Grid_Sampler-53"><span class="linenos"> 53</span></a><span class="sd">            vary = {&quot;x1&quot;: [0.0, 0.5. 1.0], &quot;x2&quot;: [True, False]}. This will</span>
+</span><span id="Grid_Sampler-53"><a href="#Grid_Sampler-53"><span class="linenos"> 53</span></a><span class="sd">            vary = {"x1": [0.0, 0.5. 1.0], "x2": [True, False]}. This will</span>
 </span><span id="Grid_Sampler-54"><a href="#Grid_Sampler-54"><span class="linenos"> 54</span></a><span class="sd">            create a 2D tensor product of all (x1, x2) parameter combinations.</span>
 </span><span id="Grid_Sampler-55"><a href="#Grid_Sampler-55"><span class="linenos"> 55</span></a><span class="sd">            If a list of vary dicts is specified, each vary dict will be treated</span>
 </span><span id="Grid_Sampler-56"><a href="#Grid_Sampler-56"><span class="linenos"> 56</span></a><span class="sd">            independently to generate points. These dicts do not have to contain</span>
 </span><span id="Grid_Sampler-57"><a href="#Grid_Sampler-57"><span class="linenos"> 57</span></a><span class="sd">            the same parameters. The tensor product points are stored in the </span>
-</span><span id="Grid_Sampler-58"><a href="#Grid_Sampler-58"><span class="linenos"> 58</span></a><span class="sd">            &#39;points&#39; list, with one tensor product per vary dict.</span>
+</span><span id="Grid_Sampler-58"><a href="#Grid_Sampler-58"><span class="linenos"> 58</span></a><span class="sd">            'points' list, with one tensor product per vary dict.</span>
 </span><span id="Grid_Sampler-59"><a href="#Grid_Sampler-59"><span class="linenos"> 59</span></a><span class="sd">        count : int, optional</span>
 </span><span id="Grid_Sampler-60"><a href="#Grid_Sampler-60"><span class="linenos"> 60</span></a><span class="sd">            Internal counter used to count the number of samples that have</span>
 </span><span id="Grid_Sampler-61"><a href="#Grid_Sampler-61"><span class="linenos"> 61</span></a><span class="sd">            been executed. The default is 0.</span>
@@ -279,7 +279,7 @@ values.</p>
 </span><span id="Grid_Sampler-64"><a href="#Grid_Sampler-64"><span class="linenos"> 64</span></a><span class="sd">        -------</span>
 </span><span id="Grid_Sampler-65"><a href="#Grid_Sampler-65"><span class="linenos"> 65</span></a><span class="sd">        None.</span>
 </span><span id="Grid_Sampler-66"><a href="#Grid_Sampler-66"><span class="linenos"> 66</span></a>
-</span><span id="Grid_Sampler-67"><a href="#Grid_Sampler-67"><span class="linenos"> 67</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="Grid_Sampler-67"><a href="#Grid_Sampler-67"><span class="linenos"> 67</span></a><span class="sd">        """</span>
 </span><span id="Grid_Sampler-68"><a href="#Grid_Sampler-68"><span class="linenos"> 68</span></a>        <span class="c1"># allways add vary to list, even if only a single dict is specified</span>
 </span><span id="Grid_Sampler-69"><a href="#Grid_Sampler-69"><span class="linenos"> 69</span></a>        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">vary</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
 </span><span id="Grid_Sampler-70"><a href="#Grid_Sampler-70"><span class="linenos"> 70</span></a>            <span class="n">vary</span> <span class="o">=</span> <span class="p">[</span><span class="n">vary</span><span class="p">]</span>
@@ -307,13 +307,13 @@ values.</p>
 </span><span id="Grid_Sampler-92"><a href="#Grid_Sampler-92"><span class="linenos"> 92</span></a>        <span class="k">return</span> <span class="kc">True</span>
 </span><span id="Grid_Sampler-93"><a href="#Grid_Sampler-93"><span class="linenos"> 93</span></a>
 </span><span id="Grid_Sampler-94"><a href="#Grid_Sampler-94"><span class="linenos"> 94</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">n_samples</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="Grid_Sampler-95"><a href="#Grid_Sampler-95"><span class="linenos"> 95</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the number of samples in this sampler.</span>
-</span><span id="Grid_Sampler-96"><a href="#Grid_Sampler-96"><span class="linenos"> 96</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="Grid_Sampler-95"><a href="#Grid_Sampler-95"><span class="linenos"> 95</span></a><span class="w">        </span><span class="sd">"""Returns the number of samples in this sampler.</span>
+</span><span id="Grid_Sampler-96"><a href="#Grid_Sampler-96"><span class="linenos"> 96</span></a><span class="sd">        """</span>
 </span><span id="Grid_Sampler-97"><a href="#Grid_Sampler-97"><span class="linenos"> 97</span></a>        <span class="c1"># return self.points.shape[0]</span>
 </span><span id="Grid_Sampler-98"><a href="#Grid_Sampler-98"><span class="linenos"> 98</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">cumul_sizes</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
 </span><span id="Grid_Sampler-99"><a href="#Grid_Sampler-99"><span class="linenos"> 99</span></a>
 </span><span id="Grid_Sampler-100"><a href="#Grid_Sampler-100"><span class="linenos">100</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_param_names</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="Grid_Sampler-101"><a href="#Grid_Sampler-101"><span class="linenos">101</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="Grid_Sampler-101"><a href="#Grid_Sampler-101"><span class="linenos">101</span></a><span class="w">        </span><span class="sd">"""</span>
 </span><span id="Grid_Sampler-102"><a href="#Grid_Sampler-102"><span class="linenos">102</span></a><span class="sd">        Get the names of all parameters that were varied.</span>
 </span><span id="Grid_Sampler-103"><a href="#Grid_Sampler-103"><span class="linenos">103</span></a>
 </span><span id="Grid_Sampler-104"><a href="#Grid_Sampler-104"><span class="linenos">104</span></a><span class="sd">        Returns</span>
@@ -321,7 +321,7 @@ values.</p>
 </span><span id="Grid_Sampler-106"><a href="#Grid_Sampler-106"><span class="linenos">106</span></a><span class="sd">        param_names : list</span>
 </span><span id="Grid_Sampler-107"><a href="#Grid_Sampler-107"><span class="linenos">107</span></a><span class="sd">            List of parameter names.</span>
 </span><span id="Grid_Sampler-108"><a href="#Grid_Sampler-108"><span class="linenos">108</span></a>
-</span><span id="Grid_Sampler-109"><a href="#Grid_Sampler-109"><span class="linenos">109</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="Grid_Sampler-109"><a href="#Grid_Sampler-109"><span class="linenos">109</span></a><span class="sd">        """</span>
 </span><span id="Grid_Sampler-110"><a href="#Grid_Sampler-110"><span class="linenos">110</span></a>        <span class="n">param_names</span> <span class="o">=</span> <span class="p">[]</span>
 </span><span id="Grid_Sampler-111"><a href="#Grid_Sampler-111"><span class="linenos">111</span></a>        <span class="k">for</span> <span class="n">_vary</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">vary</span><span class="p">:</span>
 </span><span id="Grid_Sampler-112"><a href="#Grid_Sampler-112"><span class="linenos">112</span></a>            <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">_vary</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
@@ -330,7 +330,7 @@ values.</p>
 </span><span id="Grid_Sampler-115"><a href="#Grid_Sampler-115"><span class="linenos">115</span></a>        <span class="k">return</span> <span class="n">param_names</span>
 </span><span id="Grid_Sampler-116"><a href="#Grid_Sampler-116"><span class="linenos">116</span></a>
 </span><span id="Grid_Sampler-117"><a href="#Grid_Sampler-117"><span class="linenos">117</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__next__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="Grid_Sampler-118"><a href="#Grid_Sampler-118"><span class="linenos">118</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="Grid_Sampler-118"><a href="#Grid_Sampler-118"><span class="linenos">118</span></a><span class="w">        </span><span class="sd">"""</span>
 </span><span id="Grid_Sampler-119"><a href="#Grid_Sampler-119"><span class="linenos">119</span></a><span class="sd">        Return the next sample from the input distributions.</span>
 </span><span id="Grid_Sampler-120"><a href="#Grid_Sampler-120"><span class="linenos">120</span></a>
 </span><span id="Grid_Sampler-121"><a href="#Grid_Sampler-121"><span class="linenos">121</span></a><span class="sd">        Raises</span>
@@ -342,9 +342,9 @@ values.</p>
 </span><span id="Grid_Sampler-127"><a href="#Grid_Sampler-127"><span class="linenos">127</span></a><span class="sd">        -------</span>
 </span><span id="Grid_Sampler-128"><a href="#Grid_Sampler-128"><span class="linenos">128</span></a><span class="sd">        run_dict : dict</span>
 </span><span id="Grid_Sampler-129"><a href="#Grid_Sampler-129"><span class="linenos">129</span></a><span class="sd">            A dictionary with the random input samples, e.g.</span>
-</span><span id="Grid_Sampler-130"><a href="#Grid_Sampler-130"><span class="linenos">130</span></a><span class="sd">            {&#39;x1&#39;: 0.5, &#39;x2&#39;: False}.</span>
+</span><span id="Grid_Sampler-130"><a href="#Grid_Sampler-130"><span class="linenos">130</span></a><span class="sd">            {'x1': 0.5, 'x2': False}.</span>
 </span><span id="Grid_Sampler-131"><a href="#Grid_Sampler-131"><span class="linenos">131</span></a>
-</span><span id="Grid_Sampler-132"><a href="#Grid_Sampler-132"><span class="linenos">132</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="Grid_Sampler-132"><a href="#Grid_Sampler-132"><span class="linenos">132</span></a><span class="sd">        """</span>
 </span><span id="Grid_Sampler-133"><a href="#Grid_Sampler-133"><span class="linenos">133</span></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">count</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_samples</span><span class="p">():</span>
 </span><span id="Grid_Sampler-134"><a href="#Grid_Sampler-134"><span class="linenos">134</span></a>            <span class="n">vary_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">count</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">cumul_sizes</span><span class="p">[</span><span class="mi">1</span><span class="p">:])[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
 </span><span id="Grid_Sampler-135"><a href="#Grid_Sampler-135"><span class="linenos">135</span></a>            <span class="n">run_dict</span> <span class="o">=</span> <span class="p">{}</span>
@@ -382,19 +382,19 @@ Name of the particular sampler.</li>
     </div>
     <a class="headerlink" href="#Grid_Sampler.__init__"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="Grid_Sampler.__init__-45"><a href="#Grid_Sampler.__init__-45"><span class="linenos">45</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vary</span><span class="p">,</span> <span class="n">count</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
-</span><span id="Grid_Sampler.__init__-46"><a href="#Grid_Sampler.__init__-46"><span class="linenos">46</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="Grid_Sampler.__init__-46"><a href="#Grid_Sampler.__init__-46"><span class="linenos">46</span></a><span class="w">        </span><span class="sd">"""</span>
 </span><span id="Grid_Sampler.__init__-47"><a href="#Grid_Sampler.__init__-47"><span class="linenos">47</span></a><span class="sd">        Initialize the grid sampler.</span>
 </span><span id="Grid_Sampler.__init__-48"><a href="#Grid_Sampler.__init__-48"><span class="linenos">48</span></a>
 </span><span id="Grid_Sampler.__init__-49"><a href="#Grid_Sampler.__init__-49"><span class="linenos">49</span></a><span class="sd">        Parameters</span>
 </span><span id="Grid_Sampler.__init__-50"><a href="#Grid_Sampler.__init__-50"><span class="linenos">50</span></a><span class="sd">        ----------</span>
 </span><span id="Grid_Sampler.__init__-51"><a href="#Grid_Sampler.__init__-51"><span class="linenos">51</span></a><span class="sd">        vary : dict, or list of dicts</span>
 </span><span id="Grid_Sampler.__init__-52"><a href="#Grid_Sampler.__init__-52"><span class="linenos">52</span></a><span class="sd">            A dictionary containing all 1D values for each parameter. For instance</span>
-</span><span id="Grid_Sampler.__init__-53"><a href="#Grid_Sampler.__init__-53"><span class="linenos">53</span></a><span class="sd">            vary = {&quot;x1&quot;: [0.0, 0.5. 1.0], &quot;x2&quot;: [True, False]}. This will</span>
+</span><span id="Grid_Sampler.__init__-53"><a href="#Grid_Sampler.__init__-53"><span class="linenos">53</span></a><span class="sd">            vary = {"x1": [0.0, 0.5. 1.0], "x2": [True, False]}. This will</span>
 </span><span id="Grid_Sampler.__init__-54"><a href="#Grid_Sampler.__init__-54"><span class="linenos">54</span></a><span class="sd">            create a 2D tensor product of all (x1, x2) parameter combinations.</span>
 </span><span id="Grid_Sampler.__init__-55"><a href="#Grid_Sampler.__init__-55"><span class="linenos">55</span></a><span class="sd">            If a list of vary dicts is specified, each vary dict will be treated</span>
 </span><span id="Grid_Sampler.__init__-56"><a href="#Grid_Sampler.__init__-56"><span class="linenos">56</span></a><span class="sd">            independently to generate points. These dicts do not have to contain</span>
 </span><span id="Grid_Sampler.__init__-57"><a href="#Grid_Sampler.__init__-57"><span class="linenos">57</span></a><span class="sd">            the same parameters. The tensor product points are stored in the </span>
-</span><span id="Grid_Sampler.__init__-58"><a href="#Grid_Sampler.__init__-58"><span class="linenos">58</span></a><span class="sd">            &#39;points&#39; list, with one tensor product per vary dict.</span>
+</span><span id="Grid_Sampler.__init__-58"><a href="#Grid_Sampler.__init__-58"><span class="linenos">58</span></a><span class="sd">            'points' list, with one tensor product per vary dict.</span>
 </span><span id="Grid_Sampler.__init__-59"><a href="#Grid_Sampler.__init__-59"><span class="linenos">59</span></a><span class="sd">        count : int, optional</span>
 </span><span id="Grid_Sampler.__init__-60"><a href="#Grid_Sampler.__init__-60"><span class="linenos">60</span></a><span class="sd">            Internal counter used to count the number of samples that have</span>
 </span><span id="Grid_Sampler.__init__-61"><a href="#Grid_Sampler.__init__-61"><span class="linenos">61</span></a><span class="sd">            been executed. The default is 0.</span>
@@ -403,7 +403,7 @@ Name of the particular sampler.</li>
 </span><span id="Grid_Sampler.__init__-64"><a href="#Grid_Sampler.__init__-64"><span class="linenos">64</span></a><span class="sd">        -------</span>
 </span><span id="Grid_Sampler.__init__-65"><a href="#Grid_Sampler.__init__-65"><span class="linenos">65</span></a><span class="sd">        None.</span>
 </span><span id="Grid_Sampler.__init__-66"><a href="#Grid_Sampler.__init__-66"><span class="linenos">66</span></a>
-</span><span id="Grid_Sampler.__init__-67"><a href="#Grid_Sampler.__init__-67"><span class="linenos">67</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="Grid_Sampler.__init__-67"><a href="#Grid_Sampler.__init__-67"><span class="linenos">67</span></a><span class="sd">        """</span>
 </span><span id="Grid_Sampler.__init__-68"><a href="#Grid_Sampler.__init__-68"><span class="linenos">68</span></a>        <span class="c1"># allways add vary to list, even if only a single dict is specified</span>
 </span><span id="Grid_Sampler.__init__-69"><a href="#Grid_Sampler.__init__-69"><span class="linenos">69</span></a>        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">vary</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
 </span><span id="Grid_Sampler.__init__-70"><a href="#Grid_Sampler.__init__-70"><span class="linenos">70</span></a>            <span class="n">vary</span> <span class="o">=</span> <span class="p">[</span><span class="n">vary</span><span class="p">]</span>
@@ -531,8 +531,8 @@ been executed. The default is 0.</li>
     </div>
     <a class="headerlink" href="#Grid_Sampler.n_samples"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="Grid_Sampler.n_samples-94"><a href="#Grid_Sampler.n_samples-94"><span class="linenos">94</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">n_samples</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="Grid_Sampler.n_samples-95"><a href="#Grid_Sampler.n_samples-95"><span class="linenos">95</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the number of samples in this sampler.</span>
-</span><span id="Grid_Sampler.n_samples-96"><a href="#Grid_Sampler.n_samples-96"><span class="linenos">96</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="Grid_Sampler.n_samples-95"><a href="#Grid_Sampler.n_samples-95"><span class="linenos">95</span></a><span class="w">        </span><span class="sd">"""Returns the number of samples in this sampler.</span>
+</span><span id="Grid_Sampler.n_samples-96"><a href="#Grid_Sampler.n_samples-96"><span class="linenos">96</span></a><span class="sd">        """</span>
 </span><span id="Grid_Sampler.n_samples-97"><a href="#Grid_Sampler.n_samples-97"><span class="linenos">97</span></a>        <span class="c1"># return self.points.shape[0]</span>
 </span><span id="Grid_Sampler.n_samples-98"><a href="#Grid_Sampler.n_samples-98"><span class="linenos">98</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">cumul_sizes</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
 </span></pre></div>
@@ -555,7 +555,7 @@ been executed. The default is 0.</li>
     </div>
     <a class="headerlink" href="#Grid_Sampler.get_param_names"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="Grid_Sampler.get_param_names-100"><a href="#Grid_Sampler.get_param_names-100"><span class="linenos">100</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_param_names</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="Grid_Sampler.get_param_names-101"><a href="#Grid_Sampler.get_param_names-101"><span class="linenos">101</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="Grid_Sampler.get_param_names-101"><a href="#Grid_Sampler.get_param_names-101"><span class="linenos">101</span></a><span class="w">        </span><span class="sd">"""</span>
 </span><span id="Grid_Sampler.get_param_names-102"><a href="#Grid_Sampler.get_param_names-102"><span class="linenos">102</span></a><span class="sd">        Get the names of all parameters that were varied.</span>
 </span><span id="Grid_Sampler.get_param_names-103"><a href="#Grid_Sampler.get_param_names-103"><span class="linenos">103</span></a>
 </span><span id="Grid_Sampler.get_param_names-104"><a href="#Grid_Sampler.get_param_names-104"><span class="linenos">104</span></a><span class="sd">        Returns</span>
@@ -563,7 +563,7 @@ been executed. The default is 0.</li>
 </span><span id="Grid_Sampler.get_param_names-106"><a href="#Grid_Sampler.get_param_names-106"><span class="linenos">106</span></a><span class="sd">        param_names : list</span>
 </span><span id="Grid_Sampler.get_param_names-107"><a href="#Grid_Sampler.get_param_names-107"><span class="linenos">107</span></a><span class="sd">            List of parameter names.</span>
 </span><span id="Grid_Sampler.get_param_names-108"><a href="#Grid_Sampler.get_param_names-108"><span class="linenos">108</span></a>
-</span><span id="Grid_Sampler.get_param_names-109"><a href="#Grid_Sampler.get_param_names-109"><span class="linenos">109</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="Grid_Sampler.get_param_names-109"><a href="#Grid_Sampler.get_param_names-109"><span class="linenos">109</span></a><span class="sd">        """</span>
 </span><span id="Grid_Sampler.get_param_names-110"><a href="#Grid_Sampler.get_param_names-110"><span class="linenos">110</span></a>        <span class="n">param_names</span> <span class="o">=</span> <span class="p">[]</span>
 </span><span id="Grid_Sampler.get_param_names-111"><a href="#Grid_Sampler.get_param_names-111"><span class="linenos">111</span></a>        <span class="k">for</span> <span class="n">_vary</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">vary</span><span class="p">:</span>
 </span><span id="Grid_Sampler.get_param_names-112"><a href="#Grid_Sampler.get_param_names-112"><span class="linenos">112</span></a>            <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">_vary</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>

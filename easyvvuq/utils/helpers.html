@@ -69,7 +69,7 @@
 </span><span id="L-4"><a href="#L-4"><span class="linenos"> 4</span></a>
 </span><span id="L-5"><a href="#L-5"><span class="linenos"> 5</span></a>
 </span><span id="L-6"><a href="#L-6"><span class="linenos"> 6</span></a><span class="k">def</span><span class="w"> </span><span class="nf">easyvvuq_serialize</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
-</span><span id="L-7"><a href="#L-7"><span class="linenos"> 7</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Takes an object and returns a string with that object serialized.</span>
+</span><span id="L-7"><a href="#L-7"><span class="linenos"> 7</span></a><span class="w">    </span><span class="sd">"""Takes an object and returns a string with that object serialized.</span>
 </span><span id="L-8"><a href="#L-8"><span class="linenos"> 8</span></a>
 </span><span id="L-9"><a href="#L-9"><span class="linenos"> 9</span></a><span class="sd">    Parameters</span>
 </span><span id="L-10"><a href="#L-10"><span class="linenos">10</span></a><span class="sd">    ----------</span>
@@ -80,12 +80,12 @@
 </span><span id="L-15"><a href="#L-15"><span class="linenos">15</span></a><span class="sd">    -------</span>
 </span><span id="L-16"><a href="#L-16"><span class="linenos">16</span></a><span class="sd">    str:</span>
 </span><span id="L-17"><a href="#L-17"><span class="linenos">17</span></a><span class="sd">        A string representation of obj.</span>
-</span><span id="L-18"><a href="#L-18"><span class="linenos">18</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="L-19"><a href="#L-19"><span class="linenos">19</span></a>    <span class="k">return</span> <span class="n">base64</span><span class="o">.</span><span class="n">b64encode</span><span class="p">(</span><span class="n">dill</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">obj</span><span class="p">))</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+</span><span id="L-18"><a href="#L-18"><span class="linenos">18</span></a><span class="sd">    """</span>
+</span><span id="L-19"><a href="#L-19"><span class="linenos">19</span></a>    <span class="k">return</span> <span class="n">base64</span><span class="o">.</span><span class="n">b64encode</span><span class="p">(</span><span class="n">dill</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">obj</span><span class="p">))</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">'utf-8'</span><span class="p">)</span>
 </span><span id="L-20"><a href="#L-20"><span class="linenos">20</span></a>
 </span><span id="L-21"><a href="#L-21"><span class="linenos">21</span></a>
 </span><span id="L-22"><a href="#L-22"><span class="linenos">22</span></a><span class="k">def</span><span class="w"> </span><span class="nf">easyvvuq_deserialize</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
-</span><span id="L-23"><a href="#L-23"><span class="linenos">23</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Takes a serialized objected and reconstructs it.</span>
+</span><span id="L-23"><a href="#L-23"><span class="linenos">23</span></a><span class="w">    </span><span class="sd">"""Takes a serialized objected and reconstructs it.</span>
 </span><span id="L-24"><a href="#L-24"><span class="linenos">24</span></a>
 </span><span id="L-25"><a href="#L-25"><span class="linenos">25</span></a><span class="sd">    Parameters</span>
 </span><span id="L-26"><a href="#L-26"><span class="linenos">26</span></a><span class="sd">    ----------</span>
@@ -96,15 +96,15 @@
 </span><span id="L-31"><a href="#L-31"><span class="linenos">31</span></a><span class="sd">    -------</span>
 </span><span id="L-32"><a href="#L-32"><span class="linenos">32</span></a><span class="sd">    obj:</span>
 </span><span id="L-33"><a href="#L-33"><span class="linenos">33</span></a><span class="sd">        A previously serialized Python object.</span>
-</span><span id="L-34"><a href="#L-34"><span class="linenos">34</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="L-34"><a href="#L-34"><span class="linenos">34</span></a><span class="sd">    """</span>
 </span><span id="L-35"><a href="#L-35"><span class="linenos">35</span></a>    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">):</span>
 </span><span id="L-36"><a href="#L-36"><span class="linenos">36</span></a>        <span class="k">return</span> <span class="n">dill</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">base64</span><span class="o">.</span><span class="n">b64decode</span><span class="p">(</span><span class="n">s</span><span class="p">))</span>
 </span><span id="L-37"><a href="#L-37"><span class="linenos">37</span></a>    <span class="k">else</span><span class="p">:</span>
-</span><span id="L-38"><a href="#L-38"><span class="linenos">38</span></a>        <span class="k">return</span> <span class="n">dill</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">base64</span><span class="o">.</span><span class="n">b64decode</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)))</span>
+</span><span id="L-38"><a href="#L-38"><span class="linenos">38</span></a>        <span class="k">return</span> <span class="n">dill</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">base64</span><span class="o">.</span><span class="n">b64decode</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">'utf-8'</span><span class="p">)))</span>
 </span><span id="L-39"><a href="#L-39"><span class="linenos">39</span></a>
 </span><span id="L-40"><a href="#L-40"><span class="linenos">40</span></a>
 </span><span id="L-41"><a href="#L-41"><span class="linenos">41</span></a><span class="k">def</span><span class="w"> </span><span class="nf">multi_index_tuple_parser</span><span class="p">(</span><span class="n">lst</span><span class="p">):</span>
-</span><span id="L-42"><a href="#L-42"><span class="linenos">42</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-42"><a href="#L-42"><span class="linenos">42</span></a><span class="w">    </span><span class="sd">"""</span>
 </span><span id="L-43"><a href="#L-43"><span class="linenos">43</span></a><span class="sd">    Parses a list of strings to tuples if they represent tuples, otherwise</span>
 </span><span id="L-44"><a href="#L-44"><span class="linenos">44</span></a><span class="sd">    leaves them as is.</span>
 </span><span id="L-45"><a href="#L-45"><span class="linenos">45</span></a>
@@ -116,16 +116,16 @@
 </span><span id="L-51"><a href="#L-51"><span class="linenos">51</span></a><span class="sd">    _______</span>
 </span><span id="L-52"><a href="#L-52"><span class="linenos">52</span></a><span class="sd">    a tuple consisting of a list of tuples and/or strings and a bool indicating if</span>
 </span><span id="L-53"><a href="#L-53"><span class="linenos">53</span></a><span class="sd">    the lst contains any tuples</span>
-</span><span id="L-54"><a href="#L-54"><span class="linenos">54</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="L-54"><a href="#L-54"><span class="linenos">54</span></a><span class="sd">    """</span>
 </span><span id="L-55"><a href="#L-55"><span class="linenos">55</span></a>    <span class="n">contains_tuples</span> <span class="o">=</span> <span class="kc">True</span>
 </span><span id="L-56"><a href="#L-56"><span class="linenos">56</span></a>    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">lst</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-</span><span id="L-57"><a href="#L-57"><span class="linenos">57</span></a>        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;multi_index_tuple_parser needs a non-empty list of strings&#39;</span><span class="p">)</span>
+</span><span id="L-57"><a href="#L-57"><span class="linenos">57</span></a>        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">'multi_index_tuple_parser needs a non-empty list of strings'</span><span class="p">)</span>
 </span><span id="L-58"><a href="#L-58"><span class="linenos">58</span></a>    <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">lst</span><span class="p">:</span>
 </span><span id="L-59"><a href="#L-59"><span class="linenos">59</span></a>        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-</span><span id="L-60"><a href="#L-60"><span class="linenos">60</span></a>            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;multi_index_tuple_parser needs a list of strings&#39;</span><span class="p">)</span>
+</span><span id="L-60"><a href="#L-60"><span class="linenos">60</span></a>            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">'multi_index_tuple_parser needs a list of strings'</span><span class="p">)</span>
 </span><span id="L-61"><a href="#L-61"><span class="linenos">61</span></a>    <span class="n">result</span> <span class="o">=</span> <span class="p">[]</span>
 </span><span id="L-62"><a href="#L-62"><span class="linenos">62</span></a>    <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">lst</span><span class="p">:</span>
-</span><span id="L-63"><a href="#L-63"><span class="linenos">63</span></a>        <span class="k">if</span> <span class="n">name</span><span class="o">.</span><span class="n">strip</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;(&#39;</span> <span class="ow">and</span> <span class="n">name</span><span class="o">.</span><span class="n">strip</span><span class="p">()[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;)&#39;</span><span class="p">:</span>
+</span><span id="L-63"><a href="#L-63"><span class="linenos">63</span></a>        <span class="k">if</span> <span class="n">name</span><span class="o">.</span><span class="n">strip</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">'('</span> <span class="ow">and</span> <span class="n">name</span><span class="o">.</span><span class="n">strip</span><span class="p">()[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s1">')'</span><span class="p">:</span>
 </span><span id="L-64"><a href="#L-64"><span class="linenos">64</span></a>            <span class="n">name</span> <span class="o">=</span> <span class="n">literal_eval</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
 </span><span id="L-65"><a href="#L-65"><span class="linenos">65</span></a>        <span class="k">else</span><span class="p">:</span>
 </span><span id="L-66"><a href="#L-66"><span class="linenos">66</span></a>            <span class="n">contains_tuples</span> <span class="o">=</span> <span class="kc">False</span>
@@ -134,7 +134,7 @@
 </span><span id="L-69"><a href="#L-69"><span class="linenos">69</span></a>
 </span><span id="L-70"><a href="#L-70"><span class="linenos">70</span></a>
 </span><span id="L-71"><a href="#L-71"><span class="linenos">71</span></a><span class="k">def</span><span class="w"> </span><span class="nf">remove_start_of_file</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">delimiter</span><span class="p">):</span>
-</span><span id="L-72"><a href="#L-72"><span class="linenos">72</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Overwrite a file leaving only the portion of it after the</span>
+</span><span id="L-72"><a href="#L-72"><span class="linenos">72</span></a><span class="w">    </span><span class="sd">"""Overwrite a file leaving only the portion of it after the</span>
 </span><span id="L-73"><a href="#L-73"><span class="linenos">73</span></a><span class="sd">    delimiter string.</span>
 </span><span id="L-74"><a href="#L-74"><span class="linenos">74</span></a>
 </span><span id="L-75"><a href="#L-75"><span class="linenos">75</span></a><span class="sd">    Parameters</span>
@@ -144,8 +144,8 @@
 </span><span id="L-79"><a href="#L-79"><span class="linenos">79</span></a>
 </span><span id="L-80"><a href="#L-80"><span class="linenos">80</span></a><span class="sd">    delimiter : str</span>
 </span><span id="L-81"><a href="#L-81"><span class="linenos">81</span></a><span class="sd">       the string after which the file is copied over</span>
-</span><span id="L-82"><a href="#L-82"><span class="linenos">82</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="L-83"><a href="#L-83"><span class="linenos">83</span></a>    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fd</span><span class="p">:</span>
+</span><span id="L-82"><a href="#L-82"><span class="linenos">82</span></a><span class="sd">    """</span>
+</span><span id="L-83"><a href="#L-83"><span class="linenos">83</span></a>    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">'r'</span><span class="p">)</span> <span class="k">as</span> <span class="n">fd</span><span class="p">:</span>
 </span><span id="L-84"><a href="#L-84"><span class="linenos">84</span></a>        <span class="n">lines</span> <span class="o">=</span> <span class="n">fd</span><span class="o">.</span><span class="n">readlines</span><span class="p">()</span>
 </span><span id="L-85"><a href="#L-85"><span class="linenos">85</span></a>    <span class="n">remaining</span> <span class="o">=</span> <span class="p">[]</span>
 </span><span id="L-86"><a href="#L-86"><span class="linenos">86</span></a>    <span class="n">after_delimiter</span> <span class="o">=</span> <span class="kc">False</span>
@@ -154,7 +154,7 @@
 </span><span id="L-89"><a href="#L-89"><span class="linenos">89</span></a>            <span class="n">remaining</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
 </span><span id="L-90"><a href="#L-90"><span class="linenos">90</span></a>        <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">==</span> <span class="n">delimiter</span><span class="p">:</span>
 </span><span id="L-91"><a href="#L-91"><span class="linenos">91</span></a>            <span class="n">after_delimiter</span> <span class="o">=</span> <span class="kc">True</span>
-</span><span id="L-92"><a href="#L-92"><span class="linenos">92</span></a>    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fd</span><span class="p">:</span>
+</span><span id="L-92"><a href="#L-92"><span class="linenos">92</span></a>    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">'w'</span><span class="p">)</span> <span class="k">as</span> <span class="n">fd</span><span class="p">:</span>
 </span><span id="L-93"><a href="#L-93"><span class="linenos">93</span></a>        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">remaining</span><span class="p">:</span>
 </span><span id="L-94"><a href="#L-94"><span class="linenos">94</span></a>            <span class="n">fd</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
 </span></pre></div>
@@ -173,7 +173,7 @@
     </div>
     <a class="headerlink" href="#easyvvuq_serialize"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="easyvvuq_serialize-7"><a href="#easyvvuq_serialize-7"><span class="linenos"> 7</span></a><span class="k">def</span><span class="w"> </span><span class="nf">easyvvuq_serialize</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
-</span><span id="easyvvuq_serialize-8"><a href="#easyvvuq_serialize-8"><span class="linenos"> 8</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Takes an object and returns a string with that object serialized.</span>
+</span><span id="easyvvuq_serialize-8"><a href="#easyvvuq_serialize-8"><span class="linenos"> 8</span></a><span class="w">    </span><span class="sd">"""Takes an object and returns a string with that object serialized.</span>
 </span><span id="easyvvuq_serialize-9"><a href="#easyvvuq_serialize-9"><span class="linenos"> 9</span></a>
 </span><span id="easyvvuq_serialize-10"><a href="#easyvvuq_serialize-10"><span class="linenos">10</span></a><span class="sd">    Parameters</span>
 </span><span id="easyvvuq_serialize-11"><a href="#easyvvuq_serialize-11"><span class="linenos">11</span></a><span class="sd">    ----------</span>
@@ -184,8 +184,8 @@
 </span><span id="easyvvuq_serialize-16"><a href="#easyvvuq_serialize-16"><span class="linenos">16</span></a><span class="sd">    -------</span>
 </span><span id="easyvvuq_serialize-17"><a href="#easyvvuq_serialize-17"><span class="linenos">17</span></a><span class="sd">    str:</span>
 </span><span id="easyvvuq_serialize-18"><a href="#easyvvuq_serialize-18"><span class="linenos">18</span></a><span class="sd">        A string representation of obj.</span>
-</span><span id="easyvvuq_serialize-19"><a href="#easyvvuq_serialize-19"><span class="linenos">19</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="easyvvuq_serialize-20"><a href="#easyvvuq_serialize-20"><span class="linenos">20</span></a>    <span class="k">return</span> <span class="n">base64</span><span class="o">.</span><span class="n">b64encode</span><span class="p">(</span><span class="n">dill</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">obj</span><span class="p">))</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+</span><span id="easyvvuq_serialize-19"><a href="#easyvvuq_serialize-19"><span class="linenos">19</span></a><span class="sd">    """</span>
+</span><span id="easyvvuq_serialize-20"><a href="#easyvvuq_serialize-20"><span class="linenos">20</span></a>    <span class="k">return</span> <span class="n">base64</span><span class="o">.</span><span class="n">b64encode</span><span class="p">(</span><span class="n">dill</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">obj</span><span class="p">))</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">'utf-8'</span><span class="p">)</span>
 </span></pre></div>
 
 
@@ -219,7 +219,7 @@ An arbitrary Python object.</li>
     </div>
     <a class="headerlink" href="#easyvvuq_deserialize"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="easyvvuq_deserialize-23"><a href="#easyvvuq_deserialize-23"><span class="linenos">23</span></a><span class="k">def</span><span class="w"> </span><span class="nf">easyvvuq_deserialize</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
-</span><span id="easyvvuq_deserialize-24"><a href="#easyvvuq_deserialize-24"><span class="linenos">24</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Takes a serialized objected and reconstructs it.</span>
+</span><span id="easyvvuq_deserialize-24"><a href="#easyvvuq_deserialize-24"><span class="linenos">24</span></a><span class="w">    </span><span class="sd">"""Takes a serialized objected and reconstructs it.</span>
 </span><span id="easyvvuq_deserialize-25"><a href="#easyvvuq_deserialize-25"><span class="linenos">25</span></a>
 </span><span id="easyvvuq_deserialize-26"><a href="#easyvvuq_deserialize-26"><span class="linenos">26</span></a><span class="sd">    Parameters</span>
 </span><span id="easyvvuq_deserialize-27"><a href="#easyvvuq_deserialize-27"><span class="linenos">27</span></a><span class="sd">    ----------</span>
@@ -230,11 +230,11 @@ An arbitrary Python object.</li>
 </span><span id="easyvvuq_deserialize-32"><a href="#easyvvuq_deserialize-32"><span class="linenos">32</span></a><span class="sd">    -------</span>
 </span><span id="easyvvuq_deserialize-33"><a href="#easyvvuq_deserialize-33"><span class="linenos">33</span></a><span class="sd">    obj:</span>
 </span><span id="easyvvuq_deserialize-34"><a href="#easyvvuq_deserialize-34"><span class="linenos">34</span></a><span class="sd">        A previously serialized Python object.</span>
-</span><span id="easyvvuq_deserialize-35"><a href="#easyvvuq_deserialize-35"><span class="linenos">35</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="easyvvuq_deserialize-35"><a href="#easyvvuq_deserialize-35"><span class="linenos">35</span></a><span class="sd">    """</span>
 </span><span id="easyvvuq_deserialize-36"><a href="#easyvvuq_deserialize-36"><span class="linenos">36</span></a>    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">):</span>
 </span><span id="easyvvuq_deserialize-37"><a href="#easyvvuq_deserialize-37"><span class="linenos">37</span></a>        <span class="k">return</span> <span class="n">dill</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">base64</span><span class="o">.</span><span class="n">b64decode</span><span class="p">(</span><span class="n">s</span><span class="p">))</span>
 </span><span id="easyvvuq_deserialize-38"><a href="#easyvvuq_deserialize-38"><span class="linenos">38</span></a>    <span class="k">else</span><span class="p">:</span>
-</span><span id="easyvvuq_deserialize-39"><a href="#easyvvuq_deserialize-39"><span class="linenos">39</span></a>        <span class="k">return</span> <span class="n">dill</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">base64</span><span class="o">.</span><span class="n">b64decode</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)))</span>
+</span><span id="easyvvuq_deserialize-39"><a href="#easyvvuq_deserialize-39"><span class="linenos">39</span></a>        <span class="k">return</span> <span class="n">dill</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">base64</span><span class="o">.</span><span class="n">b64decode</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">'utf-8'</span><span class="p">)))</span>
 </span></pre></div>
 
 
@@ -268,7 +268,7 @@ A serialized Python object.</li>
     </div>
     <a class="headerlink" href="#multi_index_tuple_parser"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="multi_index_tuple_parser-42"><a href="#multi_index_tuple_parser-42"><span class="linenos">42</span></a><span class="k">def</span><span class="w"> </span><span class="nf">multi_index_tuple_parser</span><span class="p">(</span><span class="n">lst</span><span class="p">):</span>
-</span><span id="multi_index_tuple_parser-43"><a href="#multi_index_tuple_parser-43"><span class="linenos">43</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="multi_index_tuple_parser-43"><a href="#multi_index_tuple_parser-43"><span class="linenos">43</span></a><span class="w">    </span><span class="sd">"""</span>
 </span><span id="multi_index_tuple_parser-44"><a href="#multi_index_tuple_parser-44"><span class="linenos">44</span></a><span class="sd">    Parses a list of strings to tuples if they represent tuples, otherwise</span>
 </span><span id="multi_index_tuple_parser-45"><a href="#multi_index_tuple_parser-45"><span class="linenos">45</span></a><span class="sd">    leaves them as is.</span>
 </span><span id="multi_index_tuple_parser-46"><a href="#multi_index_tuple_parser-46"><span class="linenos">46</span></a>
@@ -280,16 +280,16 @@ A serialized Python object.</li>
 </span><span id="multi_index_tuple_parser-52"><a href="#multi_index_tuple_parser-52"><span class="linenos">52</span></a><span class="sd">    _______</span>
 </span><span id="multi_index_tuple_parser-53"><a href="#multi_index_tuple_parser-53"><span class="linenos">53</span></a><span class="sd">    a tuple consisting of a list of tuples and/or strings and a bool indicating if</span>
 </span><span id="multi_index_tuple_parser-54"><a href="#multi_index_tuple_parser-54"><span class="linenos">54</span></a><span class="sd">    the lst contains any tuples</span>
-</span><span id="multi_index_tuple_parser-55"><a href="#multi_index_tuple_parser-55"><span class="linenos">55</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="multi_index_tuple_parser-55"><a href="#multi_index_tuple_parser-55"><span class="linenos">55</span></a><span class="sd">    """</span>
 </span><span id="multi_index_tuple_parser-56"><a href="#multi_index_tuple_parser-56"><span class="linenos">56</span></a>    <span class="n">contains_tuples</span> <span class="o">=</span> <span class="kc">True</span>
 </span><span id="multi_index_tuple_parser-57"><a href="#multi_index_tuple_parser-57"><span class="linenos">57</span></a>    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">lst</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-</span><span id="multi_index_tuple_parser-58"><a href="#multi_index_tuple_parser-58"><span class="linenos">58</span></a>        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;multi_index_tuple_parser needs a non-empty list of strings&#39;</span><span class="p">)</span>
+</span><span id="multi_index_tuple_parser-58"><a href="#multi_index_tuple_parser-58"><span class="linenos">58</span></a>        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">'multi_index_tuple_parser needs a non-empty list of strings'</span><span class="p">)</span>
 </span><span id="multi_index_tuple_parser-59"><a href="#multi_index_tuple_parser-59"><span class="linenos">59</span></a>    <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">lst</span><span class="p">:</span>
 </span><span id="multi_index_tuple_parser-60"><a href="#multi_index_tuple_parser-60"><span class="linenos">60</span></a>        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-</span><span id="multi_index_tuple_parser-61"><a href="#multi_index_tuple_parser-61"><span class="linenos">61</span></a>            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;multi_index_tuple_parser needs a list of strings&#39;</span><span class="p">)</span>
+</span><span id="multi_index_tuple_parser-61"><a href="#multi_index_tuple_parser-61"><span class="linenos">61</span></a>            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">'multi_index_tuple_parser needs a list of strings'</span><span class="p">)</span>
 </span><span id="multi_index_tuple_parser-62"><a href="#multi_index_tuple_parser-62"><span class="linenos">62</span></a>    <span class="n">result</span> <span class="o">=</span> <span class="p">[]</span>
 </span><span id="multi_index_tuple_parser-63"><a href="#multi_index_tuple_parser-63"><span class="linenos">63</span></a>    <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">lst</span><span class="p">:</span>
-</span><span id="multi_index_tuple_parser-64"><a href="#multi_index_tuple_parser-64"><span class="linenos">64</span></a>        <span class="k">if</span> <span class="n">name</span><span class="o">.</span><span class="n">strip</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;(&#39;</span> <span class="ow">and</span> <span class="n">name</span><span class="o">.</span><span class="n">strip</span><span class="p">()[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;)&#39;</span><span class="p">:</span>
+</span><span id="multi_index_tuple_parser-64"><a href="#multi_index_tuple_parser-64"><span class="linenos">64</span></a>        <span class="k">if</span> <span class="n">name</span><span class="o">.</span><span class="n">strip</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">'('</span> <span class="ow">and</span> <span class="n">name</span><span class="o">.</span><span class="n">strip</span><span class="p">()[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s1">')'</span><span class="p">:</span>
 </span><span id="multi_index_tuple_parser-65"><a href="#multi_index_tuple_parser-65"><span class="linenos">65</span></a>            <span class="n">name</span> <span class="o">=</span> <span class="n">literal_eval</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
 </span><span id="multi_index_tuple_parser-66"><a href="#multi_index_tuple_parser-66"><span class="linenos">66</span></a>        <span class="k">else</span><span class="p">:</span>
 </span><span id="multi_index_tuple_parser-67"><a href="#multi_index_tuple_parser-67"><span class="linenos">67</span></a>            <span class="n">contains_tuples</span> <span class="o">=</span> <span class="kc">False</span>
@@ -329,7 +329,7 @@ the lst contains any tuples</p>
     </div>
     <a class="headerlink" href="#remove_start_of_file"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="remove_start_of_file-72"><a href="#remove_start_of_file-72"><span class="linenos">72</span></a><span class="k">def</span><span class="w"> </span><span class="nf">remove_start_of_file</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">delimiter</span><span class="p">):</span>
-</span><span id="remove_start_of_file-73"><a href="#remove_start_of_file-73"><span class="linenos">73</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Overwrite a file leaving only the portion of it after the</span>
+</span><span id="remove_start_of_file-73"><a href="#remove_start_of_file-73"><span class="linenos">73</span></a><span class="w">    </span><span class="sd">"""Overwrite a file leaving only the portion of it after the</span>
 </span><span id="remove_start_of_file-74"><a href="#remove_start_of_file-74"><span class="linenos">74</span></a><span class="sd">    delimiter string.</span>
 </span><span id="remove_start_of_file-75"><a href="#remove_start_of_file-75"><span class="linenos">75</span></a>
 </span><span id="remove_start_of_file-76"><a href="#remove_start_of_file-76"><span class="linenos">76</span></a><span class="sd">    Parameters</span>
@@ -339,8 +339,8 @@ the lst contains any tuples</p>
 </span><span id="remove_start_of_file-80"><a href="#remove_start_of_file-80"><span class="linenos">80</span></a>
 </span><span id="remove_start_of_file-81"><a href="#remove_start_of_file-81"><span class="linenos">81</span></a><span class="sd">    delimiter : str</span>
 </span><span id="remove_start_of_file-82"><a href="#remove_start_of_file-82"><span class="linenos">82</span></a><span class="sd">       the string after which the file is copied over</span>
-</span><span id="remove_start_of_file-83"><a href="#remove_start_of_file-83"><span class="linenos">83</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="remove_start_of_file-84"><a href="#remove_start_of_file-84"><span class="linenos">84</span></a>    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fd</span><span class="p">:</span>
+</span><span id="remove_start_of_file-83"><a href="#remove_start_of_file-83"><span class="linenos">83</span></a><span class="sd">    """</span>
+</span><span id="remove_start_of_file-84"><a href="#remove_start_of_file-84"><span class="linenos">84</span></a>    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">'r'</span><span class="p">)</span> <span class="k">as</span> <span class="n">fd</span><span class="p">:</span>
 </span><span id="remove_start_of_file-85"><a href="#remove_start_of_file-85"><span class="linenos">85</span></a>        <span class="n">lines</span> <span class="o">=</span> <span class="n">fd</span><span class="o">.</span><span class="n">readlines</span><span class="p">()</span>
 </span><span id="remove_start_of_file-86"><a href="#remove_start_of_file-86"><span class="linenos">86</span></a>    <span class="n">remaining</span> <span class="o">=</span> <span class="p">[]</span>
 </span><span id="remove_start_of_file-87"><a href="#remove_start_of_file-87"><span class="linenos">87</span></a>    <span class="n">after_delimiter</span> <span class="o">=</span> <span class="kc">False</span>
@@ -349,7 +349,7 @@ the lst contains any tuples</p>
 </span><span id="remove_start_of_file-90"><a href="#remove_start_of_file-90"><span class="linenos">90</span></a>            <span class="n">remaining</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
 </span><span id="remove_start_of_file-91"><a href="#remove_start_of_file-91"><span class="linenos">91</span></a>        <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">==</span> <span class="n">delimiter</span><span class="p">:</span>
 </span><span id="remove_start_of_file-92"><a href="#remove_start_of_file-92"><span class="linenos">92</span></a>            <span class="n">after_delimiter</span> <span class="o">=</span> <span class="kc">True</span>
-</span><span id="remove_start_of_file-93"><a href="#remove_start_of_file-93"><span class="linenos">93</span></a>    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fd</span><span class="p">:</span>
+</span><span id="remove_start_of_file-93"><a href="#remove_start_of_file-93"><span class="linenos">93</span></a>    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">'w'</span><span class="p">)</span> <span class="k">as</span> <span class="n">fd</span><span class="p">:</span>
 </span><span id="remove_start_of_file-94"><a href="#remove_start_of_file-94"><span class="linenos">94</span></a>        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">remaining</span><span class="p">:</span>
 </span><span id="remove_start_of_file-95"><a href="#remove_start_of_file-95"><span class="linenos">95</span></a>            <span class="n">fd</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
 </span></pre></div>

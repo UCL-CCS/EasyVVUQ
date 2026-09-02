@@ -75,32 +75,32 @@
 
                         <label class="view-source-button" for="mod-dataframe_sampler-view-source"><span>View Source</span></label>
 
-                        <div class="pdoc-code codehilite"><pre><span></span><span id="L-1"><a href="#L-1"><span class="linenos"> 1</span></a><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="L-2"><a href="#L-2"><span class="linenos"> 2</span></a><span class="sd">&quot;&quot;&quot;</span>
+                        <div class="pdoc-code codehilite"><pre><span></span><span id="L-1"><a href="#L-1"><span class="linenos"> 1</span></a><span class="sd">"""</span>
+</span><span id="L-2"><a href="#L-2"><span class="linenos"> 2</span></a><span class="sd">"""</span>
 </span><span id="L-3"><a href="#L-3"><span class="linenos"> 3</span></a>
 </span><span id="L-4"><a href="#L-4"><span class="linenos"> 4</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseSamplingElement</span>
 </span><span id="L-5"><a href="#L-5"><span class="linenos"> 5</span></a><span class="kn">import</span><span class="w"> </span><span class="nn">csv</span>
 </span><span id="L-6"><a href="#L-6"><span class="linenos"> 6</span></a>
-</span><span id="L-7"><a href="#L-7"><span class="linenos"> 7</span></a><span class="n">__license__</span> <span class="o">=</span> <span class="s2">&quot;LGPL&quot;</span>
+</span><span id="L-7"><a href="#L-7"><span class="linenos"> 7</span></a><span class="n">__license__</span> <span class="o">=</span> <span class="s2">"LGPL"</span>
 </span><span id="L-8"><a href="#L-8"><span class="linenos"> 8</span></a>
 </span><span id="L-9"><a href="#L-9"><span class="linenos"> 9</span></a>
-</span><span id="L-10"><a href="#L-10"><span class="linenos">10</span></a><span class="k">class</span><span class="w"> </span><span class="nc">DataFrameSampler</span><span class="p">(</span><span class="n">BaseSamplingElement</span><span class="p">,</span> <span class="n">sampler_name</span><span class="o">=</span><span class="s2">&quot;csv_sampler&quot;</span><span class="p">):</span>
+</span><span id="L-10"><a href="#L-10"><span class="linenos">10</span></a><span class="k">class</span><span class="w"> </span><span class="nc">DataFrameSampler</span><span class="p">(</span><span class="n">BaseSamplingElement</span><span class="p">,</span> <span class="n">sampler_name</span><span class="o">=</span><span class="s2">"csv_sampler"</span><span class="p">):</span>
 </span><span id="L-11"><a href="#L-11"><span class="linenos">11</span></a>
 </span><span id="L-12"><a href="#L-12"><span class="linenos">12</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">counter</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
-</span><span id="L-13"><a href="#L-13"><span class="linenos">13</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Takes a DataFrame and outputs it row by row.</span>
-</span><span id="L-14"><a href="#L-14"><span class="linenos">14</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="L-15"><a href="#L-15"><span class="linenos">15</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(</span><span class="n">orient</span><span class="o">=</span><span class="s1">&#39;records&#39;</span><span class="p">)</span>
+</span><span id="L-13"><a href="#L-13"><span class="linenos">13</span></a><span class="w">        </span><span class="sd">"""Takes a DataFrame and outputs it row by row.</span>
+</span><span id="L-14"><a href="#L-14"><span class="linenos">14</span></a><span class="sd">        """</span>
+</span><span id="L-15"><a href="#L-15"><span class="linenos">15</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(</span><span class="n">orient</span><span class="o">=</span><span class="s1">'records'</span><span class="p">)</span>
 </span><span id="L-16"><a href="#L-16"><span class="linenos">16</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">counter</span> <span class="o">=</span> <span class="n">counter</span>
 </span><span id="L-17"><a href="#L-17"><span class="linenos">17</span></a>
 </span><span id="L-18"><a href="#L-18"><span class="linenos">18</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">is_finite</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span id="L-19"><a href="#L-19"><span class="linenos">19</span></a>        <span class="k">return</span> <span class="kc">True</span>
 </span><span id="L-20"><a href="#L-20"><span class="linenos">20</span></a>
 </span><span id="L-21"><a href="#L-21"><span class="linenos">21</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">n_samples</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="L-22"><a href="#L-22"><span class="linenos">22</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the number of samples in this sampler.</span>
+</span><span id="L-22"><a href="#L-22"><span class="linenos">22</span></a><span class="w">        </span><span class="sd">"""Returns the number of samples in this sampler.</span>
 </span><span id="L-23"><a href="#L-23"><span class="linenos">23</span></a><span class="sd">        Returns</span>
 </span><span id="L-24"><a href="#L-24"><span class="linenos">24</span></a><span class="sd">        -------</span>
 </span><span id="L-25"><a href="#L-25"><span class="linenos">25</span></a><span class="sd">        if the user specifies maximum number of samples than return that, otherwise - error</span>
-</span><span id="L-26"><a href="#L-26"><span class="linenos">26</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-26"><a href="#L-26"><span class="linenos">26</span></a><span class="sd">        """</span>
 </span><span id="L-27"><a href="#L-27"><span class="linenos">27</span></a>        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
 </span><span id="L-28"><a href="#L-28"><span class="linenos">28</span></a>
 </span><span id="L-29"><a href="#L-29"><span class="linenos">29</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__next__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -126,23 +126,23 @@
 
     </div>
     <a class="headerlink" href="#DataFrameSampler"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="DataFrameSampler-11"><a href="#DataFrameSampler-11"><span class="linenos">11</span></a><span class="k">class</span><span class="w"> </span><span class="nc">DataFrameSampler</span><span class="p">(</span><span class="n">BaseSamplingElement</span><span class="p">,</span> <span class="n">sampler_name</span><span class="o">=</span><span class="s2">&quot;csv_sampler&quot;</span><span class="p">):</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="DataFrameSampler-11"><a href="#DataFrameSampler-11"><span class="linenos">11</span></a><span class="k">class</span><span class="w"> </span><span class="nc">DataFrameSampler</span><span class="p">(</span><span class="n">BaseSamplingElement</span><span class="p">,</span> <span class="n">sampler_name</span><span class="o">=</span><span class="s2">"csv_sampler"</span><span class="p">):</span>
 </span><span id="DataFrameSampler-12"><a href="#DataFrameSampler-12"><span class="linenos">12</span></a>
 </span><span id="DataFrameSampler-13"><a href="#DataFrameSampler-13"><span class="linenos">13</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">counter</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
-</span><span id="DataFrameSampler-14"><a href="#DataFrameSampler-14"><span class="linenos">14</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Takes a DataFrame and outputs it row by row.</span>
-</span><span id="DataFrameSampler-15"><a href="#DataFrameSampler-15"><span class="linenos">15</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="DataFrameSampler-16"><a href="#DataFrameSampler-16"><span class="linenos">16</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(</span><span class="n">orient</span><span class="o">=</span><span class="s1">&#39;records&#39;</span><span class="p">)</span>
+</span><span id="DataFrameSampler-14"><a href="#DataFrameSampler-14"><span class="linenos">14</span></a><span class="w">        </span><span class="sd">"""Takes a DataFrame and outputs it row by row.</span>
+</span><span id="DataFrameSampler-15"><a href="#DataFrameSampler-15"><span class="linenos">15</span></a><span class="sd">        """</span>
+</span><span id="DataFrameSampler-16"><a href="#DataFrameSampler-16"><span class="linenos">16</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(</span><span class="n">orient</span><span class="o">=</span><span class="s1">'records'</span><span class="p">)</span>
 </span><span id="DataFrameSampler-17"><a href="#DataFrameSampler-17"><span class="linenos">17</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">counter</span> <span class="o">=</span> <span class="n">counter</span>
 </span><span id="DataFrameSampler-18"><a href="#DataFrameSampler-18"><span class="linenos">18</span></a>
 </span><span id="DataFrameSampler-19"><a href="#DataFrameSampler-19"><span class="linenos">19</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">is_finite</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span id="DataFrameSampler-20"><a href="#DataFrameSampler-20"><span class="linenos">20</span></a>        <span class="k">return</span> <span class="kc">True</span>
 </span><span id="DataFrameSampler-21"><a href="#DataFrameSampler-21"><span class="linenos">21</span></a>
 </span><span id="DataFrameSampler-22"><a href="#DataFrameSampler-22"><span class="linenos">22</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">n_samples</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="DataFrameSampler-23"><a href="#DataFrameSampler-23"><span class="linenos">23</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the number of samples in this sampler.</span>
+</span><span id="DataFrameSampler-23"><a href="#DataFrameSampler-23"><span class="linenos">23</span></a><span class="w">        </span><span class="sd">"""Returns the number of samples in this sampler.</span>
 </span><span id="DataFrameSampler-24"><a href="#DataFrameSampler-24"><span class="linenos">24</span></a><span class="sd">        Returns</span>
 </span><span id="DataFrameSampler-25"><a href="#DataFrameSampler-25"><span class="linenos">25</span></a><span class="sd">        -------</span>
 </span><span id="DataFrameSampler-26"><a href="#DataFrameSampler-26"><span class="linenos">26</span></a><span class="sd">        if the user specifies maximum number of samples than return that, otherwise - error</span>
-</span><span id="DataFrameSampler-27"><a href="#DataFrameSampler-27"><span class="linenos">27</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="DataFrameSampler-27"><a href="#DataFrameSampler-27"><span class="linenos">27</span></a><span class="sd">        """</span>
 </span><span id="DataFrameSampler-28"><a href="#DataFrameSampler-28"><span class="linenos">28</span></a>        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
 </span><span id="DataFrameSampler-29"><a href="#DataFrameSampler-29"><span class="linenos">29</span></a>
 </span><span id="DataFrameSampler-30"><a href="#DataFrameSampler-30"><span class="linenos">30</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__next__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -178,9 +178,9 @@ Name of the particular sampler.</li>
     </div>
     <a class="headerlink" href="#DataFrameSampler.__init__"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="DataFrameSampler.__init__-13"><a href="#DataFrameSampler.__init__-13"><span class="linenos">13</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">counter</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
-</span><span id="DataFrameSampler.__init__-14"><a href="#DataFrameSampler.__init__-14"><span class="linenos">14</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Takes a DataFrame and outputs it row by row.</span>
-</span><span id="DataFrameSampler.__init__-15"><a href="#DataFrameSampler.__init__-15"><span class="linenos">15</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="DataFrameSampler.__init__-16"><a href="#DataFrameSampler.__init__-16"><span class="linenos">16</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(</span><span class="n">orient</span><span class="o">=</span><span class="s1">&#39;records&#39;</span><span class="p">)</span>
+</span><span id="DataFrameSampler.__init__-14"><a href="#DataFrameSampler.__init__-14"><span class="linenos">14</span></a><span class="w">        </span><span class="sd">"""Takes a DataFrame and outputs it row by row.</span>
+</span><span id="DataFrameSampler.__init__-15"><a href="#DataFrameSampler.__init__-15"><span class="linenos">15</span></a><span class="sd">        """</span>
+</span><span id="DataFrameSampler.__init__-16"><a href="#DataFrameSampler.__init__-16"><span class="linenos">16</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(</span><span class="n">orient</span><span class="o">=</span><span class="s1">'records'</span><span class="p">)</span>
 </span><span id="DataFrameSampler.__init__-17"><a href="#DataFrameSampler.__init__-17"><span class="linenos">17</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">counter</span> <span class="o">=</span> <span class="n">counter</span>
 </span></pre></div>
 
@@ -243,11 +243,11 @@ Name of the particular sampler.</li>
     </div>
     <a class="headerlink" href="#DataFrameSampler.n_samples"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="DataFrameSampler.n_samples-22"><a href="#DataFrameSampler.n_samples-22"><span class="linenos">22</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">n_samples</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="DataFrameSampler.n_samples-23"><a href="#DataFrameSampler.n_samples-23"><span class="linenos">23</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the number of samples in this sampler.</span>
+</span><span id="DataFrameSampler.n_samples-23"><a href="#DataFrameSampler.n_samples-23"><span class="linenos">23</span></a><span class="w">        </span><span class="sd">"""Returns the number of samples in this sampler.</span>
 </span><span id="DataFrameSampler.n_samples-24"><a href="#DataFrameSampler.n_samples-24"><span class="linenos">24</span></a><span class="sd">        Returns</span>
 </span><span id="DataFrameSampler.n_samples-25"><a href="#DataFrameSampler.n_samples-25"><span class="linenos">25</span></a><span class="sd">        -------</span>
 </span><span id="DataFrameSampler.n_samples-26"><a href="#DataFrameSampler.n_samples-26"><span class="linenos">26</span></a><span class="sd">        if the user specifies maximum number of samples than return that, otherwise - error</span>
-</span><span id="DataFrameSampler.n_samples-27"><a href="#DataFrameSampler.n_samples-27"><span class="linenos">27</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="DataFrameSampler.n_samples-27"><a href="#DataFrameSampler.n_samples-27"><span class="linenos">27</span></a><span class="sd">        """</span>
 </span><span id="DataFrameSampler.n_samples-28"><a href="#DataFrameSampler.n_samples-28"><span class="linenos">28</span></a>        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
 </span></pre></div>
 

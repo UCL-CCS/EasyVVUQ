@@ -105,7 +105,7 @@
                         <div class="pdoc-code codehilite"><pre><span></span><span id="L-1"><a href="#L-1"><span class="linenos">  1</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">easyvvuq.base_element</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseElement</span>
 </span><span id="L-2"><a href="#L-2"><span class="linenos">  2</span></a><span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
 </span><span id="L-3"><a href="#L-3"><span class="linenos">  3</span></a>
-</span><span id="L-4"><a href="#L-4"><span class="linenos">  4</span></a><span class="n">__copyright__</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+</span><span id="L-4"><a href="#L-4"><span class="linenos">  4</span></a><span class="n">__copyright__</span> <span class="o">=</span> <span class="s2">"""</span>
 </span><span id="L-5"><a href="#L-5"><span class="linenos">  5</span></a>
 </span><span id="L-6"><a href="#L-6"><span class="linenos">  6</span></a><span class="s2">    Copyright 2018 Robin A. Richardson, David W. Wright</span>
 </span><span id="L-7"><a href="#L-7"><span class="linenos">  7</span></a>
@@ -124,8 +124,8 @@
 </span><span id="L-20"><a href="#L-20"><span class="linenos"> 20</span></a><span class="s2">    You should have received a copy of the Lesser GNU General Public License</span>
 </span><span id="L-21"><a href="#L-21"><span class="linenos"> 21</span></a><span class="s2">    along with this program.  If not, see &lt;https://www.gnu.org/licenses/&gt;.</span>
 </span><span id="L-22"><a href="#L-22"><span class="linenos"> 22</span></a>
-</span><span id="L-23"><a href="#L-23"><span class="linenos"> 23</span></a><span class="s2">&quot;&quot;&quot;</span>
-</span><span id="L-24"><a href="#L-24"><span class="linenos"> 24</span></a><span class="n">__license__</span> <span class="o">=</span> <span class="s2">&quot;LGPL&quot;</span>
+</span><span id="L-23"><a href="#L-23"><span class="linenos"> 23</span></a><span class="s2">"""</span>
+</span><span id="L-24"><a href="#L-24"><span class="linenos"> 24</span></a><span class="n">__license__</span> <span class="o">=</span> <span class="s2">"LGPL"</span>
 </span><span id="L-25"><a href="#L-25"><span class="linenos"> 25</span></a>
 </span><span id="L-26"><a href="#L-26"><span class="linenos"> 26</span></a>
 </span><span id="L-27"><a href="#L-27"><span class="linenos"> 27</span></a><span class="c1"># Dict to store all registered samplers (any class which extends</span>
@@ -134,19 +134,19 @@
 </span><span id="L-30"><a href="#L-30"><span class="linenos"> 30</span></a>
 </span><span id="L-31"><a href="#L-31"><span class="linenos"> 31</span></a>
 </span><span id="L-32"><a href="#L-32"><span class="linenos"> 32</span></a><span class="k">class</span><span class="w"> </span><span class="nc">BaseSamplingElement</span><span class="p">(</span><span class="n">BaseElement</span><span class="p">):</span>
-</span><span id="L-33"><a href="#L-33"><span class="linenos"> 33</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Baseclass for all EasyVVUQ sampling elements.</span>
+</span><span id="L-33"><a href="#L-33"><span class="linenos"> 33</span></a><span class="w">    </span><span class="sd">"""Baseclass for all EasyVVUQ sampling elements.</span>
 </span><span id="L-34"><a href="#L-34"><span class="linenos"> 34</span></a>
 </span><span id="L-35"><a href="#L-35"><span class="linenos"> 35</span></a><span class="sd">    Attributes</span>
 </span><span id="L-36"><a href="#L-36"><span class="linenos"> 36</span></a><span class="sd">    ----------</span>
 </span><span id="L-37"><a href="#L-37"><span class="linenos"> 37</span></a><span class="sd">    sampler_name : str</span>
 </span><span id="L-38"><a href="#L-38"><span class="linenos"> 38</span></a><span class="sd">        Name of the particular sampler.</span>
 </span><span id="L-39"><a href="#L-39"><span class="linenos"> 39</span></a>
-</span><span id="L-40"><a href="#L-40"><span class="linenos"> 40</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="L-40"><a href="#L-40"><span class="linenos"> 40</span></a><span class="sd">    """</span>
 </span><span id="L-41"><a href="#L-41"><span class="linenos"> 41</span></a>
 </span><span id="L-42"><a href="#L-42"><span class="linenos"> 42</span></a>    <span class="n">iteration</span> <span class="o">=</span> <span class="mi">0</span>
 </span><span id="L-43"><a href="#L-43"><span class="linenos"> 43</span></a>
 </span><span id="L-44"><a href="#L-44"><span class="linenos"> 44</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">__init_subclass__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">sampler_name</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-</span><span id="L-45"><a href="#L-45"><span class="linenos"> 45</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-45"><a href="#L-45"><span class="linenos"> 45</span></a><span class="w">        </span><span class="sd">"""</span>
 </span><span id="L-46"><a href="#L-46"><span class="linenos"> 46</span></a><span class="sd">        Catch any new samplers (all samplers must inherit from</span>
 </span><span id="L-47"><a href="#L-47"><span class="linenos"> 47</span></a><span class="sd">        BaseSamplingElement) and add them to the dict of available samplers.</span>
 </span><span id="L-48"><a href="#L-48"><span class="linenos"> 48</span></a>
@@ -154,7 +154,7 @@
 </span><span id="L-50"><a href="#L-50"><span class="linenos"> 50</span></a><span class="sd">        ----------</span>
 </span><span id="L-51"><a href="#L-51"><span class="linenos"> 51</span></a><span class="sd">        sampler_name : str</span>
 </span><span id="L-52"><a href="#L-52"><span class="linenos"> 52</span></a><span class="sd">            Name of the particular sampler.</span>
-</span><span id="L-53"><a href="#L-53"><span class="linenos"> 53</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-53"><a href="#L-53"><span class="linenos"> 53</span></a><span class="sd">        """</span>
 </span><span id="L-54"><a href="#L-54"><span class="linenos"> 54</span></a>
 </span><span id="L-55"><a href="#L-55"><span class="linenos"> 55</span></a>        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init_subclass__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </span><span id="L-56"><a href="#L-56"><span class="linenos"> 56</span></a>
@@ -164,7 +164,7 @@
 </span><span id="L-60"><a href="#L-60"><span class="linenos"> 60</span></a>        <span class="n">AVAILABLE_SAMPLERS</span><span class="p">[</span><span class="n">sampler_name</span><span class="p">]</span> <span class="o">=</span> <span class="bp">cls</span>
 </span><span id="L-61"><a href="#L-61"><span class="linenos"> 61</span></a>
 </span><span id="L-62"><a href="#L-62"><span class="linenos"> 62</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">element_category</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="L-63"><a href="#L-63"><span class="linenos"> 63</span></a>        <span class="k">return</span> <span class="s2">&quot;sampling&quot;</span>
+</span><span id="L-63"><a href="#L-63"><span class="linenos"> 63</span></a>        <span class="k">return</span> <span class="s2">"sampling"</span>
 </span><span id="L-64"><a href="#L-64"><span class="linenos"> 64</span></a>
 </span><span id="L-65"><a href="#L-65"><span class="linenos"> 65</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">element_name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span id="L-66"><a href="#L-66"><span class="linenos"> 66</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">sampler_name</span>
@@ -176,21 +176,21 @@
 </span><span id="L-72"><a href="#L-72"><span class="linenos"> 72</span></a>        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
 </span><span id="L-73"><a href="#L-73"><span class="linenos"> 73</span></a>
 </span><span id="L-74"><a href="#L-74"><span class="linenos"> 74</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="L-75"><a href="#L-75"><span class="linenos"> 75</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-75"><a href="#L-75"><span class="linenos"> 75</span></a><span class="w">        </span><span class="sd">"""</span>
 </span><span id="L-76"><a href="#L-76"><span class="linenos"> 76</span></a><span class="sd">        This method allows the sampler to be used as an iterator.</span>
-</span><span id="L-77"><a href="#L-77"><span class="linenos"> 77</span></a><span class="sd">        The campaign object&#39;s draw_samples() method uses samplers</span>
+</span><span id="L-77"><a href="#L-77"><span class="linenos"> 77</span></a><span class="sd">        The campaign object's draw_samples() method uses samplers</span>
 </span><span id="L-78"><a href="#L-78"><span class="linenos"> 78</span></a><span class="sd">        in that manner.</span>
-</span><span id="L-79"><a href="#L-79"><span class="linenos"> 79</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-79"><a href="#L-79"><span class="linenos"> 79</span></a><span class="sd">        """</span>
 </span><span id="L-80"><a href="#L-80"><span class="linenos"> 80</span></a>        <span class="k">return</span> <span class="bp">self</span>
 </span><span id="L-81"><a href="#L-81"><span class="linenos"> 81</span></a>
 </span><span id="L-82"><a href="#L-82"><span class="linenos"> 82</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__next__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="L-83"><a href="#L-83"><span class="linenos"> 83</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-83"><a href="#L-83"><span class="linenos"> 83</span></a><span class="w">        </span><span class="sd">"""</span>
 </span><span id="L-84"><a href="#L-84"><span class="linenos"> 84</span></a><span class="sd">        This must be implemented by any sampler class.</span>
 </span><span id="L-85"><a href="#L-85"><span class="linenos"> 85</span></a><span class="sd">        It should return the next run in the sequence.</span>
 </span><span id="L-86"><a href="#L-86"><span class="linenos"> 86</span></a><span class="sd">        In the case of a finite sampler, when there are</span>
 </span><span id="L-87"><a href="#L-87"><span class="linenos"> 87</span></a><span class="sd">        no more runs remaining, __next__() should</span>
 </span><span id="L-88"><a href="#L-88"><span class="linenos"> 88</span></a><span class="sd">        raise a StopIteration exception</span>
-</span><span id="L-89"><a href="#L-89"><span class="linenos"> 89</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-89"><a href="#L-89"><span class="linenos"> 89</span></a><span class="sd">        """</span>
 </span><span id="L-90"><a href="#L-90"><span class="linenos"> 90</span></a>        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
 </span><span id="L-91"><a href="#L-91"><span class="linenos"> 91</span></a>
 </span><span id="L-92"><a href="#L-92"><span class="linenos"> 92</span></a>    <span class="nd">@property</span>
@@ -202,7 +202,7 @@
 </span><span id="L-98"><a href="#L-98"><span class="linenos"> 98</span></a>        <span class="k">try</span><span class="p">:</span>
 </span><span id="L-99"><a href="#L-99"><span class="linenos"> 99</span></a>            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sampler_id</span>
 </span><span id="L-100"><a href="#L-100"><span class="linenos">100</span></a>        <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
-</span><span id="L-101"><a href="#L-101"><span class="linenos">101</span></a>            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;this sampler does not have an id assigned, run set_sampler first&#39;</span><span class="p">)</span>
+</span><span id="L-101"><a href="#L-101"><span class="linenos">101</span></a>            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">'this sampler does not have an id assigned, run set_sampler first'</span><span class="p">)</span>
 </span><span id="L-102"><a href="#L-102"><span class="linenos">102</span></a>
 </span><span id="L-103"><a href="#L-103"><span class="linenos">103</span></a>    <span class="nd">@sampler_id</span><span class="o">.</span><span class="n">setter</span>
 </span><span id="L-104"><a href="#L-104"><span class="linenos">104</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">sampler_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
@@ -212,19 +212,19 @@
 </span><span id="L-108"><a href="#L-108"><span class="linenos">108</span></a><span class="k">class</span><span class="w"> </span><span class="nc">Vary</span><span class="p">:</span>
 </span><span id="L-109"><a href="#L-109"><span class="linenos">109</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vary_dict</span><span class="p">):</span>
 </span><span id="L-110"><a href="#L-110"><span class="linenos">110</span></a>        <span class="k">if</span> <span class="n">vary_dict</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="L-111"><a href="#L-111"><span class="linenos">111</span></a>            <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;&#39;vary_dict&#39; cannot be None. RandomSampler must be passed a &quot;</span>
-</span><span id="L-112"><a href="#L-112"><span class="linenos">112</span></a>                   <span class="s2">&quot;dict of the names of the parameters you want to vary, &quot;</span>
-</span><span id="L-113"><a href="#L-113"><span class="linenos">113</span></a>                   <span class="s2">&quot;and their corresponding distributions.&quot;</span><span class="p">)</span>
+</span><span id="L-111"><a href="#L-111"><span class="linenos">111</span></a>            <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s2">"'vary_dict' cannot be None. RandomSampler must be passed a "</span>
+</span><span id="L-112"><a href="#L-112"><span class="linenos">112</span></a>                   <span class="s2">"dict of the names of the parameters you want to vary, "</span>
+</span><span id="L-113"><a href="#L-113"><span class="linenos">113</span></a>                   <span class="s2">"and their corresponding distributions."</span><span class="p">)</span>
 </span><span id="L-114"><a href="#L-114"><span class="linenos">114</span></a>            <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 </span><span id="L-115"><a href="#L-115"><span class="linenos">115</span></a>            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 </span><span id="L-116"><a href="#L-116"><span class="linenos">116</span></a>        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">vary_dict</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
-</span><span id="L-117"><a href="#L-117"><span class="linenos">117</span></a>            <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;&#39;vary_dict&#39; must be a dictionary of the names of the &quot;</span>
-</span><span id="L-118"><a href="#L-118"><span class="linenos">118</span></a>                   <span class="s2">&quot;parameters you want to vary, and their corresponding &quot;</span>
-</span><span id="L-119"><a href="#L-119"><span class="linenos">119</span></a>                   <span class="s2">&quot;distributions.&quot;</span><span class="p">)</span>
+</span><span id="L-117"><a href="#L-117"><span class="linenos">117</span></a>            <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s2">"'vary_dict' must be a dictionary of the names of the "</span>
+</span><span id="L-118"><a href="#L-118"><span class="linenos">118</span></a>                   <span class="s2">"parameters you want to vary, and their corresponding "</span>
+</span><span id="L-119"><a href="#L-119"><span class="linenos">119</span></a>                   <span class="s2">"distributions."</span><span class="p">)</span>
 </span><span id="L-120"><a href="#L-120"><span class="linenos">120</span></a>            <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 </span><span id="L-121"><a href="#L-121"><span class="linenos">121</span></a>            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 </span><span id="L-122"><a href="#L-122"><span class="linenos">122</span></a>        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">vary_dict</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-</span><span id="L-123"><a href="#L-123"><span class="linenos">123</span></a>            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;&#39;vary_dict&#39; cannot be empty.&quot;</span>
+</span><span id="L-123"><a href="#L-123"><span class="linenos">123</span></a>            <span class="n">msg</span> <span class="o">=</span> <span class="s2">"'vary_dict' cannot be empty."</span>
 </span><span id="L-124"><a href="#L-124"><span class="linenos">124</span></a>            <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 </span><span id="L-125"><a href="#L-125"><span class="linenos">125</span></a>            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 </span><span id="L-126"><a href="#L-126"><span class="linenos">126</span></a>
@@ -270,19 +270,19 @@
     </div>
     <a class="headerlink" href="#BaseSamplingElement"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="BaseSamplingElement-33"><a href="#BaseSamplingElement-33"><span class="linenos"> 33</span></a><span class="k">class</span><span class="w"> </span><span class="nc">BaseSamplingElement</span><span class="p">(</span><span class="n">BaseElement</span><span class="p">):</span>
-</span><span id="BaseSamplingElement-34"><a href="#BaseSamplingElement-34"><span class="linenos"> 34</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Baseclass for all EasyVVUQ sampling elements.</span>
+</span><span id="BaseSamplingElement-34"><a href="#BaseSamplingElement-34"><span class="linenos"> 34</span></a><span class="w">    </span><span class="sd">"""Baseclass for all EasyVVUQ sampling elements.</span>
 </span><span id="BaseSamplingElement-35"><a href="#BaseSamplingElement-35"><span class="linenos"> 35</span></a>
 </span><span id="BaseSamplingElement-36"><a href="#BaseSamplingElement-36"><span class="linenos"> 36</span></a><span class="sd">    Attributes</span>
 </span><span id="BaseSamplingElement-37"><a href="#BaseSamplingElement-37"><span class="linenos"> 37</span></a><span class="sd">    ----------</span>
 </span><span id="BaseSamplingElement-38"><a href="#BaseSamplingElement-38"><span class="linenos"> 38</span></a><span class="sd">    sampler_name : str</span>
 </span><span id="BaseSamplingElement-39"><a href="#BaseSamplingElement-39"><span class="linenos"> 39</span></a><span class="sd">        Name of the particular sampler.</span>
 </span><span id="BaseSamplingElement-40"><a href="#BaseSamplingElement-40"><span class="linenos"> 40</span></a>
-</span><span id="BaseSamplingElement-41"><a href="#BaseSamplingElement-41"><span class="linenos"> 41</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="BaseSamplingElement-41"><a href="#BaseSamplingElement-41"><span class="linenos"> 41</span></a><span class="sd">    """</span>
 </span><span id="BaseSamplingElement-42"><a href="#BaseSamplingElement-42"><span class="linenos"> 42</span></a>
 </span><span id="BaseSamplingElement-43"><a href="#BaseSamplingElement-43"><span class="linenos"> 43</span></a>    <span class="n">iteration</span> <span class="o">=</span> <span class="mi">0</span>
 </span><span id="BaseSamplingElement-44"><a href="#BaseSamplingElement-44"><span class="linenos"> 44</span></a>
 </span><span id="BaseSamplingElement-45"><a href="#BaseSamplingElement-45"><span class="linenos"> 45</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">__init_subclass__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">sampler_name</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-</span><span id="BaseSamplingElement-46"><a href="#BaseSamplingElement-46"><span class="linenos"> 46</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="BaseSamplingElement-46"><a href="#BaseSamplingElement-46"><span class="linenos"> 46</span></a><span class="w">        </span><span class="sd">"""</span>
 </span><span id="BaseSamplingElement-47"><a href="#BaseSamplingElement-47"><span class="linenos"> 47</span></a><span class="sd">        Catch any new samplers (all samplers must inherit from</span>
 </span><span id="BaseSamplingElement-48"><a href="#BaseSamplingElement-48"><span class="linenos"> 48</span></a><span class="sd">        BaseSamplingElement) and add them to the dict of available samplers.</span>
 </span><span id="BaseSamplingElement-49"><a href="#BaseSamplingElement-49"><span class="linenos"> 49</span></a>
@@ -290,7 +290,7 @@
 </span><span id="BaseSamplingElement-51"><a href="#BaseSamplingElement-51"><span class="linenos"> 51</span></a><span class="sd">        ----------</span>
 </span><span id="BaseSamplingElement-52"><a href="#BaseSamplingElement-52"><span class="linenos"> 52</span></a><span class="sd">        sampler_name : str</span>
 </span><span id="BaseSamplingElement-53"><a href="#BaseSamplingElement-53"><span class="linenos"> 53</span></a><span class="sd">            Name of the particular sampler.</span>
-</span><span id="BaseSamplingElement-54"><a href="#BaseSamplingElement-54"><span class="linenos"> 54</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="BaseSamplingElement-54"><a href="#BaseSamplingElement-54"><span class="linenos"> 54</span></a><span class="sd">        """</span>
 </span><span id="BaseSamplingElement-55"><a href="#BaseSamplingElement-55"><span class="linenos"> 55</span></a>
 </span><span id="BaseSamplingElement-56"><a href="#BaseSamplingElement-56"><span class="linenos"> 56</span></a>        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init_subclass__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </span><span id="BaseSamplingElement-57"><a href="#BaseSamplingElement-57"><span class="linenos"> 57</span></a>
@@ -300,7 +300,7 @@
 </span><span id="BaseSamplingElement-61"><a href="#BaseSamplingElement-61"><span class="linenos"> 61</span></a>        <span class="n">AVAILABLE_SAMPLERS</span><span class="p">[</span><span class="n">sampler_name</span><span class="p">]</span> <span class="o">=</span> <span class="bp">cls</span>
 </span><span id="BaseSamplingElement-62"><a href="#BaseSamplingElement-62"><span class="linenos"> 62</span></a>
 </span><span id="BaseSamplingElement-63"><a href="#BaseSamplingElement-63"><span class="linenos"> 63</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">element_category</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="BaseSamplingElement-64"><a href="#BaseSamplingElement-64"><span class="linenos"> 64</span></a>        <span class="k">return</span> <span class="s2">&quot;sampling&quot;</span>
+</span><span id="BaseSamplingElement-64"><a href="#BaseSamplingElement-64"><span class="linenos"> 64</span></a>        <span class="k">return</span> <span class="s2">"sampling"</span>
 </span><span id="BaseSamplingElement-65"><a href="#BaseSamplingElement-65"><span class="linenos"> 65</span></a>
 </span><span id="BaseSamplingElement-66"><a href="#BaseSamplingElement-66"><span class="linenos"> 66</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">element_name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span id="BaseSamplingElement-67"><a href="#BaseSamplingElement-67"><span class="linenos"> 67</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">sampler_name</span>
@@ -312,21 +312,21 @@
 </span><span id="BaseSamplingElement-73"><a href="#BaseSamplingElement-73"><span class="linenos"> 73</span></a>        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
 </span><span id="BaseSamplingElement-74"><a href="#BaseSamplingElement-74"><span class="linenos"> 74</span></a>
 </span><span id="BaseSamplingElement-75"><a href="#BaseSamplingElement-75"><span class="linenos"> 75</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="BaseSamplingElement-76"><a href="#BaseSamplingElement-76"><span class="linenos"> 76</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="BaseSamplingElement-76"><a href="#BaseSamplingElement-76"><span class="linenos"> 76</span></a><span class="w">        </span><span class="sd">"""</span>
 </span><span id="BaseSamplingElement-77"><a href="#BaseSamplingElement-77"><span class="linenos"> 77</span></a><span class="sd">        This method allows the sampler to be used as an iterator.</span>
-</span><span id="BaseSamplingElement-78"><a href="#BaseSamplingElement-78"><span class="linenos"> 78</span></a><span class="sd">        The campaign object&#39;s draw_samples() method uses samplers</span>
+</span><span id="BaseSamplingElement-78"><a href="#BaseSamplingElement-78"><span class="linenos"> 78</span></a><span class="sd">        The campaign object's draw_samples() method uses samplers</span>
 </span><span id="BaseSamplingElement-79"><a href="#BaseSamplingElement-79"><span class="linenos"> 79</span></a><span class="sd">        in that manner.</span>
-</span><span id="BaseSamplingElement-80"><a href="#BaseSamplingElement-80"><span class="linenos"> 80</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="BaseSamplingElement-80"><a href="#BaseSamplingElement-80"><span class="linenos"> 80</span></a><span class="sd">        """</span>
 </span><span id="BaseSamplingElement-81"><a href="#BaseSamplingElement-81"><span class="linenos"> 81</span></a>        <span class="k">return</span> <span class="bp">self</span>
 </span><span id="BaseSamplingElement-82"><a href="#BaseSamplingElement-82"><span class="linenos"> 82</span></a>
 </span><span id="BaseSamplingElement-83"><a href="#BaseSamplingElement-83"><span class="linenos"> 83</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__next__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="BaseSamplingElement-84"><a href="#BaseSamplingElement-84"><span class="linenos"> 84</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="BaseSamplingElement-84"><a href="#BaseSamplingElement-84"><span class="linenos"> 84</span></a><span class="w">        </span><span class="sd">"""</span>
 </span><span id="BaseSamplingElement-85"><a href="#BaseSamplingElement-85"><span class="linenos"> 85</span></a><span class="sd">        This must be implemented by any sampler class.</span>
 </span><span id="BaseSamplingElement-86"><a href="#BaseSamplingElement-86"><span class="linenos"> 86</span></a><span class="sd">        It should return the next run in the sequence.</span>
 </span><span id="BaseSamplingElement-87"><a href="#BaseSamplingElement-87"><span class="linenos"> 87</span></a><span class="sd">        In the case of a finite sampler, when there are</span>
 </span><span id="BaseSamplingElement-88"><a href="#BaseSamplingElement-88"><span class="linenos"> 88</span></a><span class="sd">        no more runs remaining, __next__() should</span>
 </span><span id="BaseSamplingElement-89"><a href="#BaseSamplingElement-89"><span class="linenos"> 89</span></a><span class="sd">        raise a StopIteration exception</span>
-</span><span id="BaseSamplingElement-90"><a href="#BaseSamplingElement-90"><span class="linenos"> 90</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="BaseSamplingElement-90"><a href="#BaseSamplingElement-90"><span class="linenos"> 90</span></a><span class="sd">        """</span>
 </span><span id="BaseSamplingElement-91"><a href="#BaseSamplingElement-91"><span class="linenos"> 91</span></a>        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
 </span><span id="BaseSamplingElement-92"><a href="#BaseSamplingElement-92"><span class="linenos"> 92</span></a>
 </span><span id="BaseSamplingElement-93"><a href="#BaseSamplingElement-93"><span class="linenos"> 93</span></a>    <span class="nd">@property</span>
@@ -338,7 +338,7 @@
 </span><span id="BaseSamplingElement-99"><a href="#BaseSamplingElement-99"><span class="linenos"> 99</span></a>        <span class="k">try</span><span class="p">:</span>
 </span><span id="BaseSamplingElement-100"><a href="#BaseSamplingElement-100"><span class="linenos">100</span></a>            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sampler_id</span>
 </span><span id="BaseSamplingElement-101"><a href="#BaseSamplingElement-101"><span class="linenos">101</span></a>        <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
-</span><span id="BaseSamplingElement-102"><a href="#BaseSamplingElement-102"><span class="linenos">102</span></a>            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;this sampler does not have an id assigned, run set_sampler first&#39;</span><span class="p">)</span>
+</span><span id="BaseSamplingElement-102"><a href="#BaseSamplingElement-102"><span class="linenos">102</span></a>            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">'this sampler does not have an id assigned, run set_sampler first'</span><span class="p">)</span>
 </span><span id="BaseSamplingElement-103"><a href="#BaseSamplingElement-103"><span class="linenos">103</span></a>
 </span><span id="BaseSamplingElement-104"><a href="#BaseSamplingElement-104"><span class="linenos">104</span></a>    <span class="nd">@sampler_id</span><span class="o">.</span><span class="n">setter</span>
 </span><span id="BaseSamplingElement-105"><a href="#BaseSamplingElement-105"><span class="linenos">105</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">sampler_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
@@ -381,7 +381,7 @@ Name of the particular sampler.</li>
     </div>
     <a class="headerlink" href="#BaseSamplingElement.element_category"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="BaseSamplingElement.element_category-63"><a href="#BaseSamplingElement.element_category-63"><span class="linenos">63</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">element_category</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="BaseSamplingElement.element_category-64"><a href="#BaseSamplingElement.element_category-64"><span class="linenos">64</span></a>        <span class="k">return</span> <span class="s2">&quot;sampling&quot;</span>
+</span><span id="BaseSamplingElement.element_category-64"><a href="#BaseSamplingElement.element_category-64"><span class="linenos">64</span></a>        <span class="k">return</span> <span class="s2">"sampling"</span>
 </span></pre></div>
 
 
@@ -477,7 +477,7 @@ Name of the particular sampler.</li>
 </span><span id="BaseSamplingElement.sampler_id-99"><a href="#BaseSamplingElement.sampler_id-99"><span class="linenos"> 99</span></a>        <span class="k">try</span><span class="p">:</span>
 </span><span id="BaseSamplingElement.sampler_id-100"><a href="#BaseSamplingElement.sampler_id-100"><span class="linenos">100</span></a>            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sampler_id</span>
 </span><span id="BaseSamplingElement.sampler_id-101"><a href="#BaseSamplingElement.sampler_id-101"><span class="linenos">101</span></a>        <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
-</span><span id="BaseSamplingElement.sampler_id-102"><a href="#BaseSamplingElement.sampler_id-102"><span class="linenos">102</span></a>            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;this sampler does not have an id assigned, run set_sampler first&#39;</span><span class="p">)</span>
+</span><span id="BaseSamplingElement.sampler_id-102"><a href="#BaseSamplingElement.sampler_id-102"><span class="linenos">102</span></a>            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">'this sampler does not have an id assigned, run set_sampler first'</span><span class="p">)</span>
 </span></pre></div>
 
 
@@ -508,19 +508,19 @@ Name of the particular sampler.</li>
             <div class="pdoc-code codehilite"><pre><span></span><span id="Vary-109"><a href="#Vary-109"><span class="linenos">109</span></a><span class="k">class</span><span class="w"> </span><span class="nc">Vary</span><span class="p">:</span>
 </span><span id="Vary-110"><a href="#Vary-110"><span class="linenos">110</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vary_dict</span><span class="p">):</span>
 </span><span id="Vary-111"><a href="#Vary-111"><span class="linenos">111</span></a>        <span class="k">if</span> <span class="n">vary_dict</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="Vary-112"><a href="#Vary-112"><span class="linenos">112</span></a>            <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;&#39;vary_dict&#39; cannot be None. RandomSampler must be passed a &quot;</span>
-</span><span id="Vary-113"><a href="#Vary-113"><span class="linenos">113</span></a>                   <span class="s2">&quot;dict of the names of the parameters you want to vary, &quot;</span>
-</span><span id="Vary-114"><a href="#Vary-114"><span class="linenos">114</span></a>                   <span class="s2">&quot;and their corresponding distributions.&quot;</span><span class="p">)</span>
+</span><span id="Vary-112"><a href="#Vary-112"><span class="linenos">112</span></a>            <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s2">"'vary_dict' cannot be None. RandomSampler must be passed a "</span>
+</span><span id="Vary-113"><a href="#Vary-113"><span class="linenos">113</span></a>                   <span class="s2">"dict of the names of the parameters you want to vary, "</span>
+</span><span id="Vary-114"><a href="#Vary-114"><span class="linenos">114</span></a>                   <span class="s2">"and their corresponding distributions."</span><span class="p">)</span>
 </span><span id="Vary-115"><a href="#Vary-115"><span class="linenos">115</span></a>            <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 </span><span id="Vary-116"><a href="#Vary-116"><span class="linenos">116</span></a>            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 </span><span id="Vary-117"><a href="#Vary-117"><span class="linenos">117</span></a>        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">vary_dict</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
-</span><span id="Vary-118"><a href="#Vary-118"><span class="linenos">118</span></a>            <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;&#39;vary_dict&#39; must be a dictionary of the names of the &quot;</span>
-</span><span id="Vary-119"><a href="#Vary-119"><span class="linenos">119</span></a>                   <span class="s2">&quot;parameters you want to vary, and their corresponding &quot;</span>
-</span><span id="Vary-120"><a href="#Vary-120"><span class="linenos">120</span></a>                   <span class="s2">&quot;distributions.&quot;</span><span class="p">)</span>
+</span><span id="Vary-118"><a href="#Vary-118"><span class="linenos">118</span></a>            <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s2">"'vary_dict' must be a dictionary of the names of the "</span>
+</span><span id="Vary-119"><a href="#Vary-119"><span class="linenos">119</span></a>                   <span class="s2">"parameters you want to vary, and their corresponding "</span>
+</span><span id="Vary-120"><a href="#Vary-120"><span class="linenos">120</span></a>                   <span class="s2">"distributions."</span><span class="p">)</span>
 </span><span id="Vary-121"><a href="#Vary-121"><span class="linenos">121</span></a>            <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 </span><span id="Vary-122"><a href="#Vary-122"><span class="linenos">122</span></a>            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 </span><span id="Vary-123"><a href="#Vary-123"><span class="linenos">123</span></a>        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">vary_dict</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-</span><span id="Vary-124"><a href="#Vary-124"><span class="linenos">124</span></a>            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;&#39;vary_dict&#39; cannot be empty.&quot;</span>
+</span><span id="Vary-124"><a href="#Vary-124"><span class="linenos">124</span></a>            <span class="n">msg</span> <span class="o">=</span> <span class="s2">"'vary_dict' cannot be empty."</span>
 </span><span id="Vary-125"><a href="#Vary-125"><span class="linenos">125</span></a>            <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 </span><span id="Vary-126"><a href="#Vary-126"><span class="linenos">126</span></a>            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 </span><span id="Vary-127"><a href="#Vary-127"><span class="linenos">127</span></a>
@@ -554,19 +554,19 @@ Name of the particular sampler.</li>
     <a class="headerlink" href="#Vary.__init__"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="Vary.__init__-110"><a href="#Vary.__init__-110"><span class="linenos">110</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vary_dict</span><span class="p">):</span>
 </span><span id="Vary.__init__-111"><a href="#Vary.__init__-111"><span class="linenos">111</span></a>        <span class="k">if</span> <span class="n">vary_dict</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="Vary.__init__-112"><a href="#Vary.__init__-112"><span class="linenos">112</span></a>            <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;&#39;vary_dict&#39; cannot be None. RandomSampler must be passed a &quot;</span>
-</span><span id="Vary.__init__-113"><a href="#Vary.__init__-113"><span class="linenos">113</span></a>                   <span class="s2">&quot;dict of the names of the parameters you want to vary, &quot;</span>
-</span><span id="Vary.__init__-114"><a href="#Vary.__init__-114"><span class="linenos">114</span></a>                   <span class="s2">&quot;and their corresponding distributions.&quot;</span><span class="p">)</span>
+</span><span id="Vary.__init__-112"><a href="#Vary.__init__-112"><span class="linenos">112</span></a>            <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s2">"'vary_dict' cannot be None. RandomSampler must be passed a "</span>
+</span><span id="Vary.__init__-113"><a href="#Vary.__init__-113"><span class="linenos">113</span></a>                   <span class="s2">"dict of the names of the parameters you want to vary, "</span>
+</span><span id="Vary.__init__-114"><a href="#Vary.__init__-114"><span class="linenos">114</span></a>                   <span class="s2">"and their corresponding distributions."</span><span class="p">)</span>
 </span><span id="Vary.__init__-115"><a href="#Vary.__init__-115"><span class="linenos">115</span></a>            <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 </span><span id="Vary.__init__-116"><a href="#Vary.__init__-116"><span class="linenos">116</span></a>            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 </span><span id="Vary.__init__-117"><a href="#Vary.__init__-117"><span class="linenos">117</span></a>        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">vary_dict</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
-</span><span id="Vary.__init__-118"><a href="#Vary.__init__-118"><span class="linenos">118</span></a>            <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;&#39;vary_dict&#39; must be a dictionary of the names of the &quot;</span>
-</span><span id="Vary.__init__-119"><a href="#Vary.__init__-119"><span class="linenos">119</span></a>                   <span class="s2">&quot;parameters you want to vary, and their corresponding &quot;</span>
-</span><span id="Vary.__init__-120"><a href="#Vary.__init__-120"><span class="linenos">120</span></a>                   <span class="s2">&quot;distributions.&quot;</span><span class="p">)</span>
+</span><span id="Vary.__init__-118"><a href="#Vary.__init__-118"><span class="linenos">118</span></a>            <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s2">"'vary_dict' must be a dictionary of the names of the "</span>
+</span><span id="Vary.__init__-119"><a href="#Vary.__init__-119"><span class="linenos">119</span></a>                   <span class="s2">"parameters you want to vary, and their corresponding "</span>
+</span><span id="Vary.__init__-120"><a href="#Vary.__init__-120"><span class="linenos">120</span></a>                   <span class="s2">"distributions."</span><span class="p">)</span>
 </span><span id="Vary.__init__-121"><a href="#Vary.__init__-121"><span class="linenos">121</span></a>            <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 </span><span id="Vary.__init__-122"><a href="#Vary.__init__-122"><span class="linenos">122</span></a>            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 </span><span id="Vary.__init__-123"><a href="#Vary.__init__-123"><span class="linenos">123</span></a>        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">vary_dict</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-</span><span id="Vary.__init__-124"><a href="#Vary.__init__-124"><span class="linenos">124</span></a>            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;&#39;vary_dict&#39; cannot be empty.&quot;</span>
+</span><span id="Vary.__init__-124"><a href="#Vary.__init__-124"><span class="linenos">124</span></a>            <span class="n">msg</span> <span class="o">=</span> <span class="s2">"'vary_dict' cannot be empty."</span>
 </span><span id="Vary.__init__-125"><a href="#Vary.__init__-125"><span class="linenos">125</span></a>            <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 </span><span id="Vary.__init__-126"><a href="#Vary.__init__-126"><span class="linenos">126</span></a>            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 </span><span id="Vary.__init__-127"><a href="#Vary.__init__-127"><span class="linenos">127</span></a>

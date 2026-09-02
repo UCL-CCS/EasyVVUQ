@@ -74,7 +74,7 @@
 
                         <div class="pdoc-code codehilite"><pre><span></span><span id="L-1"><a href="#L-1"><span class="linenos"> 1</span></a><span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
 </span><span id="L-2"><a href="#L-2"><span class="linenos"> 2</span></a>
-</span><span id="L-3"><a href="#L-3"><span class="linenos"> 3</span></a><span class="n">__copyright__</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+</span><span id="L-3"><a href="#L-3"><span class="linenos"> 3</span></a><span class="n">__copyright__</span> <span class="o">=</span> <span class="s2">"""</span>
 </span><span id="L-4"><a href="#L-4"><span class="linenos"> 4</span></a>
 </span><span id="L-5"><a href="#L-5"><span class="linenos"> 5</span></a><span class="s2">    Copyright 2018 Robin A. Richardson, David W. Wright</span>
 </span><span id="L-6"><a href="#L-6"><span class="linenos"> 6</span></a>
@@ -93,8 +93,8 @@
 </span><span id="L-19"><a href="#L-19"><span class="linenos">19</span></a><span class="s2">    You should have received a copy of the Lesser GNU General Public License</span>
 </span><span id="L-20"><a href="#L-20"><span class="linenos">20</span></a><span class="s2">    along with this program.  If not, see &lt;https://www.gnu.org/licenses/&gt;.</span>
 </span><span id="L-21"><a href="#L-21"><span class="linenos">21</span></a>
-</span><span id="L-22"><a href="#L-22"><span class="linenos">22</span></a><span class="s2">&quot;&quot;&quot;</span>
-</span><span id="L-23"><a href="#L-23"><span class="linenos">23</span></a><span class="n">__license__</span> <span class="o">=</span> <span class="s2">&quot;LGPL&quot;</span>
+</span><span id="L-22"><a href="#L-22"><span class="linenos">22</span></a><span class="s2">"""</span>
+</span><span id="L-23"><a href="#L-23"><span class="linenos">23</span></a><span class="n">__license__</span> <span class="o">=</span> <span class="s2">"LGPL"</span>
 </span><span id="L-24"><a href="#L-24"><span class="linenos">24</span></a>
 </span><span id="L-25"><a href="#L-25"><span class="linenos">25</span></a><span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 </span><span id="L-26"><a href="#L-26"><span class="linenos">26</span></a>
@@ -102,15 +102,15 @@
 </span><span id="L-28"><a href="#L-28"><span class="linenos">28</span></a><span class="k">class</span><span class="w"> </span><span class="nc">MultiEncoder</span><span class="p">:</span>
 </span><span id="L-29"><a href="#L-29"><span class="linenos">29</span></a>
 </span><span id="L-30"><a href="#L-30"><span class="linenos">30</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">encoders</span><span class="p">):</span>
-</span><span id="L-31"><a href="#L-31"><span class="linenos">31</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-31"><a href="#L-31"><span class="linenos">31</span></a><span class="w">        </span><span class="sd">"""</span>
 </span><span id="L-32"><a href="#L-32"><span class="linenos">32</span></a><span class="sd">            Expects one or more encoders</span>
-</span><span id="L-33"><a href="#L-33"><span class="linenos">33</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-33"><a href="#L-33"><span class="linenos">33</span></a><span class="sd">        """</span>
 </span><span id="L-34"><a href="#L-34"><span class="linenos">34</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">encoders</span> <span class="o">=</span> <span class="n">encoders</span>
 </span><span id="L-35"><a href="#L-35"><span class="linenos">35</span></a>
-</span><span id="L-36"><a href="#L-36"><span class="linenos">36</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">encode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="p">{},</span> <span class="n">target_dir</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
-</span><span id="L-37"><a href="#L-37"><span class="linenos">37</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-36"><a href="#L-36"><span class="linenos">36</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">encode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="p">{},</span> <span class="n">target_dir</span><span class="o">=</span><span class="s1">''</span><span class="p">):</span>
+</span><span id="L-37"><a href="#L-37"><span class="linenos">37</span></a><span class="w">        </span><span class="sd">"""</span>
 </span><span id="L-38"><a href="#L-38"><span class="linenos">38</span></a><span class="sd">            Applies all encoders in the list of encoders.</span>
-</span><span id="L-39"><a href="#L-39"><span class="linenos">39</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-39"><a href="#L-39"><span class="linenos">39</span></a><span class="sd">        """</span>
 </span><span id="L-40"><a href="#L-40"><span class="linenos">40</span></a>        <span class="k">for</span> <span class="n">encoder</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">encoders</span><span class="p">:</span>
 </span><span id="L-41"><a href="#L-41"><span class="linenos">41</span></a>            <span class="n">encoder</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">,</span> <span class="n">target_dir</span><span class="o">=</span><span class="n">target_dir</span><span class="p">)</span>
 </span><span id="L-42"><a href="#L-42"><span class="linenos">42</span></a>
@@ -146,15 +146,15 @@
             <div class="pdoc-code codehilite"><pre><span></span><span id="MultiEncoder-29"><a href="#MultiEncoder-29"><span class="linenos">29</span></a><span class="k">class</span><span class="w"> </span><span class="nc">MultiEncoder</span><span class="p">:</span>
 </span><span id="MultiEncoder-30"><a href="#MultiEncoder-30"><span class="linenos">30</span></a>
 </span><span id="MultiEncoder-31"><a href="#MultiEncoder-31"><span class="linenos">31</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">encoders</span><span class="p">):</span>
-</span><span id="MultiEncoder-32"><a href="#MultiEncoder-32"><span class="linenos">32</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="MultiEncoder-32"><a href="#MultiEncoder-32"><span class="linenos">32</span></a><span class="w">        </span><span class="sd">"""</span>
 </span><span id="MultiEncoder-33"><a href="#MultiEncoder-33"><span class="linenos">33</span></a><span class="sd">            Expects one or more encoders</span>
-</span><span id="MultiEncoder-34"><a href="#MultiEncoder-34"><span class="linenos">34</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="MultiEncoder-34"><a href="#MultiEncoder-34"><span class="linenos">34</span></a><span class="sd">        """</span>
 </span><span id="MultiEncoder-35"><a href="#MultiEncoder-35"><span class="linenos">35</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">encoders</span> <span class="o">=</span> <span class="n">encoders</span>
 </span><span id="MultiEncoder-36"><a href="#MultiEncoder-36"><span class="linenos">36</span></a>
-</span><span id="MultiEncoder-37"><a href="#MultiEncoder-37"><span class="linenos">37</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">encode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="p">{},</span> <span class="n">target_dir</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
-</span><span id="MultiEncoder-38"><a href="#MultiEncoder-38"><span class="linenos">38</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="MultiEncoder-37"><a href="#MultiEncoder-37"><span class="linenos">37</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">encode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="p">{},</span> <span class="n">target_dir</span><span class="o">=</span><span class="s1">''</span><span class="p">):</span>
+</span><span id="MultiEncoder-38"><a href="#MultiEncoder-38"><span class="linenos">38</span></a><span class="w">        </span><span class="sd">"""</span>
 </span><span id="MultiEncoder-39"><a href="#MultiEncoder-39"><span class="linenos">39</span></a><span class="sd">            Applies all encoders in the list of encoders.</span>
-</span><span id="MultiEncoder-40"><a href="#MultiEncoder-40"><span class="linenos">40</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="MultiEncoder-40"><a href="#MultiEncoder-40"><span class="linenos">40</span></a><span class="sd">        """</span>
 </span><span id="MultiEncoder-41"><a href="#MultiEncoder-41"><span class="linenos">41</span></a>        <span class="k">for</span> <span class="n">encoder</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">encoders</span><span class="p">:</span>
 </span><span id="MultiEncoder-42"><a href="#MultiEncoder-42"><span class="linenos">42</span></a>            <span class="n">encoder</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">,</span> <span class="n">target_dir</span><span class="o">=</span><span class="n">target_dir</span><span class="p">)</span>
 </span><span id="MultiEncoder-43"><a href="#MultiEncoder-43"><span class="linenos">43</span></a>
@@ -176,9 +176,9 @@
     </div>
     <a class="headerlink" href="#MultiEncoder.__init__"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="MultiEncoder.__init__-31"><a href="#MultiEncoder.__init__-31"><span class="linenos">31</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">encoders</span><span class="p">):</span>
-</span><span id="MultiEncoder.__init__-32"><a href="#MultiEncoder.__init__-32"><span class="linenos">32</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="MultiEncoder.__init__-32"><a href="#MultiEncoder.__init__-32"><span class="linenos">32</span></a><span class="w">        </span><span class="sd">"""</span>
 </span><span id="MultiEncoder.__init__-33"><a href="#MultiEncoder.__init__-33"><span class="linenos">33</span></a><span class="sd">            Expects one or more encoders</span>
-</span><span id="MultiEncoder.__init__-34"><a href="#MultiEncoder.__init__-34"><span class="linenos">34</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="MultiEncoder.__init__-34"><a href="#MultiEncoder.__init__-34"><span class="linenos">34</span></a><span class="sd">        """</span>
 </span><span id="MultiEncoder.__init__-35"><a href="#MultiEncoder.__init__-35"><span class="linenos">35</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">encoders</span> <span class="o">=</span> <span class="n">encoders</span>
 </span></pre></div>
 
@@ -204,16 +204,16 @@
 <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">encode</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">params</span><span class="o">=</span><span class="p">{}</span>, </span><span class="param"><span class="n">target_dir</span><span class="o">=</span><span class="s1">&#39;&#39;</span></span><span class="return-annotation">):</span></span>
+        <span class="name">encode</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">params</span><span class="o">=</span><span class="p">{}</span>, </span><span class="param"><span class="n">target_dir</span><span class="o">=</span><span class="s1">''</span></span><span class="return-annotation">):</span></span>
 
                 <label class="view-source-button" for="MultiEncoder.encode-view-source"><span>View Source</span></label>
 
     </div>
     <a class="headerlink" href="#MultiEncoder.encode"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="MultiEncoder.encode-37"><a href="#MultiEncoder.encode-37"><span class="linenos">37</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">encode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="p">{},</span> <span class="n">target_dir</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
-</span><span id="MultiEncoder.encode-38"><a href="#MultiEncoder.encode-38"><span class="linenos">38</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="MultiEncoder.encode-37"><a href="#MultiEncoder.encode-37"><span class="linenos">37</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">encode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="p">{},</span> <span class="n">target_dir</span><span class="o">=</span><span class="s1">''</span><span class="p">):</span>
+</span><span id="MultiEncoder.encode-38"><a href="#MultiEncoder.encode-38"><span class="linenos">38</span></a><span class="w">        </span><span class="sd">"""</span>
 </span><span id="MultiEncoder.encode-39"><a href="#MultiEncoder.encode-39"><span class="linenos">39</span></a><span class="sd">            Applies all encoders in the list of encoders.</span>
-</span><span id="MultiEncoder.encode-40"><a href="#MultiEncoder.encode-40"><span class="linenos">40</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="MultiEncoder.encode-40"><a href="#MultiEncoder.encode-40"><span class="linenos">40</span></a><span class="sd">        """</span>
 </span><span id="MultiEncoder.encode-41"><a href="#MultiEncoder.encode-41"><span class="linenos">41</span></a>        <span class="k">for</span> <span class="n">encoder</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">encoders</span><span class="p">:</span>
 </span><span id="MultiEncoder.encode-42"><a href="#MultiEncoder.encode-42"><span class="linenos">42</span></a>            <span class="n">encoder</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">,</span> <span class="n">target_dir</span><span class="o">=</span><span class="n">target_dir</span><span class="p">)</span>
 </span></pre></div>

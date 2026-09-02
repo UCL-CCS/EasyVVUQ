@@ -146,9 +146,9 @@
 
                         <label class="view-source-button" for="mod-data_structs-view-source"><span>View Source</span></label>
 
-                        <div class="pdoc-code codehilite"><pre><span></span><span id="L-1"><a href="#L-1"><span class="linenos">  1</span></a><span class="sd">&quot;&quot;&quot;Data structures to ensure consistency during serialization for databases.</span>
+                        <div class="pdoc-code codehilite"><pre><span></span><span id="L-1"><a href="#L-1"><span class="linenos">  1</span></a><span class="sd">"""Data structures to ensure consistency during serialization for databases.</span>
 </span><span id="L-2"><a href="#L-2"><span class="linenos">  2</span></a>
-</span><span id="L-3"><a href="#L-3"><span class="linenos">  3</span></a><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-3"><a href="#L-3"><span class="linenos">  3</span></a><span class="sd">"""</span>
 </span><span id="L-4"><a href="#L-4"><span class="linenos">  4</span></a><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
 </span><span id="L-5"><a href="#L-5"><span class="linenos">  5</span></a><span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
 </span><span id="L-6"><a href="#L-6"><span class="linenos">  6</span></a><span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
@@ -156,7 +156,7 @@
 </span><span id="L-8"><a href="#L-8"><span class="linenos">  8</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">easyvvuq.utils.helpers</span><span class="w"> </span><span class="kn">import</span> <span class="n">easyvvuq_serialize</span>
 </span><span id="L-9"><a href="#L-9"><span class="linenos">  9</span></a><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span>
 </span><span id="L-10"><a href="#L-10"><span class="linenos"> 10</span></a>
-</span><span id="L-11"><a href="#L-11"><span class="linenos"> 11</span></a><span class="n">__copyright__</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+</span><span id="L-11"><a href="#L-11"><span class="linenos"> 11</span></a><span class="n">__copyright__</span> <span class="o">=</span> <span class="s2">"""</span>
 </span><span id="L-12"><a href="#L-12"><span class="linenos"> 12</span></a>
 </span><span id="L-13"><a href="#L-13"><span class="linenos"> 13</span></a><span class="s2">    Copyright 2018 Robin A. Richardson, David W. Wright</span>
 </span><span id="L-14"><a href="#L-14"><span class="linenos"> 14</span></a>
@@ -175,43 +175,43 @@
 </span><span id="L-27"><a href="#L-27"><span class="linenos"> 27</span></a><span class="s2">    You should have received a copy of the Lesser GNU General Public License</span>
 </span><span id="L-28"><a href="#L-28"><span class="linenos"> 28</span></a><span class="s2">    along with this program.  If not, see &lt;https://www.gnu.org/licenses/&gt;.</span>
 </span><span id="L-29"><a href="#L-29"><span class="linenos"> 29</span></a>
-</span><span id="L-30"><a href="#L-30"><span class="linenos"> 30</span></a><span class="s2">&quot;&quot;&quot;</span>
-</span><span id="L-31"><a href="#L-31"><span class="linenos"> 31</span></a><span class="n">__license__</span> <span class="o">=</span> <span class="s2">&quot;LGPL&quot;</span>
+</span><span id="L-30"><a href="#L-30"><span class="linenos"> 30</span></a><span class="s2">"""</span>
+</span><span id="L-31"><a href="#L-31"><span class="linenos"> 31</span></a><span class="n">__license__</span> <span class="o">=</span> <span class="s2">"LGPL"</span>
 </span><span id="L-32"><a href="#L-32"><span class="linenos"> 32</span></a>
 </span><span id="L-33"><a href="#L-33"><span class="linenos"> 33</span></a><span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 </span><span id="L-34"><a href="#L-34"><span class="linenos"> 34</span></a>
 </span><span id="L-35"><a href="#L-35"><span class="linenos"> 35</span></a>
-</span><span id="L-36"><a href="#L-36"><span class="linenos"> 36</span></a><span class="k">def</span><span class="w"> </span><span class="nf">check_local_dir</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">dir_type</span><span class="o">=</span><span class="s1">&#39;campaign&#39;</span><span class="p">):</span>
-</span><span id="L-37"><a href="#L-37"><span class="linenos"> 37</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-36"><a href="#L-36"><span class="linenos"> 36</span></a><span class="k">def</span><span class="w"> </span><span class="nf">check_local_dir</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">dir_type</span><span class="o">=</span><span class="s1">'campaign'</span><span class="p">):</span>
+</span><span id="L-37"><a href="#L-37"><span class="linenos"> 37</span></a><span class="w">    </span><span class="sd">"""</span>
 </span><span id="L-38"><a href="#L-38"><span class="linenos"> 38</span></a><span class="sd">    Check that local path exists and if not create it.</span>
 </span><span id="L-39"><a href="#L-39"><span class="linenos"> 39</span></a>
 </span><span id="L-40"><a href="#L-40"><span class="linenos"> 40</span></a><span class="sd">    Parameters</span>
 </span><span id="L-41"><a href="#L-41"><span class="linenos"> 41</span></a><span class="sd">    ----------</span>
 </span><span id="L-42"><a href="#L-42"><span class="linenos"> 42</span></a><span class="sd">    path : str</span>
 </span><span id="L-43"><a href="#L-43"><span class="linenos"> 43</span></a><span class="sd">        Directory location to check.</span>
-</span><span id="L-44"><a href="#L-44"><span class="linenos"> 44</span></a><span class="sd">    dir_type : str, default=&#39;campaign&#39;</span>
+</span><span id="L-44"><a href="#L-44"><span class="linenos"> 44</span></a><span class="sd">    dir_type : str, default='campaign'</span>
 </span><span id="L-45"><a href="#L-45"><span class="linenos"> 45</span></a><span class="sd">        Type of directory we are checking (used for user and debugging</span>
 </span><span id="L-46"><a href="#L-46"><span class="linenos"> 46</span></a><span class="sd">        information.)</span>
 </span><span id="L-47"><a href="#L-47"><span class="linenos"> 47</span></a>
 </span><span id="L-48"><a href="#L-48"><span class="linenos"> 48</span></a><span class="sd">    Returns</span>
 </span><span id="L-49"><a href="#L-49"><span class="linenos"> 49</span></a><span class="sd">    -------</span>
 </span><span id="L-50"><a href="#L-50"><span class="linenos"> 50</span></a>
-</span><span id="L-51"><a href="#L-51"><span class="linenos"> 51</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="L-51"><a href="#L-51"><span class="linenos"> 51</span></a><span class="sd">    """</span>
 </span><span id="L-52"><a href="#L-52"><span class="linenos"> 52</span></a>
 </span><span id="L-53"><a href="#L-53"><span class="linenos"> 53</span></a>    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
 </span><span id="L-54"><a href="#L-54"><span class="linenos"> 54</span></a>
 </span><span id="L-55"><a href="#L-55"><span class="linenos"> 55</span></a>        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
-</span><span id="L-56"><a href="#L-56"><span class="linenos"> 56</span></a>            <span class="n">logger</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s1"> specified as </span><span class="si">{</span><span class="n">dir_type</span><span class="si">}</span><span class="s1"> directory &#39;</span>
-</span><span id="L-57"><a href="#L-57"><span class="linenos"> 57</span></a>                            <span class="sa">f</span><span class="s1">&#39;for local run but is not a directory.&#39;</span><span class="p">)</span>
-</span><span id="L-58"><a href="#L-58"><span class="linenos"> 58</span></a>            <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Invalid </span><span class="si">{</span><span class="n">dir_type</span><span class="si">}</span><span class="s1"> directory&#39;</span><span class="p">)</span>
+</span><span id="L-56"><a href="#L-56"><span class="linenos"> 56</span></a>            <span class="n">logger</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span><span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s1"> specified as </span><span class="si">{</span><span class="n">dir_type</span><span class="si">}</span><span class="s1"> directory '</span>
+</span><span id="L-57"><a href="#L-57"><span class="linenos"> 57</span></a>                            <span class="sa">f</span><span class="s1">'for local run but is not a directory.'</span><span class="p">)</span>
+</span><span id="L-58"><a href="#L-58"><span class="linenos"> 58</span></a>            <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="sa">f</span><span class="s1">'Invalid </span><span class="si">{</span><span class="n">dir_type</span><span class="si">}</span><span class="s1"> directory'</span><span class="p">)</span>
 </span><span id="L-59"><a href="#L-59"><span class="linenos"> 59</span></a>        <span class="k">else</span><span class="p">:</span>
 </span><span id="L-60"><a href="#L-60"><span class="linenos"> 60</span></a>            <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
 </span><span id="L-61"><a href="#L-61"><span class="linenos"> 61</span></a>
 </span><span id="L-62"><a href="#L-62"><span class="linenos"> 62</span></a>
-</span><span id="L-63"><a href="#L-63"><span class="linenos"> 63</span></a><span class="k">def</span><span class="w"> </span><span class="nf">check_reference</span><span class="p">(</span><span class="n">ref</span><span class="p">,</span> <span class="n">run_name</span><span class="p">,</span> <span class="n">ref_type</span><span class="o">=</span><span class="s1">&#39;campaign&#39;</span><span class="p">):</span>
-</span><span id="L-64"><a href="#L-64"><span class="linenos"> 64</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-63"><a href="#L-63"><span class="linenos"> 63</span></a><span class="k">def</span><span class="w"> </span><span class="nf">check_reference</span><span class="p">(</span><span class="n">ref</span><span class="p">,</span> <span class="n">run_name</span><span class="p">,</span> <span class="n">ref_type</span><span class="o">=</span><span class="s1">'campaign'</span><span class="p">):</span>
+</span><span id="L-64"><a href="#L-64"><span class="linenos"> 64</span></a><span class="w">    </span><span class="sd">"""</span>
 </span><span id="L-65"><a href="#L-65"><span class="linenos"> 65</span></a><span class="sd">    Validation check for a `RunInfo` reference. Checks that an integer value</span>
-</span><span id="L-66"><a href="#L-66"><span class="linenos"> 66</span></a><span class="sd">    has been passed to use as a reference to another &#39;table&#39; - i.e. to a</span>
+</span><span id="L-66"><a href="#L-66"><span class="linenos"> 66</span></a><span class="sd">    has been passed to use as a reference to another 'table' - i.e. to a</span>
 </span><span id="L-67"><a href="#L-67"><span class="linenos"> 67</span></a><span class="sd">    specific campaign, app or sampler.</span>
 </span><span id="L-68"><a href="#L-68"><span class="linenos"> 68</span></a>
 </span><span id="L-69"><a href="#L-69"><span class="linenos"> 69</span></a><span class="sd">    Parameters</span>
@@ -221,29 +221,29 @@
 </span><span id="L-73"><a href="#L-73"><span class="linenos"> 73</span></a><span class="sd">    run_name : str</span>
 </span><span id="L-74"><a href="#L-74"><span class="linenos"> 74</span></a><span class="sd">        Name of run for which the check is being performed (user info/</span>
 </span><span id="L-75"><a href="#L-75"><span class="linenos"> 75</span></a><span class="sd">        debugging).</span>
-</span><span id="L-76"><a href="#L-76"><span class="linenos"> 76</span></a><span class="sd">    ref_type : str, default=&#39;campaign&#39;</span>
+</span><span id="L-76"><a href="#L-76"><span class="linenos"> 76</span></a><span class="sd">    ref_type : str, default='campaign'</span>
 </span><span id="L-77"><a href="#L-77"><span class="linenos"> 77</span></a><span class="sd">        Are we checking for a campaign, sampler or app (user info/</span>
 </span><span id="L-78"><a href="#L-78"><span class="linenos"> 78</span></a><span class="sd">        debugging).</span>
 </span><span id="L-79"><a href="#L-79"><span class="linenos"> 79</span></a>
 </span><span id="L-80"><a href="#L-80"><span class="linenos"> 80</span></a><span class="sd">    Returns</span>
 </span><span id="L-81"><a href="#L-81"><span class="linenos"> 81</span></a><span class="sd">    -------</span>
 </span><span id="L-82"><a href="#L-82"><span class="linenos"> 82</span></a>
-</span><span id="L-83"><a href="#L-83"><span class="linenos"> 83</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="L-83"><a href="#L-83"><span class="linenos"> 83</span></a><span class="sd">    """</span>
 </span><span id="L-84"><a href="#L-84"><span class="linenos"> 84</span></a>
 </span><span id="L-85"><a href="#L-85"><span class="linenos"> 85</span></a>    <span class="k">if</span> <span class="n">ref</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="L-86"><a href="#L-86"><span class="linenos"> 86</span></a>        <span class="n">message</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;No </span><span class="si">{</span><span class="n">ref_type</span><span class="si">}</span><span class="s1"> id specified for run </span><span class="si">{</span><span class="n">run_name</span><span class="si">}</span><span class="s1">&#39;</span>
+</span><span id="L-86"><a href="#L-86"><span class="linenos"> 86</span></a>        <span class="n">message</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">'No </span><span class="si">{</span><span class="n">ref_type</span><span class="si">}</span><span class="s1"> id specified for run </span><span class="si">{</span><span class="n">run_name</span><span class="si">}</span><span class="s1">'</span>
 </span><span id="L-87"><a href="#L-87"><span class="linenos"> 87</span></a>        <span class="n">logger</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
 </span><span id="L-88"><a href="#L-88"><span class="linenos"> 88</span></a>        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
 </span><span id="L-89"><a href="#L-89"><span class="linenos"> 89</span></a>
 </span><span id="L-90"><a href="#L-90"><span class="linenos"> 90</span></a>    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ref</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
-</span><span id="L-91"><a href="#L-91"><span class="linenos"> 91</span></a>        <span class="n">message</span> <span class="o">=</span> <span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Invalid </span><span class="si">{</span><span class="n">ref_type</span><span class="si">}</span><span class="s1"> id (</span><span class="si">{</span><span class="n">ref</span><span class="si">}</span><span class="s1">) specified for &#39;</span>
-</span><span id="L-92"><a href="#L-92"><span class="linenos"> 92</span></a>                   <span class="sa">f</span><span class="s1">&#39;run </span><span class="si">{</span><span class="n">run_name</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+</span><span id="L-91"><a href="#L-91"><span class="linenos"> 91</span></a>        <span class="n">message</span> <span class="o">=</span> <span class="p">(</span><span class="sa">f</span><span class="s1">'Invalid </span><span class="si">{</span><span class="n">ref_type</span><span class="si">}</span><span class="s1"> id (</span><span class="si">{</span><span class="n">ref</span><span class="si">}</span><span class="s1">) specified for '</span>
+</span><span id="L-92"><a href="#L-92"><span class="linenos"> 92</span></a>                   <span class="sa">f</span><span class="s1">'run </span><span class="si">{</span><span class="n">run_name</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
 </span><span id="L-93"><a href="#L-93"><span class="linenos"> 93</span></a>        <span class="n">logger</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
 </span><span id="L-94"><a href="#L-94"><span class="linenos"> 94</span></a>        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
 </span><span id="L-95"><a href="#L-95"><span class="linenos"> 95</span></a>
 </span><span id="L-96"><a href="#L-96"><span class="linenos"> 96</span></a>
 </span><span id="L-97"><a href="#L-97"><span class="linenos"> 97</span></a><span class="k">class</span><span class="w"> </span><span class="nc">RunInfo</span><span class="p">:</span>
-</span><span id="L-98"><a href="#L-98"><span class="linenos"> 98</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Handles information for individual application runs.</span>
+</span><span id="L-98"><a href="#L-98"><span class="linenos"> 98</span></a><span class="w">    </span><span class="sd">"""Handles information for individual application runs.</span>
 </span><span id="L-99"><a href="#L-99"><span class="linenos"> 99</span></a>
 </span><span id="L-100"><a href="#L-100"><span class="linenos">100</span></a><span class="sd">    Parameters</span>
 </span><span id="L-101"><a href="#L-101"><span class="linenos">101</span></a><span class="sd">    ----------</span>
@@ -269,7 +269,7 @@
 </span><span id="L-121"><a href="#L-121"><span class="linenos">121</span></a><span class="sd">    run_name : str</span>
 </span><span id="L-122"><a href="#L-122"><span class="linenos">122</span></a><span class="sd">        Human readable name of the run.</span>
 </span><span id="L-123"><a href="#L-123"><span class="linenos">123</span></a><span class="sd">    status : enum(Status)</span>
-</span><span id="L-124"><a href="#L-124"><span class="linenos">124</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="L-124"><a href="#L-124"><span class="linenos">124</span></a><span class="sd">    """</span>
 </span><span id="L-125"><a href="#L-125"><span class="linenos">125</span></a>
 </span><span id="L-126"><a href="#L-126"><span class="linenos">126</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
 </span><span id="L-127"><a href="#L-127"><span class="linenos">127</span></a>            <span class="bp">self</span><span class="p">,</span>
@@ -288,7 +288,7 @@
 </span><span id="L-140"><a href="#L-140"><span class="linenos">140</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">run_dir</span> <span class="o">=</span> <span class="n">run_dir</span>
 </span><span id="L-141"><a href="#L-141"><span class="linenos">141</span></a>
 </span><span id="L-142"><a href="#L-142"><span class="linenos">142</span></a>        <span class="k">if</span> <span class="ow">not</span> <span class="n">params</span><span class="p">:</span>
-</span><span id="L-143"><a href="#L-143"><span class="linenos">143</span></a>            <span class="n">message</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;No run configuration specified for run </span><span class="si">{</span><span class="n">run_name</span><span class="si">}</span><span class="s1">&#39;</span>
+</span><span id="L-143"><a href="#L-143"><span class="linenos">143</span></a>            <span class="n">message</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">'No run configuration specified for run </span><span class="si">{</span><span class="n">run_name</span><span class="si">}</span><span class="s1">'</span>
 </span><span id="L-144"><a href="#L-144"><span class="linenos">144</span></a>            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
 </span><span id="L-145"><a href="#L-145"><span class="linenos">145</span></a>
 </span><span id="L-146"><a href="#L-146"><span class="linenos">146</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">params</span> <span class="o">=</span> <span class="n">params</span>
@@ -297,7 +297,7 @@
 </span><span id="L-149"><a href="#L-149"><span class="linenos">149</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">iteration</span> <span class="o">=</span> <span class="mi">0</span>
 </span><span id="L-150"><a href="#L-150"><span class="linenos">150</span></a>
 </span><span id="L-151"><a href="#L-151"><span class="linenos">151</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">flatten</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-</span><span id="L-152"><a href="#L-152"><span class="linenos">152</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert to a dictionary (optionally flatten to single level)</span>
+</span><span id="L-152"><a href="#L-152"><span class="linenos">152</span></a><span class="w">        </span><span class="sd">"""Convert to a dictionary (optionally flatten to single level)</span>
 </span><span id="L-153"><a href="#L-153"><span class="linenos">153</span></a>
 </span><span id="L-154"><a href="#L-154"><span class="linenos">154</span></a><span class="sd">        Parameters</span>
 </span><span id="L-155"><a href="#L-155"><span class="linenos">155</span></a><span class="sd">        ----------</span>
@@ -310,44 +310,44 @@
 </span><span id="L-162"><a href="#L-162"><span class="linenos">162</span></a><span class="sd">        dict</span>
 </span><span id="L-163"><a href="#L-163"><span class="linenos">163</span></a><span class="sd">            Dictionary representing the run - if flattened then params are</span>
 </span><span id="L-164"><a href="#L-164"><span class="linenos">164</span></a><span class="sd">            returned as a JSON format sting.</span>
-</span><span id="L-165"><a href="#L-165"><span class="linenos">165</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-165"><a href="#L-165"><span class="linenos">165</span></a><span class="sd">        """</span>
 </span><span id="L-166"><a href="#L-166"><span class="linenos">166</span></a>
 </span><span id="L-167"><a href="#L-167"><span class="linenos">167</span></a>        <span class="k">def</span><span class="w"> </span><span class="nf">convert_nonserializable</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
 </span><span id="L-168"><a href="#L-168"><span class="linenos">168</span></a>            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">int64</span><span class="p">):</span>
 </span><span id="L-169"><a href="#L-169"><span class="linenos">169</span></a>                <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
-</span><span id="L-170"><a href="#L-170"><span class="linenos">170</span></a>            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;Unknown type:&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="n">obj</span><span class="p">))</span>
+</span><span id="L-170"><a href="#L-170"><span class="linenos">170</span></a>            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">'Unknown type:'</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="n">obj</span><span class="p">))</span>
 </span><span id="L-171"><a href="#L-171"><span class="linenos">171</span></a>
 </span><span id="L-172"><a href="#L-172"><span class="linenos">172</span></a>        <span class="k">if</span> <span class="n">flatten</span><span class="p">:</span>
 </span><span id="L-173"><a href="#L-173"><span class="linenos">173</span></a>
 </span><span id="L-174"><a href="#L-174"><span class="linenos">174</span></a>            <span class="n">out_dict</span> <span class="o">=</span> <span class="p">{</span>
-</span><span id="L-175"><a href="#L-175"><span class="linenos">175</span></a>                <span class="s1">&#39;run_name&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">run_name</span><span class="p">,</span>
-</span><span id="L-176"><a href="#L-176"><span class="linenos">176</span></a>                <span class="s1">&#39;run_dir&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">run_dir</span><span class="p">,</span>
-</span><span id="L-177"><a href="#L-177"><span class="linenos">177</span></a>                <span class="s1">&#39;params&#39;</span><span class="p">:</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">convert_nonserializable</span><span class="p">),</span>
-</span><span id="L-178"><a href="#L-178"><span class="linenos">178</span></a>                <span class="s1">&#39;status&#39;</span><span class="p">:</span> <span class="n">constants</span><span class="o">.</span><span class="n">Status</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">status</span><span class="p">),</span>
-</span><span id="L-179"><a href="#L-179"><span class="linenos">179</span></a>                <span class="s1">&#39;campaign&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">campaign</span><span class="p">,</span>
-</span><span id="L-180"><a href="#L-180"><span class="linenos">180</span></a>                <span class="s1">&#39;sampler&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">sample</span><span class="p">,</span>
-</span><span id="L-181"><a href="#L-181"><span class="linenos">181</span></a>                <span class="s1">&#39;app&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">app</span><span class="p">,</span>
-</span><span id="L-182"><a href="#L-182"><span class="linenos">182</span></a>                <span class="s1">&#39;iteration&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">iteration</span><span class="p">,</span>
+</span><span id="L-175"><a href="#L-175"><span class="linenos">175</span></a>                <span class="s1">'run_name'</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">run_name</span><span class="p">,</span>
+</span><span id="L-176"><a href="#L-176"><span class="linenos">176</span></a>                <span class="s1">'run_dir'</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">run_dir</span><span class="p">,</span>
+</span><span id="L-177"><a href="#L-177"><span class="linenos">177</span></a>                <span class="s1">'params'</span><span class="p">:</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">convert_nonserializable</span><span class="p">),</span>
+</span><span id="L-178"><a href="#L-178"><span class="linenos">178</span></a>                <span class="s1">'status'</span><span class="p">:</span> <span class="n">constants</span><span class="o">.</span><span class="n">Status</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">status</span><span class="p">),</span>
+</span><span id="L-179"><a href="#L-179"><span class="linenos">179</span></a>                <span class="s1">'campaign'</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">campaign</span><span class="p">,</span>
+</span><span id="L-180"><a href="#L-180"><span class="linenos">180</span></a>                <span class="s1">'sampler'</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">sample</span><span class="p">,</span>
+</span><span id="L-181"><a href="#L-181"><span class="linenos">181</span></a>                <span class="s1">'app'</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">app</span><span class="p">,</span>
+</span><span id="L-182"><a href="#L-182"><span class="linenos">182</span></a>                <span class="s1">'iteration'</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">iteration</span><span class="p">,</span>
 </span><span id="L-183"><a href="#L-183"><span class="linenos">183</span></a>            <span class="p">}</span>
 </span><span id="L-184"><a href="#L-184"><span class="linenos">184</span></a>
 </span><span id="L-185"><a href="#L-185"><span class="linenos">185</span></a>        <span class="k">else</span><span class="p">:</span>
 </span><span id="L-186"><a href="#L-186"><span class="linenos">186</span></a>
 </span><span id="L-187"><a href="#L-187"><span class="linenos">187</span></a>            <span class="n">out_dict</span> <span class="o">=</span> <span class="p">{</span>
-</span><span id="L-188"><a href="#L-188"><span class="linenos">188</span></a>                <span class="s1">&#39;run_name&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">run_name</span><span class="p">,</span>
-</span><span id="L-189"><a href="#L-189"><span class="linenos">189</span></a>                <span class="s1">&#39;run_dir&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">run_dir</span><span class="p">,</span>
-</span><span id="L-190"><a href="#L-190"><span class="linenos">190</span></a>                <span class="s1">&#39;params&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">,</span>
-</span><span id="L-191"><a href="#L-191"><span class="linenos">191</span></a>                <span class="s1">&#39;status&#39;</span><span class="p">:</span> <span class="n">constants</span><span class="o">.</span><span class="n">Status</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">status</span><span class="p">),</span>
-</span><span id="L-192"><a href="#L-192"><span class="linenos">192</span></a>                <span class="s1">&#39;campaign&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">campaign</span><span class="p">,</span>
-</span><span id="L-193"><a href="#L-193"><span class="linenos">193</span></a>                <span class="s1">&#39;sampler&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">sample</span><span class="p">,</span>
-</span><span id="L-194"><a href="#L-194"><span class="linenos">194</span></a>                <span class="s1">&#39;app&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">app</span><span class="p">,</span>
-</span><span id="L-195"><a href="#L-195"><span class="linenos">195</span></a>                <span class="s1">&#39;iteration&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">iteration</span><span class="p">,</span>
+</span><span id="L-188"><a href="#L-188"><span class="linenos">188</span></a>                <span class="s1">'run_name'</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">run_name</span><span class="p">,</span>
+</span><span id="L-189"><a href="#L-189"><span class="linenos">189</span></a>                <span class="s1">'run_dir'</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">run_dir</span><span class="p">,</span>
+</span><span id="L-190"><a href="#L-190"><span class="linenos">190</span></a>                <span class="s1">'params'</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">,</span>
+</span><span id="L-191"><a href="#L-191"><span class="linenos">191</span></a>                <span class="s1">'status'</span><span class="p">:</span> <span class="n">constants</span><span class="o">.</span><span class="n">Status</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">status</span><span class="p">),</span>
+</span><span id="L-192"><a href="#L-192"><span class="linenos">192</span></a>                <span class="s1">'campaign'</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">campaign</span><span class="p">,</span>
+</span><span id="L-193"><a href="#L-193"><span class="linenos">193</span></a>                <span class="s1">'sampler'</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">sample</span><span class="p">,</span>
+</span><span id="L-194"><a href="#L-194"><span class="linenos">194</span></a>                <span class="s1">'app'</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">app</span><span class="p">,</span>
+</span><span id="L-195"><a href="#L-195"><span class="linenos">195</span></a>                <span class="s1">'iteration'</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">iteration</span><span class="p">,</span>
 </span><span id="L-196"><a href="#L-196"><span class="linenos">196</span></a>            <span class="p">}</span>
 </span><span id="L-197"><a href="#L-197"><span class="linenos">197</span></a>
 </span><span id="L-198"><a href="#L-198"><span class="linenos">198</span></a>        <span class="k">return</span> <span class="n">out_dict</span>
 </span><span id="L-199"><a href="#L-199"><span class="linenos">199</span></a>
 </span><span id="L-200"><a href="#L-200"><span class="linenos">200</span></a>
 </span><span id="L-201"><a href="#L-201"><span class="linenos">201</span></a><span class="k">class</span><span class="w"> </span><span class="nc">AppInfo</span><span class="p">:</span>
-</span><span id="L-202"><a href="#L-202"><span class="linenos">202</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Handles information for particular application.</span>
+</span><span id="L-202"><a href="#L-202"><span class="linenos">202</span></a><span class="w">    </span><span class="sd">"""Handles information for particular application.</span>
 </span><span id="L-203"><a href="#L-203"><span class="linenos">203</span></a>
 </span><span id="L-204"><a href="#L-204"><span class="linenos">204</span></a><span class="sd">    Attributes</span>
 </span><span id="L-205"><a href="#L-205"><span class="linenos">205</span></a><span class="sd">    ----------</span>
@@ -355,7 +355,7 @@
 </span><span id="L-207"><a href="#L-207"><span class="linenos">207</span></a><span class="sd">        Human readable application name.</span>
 </span><span id="L-208"><a href="#L-208"><span class="linenos">208</span></a><span class="sd">    paramsspec : ParamsSpecification or None</span>
 </span><span id="L-209"><a href="#L-209"><span class="linenos">209</span></a><span class="sd">        Description of possible parameter values.</span>
-</span><span id="L-210"><a href="#L-210"><span class="linenos">210</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="L-210"><a href="#L-210"><span class="linenos">210</span></a><span class="sd">    """</span>
 </span><span id="L-211"><a href="#L-211"><span class="linenos">211</span></a>
 </span><span id="L-212"><a href="#L-212"><span class="linenos">212</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
 </span><span id="L-213"><a href="#L-213"><span class="linenos">213</span></a>            <span class="bp">self</span><span class="p">,</span>
@@ -368,7 +368,7 @@
 </span><span id="L-220"><a href="#L-220"><span class="linenos">220</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">actions</span> <span class="o">=</span> <span class="n">actions</span>
 </span><span id="L-221"><a href="#L-221"><span class="linenos">221</span></a>
 </span><span id="L-222"><a href="#L-222"><span class="linenos">222</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">flatten</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-</span><span id="L-223"><a href="#L-223"><span class="linenos">223</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert to a dictionary (optionally flatten to single level)</span>
+</span><span id="L-223"><a href="#L-223"><span class="linenos">223</span></a><span class="w">        </span><span class="sd">"""Convert to a dictionary (optionally flatten to single level)</span>
 </span><span id="L-224"><a href="#L-224"><span class="linenos">224</span></a>
 </span><span id="L-225"><a href="#L-225"><span class="linenos">225</span></a><span class="sd">        Parameters</span>
 </span><span id="L-226"><a href="#L-226"><span class="linenos">226</span></a><span class="sd">        ----------</span>
@@ -381,26 +381,26 @@
 </span><span id="L-233"><a href="#L-233"><span class="linenos">233</span></a><span class="sd">        dict</span>
 </span><span id="L-234"><a href="#L-234"><span class="linenos">234</span></a><span class="sd">            Dictionary representing the application- if flattened then `paramsspec`</span>
 </span><span id="L-235"><a href="#L-235"><span class="linenos">235</span></a><span class="sd">            is returned as a JSON format sting.</span>
-</span><span id="L-236"><a href="#L-236"><span class="linenos">236</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-236"><a href="#L-236"><span class="linenos">236</span></a><span class="sd">        """</span>
 </span><span id="L-237"><a href="#L-237"><span class="linenos">237</span></a>
 </span><span id="L-238"><a href="#L-238"><span class="linenos">238</span></a>        <span class="k">if</span> <span class="n">flatten</span><span class="p">:</span>
 </span><span id="L-239"><a href="#L-239"><span class="linenos">239</span></a>
 </span><span id="L-240"><a href="#L-240"><span class="linenos">240</span></a>            <span class="n">out_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
 </span><span id="L-241"><a href="#L-241"><span class="linenos">241</span></a>
-</span><span id="L-242"><a href="#L-242"><span class="linenos">242</span></a>            <span class="n">out_dict</span><span class="p">[</span><span class="s1">&#39;params&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">paramsspec</span><span class="o">.</span><span class="n">serialize</span><span class="p">()</span>
+</span><span id="L-242"><a href="#L-242"><span class="linenos">242</span></a>            <span class="n">out_dict</span><span class="p">[</span><span class="s1">'params'</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">paramsspec</span><span class="o">.</span><span class="n">serialize</span><span class="p">()</span>
 </span><span id="L-243"><a href="#L-243"><span class="linenos">243</span></a>        <span class="k">else</span><span class="p">:</span>
 </span><span id="L-244"><a href="#L-244"><span class="linenos">244</span></a>
 </span><span id="L-245"><a href="#L-245"><span class="linenos">245</span></a>            <span class="n">out_dict</span> <span class="o">=</span> <span class="p">{</span>
-</span><span id="L-246"><a href="#L-246"><span class="linenos">246</span></a>                <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
-</span><span id="L-247"><a href="#L-247"><span class="linenos">247</span></a>                <span class="s1">&#39;params&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">paramsspec</span><span class="p">,</span>
-</span><span id="L-248"><a href="#L-248"><span class="linenos">248</span></a>                <span class="s1">&#39;actions&#39;</span><span class="p">:</span> <span class="n">easyvvuq_serialize</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">actions</span><span class="p">),</span>
+</span><span id="L-246"><a href="#L-246"><span class="linenos">246</span></a>                <span class="s1">'name'</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+</span><span id="L-247"><a href="#L-247"><span class="linenos">247</span></a>                <span class="s1">'params'</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">paramsspec</span><span class="p">,</span>
+</span><span id="L-248"><a href="#L-248"><span class="linenos">248</span></a>                <span class="s1">'actions'</span><span class="p">:</span> <span class="n">easyvvuq_serialize</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">actions</span><span class="p">),</span>
 </span><span id="L-249"><a href="#L-249"><span class="linenos">249</span></a>            <span class="p">}</span>
 </span><span id="L-250"><a href="#L-250"><span class="linenos">250</span></a>
 </span><span id="L-251"><a href="#L-251"><span class="linenos">251</span></a>        <span class="k">return</span> <span class="n">out_dict</span>
 </span><span id="L-252"><a href="#L-252"><span class="linenos">252</span></a>
 </span><span id="L-253"><a href="#L-253"><span class="linenos">253</span></a>
 </span><span id="L-254"><a href="#L-254"><span class="linenos">254</span></a><span class="k">class</span><span class="w"> </span><span class="nc">CampaignInfo</span><span class="p">:</span>
-</span><span id="L-255"><a href="#L-255"><span class="linenos">255</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Handles information on Campaign.</span>
+</span><span id="L-255"><a href="#L-255"><span class="linenos">255</span></a><span class="w">    </span><span class="sd">"""Handles information on Campaign.</span>
 </span><span id="L-256"><a href="#L-256"><span class="linenos">256</span></a>
 </span><span id="L-257"><a href="#L-257"><span class="linenos">257</span></a><span class="sd">    Parameters</span>
 </span><span id="L-258"><a href="#L-258"><span class="linenos">258</span></a><span class="sd">    ----------</span>
@@ -430,19 +430,19 @@
 </span><span id="L-282"><a href="#L-282"><span class="linenos">282</span></a><span class="sd">        Path to the campaign directory.</span>
 </span><span id="L-283"><a href="#L-283"><span class="linenos">283</span></a><span class="sd">    runs_dir : str or None</span>
 </span><span id="L-284"><a href="#L-284"><span class="linenos">284</span></a><span class="sd">        path to run directory (within the campaign directory)</span>
-</span><span id="L-285"><a href="#L-285"><span class="linenos">285</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="L-285"><a href="#L-285"><span class="linenos">285</span></a><span class="sd">    """</span>
 </span><span id="L-286"><a href="#L-286"><span class="linenos">286</span></a>
 </span><span id="L-287"><a href="#L-287"><span class="linenos">287</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">easyvvuq_version</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
 </span><span id="L-288"><a href="#L-288"><span class="linenos">288</span></a>                 <span class="n">campaign_dir_prefix</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">campaign_dir</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
 </span><span id="L-289"><a href="#L-289"><span class="linenos">289</span></a>                 <span class="n">runs_dir</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">local</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 </span><span id="L-290"><a href="#L-290"><span class="linenos">290</span></a>
 </span><span id="L-291"><a href="#L-291"><span class="linenos">291</span></a>        <span class="k">if</span> <span class="n">name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="L-292"><a href="#L-292"><span class="linenos">292</span></a>            <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;CampaignInfo constructor must be passed a &#39;name&#39;.&quot;</span>
+</span><span id="L-292"><a href="#L-292"><span class="linenos">292</span></a>            <span class="n">message</span> <span class="o">=</span> <span class="s2">"CampaignInfo constructor must be passed a 'name'."</span>
 </span><span id="L-293"><a href="#L-293"><span class="linenos">293</span></a>            <span class="n">logger</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
 </span><span id="L-294"><a href="#L-294"><span class="linenos">294</span></a>            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
 </span><span id="L-295"><a href="#L-295"><span class="linenos">295</span></a>
 </span><span id="L-296"><a href="#L-296"><span class="linenos">296</span></a>        <span class="k">if</span> <span class="n">campaign_dir</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="L-297"><a href="#L-297"><span class="linenos">297</span></a>            <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;CampaignInfo constructor must be passed &#39;campaign_dir&#39;&quot;</span>
+</span><span id="L-297"><a href="#L-297"><span class="linenos">297</span></a>            <span class="n">message</span> <span class="o">=</span> <span class="s2">"CampaignInfo constructor must be passed 'campaign_dir'"</span>
 </span><span id="L-298"><a href="#L-298"><span class="linenos">298</span></a>            <span class="n">logger</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
 </span><span id="L-299"><a href="#L-299"><span class="linenos">299</span></a>            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
 </span><span id="L-300"><a href="#L-300"><span class="linenos">300</span></a>
@@ -458,10 +458,10 @@
 </span><span id="L-310"><a href="#L-310"><span class="linenos">310</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">campaign_dir</span> <span class="o">=</span> <span class="n">campaign_dir</span>
 </span><span id="L-311"><a href="#L-311"><span class="linenos">311</span></a>
 </span><span id="L-312"><a href="#L-312"><span class="linenos">312</span></a>        <span class="k">if</span> <span class="n">runs_dir</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="L-313"><a href="#L-313"><span class="linenos">313</span></a>            <span class="n">runs_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">campaign_dir</span><span class="p">,</span> <span class="s1">&#39;runs&#39;</span><span class="p">)</span>
+</span><span id="L-313"><a href="#L-313"><span class="linenos">313</span></a>            <span class="n">runs_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">campaign_dir</span><span class="p">,</span> <span class="s1">'runs'</span><span class="p">)</span>
 </span><span id="L-314"><a href="#L-314"><span class="linenos">314</span></a>
 </span><span id="L-315"><a href="#L-315"><span class="linenos">315</span></a>        <span class="k">if</span> <span class="n">local</span><span class="p">:</span>
-</span><span id="L-316"><a href="#L-316"><span class="linenos">316</span></a>            <span class="n">check_local_dir</span><span class="p">(</span><span class="n">runs_dir</span><span class="p">,</span> <span class="s1">&#39;runs&#39;</span><span class="p">)</span>
+</span><span id="L-316"><a href="#L-316"><span class="linenos">316</span></a>            <span class="n">check_local_dir</span><span class="p">(</span><span class="n">runs_dir</span><span class="p">,</span> <span class="s1">'runs'</span><span class="p">)</span>
 </span><span id="L-317"><a href="#L-317"><span class="linenos">317</span></a>
 </span><span id="L-318"><a href="#L-318"><span class="linenos">318</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">runs_dir</span> <span class="o">=</span> <span class="n">runs_dir</span>
 </span><span id="L-319"><a href="#L-319"><span class="linenos">319</span></a>
@@ -475,7 +475,7 @@
 </span><span id="L-327"><a href="#L-327"><span class="linenos">327</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_easyvvuq_version</span> <span class="o">=</span> <span class="n">version_no</span>
 </span><span id="L-328"><a href="#L-328"><span class="linenos">328</span></a>
 </span><span id="L-329"><a href="#L-329"><span class="linenos">329</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">flatten</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-</span><span id="L-330"><a href="#L-330"><span class="linenos">330</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert this to a dictionary</span>
+</span><span id="L-330"><a href="#L-330"><span class="linenos">330</span></a><span class="w">        </span><span class="sd">"""Convert this to a dictionary</span>
 </span><span id="L-331"><a href="#L-331"><span class="linenos">331</span></a>
 </span><span id="L-332"><a href="#L-332"><span class="linenos">332</span></a><span class="sd">        Parameters</span>
 </span><span id="L-333"><a href="#L-333"><span class="linenos">333</span></a><span class="sd">        ----------</span>
@@ -486,14 +486,14 @@
 </span><span id="L-338"><a href="#L-338"><span class="linenos">338</span></a><span class="sd">        -------</span>
 </span><span id="L-339"><a href="#L-339"><span class="linenos">339</span></a><span class="sd">        dict</span>
 </span><span id="L-340"><a href="#L-340"><span class="linenos">340</span></a><span class="sd">            Dictionary representing the campaign.</span>
-</span><span id="L-341"><a href="#L-341"><span class="linenos">341</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-341"><a href="#L-341"><span class="linenos">341</span></a><span class="sd">        """</span>
 </span><span id="L-342"><a href="#L-342"><span class="linenos">342</span></a>
 </span><span id="L-343"><a href="#L-343"><span class="linenos">343</span></a>        <span class="n">out_dict</span> <span class="o">=</span> <span class="p">{</span>
-</span><span id="L-344"><a href="#L-344"><span class="linenos">344</span></a>            <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
-</span><span id="L-345"><a href="#L-345"><span class="linenos">345</span></a>            <span class="s1">&#39;campaign_dir&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">campaign_dir</span><span class="p">,</span>
-</span><span id="L-346"><a href="#L-346"><span class="linenos">346</span></a>            <span class="s1">&#39;campaign_dir_prefix&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">campaign_dir_prefix</span><span class="p">,</span>
-</span><span id="L-347"><a href="#L-347"><span class="linenos">347</span></a>            <span class="s1">&#39;runs_dir&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">runs_dir</span><span class="p">,</span>
-</span><span id="L-348"><a href="#L-348"><span class="linenos">348</span></a>            <span class="s1">&#39;easyvvuq_version&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">easyvvuq_version</span>
+</span><span id="L-344"><a href="#L-344"><span class="linenos">344</span></a>            <span class="s1">'name'</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+</span><span id="L-345"><a href="#L-345"><span class="linenos">345</span></a>            <span class="s1">'campaign_dir'</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">campaign_dir</span><span class="p">,</span>
+</span><span id="L-346"><a href="#L-346"><span class="linenos">346</span></a>            <span class="s1">'campaign_dir_prefix'</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">campaign_dir_prefix</span><span class="p">,</span>
+</span><span id="L-347"><a href="#L-347"><span class="linenos">347</span></a>            <span class="s1">'runs_dir'</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">runs_dir</span><span class="p">,</span>
+</span><span id="L-348"><a href="#L-348"><span class="linenos">348</span></a>            <span class="s1">'easyvvuq_version'</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">easyvvuq_version</span>
 </span><span id="L-349"><a href="#L-349"><span class="linenos">349</span></a>        <span class="p">}</span>
 </span><span id="L-350"><a href="#L-350"><span class="linenos">350</span></a>
 </span><span id="L-351"><a href="#L-351"><span class="linenos">351</span></a>        <span class="k">return</span> <span class="n">out_dict</span>
@@ -518,35 +518,35 @@
 <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">check_local_dir</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">path</span>, </span><span class="param"><span class="n">dir_type</span><span class="o">=</span><span class="s1">&#39;campaign&#39;</span></span><span class="return-annotation">):</span></span>
+        <span class="name">check_local_dir</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">path</span>, </span><span class="param"><span class="n">dir_type</span><span class="o">=</span><span class="s1">'campaign'</span></span><span class="return-annotation">):</span></span>
 
                 <label class="view-source-button" for="check_local_dir-view-source"><span>View Source</span></label>
 
     </div>
     <a class="headerlink" href="#check_local_dir"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="check_local_dir-37"><a href="#check_local_dir-37"><span class="linenos">37</span></a><span class="k">def</span><span class="w"> </span><span class="nf">check_local_dir</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">dir_type</span><span class="o">=</span><span class="s1">&#39;campaign&#39;</span><span class="p">):</span>
-</span><span id="check_local_dir-38"><a href="#check_local_dir-38"><span class="linenos">38</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="check_local_dir-37"><a href="#check_local_dir-37"><span class="linenos">37</span></a><span class="k">def</span><span class="w"> </span><span class="nf">check_local_dir</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">dir_type</span><span class="o">=</span><span class="s1">'campaign'</span><span class="p">):</span>
+</span><span id="check_local_dir-38"><a href="#check_local_dir-38"><span class="linenos">38</span></a><span class="w">    </span><span class="sd">"""</span>
 </span><span id="check_local_dir-39"><a href="#check_local_dir-39"><span class="linenos">39</span></a><span class="sd">    Check that local path exists and if not create it.</span>
 </span><span id="check_local_dir-40"><a href="#check_local_dir-40"><span class="linenos">40</span></a>
 </span><span id="check_local_dir-41"><a href="#check_local_dir-41"><span class="linenos">41</span></a><span class="sd">    Parameters</span>
 </span><span id="check_local_dir-42"><a href="#check_local_dir-42"><span class="linenos">42</span></a><span class="sd">    ----------</span>
 </span><span id="check_local_dir-43"><a href="#check_local_dir-43"><span class="linenos">43</span></a><span class="sd">    path : str</span>
 </span><span id="check_local_dir-44"><a href="#check_local_dir-44"><span class="linenos">44</span></a><span class="sd">        Directory location to check.</span>
-</span><span id="check_local_dir-45"><a href="#check_local_dir-45"><span class="linenos">45</span></a><span class="sd">    dir_type : str, default=&#39;campaign&#39;</span>
+</span><span id="check_local_dir-45"><a href="#check_local_dir-45"><span class="linenos">45</span></a><span class="sd">    dir_type : str, default='campaign'</span>
 </span><span id="check_local_dir-46"><a href="#check_local_dir-46"><span class="linenos">46</span></a><span class="sd">        Type of directory we are checking (used for user and debugging</span>
 </span><span id="check_local_dir-47"><a href="#check_local_dir-47"><span class="linenos">47</span></a><span class="sd">        information.)</span>
 </span><span id="check_local_dir-48"><a href="#check_local_dir-48"><span class="linenos">48</span></a>
 </span><span id="check_local_dir-49"><a href="#check_local_dir-49"><span class="linenos">49</span></a><span class="sd">    Returns</span>
 </span><span id="check_local_dir-50"><a href="#check_local_dir-50"><span class="linenos">50</span></a><span class="sd">    -------</span>
 </span><span id="check_local_dir-51"><a href="#check_local_dir-51"><span class="linenos">51</span></a>
-</span><span id="check_local_dir-52"><a href="#check_local_dir-52"><span class="linenos">52</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="check_local_dir-52"><a href="#check_local_dir-52"><span class="linenos">52</span></a><span class="sd">    """</span>
 </span><span id="check_local_dir-53"><a href="#check_local_dir-53"><span class="linenos">53</span></a>
 </span><span id="check_local_dir-54"><a href="#check_local_dir-54"><span class="linenos">54</span></a>    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
 </span><span id="check_local_dir-55"><a href="#check_local_dir-55"><span class="linenos">55</span></a>
 </span><span id="check_local_dir-56"><a href="#check_local_dir-56"><span class="linenos">56</span></a>        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
-</span><span id="check_local_dir-57"><a href="#check_local_dir-57"><span class="linenos">57</span></a>            <span class="n">logger</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s1"> specified as </span><span class="si">{</span><span class="n">dir_type</span><span class="si">}</span><span class="s1"> directory &#39;</span>
-</span><span id="check_local_dir-58"><a href="#check_local_dir-58"><span class="linenos">58</span></a>                            <span class="sa">f</span><span class="s1">&#39;for local run but is not a directory.&#39;</span><span class="p">)</span>
-</span><span id="check_local_dir-59"><a href="#check_local_dir-59"><span class="linenos">59</span></a>            <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Invalid </span><span class="si">{</span><span class="n">dir_type</span><span class="si">}</span><span class="s1"> directory&#39;</span><span class="p">)</span>
+</span><span id="check_local_dir-57"><a href="#check_local_dir-57"><span class="linenos">57</span></a>            <span class="n">logger</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span><span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s1"> specified as </span><span class="si">{</span><span class="n">dir_type</span><span class="si">}</span><span class="s1"> directory '</span>
+</span><span id="check_local_dir-58"><a href="#check_local_dir-58"><span class="linenos">58</span></a>                            <span class="sa">f</span><span class="s1">'for local run but is not a directory.'</span><span class="p">)</span>
+</span><span id="check_local_dir-59"><a href="#check_local_dir-59"><span class="linenos">59</span></a>            <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="sa">f</span><span class="s1">'Invalid </span><span class="si">{</span><span class="n">dir_type</span><span class="si">}</span><span class="s1"> directory'</span><span class="p">)</span>
 </span><span id="check_local_dir-60"><a href="#check_local_dir-60"><span class="linenos">60</span></a>        <span class="k">else</span><span class="p">:</span>
 </span><span id="check_local_dir-61"><a href="#check_local_dir-61"><span class="linenos">61</span></a>            <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
 </span></pre></div>
@@ -574,16 +574,16 @@ information.)</li>
 <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">check_reference</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">ref</span>, </span><span class="param"><span class="n">run_name</span>, </span><span class="param"><span class="n">ref_type</span><span class="o">=</span><span class="s1">&#39;campaign&#39;</span></span><span class="return-annotation">):</span></span>
+        <span class="name">check_reference</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">ref</span>, </span><span class="param"><span class="n">run_name</span>, </span><span class="param"><span class="n">ref_type</span><span class="o">=</span><span class="s1">'campaign'</span></span><span class="return-annotation">):</span></span>
 
                 <label class="view-source-button" for="check_reference-view-source"><span>View Source</span></label>
 
     </div>
     <a class="headerlink" href="#check_reference"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="check_reference-64"><a href="#check_reference-64"><span class="linenos">64</span></a><span class="k">def</span><span class="w"> </span><span class="nf">check_reference</span><span class="p">(</span><span class="n">ref</span><span class="p">,</span> <span class="n">run_name</span><span class="p">,</span> <span class="n">ref_type</span><span class="o">=</span><span class="s1">&#39;campaign&#39;</span><span class="p">):</span>
-</span><span id="check_reference-65"><a href="#check_reference-65"><span class="linenos">65</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="check_reference-64"><a href="#check_reference-64"><span class="linenos">64</span></a><span class="k">def</span><span class="w"> </span><span class="nf">check_reference</span><span class="p">(</span><span class="n">ref</span><span class="p">,</span> <span class="n">run_name</span><span class="p">,</span> <span class="n">ref_type</span><span class="o">=</span><span class="s1">'campaign'</span><span class="p">):</span>
+</span><span id="check_reference-65"><a href="#check_reference-65"><span class="linenos">65</span></a><span class="w">    </span><span class="sd">"""</span>
 </span><span id="check_reference-66"><a href="#check_reference-66"><span class="linenos">66</span></a><span class="sd">    Validation check for a `RunInfo` reference. Checks that an integer value</span>
-</span><span id="check_reference-67"><a href="#check_reference-67"><span class="linenos">67</span></a><span class="sd">    has been passed to use as a reference to another &#39;table&#39; - i.e. to a</span>
+</span><span id="check_reference-67"><a href="#check_reference-67"><span class="linenos">67</span></a><span class="sd">    has been passed to use as a reference to another 'table' - i.e. to a</span>
 </span><span id="check_reference-68"><a href="#check_reference-68"><span class="linenos">68</span></a><span class="sd">    specific campaign, app or sampler.</span>
 </span><span id="check_reference-69"><a href="#check_reference-69"><span class="linenos">69</span></a>
 </span><span id="check_reference-70"><a href="#check_reference-70"><span class="linenos">70</span></a><span class="sd">    Parameters</span>
@@ -593,23 +593,23 @@ information.)</li>
 </span><span id="check_reference-74"><a href="#check_reference-74"><span class="linenos">74</span></a><span class="sd">    run_name : str</span>
 </span><span id="check_reference-75"><a href="#check_reference-75"><span class="linenos">75</span></a><span class="sd">        Name of run for which the check is being performed (user info/</span>
 </span><span id="check_reference-76"><a href="#check_reference-76"><span class="linenos">76</span></a><span class="sd">        debugging).</span>
-</span><span id="check_reference-77"><a href="#check_reference-77"><span class="linenos">77</span></a><span class="sd">    ref_type : str, default=&#39;campaign&#39;</span>
+</span><span id="check_reference-77"><a href="#check_reference-77"><span class="linenos">77</span></a><span class="sd">    ref_type : str, default='campaign'</span>
 </span><span id="check_reference-78"><a href="#check_reference-78"><span class="linenos">78</span></a><span class="sd">        Are we checking for a campaign, sampler or app (user info/</span>
 </span><span id="check_reference-79"><a href="#check_reference-79"><span class="linenos">79</span></a><span class="sd">        debugging).</span>
 </span><span id="check_reference-80"><a href="#check_reference-80"><span class="linenos">80</span></a>
 </span><span id="check_reference-81"><a href="#check_reference-81"><span class="linenos">81</span></a><span class="sd">    Returns</span>
 </span><span id="check_reference-82"><a href="#check_reference-82"><span class="linenos">82</span></a><span class="sd">    -------</span>
 </span><span id="check_reference-83"><a href="#check_reference-83"><span class="linenos">83</span></a>
-</span><span id="check_reference-84"><a href="#check_reference-84"><span class="linenos">84</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="check_reference-84"><a href="#check_reference-84"><span class="linenos">84</span></a><span class="sd">    """</span>
 </span><span id="check_reference-85"><a href="#check_reference-85"><span class="linenos">85</span></a>
 </span><span id="check_reference-86"><a href="#check_reference-86"><span class="linenos">86</span></a>    <span class="k">if</span> <span class="n">ref</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="check_reference-87"><a href="#check_reference-87"><span class="linenos">87</span></a>        <span class="n">message</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;No </span><span class="si">{</span><span class="n">ref_type</span><span class="si">}</span><span class="s1"> id specified for run </span><span class="si">{</span><span class="n">run_name</span><span class="si">}</span><span class="s1">&#39;</span>
+</span><span id="check_reference-87"><a href="#check_reference-87"><span class="linenos">87</span></a>        <span class="n">message</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">'No </span><span class="si">{</span><span class="n">ref_type</span><span class="si">}</span><span class="s1"> id specified for run </span><span class="si">{</span><span class="n">run_name</span><span class="si">}</span><span class="s1">'</span>
 </span><span id="check_reference-88"><a href="#check_reference-88"><span class="linenos">88</span></a>        <span class="n">logger</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
 </span><span id="check_reference-89"><a href="#check_reference-89"><span class="linenos">89</span></a>        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
 </span><span id="check_reference-90"><a href="#check_reference-90"><span class="linenos">90</span></a>
 </span><span id="check_reference-91"><a href="#check_reference-91"><span class="linenos">91</span></a>    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ref</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
-</span><span id="check_reference-92"><a href="#check_reference-92"><span class="linenos">92</span></a>        <span class="n">message</span> <span class="o">=</span> <span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Invalid </span><span class="si">{</span><span class="n">ref_type</span><span class="si">}</span><span class="s1"> id (</span><span class="si">{</span><span class="n">ref</span><span class="si">}</span><span class="s1">) specified for &#39;</span>
-</span><span id="check_reference-93"><a href="#check_reference-93"><span class="linenos">93</span></a>                   <span class="sa">f</span><span class="s1">&#39;run </span><span class="si">{</span><span class="n">run_name</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+</span><span id="check_reference-92"><a href="#check_reference-92"><span class="linenos">92</span></a>        <span class="n">message</span> <span class="o">=</span> <span class="p">(</span><span class="sa">f</span><span class="s1">'Invalid </span><span class="si">{</span><span class="n">ref_type</span><span class="si">}</span><span class="s1"> id (</span><span class="si">{</span><span class="n">ref</span><span class="si">}</span><span class="s1">) specified for '</span>
+</span><span id="check_reference-93"><a href="#check_reference-93"><span class="linenos">93</span></a>                   <span class="sa">f</span><span class="s1">'run </span><span class="si">{</span><span class="n">run_name</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
 </span><span id="check_reference-94"><a href="#check_reference-94"><span class="linenos">94</span></a>        <span class="n">logger</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
 </span><span id="check_reference-95"><a href="#check_reference-95"><span class="linenos">95</span></a>        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
 </span></pre></div>
@@ -649,7 +649,7 @@ debugging).</li>
     </div>
     <a class="headerlink" href="#RunInfo"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="RunInfo-98"><a href="#RunInfo-98"><span class="linenos"> 98</span></a><span class="k">class</span><span class="w"> </span><span class="nc">RunInfo</span><span class="p">:</span>
-</span><span id="RunInfo-99"><a href="#RunInfo-99"><span class="linenos"> 99</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Handles information for individual application runs.</span>
+</span><span id="RunInfo-99"><a href="#RunInfo-99"><span class="linenos"> 99</span></a><span class="w">    </span><span class="sd">"""Handles information for individual application runs.</span>
 </span><span id="RunInfo-100"><a href="#RunInfo-100"><span class="linenos">100</span></a>
 </span><span id="RunInfo-101"><a href="#RunInfo-101"><span class="linenos">101</span></a><span class="sd">    Parameters</span>
 </span><span id="RunInfo-102"><a href="#RunInfo-102"><span class="linenos">102</span></a><span class="sd">    ----------</span>
@@ -675,7 +675,7 @@ debugging).</li>
 </span><span id="RunInfo-122"><a href="#RunInfo-122"><span class="linenos">122</span></a><span class="sd">    run_name : str</span>
 </span><span id="RunInfo-123"><a href="#RunInfo-123"><span class="linenos">123</span></a><span class="sd">        Human readable name of the run.</span>
 </span><span id="RunInfo-124"><a href="#RunInfo-124"><span class="linenos">124</span></a><span class="sd">    status : enum(Status)</span>
-</span><span id="RunInfo-125"><a href="#RunInfo-125"><span class="linenos">125</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="RunInfo-125"><a href="#RunInfo-125"><span class="linenos">125</span></a><span class="sd">    """</span>
 </span><span id="RunInfo-126"><a href="#RunInfo-126"><span class="linenos">126</span></a>
 </span><span id="RunInfo-127"><a href="#RunInfo-127"><span class="linenos">127</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
 </span><span id="RunInfo-128"><a href="#RunInfo-128"><span class="linenos">128</span></a>            <span class="bp">self</span><span class="p">,</span>
@@ -694,7 +694,7 @@ debugging).</li>
 </span><span id="RunInfo-141"><a href="#RunInfo-141"><span class="linenos">141</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">run_dir</span> <span class="o">=</span> <span class="n">run_dir</span>
 </span><span id="RunInfo-142"><a href="#RunInfo-142"><span class="linenos">142</span></a>
 </span><span id="RunInfo-143"><a href="#RunInfo-143"><span class="linenos">143</span></a>        <span class="k">if</span> <span class="ow">not</span> <span class="n">params</span><span class="p">:</span>
-</span><span id="RunInfo-144"><a href="#RunInfo-144"><span class="linenos">144</span></a>            <span class="n">message</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;No run configuration specified for run </span><span class="si">{</span><span class="n">run_name</span><span class="si">}</span><span class="s1">&#39;</span>
+</span><span id="RunInfo-144"><a href="#RunInfo-144"><span class="linenos">144</span></a>            <span class="n">message</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">'No run configuration specified for run </span><span class="si">{</span><span class="n">run_name</span><span class="si">}</span><span class="s1">'</span>
 </span><span id="RunInfo-145"><a href="#RunInfo-145"><span class="linenos">145</span></a>            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
 </span><span id="RunInfo-146"><a href="#RunInfo-146"><span class="linenos">146</span></a>
 </span><span id="RunInfo-147"><a href="#RunInfo-147"><span class="linenos">147</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">params</span> <span class="o">=</span> <span class="n">params</span>
@@ -703,7 +703,7 @@ debugging).</li>
 </span><span id="RunInfo-150"><a href="#RunInfo-150"><span class="linenos">150</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">iteration</span> <span class="o">=</span> <span class="mi">0</span>
 </span><span id="RunInfo-151"><a href="#RunInfo-151"><span class="linenos">151</span></a>
 </span><span id="RunInfo-152"><a href="#RunInfo-152"><span class="linenos">152</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">flatten</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-</span><span id="RunInfo-153"><a href="#RunInfo-153"><span class="linenos">153</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert to a dictionary (optionally flatten to single level)</span>
+</span><span id="RunInfo-153"><a href="#RunInfo-153"><span class="linenos">153</span></a><span class="w">        </span><span class="sd">"""Convert to a dictionary (optionally flatten to single level)</span>
 </span><span id="RunInfo-154"><a href="#RunInfo-154"><span class="linenos">154</span></a>
 </span><span id="RunInfo-155"><a href="#RunInfo-155"><span class="linenos">155</span></a><span class="sd">        Parameters</span>
 </span><span id="RunInfo-156"><a href="#RunInfo-156"><span class="linenos">156</span></a><span class="sd">        ----------</span>
@@ -716,37 +716,37 @@ debugging).</li>
 </span><span id="RunInfo-163"><a href="#RunInfo-163"><span class="linenos">163</span></a><span class="sd">        dict</span>
 </span><span id="RunInfo-164"><a href="#RunInfo-164"><span class="linenos">164</span></a><span class="sd">            Dictionary representing the run - if flattened then params are</span>
 </span><span id="RunInfo-165"><a href="#RunInfo-165"><span class="linenos">165</span></a><span class="sd">            returned as a JSON format sting.</span>
-</span><span id="RunInfo-166"><a href="#RunInfo-166"><span class="linenos">166</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="RunInfo-166"><a href="#RunInfo-166"><span class="linenos">166</span></a><span class="sd">        """</span>
 </span><span id="RunInfo-167"><a href="#RunInfo-167"><span class="linenos">167</span></a>
 </span><span id="RunInfo-168"><a href="#RunInfo-168"><span class="linenos">168</span></a>        <span class="k">def</span><span class="w"> </span><span class="nf">convert_nonserializable</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
 </span><span id="RunInfo-169"><a href="#RunInfo-169"><span class="linenos">169</span></a>            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">int64</span><span class="p">):</span>
 </span><span id="RunInfo-170"><a href="#RunInfo-170"><span class="linenos">170</span></a>                <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
-</span><span id="RunInfo-171"><a href="#RunInfo-171"><span class="linenos">171</span></a>            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;Unknown type:&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="n">obj</span><span class="p">))</span>
+</span><span id="RunInfo-171"><a href="#RunInfo-171"><span class="linenos">171</span></a>            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">'Unknown type:'</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="n">obj</span><span class="p">))</span>
 </span><span id="RunInfo-172"><a href="#RunInfo-172"><span class="linenos">172</span></a>
 </span><span id="RunInfo-173"><a href="#RunInfo-173"><span class="linenos">173</span></a>        <span class="k">if</span> <span class="n">flatten</span><span class="p">:</span>
 </span><span id="RunInfo-174"><a href="#RunInfo-174"><span class="linenos">174</span></a>
 </span><span id="RunInfo-175"><a href="#RunInfo-175"><span class="linenos">175</span></a>            <span class="n">out_dict</span> <span class="o">=</span> <span class="p">{</span>
-</span><span id="RunInfo-176"><a href="#RunInfo-176"><span class="linenos">176</span></a>                <span class="s1">&#39;run_name&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">run_name</span><span class="p">,</span>
-</span><span id="RunInfo-177"><a href="#RunInfo-177"><span class="linenos">177</span></a>                <span class="s1">&#39;run_dir&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">run_dir</span><span class="p">,</span>
-</span><span id="RunInfo-178"><a href="#RunInfo-178"><span class="linenos">178</span></a>                <span class="s1">&#39;params&#39;</span><span class="p">:</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">convert_nonserializable</span><span class="p">),</span>
-</span><span id="RunInfo-179"><a href="#RunInfo-179"><span class="linenos">179</span></a>                <span class="s1">&#39;status&#39;</span><span class="p">:</span> <span class="n">constants</span><span class="o">.</span><span class="n">Status</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">status</span><span class="p">),</span>
-</span><span id="RunInfo-180"><a href="#RunInfo-180"><span class="linenos">180</span></a>                <span class="s1">&#39;campaign&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">campaign</span><span class="p">,</span>
-</span><span id="RunInfo-181"><a href="#RunInfo-181"><span class="linenos">181</span></a>                <span class="s1">&#39;sampler&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">sample</span><span class="p">,</span>
-</span><span id="RunInfo-182"><a href="#RunInfo-182"><span class="linenos">182</span></a>                <span class="s1">&#39;app&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">app</span><span class="p">,</span>
-</span><span id="RunInfo-183"><a href="#RunInfo-183"><span class="linenos">183</span></a>                <span class="s1">&#39;iteration&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">iteration</span><span class="p">,</span>
+</span><span id="RunInfo-176"><a href="#RunInfo-176"><span class="linenos">176</span></a>                <span class="s1">'run_name'</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">run_name</span><span class="p">,</span>
+</span><span id="RunInfo-177"><a href="#RunInfo-177"><span class="linenos">177</span></a>                <span class="s1">'run_dir'</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">run_dir</span><span class="p">,</span>
+</span><span id="RunInfo-178"><a href="#RunInfo-178"><span class="linenos">178</span></a>                <span class="s1">'params'</span><span class="p">:</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">convert_nonserializable</span><span class="p">),</span>
+</span><span id="RunInfo-179"><a href="#RunInfo-179"><span class="linenos">179</span></a>                <span class="s1">'status'</span><span class="p">:</span> <span class="n">constants</span><span class="o">.</span><span class="n">Status</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">status</span><span class="p">),</span>
+</span><span id="RunInfo-180"><a href="#RunInfo-180"><span class="linenos">180</span></a>                <span class="s1">'campaign'</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">campaign</span><span class="p">,</span>
+</span><span id="RunInfo-181"><a href="#RunInfo-181"><span class="linenos">181</span></a>                <span class="s1">'sampler'</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">sample</span><span class="p">,</span>
+</span><span id="RunInfo-182"><a href="#RunInfo-182"><span class="linenos">182</span></a>                <span class="s1">'app'</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">app</span><span class="p">,</span>
+</span><span id="RunInfo-183"><a href="#RunInfo-183"><span class="linenos">183</span></a>                <span class="s1">'iteration'</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">iteration</span><span class="p">,</span>
 </span><span id="RunInfo-184"><a href="#RunInfo-184"><span class="linenos">184</span></a>            <span class="p">}</span>
 </span><span id="RunInfo-185"><a href="#RunInfo-185"><span class="linenos">185</span></a>
 </span><span id="RunInfo-186"><a href="#RunInfo-186"><span class="linenos">186</span></a>        <span class="k">else</span><span class="p">:</span>
 </span><span id="RunInfo-187"><a href="#RunInfo-187"><span class="linenos">187</span></a>
 </span><span id="RunInfo-188"><a href="#RunInfo-188"><span class="linenos">188</span></a>            <span class="n">out_dict</span> <span class="o">=</span> <span class="p">{</span>
-</span><span id="RunInfo-189"><a href="#RunInfo-189"><span class="linenos">189</span></a>                <span class="s1">&#39;run_name&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">run_name</span><span class="p">,</span>
-</span><span id="RunInfo-190"><a href="#RunInfo-190"><span class="linenos">190</span></a>                <span class="s1">&#39;run_dir&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">run_dir</span><span class="p">,</span>
-</span><span id="RunInfo-191"><a href="#RunInfo-191"><span class="linenos">191</span></a>                <span class="s1">&#39;params&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">,</span>
-</span><span id="RunInfo-192"><a href="#RunInfo-192"><span class="linenos">192</span></a>                <span class="s1">&#39;status&#39;</span><span class="p">:</span> <span class="n">constants</span><span class="o">.</span><span class="n">Status</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">status</span><span class="p">),</span>
-</span><span id="RunInfo-193"><a href="#RunInfo-193"><span class="linenos">193</span></a>                <span class="s1">&#39;campaign&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">campaign</span><span class="p">,</span>
-</span><span id="RunInfo-194"><a href="#RunInfo-194"><span class="linenos">194</span></a>                <span class="s1">&#39;sampler&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">sample</span><span class="p">,</span>
-</span><span id="RunInfo-195"><a href="#RunInfo-195"><span class="linenos">195</span></a>                <span class="s1">&#39;app&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">app</span><span class="p">,</span>
-</span><span id="RunInfo-196"><a href="#RunInfo-196"><span class="linenos">196</span></a>                <span class="s1">&#39;iteration&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">iteration</span><span class="p">,</span>
+</span><span id="RunInfo-189"><a href="#RunInfo-189"><span class="linenos">189</span></a>                <span class="s1">'run_name'</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">run_name</span><span class="p">,</span>
+</span><span id="RunInfo-190"><a href="#RunInfo-190"><span class="linenos">190</span></a>                <span class="s1">'run_dir'</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">run_dir</span><span class="p">,</span>
+</span><span id="RunInfo-191"><a href="#RunInfo-191"><span class="linenos">191</span></a>                <span class="s1">'params'</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">,</span>
+</span><span id="RunInfo-192"><a href="#RunInfo-192"><span class="linenos">192</span></a>                <span class="s1">'status'</span><span class="p">:</span> <span class="n">constants</span><span class="o">.</span><span class="n">Status</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">status</span><span class="p">),</span>
+</span><span id="RunInfo-193"><a href="#RunInfo-193"><span class="linenos">193</span></a>                <span class="s1">'campaign'</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">campaign</span><span class="p">,</span>
+</span><span id="RunInfo-194"><a href="#RunInfo-194"><span class="linenos">194</span></a>                <span class="s1">'sampler'</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">sample</span><span class="p">,</span>
+</span><span id="RunInfo-195"><a href="#RunInfo-195"><span class="linenos">195</span></a>                <span class="s1">'app'</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">app</span><span class="p">,</span>
+</span><span id="RunInfo-196"><a href="#RunInfo-196"><span class="linenos">196</span></a>                <span class="s1">'iteration'</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">iteration</span><span class="p">,</span>
 </span><span id="RunInfo-197"><a href="#RunInfo-197"><span class="linenos">197</span></a>            <span class="p">}</span>
 </span><span id="RunInfo-198"><a href="#RunInfo-198"><span class="linenos">198</span></a>
 </span><span id="RunInfo-199"><a href="#RunInfo-199"><span class="linenos">199</span></a>        <span class="k">return</span> <span class="n">out_dict</span>
@@ -813,7 +813,7 @@ Human readable name of the run.</li>
 </span><span id="RunInfo.__init__-141"><a href="#RunInfo.__init__-141"><span class="linenos">141</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">run_dir</span> <span class="o">=</span> <span class="n">run_dir</span>
 </span><span id="RunInfo.__init__-142"><a href="#RunInfo.__init__-142"><span class="linenos">142</span></a>
 </span><span id="RunInfo.__init__-143"><a href="#RunInfo.__init__-143"><span class="linenos">143</span></a>        <span class="k">if</span> <span class="ow">not</span> <span class="n">params</span><span class="p">:</span>
-</span><span id="RunInfo.__init__-144"><a href="#RunInfo.__init__-144"><span class="linenos">144</span></a>            <span class="n">message</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;No run configuration specified for run </span><span class="si">{</span><span class="n">run_name</span><span class="si">}</span><span class="s1">&#39;</span>
+</span><span id="RunInfo.__init__-144"><a href="#RunInfo.__init__-144"><span class="linenos">144</span></a>            <span class="n">message</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">'No run configuration specified for run </span><span class="si">{</span><span class="n">run_name</span><span class="si">}</span><span class="s1">'</span>
 </span><span id="RunInfo.__init__-145"><a href="#RunInfo.__init__-145"><span class="linenos">145</span></a>            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
 </span><span id="RunInfo.__init__-146"><a href="#RunInfo.__init__-146"><span class="linenos">146</span></a>
 </span><span id="RunInfo.__init__-147"><a href="#RunInfo.__init__-147"><span class="linenos">147</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">params</span> <span class="o">=</span> <span class="n">params</span>
@@ -926,7 +926,7 @@ Human readable name of the run.</li>
     </div>
     <a class="headerlink" href="#RunInfo.to_dict"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="RunInfo.to_dict-152"><a href="#RunInfo.to_dict-152"><span class="linenos">152</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">flatten</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-</span><span id="RunInfo.to_dict-153"><a href="#RunInfo.to_dict-153"><span class="linenos">153</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert to a dictionary (optionally flatten to single level)</span>
+</span><span id="RunInfo.to_dict-153"><a href="#RunInfo.to_dict-153"><span class="linenos">153</span></a><span class="w">        </span><span class="sd">"""Convert to a dictionary (optionally flatten to single level)</span>
 </span><span id="RunInfo.to_dict-154"><a href="#RunInfo.to_dict-154"><span class="linenos">154</span></a>
 </span><span id="RunInfo.to_dict-155"><a href="#RunInfo.to_dict-155"><span class="linenos">155</span></a><span class="sd">        Parameters</span>
 </span><span id="RunInfo.to_dict-156"><a href="#RunInfo.to_dict-156"><span class="linenos">156</span></a><span class="sd">        ----------</span>
@@ -939,37 +939,37 @@ Human readable name of the run.</li>
 </span><span id="RunInfo.to_dict-163"><a href="#RunInfo.to_dict-163"><span class="linenos">163</span></a><span class="sd">        dict</span>
 </span><span id="RunInfo.to_dict-164"><a href="#RunInfo.to_dict-164"><span class="linenos">164</span></a><span class="sd">            Dictionary representing the run - if flattened then params are</span>
 </span><span id="RunInfo.to_dict-165"><a href="#RunInfo.to_dict-165"><span class="linenos">165</span></a><span class="sd">            returned as a JSON format sting.</span>
-</span><span id="RunInfo.to_dict-166"><a href="#RunInfo.to_dict-166"><span class="linenos">166</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="RunInfo.to_dict-166"><a href="#RunInfo.to_dict-166"><span class="linenos">166</span></a><span class="sd">        """</span>
 </span><span id="RunInfo.to_dict-167"><a href="#RunInfo.to_dict-167"><span class="linenos">167</span></a>
 </span><span id="RunInfo.to_dict-168"><a href="#RunInfo.to_dict-168"><span class="linenos">168</span></a>        <span class="k">def</span><span class="w"> </span><span class="nf">convert_nonserializable</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
 </span><span id="RunInfo.to_dict-169"><a href="#RunInfo.to_dict-169"><span class="linenos">169</span></a>            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">int64</span><span class="p">):</span>
 </span><span id="RunInfo.to_dict-170"><a href="#RunInfo.to_dict-170"><span class="linenos">170</span></a>                <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
-</span><span id="RunInfo.to_dict-171"><a href="#RunInfo.to_dict-171"><span class="linenos">171</span></a>            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;Unknown type:&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="n">obj</span><span class="p">))</span>
+</span><span id="RunInfo.to_dict-171"><a href="#RunInfo.to_dict-171"><span class="linenos">171</span></a>            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">'Unknown type:'</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="n">obj</span><span class="p">))</span>
 </span><span id="RunInfo.to_dict-172"><a href="#RunInfo.to_dict-172"><span class="linenos">172</span></a>
 </span><span id="RunInfo.to_dict-173"><a href="#RunInfo.to_dict-173"><span class="linenos">173</span></a>        <span class="k">if</span> <span class="n">flatten</span><span class="p">:</span>
 </span><span id="RunInfo.to_dict-174"><a href="#RunInfo.to_dict-174"><span class="linenos">174</span></a>
 </span><span id="RunInfo.to_dict-175"><a href="#RunInfo.to_dict-175"><span class="linenos">175</span></a>            <span class="n">out_dict</span> <span class="o">=</span> <span class="p">{</span>
-</span><span id="RunInfo.to_dict-176"><a href="#RunInfo.to_dict-176"><span class="linenos">176</span></a>                <span class="s1">&#39;run_name&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">run_name</span><span class="p">,</span>
-</span><span id="RunInfo.to_dict-177"><a href="#RunInfo.to_dict-177"><span class="linenos">177</span></a>                <span class="s1">&#39;run_dir&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">run_dir</span><span class="p">,</span>
-</span><span id="RunInfo.to_dict-178"><a href="#RunInfo.to_dict-178"><span class="linenos">178</span></a>                <span class="s1">&#39;params&#39;</span><span class="p">:</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">convert_nonserializable</span><span class="p">),</span>
-</span><span id="RunInfo.to_dict-179"><a href="#RunInfo.to_dict-179"><span class="linenos">179</span></a>                <span class="s1">&#39;status&#39;</span><span class="p">:</span> <span class="n">constants</span><span class="o">.</span><span class="n">Status</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">status</span><span class="p">),</span>
-</span><span id="RunInfo.to_dict-180"><a href="#RunInfo.to_dict-180"><span class="linenos">180</span></a>                <span class="s1">&#39;campaign&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">campaign</span><span class="p">,</span>
-</span><span id="RunInfo.to_dict-181"><a href="#RunInfo.to_dict-181"><span class="linenos">181</span></a>                <span class="s1">&#39;sampler&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">sample</span><span class="p">,</span>
-</span><span id="RunInfo.to_dict-182"><a href="#RunInfo.to_dict-182"><span class="linenos">182</span></a>                <span class="s1">&#39;app&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">app</span><span class="p">,</span>
-</span><span id="RunInfo.to_dict-183"><a href="#RunInfo.to_dict-183"><span class="linenos">183</span></a>                <span class="s1">&#39;iteration&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">iteration</span><span class="p">,</span>
+</span><span id="RunInfo.to_dict-176"><a href="#RunInfo.to_dict-176"><span class="linenos">176</span></a>                <span class="s1">'run_name'</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">run_name</span><span class="p">,</span>
+</span><span id="RunInfo.to_dict-177"><a href="#RunInfo.to_dict-177"><span class="linenos">177</span></a>                <span class="s1">'run_dir'</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">run_dir</span><span class="p">,</span>
+</span><span id="RunInfo.to_dict-178"><a href="#RunInfo.to_dict-178"><span class="linenos">178</span></a>                <span class="s1">'params'</span><span class="p">:</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">convert_nonserializable</span><span class="p">),</span>
+</span><span id="RunInfo.to_dict-179"><a href="#RunInfo.to_dict-179"><span class="linenos">179</span></a>                <span class="s1">'status'</span><span class="p">:</span> <span class="n">constants</span><span class="o">.</span><span class="n">Status</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">status</span><span class="p">),</span>
+</span><span id="RunInfo.to_dict-180"><a href="#RunInfo.to_dict-180"><span class="linenos">180</span></a>                <span class="s1">'campaign'</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">campaign</span><span class="p">,</span>
+</span><span id="RunInfo.to_dict-181"><a href="#RunInfo.to_dict-181"><span class="linenos">181</span></a>                <span class="s1">'sampler'</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">sample</span><span class="p">,</span>
+</span><span id="RunInfo.to_dict-182"><a href="#RunInfo.to_dict-182"><span class="linenos">182</span></a>                <span class="s1">'app'</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">app</span><span class="p">,</span>
+</span><span id="RunInfo.to_dict-183"><a href="#RunInfo.to_dict-183"><span class="linenos">183</span></a>                <span class="s1">'iteration'</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">iteration</span><span class="p">,</span>
 </span><span id="RunInfo.to_dict-184"><a href="#RunInfo.to_dict-184"><span class="linenos">184</span></a>            <span class="p">}</span>
 </span><span id="RunInfo.to_dict-185"><a href="#RunInfo.to_dict-185"><span class="linenos">185</span></a>
 </span><span id="RunInfo.to_dict-186"><a href="#RunInfo.to_dict-186"><span class="linenos">186</span></a>        <span class="k">else</span><span class="p">:</span>
 </span><span id="RunInfo.to_dict-187"><a href="#RunInfo.to_dict-187"><span class="linenos">187</span></a>
 </span><span id="RunInfo.to_dict-188"><a href="#RunInfo.to_dict-188"><span class="linenos">188</span></a>            <span class="n">out_dict</span> <span class="o">=</span> <span class="p">{</span>
-</span><span id="RunInfo.to_dict-189"><a href="#RunInfo.to_dict-189"><span class="linenos">189</span></a>                <span class="s1">&#39;run_name&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">run_name</span><span class="p">,</span>
-</span><span id="RunInfo.to_dict-190"><a href="#RunInfo.to_dict-190"><span class="linenos">190</span></a>                <span class="s1">&#39;run_dir&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">run_dir</span><span class="p">,</span>
-</span><span id="RunInfo.to_dict-191"><a href="#RunInfo.to_dict-191"><span class="linenos">191</span></a>                <span class="s1">&#39;params&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">,</span>
-</span><span id="RunInfo.to_dict-192"><a href="#RunInfo.to_dict-192"><span class="linenos">192</span></a>                <span class="s1">&#39;status&#39;</span><span class="p">:</span> <span class="n">constants</span><span class="o">.</span><span class="n">Status</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">status</span><span class="p">),</span>
-</span><span id="RunInfo.to_dict-193"><a href="#RunInfo.to_dict-193"><span class="linenos">193</span></a>                <span class="s1">&#39;campaign&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">campaign</span><span class="p">,</span>
-</span><span id="RunInfo.to_dict-194"><a href="#RunInfo.to_dict-194"><span class="linenos">194</span></a>                <span class="s1">&#39;sampler&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">sample</span><span class="p">,</span>
-</span><span id="RunInfo.to_dict-195"><a href="#RunInfo.to_dict-195"><span class="linenos">195</span></a>                <span class="s1">&#39;app&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">app</span><span class="p">,</span>
-</span><span id="RunInfo.to_dict-196"><a href="#RunInfo.to_dict-196"><span class="linenos">196</span></a>                <span class="s1">&#39;iteration&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">iteration</span><span class="p">,</span>
+</span><span id="RunInfo.to_dict-189"><a href="#RunInfo.to_dict-189"><span class="linenos">189</span></a>                <span class="s1">'run_name'</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">run_name</span><span class="p">,</span>
+</span><span id="RunInfo.to_dict-190"><a href="#RunInfo.to_dict-190"><span class="linenos">190</span></a>                <span class="s1">'run_dir'</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">run_dir</span><span class="p">,</span>
+</span><span id="RunInfo.to_dict-191"><a href="#RunInfo.to_dict-191"><span class="linenos">191</span></a>                <span class="s1">'params'</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">,</span>
+</span><span id="RunInfo.to_dict-192"><a href="#RunInfo.to_dict-192"><span class="linenos">192</span></a>                <span class="s1">'status'</span><span class="p">:</span> <span class="n">constants</span><span class="o">.</span><span class="n">Status</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">status</span><span class="p">),</span>
+</span><span id="RunInfo.to_dict-193"><a href="#RunInfo.to_dict-193"><span class="linenos">193</span></a>                <span class="s1">'campaign'</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">campaign</span><span class="p">,</span>
+</span><span id="RunInfo.to_dict-194"><a href="#RunInfo.to_dict-194"><span class="linenos">194</span></a>                <span class="s1">'sampler'</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">sample</span><span class="p">,</span>
+</span><span id="RunInfo.to_dict-195"><a href="#RunInfo.to_dict-195"><span class="linenos">195</span></a>                <span class="s1">'app'</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">app</span><span class="p">,</span>
+</span><span id="RunInfo.to_dict-196"><a href="#RunInfo.to_dict-196"><span class="linenos">196</span></a>                <span class="s1">'iteration'</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">iteration</span><span class="p">,</span>
 </span><span id="RunInfo.to_dict-197"><a href="#RunInfo.to_dict-197"><span class="linenos">197</span></a>            <span class="p">}</span>
 </span><span id="RunInfo.to_dict-198"><a href="#RunInfo.to_dict-198"><span class="linenos">198</span></a>
 </span><span id="RunInfo.to_dict-199"><a href="#RunInfo.to_dict-199"><span class="linenos">199</span></a>        <span class="k">return</span> <span class="n">out_dict</span>
@@ -1009,7 +1009,7 @@ returned as a JSON format sting.</li>
     </div>
     <a class="headerlink" href="#AppInfo"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="AppInfo-202"><a href="#AppInfo-202"><span class="linenos">202</span></a><span class="k">class</span><span class="w"> </span><span class="nc">AppInfo</span><span class="p">:</span>
-</span><span id="AppInfo-203"><a href="#AppInfo-203"><span class="linenos">203</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Handles information for particular application.</span>
+</span><span id="AppInfo-203"><a href="#AppInfo-203"><span class="linenos">203</span></a><span class="w">    </span><span class="sd">"""Handles information for particular application.</span>
 </span><span id="AppInfo-204"><a href="#AppInfo-204"><span class="linenos">204</span></a>
 </span><span id="AppInfo-205"><a href="#AppInfo-205"><span class="linenos">205</span></a><span class="sd">    Attributes</span>
 </span><span id="AppInfo-206"><a href="#AppInfo-206"><span class="linenos">206</span></a><span class="sd">    ----------</span>
@@ -1017,7 +1017,7 @@ returned as a JSON format sting.</li>
 </span><span id="AppInfo-208"><a href="#AppInfo-208"><span class="linenos">208</span></a><span class="sd">        Human readable application name.</span>
 </span><span id="AppInfo-209"><a href="#AppInfo-209"><span class="linenos">209</span></a><span class="sd">    paramsspec : ParamsSpecification or None</span>
 </span><span id="AppInfo-210"><a href="#AppInfo-210"><span class="linenos">210</span></a><span class="sd">        Description of possible parameter values.</span>
-</span><span id="AppInfo-211"><a href="#AppInfo-211"><span class="linenos">211</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="AppInfo-211"><a href="#AppInfo-211"><span class="linenos">211</span></a><span class="sd">    """</span>
 </span><span id="AppInfo-212"><a href="#AppInfo-212"><span class="linenos">212</span></a>
 </span><span id="AppInfo-213"><a href="#AppInfo-213"><span class="linenos">213</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
 </span><span id="AppInfo-214"><a href="#AppInfo-214"><span class="linenos">214</span></a>            <span class="bp">self</span><span class="p">,</span>
@@ -1030,7 +1030,7 @@ returned as a JSON format sting.</li>
 </span><span id="AppInfo-221"><a href="#AppInfo-221"><span class="linenos">221</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">actions</span> <span class="o">=</span> <span class="n">actions</span>
 </span><span id="AppInfo-222"><a href="#AppInfo-222"><span class="linenos">222</span></a>
 </span><span id="AppInfo-223"><a href="#AppInfo-223"><span class="linenos">223</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">flatten</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-</span><span id="AppInfo-224"><a href="#AppInfo-224"><span class="linenos">224</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert to a dictionary (optionally flatten to single level)</span>
+</span><span id="AppInfo-224"><a href="#AppInfo-224"><span class="linenos">224</span></a><span class="w">        </span><span class="sd">"""Convert to a dictionary (optionally flatten to single level)</span>
 </span><span id="AppInfo-225"><a href="#AppInfo-225"><span class="linenos">225</span></a>
 </span><span id="AppInfo-226"><a href="#AppInfo-226"><span class="linenos">226</span></a><span class="sd">        Parameters</span>
 </span><span id="AppInfo-227"><a href="#AppInfo-227"><span class="linenos">227</span></a><span class="sd">        ----------</span>
@@ -1043,19 +1043,19 @@ returned as a JSON format sting.</li>
 </span><span id="AppInfo-234"><a href="#AppInfo-234"><span class="linenos">234</span></a><span class="sd">        dict</span>
 </span><span id="AppInfo-235"><a href="#AppInfo-235"><span class="linenos">235</span></a><span class="sd">            Dictionary representing the application- if flattened then `paramsspec`</span>
 </span><span id="AppInfo-236"><a href="#AppInfo-236"><span class="linenos">236</span></a><span class="sd">            is returned as a JSON format sting.</span>
-</span><span id="AppInfo-237"><a href="#AppInfo-237"><span class="linenos">237</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="AppInfo-237"><a href="#AppInfo-237"><span class="linenos">237</span></a><span class="sd">        """</span>
 </span><span id="AppInfo-238"><a href="#AppInfo-238"><span class="linenos">238</span></a>
 </span><span id="AppInfo-239"><a href="#AppInfo-239"><span class="linenos">239</span></a>        <span class="k">if</span> <span class="n">flatten</span><span class="p">:</span>
 </span><span id="AppInfo-240"><a href="#AppInfo-240"><span class="linenos">240</span></a>
 </span><span id="AppInfo-241"><a href="#AppInfo-241"><span class="linenos">241</span></a>            <span class="n">out_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
 </span><span id="AppInfo-242"><a href="#AppInfo-242"><span class="linenos">242</span></a>
-</span><span id="AppInfo-243"><a href="#AppInfo-243"><span class="linenos">243</span></a>            <span class="n">out_dict</span><span class="p">[</span><span class="s1">&#39;params&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">paramsspec</span><span class="o">.</span><span class="n">serialize</span><span class="p">()</span>
+</span><span id="AppInfo-243"><a href="#AppInfo-243"><span class="linenos">243</span></a>            <span class="n">out_dict</span><span class="p">[</span><span class="s1">'params'</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">paramsspec</span><span class="o">.</span><span class="n">serialize</span><span class="p">()</span>
 </span><span id="AppInfo-244"><a href="#AppInfo-244"><span class="linenos">244</span></a>        <span class="k">else</span><span class="p">:</span>
 </span><span id="AppInfo-245"><a href="#AppInfo-245"><span class="linenos">245</span></a>
 </span><span id="AppInfo-246"><a href="#AppInfo-246"><span class="linenos">246</span></a>            <span class="n">out_dict</span> <span class="o">=</span> <span class="p">{</span>
-</span><span id="AppInfo-247"><a href="#AppInfo-247"><span class="linenos">247</span></a>                <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
-</span><span id="AppInfo-248"><a href="#AppInfo-248"><span class="linenos">248</span></a>                <span class="s1">&#39;params&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">paramsspec</span><span class="p">,</span>
-</span><span id="AppInfo-249"><a href="#AppInfo-249"><span class="linenos">249</span></a>                <span class="s1">&#39;actions&#39;</span><span class="p">:</span> <span class="n">easyvvuq_serialize</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">actions</span><span class="p">),</span>
+</span><span id="AppInfo-247"><a href="#AppInfo-247"><span class="linenos">247</span></a>                <span class="s1">'name'</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+</span><span id="AppInfo-248"><a href="#AppInfo-248"><span class="linenos">248</span></a>                <span class="s1">'params'</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">paramsspec</span><span class="p">,</span>
+</span><span id="AppInfo-249"><a href="#AppInfo-249"><span class="linenos">249</span></a>                <span class="s1">'actions'</span><span class="p">:</span> <span class="n">easyvvuq_serialize</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">actions</span><span class="p">),</span>
 </span><span id="AppInfo-250"><a href="#AppInfo-250"><span class="linenos">250</span></a>            <span class="p">}</span>
 </span><span id="AppInfo-251"><a href="#AppInfo-251"><span class="linenos">251</span></a>
 </span><span id="AppInfo-252"><a href="#AppInfo-252"><span class="linenos">252</span></a>        <span class="k">return</span> <span class="n">out_dict</span>
@@ -1145,7 +1145,7 @@ Description of possible parameter values.</li>
     </div>
     <a class="headerlink" href="#AppInfo.to_dict"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="AppInfo.to_dict-223"><a href="#AppInfo.to_dict-223"><span class="linenos">223</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">flatten</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-</span><span id="AppInfo.to_dict-224"><a href="#AppInfo.to_dict-224"><span class="linenos">224</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert to a dictionary (optionally flatten to single level)</span>
+</span><span id="AppInfo.to_dict-224"><a href="#AppInfo.to_dict-224"><span class="linenos">224</span></a><span class="w">        </span><span class="sd">"""Convert to a dictionary (optionally flatten to single level)</span>
 </span><span id="AppInfo.to_dict-225"><a href="#AppInfo.to_dict-225"><span class="linenos">225</span></a>
 </span><span id="AppInfo.to_dict-226"><a href="#AppInfo.to_dict-226"><span class="linenos">226</span></a><span class="sd">        Parameters</span>
 </span><span id="AppInfo.to_dict-227"><a href="#AppInfo.to_dict-227"><span class="linenos">227</span></a><span class="sd">        ----------</span>
@@ -1158,19 +1158,19 @@ Description of possible parameter values.</li>
 </span><span id="AppInfo.to_dict-234"><a href="#AppInfo.to_dict-234"><span class="linenos">234</span></a><span class="sd">        dict</span>
 </span><span id="AppInfo.to_dict-235"><a href="#AppInfo.to_dict-235"><span class="linenos">235</span></a><span class="sd">            Dictionary representing the application- if flattened then `paramsspec`</span>
 </span><span id="AppInfo.to_dict-236"><a href="#AppInfo.to_dict-236"><span class="linenos">236</span></a><span class="sd">            is returned as a JSON format sting.</span>
-</span><span id="AppInfo.to_dict-237"><a href="#AppInfo.to_dict-237"><span class="linenos">237</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="AppInfo.to_dict-237"><a href="#AppInfo.to_dict-237"><span class="linenos">237</span></a><span class="sd">        """</span>
 </span><span id="AppInfo.to_dict-238"><a href="#AppInfo.to_dict-238"><span class="linenos">238</span></a>
 </span><span id="AppInfo.to_dict-239"><a href="#AppInfo.to_dict-239"><span class="linenos">239</span></a>        <span class="k">if</span> <span class="n">flatten</span><span class="p">:</span>
 </span><span id="AppInfo.to_dict-240"><a href="#AppInfo.to_dict-240"><span class="linenos">240</span></a>
 </span><span id="AppInfo.to_dict-241"><a href="#AppInfo.to_dict-241"><span class="linenos">241</span></a>            <span class="n">out_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
 </span><span id="AppInfo.to_dict-242"><a href="#AppInfo.to_dict-242"><span class="linenos">242</span></a>
-</span><span id="AppInfo.to_dict-243"><a href="#AppInfo.to_dict-243"><span class="linenos">243</span></a>            <span class="n">out_dict</span><span class="p">[</span><span class="s1">&#39;params&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">paramsspec</span><span class="o">.</span><span class="n">serialize</span><span class="p">()</span>
+</span><span id="AppInfo.to_dict-243"><a href="#AppInfo.to_dict-243"><span class="linenos">243</span></a>            <span class="n">out_dict</span><span class="p">[</span><span class="s1">'params'</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">paramsspec</span><span class="o">.</span><span class="n">serialize</span><span class="p">()</span>
 </span><span id="AppInfo.to_dict-244"><a href="#AppInfo.to_dict-244"><span class="linenos">244</span></a>        <span class="k">else</span><span class="p">:</span>
 </span><span id="AppInfo.to_dict-245"><a href="#AppInfo.to_dict-245"><span class="linenos">245</span></a>
 </span><span id="AppInfo.to_dict-246"><a href="#AppInfo.to_dict-246"><span class="linenos">246</span></a>            <span class="n">out_dict</span> <span class="o">=</span> <span class="p">{</span>
-</span><span id="AppInfo.to_dict-247"><a href="#AppInfo.to_dict-247"><span class="linenos">247</span></a>                <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
-</span><span id="AppInfo.to_dict-248"><a href="#AppInfo.to_dict-248"><span class="linenos">248</span></a>                <span class="s1">&#39;params&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">paramsspec</span><span class="p">,</span>
-</span><span id="AppInfo.to_dict-249"><a href="#AppInfo.to_dict-249"><span class="linenos">249</span></a>                <span class="s1">&#39;actions&#39;</span><span class="p">:</span> <span class="n">easyvvuq_serialize</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">actions</span><span class="p">),</span>
+</span><span id="AppInfo.to_dict-247"><a href="#AppInfo.to_dict-247"><span class="linenos">247</span></a>                <span class="s1">'name'</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+</span><span id="AppInfo.to_dict-248"><a href="#AppInfo.to_dict-248"><span class="linenos">248</span></a>                <span class="s1">'params'</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">paramsspec</span><span class="p">,</span>
+</span><span id="AppInfo.to_dict-249"><a href="#AppInfo.to_dict-249"><span class="linenos">249</span></a>                <span class="s1">'actions'</span><span class="p">:</span> <span class="n">easyvvuq_serialize</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">actions</span><span class="p">),</span>
 </span><span id="AppInfo.to_dict-250"><a href="#AppInfo.to_dict-250"><span class="linenos">250</span></a>            <span class="p">}</span>
 </span><span id="AppInfo.to_dict-251"><a href="#AppInfo.to_dict-251"><span class="linenos">251</span></a>
 </span><span id="AppInfo.to_dict-252"><a href="#AppInfo.to_dict-252"><span class="linenos">252</span></a>        <span class="k">return</span> <span class="n">out_dict</span>
@@ -1210,7 +1210,7 @@ is returned as a JSON format sting.</li>
     </div>
     <a class="headerlink" href="#CampaignInfo"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="CampaignInfo-255"><a href="#CampaignInfo-255"><span class="linenos">255</span></a><span class="k">class</span><span class="w"> </span><span class="nc">CampaignInfo</span><span class="p">:</span>
-</span><span id="CampaignInfo-256"><a href="#CampaignInfo-256"><span class="linenos">256</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Handles information on Campaign.</span>
+</span><span id="CampaignInfo-256"><a href="#CampaignInfo-256"><span class="linenos">256</span></a><span class="w">    </span><span class="sd">"""Handles information on Campaign.</span>
 </span><span id="CampaignInfo-257"><a href="#CampaignInfo-257"><span class="linenos">257</span></a>
 </span><span id="CampaignInfo-258"><a href="#CampaignInfo-258"><span class="linenos">258</span></a><span class="sd">    Parameters</span>
 </span><span id="CampaignInfo-259"><a href="#CampaignInfo-259"><span class="linenos">259</span></a><span class="sd">    ----------</span>
@@ -1240,19 +1240,19 @@ is returned as a JSON format sting.</li>
 </span><span id="CampaignInfo-283"><a href="#CampaignInfo-283"><span class="linenos">283</span></a><span class="sd">        Path to the campaign directory.</span>
 </span><span id="CampaignInfo-284"><a href="#CampaignInfo-284"><span class="linenos">284</span></a><span class="sd">    runs_dir : str or None</span>
 </span><span id="CampaignInfo-285"><a href="#CampaignInfo-285"><span class="linenos">285</span></a><span class="sd">        path to run directory (within the campaign directory)</span>
-</span><span id="CampaignInfo-286"><a href="#CampaignInfo-286"><span class="linenos">286</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="CampaignInfo-286"><a href="#CampaignInfo-286"><span class="linenos">286</span></a><span class="sd">    """</span>
 </span><span id="CampaignInfo-287"><a href="#CampaignInfo-287"><span class="linenos">287</span></a>
 </span><span id="CampaignInfo-288"><a href="#CampaignInfo-288"><span class="linenos">288</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">easyvvuq_version</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
 </span><span id="CampaignInfo-289"><a href="#CampaignInfo-289"><span class="linenos">289</span></a>                 <span class="n">campaign_dir_prefix</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">campaign_dir</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
 </span><span id="CampaignInfo-290"><a href="#CampaignInfo-290"><span class="linenos">290</span></a>                 <span class="n">runs_dir</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">local</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 </span><span id="CampaignInfo-291"><a href="#CampaignInfo-291"><span class="linenos">291</span></a>
 </span><span id="CampaignInfo-292"><a href="#CampaignInfo-292"><span class="linenos">292</span></a>        <span class="k">if</span> <span class="n">name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="CampaignInfo-293"><a href="#CampaignInfo-293"><span class="linenos">293</span></a>            <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;CampaignInfo constructor must be passed a &#39;name&#39;.&quot;</span>
+</span><span id="CampaignInfo-293"><a href="#CampaignInfo-293"><span class="linenos">293</span></a>            <span class="n">message</span> <span class="o">=</span> <span class="s2">"CampaignInfo constructor must be passed a 'name'."</span>
 </span><span id="CampaignInfo-294"><a href="#CampaignInfo-294"><span class="linenos">294</span></a>            <span class="n">logger</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
 </span><span id="CampaignInfo-295"><a href="#CampaignInfo-295"><span class="linenos">295</span></a>            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
 </span><span id="CampaignInfo-296"><a href="#CampaignInfo-296"><span class="linenos">296</span></a>
 </span><span id="CampaignInfo-297"><a href="#CampaignInfo-297"><span class="linenos">297</span></a>        <span class="k">if</span> <span class="n">campaign_dir</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="CampaignInfo-298"><a href="#CampaignInfo-298"><span class="linenos">298</span></a>            <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;CampaignInfo constructor must be passed &#39;campaign_dir&#39;&quot;</span>
+</span><span id="CampaignInfo-298"><a href="#CampaignInfo-298"><span class="linenos">298</span></a>            <span class="n">message</span> <span class="o">=</span> <span class="s2">"CampaignInfo constructor must be passed 'campaign_dir'"</span>
 </span><span id="CampaignInfo-299"><a href="#CampaignInfo-299"><span class="linenos">299</span></a>            <span class="n">logger</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
 </span><span id="CampaignInfo-300"><a href="#CampaignInfo-300"><span class="linenos">300</span></a>            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
 </span><span id="CampaignInfo-301"><a href="#CampaignInfo-301"><span class="linenos">301</span></a>
@@ -1268,10 +1268,10 @@ is returned as a JSON format sting.</li>
 </span><span id="CampaignInfo-311"><a href="#CampaignInfo-311"><span class="linenos">311</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">campaign_dir</span> <span class="o">=</span> <span class="n">campaign_dir</span>
 </span><span id="CampaignInfo-312"><a href="#CampaignInfo-312"><span class="linenos">312</span></a>
 </span><span id="CampaignInfo-313"><a href="#CampaignInfo-313"><span class="linenos">313</span></a>        <span class="k">if</span> <span class="n">runs_dir</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="CampaignInfo-314"><a href="#CampaignInfo-314"><span class="linenos">314</span></a>            <span class="n">runs_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">campaign_dir</span><span class="p">,</span> <span class="s1">&#39;runs&#39;</span><span class="p">)</span>
+</span><span id="CampaignInfo-314"><a href="#CampaignInfo-314"><span class="linenos">314</span></a>            <span class="n">runs_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">campaign_dir</span><span class="p">,</span> <span class="s1">'runs'</span><span class="p">)</span>
 </span><span id="CampaignInfo-315"><a href="#CampaignInfo-315"><span class="linenos">315</span></a>
 </span><span id="CampaignInfo-316"><a href="#CampaignInfo-316"><span class="linenos">316</span></a>        <span class="k">if</span> <span class="n">local</span><span class="p">:</span>
-</span><span id="CampaignInfo-317"><a href="#CampaignInfo-317"><span class="linenos">317</span></a>            <span class="n">check_local_dir</span><span class="p">(</span><span class="n">runs_dir</span><span class="p">,</span> <span class="s1">&#39;runs&#39;</span><span class="p">)</span>
+</span><span id="CampaignInfo-317"><a href="#CampaignInfo-317"><span class="linenos">317</span></a>            <span class="n">check_local_dir</span><span class="p">(</span><span class="n">runs_dir</span><span class="p">,</span> <span class="s1">'runs'</span><span class="p">)</span>
 </span><span id="CampaignInfo-318"><a href="#CampaignInfo-318"><span class="linenos">318</span></a>
 </span><span id="CampaignInfo-319"><a href="#CampaignInfo-319"><span class="linenos">319</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">runs_dir</span> <span class="o">=</span> <span class="n">runs_dir</span>
 </span><span id="CampaignInfo-320"><a href="#CampaignInfo-320"><span class="linenos">320</span></a>
@@ -1285,7 +1285,7 @@ is returned as a JSON format sting.</li>
 </span><span id="CampaignInfo-328"><a href="#CampaignInfo-328"><span class="linenos">328</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_easyvvuq_version</span> <span class="o">=</span> <span class="n">version_no</span>
 </span><span id="CampaignInfo-329"><a href="#CampaignInfo-329"><span class="linenos">329</span></a>
 </span><span id="CampaignInfo-330"><a href="#CampaignInfo-330"><span class="linenos">330</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">flatten</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-</span><span id="CampaignInfo-331"><a href="#CampaignInfo-331"><span class="linenos">331</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert this to a dictionary</span>
+</span><span id="CampaignInfo-331"><a href="#CampaignInfo-331"><span class="linenos">331</span></a><span class="w">        </span><span class="sd">"""Convert this to a dictionary</span>
 </span><span id="CampaignInfo-332"><a href="#CampaignInfo-332"><span class="linenos">332</span></a>
 </span><span id="CampaignInfo-333"><a href="#CampaignInfo-333"><span class="linenos">333</span></a><span class="sd">        Parameters</span>
 </span><span id="CampaignInfo-334"><a href="#CampaignInfo-334"><span class="linenos">334</span></a><span class="sd">        ----------</span>
@@ -1296,14 +1296,14 @@ is returned as a JSON format sting.</li>
 </span><span id="CampaignInfo-339"><a href="#CampaignInfo-339"><span class="linenos">339</span></a><span class="sd">        -------</span>
 </span><span id="CampaignInfo-340"><a href="#CampaignInfo-340"><span class="linenos">340</span></a><span class="sd">        dict</span>
 </span><span id="CampaignInfo-341"><a href="#CampaignInfo-341"><span class="linenos">341</span></a><span class="sd">            Dictionary representing the campaign.</span>
-</span><span id="CampaignInfo-342"><a href="#CampaignInfo-342"><span class="linenos">342</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="CampaignInfo-342"><a href="#CampaignInfo-342"><span class="linenos">342</span></a><span class="sd">        """</span>
 </span><span id="CampaignInfo-343"><a href="#CampaignInfo-343"><span class="linenos">343</span></a>
 </span><span id="CampaignInfo-344"><a href="#CampaignInfo-344"><span class="linenos">344</span></a>        <span class="n">out_dict</span> <span class="o">=</span> <span class="p">{</span>
-</span><span id="CampaignInfo-345"><a href="#CampaignInfo-345"><span class="linenos">345</span></a>            <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
-</span><span id="CampaignInfo-346"><a href="#CampaignInfo-346"><span class="linenos">346</span></a>            <span class="s1">&#39;campaign_dir&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">campaign_dir</span><span class="p">,</span>
-</span><span id="CampaignInfo-347"><a href="#CampaignInfo-347"><span class="linenos">347</span></a>            <span class="s1">&#39;campaign_dir_prefix&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">campaign_dir_prefix</span><span class="p">,</span>
-</span><span id="CampaignInfo-348"><a href="#CampaignInfo-348"><span class="linenos">348</span></a>            <span class="s1">&#39;runs_dir&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">runs_dir</span><span class="p">,</span>
-</span><span id="CampaignInfo-349"><a href="#CampaignInfo-349"><span class="linenos">349</span></a>            <span class="s1">&#39;easyvvuq_version&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">easyvvuq_version</span>
+</span><span id="CampaignInfo-345"><a href="#CampaignInfo-345"><span class="linenos">345</span></a>            <span class="s1">'name'</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+</span><span id="CampaignInfo-346"><a href="#CampaignInfo-346"><span class="linenos">346</span></a>            <span class="s1">'campaign_dir'</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">campaign_dir</span><span class="p">,</span>
+</span><span id="CampaignInfo-347"><a href="#CampaignInfo-347"><span class="linenos">347</span></a>            <span class="s1">'campaign_dir_prefix'</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">campaign_dir_prefix</span><span class="p">,</span>
+</span><span id="CampaignInfo-348"><a href="#CampaignInfo-348"><span class="linenos">348</span></a>            <span class="s1">'runs_dir'</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">runs_dir</span><span class="p">,</span>
+</span><span id="CampaignInfo-349"><a href="#CampaignInfo-349"><span class="linenos">349</span></a>            <span class="s1">'easyvvuq_version'</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">easyvvuq_version</span>
 </span><span id="CampaignInfo-350"><a href="#CampaignInfo-350"><span class="linenos">350</span></a>        <span class="p">}</span>
 </span><span id="CampaignInfo-351"><a href="#CampaignInfo-351"><span class="linenos">351</span></a>
 </span><span id="CampaignInfo-352"><a href="#CampaignInfo-352"><span class="linenos">352</span></a>        <span class="k">return</span> <span class="n">out_dict</span>
@@ -1362,12 +1362,12 @@ path to run directory (within the campaign directory)</li>
 </span><span id="CampaignInfo.__init__-290"><a href="#CampaignInfo.__init__-290"><span class="linenos">290</span></a>                 <span class="n">runs_dir</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">local</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 </span><span id="CampaignInfo.__init__-291"><a href="#CampaignInfo.__init__-291"><span class="linenos">291</span></a>
 </span><span id="CampaignInfo.__init__-292"><a href="#CampaignInfo.__init__-292"><span class="linenos">292</span></a>        <span class="k">if</span> <span class="n">name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="CampaignInfo.__init__-293"><a href="#CampaignInfo.__init__-293"><span class="linenos">293</span></a>            <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;CampaignInfo constructor must be passed a &#39;name&#39;.&quot;</span>
+</span><span id="CampaignInfo.__init__-293"><a href="#CampaignInfo.__init__-293"><span class="linenos">293</span></a>            <span class="n">message</span> <span class="o">=</span> <span class="s2">"CampaignInfo constructor must be passed a 'name'."</span>
 </span><span id="CampaignInfo.__init__-294"><a href="#CampaignInfo.__init__-294"><span class="linenos">294</span></a>            <span class="n">logger</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
 </span><span id="CampaignInfo.__init__-295"><a href="#CampaignInfo.__init__-295"><span class="linenos">295</span></a>            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
 </span><span id="CampaignInfo.__init__-296"><a href="#CampaignInfo.__init__-296"><span class="linenos">296</span></a>
 </span><span id="CampaignInfo.__init__-297"><a href="#CampaignInfo.__init__-297"><span class="linenos">297</span></a>        <span class="k">if</span> <span class="n">campaign_dir</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="CampaignInfo.__init__-298"><a href="#CampaignInfo.__init__-298"><span class="linenos">298</span></a>            <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;CampaignInfo constructor must be passed &#39;campaign_dir&#39;&quot;</span>
+</span><span id="CampaignInfo.__init__-298"><a href="#CampaignInfo.__init__-298"><span class="linenos">298</span></a>            <span class="n">message</span> <span class="o">=</span> <span class="s2">"CampaignInfo constructor must be passed 'campaign_dir'"</span>
 </span><span id="CampaignInfo.__init__-299"><a href="#CampaignInfo.__init__-299"><span class="linenos">299</span></a>            <span class="n">logger</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
 </span><span id="CampaignInfo.__init__-300"><a href="#CampaignInfo.__init__-300"><span class="linenos">300</span></a>            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
 </span><span id="CampaignInfo.__init__-301"><a href="#CampaignInfo.__init__-301"><span class="linenos">301</span></a>
@@ -1383,10 +1383,10 @@ path to run directory (within the campaign directory)</li>
 </span><span id="CampaignInfo.__init__-311"><a href="#CampaignInfo.__init__-311"><span class="linenos">311</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">campaign_dir</span> <span class="o">=</span> <span class="n">campaign_dir</span>
 </span><span id="CampaignInfo.__init__-312"><a href="#CampaignInfo.__init__-312"><span class="linenos">312</span></a>
 </span><span id="CampaignInfo.__init__-313"><a href="#CampaignInfo.__init__-313"><span class="linenos">313</span></a>        <span class="k">if</span> <span class="n">runs_dir</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="CampaignInfo.__init__-314"><a href="#CampaignInfo.__init__-314"><span class="linenos">314</span></a>            <span class="n">runs_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">campaign_dir</span><span class="p">,</span> <span class="s1">&#39;runs&#39;</span><span class="p">)</span>
+</span><span id="CampaignInfo.__init__-314"><a href="#CampaignInfo.__init__-314"><span class="linenos">314</span></a>            <span class="n">runs_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">campaign_dir</span><span class="p">,</span> <span class="s1">'runs'</span><span class="p">)</span>
 </span><span id="CampaignInfo.__init__-315"><a href="#CampaignInfo.__init__-315"><span class="linenos">315</span></a>
 </span><span id="CampaignInfo.__init__-316"><a href="#CampaignInfo.__init__-316"><span class="linenos">316</span></a>        <span class="k">if</span> <span class="n">local</span><span class="p">:</span>
-</span><span id="CampaignInfo.__init__-317"><a href="#CampaignInfo.__init__-317"><span class="linenos">317</span></a>            <span class="n">check_local_dir</span><span class="p">(</span><span class="n">runs_dir</span><span class="p">,</span> <span class="s1">&#39;runs&#39;</span><span class="p">)</span>
+</span><span id="CampaignInfo.__init__-317"><a href="#CampaignInfo.__init__-317"><span class="linenos">317</span></a>            <span class="n">check_local_dir</span><span class="p">(</span><span class="n">runs_dir</span><span class="p">,</span> <span class="s1">'runs'</span><span class="p">)</span>
 </span><span id="CampaignInfo.__init__-318"><a href="#CampaignInfo.__init__-318"><span class="linenos">318</span></a>
 </span><span id="CampaignInfo.__init__-319"><a href="#CampaignInfo.__init__-319"><span class="linenos">319</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">runs_dir</span> <span class="o">=</span> <span class="n">runs_dir</span>
 </span></pre></div>
@@ -1469,7 +1469,7 @@ path to run directory (within the campaign directory)</li>
     </div>
     <a class="headerlink" href="#CampaignInfo.to_dict"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="CampaignInfo.to_dict-330"><a href="#CampaignInfo.to_dict-330"><span class="linenos">330</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">flatten</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-</span><span id="CampaignInfo.to_dict-331"><a href="#CampaignInfo.to_dict-331"><span class="linenos">331</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert this to a dictionary</span>
+</span><span id="CampaignInfo.to_dict-331"><a href="#CampaignInfo.to_dict-331"><span class="linenos">331</span></a><span class="w">        </span><span class="sd">"""Convert this to a dictionary</span>
 </span><span id="CampaignInfo.to_dict-332"><a href="#CampaignInfo.to_dict-332"><span class="linenos">332</span></a>
 </span><span id="CampaignInfo.to_dict-333"><a href="#CampaignInfo.to_dict-333"><span class="linenos">333</span></a><span class="sd">        Parameters</span>
 </span><span id="CampaignInfo.to_dict-334"><a href="#CampaignInfo.to_dict-334"><span class="linenos">334</span></a><span class="sd">        ----------</span>
@@ -1480,14 +1480,14 @@ path to run directory (within the campaign directory)</li>
 </span><span id="CampaignInfo.to_dict-339"><a href="#CampaignInfo.to_dict-339"><span class="linenos">339</span></a><span class="sd">        -------</span>
 </span><span id="CampaignInfo.to_dict-340"><a href="#CampaignInfo.to_dict-340"><span class="linenos">340</span></a><span class="sd">        dict</span>
 </span><span id="CampaignInfo.to_dict-341"><a href="#CampaignInfo.to_dict-341"><span class="linenos">341</span></a><span class="sd">            Dictionary representing the campaign.</span>
-</span><span id="CampaignInfo.to_dict-342"><a href="#CampaignInfo.to_dict-342"><span class="linenos">342</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="CampaignInfo.to_dict-342"><a href="#CampaignInfo.to_dict-342"><span class="linenos">342</span></a><span class="sd">        """</span>
 </span><span id="CampaignInfo.to_dict-343"><a href="#CampaignInfo.to_dict-343"><span class="linenos">343</span></a>
 </span><span id="CampaignInfo.to_dict-344"><a href="#CampaignInfo.to_dict-344"><span class="linenos">344</span></a>        <span class="n">out_dict</span> <span class="o">=</span> <span class="p">{</span>
-</span><span id="CampaignInfo.to_dict-345"><a href="#CampaignInfo.to_dict-345"><span class="linenos">345</span></a>            <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
-</span><span id="CampaignInfo.to_dict-346"><a href="#CampaignInfo.to_dict-346"><span class="linenos">346</span></a>            <span class="s1">&#39;campaign_dir&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">campaign_dir</span><span class="p">,</span>
-</span><span id="CampaignInfo.to_dict-347"><a href="#CampaignInfo.to_dict-347"><span class="linenos">347</span></a>            <span class="s1">&#39;campaign_dir_prefix&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">campaign_dir_prefix</span><span class="p">,</span>
-</span><span id="CampaignInfo.to_dict-348"><a href="#CampaignInfo.to_dict-348"><span class="linenos">348</span></a>            <span class="s1">&#39;runs_dir&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">runs_dir</span><span class="p">,</span>
-</span><span id="CampaignInfo.to_dict-349"><a href="#CampaignInfo.to_dict-349"><span class="linenos">349</span></a>            <span class="s1">&#39;easyvvuq_version&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">easyvvuq_version</span>
+</span><span id="CampaignInfo.to_dict-345"><a href="#CampaignInfo.to_dict-345"><span class="linenos">345</span></a>            <span class="s1">'name'</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+</span><span id="CampaignInfo.to_dict-346"><a href="#CampaignInfo.to_dict-346"><span class="linenos">346</span></a>            <span class="s1">'campaign_dir'</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">campaign_dir</span><span class="p">,</span>
+</span><span id="CampaignInfo.to_dict-347"><a href="#CampaignInfo.to_dict-347"><span class="linenos">347</span></a>            <span class="s1">'campaign_dir_prefix'</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">campaign_dir_prefix</span><span class="p">,</span>
+</span><span id="CampaignInfo.to_dict-348"><a href="#CampaignInfo.to_dict-348"><span class="linenos">348</span></a>            <span class="s1">'runs_dir'</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">runs_dir</span><span class="p">,</span>
+</span><span id="CampaignInfo.to_dict-349"><a href="#CampaignInfo.to_dict-349"><span class="linenos">349</span></a>            <span class="s1">'easyvvuq_version'</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">easyvvuq_version</span>
 </span><span id="CampaignInfo.to_dict-350"><a href="#CampaignInfo.to_dict-350"><span class="linenos">350</span></a>        <span class="p">}</span>
 </span><span id="CampaignInfo.to_dict-351"><a href="#CampaignInfo.to_dict-351"><span class="linenos">351</span></a>
 </span><span id="CampaignInfo.to_dict-352"><a href="#CampaignInfo.to_dict-352"><span class="linenos">352</span></a>        <span class="k">return</span> <span class="n">out_dict</span>

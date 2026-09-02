@@ -66,7 +66,7 @@
 
                         <label class="view-source-button" for="mod-base_element-view-source"><span>View Source</span></label>
 
-                        <div class="pdoc-code codehilite"><pre><span></span><span id="L-1"><a href="#L-1"><span class="linenos"> 1</span></a><span class="n">__copyright__</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+                        <div class="pdoc-code codehilite"><pre><span></span><span id="L-1"><a href="#L-1"><span class="linenos"> 1</span></a><span class="n">__copyright__</span> <span class="o">=</span> <span class="s2">"""</span>
 </span><span id="L-2"><a href="#L-2"><span class="linenos"> 2</span></a>
 </span><span id="L-3"><a href="#L-3"><span class="linenos"> 3</span></a><span class="s2">    Copyright 2018 Robin A. Richardson, David W. Wright</span>
 </span><span id="L-4"><a href="#L-4"><span class="linenos"> 4</span></a>
@@ -85,17 +85,17 @@
 </span><span id="L-17"><a href="#L-17"><span class="linenos">17</span></a><span class="s2">    You should have received a copy of the Lesser GNU General Public License</span>
 </span><span id="L-18"><a href="#L-18"><span class="linenos">18</span></a><span class="s2">    along with this program.  If not, see &lt;https://www.gnu.org/licenses/&gt;.</span>
 </span><span id="L-19"><a href="#L-19"><span class="linenos">19</span></a>
-</span><span id="L-20"><a href="#L-20"><span class="linenos">20</span></a><span class="s2">&quot;&quot;&quot;</span>
-</span><span id="L-21"><a href="#L-21"><span class="linenos">21</span></a><span class="n">__license__</span> <span class="o">=</span> <span class="s2">&quot;LGPL&quot;</span>
+</span><span id="L-20"><a href="#L-20"><span class="linenos">20</span></a><span class="s2">"""</span>
+</span><span id="L-21"><a href="#L-21"><span class="linenos">21</span></a><span class="n">__license__</span> <span class="o">=</span> <span class="s2">"LGPL"</span>
 </span><span id="L-22"><a href="#L-22"><span class="linenos">22</span></a>
 </span><span id="L-23"><a href="#L-23"><span class="linenos">23</span></a>
 </span><span id="L-24"><a href="#L-24"><span class="linenos">24</span></a><span class="k">class</span><span class="w"> </span><span class="nc">BaseElement</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-</span><span id="L-25"><a href="#L-25"><span class="linenos">25</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Baseclass for all EasyVVUQ elements.</span>
+</span><span id="L-25"><a href="#L-25"><span class="linenos">25</span></a><span class="w">    </span><span class="sd">"""Baseclass for all EasyVVUQ elements.</span>
 </span><span id="L-26"><a href="#L-26"><span class="linenos">26</span></a>
 </span><span id="L-27"><a href="#L-27"><span class="linenos">27</span></a><span class="sd">    Attributes</span>
 </span><span id="L-28"><a href="#L-28"><span class="linenos">28</span></a><span class="sd">    ----------</span>
 </span><span id="L-29"><a href="#L-29"><span class="linenos">29</span></a>
-</span><span id="L-30"><a href="#L-30"><span class="linenos">30</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="L-30"><a href="#L-30"><span class="linenos">30</span></a><span class="sd">    """</span>
 </span><span id="L-31"><a href="#L-31"><span class="linenos">31</span></a>
 </span><span id="L-32"><a href="#L-32"><span class="linenos">32</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">element_name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span id="L-33"><a href="#L-33"><span class="linenos">33</span></a>        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
@@ -121,12 +121,12 @@
     </div>
     <a class="headerlink" href="#BaseElement"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="BaseElement-25"><a href="#BaseElement-25"><span class="linenos">25</span></a><span class="k">class</span><span class="w"> </span><span class="nc">BaseElement</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-</span><span id="BaseElement-26"><a href="#BaseElement-26"><span class="linenos">26</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Baseclass for all EasyVVUQ elements.</span>
+</span><span id="BaseElement-26"><a href="#BaseElement-26"><span class="linenos">26</span></a><span class="w">    </span><span class="sd">"""Baseclass for all EasyVVUQ elements.</span>
 </span><span id="BaseElement-27"><a href="#BaseElement-27"><span class="linenos">27</span></a>
 </span><span id="BaseElement-28"><a href="#BaseElement-28"><span class="linenos">28</span></a><span class="sd">    Attributes</span>
 </span><span id="BaseElement-29"><a href="#BaseElement-29"><span class="linenos">29</span></a><span class="sd">    ----------</span>
 </span><span id="BaseElement-30"><a href="#BaseElement-30"><span class="linenos">30</span></a>
-</span><span id="BaseElement-31"><a href="#BaseElement-31"><span class="linenos">31</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="BaseElement-31"><a href="#BaseElement-31"><span class="linenos">31</span></a><span class="sd">    """</span>
 </span><span id="BaseElement-32"><a href="#BaseElement-32"><span class="linenos">32</span></a>
 </span><span id="BaseElement-33"><a href="#BaseElement-33"><span class="linenos">33</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">element_name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span id="BaseElement-34"><a href="#BaseElement-34"><span class="linenos">34</span></a>        <span class="k">raise</span> <span class="ne">NotImplementedError</span>

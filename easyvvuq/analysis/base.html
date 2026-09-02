@@ -71,11 +71,11 @@
 
                         <label class="view-source-button" for="mod-base-view-source"><span>View Source</span></label>
 
-                        <div class="pdoc-code codehilite"><pre><span></span><span id="L-1"><a href="#L-1"><span class="linenos"> 1</span></a><span class="sd">&quot;&quot;&quot;Provides a base class for all analysis elements.</span>
-</span><span id="L-2"><a href="#L-2"><span class="linenos"> 2</span></a><span class="sd">&quot;&quot;&quot;</span>
+                        <div class="pdoc-code codehilite"><pre><span></span><span id="L-1"><a href="#L-1"><span class="linenos"> 1</span></a><span class="sd">"""Provides a base class for all analysis elements.</span>
+</span><span id="L-2"><a href="#L-2"><span class="linenos"> 2</span></a><span class="sd">"""</span>
 </span><span id="L-3"><a href="#L-3"><span class="linenos"> 3</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">..</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseElement</span>
 </span><span id="L-4"><a href="#L-4"><span class="linenos"> 4</span></a>
-</span><span id="L-5"><a href="#L-5"><span class="linenos"> 5</span></a><span class="n">__copyright__</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+</span><span id="L-5"><a href="#L-5"><span class="linenos"> 5</span></a><span class="n">__copyright__</span> <span class="o">=</span> <span class="s2">"""</span>
 </span><span id="L-6"><a href="#L-6"><span class="linenos"> 6</span></a>
 </span><span id="L-7"><a href="#L-7"><span class="linenos"> 7</span></a><span class="s2">    Copyright 2018 Robin A. Richardson, David W. Wright</span>
 </span><span id="L-8"><a href="#L-8"><span class="linenos"> 8</span></a>
@@ -94,20 +94,20 @@
 </span><span id="L-21"><a href="#L-21"><span class="linenos">21</span></a><span class="s2">    You should have received a copy of the Lesser GNU General Public License</span>
 </span><span id="L-22"><a href="#L-22"><span class="linenos">22</span></a><span class="s2">    along with this program.  If not, see &lt;https://www.gnu.org/licenses/&gt;.</span>
 </span><span id="L-23"><a href="#L-23"><span class="linenos">23</span></a>
-</span><span id="L-24"><a href="#L-24"><span class="linenos">24</span></a><span class="s2">&quot;&quot;&quot;</span>
-</span><span id="L-25"><a href="#L-25"><span class="linenos">25</span></a><span class="n">__license__</span> <span class="o">=</span> <span class="s2">&quot;LGPL&quot;</span>
+</span><span id="L-24"><a href="#L-24"><span class="linenos">24</span></a><span class="s2">"""</span>
+</span><span id="L-25"><a href="#L-25"><span class="linenos">25</span></a><span class="n">__license__</span> <span class="o">=</span> <span class="s2">"LGPL"</span>
 </span><span id="L-26"><a href="#L-26"><span class="linenos">26</span></a>
 </span><span id="L-27"><a href="#L-27"><span class="linenos">27</span></a>
 </span><span id="L-28"><a href="#L-28"><span class="linenos">28</span></a><span class="k">class</span><span class="w"> </span><span class="nc">BaseAnalysisElement</span><span class="p">(</span><span class="n">BaseElement</span><span class="p">):</span>
-</span><span id="L-29"><a href="#L-29"><span class="linenos">29</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Base class for all EasyVVUQ analysis elements.</span>
+</span><span id="L-29"><a href="#L-29"><span class="linenos">29</span></a><span class="w">    </span><span class="sd">"""Base class for all EasyVVUQ analysis elements.</span>
 </span><span id="L-30"><a href="#L-30"><span class="linenos">30</span></a>
 </span><span id="L-31"><a href="#L-31"><span class="linenos">31</span></a><span class="sd">    Attributes</span>
 </span><span id="L-32"><a href="#L-32"><span class="linenos">32</span></a><span class="sd">    ----------</span>
 </span><span id="L-33"><a href="#L-33"><span class="linenos">33</span></a>
-</span><span id="L-34"><a href="#L-34"><span class="linenos">34</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="L-34"><a href="#L-34"><span class="linenos">34</span></a><span class="sd">    """</span>
 </span><span id="L-35"><a href="#L-35"><span class="linenos">35</span></a>
 </span><span id="L-36"><a href="#L-36"><span class="linenos">36</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">analyse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_frame</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-</span><span id="L-37"><a href="#L-37"><span class="linenos">37</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Perform analysis on input `data_frame`.</span>
+</span><span id="L-37"><a href="#L-37"><span class="linenos">37</span></a><span class="w">        </span><span class="sd">"""Perform analysis on input `data_frame`.</span>
 </span><span id="L-38"><a href="#L-38"><span class="linenos">38</span></a>
 </span><span id="L-39"><a href="#L-39"><span class="linenos">39</span></a><span class="sd">        Parameters</span>
 </span><span id="L-40"><a href="#L-40"><span class="linenos">40</span></a><span class="sd">        ----------</span>
@@ -117,37 +117,37 @@
 </span><span id="L-44"><a href="#L-44"><span class="linenos">44</span></a><span class="sd">        Returns</span>
 </span><span id="L-45"><a href="#L-45"><span class="linenos">45</span></a><span class="sd">        -------</span>
 </span><span id="L-46"><a href="#L-46"><span class="linenos">46</span></a><span class="sd">        AnalysisResults instance</span>
-</span><span id="L-47"><a href="#L-47"><span class="linenos">47</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-47"><a href="#L-47"><span class="linenos">47</span></a><span class="sd">        """</span>
 </span><span id="L-48"><a href="#L-48"><span class="linenos">48</span></a>        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
 </span><span id="L-49"><a href="#L-49"><span class="linenos">49</span></a>
 </span><span id="L-50"><a href="#L-50"><span class="linenos">50</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">element_category</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="L-51"><a href="#L-51"><span class="linenos">51</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Element type for logging and verification.</span>
+</span><span id="L-51"><a href="#L-51"><span class="linenos">51</span></a><span class="w">        </span><span class="sd">"""Element type for logging and verification.</span>
 </span><span id="L-52"><a href="#L-52"><span class="linenos">52</span></a>
 </span><span id="L-53"><a href="#L-53"><span class="linenos">53</span></a><span class="sd">        Returns</span>
 </span><span id="L-54"><a href="#L-54"><span class="linenos">54</span></a><span class="sd">        -------</span>
 </span><span id="L-55"><a href="#L-55"><span class="linenos">55</span></a><span class="sd">        str</span>
 </span><span id="L-56"><a href="#L-56"><span class="linenos">56</span></a><span class="sd">            Element category.</span>
-</span><span id="L-57"><a href="#L-57"><span class="linenos">57</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="L-58"><a href="#L-58"><span class="linenos">58</span></a>        <span class="k">return</span> <span class="s2">&quot;analysis&quot;</span>
+</span><span id="L-57"><a href="#L-57"><span class="linenos">57</span></a><span class="sd">        """</span>
+</span><span id="L-58"><a href="#L-58"><span class="linenos">58</span></a>        <span class="k">return</span> <span class="s2">"analysis"</span>
 </span><span id="L-59"><a href="#L-59"><span class="linenos">59</span></a>
 </span><span id="L-60"><a href="#L-60"><span class="linenos">60</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">element_name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="L-61"><a href="#L-61"><span class="linenos">61</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Name for this element for logging purposes.</span>
+</span><span id="L-61"><a href="#L-61"><span class="linenos">61</span></a><span class="w">        </span><span class="sd">"""Name for this element for logging purposes.</span>
 </span><span id="L-62"><a href="#L-62"><span class="linenos">62</span></a>
 </span><span id="L-63"><a href="#L-63"><span class="linenos">63</span></a><span class="sd">        Returns</span>
 </span><span id="L-64"><a href="#L-64"><span class="linenos">64</span></a><span class="sd">        -------</span>
 </span><span id="L-65"><a href="#L-65"><span class="linenos">65</span></a><span class="sd">        str</span>
 </span><span id="L-66"><a href="#L-66"><span class="linenos">66</span></a><span class="sd">            Element name.</span>
-</span><span id="L-67"><a href="#L-67"><span class="linenos">67</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-67"><a href="#L-67"><span class="linenos">67</span></a><span class="sd">        """</span>
 </span><span id="L-68"><a href="#L-68"><span class="linenos">68</span></a>        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
 </span><span id="L-69"><a href="#L-69"><span class="linenos">69</span></a>
 </span><span id="L-70"><a href="#L-70"><span class="linenos">70</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">element_version</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="L-71"><a href="#L-71"><span class="linenos">71</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Version of this element for logging purposes.</span>
+</span><span id="L-71"><a href="#L-71"><span class="linenos">71</span></a><span class="w">        </span><span class="sd">"""Version of this element for logging purposes.</span>
 </span><span id="L-72"><a href="#L-72"><span class="linenos">72</span></a>
 </span><span id="L-73"><a href="#L-73"><span class="linenos">73</span></a><span class="sd">        Returns</span>
 </span><span id="L-74"><a href="#L-74"><span class="linenos">74</span></a><span class="sd">        -------</span>
 </span><span id="L-75"><a href="#L-75"><span class="linenos">75</span></a><span class="sd">        str</span>
 </span><span id="L-76"><a href="#L-76"><span class="linenos">76</span></a><span class="sd">            Element version.</span>
-</span><span id="L-77"><a href="#L-77"><span class="linenos">77</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-77"><a href="#L-77"><span class="linenos">77</span></a><span class="sd">        """</span>
 </span><span id="L-78"><a href="#L-78"><span class="linenos">78</span></a>        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
 </span></pre></div>
 
@@ -165,15 +165,15 @@
     </div>
     <a class="headerlink" href="#BaseAnalysisElement"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="BaseAnalysisElement-29"><a href="#BaseAnalysisElement-29"><span class="linenos">29</span></a><span class="k">class</span><span class="w"> </span><span class="nc">BaseAnalysisElement</span><span class="p">(</span><span class="n">BaseElement</span><span class="p">):</span>
-</span><span id="BaseAnalysisElement-30"><a href="#BaseAnalysisElement-30"><span class="linenos">30</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Base class for all EasyVVUQ analysis elements.</span>
+</span><span id="BaseAnalysisElement-30"><a href="#BaseAnalysisElement-30"><span class="linenos">30</span></a><span class="w">    </span><span class="sd">"""Base class for all EasyVVUQ analysis elements.</span>
 </span><span id="BaseAnalysisElement-31"><a href="#BaseAnalysisElement-31"><span class="linenos">31</span></a>
 </span><span id="BaseAnalysisElement-32"><a href="#BaseAnalysisElement-32"><span class="linenos">32</span></a><span class="sd">    Attributes</span>
 </span><span id="BaseAnalysisElement-33"><a href="#BaseAnalysisElement-33"><span class="linenos">33</span></a><span class="sd">    ----------</span>
 </span><span id="BaseAnalysisElement-34"><a href="#BaseAnalysisElement-34"><span class="linenos">34</span></a>
-</span><span id="BaseAnalysisElement-35"><a href="#BaseAnalysisElement-35"><span class="linenos">35</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="BaseAnalysisElement-35"><a href="#BaseAnalysisElement-35"><span class="linenos">35</span></a><span class="sd">    """</span>
 </span><span id="BaseAnalysisElement-36"><a href="#BaseAnalysisElement-36"><span class="linenos">36</span></a>
 </span><span id="BaseAnalysisElement-37"><a href="#BaseAnalysisElement-37"><span class="linenos">37</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">analyse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_frame</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-</span><span id="BaseAnalysisElement-38"><a href="#BaseAnalysisElement-38"><span class="linenos">38</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Perform analysis on input `data_frame`.</span>
+</span><span id="BaseAnalysisElement-38"><a href="#BaseAnalysisElement-38"><span class="linenos">38</span></a><span class="w">        </span><span class="sd">"""Perform analysis on input `data_frame`.</span>
 </span><span id="BaseAnalysisElement-39"><a href="#BaseAnalysisElement-39"><span class="linenos">39</span></a>
 </span><span id="BaseAnalysisElement-40"><a href="#BaseAnalysisElement-40"><span class="linenos">40</span></a><span class="sd">        Parameters</span>
 </span><span id="BaseAnalysisElement-41"><a href="#BaseAnalysisElement-41"><span class="linenos">41</span></a><span class="sd">        ----------</span>
@@ -183,37 +183,37 @@
 </span><span id="BaseAnalysisElement-45"><a href="#BaseAnalysisElement-45"><span class="linenos">45</span></a><span class="sd">        Returns</span>
 </span><span id="BaseAnalysisElement-46"><a href="#BaseAnalysisElement-46"><span class="linenos">46</span></a><span class="sd">        -------</span>
 </span><span id="BaseAnalysisElement-47"><a href="#BaseAnalysisElement-47"><span class="linenos">47</span></a><span class="sd">        AnalysisResults instance</span>
-</span><span id="BaseAnalysisElement-48"><a href="#BaseAnalysisElement-48"><span class="linenos">48</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="BaseAnalysisElement-48"><a href="#BaseAnalysisElement-48"><span class="linenos">48</span></a><span class="sd">        """</span>
 </span><span id="BaseAnalysisElement-49"><a href="#BaseAnalysisElement-49"><span class="linenos">49</span></a>        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
 </span><span id="BaseAnalysisElement-50"><a href="#BaseAnalysisElement-50"><span class="linenos">50</span></a>
 </span><span id="BaseAnalysisElement-51"><a href="#BaseAnalysisElement-51"><span class="linenos">51</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">element_category</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="BaseAnalysisElement-52"><a href="#BaseAnalysisElement-52"><span class="linenos">52</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Element type for logging and verification.</span>
+</span><span id="BaseAnalysisElement-52"><a href="#BaseAnalysisElement-52"><span class="linenos">52</span></a><span class="w">        </span><span class="sd">"""Element type for logging and verification.</span>
 </span><span id="BaseAnalysisElement-53"><a href="#BaseAnalysisElement-53"><span class="linenos">53</span></a>
 </span><span id="BaseAnalysisElement-54"><a href="#BaseAnalysisElement-54"><span class="linenos">54</span></a><span class="sd">        Returns</span>
 </span><span id="BaseAnalysisElement-55"><a href="#BaseAnalysisElement-55"><span class="linenos">55</span></a><span class="sd">        -------</span>
 </span><span id="BaseAnalysisElement-56"><a href="#BaseAnalysisElement-56"><span class="linenos">56</span></a><span class="sd">        str</span>
 </span><span id="BaseAnalysisElement-57"><a href="#BaseAnalysisElement-57"><span class="linenos">57</span></a><span class="sd">            Element category.</span>
-</span><span id="BaseAnalysisElement-58"><a href="#BaseAnalysisElement-58"><span class="linenos">58</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="BaseAnalysisElement-59"><a href="#BaseAnalysisElement-59"><span class="linenos">59</span></a>        <span class="k">return</span> <span class="s2">&quot;analysis&quot;</span>
+</span><span id="BaseAnalysisElement-58"><a href="#BaseAnalysisElement-58"><span class="linenos">58</span></a><span class="sd">        """</span>
+</span><span id="BaseAnalysisElement-59"><a href="#BaseAnalysisElement-59"><span class="linenos">59</span></a>        <span class="k">return</span> <span class="s2">"analysis"</span>
 </span><span id="BaseAnalysisElement-60"><a href="#BaseAnalysisElement-60"><span class="linenos">60</span></a>
 </span><span id="BaseAnalysisElement-61"><a href="#BaseAnalysisElement-61"><span class="linenos">61</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">element_name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="BaseAnalysisElement-62"><a href="#BaseAnalysisElement-62"><span class="linenos">62</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Name for this element for logging purposes.</span>
+</span><span id="BaseAnalysisElement-62"><a href="#BaseAnalysisElement-62"><span class="linenos">62</span></a><span class="w">        </span><span class="sd">"""Name for this element for logging purposes.</span>
 </span><span id="BaseAnalysisElement-63"><a href="#BaseAnalysisElement-63"><span class="linenos">63</span></a>
 </span><span id="BaseAnalysisElement-64"><a href="#BaseAnalysisElement-64"><span class="linenos">64</span></a><span class="sd">        Returns</span>
 </span><span id="BaseAnalysisElement-65"><a href="#BaseAnalysisElement-65"><span class="linenos">65</span></a><span class="sd">        -------</span>
 </span><span id="BaseAnalysisElement-66"><a href="#BaseAnalysisElement-66"><span class="linenos">66</span></a><span class="sd">        str</span>
 </span><span id="BaseAnalysisElement-67"><a href="#BaseAnalysisElement-67"><span class="linenos">67</span></a><span class="sd">            Element name.</span>
-</span><span id="BaseAnalysisElement-68"><a href="#BaseAnalysisElement-68"><span class="linenos">68</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="BaseAnalysisElement-68"><a href="#BaseAnalysisElement-68"><span class="linenos">68</span></a><span class="sd">        """</span>
 </span><span id="BaseAnalysisElement-69"><a href="#BaseAnalysisElement-69"><span class="linenos">69</span></a>        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
 </span><span id="BaseAnalysisElement-70"><a href="#BaseAnalysisElement-70"><span class="linenos">70</span></a>
 </span><span id="BaseAnalysisElement-71"><a href="#BaseAnalysisElement-71"><span class="linenos">71</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">element_version</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="BaseAnalysisElement-72"><a href="#BaseAnalysisElement-72"><span class="linenos">72</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Version of this element for logging purposes.</span>
+</span><span id="BaseAnalysisElement-72"><a href="#BaseAnalysisElement-72"><span class="linenos">72</span></a><span class="w">        </span><span class="sd">"""Version of this element for logging purposes.</span>
 </span><span id="BaseAnalysisElement-73"><a href="#BaseAnalysisElement-73"><span class="linenos">73</span></a>
 </span><span id="BaseAnalysisElement-74"><a href="#BaseAnalysisElement-74"><span class="linenos">74</span></a><span class="sd">        Returns</span>
 </span><span id="BaseAnalysisElement-75"><a href="#BaseAnalysisElement-75"><span class="linenos">75</span></a><span class="sd">        -------</span>
 </span><span id="BaseAnalysisElement-76"><a href="#BaseAnalysisElement-76"><span class="linenos">76</span></a><span class="sd">        str</span>
 </span><span id="BaseAnalysisElement-77"><a href="#BaseAnalysisElement-77"><span class="linenos">77</span></a><span class="sd">            Element version.</span>
-</span><span id="BaseAnalysisElement-78"><a href="#BaseAnalysisElement-78"><span class="linenos">78</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="BaseAnalysisElement-78"><a href="#BaseAnalysisElement-78"><span class="linenos">78</span></a><span class="sd">        """</span>
 </span><span id="BaseAnalysisElement-79"><a href="#BaseAnalysisElement-79"><span class="linenos">79</span></a>        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
 </span></pre></div>
 
@@ -236,7 +236,7 @@
     </div>
     <a class="headerlink" href="#BaseAnalysisElement.analyse"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="BaseAnalysisElement.analyse-37"><a href="#BaseAnalysisElement.analyse-37"><span class="linenos">37</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">analyse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_frame</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-</span><span id="BaseAnalysisElement.analyse-38"><a href="#BaseAnalysisElement.analyse-38"><span class="linenos">38</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Perform analysis on input `data_frame`.</span>
+</span><span id="BaseAnalysisElement.analyse-38"><a href="#BaseAnalysisElement.analyse-38"><span class="linenos">38</span></a><span class="w">        </span><span class="sd">"""Perform analysis on input `data_frame`.</span>
 </span><span id="BaseAnalysisElement.analyse-39"><a href="#BaseAnalysisElement.analyse-39"><span class="linenos">39</span></a>
 </span><span id="BaseAnalysisElement.analyse-40"><a href="#BaseAnalysisElement.analyse-40"><span class="linenos">40</span></a><span class="sd">        Parameters</span>
 </span><span id="BaseAnalysisElement.analyse-41"><a href="#BaseAnalysisElement.analyse-41"><span class="linenos">41</span></a><span class="sd">        ----------</span>
@@ -246,7 +246,7 @@
 </span><span id="BaseAnalysisElement.analyse-45"><a href="#BaseAnalysisElement.analyse-45"><span class="linenos">45</span></a><span class="sd">        Returns</span>
 </span><span id="BaseAnalysisElement.analyse-46"><a href="#BaseAnalysisElement.analyse-46"><span class="linenos">46</span></a><span class="sd">        -------</span>
 </span><span id="BaseAnalysisElement.analyse-47"><a href="#BaseAnalysisElement.analyse-47"><span class="linenos">47</span></a><span class="sd">        AnalysisResults instance</span>
-</span><span id="BaseAnalysisElement.analyse-48"><a href="#BaseAnalysisElement.analyse-48"><span class="linenos">48</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="BaseAnalysisElement.analyse-48"><a href="#BaseAnalysisElement.analyse-48"><span class="linenos">48</span></a><span class="sd">        """</span>
 </span><span id="BaseAnalysisElement.analyse-49"><a href="#BaseAnalysisElement.analyse-49"><span class="linenos">49</span></a>        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
 </span></pre></div>
 
@@ -281,14 +281,14 @@ Input data for analysis.</li>
     </div>
     <a class="headerlink" href="#BaseAnalysisElement.element_category"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="BaseAnalysisElement.element_category-51"><a href="#BaseAnalysisElement.element_category-51"><span class="linenos">51</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">element_category</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="BaseAnalysisElement.element_category-52"><a href="#BaseAnalysisElement.element_category-52"><span class="linenos">52</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Element type for logging and verification.</span>
+</span><span id="BaseAnalysisElement.element_category-52"><a href="#BaseAnalysisElement.element_category-52"><span class="linenos">52</span></a><span class="w">        </span><span class="sd">"""Element type for logging and verification.</span>
 </span><span id="BaseAnalysisElement.element_category-53"><a href="#BaseAnalysisElement.element_category-53"><span class="linenos">53</span></a>
 </span><span id="BaseAnalysisElement.element_category-54"><a href="#BaseAnalysisElement.element_category-54"><span class="linenos">54</span></a><span class="sd">        Returns</span>
 </span><span id="BaseAnalysisElement.element_category-55"><a href="#BaseAnalysisElement.element_category-55"><span class="linenos">55</span></a><span class="sd">        -------</span>
 </span><span id="BaseAnalysisElement.element_category-56"><a href="#BaseAnalysisElement.element_category-56"><span class="linenos">56</span></a><span class="sd">        str</span>
 </span><span id="BaseAnalysisElement.element_category-57"><a href="#BaseAnalysisElement.element_category-57"><span class="linenos">57</span></a><span class="sd">            Element category.</span>
-</span><span id="BaseAnalysisElement.element_category-58"><a href="#BaseAnalysisElement.element_category-58"><span class="linenos">58</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="BaseAnalysisElement.element_category-59"><a href="#BaseAnalysisElement.element_category-59"><span class="linenos">59</span></a>        <span class="k">return</span> <span class="s2">&quot;analysis&quot;</span>
+</span><span id="BaseAnalysisElement.element_category-58"><a href="#BaseAnalysisElement.element_category-58"><span class="linenos">58</span></a><span class="sd">        """</span>
+</span><span id="BaseAnalysisElement.element_category-59"><a href="#BaseAnalysisElement.element_category-59"><span class="linenos">59</span></a>        <span class="k">return</span> <span class="s2">"analysis"</span>
 </span></pre></div>
 
 
@@ -315,13 +315,13 @@ Input data for analysis.</li>
     </div>
     <a class="headerlink" href="#BaseAnalysisElement.element_name"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="BaseAnalysisElement.element_name-61"><a href="#BaseAnalysisElement.element_name-61"><span class="linenos">61</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">element_name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="BaseAnalysisElement.element_name-62"><a href="#BaseAnalysisElement.element_name-62"><span class="linenos">62</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Name for this element for logging purposes.</span>
+</span><span id="BaseAnalysisElement.element_name-62"><a href="#BaseAnalysisElement.element_name-62"><span class="linenos">62</span></a><span class="w">        </span><span class="sd">"""Name for this element for logging purposes.</span>
 </span><span id="BaseAnalysisElement.element_name-63"><a href="#BaseAnalysisElement.element_name-63"><span class="linenos">63</span></a>
 </span><span id="BaseAnalysisElement.element_name-64"><a href="#BaseAnalysisElement.element_name-64"><span class="linenos">64</span></a><span class="sd">        Returns</span>
 </span><span id="BaseAnalysisElement.element_name-65"><a href="#BaseAnalysisElement.element_name-65"><span class="linenos">65</span></a><span class="sd">        -------</span>
 </span><span id="BaseAnalysisElement.element_name-66"><a href="#BaseAnalysisElement.element_name-66"><span class="linenos">66</span></a><span class="sd">        str</span>
 </span><span id="BaseAnalysisElement.element_name-67"><a href="#BaseAnalysisElement.element_name-67"><span class="linenos">67</span></a><span class="sd">            Element name.</span>
-</span><span id="BaseAnalysisElement.element_name-68"><a href="#BaseAnalysisElement.element_name-68"><span class="linenos">68</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="BaseAnalysisElement.element_name-68"><a href="#BaseAnalysisElement.element_name-68"><span class="linenos">68</span></a><span class="sd">        """</span>
 </span><span id="BaseAnalysisElement.element_name-69"><a href="#BaseAnalysisElement.element_name-69"><span class="linenos">69</span></a>        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
 </span></pre></div>
 
@@ -349,13 +349,13 @@ Input data for analysis.</li>
     </div>
     <a class="headerlink" href="#BaseAnalysisElement.element_version"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="BaseAnalysisElement.element_version-71"><a href="#BaseAnalysisElement.element_version-71"><span class="linenos">71</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">element_version</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="BaseAnalysisElement.element_version-72"><a href="#BaseAnalysisElement.element_version-72"><span class="linenos">72</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Version of this element for logging purposes.</span>
+</span><span id="BaseAnalysisElement.element_version-72"><a href="#BaseAnalysisElement.element_version-72"><span class="linenos">72</span></a><span class="w">        </span><span class="sd">"""Version of this element for logging purposes.</span>
 </span><span id="BaseAnalysisElement.element_version-73"><a href="#BaseAnalysisElement.element_version-73"><span class="linenos">73</span></a>
 </span><span id="BaseAnalysisElement.element_version-74"><a href="#BaseAnalysisElement.element_version-74"><span class="linenos">74</span></a><span class="sd">        Returns</span>
 </span><span id="BaseAnalysisElement.element_version-75"><a href="#BaseAnalysisElement.element_version-75"><span class="linenos">75</span></a><span class="sd">        -------</span>
 </span><span id="BaseAnalysisElement.element_version-76"><a href="#BaseAnalysisElement.element_version-76"><span class="linenos">76</span></a><span class="sd">        str</span>
 </span><span id="BaseAnalysisElement.element_version-77"><a href="#BaseAnalysisElement.element_version-77"><span class="linenos">77</span></a><span class="sd">            Element version.</span>
-</span><span id="BaseAnalysisElement.element_version-78"><a href="#BaseAnalysisElement.element_version-78"><span class="linenos">78</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="BaseAnalysisElement.element_version-78"><a href="#BaseAnalysisElement.element_version-78"><span class="linenos">78</span></a><span class="sd">        """</span>
 </span><span id="BaseAnalysisElement.element_version-79"><a href="#BaseAnalysisElement.element_version-79"><span class="linenos">79</span></a>        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
 </span></pre></div>
 

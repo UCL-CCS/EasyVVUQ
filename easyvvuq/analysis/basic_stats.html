@@ -79,14 +79,14 @@
 
                         <label class="view-source-button" for="mod-basic_stats-view-source"><span>View Source</span></label>
 
-                        <div class="pdoc-code codehilite"><pre><span></span><span id="L-1"><a href="#L-1"><span class="linenos">  1</span></a><span class="sd">&quot;&quot;&quot;Provides analysis element for basic statistical analysis.</span>
+                        <div class="pdoc-code codehilite"><pre><span></span><span id="L-1"><a href="#L-1"><span class="linenos">  1</span></a><span class="sd">"""Provides analysis element for basic statistical analysis.</span>
 </span><span id="L-2"><a href="#L-2"><span class="linenos">  2</span></a>
 </span><span id="L-3"><a href="#L-3"><span class="linenos">  3</span></a><span class="sd">The analysis is based on `pandas.DataFrame.describe()` function.</span>
-</span><span id="L-4"><a href="#L-4"><span class="linenos">  4</span></a><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-4"><a href="#L-4"><span class="linenos">  4</span></a><span class="sd">"""</span>
 </span><span id="L-5"><a href="#L-5"><span class="linenos">  5</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">easyvvuq</span><span class="w"> </span><span class="kn">import</span> <span class="n">OutputType</span>
 </span><span id="L-6"><a href="#L-6"><span class="linenos">  6</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseAnalysisElement</span>
 </span><span id="L-7"><a href="#L-7"><span class="linenos">  7</span></a>
-</span><span id="L-8"><a href="#L-8"><span class="linenos">  8</span></a><span class="n">__copyright__</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+</span><span id="L-8"><a href="#L-8"><span class="linenos">  8</span></a><span class="n">__copyright__</span> <span class="o">=</span> <span class="s2">"""</span>
 </span><span id="L-9"><a href="#L-9"><span class="linenos">  9</span></a>
 </span><span id="L-10"><a href="#L-10"><span class="linenos"> 10</span></a><span class="s2">    Copyright 2018 Robin A. Richardson, David W. Wright</span>
 </span><span id="L-11"><a href="#L-11"><span class="linenos"> 11</span></a>
@@ -105,14 +105,14 @@
 </span><span id="L-24"><a href="#L-24"><span class="linenos"> 24</span></a><span class="s2">    You should have received a copy of the Lesser GNU General Public License</span>
 </span><span id="L-25"><a href="#L-25"><span class="linenos"> 25</span></a><span class="s2">    along with this program.  If not, see &lt;https://www.gnu.org/licenses/&gt;.</span>
 </span><span id="L-26"><a href="#L-26"><span class="linenos"> 26</span></a>
-</span><span id="L-27"><a href="#L-27"><span class="linenos"> 27</span></a><span class="s2">&quot;&quot;&quot;</span>
-</span><span id="L-28"><a href="#L-28"><span class="linenos"> 28</span></a><span class="n">__license__</span> <span class="o">=</span> <span class="s2">&quot;LGPL&quot;</span>
+</span><span id="L-27"><a href="#L-27"><span class="linenos"> 27</span></a><span class="s2">"""</span>
+</span><span id="L-28"><a href="#L-28"><span class="linenos"> 28</span></a><span class="n">__license__</span> <span class="o">=</span> <span class="s2">"LGPL"</span>
 </span><span id="L-29"><a href="#L-29"><span class="linenos"> 29</span></a>
 </span><span id="L-30"><a href="#L-30"><span class="linenos"> 30</span></a>
 </span><span id="L-31"><a href="#L-31"><span class="linenos"> 31</span></a><span class="k">class</span><span class="w"> </span><span class="nc">BasicStats</span><span class="p">(</span><span class="n">BaseAnalysisElement</span><span class="p">):</span>
 </span><span id="L-32"><a href="#L-32"><span class="linenos"> 32</span></a>
 </span><span id="L-33"><a href="#L-33"><span class="linenos"> 33</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">groupby</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">qoi_cols</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-</span><span id="L-34"><a href="#L-34"><span class="linenos"> 34</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Element to calculate basic stats for `qoi_cols` values.</span>
+</span><span id="L-34"><a href="#L-34"><span class="linenos"> 34</span></a><span class="w">        </span><span class="sd">"""Element to calculate basic stats for `qoi_cols` values.</span>
 </span><span id="L-35"><a href="#L-35"><span class="linenos"> 35</span></a>
 </span><span id="L-36"><a href="#L-36"><span class="linenos"> 36</span></a><span class="sd">        This results in values for: count, mean, std, min, max and 25%, 50% &amp;</span>
 </span><span id="L-37"><a href="#L-37"><span class="linenos"> 37</span></a><span class="sd">        75% percentiles for each value in the analysis.</span>
@@ -125,7 +125,7 @@
 </span><span id="L-44"><a href="#L-44"><span class="linenos"> 44</span></a><span class="sd">        qoi_cols : list or None</span>
 </span><span id="L-45"><a href="#L-45"><span class="linenos"> 45</span></a><span class="sd">            Columns of quantities of interest (for which stats will be</span>
 </span><span id="L-46"><a href="#L-46"><span class="linenos"> 46</span></a><span class="sd">            calculated).</span>
-</span><span id="L-47"><a href="#L-47"><span class="linenos"> 47</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-47"><a href="#L-47"><span class="linenos"> 47</span></a><span class="sd">        """</span>
 </span><span id="L-48"><a href="#L-48"><span class="linenos"> 48</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">groupby</span> <span class="o">=</span> <span class="n">groupby</span>
 </span><span id="L-49"><a href="#L-49"><span class="linenos"> 49</span></a>        <span class="k">if</span> <span class="n">qoi_cols</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
 </span><span id="L-50"><a href="#L-50"><span class="linenos"> 50</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">qoi_cols</span> <span class="o">=</span> <span class="n">qoi_cols</span>
@@ -134,15 +134,15 @@
 </span><span id="L-53"><a href="#L-53"><span class="linenos"> 53</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">output_type</span> <span class="o">=</span> <span class="n">OutputType</span><span class="o">.</span><span class="n">SUMMARY</span>
 </span><span id="L-54"><a href="#L-54"><span class="linenos"> 54</span></a>
 </span><span id="L-55"><a href="#L-55"><span class="linenos"> 55</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">element_name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="L-56"><a href="#L-56"><span class="linenos"> 56</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Name for this element for logging purposes&quot;&quot;&quot;</span>
-</span><span id="L-57"><a href="#L-57"><span class="linenos"> 57</span></a>        <span class="k">return</span> <span class="s2">&quot;basic_stats&quot;</span>
+</span><span id="L-56"><a href="#L-56"><span class="linenos"> 56</span></a><span class="w">        </span><span class="sd">"""Name for this element for logging purposes"""</span>
+</span><span id="L-57"><a href="#L-57"><span class="linenos"> 57</span></a>        <span class="k">return</span> <span class="s2">"basic_stats"</span>
 </span><span id="L-58"><a href="#L-58"><span class="linenos"> 58</span></a>
 </span><span id="L-59"><a href="#L-59"><span class="linenos"> 59</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">element_version</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="L-60"><a href="#L-60"><span class="linenos"> 60</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Version of this element for logging purposes&quot;&quot;&quot;</span>
-</span><span id="L-61"><a href="#L-61"><span class="linenos"> 61</span></a>        <span class="k">return</span> <span class="s2">&quot;0.1&quot;</span>
+</span><span id="L-60"><a href="#L-60"><span class="linenos"> 60</span></a><span class="w">        </span><span class="sd">"""Version of this element for logging purposes"""</span>
+</span><span id="L-61"><a href="#L-61"><span class="linenos"> 61</span></a>        <span class="k">return</span> <span class="s2">"0.1"</span>
 </span><span id="L-62"><a href="#L-62"><span class="linenos"> 62</span></a>
 </span><span id="L-63"><a href="#L-63"><span class="linenos"> 63</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">analyse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_frame</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-</span><span id="L-64"><a href="#L-64"><span class="linenos"> 64</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Perform the basis stats analysis on the input `data_frame`.</span>
+</span><span id="L-64"><a href="#L-64"><span class="linenos"> 64</span></a><span class="w">        </span><span class="sd">"""Perform the basis stats analysis on the input `data_frame`.</span>
 </span><span id="L-65"><a href="#L-65"><span class="linenos"> 65</span></a>
 </span><span id="L-66"><a href="#L-66"><span class="linenos"> 66</span></a><span class="sd">        Analysis is based on `pandas.Dataframe.describe` and results in</span>
 </span><span id="L-67"><a href="#L-67"><span class="linenos"> 67</span></a><span class="sd">        values for: count, mean, std, min, max and 25%, 50% &amp; 75% percentiles</span>
@@ -160,16 +160,16 @@
 </span><span id="L-79"><a href="#L-79"><span class="linenos"> 79</span></a><span class="sd">        -------</span>
 </span><span id="L-80"><a href="#L-80"><span class="linenos"> 80</span></a><span class="sd">        :obj:`pandas.DataFrame`</span>
 </span><span id="L-81"><a href="#L-81"><span class="linenos"> 81</span></a><span class="sd">            Basic statistic for selected columns and groupings of data.</span>
-</span><span id="L-82"><a href="#L-82"><span class="linenos"> 82</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-82"><a href="#L-82"><span class="linenos"> 82</span></a><span class="sd">        """</span>
 </span><span id="L-83"><a href="#L-83"><span class="linenos"> 83</span></a>
 </span><span id="L-84"><a href="#L-84"><span class="linenos"> 84</span></a>        <span class="n">qoi_cols</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">qoi_cols</span>
 </span><span id="L-85"><a href="#L-85"><span class="linenos"> 85</span></a>
 </span><span id="L-86"><a href="#L-86"><span class="linenos"> 86</span></a>        <span class="k">if</span> <span class="n">data_frame</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="L-87"><a href="#L-87"><span class="linenos"> 87</span></a>            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;Analysis element needs a data frame to &quot;</span>
-</span><span id="L-88"><a href="#L-88"><span class="linenos"> 88</span></a>                               <span class="s2">&quot;analyse&quot;</span><span class="p">)</span>
+</span><span id="L-87"><a href="#L-87"><span class="linenos"> 87</span></a>            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">"Analysis element needs a data frame to "</span>
+</span><span id="L-88"><a href="#L-88"><span class="linenos"> 88</span></a>                               <span class="s2">"analyse"</span><span class="p">)</span>
 </span><span id="L-89"><a href="#L-89"><span class="linenos"> 89</span></a>        <span class="k">elif</span> <span class="n">data_frame</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
 </span><span id="L-90"><a href="#L-90"><span class="linenos"> 90</span></a>            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
-</span><span id="L-91"><a href="#L-91"><span class="linenos"> 91</span></a>                <span class="s2">&quot;No data in data frame passed to analyse element&quot;</span><span class="p">)</span>
+</span><span id="L-91"><a href="#L-91"><span class="linenos"> 91</span></a>                <span class="s2">"No data in data frame passed to analyse element"</span><span class="p">)</span>
 </span><span id="L-92"><a href="#L-92"><span class="linenos"> 92</span></a>
 </span><span id="L-93"><a href="#L-93"><span class="linenos"> 93</span></a>        <span class="c1"># Get summary statistics</span>
 </span><span id="L-94"><a href="#L-94"><span class="linenos"> 94</span></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">groupby</span><span class="p">:</span>
@@ -203,7 +203,7 @@
             <div class="pdoc-code codehilite"><pre><span></span><span id="BasicStats-32"><a href="#BasicStats-32"><span class="linenos"> 32</span></a><span class="k">class</span><span class="w"> </span><span class="nc">BasicStats</span><span class="p">(</span><span class="n">BaseAnalysisElement</span><span class="p">):</span>
 </span><span id="BasicStats-33"><a href="#BasicStats-33"><span class="linenos"> 33</span></a>
 </span><span id="BasicStats-34"><a href="#BasicStats-34"><span class="linenos"> 34</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">groupby</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">qoi_cols</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-</span><span id="BasicStats-35"><a href="#BasicStats-35"><span class="linenos"> 35</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Element to calculate basic stats for `qoi_cols` values.</span>
+</span><span id="BasicStats-35"><a href="#BasicStats-35"><span class="linenos"> 35</span></a><span class="w">        </span><span class="sd">"""Element to calculate basic stats for `qoi_cols` values.</span>
 </span><span id="BasicStats-36"><a href="#BasicStats-36"><span class="linenos"> 36</span></a>
 </span><span id="BasicStats-37"><a href="#BasicStats-37"><span class="linenos"> 37</span></a><span class="sd">        This results in values for: count, mean, std, min, max and 25%, 50% &amp;</span>
 </span><span id="BasicStats-38"><a href="#BasicStats-38"><span class="linenos"> 38</span></a><span class="sd">        75% percentiles for each value in the analysis.</span>
@@ -216,7 +216,7 @@
 </span><span id="BasicStats-45"><a href="#BasicStats-45"><span class="linenos"> 45</span></a><span class="sd">        qoi_cols : list or None</span>
 </span><span id="BasicStats-46"><a href="#BasicStats-46"><span class="linenos"> 46</span></a><span class="sd">            Columns of quantities of interest (for which stats will be</span>
 </span><span id="BasicStats-47"><a href="#BasicStats-47"><span class="linenos"> 47</span></a><span class="sd">            calculated).</span>
-</span><span id="BasicStats-48"><a href="#BasicStats-48"><span class="linenos"> 48</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="BasicStats-48"><a href="#BasicStats-48"><span class="linenos"> 48</span></a><span class="sd">        """</span>
 </span><span id="BasicStats-49"><a href="#BasicStats-49"><span class="linenos"> 49</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">groupby</span> <span class="o">=</span> <span class="n">groupby</span>
 </span><span id="BasicStats-50"><a href="#BasicStats-50"><span class="linenos"> 50</span></a>        <span class="k">if</span> <span class="n">qoi_cols</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
 </span><span id="BasicStats-51"><a href="#BasicStats-51"><span class="linenos"> 51</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">qoi_cols</span> <span class="o">=</span> <span class="n">qoi_cols</span>
@@ -225,15 +225,15 @@
 </span><span id="BasicStats-54"><a href="#BasicStats-54"><span class="linenos"> 54</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">output_type</span> <span class="o">=</span> <span class="n">OutputType</span><span class="o">.</span><span class="n">SUMMARY</span>
 </span><span id="BasicStats-55"><a href="#BasicStats-55"><span class="linenos"> 55</span></a>
 </span><span id="BasicStats-56"><a href="#BasicStats-56"><span class="linenos"> 56</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">element_name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="BasicStats-57"><a href="#BasicStats-57"><span class="linenos"> 57</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Name for this element for logging purposes&quot;&quot;&quot;</span>
-</span><span id="BasicStats-58"><a href="#BasicStats-58"><span class="linenos"> 58</span></a>        <span class="k">return</span> <span class="s2">&quot;basic_stats&quot;</span>
+</span><span id="BasicStats-57"><a href="#BasicStats-57"><span class="linenos"> 57</span></a><span class="w">        </span><span class="sd">"""Name for this element for logging purposes"""</span>
+</span><span id="BasicStats-58"><a href="#BasicStats-58"><span class="linenos"> 58</span></a>        <span class="k">return</span> <span class="s2">"basic_stats"</span>
 </span><span id="BasicStats-59"><a href="#BasicStats-59"><span class="linenos"> 59</span></a>
 </span><span id="BasicStats-60"><a href="#BasicStats-60"><span class="linenos"> 60</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">element_version</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="BasicStats-61"><a href="#BasicStats-61"><span class="linenos"> 61</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Version of this element for logging purposes&quot;&quot;&quot;</span>
-</span><span id="BasicStats-62"><a href="#BasicStats-62"><span class="linenos"> 62</span></a>        <span class="k">return</span> <span class="s2">&quot;0.1&quot;</span>
+</span><span id="BasicStats-61"><a href="#BasicStats-61"><span class="linenos"> 61</span></a><span class="w">        </span><span class="sd">"""Version of this element for logging purposes"""</span>
+</span><span id="BasicStats-62"><a href="#BasicStats-62"><span class="linenos"> 62</span></a>        <span class="k">return</span> <span class="s2">"0.1"</span>
 </span><span id="BasicStats-63"><a href="#BasicStats-63"><span class="linenos"> 63</span></a>
 </span><span id="BasicStats-64"><a href="#BasicStats-64"><span class="linenos"> 64</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">analyse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_frame</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-</span><span id="BasicStats-65"><a href="#BasicStats-65"><span class="linenos"> 65</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Perform the basis stats analysis on the input `data_frame`.</span>
+</span><span id="BasicStats-65"><a href="#BasicStats-65"><span class="linenos"> 65</span></a><span class="w">        </span><span class="sd">"""Perform the basis stats analysis on the input `data_frame`.</span>
 </span><span id="BasicStats-66"><a href="#BasicStats-66"><span class="linenos"> 66</span></a>
 </span><span id="BasicStats-67"><a href="#BasicStats-67"><span class="linenos"> 67</span></a><span class="sd">        Analysis is based on `pandas.Dataframe.describe` and results in</span>
 </span><span id="BasicStats-68"><a href="#BasicStats-68"><span class="linenos"> 68</span></a><span class="sd">        values for: count, mean, std, min, max and 25%, 50% &amp; 75% percentiles</span>
@@ -251,16 +251,16 @@
 </span><span id="BasicStats-80"><a href="#BasicStats-80"><span class="linenos"> 80</span></a><span class="sd">        -------</span>
 </span><span id="BasicStats-81"><a href="#BasicStats-81"><span class="linenos"> 81</span></a><span class="sd">        :obj:`pandas.DataFrame`</span>
 </span><span id="BasicStats-82"><a href="#BasicStats-82"><span class="linenos"> 82</span></a><span class="sd">            Basic statistic for selected columns and groupings of data.</span>
-</span><span id="BasicStats-83"><a href="#BasicStats-83"><span class="linenos"> 83</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="BasicStats-83"><a href="#BasicStats-83"><span class="linenos"> 83</span></a><span class="sd">        """</span>
 </span><span id="BasicStats-84"><a href="#BasicStats-84"><span class="linenos"> 84</span></a>
 </span><span id="BasicStats-85"><a href="#BasicStats-85"><span class="linenos"> 85</span></a>        <span class="n">qoi_cols</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">qoi_cols</span>
 </span><span id="BasicStats-86"><a href="#BasicStats-86"><span class="linenos"> 86</span></a>
 </span><span id="BasicStats-87"><a href="#BasicStats-87"><span class="linenos"> 87</span></a>        <span class="k">if</span> <span class="n">data_frame</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="BasicStats-88"><a href="#BasicStats-88"><span class="linenos"> 88</span></a>            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;Analysis element needs a data frame to &quot;</span>
-</span><span id="BasicStats-89"><a href="#BasicStats-89"><span class="linenos"> 89</span></a>                               <span class="s2">&quot;analyse&quot;</span><span class="p">)</span>
+</span><span id="BasicStats-88"><a href="#BasicStats-88"><span class="linenos"> 88</span></a>            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">"Analysis element needs a data frame to "</span>
+</span><span id="BasicStats-89"><a href="#BasicStats-89"><span class="linenos"> 89</span></a>                               <span class="s2">"analyse"</span><span class="p">)</span>
 </span><span id="BasicStats-90"><a href="#BasicStats-90"><span class="linenos"> 90</span></a>        <span class="k">elif</span> <span class="n">data_frame</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
 </span><span id="BasicStats-91"><a href="#BasicStats-91"><span class="linenos"> 91</span></a>            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
-</span><span id="BasicStats-92"><a href="#BasicStats-92"><span class="linenos"> 92</span></a>                <span class="s2">&quot;No data in data frame passed to analyse element&quot;</span><span class="p">)</span>
+</span><span id="BasicStats-92"><a href="#BasicStats-92"><span class="linenos"> 92</span></a>                <span class="s2">"No data in data frame passed to analyse element"</span><span class="p">)</span>
 </span><span id="BasicStats-93"><a href="#BasicStats-93"><span class="linenos"> 93</span></a>
 </span><span id="BasicStats-94"><a href="#BasicStats-94"><span class="linenos"> 94</span></a>        <span class="c1"># Get summary statistics</span>
 </span><span id="BasicStats-95"><a href="#BasicStats-95"><span class="linenos"> 95</span></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">groupby</span><span class="p">:</span>
@@ -296,7 +296,7 @@
     </div>
     <a class="headerlink" href="#BasicStats.__init__"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="BasicStats.__init__-34"><a href="#BasicStats.__init__-34"><span class="linenos">34</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">groupby</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">qoi_cols</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-</span><span id="BasicStats.__init__-35"><a href="#BasicStats.__init__-35"><span class="linenos">35</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Element to calculate basic stats for `qoi_cols` values.</span>
+</span><span id="BasicStats.__init__-35"><a href="#BasicStats.__init__-35"><span class="linenos">35</span></a><span class="w">        </span><span class="sd">"""Element to calculate basic stats for `qoi_cols` values.</span>
 </span><span id="BasicStats.__init__-36"><a href="#BasicStats.__init__-36"><span class="linenos">36</span></a>
 </span><span id="BasicStats.__init__-37"><a href="#BasicStats.__init__-37"><span class="linenos">37</span></a><span class="sd">        This results in values for: count, mean, std, min, max and 25%, 50% &amp;</span>
 </span><span id="BasicStats.__init__-38"><a href="#BasicStats.__init__-38"><span class="linenos">38</span></a><span class="sd">        75% percentiles for each value in the analysis.</span>
@@ -309,7 +309,7 @@
 </span><span id="BasicStats.__init__-45"><a href="#BasicStats.__init__-45"><span class="linenos">45</span></a><span class="sd">        qoi_cols : list or None</span>
 </span><span id="BasicStats.__init__-46"><a href="#BasicStats.__init__-46"><span class="linenos">46</span></a><span class="sd">            Columns of quantities of interest (for which stats will be</span>
 </span><span id="BasicStats.__init__-47"><a href="#BasicStats.__init__-47"><span class="linenos">47</span></a><span class="sd">            calculated).</span>
-</span><span id="BasicStats.__init__-48"><a href="#BasicStats.__init__-48"><span class="linenos">48</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="BasicStats.__init__-48"><a href="#BasicStats.__init__-48"><span class="linenos">48</span></a><span class="sd">        """</span>
 </span><span id="BasicStats.__init__-49"><a href="#BasicStats.__init__-49"><span class="linenos">49</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">groupby</span> <span class="o">=</span> <span class="n">groupby</span>
 </span><span id="BasicStats.__init__-50"><a href="#BasicStats.__init__-50"><span class="linenos">50</span></a>        <span class="k">if</span> <span class="n">qoi_cols</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
 </span><span id="BasicStats.__init__-51"><a href="#BasicStats.__init__-51"><span class="linenos">51</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">qoi_cols</span> <span class="o">=</span> <span class="n">qoi_cols</span>
@@ -372,8 +372,8 @@ calculated).</li>
     </div>
     <a class="headerlink" href="#BasicStats.element_name"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="BasicStats.element_name-56"><a href="#BasicStats.element_name-56"><span class="linenos">56</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">element_name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="BasicStats.element_name-57"><a href="#BasicStats.element_name-57"><span class="linenos">57</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Name for this element for logging purposes&quot;&quot;&quot;</span>
-</span><span id="BasicStats.element_name-58"><a href="#BasicStats.element_name-58"><span class="linenos">58</span></a>        <span class="k">return</span> <span class="s2">&quot;basic_stats&quot;</span>
+</span><span id="BasicStats.element_name-57"><a href="#BasicStats.element_name-57"><span class="linenos">57</span></a><span class="w">        </span><span class="sd">"""Name for this element for logging purposes"""</span>
+</span><span id="BasicStats.element_name-58"><a href="#BasicStats.element_name-58"><span class="linenos">58</span></a>        <span class="k">return</span> <span class="s2">"basic_stats"</span>
 </span></pre></div>
 
 
@@ -394,8 +394,8 @@ calculated).</li>
     </div>
     <a class="headerlink" href="#BasicStats.element_version"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="BasicStats.element_version-60"><a href="#BasicStats.element_version-60"><span class="linenos">60</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">element_version</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="BasicStats.element_version-61"><a href="#BasicStats.element_version-61"><span class="linenos">61</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Version of this element for logging purposes&quot;&quot;&quot;</span>
-</span><span id="BasicStats.element_version-62"><a href="#BasicStats.element_version-62"><span class="linenos">62</span></a>        <span class="k">return</span> <span class="s2">&quot;0.1&quot;</span>
+</span><span id="BasicStats.element_version-61"><a href="#BasicStats.element_version-61"><span class="linenos">61</span></a><span class="w">        </span><span class="sd">"""Version of this element for logging purposes"""</span>
+</span><span id="BasicStats.element_version-62"><a href="#BasicStats.element_version-62"><span class="linenos">62</span></a>        <span class="k">return</span> <span class="s2">"0.1"</span>
 </span></pre></div>
 
 
@@ -416,7 +416,7 @@ calculated).</li>
     </div>
     <a class="headerlink" href="#BasicStats.analyse"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="BasicStats.analyse-64"><a href="#BasicStats.analyse-64"><span class="linenos"> 64</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">analyse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_frame</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-</span><span id="BasicStats.analyse-65"><a href="#BasicStats.analyse-65"><span class="linenos"> 65</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Perform the basis stats analysis on the input `data_frame`.</span>
+</span><span id="BasicStats.analyse-65"><a href="#BasicStats.analyse-65"><span class="linenos"> 65</span></a><span class="w">        </span><span class="sd">"""Perform the basis stats analysis on the input `data_frame`.</span>
 </span><span id="BasicStats.analyse-66"><a href="#BasicStats.analyse-66"><span class="linenos"> 66</span></a>
 </span><span id="BasicStats.analyse-67"><a href="#BasicStats.analyse-67"><span class="linenos"> 67</span></a><span class="sd">        Analysis is based on `pandas.Dataframe.describe` and results in</span>
 </span><span id="BasicStats.analyse-68"><a href="#BasicStats.analyse-68"><span class="linenos"> 68</span></a><span class="sd">        values for: count, mean, std, min, max and 25%, 50% &amp; 75% percentiles</span>
@@ -434,16 +434,16 @@ calculated).</li>
 </span><span id="BasicStats.analyse-80"><a href="#BasicStats.analyse-80"><span class="linenos"> 80</span></a><span class="sd">        -------</span>
 </span><span id="BasicStats.analyse-81"><a href="#BasicStats.analyse-81"><span class="linenos"> 81</span></a><span class="sd">        :obj:`pandas.DataFrame`</span>
 </span><span id="BasicStats.analyse-82"><a href="#BasicStats.analyse-82"><span class="linenos"> 82</span></a><span class="sd">            Basic statistic for selected columns and groupings of data.</span>
-</span><span id="BasicStats.analyse-83"><a href="#BasicStats.analyse-83"><span class="linenos"> 83</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="BasicStats.analyse-83"><a href="#BasicStats.analyse-83"><span class="linenos"> 83</span></a><span class="sd">        """</span>
 </span><span id="BasicStats.analyse-84"><a href="#BasicStats.analyse-84"><span class="linenos"> 84</span></a>
 </span><span id="BasicStats.analyse-85"><a href="#BasicStats.analyse-85"><span class="linenos"> 85</span></a>        <span class="n">qoi_cols</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">qoi_cols</span>
 </span><span id="BasicStats.analyse-86"><a href="#BasicStats.analyse-86"><span class="linenos"> 86</span></a>
 </span><span id="BasicStats.analyse-87"><a href="#BasicStats.analyse-87"><span class="linenos"> 87</span></a>        <span class="k">if</span> <span class="n">data_frame</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="BasicStats.analyse-88"><a href="#BasicStats.analyse-88"><span class="linenos"> 88</span></a>            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;Analysis element needs a data frame to &quot;</span>
-</span><span id="BasicStats.analyse-89"><a href="#BasicStats.analyse-89"><span class="linenos"> 89</span></a>                               <span class="s2">&quot;analyse&quot;</span><span class="p">)</span>
+</span><span id="BasicStats.analyse-88"><a href="#BasicStats.analyse-88"><span class="linenos"> 88</span></a>            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">"Analysis element needs a data frame to "</span>
+</span><span id="BasicStats.analyse-89"><a href="#BasicStats.analyse-89"><span class="linenos"> 89</span></a>                               <span class="s2">"analyse"</span><span class="p">)</span>
 </span><span id="BasicStats.analyse-90"><a href="#BasicStats.analyse-90"><span class="linenos"> 90</span></a>        <span class="k">elif</span> <span class="n">data_frame</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
 </span><span id="BasicStats.analyse-91"><a href="#BasicStats.analyse-91"><span class="linenos"> 91</span></a>            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
-</span><span id="BasicStats.analyse-92"><a href="#BasicStats.analyse-92"><span class="linenos"> 92</span></a>                <span class="s2">&quot;No data in data frame passed to analyse element&quot;</span><span class="p">)</span>
+</span><span id="BasicStats.analyse-92"><a href="#BasicStats.analyse-92"><span class="linenos"> 92</span></a>                <span class="s2">"No data in data frame passed to analyse element"</span><span class="p">)</span>
 </span><span id="BasicStats.analyse-93"><a href="#BasicStats.analyse-93"><span class="linenos"> 93</span></a>
 </span><span id="BasicStats.analyse-94"><a href="#BasicStats.analyse-94"><span class="linenos"> 94</span></a>        <span class="c1"># Get summary statistics</span>
 </span><span id="BasicStats.analyse-95"><a href="#BasicStats.analyse-95"><span class="linenos"> 95</span></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">groupby</span><span class="p">:</span>
