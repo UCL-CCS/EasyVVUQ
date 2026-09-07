@@ -265,8 +265,10 @@ class Campaign:
             self.campaign_name = name
             self._campaign_dir = self.campaign_db.campaign_dir(name)
             if not os.path.exists(self._campaign_dir):
-                message = (f"Campaign directory ({self.campaign_dir}) does not exist.")
-                raise RuntimeError(message)
+                self._campaign_dir = work_dir # it is probably not correct behaviour, but works in our case
+                if not os.path.exists(self._campaign_dir):
+                    message = (f"Campaign directory ({self.campaign_dir}) does not exist.")
+                    raise RuntimeError(message)
             self._active_sampler_id = self.campaign_db.get_sampler_id(self.campaign_id)
             self._active_sampler = self.campaign_db.resurrect_sampler(self._active_sampler_id)
             self.set_app(self._active_app_name)
