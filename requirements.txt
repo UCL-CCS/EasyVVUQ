@@ -1,6 +1,6 @@
 alabaster==1.0.0
 annotated-doc==0.0.4
-anyio==4.13.0
+anyio==4.14.2
 anytree==2.13.0
 appdirs==1.4.4
 asciidoc==10.2.1
