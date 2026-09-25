@@ -1,4 +1,5 @@
 import logging
+import sys
 import chaospy as cp
 import numpy as np
 import random
@@ -171,7 +172,7 @@ class PCESampler(BaseSamplingElement, sampler_name="PCE_sampler"):
             self.distribution_dep = np.array(distribution)
         else:
             logging.error("Unsupported type of the distribution argument. It should be either cp.Distribution or a matrix-like array")
-            exit()
+            sys.exit(1)
 
         # Build independent joint multivariate distribution considering each uncertain paramter
         if not self.distribution_dep is None:
