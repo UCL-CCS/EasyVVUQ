@@ -14,7 +14,6 @@ import os
 import sys
 sys.path.insert(0, os.path.abspath('../../src'))
 
-import sphinx_rtd_theme 
 ###html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
 
 from sphinx.ext.apidoc import main as apidoc_main
