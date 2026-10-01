@@ -1328,23 +1328,23 @@ instance that has no instance attributes and cannot be given any.</p>
 
     </div>
     <a class="headerlink" href="#Base.__init__"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="Base.__init__-2181"><a href="#Base.__init__-2181"><span class="linenos">2181</span></a><span class="k">def</span><span class="w"> </span><span class="nf">_declarative_constructor</span><span class="p">(</span><span class="bp">self</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="Base.__init__-2182"><a href="#Base.__init__-2182"><span class="linenos">2182</span></a><span class="w">    </span><span class="sd">"""A simple constructor that allows initialization from kwargs.</span>
-</span><span id="Base.__init__-2183"><a href="#Base.__init__-2183"><span class="linenos">2183</span></a>
-</span><span id="Base.__init__-2184"><a href="#Base.__init__-2184"><span class="linenos">2184</span></a><span class="sd">    Sets attributes on the constructed instance using the names and</span>
-</span><span id="Base.__init__-2185"><a href="#Base.__init__-2185"><span class="linenos">2185</span></a><span class="sd">    values in ``kwargs``.</span>
-</span><span id="Base.__init__-2186"><a href="#Base.__init__-2186"><span class="linenos">2186</span></a>
-</span><span id="Base.__init__-2187"><a href="#Base.__init__-2187"><span class="linenos">2187</span></a><span class="sd">    Only keys that are present as</span>
-</span><span id="Base.__init__-2188"><a href="#Base.__init__-2188"><span class="linenos">2188</span></a><span class="sd">    attributes of the instance's class are allowed. These could be,</span>
-</span><span id="Base.__init__-2189"><a href="#Base.__init__-2189"><span class="linenos">2189</span></a><span class="sd">    for example, any mapped columns or relationships.</span>
-</span><span id="Base.__init__-2190"><a href="#Base.__init__-2190"><span class="linenos">2190</span></a><span class="sd">    """</span>
-</span><span id="Base.__init__-2191"><a href="#Base.__init__-2191"><span class="linenos">2191</span></a>    <span class="n">cls_</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
-</span><span id="Base.__init__-2192"><a href="#Base.__init__-2192"><span class="linenos">2192</span></a>    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
-</span><span id="Base.__init__-2193"><a href="#Base.__init__-2193"><span class="linenos">2193</span></a>        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">cls_</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
-</span><span id="Base.__init__-2194"><a href="#Base.__init__-2194"><span class="linenos">2194</span></a>            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
-</span><span id="Base.__init__-2195"><a href="#Base.__init__-2195"><span class="linenos">2195</span></a>                <span class="s2">"</span><span class="si">%r</span><span class="s2"> is an invalid keyword argument for </span><span class="si">%s</span><span class="s2">"</span> <span class="o">%</span> <span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">cls_</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>
-</span><span id="Base.__init__-2196"><a href="#Base.__init__-2196"><span class="linenos">2196</span></a>            <span class="p">)</span>
-</span><span id="Base.__init__-2197"><a href="#Base.__init__-2197"><span class="linenos">2197</span></a>        <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">[</span><span class="n">k</span><span class="p">])</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="Base.__init__-2275"><a href="#Base.__init__-2275"><span class="linenos">2275</span></a><span class="k">def</span><span class="w"> </span><span class="nf">_declarative_constructor</span><span class="p">(</span><span class="bp">self</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="Base.__init__-2276"><a href="#Base.__init__-2276"><span class="linenos">2276</span></a><span class="w">    </span><span class="sd">"""A simple constructor that allows initialization from kwargs.</span>
+</span><span id="Base.__init__-2277"><a href="#Base.__init__-2277"><span class="linenos">2277</span></a>
+</span><span id="Base.__init__-2278"><a href="#Base.__init__-2278"><span class="linenos">2278</span></a><span class="sd">    Sets attributes on the constructed instance using the names and</span>
+</span><span id="Base.__init__-2279"><a href="#Base.__init__-2279"><span class="linenos">2279</span></a><span class="sd">    values in ``kwargs``.</span>
+</span><span id="Base.__init__-2280"><a href="#Base.__init__-2280"><span class="linenos">2280</span></a>
+</span><span id="Base.__init__-2281"><a href="#Base.__init__-2281"><span class="linenos">2281</span></a><span class="sd">    Only keys that are present as</span>
+</span><span id="Base.__init__-2282"><a href="#Base.__init__-2282"><span class="linenos">2282</span></a><span class="sd">    attributes of the instance's class are allowed. These could be,</span>
+</span><span id="Base.__init__-2283"><a href="#Base.__init__-2283"><span class="linenos">2283</span></a><span class="sd">    for example, any mapped columns or relationships.</span>
+</span><span id="Base.__init__-2284"><a href="#Base.__init__-2284"><span class="linenos">2284</span></a><span class="sd">    """</span>
+</span><span id="Base.__init__-2285"><a href="#Base.__init__-2285"><span class="linenos">2285</span></a>    <span class="n">cls_</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+</span><span id="Base.__init__-2286"><a href="#Base.__init__-2286"><span class="linenos">2286</span></a>    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+</span><span id="Base.__init__-2287"><a href="#Base.__init__-2287"><span class="linenos">2287</span></a>        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">cls_</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
+</span><span id="Base.__init__-2288"><a href="#Base.__init__-2288"><span class="linenos">2288</span></a>            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+</span><span id="Base.__init__-2289"><a href="#Base.__init__-2289"><span class="linenos">2289</span></a>                <span class="s2">"</span><span class="si">%r</span><span class="s2"> is an invalid keyword argument for </span><span class="si">%s</span><span class="s2">"</span> <span class="o">%</span> <span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">cls_</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>
+</span><span id="Base.__init__-2290"><a href="#Base.__init__-2290"><span class="linenos">2290</span></a>            <span class="p">)</span>
+</span><span id="Base.__init__-2291"><a href="#Base.__init__-2291"><span class="linenos">2291</span></a>        <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">[</span><span class="n">k</span><span class="p">])</span>
 </span></pre></div>
 
 
@@ -1410,14 +1410,24 @@ for example, any mapped columns or relationships.</p>
 
 
                             <div id="DBInfoTable.__init__" class="classattr">
-                                <div class="attr function">
+                                        <input id="DBInfoTable.__init__-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr function">
             
         <span class="name">DBInfoTable</span><span class="signature pdoc-code condensed">(<span class="param"><span class="o">**</span><span class="n">kwargs</span></span>)</span>
 
-        
+                <label class="view-source-button" for="DBInfoTable.__init__-view-source"><span>View Source</span></label>
+
     </div>
     <a class="headerlink" href="#DBInfoTable.__init__"></a>
-    
+            <div class="pdoc-code codehilite"><pre><span></span><span id="DBInfoTable.__init__-2"><a href="#DBInfoTable.__init__-2"><span class="linenos">2</span></a><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</span><span id="DBInfoTable.__init__-3"><a href="#DBInfoTable.__init__-3"><span class="linenos">3</span></a>    <span class="n">new_state</span> <span class="o">=</span> <span class="n">class_manager</span><span class="o">.</span><span class="n">_new_state_if_none</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+</span><span id="DBInfoTable.__init__-4"><a href="#DBInfoTable.__init__-4"><span class="linenos">4</span></a>    <span class="k">if</span> <span class="n">new_state</span><span class="p">:</span>
+</span><span id="DBInfoTable.__init__-5"><a href="#DBInfoTable.__init__-5"><span class="linenos">5</span></a>        <span class="k">return</span> <span class="n">new_state</span><span class="o">.</span><span class="n">_initialize_instance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+</span><span id="DBInfoTable.__init__-6"><a href="#DBInfoTable.__init__-6"><span class="linenos">6</span></a>    <span class="k">else</span><span class="p">:</span>
+</span><span id="DBInfoTable.__init__-7"><a href="#DBInfoTable.__init__-7"><span class="linenos">7</span></a>        <span class="k">return</span> <span class="n">original_init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+</span></pre></div>
+
+
             <div class="docstring"><p>A simple constructor that allows initialization from kwargs.</p>
 
 <p>Sets attributes on the constructed instance using the names and
@@ -1484,14 +1494,24 @@ for example, any mapped columns or relationships.</p>
 
 
                             <div id="CampaignTable.__init__" class="classattr">
-                                <div class="attr function">
+                                        <input id="CampaignTable.__init__-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr function">
             
         <span class="name">CampaignTable</span><span class="signature pdoc-code condensed">(<span class="param"><span class="o">**</span><span class="n">kwargs</span></span>)</span>
 
-        
+                <label class="view-source-button" for="CampaignTable.__init__-view-source"><span>View Source</span></label>
+
     </div>
     <a class="headerlink" href="#CampaignTable.__init__"></a>
-    
+            <div class="pdoc-code codehilite"><pre><span></span><span id="CampaignTable.__init__-2"><a href="#CampaignTable.__init__-2"><span class="linenos">2</span></a><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</span><span id="CampaignTable.__init__-3"><a href="#CampaignTable.__init__-3"><span class="linenos">3</span></a>    <span class="n">new_state</span> <span class="o">=</span> <span class="n">class_manager</span><span class="o">.</span><span class="n">_new_state_if_none</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+</span><span id="CampaignTable.__init__-4"><a href="#CampaignTable.__init__-4"><span class="linenos">4</span></a>    <span class="k">if</span> <span class="n">new_state</span><span class="p">:</span>
+</span><span id="CampaignTable.__init__-5"><a href="#CampaignTable.__init__-5"><span class="linenos">5</span></a>        <span class="k">return</span> <span class="n">new_state</span><span class="o">.</span><span class="n">_initialize_instance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+</span><span id="CampaignTable.__init__-6"><a href="#CampaignTable.__init__-6"><span class="linenos">6</span></a>    <span class="k">else</span><span class="p">:</span>
+</span><span id="CampaignTable.__init__-7"><a href="#CampaignTable.__init__-7"><span class="linenos">7</span></a>        <span class="k">return</span> <span class="n">original_init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+</span></pre></div>
+
+
             <div class="docstring"><p>A simple constructor that allows initialization from kwargs.</p>
 
 <p>Sets attributes on the constructed instance using the names and
@@ -1620,14 +1640,24 @@ for example, any mapped columns or relationships.</p>
 
 
                             <div id="AppTable.__init__" class="classattr">
-                                <div class="attr function">
+                                        <input id="AppTable.__init__-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr function">
             
         <span class="name">AppTable</span><span class="signature pdoc-code condensed">(<span class="param"><span class="o">**</span><span class="n">kwargs</span></span>)</span>
 
-        
+                <label class="view-source-button" for="AppTable.__init__-view-source"><span>View Source</span></label>
+
     </div>
     <a class="headerlink" href="#AppTable.__init__"></a>
-    
+            <div class="pdoc-code codehilite"><pre><span></span><span id="AppTable.__init__-2"><a href="#AppTable.__init__-2"><span class="linenos">2</span></a><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</span><span id="AppTable.__init__-3"><a href="#AppTable.__init__-3"><span class="linenos">3</span></a>    <span class="n">new_state</span> <span class="o">=</span> <span class="n">class_manager</span><span class="o">.</span><span class="n">_new_state_if_none</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+</span><span id="AppTable.__init__-4"><a href="#AppTable.__init__-4"><span class="linenos">4</span></a>    <span class="k">if</span> <span class="n">new_state</span><span class="p">:</span>
+</span><span id="AppTable.__init__-5"><a href="#AppTable.__init__-5"><span class="linenos">5</span></a>        <span class="k">return</span> <span class="n">new_state</span><span class="o">.</span><span class="n">_initialize_instance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+</span><span id="AppTable.__init__-6"><a href="#AppTable.__init__-6"><span class="linenos">6</span></a>    <span class="k">else</span><span class="p">:</span>
+</span><span id="AppTable.__init__-7"><a href="#AppTable.__init__-7"><span class="linenos">7</span></a>        <span class="k">return</span> <span class="n">original_init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+</span></pre></div>
+
+
             <div class="docstring"><p>A simple constructor that allows initialization from kwargs.</p>
 
 <p>Sets attributes on the constructed instance using the names and
@@ -1719,14 +1749,24 @@ for example, any mapped columns or relationships.</p>
 
 
                             <div id="RunTable.__init__" class="classattr">
-                                <div class="attr function">
+                                        <input id="RunTable.__init__-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr function">
             
         <span class="name">RunTable</span><span class="signature pdoc-code condensed">(<span class="param"><span class="o">**</span><span class="n">kwargs</span></span>)</span>
 
-        
+                <label class="view-source-button" for="RunTable.__init__-view-source"><span>View Source</span></label>
+
     </div>
     <a class="headerlink" href="#RunTable.__init__"></a>
-    
+            <div class="pdoc-code codehilite"><pre><span></span><span id="RunTable.__init__-2"><a href="#RunTable.__init__-2"><span class="linenos">2</span></a><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</span><span id="RunTable.__init__-3"><a href="#RunTable.__init__-3"><span class="linenos">3</span></a>    <span class="n">new_state</span> <span class="o">=</span> <span class="n">class_manager</span><span class="o">.</span><span class="n">_new_state_if_none</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+</span><span id="RunTable.__init__-4"><a href="#RunTable.__init__-4"><span class="linenos">4</span></a>    <span class="k">if</span> <span class="n">new_state</span><span class="p">:</span>
+</span><span id="RunTable.__init__-5"><a href="#RunTable.__init__-5"><span class="linenos">5</span></a>        <span class="k">return</span> <span class="n">new_state</span><span class="o">.</span><span class="n">_initialize_instance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+</span><span id="RunTable.__init__-6"><a href="#RunTable.__init__-6"><span class="linenos">6</span></a>    <span class="k">else</span><span class="p">:</span>
+</span><span id="RunTable.__init__-7"><a href="#RunTable.__init__-7"><span class="linenos">7</span></a>        <span class="k">return</span> <span class="n">original_init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+</span></pre></div>
+
+
             <div class="docstring"><p>A simple constructor that allows initialization from kwargs.</p>
 
 <p>Sets attributes on the constructed instance using the names and
@@ -1886,14 +1926,24 @@ for example, any mapped columns or relationships.</p>
 
 
                             <div id="SamplerTable.__init__" class="classattr">
-                                <div class="attr function">
+                                        <input id="SamplerTable.__init__-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr function">
             
         <span class="name">SamplerTable</span><span class="signature pdoc-code condensed">(<span class="param"><span class="o">**</span><span class="n">kwargs</span></span>)</span>
 
-        
+                <label class="view-source-button" for="SamplerTable.__init__-view-source"><span>View Source</span></label>
+
     </div>
     <a class="headerlink" href="#SamplerTable.__init__"></a>
-    
+            <div class="pdoc-code codehilite"><pre><span></span><span id="SamplerTable.__init__-2"><a href="#SamplerTable.__init__-2"><span class="linenos">2</span></a><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</span><span id="SamplerTable.__init__-3"><a href="#SamplerTable.__init__-3"><span class="linenos">3</span></a>    <span class="n">new_state</span> <span class="o">=</span> <span class="n">class_manager</span><span class="o">.</span><span class="n">_new_state_if_none</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+</span><span id="SamplerTable.__init__-4"><a href="#SamplerTable.__init__-4"><span class="linenos">4</span></a>    <span class="k">if</span> <span class="n">new_state</span><span class="p">:</span>
+</span><span id="SamplerTable.__init__-5"><a href="#SamplerTable.__init__-5"><span class="linenos">5</span></a>        <span class="k">return</span> <span class="n">new_state</span><span class="o">.</span><span class="n">_initialize_instance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+</span><span id="SamplerTable.__init__-6"><a href="#SamplerTable.__init__-6"><span class="linenos">6</span></a>    <span class="k">else</span><span class="p">:</span>
+</span><span id="SamplerTable.__init__-7"><a href="#SamplerTable.__init__-7"><span class="linenos">7</span></a>        <span class="k">return</span> <span class="n">original_init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+</span></pre></div>
+
+
             <div class="docstring"><p>A simple constructor that allows initialization from kwargs.</p>
 
 <p>Sets attributes on the constructed instance using the names and
