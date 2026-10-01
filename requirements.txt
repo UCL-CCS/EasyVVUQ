@@ -261,7 +261,7 @@ urllib3==2.7.0
 uvicorn==0.46.0
 vcs-versioning==1.1.1
 versioneer==0.29
-virtualenv==21.2.4
+virtualenv==21.7.12
 watchfiles==1.1.1
 wcwidth==0.6.0
 webcolors==25.10.0
