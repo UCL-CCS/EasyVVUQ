@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1790842138250,
+  "lastUpdate": 1791306080652,
   "repoUrl": "https://github.com/UCL-CCS/EasyVVUQ",
   "entries": {
     "Benchmark": [
@@ -8050,6 +8050,72 @@ window.BENCHMARK_DATA = {
             "unit": "iter/sec",
             "range": "stddev: 0.00016502460800014006",
             "extra": "mean: 14.526523863637383 msec\nrounds: 66"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "djgroennl@gmail.com",
+            "name": "Derek Groen",
+            "username": "djgroen"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "93255154a3f4ad409f2009eaa7598e954f876b0e",
+          "message": "Merge pull request #508 from Jubarte27/discrete\n\nPrevent division by zero by enforcing maximum quadrature order on discrete dimensions",
+          "timestamp": "2026-10-06T17:56:45+01:00",
+          "tree_id": "a0e8485b434f23de987bdf989d82c555778796cc",
+          "url": "https://github.com/UCL-CCS/EasyVVUQ/commit/93255154a3f4ad409f2009eaa7598e954f876b0e"
+        },
+        "date": 1791306079207,
+        "tool": "pytest",
+        "benches": [
+          {
+            "name": "tests/test_db_benchmark.py::test_draw",
+            "value": 0.1268701726300542,
+            "unit": "iter/sec",
+            "range": "stddev: 0.07230557320971523",
+            "extra": "mean: 7.882073297999995 sec\nrounds: 5"
+          },
+          {
+            "name": "tests/test_db_benchmark.py::test_store_results",
+            "value": 0.21027312680285107,
+            "unit": "iter/sec",
+            "range": "stddev: 0.012815102373567727",
+            "extra": "mean: 4.755719454999996 sec\nrounds: 5"
+          },
+          {
+            "name": "tests/test_db_benchmark.py::test_get_collation_result",
+            "value": 107.42738804392349,
+            "unit": "iter/sec",
+            "range": "stddev: 0.0002055400203785518",
+            "extra": "mean: 9.308613177778588 msec\nrounds: 90"
+          },
+          {
+            "name": "tests/test_db_benchmark.py::test_draw_add",
+            "value": 0.12816699714978877,
+            "unit": "iter/sec",
+            "range": "stddev: 0.0710789048302269",
+            "extra": "mean: 7.802320583600005 sec\nrounds: 5"
+          },
+          {
+            "name": "tests/test_db_benchmark.py::test_store_results_add",
+            "value": 0.2147141617704259,
+            "unit": "iter/sec",
+            "range": "stddev: 0.03755807815670361",
+            "extra": "mean: 4.65735465119999 sec\nrounds: 5"
+          },
+          {
+            "name": "tests/test_db_benchmark.py::test_get_collation_result_add",
+            "value": 54.70076282990389,
+            "unit": "iter/sec",
+            "range": "stddev: 0.0003125567380525287",
+            "extra": "mean: 18.281280703700144 msec\nrounds: 54"
           }
         ]
       }
