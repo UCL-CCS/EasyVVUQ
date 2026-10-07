@@ -16,7 +16,6 @@ from typing import List, Dict, Tuple, Optional, Union, Any
 from collections import defaultdict
 
 import easyvvuq as uq
-from easyvvuq.constants import Status
 from easyvvuq.actions import Actions, CreateRunDirectory, Encode, Decode, ExecuteLocal
 
 __copyright__ = """
