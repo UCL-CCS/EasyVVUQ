@@ -282,7 +282,7 @@ class FDSampler(BaseSamplingElement, sampler_name="FD_sampler"):
                 #self._perturbations_dep = Transformations.cholesky(self._perturbations, vary_, distribution_)
             else:
                 self.logger.critical("Error: How did this happen? We are transforming the nodes but not with Rosenblatt nor Cholesky")
-                sys.exit()
+                sys.exit(1)
         
         return
 
