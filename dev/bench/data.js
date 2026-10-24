@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1792842330533,
+  "lastUpdate": 1792842745110,
   "repoUrl": "https://github.com/UCL-CCS/EasyVVUQ",
   "entries": {
     "Benchmark": [
@@ -8566,6 +8566,68 @@ window.BENCHMARK_DATA = {
             "unit": "iter/sec",
             "range": "stddev: 0.00031929298650149176",
             "extra": "mean: 10.559460815217825 msec\nrounds: 92"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "name": "UCL-CCS",
+            "username": "UCL-CCS"
+          },
+          "committer": {
+            "name": "UCL-CCS",
+            "username": "UCL-CCS"
+          },
+          "id": "7cef06f4052c709dffa16bfd357b8670d31e7ee4",
+          "message": "Potential fix for code scanning alert no. 293: Use of exit() or quit()",
+          "timestamp": "2026-10-21T06:39:43Z",
+          "url": "https://github.com/UCL-CCS/EasyVVUQ/pull/496/commits/7cef06f4052c709dffa16bfd357b8670d31e7ee4"
+        },
+        "date": 1792842743497,
+        "tool": "pytest",
+        "benches": [
+          {
+            "name": "tests/test_db_benchmark.py::test_draw",
+            "value": 0.12425354935256844,
+            "unit": "iter/sec",
+            "range": "stddev: 0.052637563717616395",
+            "extra": "mean: 8.048059835800007 sec\nrounds: 5"
+          },
+          {
+            "name": "tests/test_db_benchmark.py::test_store_results",
+            "value": 0.21678284345617685,
+            "unit": "iter/sec",
+            "range": "stddev: 0.01285121755378322",
+            "extra": "mean: 4.612911169799986 sec\nrounds: 5"
+          },
+          {
+            "name": "tests/test_db_benchmark.py::test_get_collation_result",
+            "value": 107.0112054314429,
+            "unit": "iter/sec",
+            "range": "stddev: 0.00012761876988059547",
+            "extra": "mean: 9.344815769229452 msec\nrounds: 91"
+          },
+          {
+            "name": "tests/test_db_benchmark.py::test_draw_add",
+            "value": 0.12416718430006045,
+            "unit": "iter/sec",
+            "range": "stddev: 0.06616790708322873",
+            "extra": "mean: 8.05365770059999 sec\nrounds: 5"
+          },
+          {
+            "name": "tests/test_db_benchmark.py::test_store_results_add",
+            "value": 0.21938685927654406,
+            "unit": "iter/sec",
+            "range": "stddev: 0.019202046862250716",
+            "extra": "mean: 4.558158147200004 sec\nrounds: 5"
+          },
+          {
+            "name": "tests/test_db_benchmark.py::test_get_collation_result_add",
+            "value": 55.50628094794806,
+            "unit": "iter/sec",
+            "range": "stddev: 0.00011182190658979233",
+            "extra": "mean: 18.015979145455027 msec\nrounds: 55"
           }
         ]
       }
