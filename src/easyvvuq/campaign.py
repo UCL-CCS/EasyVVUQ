@@ -265,7 +265,8 @@ class Campaign:
             self.campaign_name = name
             self._campaign_dir = self.campaign_db.campaign_dir(name)
             if not os.path.exists(self._campaign_dir):
-                self._campaign_dir = work_dir # it is probably not correct behaviour, but works in our case
+                logger.warning("Stored campaign directory %s does not exist; falling back to work_dir %s.", self._campaign_dir, work_dir)
+                self._campaign_dir = work_dir
                 if not os.path.exists(self._campaign_dir):
                     message = (f"Campaign directory ({self.campaign_dir}) does not exist.")
                     raise RuntimeError(message)
