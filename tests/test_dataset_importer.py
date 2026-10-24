@@ -2,7 +2,6 @@
 Tests for the dataset importer functionality.
 """
 
-import os
 import json
 import tempfile
 import shutil
