@@ -340,6 +340,7 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
         # make sure that all entries of each index are <= the max quadrature order
         # The max quad order can be low for discrete input variables
         idx = np.where((self.admissible_idx <= self.max_level).all(axis=1))[0]
+        cut_by_max_level = len(idx) != len(self.admissible_idx)
         self.admissible_idx = self.admissible_idx[idx]
         cut_by_max_level = len(idx) != len(self.admissible_idx)
         logging.debug('Admissible multi-indices:\n%s', self.admissible_idx)
