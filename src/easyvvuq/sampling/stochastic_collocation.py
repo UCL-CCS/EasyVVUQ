@@ -257,7 +257,6 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
                     # then the max order has been reached
                     if any(x == next_x for x, next_x in zip(xi_i, xi_i[1:])):
                         break
-
                     number_of_points = xi_i.size
 
                 logging.debug("Input %d is discrete, setting max quadrature order to %d"
@@ -343,6 +342,7 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
         idx = np.where((self.admissible_idx <= self.max_level).all(axis=1))[0]
         cut_by_max_level = len(idx) != len(self.admissible_idx)
         self.admissible_idx = self.admissible_idx[idx]
+        cut_by_max_level = len(idx) != len(self.admissible_idx)
         logging.debug('Admissible multi-indices:\n%s', self.admissible_idx)
 
         # determine the maximum level L of the new index set L = |l| - N + 1
@@ -351,7 +351,6 @@ class SCSampler(BaseSamplingElement, sampler_name="sc_sampler"):
             self.L = np.max(np.concatenate([self.admissible_idx, current_multi_idx]))
         else:
             self.L = np.max(self.admissible_idx)
-
         # recompute the 1D weights and collocation points
         self.compute_1D_points_weights(self.L, self.N)
         # compute collocation grid based on the admissible level indices
