@@ -1,0 +1,7 @@
+# Binder environment for the tutorials.
+# The presence of this binder/ directory makes repo2docker ignore the
+# top-level requirements.txt (a full development freeze that does not
+# install cleanly on Binder). EasyVVUQ itself is installed in postBuild.
+matplotlib
+joblib
+ipywidgets
