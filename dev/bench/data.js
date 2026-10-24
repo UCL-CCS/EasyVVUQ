@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1792843870450,
+  "lastUpdate": 1792844381455,
   "repoUrl": "https://github.com/UCL-CCS/EasyVVUQ",
   "entries": {
     "Benchmark": [
@@ -8690,6 +8690,68 @@ window.BENCHMARK_DATA = {
             "unit": "iter/sec",
             "range": "stddev: 0.00015965805515092684",
             "extra": "mean: 15.485646483867757 msec\nrounds: 62"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "name": "UCL-CCS",
+            "username": "UCL-CCS"
+          },
+          "committer": {
+            "name": "UCL-CCS",
+            "username": "UCL-CCS"
+          },
+          "id": "ebf398e565944864bf8b30dadd276ed5eb467891",
+          "message": "Potential fix for code scanning alert no. 291: Missing call to superclass `__init__` during object initialization",
+          "timestamp": "2026-10-21T06:39:43Z",
+          "url": "https://github.com/UCL-CCS/EasyVVUQ/pull/505/commits/ebf398e565944864bf8b30dadd276ed5eb467891"
+        },
+        "date": 1792844380529,
+        "tool": "pytest",
+        "benches": [
+          {
+            "name": "tests/test_db_benchmark.py::test_draw",
+            "value": 0.12291229119241763,
+            "unit": "iter/sec",
+            "range": "stddev: 0.07849161467813508",
+            "extra": "mean: 8.135882834 sec\nrounds: 5"
+          },
+          {
+            "name": "tests/test_db_benchmark.py::test_store_results",
+            "value": 0.21234161409170962,
+            "unit": "iter/sec",
+            "range": "stddev: 0.04131598203437038",
+            "extra": "mean: 4.709392477199986 sec\nrounds: 5"
+          },
+          {
+            "name": "tests/test_db_benchmark.py::test_get_collation_result",
+            "value": 103.50934200248113,
+            "unit": "iter/sec",
+            "range": "stddev: 0.00020620235826556929",
+            "extra": "mean: 9.660963741572523 msec\nrounds: 89"
+          },
+          {
+            "name": "tests/test_db_benchmark.py::test_draw_add",
+            "value": 0.12322570152723349,
+            "unit": "iter/sec",
+            "range": "stddev: 0.06801800150342492",
+            "extra": "mean: 8.115190156000006 sec\nrounds: 5"
+          },
+          {
+            "name": "tests/test_db_benchmark.py::test_store_results_add",
+            "value": 0.21939252903377393,
+            "unit": "iter/sec",
+            "range": "stddev: 0.02484073363374186",
+            "extra": "mean: 4.55804035079999 sec\nrounds: 5"
+          },
+          {
+            "name": "tests/test_db_benchmark.py::test_get_collation_result_add",
+            "value": 52.77648058129428,
+            "unit": "iter/sec",
+            "range": "stddev: 0.0010937424747232505",
+            "extra": "mean: 18.94783412962995 msec\nrounds: 54"
           }
         ]
       }
