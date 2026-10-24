@@ -21,6 +21,7 @@ class MCMCAnalysisResults(AnalysisResults):
     """
 
     def __init__(self, chains):
+        super().__init__()
         self.chains = chains
 
     def plot_hist(self, input_parameter, chain=None, skip=0, merge=True):
