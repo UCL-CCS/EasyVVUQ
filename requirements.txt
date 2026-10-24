@@ -126,7 +126,7 @@ mypy_extensions==1.1.0
 myst-parser==5.0.0
 narwhals==2.19.0
 nbclient==0.10.4
-nbconvert==7.17.1
+nbconvert==7.17.2
 nbformat==5.10.4
 nbsphinx==0.9.8
 numpoly==1.3.9
