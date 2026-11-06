@@ -119,7 +119,7 @@ mistune==3.3.3
 mock==5.2.0
 more-itertools==10.8.0
 mpmath==1.3.0
-msgpack==1.2.1
+msgpack==1.2.3
 multiprocess==0.70.19
 mypy==1.20.1
 mypy_extensions==1.1.0
