@@ -18,7 +18,7 @@ bleach==6.4.0
 blockdiag==3.0.0
 bokeh==3.9.0
 Brotli==1.2.0
-brotlicffi==1.2.0.1
+brotlicffi==1.2.1.0
 build==1.4.3
 cachetools==7.0.6
 calver==2025.10.20
